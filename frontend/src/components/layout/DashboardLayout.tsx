@@ -250,41 +250,6 @@ export default function DashboardLayout({
                     {children}
                 </main>
 
-                {/* ── Footer ── */}
-                <footer className="flex h-7 shrink-0 items-center justify-center border-t border-tactical-border bg-tactical-surface/30 px-6 select-none">
-                    <div className="relative overflow-hidden py-1 px-4 rounded-full border border-tactical-border/30 bg-black/20">
-                        <motion.span
-                            className="font-data text-[7px] tracking-[0.6em] uppercase relative z-10 bg-clip-text text-transparent bg-gradient-to-r from-zinc-500 via-white to-zinc-500 bg-[length:200%_100%]"
-                            animate={{
-                                backgroundPosition: ["200% 0", "-200% 0"]
-                            }}
-                            transition={{
-                                duration: 5,
-                                repeat: Infinity,
-                                ease: "linear"
-                            }}
-                            style={{
-                                backgroundImage: "linear-gradient(90deg, #525252 0%, #ffffff 50%, #525252 100%)",
-                                WebkitBackgroundClip: "text",
-                                color: "transparent"
-                            }}
-                        >
-                            Developed by Yusuf & İrem
-                        </motion.span>
-                        {/* Subtle background glow sweep */}
-                        <motion.div
-                            className="absolute inset-0 z-0 bg-gradient-to-r from-transparent via-tactical-primary/10 to-transparent"
-                            animate={{
-                                x: ['-200%', '200%']
-                            }}
-                            transition={{
-                                duration: 8,
-                                repeat: Infinity,
-                                ease: "linear"
-                            }}
-                        />
-                    </div>
-                </footer>
             </div>
         </div>
     );

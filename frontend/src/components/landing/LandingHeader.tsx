@@ -42,7 +42,7 @@ export default function LandingHeader() {
                         : "bg-transparent py-4"
                 }`}
             >
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between">
                         {/* Brand */}
                         <a
@@ -51,18 +51,18 @@ export default function LandingHeader() {
                                 e.preventDefault();
                                 window.scrollTo({ top: 0, behavior: "smooth" });
                             }}
-                            className="group flex items-center gap-3 cursor-pointer"
+                            className="group flex items-center gap-2.5 cursor-pointer shrink-0"
                         >
-                            <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-tactical-surface border border-tactical-border group-hover:border-[#22C55E]/50 transition-all duration-300 overflow-hidden shadow-[0_0_15px_rgba(34,197,94,0.1)]">
+                            <div className="relative flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-tactical-surface border border-tactical-border group-hover:border-[#22C55E]/50 transition-all duration-300 overflow-hidden shadow-[0_0_15px_rgba(34,197,94,0.1)] shrink-0">
                                 <div className="absolute inset-0 bg-gradient-to-br from-[#22C55E]/20 via-[#06B6D4]/10 to-transparent opacity-60 group-hover:opacity-100 transition-opacity" />
-                                <Dna className="relative h-5 w-5 text-[#22C55E] group-hover:rotate-12 transition-transform duration-300" />
+                                <Dna className="relative h-4 w-4 sm:h-5 sm:w-5 text-[#22C55E] group-hover:rotate-12 transition-transform duration-300" />
                                 <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-[#22C55E] shadow-[0_0_6px_#22C55E]" />
                             </div>
                             <div className="flex flex-col">
-                                <span className="font-mono text-base font-black tracking-[0.18em] text-tactical-text group-hover:text-[#22C55E] transition-colors">
+                                <span className="font-mono text-sm sm:text-base font-black tracking-[0.15em] sm:tracking-[0.18em] text-tactical-text group-hover:text-[#22C55E] transition-colors whitespace-nowrap">
                                     VANTAGE<span className="text-[#06B6D4]">-STR</span>
                                 </span>
-                                <span className="font-mono text-[9px] tracking-widest text-tactical-text-muted font-medium uppercase">
+                                <span className="hidden sm:block font-mono text-[9px] tracking-widest text-tactical-text-muted font-medium uppercase whitespace-nowrap">
                                     Forensic Intelligence Core
                                 </span>
                             </div>
@@ -83,7 +83,7 @@ export default function LandingHeader() {
                         </nav>
 
                         {/* Right Actions */}
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
                             {/* System Status badge */}
                             <div className="hidden sm:flex items-center gap-2 rounded-full border border-[#22C55E]/30 bg-[#22C55E]/5 px-3 py-1.5 shadow-[0_0_12px_rgba(34,197,94,0.1)]">
                                 <span className="relative flex h-2 w-2">
@@ -95,13 +95,18 @@ export default function LandingHeader() {
                                 </span>
                             </div>
 
-                            {/* Reusable Launch Demo Button */}
-                            <LaunchDemoButton size="md" />
+                            {/* Launch Demo Button - Compact on Mobile Header */}
+                            <div className="sm:hidden">
+                                <LaunchDemoButton size="sm" />
+                            </div>
+                            <div className="hidden sm:block">
+                                <LaunchDemoButton size="md" />
+                            </div>
 
                             {/* Mobile toggle */}
                             <button
                                 onClick={() => setMobileOpen((v) => !v)}
-                                className="lg:hidden p-2 text-tactical-text-dim hover:text-tactical-text transition-colors rounded-lg border border-tactical-border bg-tactical-surface"
+                                className="lg:hidden p-2 text-tactical-text-dim hover:text-tactical-text transition-colors rounded-lg border border-tactical-border bg-tactical-surface shrink-0"
                             >
                                 {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
                             </button>

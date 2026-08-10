@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, Dna } from "lucide-react";
+import { Dna } from "lucide-react";
 import LaunchDemoButton from "./LaunchDemoButton";
 import NeonDnaScroll from "./NeonDnaScroll";
 
@@ -106,10 +106,9 @@ export default function LandingHero() {
                     <a
                         href="#bio-engine"
                         onClick={scrollToBioEngine}
-                        className="flex items-center gap-2 rounded-xl border border-tactical-border bg-tactical-surface/80 backdrop-blur-md px-7 py-3.5 font-mono text-xs font-medium tracking-wide text-tactical-text-muted hover:text-white hover:border-[#06B6D4]/50 hover:bg-tactical-surface-elevated transition-all duration-200"
+                        className="flex items-center justify-center rounded-xl border border-tactical-border bg-tactical-surface/80 backdrop-blur-md px-8 py-4 font-mono text-xs font-medium tracking-wide text-tactical-text-muted hover:text-white hover:border-[#06B6D4]/50 hover:bg-tactical-surface-elevated transition-all duration-200"
                     >
                         <span>Explore Bio-Engine</span>
-                        <ChevronDown className="h-4 w-4 text-[#06B6D4]" />
                     </a>
                 </div>
 

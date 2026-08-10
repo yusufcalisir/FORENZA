@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Zap, ExternalLink } from "lucide-react";
+import { Zap } from "lucide-react";
 
 export default function LaunchDemoButton({
     size = "md",
@@ -30,7 +30,6 @@ export default function LaunchDemoButton({
             >
                 <Zap className="h-4 w-4 text-[#22C55E] group-hover:text-black transition-colors shrink-0" />
                 <span>Launch Demo</span>
-                <ExternalLink className="h-3.5 w-3.5 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
             </span>
         </Link>
     );

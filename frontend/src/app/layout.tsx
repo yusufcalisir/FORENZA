@@ -16,6 +16,9 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: "VANTAGE-STR",
+  icons: {
+    icon: "/icon.svg",
+  },
 };
 
 export default function RootLayout({

@@ -2,15 +2,15 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Dna, Menu, X } from "lucide-react";
+import { Dna, Menu, X, Layers, Cpu, ShieldCheck, Briefcase, ChevronRight } from "lucide-react";
 import LaunchDemoButton from "./LaunchDemoButton";
 
 const NAV_LINKS = [
-    { label: "Capabilities", href: "#features" },
-    { label: "Bio-Engine", href: "#bio-engine" },
-    { label: "Architecture", href: "#architecture" },
-    { label: "Solutions", href: "#solutions" },
-    { label: "Security & Specs", href: "#security-specs" },
+    { label: "Capabilities", href: "#features", icon: Layers },
+    { label: "Bio-Engine", href: "#bio-engine", icon: Dna },
+    { label: "Architecture", href: "#architecture", icon: Cpu },
+    { label: "Solutions", href: "#solutions", icon: Briefcase },
+    { label: "Security & Specs", href: "#security-specs", icon: ShieldCheck },
 ];
 
 export default function LandingHeader() {
@@ -115,31 +115,57 @@ export default function LandingHeader() {
                 </div>
             </header>
 
-            {/* Mobile Menu Overlay */}
+            {/* Premium Mobile Menu Overlay */}
             {mobileOpen && (
                 <div className="fixed inset-0 z-40 lg:hidden">
+                    {/* Backdrop */}
                     <div
-                        className="absolute inset-0 bg-black/80 backdrop-blur-md"
+                        className="absolute inset-0 bg-black/85 backdrop-blur-xl animate-fade-in"
                         onClick={() => setMobileOpen(false)}
                     />
-                    <div className="absolute top-20 left-4 right-4 bg-tactical-surface border border-tactical-border rounded-2xl p-5 shadow-2xl space-y-1.5">
-                        {NAV_LINKS.map((link) => (
-                            <a
-                                key={link.href}
-                                href={link.href}
-                                onClick={(e) => handleAnchorClick(e, link.href)}
-                                className="flex items-center px-4 py-3 rounded-xl border border-transparent hover:border-tactical-border hover:bg-tactical-surface-elevated font-mono text-sm tracking-wide text-tactical-text-muted hover:text-white transition-all"
-                            >
-                                {link.label}
-                            </a>
-                        ))}
-                        <div className="pt-3 border-t border-tactical-border">
-                            <a
-                                href="/nodes"
-                                className="flex items-center justify-center w-full rounded-xl bg-gradient-to-r from-[#22C55E] to-[#06B6D4] px-5 py-3.5 font-mono text-sm font-bold tracking-wide text-black hover:opacity-90 transition-opacity"
-                            >
-                                Launch Demo
-                            </a>
+
+                    {/* Drawer Content Card */}
+                    <div className="absolute top-20 left-3 right-3 bg-[#0A0A0B]/95 border border-tactical-border/80 rounded-2xl p-4 sm:p-5 shadow-[0_10px_40px_rgba(0,0,0,0.9)] space-y-4 max-h-[85vh] overflow-y-auto">
+                        {/* Header Directory Badge */}
+                        <div className="flex items-center justify-between border-b border-tactical-border/60 pb-3">
+                            <span className="font-mono text-[10px] tracking-widest text-tactical-text-dim uppercase font-bold">
+                                // Navigation Directory
+                            </span>
+                            <div className="flex items-center gap-1.5 rounded-full border border-[#22C55E]/30 bg-[#22C55E]/10 px-2.5 py-0.5">
+                                <span className="h-1.5 w-1.5 rounded-full bg-[#22C55E] animate-pulse" />
+                                <span className="font-mono text-[9px] text-[#22C55E] font-semibold uppercase">Online</span>
+                            </div>
+                        </div>
+
+                        {/* Navigation Items with Icons */}
+                        <div className="space-y-1.5">
+                            {NAV_LINKS.map((link) => {
+                                const Icon = link.icon;
+                                return (
+                                    <a
+                                        key={link.href}
+                                        href={link.href}
+                                        onClick={(e) => handleAnchorClick(e, link.href)}
+                                        className="group flex items-center justify-between px-3.5 py-3 rounded-xl border border-tactical-border/40 bg-tactical-surface/50 hover:bg-tactical-surface-elevated hover:border-[#22C55E]/40 font-mono text-xs sm:text-sm tracking-wide text-tactical-text-muted hover:text-white transition-all duration-200"
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-tactical-border/50 group-hover:bg-[#22C55E]/20 text-tactical-text-dim group-hover:text-[#22C55E] transition-colors">
+                                                <Icon className="h-3.5 w-3.5" />
+                                            </div>
+                                            <span className="font-medium">{link.label}</span>
+                                        </div>
+                                        <ChevronRight className="h-4 w-4 text-tactical-text-dim group-hover:text-[#22C55E] group-hover:translate-x-0.5 transition-all" />
+                                    </a>
+                                );
+                            })}
+                        </div>
+
+                        {/* Signature Launch Demo Button (Matches rest of site) */}
+                        <div className="pt-3 border-t border-tactical-border/60 flex flex-col gap-2">
+                            <LaunchDemoButton size="lg" className="w-full" />
+                            <p className="text-center font-mono text-[9px] text-tactical-text-dim">
+                                Instant Sandbox Access — Zero Setup Required
+                            </p>
                         </div>
                     </div>
                 </div>

@@ -105,14 +105,14 @@ export default function LandingSecuritySpecs() {
                         </h3>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-tactical-border">
-                        <div className="divide-y divide-tactical-border">
+                    <div className="divide-y divide-tactical-border">
                             {SPECS.slice(0, 6).map((spec) => (
                                 <div
                                     key={spec.label}
-                                    className="flex justify-between items-center px-5 py-3 hover:bg-tactical-surface-elevated/50 transition-colors font-mono text-xs"
+                                    className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 px-4 py-3 hover:bg-tactical-surface-elevated/50 transition-colors font-mono text-xs"
                                 >
                                     <span className="text-tactical-text-dim">{spec.label}</span>
-                                    <span className="font-bold" style={{ color: spec.color }}>
+                                    <span className="font-bold sm:text-right" style={{ color: spec.color }}>
                                         {spec.value}
                                     </span>
                                 </div>
@@ -122,10 +122,10 @@ export default function LandingSecuritySpecs() {
                             {SPECS.slice(6, 12).map((spec) => (
                                 <div
                                     key={spec.label}
-                                    className="flex justify-between items-center px-5 py-3 hover:bg-tactical-surface-elevated/50 transition-colors font-mono text-xs"
+                                    className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 px-4 py-3 hover:bg-tactical-surface-elevated/50 transition-colors font-mono text-xs"
                                 >
                                     <span className="text-tactical-text-dim">{spec.label}</span>
-                                    <span className="font-bold" style={{ color: spec.color }}>
+                                    <span className="font-bold sm:text-right" style={{ color: spec.color }}>
                                         {spec.value}
                                     </span>
                                 </div>

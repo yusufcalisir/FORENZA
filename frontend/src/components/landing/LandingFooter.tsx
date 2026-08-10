@@ -114,26 +114,28 @@ export default function LandingFooter() {
                     </div>
 
                     {/* Link columns */}
-                    {FOOTER_LINKS.map((col) => (
-                        <div key={col.heading} className="space-y-3">
-                            <h3 className="font-mono text-[10px] tracking-widest text-tactical-text-dim uppercase font-bold">
-                                {col.heading}
-                            </h3>
-                            <ul className="space-y-2">
-                                {col.links.map((link) => (
-                                    <li key={link.label}>
-                                        <a
-                                            href={link.href}
-                                            onClick={(e) => handleAnchorClick(e, link.href)}
-                                            className="font-mono text-xs text-tactical-text-muted hover:text-tactical-text transition-colors"
-                                        >
-                                            {link.label}
-                                        </a>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    ))}
+                    <div className="grid grid-cols-3 lg:col-span-3 gap-4">
+                        {FOOTER_LINKS.map((col) => (
+                            <div key={col.heading} className="space-y-3">
+                                <h3 className="font-mono text-[10px] tracking-widest text-tactical-text-dim uppercase font-bold">
+                                    {col.heading}
+                                </h3>
+                                <ul className="space-y-2">
+                                    {col.links.map((link) => (
+                                        <li key={link.label}>
+                                            <a
+                                                href={link.href}
+                                                onClick={(e) => handleAnchorClick(e, link.href)}
+                                                className="font-mono text-xs text-tactical-text-muted hover:text-tactical-text transition-colors"
+                                            >
+                                                {link.label}
+                                            </a>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))}
+                    </div>
                 </div>
 
                 {/* Bottom bar */}

@@ -496,7 +496,7 @@ export default function LandingBioSimulator() {
                 {/* Main Card Shell */}
                 <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface p-3 sm:p-5 shadow-[0_0_60px_rgba(0,0,0,0.6)]">
                     {/* Navigation Tabs */}
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 border-b border-tactical-border/80 pb-3 mb-5">
+                    <div className="flex overflow-x-auto gap-2 border-b border-tactical-border/80 pb-3 mb-5 scrollbar-hide">
                         {TABS.map((tab) => {
                             const Icon = tab.icon;
                             const isActive = activeTab === tab.id;
@@ -504,15 +504,15 @@ export default function LandingBioSimulator() {
                                 <button
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id)}
-                                    className={`flex items-center justify-center gap-2.5 px-4 py-3 rounded-xl font-mono text-xs font-bold tracking-wide transition-all duration-300 ${
+                                    className={`flex-shrink-0 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-mono text-[11px] font-bold tracking-wide transition-all duration-300 ${
                                         isActive
                                             ? "bg-tactical-surface-elevated text-white border border-tactical-border shadow-lg"
                                             : "text-tactical-text-muted hover:text-white hover:bg-tactical-surface-elevated/50 border border-transparent"
                                     }`}
                                     style={isActive ? { borderColor: `${tab.color}60` } : {}}
                                 >
-                                    <Icon className="h-4 w-4" style={{ color: tab.color }} />
-                                    <span>{tab.label}</span>
+                                    <Icon className="h-3.5 w-3.5 shrink-0" style={{ color: tab.color }} />
+                                    <span className="whitespace-nowrap">{tab.label}</span>
                                 </button>
                             );
                         })}

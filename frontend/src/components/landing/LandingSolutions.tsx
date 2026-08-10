@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Heart, Shield, FlaskConical, CheckCircle2, ArrowRight, FileText, Database, Lock } from "lucide-react";
+import { Search, Heart, Shield, FlaskConical, CheckCircle2, FileText } from "lucide-react";
+import NeonDnaScroll from "./NeonDnaScroll";
 
 const SOLUTIONS = [
     {
@@ -84,26 +85,26 @@ export default function LandingSolutions() {
     const Icon = activeSolution.icon;
 
     return (
-        <section id="solutions" className="py-24 px-4 bg-tactical-surface/30">
-            <div className="mx-auto max-w-6xl">
+        <section id="solutions" className="min-h-[85vh] lg:min-h-screen flex flex-col justify-between py-12 px-4 bg-tactical-surface/30">
+            <div className="my-auto mx-auto max-w-6xl w-full">
                 {/* Header */}
-                <div className="text-center mb-12">
-                    <div className="inline-flex items-center gap-2 rounded-full border border-[#06B6D4]/30 bg-[#06B6D4]/5 px-4 py-2 mb-4 shadow-[0_0_15px_rgba(6,182,212,0.1)]">
+                <div className="text-center mb-10">
+                    <div className="inline-flex items-center gap-2 rounded-full border border-[#06B6D4]/30 bg-[#06B6D4]/5 px-4 py-1.5 mb-3 shadow-[0_0_15px_rgba(6,182,212,0.1)]">
                         <span className="h-1.5 w-1.5 rounded-full bg-[#06B6D4] animate-pulse" />
                         <span className="font-mono text-[10px] tracking-widest text-[#06B6D4] uppercase font-bold">
                             Application Domains
                         </span>
                     </div>
-                    <h2 className="text-3xl sm:text-5xl font-bold text-tactical-text mb-4">
+                    <h2 className="text-3xl sm:text-5xl font-bold text-tactical-text mb-3">
                         Built for High-Stakes Environments
                     </h2>
-                    <p className="max-w-xl mx-auto text-tactical-text-muted text-sm leading-relaxed">
+                    <p className="max-w-xl mx-auto text-tactical-text-muted text-xs sm:text-sm leading-relaxed">
                         VANTAGE-STR addresses the specific operational demands of four distinct forensic and scientific disciplines.
                     </p>
                 </div>
 
                 {/* Interactive Solution Tabs */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
                     {SOLUTIONS.map((s, i) => {
                         const SIcon = s.icon;
                         const isActive = activeIdx === i;
@@ -111,7 +112,7 @@ export default function LandingSolutions() {
                             <button
                                 key={s.id}
                                 onClick={() => setActiveIdx(i)}
-                                className={`flex items-center gap-3 p-4 rounded-xl border font-mono text-xs transition-all duration-300 text-left ${
+                                className={`flex items-center gap-3 p-3.5 rounded-xl border font-mono text-xs transition-all duration-300 text-left ${
                                     isActive
                                         ? "bg-tactical-surface-elevated text-white border-current shadow-lg"
                                         : "bg-tactical-surface/60 text-tactical-text-muted border-tactical-border/60 hover:border-tactical-border hover:text-white"
@@ -126,20 +127,20 @@ export default function LandingSolutions() {
                 </div>
 
                 {/* Main Domain Inspector Card */}
-                <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface p-6 sm:p-8 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface p-5 sm:p-7 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
                         {/* Left Info Column */}
-                        <div className="lg:col-span-7 space-y-6">
+                        <div className="lg:col-span-7 space-y-5">
                             <div className="flex items-center gap-3">
                                 <div
-                                    className="flex h-12 w-12 items-center justify-center rounded-xl border shrink-0"
+                                    className="flex h-11 w-11 items-center justify-center rounded-xl border shrink-0"
                                     style={{
                                         background: `${activeSolution.color}15`,
                                         borderColor: `${activeSolution.color}35`,
                                         color: activeSolution.color,
                                     }}
                                 >
-                                    <Icon className="h-6 w-6" />
+                                    <Icon className="h-5 w-5" />
                                 </div>
                                 <div>
                                     <span
@@ -154,12 +155,12 @@ export default function LandingSolutions() {
                                 </div>
                             </div>
 
-                            <p className="text-tactical-text-muted text-sm leading-relaxed">
+                            <p className="text-tactical-text-muted text-xs sm:text-sm leading-relaxed">
                                 {activeSolution.description}
                             </p>
 
                             {/* Checklist */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
                                 {activeSolution.bulletPoints.map((point) => (
                                     <div key={point} className="flex items-start gap-2.5">
                                         <CheckCircle2
@@ -173,8 +174,8 @@ export default function LandingSolutions() {
                         </div>
 
                         {/* Right Interactive Mock Output Card */}
-                        <div className="lg:col-span-5 rounded-xl border border-tactical-border bg-tactical-bg/90 p-6 space-y-5 shadow-xl font-mono">
-                            <div className="flex items-center justify-between border-b border-tactical-border/80 pb-3">
+                        <div className="lg:col-span-5 rounded-xl border border-tactical-border bg-tactical-bg/90 p-5 space-y-4 shadow-xl font-mono">
+                            <div className="flex items-center justify-between border-b border-tactical-border/80 pb-2.5">
                                 <div className="flex items-center gap-2">
                                     <FileText className="h-4 w-4" style={{ color: activeSolution.color }} />
                                     <span className="text-xs font-bold text-white uppercase tracking-wider">
@@ -186,32 +187,37 @@ export default function LandingSolutions() {
                                 </span>
                             </div>
 
-                            <div className="space-y-3">
+                            <div className="space-y-2.5">
                                 <div>
                                     <span className="text-[9px] text-tactical-text-dim uppercase tracking-wider block">
                                         Primary Metric Output
                                     </span>
                                     <span
-                                        className="text-lg font-bold text-white"
+                                        className="text-base sm:text-lg font-bold text-white"
                                         style={{ color: activeSolution.color }}
                                     >
                                         {activeSolution.sampleMetric}
                                     </span>
                                 </div>
 
-                                <div className="p-3 rounded-lg border border-tactical-border/60 bg-black/60 text-[10px] text-tactical-text-muted break-all">
-                                    <span className="text-tactical-text-dim block mb-1">Session Target Reference:</span>
+                                <div className="p-2.5 rounded-lg border border-tactical-border/60 bg-black/60 text-[10px] text-tactical-text-muted break-all">
+                                    <span className="text-tactical-text-dim block mb-0.5">Session Target Reference:</span>
                                     {activeSolution.sampleCode}
                                 </div>
                             </div>
 
-                            <div className="pt-3 border-t border-tactical-border/60 flex items-center justify-between text-[10px] text-tactical-text-dim">
+                            <div className="pt-2.5 border-t border-tactical-border/60 flex items-center justify-between text-[10px] text-tactical-text-dim">
                                 <span>Verification Status</span>
                                 <span className="text-[#22C55E] font-bold">Passed NRC II Audit</span>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+
+            {/* Neon Scroll to Security & Specs */}
+            <div className="pt-4 flex justify-center">
+                <NeonDnaScroll targetId="security-specs" />
             </div>
         </section>
     );

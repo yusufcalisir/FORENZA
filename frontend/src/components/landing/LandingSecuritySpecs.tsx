@@ -1,6 +1,7 @@
 "use client";
 
 import { Lock, FileCheck, AlertOctagon, Cpu } from "lucide-react";
+import NeonDnaScroll from "./NeonDnaScroll";
 
 const SECURITY_PILLARS = [
     {
@@ -46,45 +47,45 @@ const SPECS = [
 
 export default function LandingSecuritySpecs() {
     return (
-        <section id="security-specs" className="py-24 px-4 bg-tactical-surface/30">
-            <div className="mx-auto max-w-7xl">
+        <section id="security-specs" className="min-h-[85vh] lg:min-h-screen flex flex-col justify-between py-12 px-4 bg-tactical-surface/30">
+            <div className="my-auto mx-auto max-w-7xl w-full">
                 {/* Header */}
-                <div className="text-center mb-16">
-                    <div className="inline-flex items-center gap-2 rounded-full border border-[#22C55E]/30 bg-[#22C55E]/5 px-4 py-2 mb-4">
-                        <span className="h-1.5 w-1.5 rounded-full bg-[#22C55E]" />
-                        <span className="font-mono text-[10px] tracking-widest text-[#22C55E] uppercase font-medium">
+                <div className="text-center mb-10">
+                    <div className="inline-flex items-center gap-2 rounded-full border border-[#22C55E]/30 bg-[#22C55E]/5 px-4 py-1.5 mb-3 shadow-[0_0_15px_rgba(34,197,94,0.1)]">
+                        <span className="h-1.5 w-1.5 rounded-full bg-[#22C55E] animate-pulse" />
+                        <span className="font-mono text-[10px] tracking-widest text-[#22C55E] uppercase font-bold">
                             Security and Specifications
                         </span>
                     </div>
-                    <h2 className="text-3xl sm:text-4xl font-bold text-tactical-text mb-4">
+                    <h2 className="text-3xl sm:text-5xl font-bold text-tactical-text mb-3">
                         Privacy by Design, Verified by Proof
                     </h2>
-                    <p className="max-w-xl mx-auto text-tactical-text-muted text-sm leading-relaxed">
+                    <p className="max-w-xl mx-auto text-tactical-text-muted text-xs sm:text-sm leading-relaxed">
                         The platform is built on four non-negotiable security principles backed by cryptographic
                         guarantees rather than policy assurances.
                     </p>
                 </div>
 
                 {/* Security Pillars */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-16">
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-10">
                     {SECURITY_PILLARS.map((pillar) => {
                         const Icon = pillar.icon;
                         return (
                             <div
                                 key={pillar.title}
-                                className="rounded-xl border border-tactical-border bg-tactical-surface p-6 hover:border-tactical-border/80 transition-colors"
+                                className="rounded-xl border border-tactical-border bg-tactical-surface p-5 hover:border-tactical-border/80 transition-colors shadow-md"
                             >
                                 <div
-                                    className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-lg border"
+                                    className="mb-3 inline-flex h-9 w-9 items-center justify-center rounded-lg border"
                                     style={{
                                         background: `${pillar.color}15`,
                                         borderColor: `${pillar.color}30`,
                                         color: pillar.color,
                                     }}
                                 >
-                                    <Icon className="h-5 w-5" />
+                                    <Icon className="h-4 w-4" />
                                 </div>
-                                <h3 className="font-semibold text-tactical-text text-sm mb-2 leading-snug">
+                                <h3 className="font-bold text-tactical-text text-sm mb-1.5 leading-snug">
                                     {pillar.title}
                                 </h3>
                                 <p className="text-tactical-text-muted text-xs leading-relaxed">
@@ -96,32 +97,47 @@ export default function LandingSecuritySpecs() {
                 </div>
 
                 {/* Technical Specifications Table */}
-                <div className="rounded-2xl border border-tactical-border bg-tactical-surface overflow-hidden">
-                    <div className="flex items-center gap-3 border-b border-tactical-border px-6 py-4">
+                <div className="rounded-2xl border border-tactical-border bg-tactical-surface overflow-hidden shadow-xl">
+                    <div className="flex items-center gap-3 border-b border-tactical-border px-5 py-3.5">
                         <span className="h-1.5 w-1.5 rounded-full bg-[#22C55E] animate-pulse" />
-                        <h3 className="font-mono text-xs tracking-widest text-tactical-text-dim uppercase">
+                        <h3 className="font-mono text-xs tracking-widest text-tactical-text-dim uppercase font-bold">
                             Technical Specifications
                         </h3>
                     </div>
-                    <div className="divide-y divide-tactical-border">
-                        {SPECS.map((spec, i) => (
-                            <div
-                                key={spec.label}
-                                className="grid grid-cols-2 gap-4 px-6 py-4 hover:bg-tactical-surface-elevated/50 transition-colors"
-                            >
-                                <span className="font-mono text-[11px] tracking-wide text-tactical-text-dim">
-                                    {spec.label}
-                                </span>
-                                <span
-                                    className="font-mono text-[11px] tracking-wide font-medium"
-                                    style={{ color: spec.color }}
+                    <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-tactical-border">
+                        <div className="divide-y divide-tactical-border">
+                            {SPECS.slice(0, 6).map((spec) => (
+                                <div
+                                    key={spec.label}
+                                    className="flex justify-between items-center px-5 py-3 hover:bg-tactical-surface-elevated/50 transition-colors font-mono text-xs"
                                 >
-                                    {spec.value}
-                                </span>
-                            </div>
-                        ))}
+                                    <span className="text-tactical-text-dim">{spec.label}</span>
+                                    <span className="font-bold" style={{ color: spec.color }}>
+                                        {spec.value}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="divide-y divide-tactical-border">
+                            {SPECS.slice(6, 12).map((spec) => (
+                                <div
+                                    key={spec.label}
+                                    className="flex justify-between items-center px-5 py-3 hover:bg-tactical-surface-elevated/50 transition-colors font-mono text-xs"
+                                >
+                                    <span className="text-tactical-text-dim">{spec.label}</span>
+                                    <span className="font-bold" style={{ color: spec.color }}>
+                                        {spec.value}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
+            </div>
+
+            {/* Neon Scroll to FAQ */}
+            <div className="pt-4 flex justify-center">
+                <NeonDnaScroll targetId="faq" />
             </div>
         </section>
     );

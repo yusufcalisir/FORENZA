@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Dna } from "lucide-react";
 import LaunchDemoButton from "./LaunchDemoButton";
+import NeonDnaScroll from "./NeonDnaScroll";
 
 const METRICS = [
     { value: 20, suffix: " / 20", label: "CODIS Core Loci", color: "#22C55E" },
@@ -54,7 +55,7 @@ export default function LandingHero() {
     };
 
     return (
-        <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden px-4 pt-24 pb-16">
+        <section className="relative min-h-[90vh] lg:min-h-screen flex flex-col items-center justify-between overflow-hidden px-4 pt-20 pb-8">
             {/* Background mesh / grid */}
             <div className="absolute inset-0 pointer-events-none select-none">
                 {/* Gradient orbs */}
@@ -71,41 +72,41 @@ export default function LandingHero() {
                 />
             </div>
 
-            <div className="relative z-10 mx-auto max-w-5xl text-center">
+            <div className="my-auto relative z-10 mx-auto max-w-5xl text-center">
                 {/* Eyebrow badge */}
-                <div className="inline-flex items-center gap-2 rounded-full border border-[#06B6D4]/30 bg-[#06B6D4]/5 px-4 py-2 mb-8 shadow-[0_0_20px_rgba(6,182,212,0.1)]">
+                <div className="inline-flex items-center gap-2 rounded-full border border-[#06B6D4]/30 bg-[#06B6D4]/5 px-4 py-1.5 mb-6 shadow-[0_0_20px_rgba(6,182,212,0.1)]">
                     <Dna className="h-4 w-4 text-[#06B6D4]" />
-                    <span className="font-mono text-[11px] tracking-widest text-[#06B6D4] font-medium uppercase">
+                    <span className="font-mono text-[10px] tracking-widest text-[#06B6D4] font-medium uppercase">
                         ADVANCED FORENSIC DNA INTELLIGENCE PLATFORM
                     </span>
                 </div>
 
                 {/* Main headline */}
-                <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight text-tactical-text mb-6 leading-tight">
+                <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight text-tactical-text mb-4 leading-tight">
                     Forensic DNA Profiling{" "}
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#22C55E] via-[#06B6D4] to-[#8B5CF6]">
                         Redefined
                     </span>
                     <br />
-                    <span className="text-3xl sm:text-4xl lg:text-5xl font-normal text-tactical-text-muted">
+                    <span className="text-2xl sm:text-3xl lg:text-5xl font-normal text-tactical-text-muted">
                         by Statistical Rigor
                     </span>
                 </h1>
 
                 {/* Subheading */}
-                <p className="max-w-2xl mx-auto text-base sm:text-lg text-tactical-text-muted mb-10 leading-relaxed font-light">
+                <p className="max-w-2xl mx-auto text-sm sm:text-base text-tactical-text-muted mb-8 leading-relaxed font-light">
                     VANTAGE-STR combines likelihood ratio STR analysis, generative phenotype reconstruction,
                     and zero-knowledge cryptographic verification with immutable blockchain chain of custody
                     into a single tactical intelligence platform.
                 </p>
 
                 {/* CTAs */}
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
                     <LaunchDemoButton size="lg" />
                     <a
                         href="#bio-engine"
                         onClick={scrollToBioEngine}
-                        className="flex items-center gap-2 rounded-xl border border-tactical-border bg-tactical-surface/80 backdrop-blur-md px-8 py-4 font-mono text-sm font-medium tracking-wide text-tactical-text-muted hover:text-white hover:border-[#06B6D4]/50 hover:bg-tactical-surface-elevated transition-all duration-200"
+                        className="flex items-center gap-2 rounded-xl border border-tactical-border bg-tactical-surface/80 backdrop-blur-md px-7 py-3.5 font-mono text-xs font-medium tracking-wide text-tactical-text-muted hover:text-white hover:border-[#06B6D4]/50 hover:bg-tactical-surface-elevated transition-all duration-200"
                     >
                         <span>Explore Bio-Engine</span>
                         <ChevronDown className="h-4 w-4 text-[#06B6D4]" />
@@ -113,20 +114,20 @@ export default function LandingHero() {
                 </div>
 
                 {/* Metrics Bar */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 max-w-4xl mx-auto">
                     {METRICS.map((m) => (
                         <div
                             key={m.label}
-                            className="rounded-xl border border-tactical-border bg-tactical-surface/50 backdrop-blur-sm px-6 py-5 flex flex-col items-center gap-2 hover:border-tactical-border/80 transition-colors shadow-lg"
+                            className="rounded-xl border border-tactical-border bg-tactical-surface/50 backdrop-blur-sm px-5 py-4 flex flex-col items-center gap-1 hover:border-tactical-border/80 transition-colors shadow-lg"
                         >
                             <span
-                                className="font-mono text-3xl font-bold tabular-nums"
+                                className="font-mono text-2xl sm:text-3xl font-bold tabular-nums"
                                 style={{ color: m.color }}
                             >
-                                {m.prefix && <span className="text-lg">{m.prefix}</span>}
+                                {m.prefix && <span className="text-base">{m.prefix}</span>}
                                 <CountUp target={m.value} suffix={m.suffix} />
                             </span>
-                            <span className="font-mono text-[10px] tracking-widest text-tactical-text-dim uppercase text-center leading-tight">
+                            <span className="font-mono text-[9px] tracking-widest text-tactical-text-dim uppercase text-center leading-tight">
                                 {m.label}
                             </span>
                         </div>
@@ -134,17 +135,10 @@ export default function LandingHero() {
                 </div>
             </div>
 
-            {/* Clickable Scroll Indicator */}
-            <button
-                onClick={scrollToBioEngine}
-                className="mt-16 flex flex-col items-center gap-2 group cursor-pointer border border-tactical-border/50 hover:border-[#22C55E]/50 rounded-full px-5 py-2.5 bg-tactical-surface/40 backdrop-blur-md transition-all duration-300 hover:shadow-[0_0_20px_rgba(34,197,94,0.15)]"
-                title="Scroll to Bio-Engine"
-            >
-                <span className="font-mono text-[10px] font-bold tracking-[0.2em] text-tactical-text-dim group-hover:text-[#22C55E] uppercase transition-colors">
-                    SCROLL DOWN
-                </span>
-                <ChevronDown className="h-4 w-4 text-[#22C55E] group-hover:translate-y-0.5 transition-transform animate-bounce" />
-            </button>
+            {/* Neon Animated DNA Helix Scroll Indicator */}
+            <div className="pt-4 z-20">
+                <NeonDnaScroll targetId="bio-engine" />
+            </div>
         </section>
     );
 }

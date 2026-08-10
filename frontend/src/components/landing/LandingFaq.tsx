@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
+import NeonDnaScroll from "./NeonDnaScroll";
 
 const FAQS = [
     {
@@ -45,57 +46,57 @@ export default function LandingFaq() {
     const [openIdx, setOpenIdx] = useState<number | null>(0);
 
     return (
-        <section id="faq" className="py-24 px-4">
-            <div className="mx-auto max-w-3xl">
+        <section id="faq" className="min-h-[85vh] lg:min-h-screen flex flex-col justify-between py-12 px-4">
+            <div className="my-auto mx-auto max-w-3xl w-full">
                 {/* Header */}
-                <div className="text-center mb-12">
-                    <div className="inline-flex items-center gap-2 rounded-full border border-[#06B6D4]/30 bg-[#06B6D4]/5 px-4 py-2 mb-4">
-                        <span className="h-1.5 w-1.5 rounded-full bg-[#06B6D4]" />
-                        <span className="font-mono text-[10px] tracking-widest text-[#06B6D4] uppercase font-medium">
+                <div className="text-center mb-10">
+                    <div className="inline-flex items-center gap-2 rounded-full border border-[#06B6D4]/30 bg-[#06B6D4]/5 px-4 py-1.5 mb-3 shadow-[0_0_15px_rgba(6,182,212,0.1)]">
+                        <span className="h-1.5 w-1.5 rounded-full bg-[#06B6D4] animate-pulse" />
+                        <span className="font-mono text-[10px] tracking-widest text-[#06B6D4] uppercase font-bold">
                             Technical FAQ
                         </span>
                     </div>
-                    <h2 className="text-3xl sm:text-4xl font-bold text-tactical-text mb-4">
+                    <h2 className="text-3xl sm:text-5xl font-bold text-tactical-text mb-3">
                         Frequently Asked Questions
                     </h2>
-                    <p className="max-w-xl mx-auto text-tactical-text-muted text-sm leading-relaxed">
+                    <p className="max-w-xl mx-auto text-tactical-text-muted text-xs sm:text-sm leading-relaxed">
                         Detailed answers to common questions about methodology, deployment, and compliance.
                     </p>
                 </div>
 
                 {/* Accordion */}
-                <div className="space-y-3">
+                <div className="space-y-2.5">
                     {FAQS.map((faq, i) => {
                         const isOpen = openIdx === i;
                         return (
                             <div
                                 key={i}
-                                className="rounded-xl border border-tactical-border bg-tactical-surface overflow-hidden transition-all duration-200"
-                                style={isOpen ? { borderColor: `${faq.color}40` } : {}}
+                                className="rounded-xl border border-tactical-border bg-tactical-surface overflow-hidden transition-all duration-200 shadow-md"
+                                style={isOpen ? { borderColor: `${faq.color}60` } : {}}
                             >
                                 <button
                                     onClick={() => setOpenIdx(isOpen ? null : i)}
-                                    className="w-full flex items-start justify-between gap-4 px-6 py-5 text-left hover:bg-tactical-surface-elevated/50 transition-colors"
+                                    className="w-full flex items-center justify-between gap-4 px-5 py-4 text-left hover:bg-tactical-surface-elevated/50 transition-colors"
                                 >
                                     <span className="font-medium text-tactical-text text-sm leading-snug pr-2">
                                         {faq.q}
                                     </span>
                                     <ChevronDown
-                                        className={`h-4 w-4 shrink-0 mt-0.5 transition-transform duration-300 ${
+                                        className={`h-4 w-4 shrink-0 transition-transform duration-300 ${
                                             isOpen ? "rotate-180" : ""
                                         }`}
                                         style={{ color: isOpen ? faq.color : undefined }}
                                     />
                                 </button>
                                 {isOpen && (
-                                    <div className="px-6 pb-5">
+                                    <div className="px-5 pb-4">
                                         <div
-                                            className="h-px mb-4"
+                                            className="h-px mb-3"
                                             style={{
                                                 background: `linear-gradient(to right, ${faq.color}40, transparent)`,
                                             }}
                                         />
-                                        <p className="text-tactical-text-muted text-sm leading-relaxed">
+                                        <p className="text-tactical-text-muted text-xs sm:text-sm leading-relaxed">
                                             {faq.a}
                                         </p>
                                     </div>
@@ -104,6 +105,11 @@ export default function LandingFaq() {
                         );
                     })}
                 </div>
+            </div>
+
+            {/* Neon Scroll to Footer */}
+            <div className="pt-4 flex justify-center">
+                <NeonDnaScroll targetId="footer" />
             </div>
         </section>
     );

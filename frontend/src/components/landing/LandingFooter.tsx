@@ -49,15 +49,15 @@ export default function LandingFooter() {
     };
 
     return (
-        <footer className="border-t border-tactical-border bg-tactical-surface/50">
+        <footer id="footer" className="border-t border-tactical-border bg-tactical-surface/50">
             {/* CTA Banner */}
             <div className="border-b border-tactical-border">
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 flex flex-col sm:flex-row items-center justify-between gap-6">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 flex flex-col sm:flex-row items-center justify-between gap-6">
                     <div>
                         <h2 className="text-xl sm:text-2xl font-bold text-tactical-text mb-1">
                             Ready to enter the platform?
                         </h2>
-                        <p className="text-tactical-text-muted text-sm">
+                        <p className="text-tactical-text-muted text-xs sm:text-sm">
                             Access the live dashboard and begin forensic analysis immediately.
                         </p>
                     </div>
@@ -66,10 +66,10 @@ export default function LandingFooter() {
             </div>
 
             {/* Main Footer Content */}
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-                <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
+                <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
                     {/* Brand column */}
-                    <div className="lg:col-span-2 space-y-5">
+                    <div className="lg:col-span-2 space-y-4">
                         <div className="flex items-center gap-3">
                             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-[#22C55E]/20 to-[#06B6D4]/10 border border-[#22C55E]/30">
                                 <Dna className="h-5 w-5 text-[#22C55E]" />
@@ -83,12 +83,12 @@ export default function LandingFooter() {
                                 </p>
                             </div>
                         </div>
-                        <p className="text-tactical-text-muted text-sm leading-relaxed max-w-xs">
+                        <p className="text-tactical-text-muted text-xs leading-relaxed max-w-xs">
                             A tactical forensic intelligence system for high-stakes DNA profiling, kinship analytics, and biometric reconstruction with cryptographic auditability.
                         </p>
                         {/* Live Status */}
                         <div className="flex items-center gap-2.5">
-                            <div className="flex items-center gap-1.5 rounded-full border border-[#22C55E]/25 bg-[#22C55E]/5 px-3 py-1.5">
+                            <div className="flex items-center gap-1.5 rounded-full border border-[#22C55E]/25 bg-[#22C55E]/5 px-3 py-1">
                                 <span className="h-1.5 w-1.5 rounded-full bg-[#22C55E] animate-pulse" />
                                 <span className="font-mono text-[9px] tracking-widest text-[#22C55E] uppercase font-semibold">
                                     All Systems Online
@@ -115,11 +115,11 @@ export default function LandingFooter() {
 
                     {/* Link columns */}
                     {FOOTER_LINKS.map((col) => (
-                        <div key={col.heading} className="space-y-4">
-                            <h3 className="font-mono text-[10px] tracking-widest text-tactical-text-dim uppercase">
+                        <div key={col.heading} className="space-y-3">
+                            <h3 className="font-mono text-[10px] tracking-widest text-tactical-text-dim uppercase font-bold">
                                 {col.heading}
                             </h3>
-                            <ul className="space-y-2.5">
+                            <ul className="space-y-2">
                                 {col.links.map((link) => (
                                     <li key={link.label}>
                                         <a
@@ -137,7 +137,7 @@ export default function LandingFooter() {
                 </div>
 
                 {/* Bottom bar */}
-                <div className="mt-12 pt-6 border-t border-tactical-border flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div className="mt-10 pt-5 border-t border-tactical-border flex flex-col sm:flex-row items-center justify-between gap-3">
                     <p className="font-mono text-[10px] tracking-wider text-tactical-text-dim">
                         VANTAGE-STR v2.0.0 — MIT License — Open Source
                     </p>

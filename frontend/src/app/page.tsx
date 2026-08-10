@@ -10,9 +10,7 @@ import LandingFaq from "@/components/landing/LandingFaq";
 import LandingFooter from "@/components/landing/LandingFooter";
 
 export const metadata: Metadata = {
-    title: "VANTAGE-STR — Advanced Forensic DNA Intelligence Platform",
-    description:
-        "VANTAGE-STR combines likelihood ratio STR analysis, generative phenotype reconstruction, and zero-knowledge cryptographic verification with immutable blockchain chain of custody into a single tactical intelligence platform.",
+    title: "VANTAGE-STR",
 };
 
 export default function RootPage() {

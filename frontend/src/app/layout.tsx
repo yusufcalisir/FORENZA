@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { Providers } from "./providers";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -14,12 +15,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "VANTAGE-STR | Tactical Forensic Network",
-  description:
-    "Vertical Anonymous Network for Tactical Analysis of Genomic Evidence — Decentralized STR Matching",
+  title: "VANTAGE-STR",
 };
-
-import { Providers } from "./providers";
 
 export default function RootLayout({
   children,

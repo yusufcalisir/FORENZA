@@ -14,6 +14,7 @@ import {
     Radio,
     Menu,
     X,
+    Home,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -204,6 +205,14 @@ export default function DashboardLayout({
                         >
                             <Menu className="h-5 w-5" />
                         </button>
+                        {/* Back to Landing Page */}
+                        <Link
+                            href="/"
+                            title="Platform Overview"
+                            className="flex-shrink-0 p-1 text-tactical-text-dim hover:text-tactical-primary transition-colors"
+                        >
+                            <Home className="h-4 w-4" />
+                        </Link>
                         <h1 className="font-data text-[10px] sm:text-xs lg:text-sm font-bold tracking-[0.1em] sm:tracking-[0.15em] text-tactical-text uppercase truncate">
                             VANTAGE-STR
                         </h1>

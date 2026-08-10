@@ -75,51 +75,51 @@ function PhenotypeTab() {
             {/* Left Col: Interactive Controls & Pigmentation Cards */}
             <div className="lg:col-span-7 space-y-4">
                 {/* Eye Pigmentation Panel */}
-                <div className="rounded-xl border border-tactical-border bg-tactical-bg/70 p-4 space-y-3 shadow-md">
-                    <div className="flex items-center justify-between border-b border-tactical-border pb-2">
-                        <div className="flex items-center gap-2">
-                            <Eye className="h-4 w-4 text-[#38BDF8]" />
-                            <span className="font-mono text-xs font-bold tracking-wider text-tactical-text uppercase">
+                <div className="rounded-xl border border-tactical-border bg-tactical-bg/70 p-3.5 sm:p-4 space-y-3 shadow-md">
+                    <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 border-b border-tactical-border pb-2">
+                        <div className="flex items-center gap-2 min-w-0">
+                            <Eye className="h-4 w-4 text-[#38BDF8] shrink-0" />
+                            <span className="font-mono text-[11px] sm:text-xs font-bold tracking-wider text-tactical-text uppercase truncate">
                                 Ocular Iris Pigmentation (HERC2 / OCA2)
                             </span>
                         </div>
-                        <span className="font-mono text-[9px] tracking-widest text-[#22C55E] bg-[#22C55E]/10 border border-[#22C55E]/20 px-2 py-0.5 rounded-full font-bold">
+                        <span className="shrink-0 font-mono text-[9px] tracking-widest text-[#22C55E] bg-[#22C55E]/10 border border-[#22C55E]/20 px-2 py-0.5 rounded-full font-bold">
                             IrisPlex v2
                         </span>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-2.5">
+                    <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5">
                         {EYE_COLORS.map((opt, i) => (
                             <button
                                 key={opt.label}
                                 onClick={() => setSelectedEye(i)}
-                                className={`flex items-center justify-between gap-2 rounded-xl border p-2.5 font-mono text-xs transition-all duration-200 ${
+                                className={`flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-1 sm:gap-2 rounded-xl border p-2 sm:p-2.5 font-mono text-[10px] sm:text-xs transition-all duration-200 ${
                                     selectedEye === i
                                         ? "border-[#38BDF8] bg-[#38BDF8]/10 text-white shadow-[0_0_15px_rgba(56,189,248,0.2)]"
                                         : "border-tactical-border bg-tactical-surface text-tactical-text-muted hover:border-tactical-border/80 hover:text-white"
                                 }`}
                             >
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-1.5 min-w-0">
                                     <span
-                                        className="h-3 w-3 rounded-full border border-white/30 shrink-0"
+                                        className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full border border-white/30 shrink-0"
                                         style={{ background: opt.color, boxShadow: `0 0 8px ${opt.glow}` }}
                                     />
-                                    <span className="font-semibold">{opt.label}</span>
+                                    <span className="font-semibold truncate">{opt.label}</span>
                                 </div>
-                                <span className="text-[10px] opacity-75">{opt.prob}%</span>
+                                <span className="text-[9px] sm:text-[10px] opacity-75 shrink-0">{opt.prob}%</span>
                             </button>
                         ))}
                     </div>
 
                     {/* Progress Bar & Details */}
                     <div className="rounded-lg border border-tactical-border bg-tactical-surface p-3 space-y-2">
-                        <div className="flex justify-between items-center text-xs font-mono">
-                            <span className="text-tactical-text-muted">Target Genotype:</span>
-                            <span className="font-bold text-[#38BDF8]">{currentEye.gene}</span>
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center text-[11px] sm:text-xs font-mono gap-0.5">
+                            <span className="text-tactical-text-muted shrink-0">Target Genotype:</span>
+                            <span className="font-bold text-[#38BDF8] truncate">{currentEye.gene}</span>
                         </div>
-                        <div className="flex justify-between items-center text-xs font-mono">
-                            <span className="text-tactical-text-muted">Secondary Marker:</span>
-                            <span className="text-tactical-text">{currentEye.secondary}</span>
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center text-[11px] sm:text-xs font-mono gap-0.5">
+                            <span className="text-tactical-text-muted shrink-0">Secondary Marker:</span>
+                            <span className="text-tactical-text truncate">{currentEye.secondary}</span>
                         </div>
                         <div className="space-y-1 pt-1">
                             <div className="flex justify-between text-[10px] font-mono">
@@ -137,20 +137,20 @@ function PhenotypeTab() {
                 </div>
 
                 {/* Skin Tone Panel */}
-                <div className="rounded-xl border border-tactical-border bg-tactical-bg/70 p-4 space-y-3 shadow-md">
-                    <div className="flex items-center justify-between border-b border-tactical-border pb-2">
-                        <div className="flex items-center gap-2">
-                            <Sliders className="h-4 w-4 text-[#F59E0B]" />
-                            <span className="font-mono text-xs font-bold tracking-wider text-tactical-text uppercase">
+                <div className="rounded-xl border border-tactical-border bg-tactical-bg/70 p-3.5 sm:p-4 space-y-3 shadow-md">
+                    <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 border-b border-tactical-border pb-2">
+                        <div className="flex items-center gap-2 min-w-0">
+                            <Sliders className="h-4 w-4 text-[#F59E0B] shrink-0" />
+                            <span className="font-mono text-[11px] sm:text-xs font-bold tracking-wider text-tactical-text uppercase truncate">
                                 Fitzpatrick Phototype (SLC24A5 / TYRP1)
                             </span>
                         </div>
-                        <span className="font-mono text-[9px] text-[#F59E0B] bg-[#F59E0B]/10 border border-[#F59E0B]/20 px-2 py-0.5 rounded-full font-bold">
+                        <span className="shrink-0 font-mono text-[9px] text-[#F59E0B] bg-[#F59E0B]/10 border border-[#F59E0B]/20 px-2 py-0.5 rounded-full font-bold">
                             HIrisPlex-S
                         </span>
                     </div>
 
-                    <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                    <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5 sm:gap-2">
                         {SKIN_TYPES.map((st, i) => (
                             <button
                                 key={st.type}
@@ -174,16 +174,16 @@ function PhenotypeTab() {
             </div>
 
             {/* Right Col: Biometric Summary Card */}
-            <div className="lg:col-span-5 flex flex-col justify-between rounded-xl border border-tactical-border bg-tactical-surface p-5 shadow-xl space-y-4">
+            <div className="lg:col-span-5 flex flex-col justify-between rounded-xl border border-tactical-border bg-tactical-surface p-4 sm:p-5 shadow-xl space-y-4">
                 <div>
                     <div className="flex items-center justify-between border-b border-tactical-border pb-2 mb-3">
                         <div className="flex items-center gap-2">
-                            <Sparkles className="h-4 w-4 text-[#8B5CF6]" />
+                            <Sparkles className="h-4 w-4 text-[#8B5CF6] shrink-0" />
                             <span className="font-mono text-xs font-bold tracking-wider text-tactical-text uppercase">
                                 Biometric Summary
                             </span>
                         </div>
-                        <div className="flex items-center gap-1 text-[9px] font-mono text-[#22C55E]">
+                        <div className="flex items-center gap-1 text-[9px] font-mono text-[#22C55E] shrink-0">
                             <CheckCircle2 className="h-3 w-3" />
                             <span>100% Synced</span>
                         </div>
@@ -256,33 +256,33 @@ function StrTab() {
     return (
         <div className="space-y-4">
             {/* Locus Tabs */}
-            <div className="flex gap-2 flex-wrap border-b border-tactical-border pb-3">
+            <div className="flex gap-1.5 sm:gap-2 flex-wrap border-b border-tactical-border pb-3">
                 {STR_DATA.map((str, i) => (
                     <button
                         key={str.name}
                         onClick={() => setSelectedIdx(i)}
-                        className={`flex items-center gap-2 rounded-xl border px-3.5 py-1.5 font-mono text-xs font-bold tracking-widest transition-all ${
+                        className={`flex items-center gap-1.5 rounded-xl border px-2.5 sm:px-3.5 py-1.5 font-mono text-[11px] sm:text-xs font-bold tracking-wider transition-all ${
                             selectedIdx === i
                                 ? "border-[#06B6D4] bg-[#06B6D4]/10 text-[#06B6D4] shadow-[0_0_15px_rgba(6,182,212,0.2)]"
                                 : "border-tactical-border bg-tactical-surface text-tactical-text-muted hover:border-tactical-border/80"
                         }`}
                     >
                         <span>{str.name}</span>
-                        <span className="text-[10px] font-normal opacity-70">[{str.alleles.join(", ")}]</span>
+                        <span className="text-[9px] sm:text-[10px] font-normal opacity-70">[{str.alleles.join(", ")}]</span>
                     </button>
                 ))}
             </div>
 
             {/* Simulated Capillary Electropherogram Chart */}
-            <div className="rounded-xl border border-tactical-border bg-tactical-bg/80 p-5 space-y-3 shadow-xl">
-                <div className="flex justify-between items-center font-mono text-xs border-b border-tactical-border/60 pb-2">
-                    <div className="flex items-center gap-2">
-                        <Activity className="h-4 w-4 text-[#06B6D4]" />
-                        <span className="font-bold text-white uppercase tracking-wider">
+            <div className="rounded-xl border border-tactical-border bg-tactical-bg/80 p-4 sm:p-5 space-y-3 shadow-xl">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 font-mono text-[11px] sm:text-xs border-b border-tactical-border/60 pb-2">
+                    <div className="flex items-center gap-2 min-w-0">
+                        <Activity className="h-4 w-4 text-[#06B6D4] shrink-0" />
+                        <span className="font-bold text-white uppercase tracking-wider truncate">
                             Fluorescent Electropherogram — {currentStr.name} Locus
                         </span>
                     </div>
-                    <span className="text-tactical-text-dim text-[10px]">CODIS Core 20 Panel</span>
+                    <span className="text-tactical-text-dim text-[9px] sm:text-[10px] shrink-0">CODIS Core 20 Panel</span>
                 </div>
 
                 {/* RFU Peak Plot Area */}
@@ -329,7 +329,7 @@ function StrTab() {
                 </div>
 
                 {/* Statistical Details Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 pt-1">
                     <div className="rounded-lg border border-tactical-border bg-tactical-surface p-2.5 font-mono">
                         <span className="text-[9px] text-tactical-text-dim block">Allele Call</span>
                         <span className="text-xs font-bold text-white">{currentStr.alleles.join(" / ")}</span>
@@ -369,22 +369,22 @@ function ZkpTab() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
             {/* Circuit Metadata Panel */}
             <div className="lg:col-span-6 space-y-3">
-                <div className="rounded-xl border border-tactical-border bg-tactical-bg/80 p-4 space-y-2.5 font-mono text-xs shadow-md">
-                    <div className="flex justify-between items-center border-b border-tactical-border pb-2">
-                        <span className="text-tactical-text-dim">Circuit Identifier:</span>
-                        <span className="font-bold text-[#8B5CF6]">dna_match_20loci.circom</span>
+                <div className="rounded-xl border border-tactical-border bg-tactical-bg/80 p-3.5 sm:p-4 space-y-2.5 font-mono text-[11px] sm:text-xs shadow-md">
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-0.5 border-b border-tactical-border pb-2">
+                        <span className="text-tactical-text-dim shrink-0">Circuit Identifier:</span>
+                        <span className="font-bold text-[#8B5CF6] truncate">dna_match_20loci.circom</span>
                     </div>
-                    <div className="flex justify-between items-center border-b border-tactical-border pb-2">
-                        <span className="text-tactical-text-dim">Proving Scheme:</span>
-                        <span className="font-bold text-[#06B6D4]">Groth16 / SnarkJS v0.7</span>
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-0.5 border-b border-tactical-border pb-2">
+                        <span className="text-tactical-text-dim shrink-0">Proving Scheme:</span>
+                        <span className="font-bold text-[#06B6D4] truncate">Groth16 / SnarkJS v0.7</span>
                     </div>
-                    <div className="flex justify-between items-center border-b border-tactical-border pb-2">
-                        <span className="text-tactical-text-dim">Private Witness:</span>
-                        <span className="text-tactical-text-muted">raw_str_alleles[20] (isolated)</span>
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-0.5 border-b border-tactical-border pb-2">
+                        <span className="text-tactical-text-dim shrink-0">Private Witness:</span>
+                        <span className="text-tactical-text-muted truncate">raw_str_alleles[20] (isolated)</span>
                     </div>
-                    <div className="flex justify-between items-center">
-                        <span className="text-tactical-text-dim">Public Verification Signal:</span>
-                        <span className="font-bold text-[#22C55E]">match_score &gt;= threshold</span>
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-0.5">
+                        <span className="text-tactical-text-dim shrink-0">Public Verification Signal:</span>
+                        <span className="font-bold text-[#22C55E] truncate">match_score &gt;= threshold</span>
                     </div>
                 </div>
 
@@ -461,10 +461,10 @@ function ZkpTab() {
 /* ═════════════════════════════════════════════════════════════════════════════
    MAIN CONTAINER WITH STUNNING TABS & OPTIMIZED HEIGHT
    ═════════════════════════════════════════════════════════════════════════════ */
-const TABS: { id: TabId; label: string; icon: React.ElementType; color: string }[] = [
-    { id: "phenotype", label: "Phenotype Prediction", icon: Eye, color: "#22C55E" },
-    { id: "str", label: "STR Locus Analysis", icon: Dna, color: "#06B6D4" },
-    { id: "zkp", label: "ZK Proof Auditor", icon: ShieldCheck, color: "#8B5CF6" },
+const TABS: { id: TabId; label: string; shortLabel: string; icon: React.ElementType; color: string }[] = [
+    { id: "phenotype", label: "Phenotype Prediction", shortLabel: "Phenotype", icon: Eye, color: "#22C55E" },
+    { id: "str", label: "STR Locus Analysis", shortLabel: "STR Analysis", icon: Dna, color: "#06B6D4" },
+    { id: "zkp", label: "ZK Proof Auditor", shortLabel: "ZK Auditor", icon: ShieldCheck, color: "#8B5CF6" },
 ];
 
 export default function LandingBioSimulator() {
@@ -494,9 +494,9 @@ export default function LandingBioSimulator() {
                 </div>
 
                 {/* Main Card Shell */}
-                <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface p-3 sm:p-5 shadow-[0_0_60px_rgba(0,0,0,0.6)]">
-                    {/* Navigation Tabs */}
-                    <div className="flex overflow-x-auto gap-2 border-b border-tactical-border/80 pb-3 mb-5 scrollbar-hide">
+                <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface p-2.5 sm:p-5 shadow-[0_0_60px_rgba(0,0,0,0.6)]">
+                    {/* Navigation Tabs - 3 Column Grid on Mobile (No Scrolling, 100% visible) */}
+                    <div className="grid grid-cols-3 gap-1 sm:gap-2 border-b border-tactical-border/80 pb-3 mb-5">
                         {TABS.map((tab) => {
                             const Icon = tab.icon;
                             const isActive = activeTab === tab.id;
@@ -504,7 +504,7 @@ export default function LandingBioSimulator() {
                                 <button
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id)}
-                                    className={`flex-shrink-0 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-mono text-[11px] font-bold tracking-wide transition-all duration-300 ${
+                                    className={`flex items-center justify-center gap-1 sm:gap-2 px-1.5 sm:px-4 py-2 sm:py-2.5 rounded-xl font-mono text-[10px] sm:text-xs font-bold tracking-tight sm:tracking-wide transition-all duration-300 ${
                                         isActive
                                             ? "bg-tactical-surface-elevated text-white border border-tactical-border shadow-lg"
                                             : "text-tactical-text-muted hover:text-white hover:bg-tactical-surface-elevated/50 border border-transparent"
@@ -512,7 +512,8 @@ export default function LandingBioSimulator() {
                                     style={isActive ? { borderColor: `${tab.color}60` } : {}}
                                 >
                                     <Icon className="h-3.5 w-3.5 shrink-0" style={{ color: tab.color }} />
-                                    <span className="whitespace-nowrap">{tab.label}</span>
+                                    <span className="hidden sm:inline whitespace-nowrap">{tab.label}</span>
+                                    <span className="sm:hidden whitespace-nowrap">{tab.shortLabel}</span>
                                 </button>
                             );
                         })}

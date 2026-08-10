@@ -73,7 +73,6 @@ type TabId = "statistical" | "relationship" | "bayesian";
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 
 async function fetchAnalysis(profileId: string, population: string): Promise<AnalysisData> {
-    console.log("[DEBUG] fetchAnalysis payload:", { profile_id: profileId, population });
     const res = await fetch(`${API_BASE}/profile/analyze`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

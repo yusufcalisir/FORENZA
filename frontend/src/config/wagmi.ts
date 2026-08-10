@@ -1,7 +1,12 @@
 import { http, createConfig } from 'wagmi'
-import { mainnet, sepolia, polygonAmoy, hardhat } from 'wagmi/chains'
-
+import { mainnet, sepolia, polygonAmoy } from 'wagmi/chains'
 import { injected } from 'wagmi/connectors'
+
+// Use stable public RPC endpoints to avoid ERR_NAME_NOT_RESOLVED errors
+// and the infinite requestAnimationFrame retry loop that follows.
+const POLYGON_AMOY_RPC = 'https://rpc.ankr.com/polygon_amoy'
+const SEPOLIA_RPC = 'https://rpc.ankr.com/eth_sepolia'
+const MAINNET_RPC = 'https://rpc.ankr.com/eth'
 
 export const config = createConfig({
     chains: [polygonAmoy, sepolia, mainnet],
@@ -9,10 +14,13 @@ export const config = createConfig({
         injected(),
     ],
     ssr: true,
+    // Increase polling interval from default 4s to 30s to avoid console spam
+    // when wallet is not connected or RPC is unreachable.
+    pollingInterval: 30_000,
     transports: {
-        [polygonAmoy.id]: http(),
-        [sepolia.id]: http(),
-        [mainnet.id]: http(),
+        [polygonAmoy.id]: http(POLYGON_AMOY_RPC),
+        [sepolia.id]: http(SEPOLIA_RPC),
+        [mainnet.id]: http(MAINNET_RPC),
     },
 })
 

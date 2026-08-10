@@ -30,6 +30,25 @@ function HeatmapLayer({ data }: { data: GeoProbability[] }) {
     const isMounted = useRef(true);
     const layerRef = useRef<L.Layer | null>(null);
 
+    // Patch HTMLCanvasElement.getContext to always pass willReadFrequently:true
+    // This silences the "Multiple readback operations" warning from leaflet.heat
+    // which internally calls getImageData without this flag.
+    useEffect(() => {
+        const original = HTMLCanvasElement.prototype.getContext;
+        // @ts-ignore
+        HTMLCanvasElement.prototype.getContext = function (type: string, attrs?: Record<string, unknown>) {
+            if (type === "2d") {
+                attrs = { willReadFrequently: true, ...attrs };
+            }
+            // @ts-ignore
+            return original.call(this, type, attrs);
+        };
+        return () => {
+            // Restore original on unmount
+            HTMLCanvasElement.prototype.getContext = original;
+        };
+    }, []);
+
     useEffect(() => {
         isMounted.current = true;
         return () => { isMounted.current = false; };

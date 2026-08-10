@@ -107,8 +107,8 @@ export default function LandingFaq() {
                 </div>
             </div>
 
-            {/* Neon Scroll to Footer */}
-            <div className="pt-4 flex justify-center">
+            {/* Neon Scroll to Footer (Desktop Only) */}
+            <div className="hidden sm:flex pt-4 justify-center">
                 <NeonDnaScroll targetId="footer" />
             </div>
         </section>

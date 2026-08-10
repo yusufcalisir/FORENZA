@@ -528,8 +528,8 @@ export default function LandingBioSimulator() {
                 </div>
             </div>
 
-            {/* Neon Scroll to Features */}
-            <div className="pt-4 flex justify-center">
+            {/* Neon Scroll to Features (Desktop Only) */}
+            <div className="hidden sm:flex pt-4 justify-center">
                 <NeonDnaScroll targetId="features" />
             </div>
         </section>

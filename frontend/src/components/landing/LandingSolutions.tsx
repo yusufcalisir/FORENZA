@@ -215,8 +215,8 @@ export default function LandingSolutions() {
                 </div>
             </div>
 
-            {/* Neon Scroll to Security & Specs */}
-            <div className="pt-4 flex justify-center">
+            {/* Neon Scroll to Security & Specs (Desktop Only) */}
+            <div className="hidden sm:flex pt-4 justify-center">
                 <NeonDnaScroll targetId="security-specs" />
             </div>
         </section>

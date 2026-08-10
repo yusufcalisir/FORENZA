@@ -26,10 +26,10 @@ export default function LaunchDemoButton({
 
             {/* Inner Button Container */}
             <span
-                className={`relative flex items-center gap-2.5 rounded-[10px] bg-[#0A0A0B] group-hover:bg-[#22C55E] ${sizeClasses} text-white group-hover:text-black transition-all duration-300`}
+                className={`relative flex items-center justify-center gap-2.5 rounded-[10px] bg-[#0A0A0B] group-hover:bg-[#22C55E] ${sizeClasses} text-white group-hover:text-black transition-all duration-300 w-full h-full`}
             >
                 <Zap className="h-4 w-4 text-[#22C55E] group-hover:text-black transition-colors shrink-0" />
-                <span>Launch Demo</span>
+                <span className="whitespace-nowrap">Launch Demo</span>
             </span>
         </Link>
     );

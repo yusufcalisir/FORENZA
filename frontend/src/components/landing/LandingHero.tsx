@@ -137,7 +137,7 @@ export default function LandingHero() {
             </div>
 
             {/* Neon Animated DNA Helix Scroll Indicator (Desktop Only) */}
-            <div className="pt-4 z-20">
+            <div className="hidden sm:block pt-4 z-20">
                 <NeonDnaScroll targetId="bio-engine" />
             </div>
         </section>

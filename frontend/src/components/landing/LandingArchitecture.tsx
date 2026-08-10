@@ -183,8 +183,8 @@ export default function LandingArchitecture() {
                 </div>
             </div>
 
-            {/* Neon Scroll to Solutions */}
-            <div className="pt-4 flex justify-center">
+            {/* Neon Scroll to Solutions (Desktop Only) */}
+            <div className="hidden sm:flex pt-4 justify-center">
                 <NeonDnaScroll targetId="solutions" />
             </div>
         </section>

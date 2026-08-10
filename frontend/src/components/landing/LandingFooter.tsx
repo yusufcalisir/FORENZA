@@ -52,7 +52,7 @@ export default function LandingFooter() {
         <footer id="footer" className="border-t border-tactical-border bg-tactical-surface/50">
             {/* CTA Banner */}
             <div className="border-b border-tactical-border">
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 flex flex-col sm:flex-row items-center justify-between gap-6">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-10 flex flex-col sm:flex-row items-center justify-between gap-5 text-center sm:text-left">
                     <div>
                         <h2 className="text-xl sm:text-2xl font-bold text-tactical-text mb-1">
                             Ready to enter the platform?
@@ -61,17 +61,19 @@ export default function LandingFooter() {
                             Access the live dashboard and begin forensic analysis immediately.
                         </p>
                     </div>
-                    <LaunchDemoButton size="lg" />
+                    <div className="w-full sm:w-auto">
+                        <LaunchDemoButton size="lg" className="w-full sm:w-auto" />
+                    </div>
                 </div>
             </div>
 
             {/* Main Footer Content */}
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
-                <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
+                <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
                     {/* Brand column */}
                     <div className="lg:col-span-2 space-y-4">
                         <div className="flex items-center gap-3">
-                            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-[#22C55E]/20 to-[#06B6D4]/10 border border-[#22C55E]/30">
+                            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-[#22C55E]/20 to-[#06B6D4]/10 border border-[#22C55E]/30 shrink-0">
                                 <Dna className="h-5 w-5 text-[#22C55E]" />
                             </div>
                             <div>
@@ -83,11 +85,11 @@ export default function LandingFooter() {
                                 </p>
                             </div>
                         </div>
-                        <p className="text-tactical-text-muted text-xs leading-relaxed max-w-xs">
+                        <p className="text-tactical-text-muted text-xs leading-relaxed max-w-sm">
                             A tactical forensic intelligence system for high-stakes DNA profiling, kinship analytics, and biometric reconstruction with cryptographic auditability.
                         </p>
                         {/* Live Status */}
-                        <div className="flex items-center gap-2.5">
+                        <div className="flex items-center gap-2.5 pt-1">
                             <div className="flex items-center gap-1.5 rounded-full border border-[#22C55E]/25 bg-[#22C55E]/5 px-3 py-1">
                                 <span className="h-1.5 w-1.5 rounded-full bg-[#22C55E] animate-pulse" />
                                 <span className="font-mono text-[9px] tracking-widest text-[#22C55E] uppercase font-semibold">
@@ -96,7 +98,7 @@ export default function LandingFooter() {
                             </div>
                         </div>
                         {/* Tech Badges */}
-                        <div className="flex flex-wrap gap-1.5">
+                        <div className="flex flex-wrap gap-1.5 pt-1">
                             {TECH_BADGES.map((b) => (
                                 <span
                                     key={b.label}
@@ -113,20 +115,20 @@ export default function LandingFooter() {
                         </div>
                     </div>
 
-                    {/* Link columns */}
-                    <div className="grid grid-cols-3 lg:col-span-3 gap-4">
+                    {/* Link columns - 2-col grid on mobile for spacious layout, 3-col on tablet/desktop */}
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:col-span-3 gap-6 sm:gap-8 pt-4 lg:pt-0 border-t border-tactical-border/60 lg:border-t-0">
                         {FOOTER_LINKS.map((col) => (
                             <div key={col.heading} className="space-y-3">
                                 <h3 className="font-mono text-[10px] tracking-widest text-tactical-text-dim uppercase font-bold">
                                     {col.heading}
                                 </h3>
-                                <ul className="space-y-2">
+                                <ul className="space-y-2.5">
                                     {col.links.map((link) => (
                                         <li key={link.label}>
                                             <a
                                                 href={link.href}
                                                 onClick={(e) => handleAnchorClick(e, link.href)}
-                                                className="font-mono text-xs text-tactical-text-muted hover:text-tactical-text transition-colors"
+                                                className="font-mono text-xs text-tactical-text-muted hover:text-tactical-text transition-colors whitespace-nowrap"
                                             >
                                                 {link.label}
                                             </a>
@@ -139,11 +141,11 @@ export default function LandingFooter() {
                 </div>
 
                 {/* Bottom bar */}
-                <div className="mt-10 pt-5 border-t border-tactical-border flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div className="mt-10 pt-6 border-t border-tactical-border flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
                     <p className="font-mono text-[10px] tracking-wider text-tactical-text-dim">
                         VANTAGE-STR v2.0.0 — MIT License — Open Source
                     </p>
-                    <p className="font-mono text-[10px] tracking-wider text-tactical-text-dim">
+                    <p className="font-mono text-[10px] tracking-wider text-tactical-text-dim sm:text-right">
                         Built for forensic precision. Use responsibly within applicable legal jurisdiction.
                     </p>
                 </div>

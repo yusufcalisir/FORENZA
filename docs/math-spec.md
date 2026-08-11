@@ -287,6 +287,23 @@ Species base development thresholds ($T_{\text{base}}$):
 - *Lucilia sericata*: $T_{\text{base}} = 9.0^\circ\text{C}$
 - *Sarcophaga carnaria*: $T_{\text{base}} = 8.0^\circ\text{C}$
 
+---
+
+## 14. Forensic Palynology & Plant DNA Barcoding Distance Metrics
+
+### 14.1 Plant DNA Barcode Sequence Alignment Similarity ($S_{\text{DNA}}$)
+For query plant DNA barcode sequence $Q$ (rbcL, matK, trnL-trnF intergenic spacer) aligned against reference sequence $R$ of length $L$:
+
+$$S_{\text{DNA}} = \frac{1}{L} \sum_{i=1}^{L} \delta(Q_i, R_i)$$
+
+where $\delta(Q_i, R_i) = 1$ if nucleotide $Q_i = R_i$, and $0$ otherwise.
+
+### 14.2 Geographic Habitat Association Likelihood Ratio ($LR_{\text{habitat}}$)
+For botanical assemblage $A = \{s_1, s_2, \dots, s_k\}$ recovered from evidence compared against suspected outdoor scene habitat $H_{\text{scene}}$ versus background habitat $H_{\text{bg}}$:
+
+$$LR_{\text{habitat}} = \frac{P(A \mid H_{\text{scene}})}{P(A \mid H_{\text{bg}})} = \prod_{m=1}^{k} \frac{P(s_m \mid H_{\text{scene}})}{P(s_m \mid H_{\text{bg}})}$$
+
+
 
 
 

@@ -233,6 +233,15 @@ try:
 except Exception as _ento_import_err:
     logger.warning(f"[boot] Entomology router not loaded: {_ento_import_err}")
 
+# --- Forensic Botany Router ---
+try:
+    from app.api.botany_routes import router as botany_router
+    app.include_router(botany_router, prefix="/api/v1")
+    logger.info("[boot] Forensic Botany API router registered at /api/v1/forensic/botany")
+except Exception as _botany_import_err:
+    logger.warning(f"[boot] Botany router not loaded: {_botany_import_err}")
+
+
 
 
 

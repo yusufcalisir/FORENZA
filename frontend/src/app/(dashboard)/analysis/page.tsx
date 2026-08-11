@@ -19,7 +19,8 @@ import DviPanel from "@/components/analysis/DviPanel";
 import HumanIdPanel from "@/components/analysis/HumanIdPanel";
 import AnthropologyPanel from "@/components/analysis/AnthropologyPanel";
 import EntomologyPanel from "@/components/analysis/EntomologyPanel";
-import { Activity, UserCheck, Binary, Bone, Bug } from "lucide-react";
+import BotanyPanel from "@/components/analysis/BotanyPanel";
+import { Activity, UserCheck, Binary, Bone, Bug, Leaf } from "lucide-react";
 import { useIngestStore } from "@/store/ingestStore";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -74,7 +75,7 @@ interface AnalysisData {
     tx_hash?: string;
 }
 
-type TabId = "statistical" | "probabilistic" | "relationship" | "bayesian" | "validation" | "lineage" | "dvi" | "hid" | "anthropology" | "entomology";
+type TabId = "statistical" | "probabilistic" | "relationship" | "bayesian" | "validation" | "lineage" | "dvi" | "hid" | "anthropology" | "entomology" | "botany";
 
 // ─── API ─────────────────────────────────────────────────────────────────────
 
@@ -582,6 +583,14 @@ export default function AnalysisPage() {
                     onClick={setActiveTab}
                     badge="PMI-ADH"
                 />
+                <TabButton
+                    id="botany"
+                    label="Forensic Botany"
+                    icon={Leaf}
+                    activeTab={activeTab}
+                    onClick={setActiveTab}
+                    badge="PALYNOLOGY"
+                />
             </div>
 
             {/* ── Tab Content ── */}
@@ -892,6 +901,18 @@ export default function AnalysisPage() {
                         transition={{ duration: 0.2 }}
                     >
                         <EntomologyPanel />
+                    </motion.div>
+                )}
+
+                {activeTab === "botany" && (
+                    <motion.div
+                        key="botany"
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -6 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        <BotanyPanel />
                     </motion.div>
                 )}
             </AnimatePresence>

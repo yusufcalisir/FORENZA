@@ -67,7 +67,7 @@ export default function InvestigationDashboard() {
             setAnalysisResult(data);
 
             // 3. Update Global Store
-            setLastIngested(activeProfileId, "VANTAGE-NODE-01", 24);
+            setLastIngested(activeProfileId, "FORENZA-NODE-01", 24);
 
         } catch (error) {
             console.error("Investigation Failed:", error);
@@ -124,7 +124,7 @@ export default function InvestigationDashboard() {
                                 Investigation Command Center
                             </h1>
                             <p className="text-[10px] text-zinc-500 font-mono tracking-wider uppercase">
-                                VANTAGE-STR // LEVEL 4 CLEARANCE
+                                FORENZA // LEVEL 4 CLEARANCE
                             </p>
                         </div>
                     </div>

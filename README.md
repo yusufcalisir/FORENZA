@@ -1,10 +1,10 @@
-# VANTAGE-STR: Advanced Forensic DNA Intelligence Platform
+# FORENZA: Advanced Forensic DNA Intelligence Platform
 
 ![License](https://img.shields.io/badge/license-MIT-emerald)
 ![Version](https://img.shields.io/badge/version-2.0.0-blue)
 ![Status](https://img.shields.io/badge/status-Production%20Ready-success)
 
-**VANTAGE-STR** is a cutting-edge forensic intelligence system designed for high-stakes DNA profiling, kinship analytics, and biometric reconstruction. It bridges the gap between biological analysis and tactical intelligence by combining rigorous **Likelihood Ratio (LR)** statistical models with **Generative AI** and **Blockchain** immutability.
+**FORENZA** is a cutting-edge forensic intelligence system designed for high-stakes DNA profiling, kinship analytics, and biometric reconstruction. It bridges the gap between biological analysis and tactical intelligence by combining rigorous **Likelihood Ratio (LR)** statistical models with **Generative AI** and **Blockchain** immutability.
 
 ---
 
@@ -94,7 +94,7 @@ The dashboard will be available at `http://localhost:3000`.
 ## 📄 Documentation
 
 ### Security & Privacy
-VANTAGE-STR is built with **Privacy by Design**.
+FORENZA is built with **Privacy by Design**.
 *   **Data Isolation**: Raw STR markers are processed in secure, isolated environments.
 *   **ZKP**: Identity verification uses Zero-Knowledge Proofs to prevent genetic data leakage.
 *   **Audit Trails**: All access and modification events are logged to the immutable ledger.

@@ -98,7 +98,7 @@ export default function LandingHero() {
 
                 {/* Subheading */}
                 <p className="max-w-xl sm:max-w-2xl mx-auto text-xs sm:text-base text-tactical-text-muted mb-4 sm:mb-8 leading-relaxed font-light">
-                    VANTAGE-STR combines likelihood ratio STR analysis, generative phenotype reconstruction,
+                    FORENZA combines likelihood ratio STR analysis, generative phenotype reconstruction,
                     and zero-knowledge cryptographic verification with immutable blockchain chain of custody
                     into a single tactical intelligence platform.
                 </p>

@@ -1,6 +1,6 @@
 @echo off
 chcp 65001 >nul
-echo 🚀 VANTAGE-STR: Starting Development Environment...
+echo 🚀 FORENZA: Starting Development Environment...
 
 rem Ensure we are in the project root
 cd /d "%~dp0"
@@ -60,15 +60,15 @@ if %errorlevel% neq 0 (
 )
 
 rem Use the venv python executable explicitly to ensure we use the installed dependencies
-start "VANTAGE-Backend" /D "%~dp0backend" cmd /k "venv\Scripts\python.exe -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000"
+start "FORENZA-Backend" /D "%~dp0backend" cmd /k "venv\Scripts\python.exe -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000"
 echo ✅ Backend started.
 
 rem 3. Start Frontend
 echo ⚛️ [3/3] Starting Frontend...
-start "VANTAGE-Frontend" /D "%~dp0frontend" cmd /k "npm run dev"
+start "FORENZA-Frontend" /D "%~dp0frontend" cmd /k "npm run dev"
 echo ✅ Frontend started.
 
-echo ✨ VANTAGE-STR is now running!
+echo ✨ FORENZA is now running!
 echo    Frontend: http://localhost:3000
 echo    Backend:  http://localhost:8000/docs
 pause

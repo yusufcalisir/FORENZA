@@ -73,7 +73,7 @@ export default function DashboardLayout({
                             className="fixed inset-y-0 left-0 z-[70] w-64 bg-tactical-surface border-r border-tactical-border lg:hidden"
                         >
                             <div className="flex h-14 items-center justify-between px-4 border-b border-tactical-border">
-                                <span className="font-data text-xs font-bold tracking-widest text-tactical-primary">VANTAGE-STR</span>
+                                <span className="font-data text-xs font-bold tracking-widest text-tactical-primary">FORENZA</span>
                                 <button onClick={() => setMobileMenuOpen(false)} className="text-tactical-text-dim hover:text-white transition-colors">
                                     <X className="h-5 w-5" />
                                 </button>
@@ -214,7 +214,7 @@ export default function DashboardLayout({
                             <Home className="h-4 w-4" />
                         </Link>
                         <h1 className="font-data text-[10px] sm:text-xs lg:text-sm font-bold tracking-[0.1em] sm:tracking-[0.15em] text-tactical-text uppercase truncate">
-                            VANTAGE-STR
+                            FORENZA
                         </h1>
                         <span className="text-tactical-border hidden md:inline flex-shrink-0">|</span>
                         <span className="font-data text-[10px] lg:text-[11px] tracking-wider text-tactical-text-muted hidden md:inline truncate">

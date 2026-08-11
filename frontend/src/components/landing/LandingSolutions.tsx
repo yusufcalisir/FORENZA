@@ -29,7 +29,7 @@ const SOLUTIONS = [
         title: "Disaster Victim Identification (DVI)",
         subtitle: "Mass Casualty Rematch & Rapid Kinship Indexing",
         description:
-            "In mass casualty events, VANTAGE-STR provides rapid kinship indexing to match unidentified remains against family reference samples. The platform supports concurrent multi-sample processing with quality scoring, allowing identification teams to prioritize high-confidence matches under operational pressure.",
+            "In mass casualty events, FORENZA provides rapid kinship indexing to match unidentified remains against family reference samples. The platform supports concurrent multi-sample processing with quality scoring, allowing identification teams to prioritize high-confidence matches under operational pressure.",
         bulletPoints: [
             "Concurrent multi-sample batch processing",
             "Parent-child and sibling KI within minutes",
@@ -65,7 +65,7 @@ const SOLUTIONS = [
         title: "Academic & Clinical Genetics Research",
         subtitle: "Population Stratification & GTEx eQTL Integration",
         description:
-            "Research institutions can leverage VANTAGE-STR as a validated computational framework for population genetics studies. The platform provides reproducible LR calculations, exportable allele frequency matrices, and GTEx eQTL cross-references for 54 tissue types, supporting peer-reviewed genomics research.",
+            "Research institutions can leverage FORENZA as a validated computational framework for population genetics studies. The platform provides reproducible LR calculations, exportable allele frequency matrices, and GTEx eQTL cross-references for 54 tissue types, supporting peer-reviewed genomics research.",
         bulletPoints: [
             "Exportable allele frequency matrices and LR results",
             "GTEx eQTL data integration for 54 tissue types",
@@ -99,7 +99,7 @@ export default function LandingSolutions() {
                         Built for High-Stakes Environments
                     </h2>
                     <p className="max-w-xl mx-auto text-tactical-text-muted text-xs sm:text-sm leading-relaxed">
-                        VANTAGE-STR addresses the specific operational demands of four distinct forensic and scientific disciplines.
+                        FORENZA addresses the specific operational demands of four distinct forensic and scientific disciplines.
                     </p>
                 </div>
 

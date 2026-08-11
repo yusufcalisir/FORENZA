@@ -1,7 +1,7 @@
 """
 Security Provider — X.509 Certificate Management & Kill-Switch.
 
-Manages the cryptographic identity of a VANTAGE sovereign node:
+Manages the cryptographic identity of a FORENZA sovereign node:
     - X.509 certificate loading and validation at boot time.
     - Request signing for all outbound communication.
     - Emergency kill-switch that wipes in-memory caches on
@@ -36,7 +36,7 @@ logger = logging.getLogger(__name__)
 # CONFIGURATION
 # ═══════════════════════════════════════════════════════════════════════════════
 
-DEFAULT_CERT_DIR: str = "/etc/vantage/certs"
+DEFAULT_CERT_DIR: str = "/etc/forenza/certs"
 MAX_AUTH_FAILURES: int = 3
 LOCKOUT_DURATION_SECONDS: int = 300
 SIGNATURE_ALGORITHM: str = "HMAC-SHA256"
@@ -417,7 +417,7 @@ class SecurityProvider:
 
             self._node_cert = CertificateInfo(
                 subject=f"CN={self._node_id}",
-                issuer="CN=VANTAGE-DEV-CA",
+                issuer="CN=FORENZA-DEV-CA",
                 fingerprint_sha256=hashlib.sha256(ephemeral_key).hexdigest(),
                 is_valid=True,
             )

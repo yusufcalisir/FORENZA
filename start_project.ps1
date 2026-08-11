@@ -1,5 +1,5 @@
 $ErrorActionPreference = "Stop"
-Write-Host "VANTAGE-STR: Starting Development Environment..." -ForegroundColor Green
+Write-Host "FORENZA: Starting Development Environment..." -ForegroundColor Green
 
 # Ensure we are in the project root
 $rootDir = $PSScriptRoot
@@ -40,6 +40,6 @@ catch {
     Write-Host "Failed to start Frontend: $_" -ForegroundColor Red
 }
 
-Write-Host "`nVANTAGE-STR is now running!" -ForegroundColor Yellow
+Write-Host "`nFORENZA is now running!" -ForegroundColor Yellow
 Write-Host "   Frontend: http://localhost:3000"
 Write-Host "   Backend:  http://localhost:8000/docs"

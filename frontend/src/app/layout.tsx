@@ -15,7 +15,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "VANTAGE-STR",
+  title: "FORENZA",
+  description: "Forensic Biology & DNA Intelligence Platform",
   icons: {
     icon: "/icon.svg",
   },

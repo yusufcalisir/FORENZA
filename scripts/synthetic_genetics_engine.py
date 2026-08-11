@@ -446,7 +446,7 @@ if __name__ == "__main__":
         pops[p.population] = pops.get(p.population, 0) + 1
 
     print(f"╔══════════════════════════════════════════════════════╗")
-    print(f"║  VANTAGE-STR  Synthetic Genetics Engine             ║")
+    print(f"║  FORENZA  Synthetic Genetics Engine             ║")
     print(f"╠══════════════════════════════════════════════════════╣")
     print(f"║  Generated:  {count:>8,} profiles in {elapsed*1000:>8.1f} ms   ║")
     print(f"║  Throughput: {count/elapsed:>8,.0f} profiles/sec            ║")

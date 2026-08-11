@@ -63,10 +63,10 @@ export default function LandingHeader() {
                             </div>
                             <div className="flex flex-col">
                                 <span className="font-mono text-sm sm:text-base font-black tracking-[0.15em] sm:tracking-[0.18em] text-tactical-text group-hover:text-[#22C55E] transition-colors whitespace-nowrap">
-                                    VANTAGE<span className="text-[#06B6D4]">-STR</span>
+                                    FOREN<span className="text-[#06B6D4]">ZA</span>
                                 </span>
                                 <span className="hidden sm:block font-mono text-[9px] tracking-widest text-tactical-text-muted font-medium uppercase whitespace-nowrap">
-                                    Forensic Intelligence Core
+                                    Forensic Biology &amp; DNA Intelligence
                                 </span>
                             </div>
                         </a>

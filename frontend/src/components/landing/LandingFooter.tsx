@@ -84,10 +84,10 @@ export default function LandingFooter() {
                             </div>
                             <div>
                                 <p className="font-mono text-sm font-bold tracking-widest text-tactical-text">
-                                    VANTAGE-STR
+                                    FORENZA
                                 </p>
                                 <p className="font-mono text-[9px] tracking-widest text-[#06B6D4]">
-                                    FORENSIC DNA INTELLIGENCE PLATFORM
+                                    FORENSIC BIOLOGY &amp; DNA INTELLIGENCE
                                 </p>
                             </div>
                         </div>
@@ -149,7 +149,7 @@ export default function LandingFooter() {
                 {/* Bottom bar */}
                 <div className="mt-10 pt-6 border-t border-tactical-border flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
                     <p className="font-mono text-[10px] tracking-wider text-tactical-text-dim">
-                        VANTAGE-STR v2.0.0 — MIT License — Open Source
+                        FORENZA v1.0.0 — MIT License — Open Source
                     </p>
                     <p className="font-mono text-[10px] tracking-wider text-tactical-text-dim sm:text-right">
                         Built for forensic precision. Use responsibly within applicable legal jurisdiction.

@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# VANTAGE-STR Startup Script
+# FORENZA Startup Script
 # Starts Infrastructure, Backend, and Frontend
 
 # Ensure we are in the script's directory
 cd "$(dirname "$0")"
 
-echo "🚀 VANTAGE-STR: Starting Development Environment..."
+echo "🚀 FORENZA: Starting Development Environment..."
 
 # 1. Infrastructure
 echo -e "\n📦 [1/3] Starting Infrastructure (Docker)..."
@@ -37,11 +37,11 @@ open_terminal() {
 # 2. Backend
 echo -e "\n🐍 [2/3] Starting Backend (FastAPI)..."
 BACKEND_CMD="cd $(pwd)/backend && source venv/bin/activate && uvicorn app.main:app --reload --port 8000"
-open_terminal "VANTAGE-Backend" "$BACKEND_CMD"
+open_terminal "FORENZA-Backend" "$BACKEND_CMD"
 
 # 3. Frontend
 echo -e "\n⚛️ [3/3] Starting Frontend (Next.js)..."
 FRONTEND_CMD="cd $(pwd)/frontend && npm run dev"
-open_terminal "VANTAGE-Frontend" "$FRONTEND_CMD"
+open_terminal "FORENZA-Frontend" "$FRONTEND_CMD"
 
-echo -e "\n✨ VANTAGE-STR Environment Prepared!"
+echo -e "\n✨ FORENZA Environment Prepared!"

@@ -6,7 +6,7 @@ import NeonDnaScroll from "./NeonDnaScroll";
 
 const FAQS = [
     {
-        q: "What input formats does VANTAGE-STR accept?",
+        q: "What input formats does FORENZA accept?",
         a: "The platform accepts standard VCF (Variant Call Format), CODIS-compatible text profiles with 20 core STR loci, and raw FASTQ files for upstream processing. Custom SNP panel formats aligned to IrisPlex or HIrisPlex-S can also be provided in structured JSON format via the API.",
         color: "#22C55E",
     },
@@ -32,11 +32,11 @@ const FAQS = [
     },
     {
         q: "Is the platform compliant with forensic science standards?",
-        a: "VANTAGE-STR implements the NRC II statistical framework as recommended by SWGDAM and OSAC guidelines. The blockchain audit trail is designed to satisfy chain of custody documentation requirements for court proceedings. Users are responsible for validating compliance with the specific statutory requirements of their jurisdiction before using outputs in legal contexts.",
+        a: "FORENZA implements the NRC II statistical framework as recommended by SWGDAM and OSAC guidelines. The blockchain audit trail is designed to satisfy chain of custody documentation requirements for court proceedings. Users are responsible for validating compliance with the specific statutory requirements of their jurisdiction before using outputs in legal contexts.",
         color: "#8B5CF6",
     },
     {
-        q: "Can I use VANTAGE-STR for population genetics research?",
+        q: "Can I use FORENZA for population genetics research?",
         a: "Yes. The platform provides exportable allele frequency matrices, combined LR tables, and phenotype posterior probability distributions in structured JSON and CSV formats. The GTEx eQTL integration provides cross-reference data across 54 non-diseased tissue types, supporting population-level genetic association analyses.",
         color: "#22C55E",
     },

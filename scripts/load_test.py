@@ -1,5 +1,5 @@
 """
-Load Test — Async Batch Uploader for VANTAGE-STR Pipeline Stress Testing.
+Load Test — Async Batch Uploader for FORENZA Pipeline Stress Testing.
 
 Generates synthetic genomic profiles and pushes them to the FastAPI
 /profile/ingest endpoint in parallel, measuring per-stage latency
@@ -212,7 +212,7 @@ def dry_run(profiles: List[SyntheticProfile]) -> None:
 # ═══════════════════════════════════════════════════════════════════════════════
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="VANTAGE-STR Load Test")
+    parser = argparse.ArgumentParser(description="FORENZA Load Test")
     parser.add_argument("--count", type=int, default=10000, help="Number of profiles")
     parser.add_argument("--concurrency", type=int, default=50, help="Max concurrent requests")
     parser.add_argument("--base-url", type=str, default="http://localhost:8000", help="API base URL")
@@ -225,7 +225,7 @@ def main() -> None:
 
     print()
     print("╔══════════════════════════════════════════════════════╗")
-    print("║  VANTAGE-STR  Load Test Runner                      ║")
+    print("║  FORENZA  Load Test Runner                      ║")
     print("╠══════════════════════════════════════════════════════╣")
     print(f"║  Profiles:    {args.count:>8,}                            ║")
     print(f"║  Concurrency: {args.concurrency:>8}                            ║")
@@ -512,7 +512,7 @@ async def run_jitter_test(
 
     print()
     print("╔══════════════════════════════════════════════════════╗")
-    print("║  VANTAGE-STR  Network Jitter Stress Test            ║")
+    print("║  FORENZA  Network Jitter Stress Test            ║")
     print("╠══════════════════════════════════════════════════════╣")
     print(f"║  Nodes:       {num_nodes:>8}                            ║")
     print(f"║  Broadcasts:  {num_broadcasts:>8}  per scenario             ║")
@@ -605,7 +605,7 @@ async def run_jitter_test(
 # ═══════════════════════════════════════════════════════════════════════════════
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="VANTAGE-STR Load Test")
+    parser = argparse.ArgumentParser(description="FORENZA Load Test")
     parser.add_argument("--count", type=int, default=10000, help="Number of profiles")
     parser.add_argument("--concurrency", type=int, default=50, help="Max concurrent requests")
     parser.add_argument("--base-url", type=str, default="http://localhost:8000", help="API base URL")
@@ -628,7 +628,7 @@ def main() -> None:
 
     print()
     print("╔══════════════════════════════════════════════════════╗")
-    print("║  VANTAGE-STR  Load Test Runner                      ║")
+    print("║  FORENZA  Load Test Runner                      ║")
     print("╠══════════════════════════════════════════════════════╣")
     print(f"║  Profiles:    {args.count:>8,}                            ║")
     print(f"║  Concurrency: {args.concurrency:>8}                            ║")

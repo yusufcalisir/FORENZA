@@ -270,7 +270,7 @@ class ReferenceTokenManager:
 
 class LocalForensicSearcher:
     """
-    Privacy-preserving search service for the VANTAGE sovereign node.
+    Privacy-preserving search service for the FORENZA sovereign node.
 
     Receives query embeddings from the Orchestrator, executes local
     Milvus searches, applies sovereignty policies, privacy-masks the

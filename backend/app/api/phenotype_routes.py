@@ -74,3 +74,65 @@ async def predict_phenotype(body: PhenotypeRequest) -> PhenotypeResponse:
         model_version=report.model_version,
         limitations=report.limitations,
     )
+
+
+# --- Extended HIrisPlex-S Router ---
+from node.services.forensic.phenotyping.phenotype_engine import AdvancedPhenotypeEngine
+from .phenotype_extended_schemas import PredictExtendedPhenotypeRequest, PredictExtendedPhenotypeResponse, UncertaintyIntervalSchema
+
+_adv_pheno_engine = AdvancedPhenotypeEngine()
+
+
+@router.post(
+    "/phenotype/predict-extended",
+    response_model=PredictExtendedPhenotypeResponse,
+    summary="Extended HIrisPlex-S Phenotype & Population-Calibrated Uncertainty",
+    description="Predicts Eye/Hair/Skin/Freckles/Morphology with population structure calibration and ISO 17025 U_95% uncertainty bounds.",
+    status_code=status.HTTP_200_OK,
+)
+async def predict_extended_phenotype(body: PredictExtendedPhenotypeRequest) -> PredictExtendedPhenotypeResponse:
+    try:
+        res = _adv_pheno_engine.predict_extended_phenotype(
+            sample_id=body.sample_id,
+            snp_dosages=body.snp_dosages,
+            ancestry_prior=body.ancestry_prior
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Extended phenotype prediction failed: {str(exc)}"
+        )
+
+    def convert_ui(ui_dict):
+        return {
+            k: UncertaintyIntervalSchema(
+                probability=v.probability,
+                u95_uncertainty=v.u95_uncertainty,
+                ci_lower=v.ci_lower,
+                ci_upper=v.ci_upper
+            )
+            for k, v in ui_dict.items()
+        }
+
+    fr = res.freckling_risk
+    fr_schema = UncertaintyIntervalSchema(
+        probability=fr.probability,
+        u95_uncertainty=fr.u95_uncertainty,
+        ci_lower=fr.ci_lower,
+        ci_upper=fr.ci_upper
+    )
+
+    return PredictExtendedPhenotypeResponse(
+        sample_id=res.sample_id,
+        eye_color_probs=convert_ui(res.eye_color_probs),
+        hair_color_probs=convert_ui(res.hair_color_probs),
+        hair_morphology_probs=convert_ui(res.hair_morphology_probs),
+        skin_tone_probs=convert_ui(res.skin_tone_probs),
+        freckling_risk=fr_schema,
+        top_eye_color=res.top_eye_color,
+        top_hair_color=res.top_hair_color,
+        top_hair_morphology=res.top_hair_morphology,
+        top_skin_tone=res.top_skin_tone,
+        biogeographic_ancestry_prior=res.biogeographic_ancestry_prior,
+        phenotype_summary=res.phenotype_summary
+    )

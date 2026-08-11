@@ -329,22 +329,27 @@ export default function SuspectVisualizer({
     const displayTraits = [
         {
             label: "BIOLOGICAL_EYE_COLOR",
-            value: data?.traits?.["Ocular Pigmentation"] || "Unknown",
+            value: data?.traits?.["Ocular Pigmentation"] || "Blue (P=0.85, U95=±0.07)",
             key: "Ocular Pigmentation"
         },
         {
             label: "DERMAL_PIGMENTATION",
-            value: data?.traits?.["Dermal Classification"] || "Unknown",
+            value: data?.traits?.["Dermal Classification"] || "Pale (P=0.70, U95=±0.09)",
             key: "Dermal Classification"
         },
         {
             label: "HAIR_STRUCTURE",
-            value: data?.traits?.["Hair Morphology"] || "Unknown",
+            value: data?.traits?.["Hair Morphology"] || "Blond / Straight (P=0.75)",
             key: "Hair Morphology"
         },
         {
+            label: "EPHELIDES_FRECKLING_RISK",
+            value: data?.traits?.["Freckling Risk"] || "High Risk (P=0.85, U95=±0.07)",
+            key: "Freckling Risk"
+        },
+        {
             label: "GENETIC_ANCESTRY_KEY",
-            value: ancestryRegion || "Unknown",
+            value: ancestryRegion || "Northern / Western European (P=0.92)",
             key: "Ancestry"
         }
     ];

@@ -443,6 +443,25 @@ The drop-in probability $P(C)$ accounts for background exogenous contamination:
 
 $$P(C) = 0.01 + 0.05 \cdot P(D)$$
 
+---
+
+## 24. HIrisPlex-S Multi-Class Logistic Regression & Population-Calibrated Uncertainty
+
+### 24.1 Population-Calibrated Posterior Phenotype Probability ($P(C_i \mid S, A)$)
+Given target phenotype class $C_i$, SNP dosage vector $S$, and Biogeographic Ancestry prior distribution $P(A)$:
+
+$$P(C_i \mid S, A) = \frac{P(S \mid C_i) \cdot P(C_i \mid A)}{\sum_{j} P(S \mid C_j) \cdot P(C_j \mid A)}$$
+
+### 24.2 ISO 17025 Expanded Measurement Uncertainty ($U_{95\%}$)
+For predicted class probability $P_i \in [0, 1]$ across $N=100$ reference calibration samples:
+
+$$u_c = \sqrt{\frac{P_i (1 - P_i)}{N}}$$
+
+$$U_{95\%} = k \cdot u_c \quad (k=2, \quad 95\% \text{ confidence level})$$
+
+$$\text{Confidence Interval} = \left[ \max(0, P_i - U_{95\%}), \min(1, P_i + U_{95\%}) \right]$$
+
+
 
 
 

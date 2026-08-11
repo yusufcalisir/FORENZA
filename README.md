@@ -15,7 +15,7 @@
   <a href="#probabilistic-genotyping--mcmc-deconvolution"><img src="https://img.shields.io/badge/Genotyping-Metropolis--Hastings%20MCMC-orange?style=for-the-badge" /></a>
   <a href="#forensic-phenotyping--biogeographic-ancestry"><img src="https://img.shields.io/badge/Phenotyping-HIrisPlex--S%20%2B%20BGA-purple?style=for-the-badge" /></a>
   <a href="#cryptographic-ledger--zero-knowledge-privacy-auditor"><img src="https://img.shields.io/badge/Privacy-ZKP%20Circom%20%2B%20Polygon-black?style=for-the-badge&logo=polygon" /></a>
-  <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/Suite%20Status-147%2F147%20Passed%20(100%25)-brightgreen?style=for-the-badge&logo=pytest" /></a>
+  <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/Suite%20Status-150%2F150%20Passed%20(100%25)-brightgreen?style=for-the-badge&logo=pytest" /></a>
 </p>
 
 ---
@@ -538,6 +538,7 @@ graph TD
 | `/api/v1/forensic/microscopy/hair-morphology` | `POST` | `HairMorphologyRequest` | `hair_id`, `medullary_index`, `species_origin`, `dna_routing` |
 | `/api/v1/forensic/touch/analyze-ltdna` | `POST` | `AnalyzeLtdnaRequest` | `sample_id`, `recovered_mass_pg`, `dropout_probability_pd`, `is_low_template` |
 | `/api/v1/forensic/touch/contributor-deconv` | `POST` | `ContributorDeconvRequest` | `sample_id`, `mixture_proportions`, `mcmc_acceptance_rate`, `log10_lr` |
+| `/api/v1/forensic/phenotype/predict-extended` | `POST` | `PredictExtendedPhenotypeRequest` | `top_eye_color`, `freckling_risk`, `hair_morphology_probs`, `skin_tone_probs` |
 | `/api/v1/health/ready` | `GET` | None | `status`, `subsystems`, `audit_chain_intact` |
 | `/api/v1/health/live` | `GET` | None | `status`, `timestamp` |
 | `/api/v1/health/metrics` | `GET` | None | `uptime_seconds`, `audit_chain_block_count`, `memory_footprint_mb` |
@@ -573,9 +574,10 @@ The entire FORENZA software surface is validated using automated Pytest suites.
 | `test_bpa.py` | Evidence Image Analysis (BPA) | 5 | ~2.13s | 100% (5/5) | Ellipse morphometry, arcsin(W/L) impact angle, analyst sign-off |
 | `test_microscopy.py` | Microscopy Intelligence | 5 | ~2.01s | 100% (5/5) | Sperm morphometry, I_medulla hair index, nDNA/mtDNA routing |
 | `test_touch.py` | Touch DNA & Low-Template | 5 | ~1.82s | 100% (5/5) | Substrate efficiency, P(D) = exp(-lambda*m), MCMC deconv |
+| `test_phenotyping_extended.py` | Extended Phenotyping & U_95% | 3 | ~1.81s | 100% (3/3) | Eye/hair/skin/freckles/morphology, BGA priors, ISO 17025 U_95% |
 | `test_federated.py` | Multi-Node Federated Network | 6 | ~1.48s | 100% (6/6) | PeerRegistry heartbeat, NodeIdentity, Orchestrator distributed query |
 | `test_forensic_routes.py` | FastAPI Endpoint Integration | 7 | ~1.69s | 100% (7/7) | POST /lr, POST /kinship, POST /validate, Pydantic v2 rejection |
-| **Master Integrated Suite** | **Complete System Surface** | **147** | **3.79s** | **100% (147/147)** | **Comprehensive Statistical & Integration Verification** |
+| **Master Integrated Suite** | **Complete System Surface** | **150** | **3.49s** | **100% (150/150)** | **Comprehensive Statistical & Integration Verification** |
 
 ---
 

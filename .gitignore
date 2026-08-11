@@ -1,51 +1,77 @@
-# Common
-node_modules/
-dist/
-build/
-.next/
-out/
+# Operating System
 .DS_Store
-*.log
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Environment & Secrets
 .env
 .env.*
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+!.env.example
+
+# Local Startup & Shell Scripts
+*.bat
+*.ps1
+start_project.*
+
+# Node.js & Next.js
+node_modules/
+frontend/node_modules/
+.next/
+frontend/.next/
+out/
+frontend/out/
+dist/
+build/
+.npm
+.turbo
+*.tsbuildinfo
 
 # Python
-venv/
-.venv/
 __pycache__/
+*/__pycache__/
+*/*/__pycache__/
+*/*/*/__pycache__/
+*/*/*/*/__pycache__/
 *.py[cod]
 *$py.class
+venv/
+.venv/
+backend/venv/
+backend/.venv/
 .pytest_cache/
-debug_error.log
-test_out.txt
 .coverage
 htmlcov/
 .mypy_cache/
+.ruff_cache/
+debug_error.log
+test_out.txt
+*.log
 
-# Hardhat / Solidity
+# Docker, Infrastructure & Certificates
+infra/milvus/volumes/
+infra/redis/data/
+infra/certs/
+infra/data/
+infra/docker-compose.global.yml
+
+# Hardhat, Solidity & ZKP Artifacts
 artifacts/
 cache/
 typechain-types/
 contracts/deployments/localhost/
+circuits/*.r1cs
+circuits/*.zkey
+circuits/*.sym
 
-# OS
-Thumbs.db
-desktop.ini
-
-# IDE
+# IDE & Editor Settings
 .vscode/
 .idea/
 *.swp
 *.swo
-
-# Project Specific
-infra/milvus/volumes/
-infra/redis/data/
-frontend/.next/
-frontend/out/
-backend/venv/
-backend/.venv/
+*.sublime-project
+*.sublime-workspace

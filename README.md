@@ -10,7 +10,7 @@
   <a href="#-probabilistic-genotyping-engine"><img src="https://img.shields.io/badge/Genotyping-Metropolis--Hastings%20MCMC-orange?style=flat-square" /></a>
   <a href="#-hirisplex-s-phenotyping--ancestry"><img src="https://img.shields.io/badge/Phenotyping-HIrisPlex--S%20%2B%20BGA-purple?style=flat-square" /></a>
   <a href="#-cryptographic-ledger--zkp"><img src="https://img.shields.io/badge/Privacy-ZKP%20Circom%20%2B%20Polygon-black?style=flat-square" /></a>
-  <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/Tests-67%20Passed%20(100%25)-brightgreen?style=flat-square" /></a>
+  <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/Tests-74%20Passed%20(100%25)-brightgreen?style=flat-square" /></a>
 </p>
 
 ---
@@ -287,6 +287,8 @@ Ensures cryptographic privacy and immutable chain-of-custody compliance.
 | `/api/v1/forensic/reports/audit` | `POST` | `AuditRequest` | `compliance_score`, `iso17025_status`, `checks`, `warnings` |
 | `/api/v1/forensic/batch/submit` | `POST` | `BatchSubmitRequest` | `job_id`, `status`, `total_items`, `submitted_timestamp` |
 | `/api/v1/forensic/batch/status/{id}` | `GET` | None | `job_id`, `progress_percentage`, `metrics`, `results` |
+| `/api/v1/forensic/dna/ystr` | `POST` | `YSTRMatchRequest` | `haplotype_match_status`, `upper_bound_95_ci`, `paternal_lineage_verdict` |
+| `/api/v1/forensic/dna/mtdna` | `POST` | `MtDnaMatchRequest` | `match_status`, `differing_positions_count`, `maternal_lineage_verdict` |
 | `/api/v1/health/ready` | `GET` | None | `status`, `subsystems`, `audit_chain_intact` |
 | `/api/v1/health/live` | `GET` | None | `status`, `timestamp` |
 | `/api/v1/health/metrics` | `GET` | None | `uptime_seconds`, `audit_chain_block_count`, `memory_footprint_mb` |
@@ -447,9 +449,10 @@ python -m pytest backend/node/services/forensic/ backend/app/api/test_forensic_r
 | `test_reports.py` | Reporting & ISO 17025 Compliance | 6 | ~1.57s | 100% (6/6) | SWGDAM report compiler, ENFSI 7-tier scale, ISO 17025 auditor |
 | `test_batch.py` | Batch Processing & Workers | 3 | ~1.42s | 100% (3/3) | Concurrency worker semaphore, job aggregator, progress polling |
 | `test_end_to_end.py` | Master E2E Pipeline Verification | 4 | ~1.60s | 100% (4/4) | Multi-phase integration, health probes, HMAC integrity verification |
+| `test_lineage_dna.py` | Expanded Lineage DNA Forensics | 7 | ~1.80s | 100% (7/7) | Y-STR Clopper-Pearson 95% CI, X-STR linkage KI_X, mtDNA rCRS |
 | `test_federated.py` | Multi-Node Federated Network | 6 | ~1.48s | 100% (6/6) | PeerRegistry heartbeat, NodeIdentity, Orchestrator distributed query |
 | `test_forensic_routes.py` | FastAPI Endpoint Integration | 7 | ~1.69s | 100% (7/7) | POST /lr, POST /kinship, POST /validate, Pydantic v2 rejection |
-| **Complete System Suite** | **Integrated System Surface** | **67** | **2.29s** | **100% (67/67)** | **Comprehensive Statistical & Integration Verification** |
+| **Complete System Suite** | **Integrated System Surface** | **74** | **2.64s** | **100% (74/74)** | **Comprehensive Statistical & Integration Verification** |
 
 ---
 

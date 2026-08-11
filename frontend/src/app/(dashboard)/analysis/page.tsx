@@ -14,6 +14,7 @@ import BayesianShiftChart from "@/components/analysis/BayesianShiftChart";
 import SuspectVisualizer from "@/components/analysis/SuspectVisualizer";
 import ProbabilisticGenotypingPanel from "@/components/analysis/ProbabilisticGenotypingPanel";
 import ValidationLabPanel from "@/components/analysis/ValidationLabPanel";
+import LineageDnaPanel from "@/components/analysis/LineageDnaPanel";
 import { Activity } from "lucide-react";
 import { useIngestStore } from "@/store/ingestStore";
 
@@ -69,7 +70,7 @@ interface AnalysisData {
     tx_hash?: string;
 }
 
-type TabId = "statistical" | "probabilistic" | "relationship" | "bayesian" | "validation";
+type TabId = "statistical" | "probabilistic" | "relationship" | "bayesian" | "validation" | "lineage";
 
 // ─── API ─────────────────────────────────────────────────────────────────────
 
@@ -537,6 +538,14 @@ export default function AnalysisPage() {
                     onClick={setActiveTab}
                     badge="5K PAIRS"
                 />
+                <TabButton
+                    id="lineage"
+                    label="Lineage DNA (Y/X/mt)"
+                    icon={Dna}
+                    activeTab={activeTab}
+                    onClick={setActiveTab}
+                    badge="Y/X/mt"
+                />
             </div>
 
             {/* ── Tab Content ── */}
@@ -787,6 +796,18 @@ export default function AnalysisPage() {
                                 />
                             </aside>
                         </div>
+                    </motion.div>
+                )}
+
+                {activeTab === "lineage" && (
+                    <motion.div
+                        key="lineage"
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -6 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        <LineageDnaPanel />
                     </motion.div>
                 )}
             </AnimatePresence>

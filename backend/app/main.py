@@ -193,6 +193,15 @@ try:
 except Exception as _health_import_err:
     logger.warning(f"[boot] Health router not loaded: {_health_import_err}")
 
+# --- Lineage DNA Forensics Router (Y-STR, X-STR, mtDNA) ---
+try:
+    from app.api.dna_routes import router as dna_router
+    app.include_router(dna_router, prefix="/api/v1")
+    logger.info("[boot] Lineage DNA API router registered at /api/v1/forensic/dna")
+except Exception as _dna_import_err:
+    logger.warning(f"[boot] Lineage DNA router not loaded: {_dna_import_err}")
+
+
 
 
 

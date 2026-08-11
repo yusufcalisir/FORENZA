@@ -164,3 +164,29 @@ $$V(LR) = \begin{cases}
 \text{Support for } H_d \text{ (Exclusion)} & \text{if } \log_{10}(LR) \le -1
 \end{cases}$$
 
+---
+
+## 9. Expanded Lineage DNA Forensics (Y-STR, X-STR, mtDNA)
+
+### 9.1 Y-STR Clopper-Pearson 95% Confidence Upper Bound
+For haplotype count $x$ observed in database of size $N$ with confidence $1 - \alpha = 0.95$:
+If $x = 0$ (unobserved haplotype):
+
+$$p_{\text{upper}} = 1 - \alpha^{1/N}$$
+
+For $N = 2500$ and $\alpha = 0.05$:
+
+$$p_{\text{upper}} = 1 - 0.05^{1/2500} \approx 0.001198$$
+
+### 9.2 X-STR Kinship Index ($KI_X$)
+For father-daughter pair at locus $l$ where father possesses allele $A_f$ and daughter possesses alleles $\{A_{d1}, A_{d2}\}$:
+
+$$KI_X = \begin{cases} \frac{1}{2 p_f} & \text{if } A_f \in \{A_{d1}, A_{d2}\} \\ 0 & \text{if } A_f \notin \{A_{d1}, A_{d2}\} \end{cases}$$
+
+### 9.3 mtDNA rCRS Distance & Decision Rule
+Let $E$ and $S$ be sets of hypervariable variants $(pos, alt)$ in HV1 (16024–16365), HV2 (73–340), and HV3 (438–574) relative to rCRS ($AC\_000021.2$).
+Symmetric difference count $d = |E \Delta S|$:
+
+$$\text{Verdict} = \begin{cases} \text{Cannot Be Excluded (Maternal Match)} & \text{if } d = 0 \\ \text{Inconclusive (Heteroplasmy / Mutation)} & \text{if } d = 1 \\ \text{Excluded (Different Lineages)} & \text{if } d \ge 2 \end{cases}$$
+
+

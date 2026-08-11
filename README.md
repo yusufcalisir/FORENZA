@@ -15,7 +15,7 @@
   <a href="#probabilistic-genotyping--mcmc-deconvolution"><img src="https://img.shields.io/badge/Genotyping-Metropolis--Hastings%20MCMC-orange?style=for-the-badge" /></a>
   <a href="#forensic-phenotyping--biogeographic-ancestry"><img src="https://img.shields.io/badge/Phenotyping-HIrisPlex--S%20%2B%20BGA-purple?style=for-the-badge" /></a>
   <a href="#cryptographic-ledger--zero-knowledge-privacy-auditor"><img src="https://img.shields.io/badge/Privacy-ZKP%20Circom%20%2B%20Polygon-black?style=for-the-badge&logo=polygon" /></a>
-  <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/Suite%20Status-126%2F126%20Passed%20(100%25)-brightgreen?style=for-the-badge&logo=pytest" /></a>
+  <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/Suite%20Status-132%2F132%20Passed%20(100%25)-brightgreen?style=for-the-badge&logo=pytest" /></a>
 </p>
 
 ---
@@ -438,6 +438,19 @@ graph TD
 
 ---
 
+### Crime Scene Biological Evidence Management Subsystem
+
+> [!NOTE]
+> **ISO 21043 Evidence Tracking & SHA-256 Custody Ledger**: Registers biological trace items (`Bloodstain`, `Hair`, `Saliva`, `TouchDNA`, `Tissue`, `Bone`, `Insect`, `PlantMaterial`) with 3D/GPS spatial coordinates, container seals, and cryptographic Chain of Custody logging ($H_k = \text{SHA256}(H_{k-1} \parallel \text{Transfer}_k)$).
+
+- **Biological Evidence Modalities**: `Bloodstain`, `Hair`, `Saliva`, `TouchDNA`, `Tissue`, `Bone`, `Insect`, `PlantMaterial`.
+- **Spatial Coordinates & Metadata**: 3D spatial $(X, Y, Z)$ or GPS $(\text{Lat}, \text{Lon})$, collection method, collector ID, preservation state.
+- **Cryptographic Custody Hashing**:
+  $$H_k = \text{SHA256}(H_{k-1} \parallel \text{Sender} \parallel \text{Receiver} \parallel \text{Timestamp})$$
+- **Software Implementation**: `backend/node/services/forensic/evidence/manager.py`.
+
+---
+
 ## Complete REST API Reference Matrix
 
 | Endpoint | Method | Request Payload Schema | Key Response Attributes |
@@ -473,6 +486,9 @@ graph TD
 | `/api/v1/forensic/graph/ingest-case` | `POST` | `IngestCaseGraphRequest` | `case_id`, `nodes_ingested`, `edges_ingested`, `graph_summary` |
 | `/api/v1/forensic/graph/traverse-path` | `POST` | `PathTraversalRequest` | `path_found`, `path_nodes`, `path_relations`, `distance` |
 | `/api/v1/forensic/graph/subgraph/{case_id}` | `GET` | None | `case_id`, `nodes`, `edges` |
+| `/api/v1/forensic/evidence/register` | `POST` | `RegisterEvidenceRequest` | `evidence_id`, `crime_scene_id`, `genesis_hash` |
+| `/api/v1/forensic/evidence/transfer-custody` | `POST` | `TransferCustodyRequest` | `evidence_id`, `transfer_id`, `current_hash` |
+| `/api/v1/forensic/evidence/audit-chain/{evidence_id}` | `GET` | None | `evidence_id`, `chain_intact`, `total_transfers`, `latest_custodian` |
 | `/api/v1/health/ready` | `GET` | None | `status`, `subsystems`, `audit_chain_intact` |
 | `/api/v1/health/live` | `GET` | None | `status`, `timestamp` |
 | `/api/v1/health/metrics` | `GET` | None | `uptime_seconds`, `audit_chain_block_count`, `memory_footprint_mb` |
@@ -504,9 +520,10 @@ The entire FORENZA software surface is validated using automated Pytest suites.
 | `test_toxicology.py` | Forensic Toxicology Engine | 6 | ~1.76s | 100% (6/6) | Quantitative drug screening, U_95% uncertainty, Widmark BAC, PMR ratio |
 | `test_serology.py` | Forensic Serology Engine | 5 | ~1.63s | 100% (5/5) | ABO/Rh blood groups, Lewis secretor status, Serology+DNA LR fusion |
 | `test_graph.py` | Forensic Knowledge Graph | 6 | ~2.09s | 100% (6/6) | Directed property graph, BFS path traversal, case subgraph extraction |
+| `test_evidence.py` | Crime Scene Evidence Subsystem | 6 | ~1.63s | 100% (6/6) | Evidence registration, spatial coords, SHA-256 custody ledger |
 | `test_federated.py` | Multi-Node Federated Network | 6 | ~1.48s | 100% (6/6) | PeerRegistry heartbeat, NodeIdentity, Orchestrator distributed query |
 | `test_forensic_routes.py` | FastAPI Endpoint Integration | 7 | ~1.69s | 100% (7/7) | POST /lr, POST /kinship, POST /validate, Pydantic v2 rejection |
-| **Master Integrated Suite** | **Complete System Surface** | **126** | **3.25s** | **100% (126/126)** | **Comprehensive Statistical & Integration Verification** |
+| **Master Integrated Suite** | **Complete System Surface** | **132** | **3.40s** | **100% (132/132)** | **Comprehensive Statistical & Integration Verification** |
 
 ---
 

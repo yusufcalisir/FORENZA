@@ -281,6 +281,15 @@ try:
 except Exception as _graph_import_err:
     logger.warning(f"[boot] Graph router not loaded: {_graph_import_err}")
 
+# --- Crime Scene Biological Evidence Router ---
+try:
+    from app.api.evidence_routes import router as evidence_router
+    app.include_router(evidence_router, prefix="/api/v1")
+    logger.info("[boot] Crime Scene Evidence API router registered at /api/v1/forensic/evidence")
+except Exception as _evid_import_err:
+    logger.warning(f"[boot] Evidence router not loaded: {_evid_import_err}")
+
+
 
 
 

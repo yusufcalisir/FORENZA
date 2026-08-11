@@ -372,6 +372,23 @@ The geodesic distance $d(u,v)$ between evidence node $u \in V$ and person/scene 
 
 $$d(u,v) = \min \{ k \mid (A^k)_{uv} > 0 \}$$
 
+---
+
+## 20. Crime Scene Evidence Spatial Coordinate Transformation & Cryptographic Chain of Custody Hashing
+
+### 20.1 Spatial Euclidean Distance ($d_{\text{spatial}}$)
+For two biological evidence items $E_A, E_B$ recovered at 3D spatial coordinates $(x_A, y_A, z_A)$ and $(x_B, y_B, z_B)$ within a crime scene:
+
+$$d_{\text{spatial}}(E_A, E_B) = \sqrt{(x_A - x_B)^2 + (y_A - y_B)^2 + (z_A - z_B)^2}$$
+
+### 20.2 Cryptographic Chain of Custody Hash Ledger ($H_k$)
+For custody transfer step $k \ge 1$ with previous ledger hash $H_{k-1}$, sender $S_k$, receiver $R_k$, and UTC timestamp $t_k$:
+
+$$H_0 = \text{SHA-256}(\text{EvidenceID} \parallel \text{SceneID} \parallel \text{CollectorID} \parallel \text{SealCode} \parallel t_0)$$
+
+$$H_k = \text{SHA-256}(H_{k-1} \parallel S_k \parallel R_k \parallel \text{Reason}_k \parallel t_k)$$
+
+
 
 
 

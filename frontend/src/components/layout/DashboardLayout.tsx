@@ -9,6 +9,7 @@ import {
     FlaskConical,
     ShieldCheck,
     GitGraph,
+    LayoutDashboard,
     Activity,
     ChevronLeft,
     ChevronRight,
@@ -23,10 +24,10 @@ import { useIngestStore } from "@/store/ingestStore";
 
 /* ── Navigation Items ── */
 const NAV_ITEMS = [
+    { id: "dashboard", label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { id: "analysis", label: "Analysis Hub", href: "/analysis", icon: FlaskConical },
     { id: "investigation", label: "Knowledge Graph", href: "/investigation", icon: GitGraph },
     { id: "database", label: "DNA Database", href: "/database", icon: Database },
-    { id: "nodes", label: "Federated Network", href: "/nodes", icon: Network },
     { id: "audit", label: "ISO Audit Log", href: "/audit", icon: ShieldCheck },
 ] as const;
 

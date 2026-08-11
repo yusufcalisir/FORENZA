@@ -26,7 +26,7 @@ export default function LaunchDemoButton({
     };
 
     const handleTransitionComplete = () => {
-        router.push("/analysis");
+        router.push("/dashboard");
     };
 
     return (

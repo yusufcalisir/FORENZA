@@ -210,5 +210,32 @@ $$\text{Status}(AM_i, PM_j) = \begin{cases}
 \text{INCONCLUSIVE} & \text{otherwise}
 \end{cases}$$
 
+---
+
+## 11. Human Identification (HID) Multi-Modal Joint Likelihood Ratio
+
+### 11.1 Joint Likelihood Ratio Product Rule
+For unlinked genomic markers across independent modalities (Autosomal STR, Y-STR, mtDNA, and Phenotype SNPs) for unidentified human remains $R$ and candidate $C$:
+
+$$LR_{\text{joint}} = LR_{\text{Autosomal STR}} \cdot LR_{\text{Y-STR}} \cdot LR_{\text{mtDNA}} \cdot LR_{\text{SNP}}$$
+
+Assuming logarithmic additivity:
+
+$$\log_{10}(LR_{\text{joint}}) = \log_{10}(LR_{\text{STR}}) + \log_{10}(LR_{\text{Y-STR}}) + \log_{10}(LR_{\text{mtDNA}}) + \log_{10}(LR_{\text{SNP}})$$
+
+### 11.2 Skeletal Amplicon Degradation Index
+Let $RFU_{\text{short}}$ be the average peak height for short locus amplicons (<200bp) and $RFU_{\text{long}}$ be the average peak height for long locus amplicons (>300bp: FGA, D18S51, D21S11):
+
+$$DI_{\text{skeletal}} = \frac{RFU_{\text{short}}}{RFU_{\text{long}}}$$
+
+Risk classification:
+
+$$\text{Risk}_{\text{dropout}} = \begin{cases} 
+\text{HIGH (MiniSTR Recommended)} & \text{if } DI_{\text{skeletal}} \ge 2.50 \\
+\text{MODERATE (Partial Long Loci Dropout)} & \text{if } 1.25 \le DI_{\text{skeletal}} < 2.50 \\
+\text{LOW (Standard Multiplex Protocol)} & \text{if } DI_{\text{skeletal}} < 1.25
+\end{cases}$$
+
+
 
 

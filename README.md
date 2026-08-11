@@ -10,7 +10,7 @@
   <a href="#-probabilistic-genotyping-engine"><img src="https://img.shields.io/badge/Genotyping-Metropolis--Hastings%20MCMC-orange?style=flat-square" /></a>
   <a href="#-hirisplex-s-phenotyping--ancestry"><img src="https://img.shields.io/badge/Phenotyping-HIrisPlex--S%20%2B%20BGA-purple?style=flat-square" /></a>
   <a href="#-cryptographic-ledger--zkp"><img src="https://img.shields.io/badge/Privacy-ZKP%20Circom%20%2B%20Polygon-black?style=flat-square" /></a>
-  <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/Tests-78%20Passed%20(100%25)-brightgreen?style=flat-square" /></a>
+  <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/Tests-82%20Passed%20(100%25)-brightgreen?style=flat-square" /></a>
 </p>
 
 ---
@@ -291,6 +291,8 @@ Ensures cryptographic privacy and immutable chain-of-custody compliance.
 | `/api/v1/forensic/dna/mtdna` | `POST` | `MtDnaMatchRequest` | `match_status`, `differing_positions_count`, `maternal_lineage_verdict` |
 | `/api/v1/forensic/dvi/missing-person/search` | `POST` | `MissingPersonSearchRequest` | `query_id`, `top_candidate_hits`, `search_summary` |
 | `/api/v1/forensic/dvi/reconcile` | `POST` | `DviReconcileRequest` | `disaster_event_id`, `confirmed_identifications_count`, `reconciliation_matrix` |
+| `/api/v1/forensic/hid/identify` | `POST` | `HumanIdentifyRequest` | `remains_id`, `joint_lr`, `top_candidate_hits`, `hid_summary` |
+| `/api/v1/forensic/hid/degradation-audit` | `POST` | `DegradationAuditRequest` | `degradation_index`, `is_lcn_sample`, `recommended_amplification_strategy` |
 | `/api/v1/health/ready` | `GET` | None | `status`, `subsystems`, `audit_chain_intact` |
 | `/api/v1/health/live` | `GET` | None | `status`, `timestamp` |
 | `/api/v1/health/metrics` | `GET` | None | `uptime_seconds`, `audit_chain_block_count`, `memory_footprint_mb` |
@@ -453,9 +455,10 @@ python -m pytest backend/node/services/forensic/ backend/app/api/test_forensic_r
 | `test_end_to_end.py` | Master E2E Pipeline Verification | 4 | ~1.60s | 100% (4/4) | Multi-phase integration, health probes, HMAC integrity verification |
 | `test_lineage_dna.py` | Expanded Lineage DNA Forensics | 7 | ~1.80s | 100% (7/7) | Y-STR Clopper-Pearson 95% CI, X-STR linkage KI_X, mtDNA rCRS |
 | `test_dvi.py` | Missing Persons & Interpol DVI | 4 | ~1.44s | 100% (4/4) | Pedigree candidate ranking, N x M AM/PM identification matrix |
+| `test_hid.py` | Human Identification (HID) | 4 | ~1.87s | 100% (4/4) | Multi-modal joint LR synthesis, skeletal degradation audit |
 | `test_federated.py` | Multi-Node Federated Network | 6 | ~1.48s | 100% (6/6) | PeerRegistry heartbeat, NodeIdentity, Orchestrator distributed query |
 | `test_forensic_routes.py` | FastAPI Endpoint Integration | 7 | ~1.69s | 100% (7/7) | POST /lr, POST /kinship, POST /validate, Pydantic v2 rejection |
-| **Complete System Suite** | **Integrated System Surface** | **78** | **2.80s** | **100% (78/78)** | **Comprehensive Statistical & Integration Verification** |
+| **Complete System Suite** | **Integrated System Surface** | **82** | **3.43s** | **100% (82/82)** | **Comprehensive Statistical & Integration Verification** |
 
 ---
 

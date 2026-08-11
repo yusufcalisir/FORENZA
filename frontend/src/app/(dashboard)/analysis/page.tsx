@@ -16,7 +16,8 @@ import ProbabilisticGenotypingPanel from "@/components/analysis/ProbabilisticGen
 import ValidationLabPanel from "@/components/analysis/ValidationLabPanel";
 import LineageDnaPanel from "@/components/analysis/LineageDnaPanel";
 import DviPanel from "@/components/analysis/DviPanel";
-import { Activity, UserCheck } from "lucide-react";
+import HumanIdPanel from "@/components/analysis/HumanIdPanel";
+import { Activity, UserCheck, Binary } from "lucide-react";
 import { useIngestStore } from "@/store/ingestStore";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -71,7 +72,7 @@ interface AnalysisData {
     tx_hash?: string;
 }
 
-type TabId = "statistical" | "probabilistic" | "relationship" | "bayesian" | "validation" | "lineage" | "dvi";
+type TabId = "statistical" | "probabilistic" | "relationship" | "bayesian" | "validation" | "lineage" | "dvi" | "hid";
 
 // ─── API ─────────────────────────────────────────────────────────────────────
 
@@ -555,6 +556,14 @@ export default function AnalysisPage() {
                     onClick={setActiveTab}
                     badge="INTERPOL"
                 />
+                <TabButton
+                    id="hid"
+                    label="Human Identification (HID)"
+                    icon={Binary}
+                    activeTab={activeTab}
+                    onClick={setActiveTab}
+                    badge="MULTI-MODAL"
+                />
             </div>
 
             {/* ── Tab Content ── */}
@@ -829,6 +838,18 @@ export default function AnalysisPage() {
                         transition={{ duration: 0.2 }}
                     >
                         <DviPanel />
+                    </motion.div>
+                )}
+
+                {activeTab === "hid" && (
+                    <motion.div
+                        key="hid"
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -6 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        <HumanIdPanel />
                     </motion.div>
                 )}
             </AnimatePresence>

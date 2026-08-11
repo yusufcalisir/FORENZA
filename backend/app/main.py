@@ -209,6 +209,15 @@ try:
 except Exception as _dvi_import_err:
     logger.warning(f"[boot] DVI router not loaded: {_dvi_import_err}")
 
+# --- Human Identification (HID) Router ---
+try:
+    from app.api.hid_routes import router as hid_router
+    app.include_router(hid_router, prefix="/api/v1")
+    logger.info("[boot] Human Identification API router registered at /api/v1/forensic/hid")
+except Exception as _hid_import_err:
+    logger.warning(f"[boot] HID router not loaded: {_hid_import_err}")
+
+
 
 
 

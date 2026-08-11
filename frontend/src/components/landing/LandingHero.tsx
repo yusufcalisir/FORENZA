@@ -55,7 +55,7 @@ export default function LandingHero() {
     };
 
     return (
-        <section className="relative min-h-[90vh] lg:min-h-screen flex flex-col items-center justify-between overflow-hidden px-4 pt-20 pb-8">
+        <section className="relative min-h-[100dvh] lg:min-h-screen flex flex-col items-center justify-between overflow-hidden px-4 pt-16 sm:pt-20 pb-6 sm:pb-8">
             {/* Background mesh / grid */}
             <div className="absolute inset-0 pointer-events-none select-none">
                 {/* Gradient orbs */}
@@ -74,44 +74,44 @@ export default function LandingHero() {
 
             <div className="my-auto relative z-10 mx-auto max-w-5xl text-center flex flex-col items-center">
                 {/* Eyebrow badge */}
-                <div className="inline-flex items-center gap-2 rounded-full border border-[#06B6D4]/30 bg-[#06B6D4]/5 px-4 py-1.5 mb-6 shadow-[0_0_20px_rgba(6,182,212,0.1)]">
-                    <Dna className="h-4 w-4 text-[#06B6D4]" />
-                    <span className="font-mono text-[10px] tracking-widest text-[#06B6D4] font-medium uppercase">
+                <div className="inline-flex items-center gap-2 rounded-full border border-[#06B6D4]/30 bg-[#06B6D4]/5 px-3.5 sm:px-4 py-1.5 mb-3 sm:mb-6 shadow-[0_0_20px_rgba(6,182,212,0.1)]">
+                    <Dna className="h-3.5 w-3.5 text-[#06B6D4]" />
+                    <span className="font-mono text-[9px] sm:text-[10px] tracking-widest text-[#06B6D4] font-medium uppercase">
                         ADVANCED FORENSIC DNA INTELLIGENCE PLATFORM
                     </span>
                 </div>
 
                 {/* Main headline */}
-                <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight text-tactical-text mb-4 leading-tight">
+                <h1 className="text-3xl sm:text-5xl lg:text-7xl font-bold tracking-tight text-tactical-text mb-3 sm:mb-4 leading-tight">
                     Forensic DNA Profiling{" "}
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#22C55E] via-[#06B6D4] to-[#8B5CF6]">
                         Redefined
                     </span>
                     <br />
-                    <span className="text-2xl sm:text-3xl lg:text-5xl font-normal text-tactical-text-muted">
+                    <span className="text-xl sm:text-3xl lg:text-5xl font-normal text-tactical-text-muted">
                         by Statistical Rigor
                     </span>
                 </h1>
 
                 {/* Subheading */}
-                <p className="max-w-2xl mx-auto text-sm sm:text-base text-tactical-text-muted mb-6 sm:mb-8 leading-relaxed font-light">
+                <p className="max-w-xl sm:max-w-2xl mx-auto text-xs sm:text-base text-tactical-text-muted mb-4 sm:mb-8 leading-relaxed font-light">
                     VANTAGE-STR combines likelihood ratio STR analysis, generative phenotype reconstruction,
                     and zero-knowledge cryptographic verification with immutable blockchain chain of custody
                     into a single tactical intelligence platform.
                 </p>
 
                 {/* 4 Metrics Cards - Always ON TOP of the buttons on ALL screens */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3 max-w-4xl w-full mx-auto mb-6 sm:mb-8">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 max-w-4xl w-full mx-auto mb-4 sm:mb-8">
                     {METRICS.map((m) => (
                         <div
                             key={m.label}
-                            className="rounded-xl border border-tactical-border bg-tactical-surface/50 backdrop-blur-sm px-3 sm:px-5 py-3 sm:py-4 flex flex-col items-center justify-center gap-1 hover:border-tactical-border/80 transition-colors shadow-lg"
+                            className="rounded-xl border border-tactical-border bg-tactical-surface/50 backdrop-blur-sm px-2.5 sm:px-5 py-2.5 sm:py-4 flex flex-col items-center justify-center gap-0.5 sm:gap-1 hover:border-tactical-border/80 transition-colors shadow-lg"
                         >
                             <span
-                                className="font-mono text-xl sm:text-3xl font-bold tabular-nums"
+                                className="font-mono text-lg sm:text-3xl font-bold tabular-nums"
                                 style={{ color: m.color }}
                             >
-                                {m.prefix && <span className="text-sm sm:text-base">{m.prefix}</span>}
+                                {m.prefix && <span className="text-xs sm:text-base">{m.prefix}</span>}
                                 <CountUp target={m.value} suffix={m.suffix} />
                             </span>
                             <span className="font-mono text-[8px] sm:text-[9px] tracking-widest text-tactical-text-dim uppercase text-center leading-tight">
@@ -121,16 +121,15 @@ export default function LandingHero() {
                     ))}
                 </div>
 
-                {/* CTAs - Always BELOW the 4 cards with perfect height & alignment parity */}
-                <div className="flex flex-row items-center justify-center gap-2.5 sm:gap-4 w-full max-w-sm sm:max-w-none">
+                {/* CTAs - Single LaunchDemoButton instance with equal height & alignment parity */}
+                <div className="flex flex-row items-center justify-center gap-2 sm:gap-4 w-full max-w-xs sm:max-w-none">
                     <div className="flex-1 sm:flex-none">
-                        <LaunchDemoButton size="md" className="w-full sm:w-auto hidden sm:inline-flex" />
-                        <LaunchDemoButton size="sm" className="w-full sm:hidden" />
+                        <LaunchDemoButton size="md" className="w-full sm:w-auto" />
                     </div>
                     <a
                         href="#bio-engine"
                         onClick={scrollToBioEngine}
-                        className="flex-1 sm:flex-none flex items-center justify-center rounded-xl border border-tactical-border bg-tactical-surface/80 backdrop-blur-md px-3.5 sm:px-6 py-2 sm:py-2.5 font-mono text-[10px] sm:text-xs font-medium tracking-wide text-tactical-text-muted hover:text-white hover:border-[#06B6D4]/50 hover:bg-tactical-surface-elevated transition-all duration-200 whitespace-nowrap"
+                        className="flex-1 sm:flex-none flex items-center justify-center rounded-xl border border-tactical-border bg-tactical-surface/80 backdrop-blur-md px-4 sm:px-8 py-2.5 sm:py-3.5 font-mono text-xs font-medium tracking-wide text-tactical-text-muted hover:text-white hover:border-[#06B6D4]/50 hover:bg-tactical-surface-elevated transition-all duration-200 whitespace-nowrap"
                     >
                         <span>Explore Bio-Engine</span>
                     </a>

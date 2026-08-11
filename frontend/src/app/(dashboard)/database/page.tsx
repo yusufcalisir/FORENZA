@@ -32,9 +32,9 @@ interface ProfileRecord {
 // ─── Mock Data Generator ─────────────────────────────────────────────────────
 
 const NODES = [
-    "EUROPOL-NL", "BKA-DE", "NCA-UK", "FBI-US-DC", "NPA-JP",
-    "SAPS-ZA", "PFA-AR", "CBI-IN", "KNPA-KR", "DGPN-FR",
-    "RCMP-CA", "AFP-AU", "INTERPOL-EU",
+    "FORENSIC-LAB-ALPHA", "DISTRICT-DNA-LAB-01", "CENTRAL-GENOMICS-NODE",
+    "MOBILE-EVIDENCE-UNIT-04", "CRIME-SCENE-UNIT-07", "NATIONAL-REFERENCE-LAB",
+    "REGIONAL-GENOMICS-HUB", "PATHOLOGY-UNIT-03", "TRACE-EVIDENCE-LAB",
 ];
 
 function seededRandom(seed: number): () => number {

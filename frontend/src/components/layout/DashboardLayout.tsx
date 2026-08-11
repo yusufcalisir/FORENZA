@@ -8,6 +8,7 @@ import {
     Database,
     FlaskConical,
     ShieldCheck,
+    GitGraph,
     Activity,
     ChevronLeft,
     ChevronRight,
@@ -22,10 +23,11 @@ import { useIngestStore } from "@/store/ingestStore";
 
 /* ── Navigation Items ── */
 const NAV_ITEMS = [
-    { id: "nodes", label: "Nodes", href: "/nodes", icon: Network },
-    { id: "database", label: "Database", href: "/database", icon: Database },
-    { id: "analysis", label: "Analysis", href: "/analysis", icon: FlaskConical },
-    { id: "audit", label: "Audit Log", href: "/audit", icon: ShieldCheck },
+    { id: "analysis", label: "Analysis Hub", href: "/analysis", icon: FlaskConical },
+    { id: "investigation", label: "Knowledge Graph", href: "/investigation", icon: GitGraph },
+    { id: "database", label: "DNA Database", href: "/database", icon: Database },
+    { id: "nodes", label: "Federated Network", href: "/nodes", icon: Network },
+    { id: "audit", label: "ISO Audit Log", href: "/audit", icon: ShieldCheck },
 ] as const;
 
 /* ── Mock network data ── */
@@ -38,17 +40,10 @@ export default function DashboardLayout({
     children: React.ReactNode;
 }) {
     const pathname = usePathname();
-    const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
+    const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-    // Check ingest state
-    const isValid = useIngestStore((s) => s.isValid);
-
-    // Filter items
-    const visibleNavItems = NAV_ITEMS.filter(item => {
-        if (item.id === "analysis") return isValid;
-        return true;
-    });
+    const visibleNavItems = NAV_ITEMS;
 
     return (
         <div className="flex min-h-screen lg:h-screen lg:overflow-hidden bg-tactical-bg text-tactical-text">
@@ -122,7 +117,7 @@ export default function DashboardLayout({
                         </div>
                         {!sidebarCollapsed && (
                             <span className="font-data text-xs font-semibold tracking-widest text-tactical-primary whitespace-nowrap">
-                                VNT-STR
+                                FORENZA OS
                             </span>
                         )}
                     </div>

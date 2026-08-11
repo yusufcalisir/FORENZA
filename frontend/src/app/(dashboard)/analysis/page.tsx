@@ -448,6 +448,23 @@ export default function AnalysisPage() {
                     </div>
                 </div>
                 <div className="flex items-center justify-between sm:justify-end gap-2 border-t border-tactical-border sm:border-t-0 pt-2 sm:pt-0">
+                    {/* Quick Preset Buttons */}
+                    <div className="flex items-center gap-1.5 border-r border-tactical-border/60 pr-2 mr-1">
+                        <span className="font-data text-[7px] text-zinc-500 uppercase font-bold hidden md:inline">Sample Cases:</span>
+                        <button
+                            onClick={() => useIngestStore.getState().loadPresetProfile("test-profile-eu")}
+                            className="px-2 py-0.5 rounded text-[8px] font-mono bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/20 transition-all"
+                        >
+                            EU Reference
+                        </button>
+                        <button
+                            onClick={() => useIngestStore.getState().loadPresetProfile("test-profile-aa")}
+                            className="px-2 py-0.5 rounded text-[8px] font-mono bg-purple-500/10 border border-purple-500/30 text-purple-300 hover:bg-purple-500/20 transition-all"
+                        >
+                            AA Reference
+                        </button>
+                    </div>
+
                     <button
                         onClick={useIngestStore((s) => s.clear)}
                         className="flex items-center gap-1 px-2 py-1 rounded border border-tactical-danger/30 hover:border-tactical-danger text-tactical-danger/70 hover:text-tactical-danger transition-all"
@@ -510,159 +527,115 @@ export default function AnalysisPage() {
                 />
             )}
 
-            {/* ── Tab Switcher ── */}
-            <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar sm:overflow-visible sm:pb-0">
-                <TabButton
-                    id="statistical"
-                    label="Statistical Analysis"
-                    icon={BarChart3}
-                    activeTab={activeTab}
-                    onClick={setActiveTab}
-                />
-                <TabButton
-                    id="probabilistic"
-                    label="Probabilistic MCMC"
-                    icon={Activity}
-                    activeTab={activeTab}
-                    onClick={setActiveTab}
-                    badge="SWGDAM"
-                />
-                <TabButton
-                    id="relationship"
-                    label="Relationship Mapping"
-                    icon={GitBranch}
-                    activeTab={activeTab}
-                    onClick={setActiveTab}
-                    badge={kinship && kinship.relationship_type !== "UNRELATED" ? "HIT" : undefined}
-                />
-                <TabButton
-                    id="bayesian"
-                    label="Bayesian Inference"
-                    icon={Brain}
-                    activeTab={activeTab}
-                    onClick={setActiveTab}
-                    badge={analysis && analysis.degradation_index > 0.3 ? "⚠" : undefined}
-                />
-                <TabButton
-                    id="validation"
-                    label="Validation Lab"
-                    icon={FlaskConical}
-                    activeTab={activeTab}
-                    onClick={setActiveTab}
-                    badge="5K PAIRS"
-                />
-                <TabButton
-                    id="lineage"
-                    label="Lineage DNA (Y/X/mt)"
-                    icon={Dna}
-                    activeTab={activeTab}
-                    onClick={setActiveTab}
-                    badge="Y/X/mt"
-                />
-                <TabButton
-                    id="dvi"
-                    label="Missing Persons & DVI"
-                    icon={UserCheck}
-                    activeTab={activeTab}
-                    onClick={setActiveTab}
-                    badge="INTERPOL"
-                />
-                <TabButton
-                    id="hid"
-                    label="Human Identification (HID)"
-                    icon={Binary}
-                    activeTab={activeTab}
-                    onClick={setActiveTab}
-                    badge="MULTI-MODAL"
-                />
-                <TabButton
-                    id="anthropology"
-                    label="Forensic Anthropology"
-                    icon={Bone}
-                    activeTab={activeTab}
-                    onClick={setActiveTab}
-                    badge="OSTEOLOGY"
-                />
-                <TabButton
-                    id="entomology"
-                    label="Forensic Entomology"
-                    icon={Bug}
-                    activeTab={activeTab}
-                    onClick={setActiveTab}
-                    badge="PMI-ADH"
-                />
-                <TabButton
-                    id="botany"
-                    label="Forensic Botany"
-                    icon={Leaf}
-                    activeTab={activeTab}
-                    onClick={setActiveTab}
-                    badge="PALYNOLOGY"
-                />
-                <TabButton
-                    id="microbiology"
-                    label="Forensic Microbiology"
-                    icon={Layers}
-                    activeTab={activeTab}
-                    onClick={setActiveTab}
-                    badge="16S-rRNA"
-                />
-                <TabButton
-                    id="fluid"
-                    label="Body Fluid Identification"
-                    icon={Droplet}
-                    activeTab={activeTab}
-                    onClick={setActiveTab}
-                    badge="mRNA-EXPR"
-                />
-                <TabButton
-                    id="toxicology"
-                    label="Forensic Toxicology"
-                    icon={Pill}
-                    activeTab={activeTab}
-                    onClick={setActiveTab}
-                    badge="ISO-17025"
-                />
-                <TabButton
-                    id="serology"
-                    label="Forensic Serology"
-                    icon={Syringe}
-                    activeTab={activeTab}
-                    onClick={setActiveTab}
-                    badge="ABO-Rh"
-                />
-                <TabButton
-                    id="evidence"
-                    label="Crime Scene Evidence"
-                    icon={PackageCheck}
-                    activeTab={activeTab}
-                    onClick={setActiveTab}
-                    badge="ISO-21043"
-                />
-                <TabButton
-                    id="bpa"
-                    label="Image Analysis (BPA)"
-                    icon={Eye}
-                    activeTab={activeTab}
-                    onClick={setActiveTab}
-                    badge="IABPA"
-                />
-                <TabButton
-                    id="microscopy"
-                    label="Microscopy Intelligence"
-                    icon={Microscope}
-                    activeTab={activeTab}
-                    onClick={setActiveTab}
-                    badge="SWGMAT"
-                />
-                <TabButton
-                    id="touch"
-                    label="Touch DNA & Low-Template"
-                    icon={Fingerprint}
-                    activeTab={activeTab}
-                    onClick={setActiveTab}
-                    badge="LTDNA"
-                />
+            {/* ── Subsystem Category Group Selector ── */}
+            <div className="space-y-3">
+                <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar border-b border-tactical-border/60">
+                    <button
+                        onClick={() => {
+                            if (!["statistical", "probabilistic", "relationship", "bayesian", "lineage", "dvi", "hid", "validation"].includes(activeTab)) {
+                                setActiveTab("statistical");
+                            }
+                        }}
+                        className={`px-3.5 py-2 rounded-t-lg font-mono text-xs font-bold transition-all border-b-2 flex items-center gap-2 ${
+                            ["statistical", "probabilistic", "relationship", "bayesian", "lineage", "dvi", "hid", "validation"].includes(activeTab)
+                                ? "border-cyan-400 text-cyan-300 bg-cyan-500/10"
+                                : "border-transparent text-tactical-text-muted hover:text-tactical-text hover:bg-tactical-surface-elevated"
+                        }`}
+                    >
+                        <Dna className="w-3.5 h-3.5" />
+                        <span>Genomics & Kinship</span>
+                    </button>
+
+                    <button
+                        onClick={() => {
+                            if (!["anthropology", "bpa", "microscopy"].includes(activeTab)) {
+                                setActiveTab("anthropology");
+                            }
+                        }}
+                        className={`px-3.5 py-2 rounded-t-lg font-mono text-xs font-bold transition-all border-b-2 flex items-center gap-2 ${
+                            ["anthropology", "bpa", "microscopy"].includes(activeTab)
+                                ? "border-purple-400 text-purple-300 bg-purple-500/10"
+                                : "border-transparent text-tactical-text-muted hover:text-tactical-text hover:bg-tactical-surface-elevated"
+                        }`}
+                    >
+                        <Eye className="w-3.5 h-3.5" />
+                        <span>Phenotype & Microscopy</span>
+                    </button>
+
+                    <button
+                        onClick={() => {
+                            if (!["entomology", "botany", "microbiology", "fluid"].includes(activeTab)) {
+                                setActiveTab("entomology");
+                            }
+                        }}
+                        className={`px-3.5 py-2 rounded-t-lg font-mono text-xs font-bold transition-all border-b-2 flex items-center gap-2 ${
+                            ["entomology", "botany", "microbiology", "fluid"].includes(activeTab)
+                                ? "border-emerald-400 text-emerald-300 bg-emerald-500/10"
+                                : "border-transparent text-tactical-text-muted hover:text-tactical-text hover:bg-tactical-surface-elevated"
+                        }`}
+                    >
+                        <Bug className="w-3.5 h-3.5" />
+                        <span>Environmental & Trace Bio</span>
+                    </button>
+
+                    <button
+                        onClick={() => {
+                            if (!["toxicology", "serology", "evidence", "touch"].includes(activeTab)) {
+                                setActiveTab("toxicology");
+                            }
+                        }}
+                        className={`px-3.5 py-2 rounded-t-lg font-mono text-xs font-bold transition-all border-b-2 flex items-center gap-2 ${
+                            ["toxicology", "serology", "evidence", "touch"].includes(activeTab)
+                                ? "border-amber-400 text-amber-300 bg-amber-500/10"
+                                : "border-transparent text-tactical-text-muted hover:text-tactical-text hover:bg-tactical-surface-elevated"
+                        }`}
+                    >
+                        <PackageCheck className="w-3.5 h-3.5" />
+                        <span>Pathology & Evidence Ledger</span>
+                    </button>
+                </div>
+
+                {/* Sub-Tab Navigation Bar */}
+                <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar sm:overflow-visible sm:pb-0">
+                    {["statistical", "probabilistic", "relationship", "bayesian", "lineage", "dvi", "hid", "validation"].includes(activeTab) && (
+                        <>
+                            <TabButton id="statistical" label="Statistical STR" icon={BarChart3} activeTab={activeTab} onClick={setActiveTab} />
+                            <TabButton id="probabilistic" label="Probabilistic MCMC" icon={Activity} activeTab={activeTab} onClick={setActiveTab} badge="SWGDAM" />
+                            <TabButton id="relationship" label="Kinship Mapping" icon={GitBranch} activeTab={activeTab} onClick={setActiveTab} badge={kinship && kinship.relationship_type !== "UNRELATED" ? "HIT" : undefined} />
+                            <TabButton id="bayesian" label="Bayesian Inference" icon={Brain} activeTab={activeTab} onClick={setActiveTab} badge={analysis && analysis.degradation_index > 0.3 ? "⚠" : undefined} />
+                            <TabButton id="lineage" label="Lineage DNA (Y/X/mt)" icon={Dna} activeTab={activeTab} onClick={setActiveTab} badge="Y/X/mt" />
+                            <TabButton id="dvi" label="Missing Persons & DVI" icon={UserCheck} activeTab={activeTab} onClick={setActiveTab} badge="DVI" />
+                            <TabButton id="hid" label="Human ID Degradation" icon={Binary} activeTab={activeTab} onClick={setActiveTab} badge="MULTI-MODAL" />
+                            <TabButton id="validation" label="Validation Lab" icon={FlaskConical} activeTab={activeTab} onClick={setActiveTab} badge="5K PAIRS" />
+                        </>
+                    )}
+
+                    {["anthropology", "bpa", "microscopy"].includes(activeTab) && (
+                        <>
+                            <TabButton id="anthropology" label="Forensic Anthropology" icon={Bone} activeTab={activeTab} onClick={setActiveTab} badge="OSTEOLOGY" />
+                            <TabButton id="bpa" label="Image Analysis (BPA)" icon={Eye} activeTab={activeTab} onClick={setActiveTab} badge="IABPA" />
+                            <TabButton id="microscopy" label="Microscopy Intelligence" icon={Microscope} activeTab={activeTab} onClick={setActiveTab} badge="SWGMAT" />
+                        </>
+                    )}
+
+                    {["entomology", "botany", "microbiology", "fluid"].includes(activeTab) && (
+                        <>
+                            <TabButton id="entomology" label="Forensic Entomology" icon={Bug} activeTab={activeTab} onClick={setActiveTab} badge="PMI-ADH" />
+                            <TabButton id="botany" label="Forensic Botany" icon={Leaf} activeTab={activeTab} onClick={setActiveTab} badge="PALYNOLOGY" />
+                            <TabButton id="microbiology" label="Forensic Microbiology" icon={Layers} activeTab={activeTab} onClick={setActiveTab} badge="16S-rRNA" />
+                            <TabButton id="fluid" label="Body Fluid (mRNA)" icon={Droplet} activeTab={activeTab} onClick={setActiveTab} badge="mRNA-EXPR" />
+                        </>
+                    )}
+
+                    {["toxicology", "serology", "evidence", "touch"].includes(activeTab) && (
+                        <>
+                            <TabButton id="toxicology" label="Forensic Toxicology" icon={Pill} activeTab={activeTab} onClick={setActiveTab} badge="ISO-17025" />
+                            <TabButton id="serology" label="Forensic Serology" icon={Syringe} activeTab={activeTab} onClick={setActiveTab} badge="ABO-Rh" />
+                            <TabButton id="evidence" label="Crime Scene Evidence" icon={PackageCheck} activeTab={activeTab} onClick={setActiveTab} badge="ISO-21043" />
+                            <TabButton id="touch" label="Touch DNA & Low-Template" icon={Fingerprint} activeTab={activeTab} onClick={setActiveTab} badge="LTDNA" />
+                        </>
+                    )}
+                </div>
             </div>
 
             {/* ── Tab Content ── */}

@@ -44,6 +44,10 @@ class FrequencyDatabase:
         self.default_population = default_population
         self.min_frequency = min_frequency
 
+    @property
+    def supported_populations(self) -> list:
+        return list(POPULATION_FREQUENCIES.keys())
+
     def get_frequency(self, locus_name: str, allele_value: float, population: Optional[str] = None) -> float:
         """Retrieves bounded frequency for a locus allele."""
         pop = population or self.default_population

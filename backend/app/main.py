@@ -161,6 +161,15 @@ try:
 except Exception as _fed_import_err:
     logger.warning(f"[boot] Federated router not loaded: {_fed_import_err}")
 
+# --- Population Genetics Router ---
+try:
+    from app.api.population_routes import router as population_router
+    app.include_router(population_router, prefix="/api/v1")
+    logger.info("[boot] Population genetics API router registered at /api/v1/forensic/population")
+except Exception as _pop_import_err:
+    logger.warning(f"[boot] Population router not loaded: {_pop_import_err}")
+
+
 
 
 # ═══════════════════════════════════════════════════════════════════════════════

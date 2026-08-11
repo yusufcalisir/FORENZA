@@ -1,0 +1,124 @@
+# PHASE 0.3 — Formal Mathematical Specification
+
+**Project:** FORENZA (Forensic Biology & DNA Intelligence Platform)  
+**Author:** Yusuf Çalışır  
+**Date:** August 2026  
+**Status:** Mathematical & Statistical Formalization  
+
+---
+
+## 1. Likelihood Ratio ($LR$) Formalism
+
+Let $E$ represent the observed forensic DNA evidence (allele calls or capillary electropherogram peak heights across $L$ loci). Let $H_p$ be the prosecution hypothesis and $H_d$ be the defense hypothesis.
+
+The total Likelihood Ratio across $L$ independent loci is the product of locus-specific LRs:
+
+$$LR = \frac{P(E \mid H_p)}{P(E \mid H_d)} = \prod_{l=1}^{L} LR_l = \prod_{l=1}^{L} \frac{P(E_l \mid H_p)}{P(E_l \mid H_d)}$$
+
+---
+
+## 2. Single-Source Genotype Olasılıkları & Substructure ($\theta$)
+
+### 2.1 Hardy-Weinberg Genotype Probabilities ($\theta = 0$)
+For a locus with allele $A_i$ of frequency $p_i$ and allele $A_j$ of frequency $p_j$:
+
+$$P(A_i A_i) = p_i^2$$
+
+$$P(A_i A_j) = 2 p_i p_j \quad (i \neq j)$$
+
+### 2.2 Balding-Nichols $\theta$-Correction (NRC II Recommendation 4.10b)
+To account for population substructure with coancestry coefficient $\theta$:
+
+#### Homozygote ($A_i A_i$):
+$$P(A_i A_i \mid \theta) = \frac{\left[2\theta + (1-\theta)p_i\right] \left[\theta + (1-\theta)p_i\right]}{(1+\theta)(1+2\theta)}$$
+
+#### Heterozygote ($A_i A_j$, $i \neq j$):
+$$P(A_i A_j \mid \theta) = \frac{2 \left[\theta + (1-\theta)p_i\right] \left[\theta + (1-\theta)p_j\right]}{(1+\theta)(1+2\theta)}$$
+
+---
+
+## 3. Kinship Index ($KI$) Formulations
+
+Let $G_m$ be the mother's genotype, $G_c$ be the child's genotype, and $G_f$ be the alleged father's genotype.
+
+### 3.1 Parent-Child Trio Index ($KI_{PC}$)
+
+$$KI_{PC} = \frac{P(G_c \mid G_m, G_f)}{P(G_c \mid G_m, \text{Unrelated})}$$
+
+Assuming alleles $G_m = \{A_i, A_j\}$, $G_c = \{A_i, A_k\}$, and $G_f = \{A_k, A_l\}$:
+
+* **Child inherits $A_k$ from alleged father:**
+  
+  $$KI_l = \frac{1}{2 p_k}$$
+
+* **With Balding-Nichols $\theta$-correction:**
+
+  $$KI_l(\theta) = \frac{1}{2 \left[\theta + (1-\theta)p_k\right]}$$
+
+### 3.2 Full-Sibling Index ($KI_{FS}$)
+Using Ito-Donnelly $k$-coefficients ($k_0 = 0.25, k_1 = 0.50, k_2 = 0.25$ for sharing 0, 1, or 2 alleles Identical By Descent):
+
+$$P(G_1, G_2 \mid \text{Full Sibs}) = k_0 P(G_1)P(G_2) + k_1 P(G_1, G_2 \mid \text{IBD}=1) + k_2 P(G_1, G_2 \mid \text{IBD}=2)$$
+
+$$KI_{FS} = \frac{P(G_1, G_2 \mid \text{Full Sibs})}{P(G_1) P(G_2)}$$
+
+---
+
+## 4. Stochastic Modeling: Dropout & Drop-in
+
+In low-template DNA analysis ($< 100\text{ pg}$), stochastic effects are modeled probabilistically:
+
+### 4.1 Dropout Probability ($P(D)$)
+Dropout probability $P(D)$ is modeled as a logistic function of peak height or DNA concentration $x$:
+
+$$P(D \mid x) = \frac{1}{1 + e^{\beta_0 + \beta_1 x}}$$
+
+Where $\beta_0, \beta_1$ are empirically calibrated parameters per locus.
+
+### 4.2 Drop-in Probability ($P(C)$)
+Drop-in is modeled as a Poisson process with rate parameter $\lambda_C$:
+
+$$P(C = k) = \frac{\lambda_C^k e^{-\lambda_C}}{k!}$$
+
+Drop-in allele height $h_c$ follows an exponential distribution:
+
+$$f(h_c) = \lambda_h e^{-\lambda_h (h_c - AT)}$$
+
+where $AT$ is the analytical threshold (e.g., 50 RFU).
+
+---
+
+## 5. Continuous Peak Height Model
+
+Let $h_{l,a}$ be the observed peak height for allele $a$ at locus $l$. The expected peak height $\mu_{l,a}$ is modeled based on mass fraction $w_k$ of contributor $k$, locus amplification efficiency $e_l$, and degradation slope $d_l$:
+
+$$\mu_{l,a} = e_l \sum_{k=1}^{K} w_k \cdot f_k(a) \cdot 10^{-d_l \cdot \text{size}(a)}$$
+
+Observed peak height $h_{l,a}$ follows a log-normal distribution centered at expected height $\mu_{l,a}$ with variance $\sigma^2$:
+
+$$\ln(h_{l,a}) \sim \mathcal{N}\left(\ln(\mu_{l,a}), \frac{\sigma^2}{\mu_{l,a}^\gamma}\right)$$
+
+where $\gamma$ is the peak height variance power parameter.
+
+### 5.1 Stutter Model ($S_{n-1}$)
+Expected $n-1$ stutter height $h_{\text{stutter}}$ for parent allele height $h_{\text{parent}}$:
+
+$$h_{\text{stutter}} = R_{l} \cdot h_{\text{parent}}$$
+
+where $R_{l}$ is the locus-specific linear stutter ratio slope.
+
+---
+
+## 6. MCMC & Uncertainty Quantification
+
+### 6.1 Posterior Distribution
+Using Metropolis-Hastings / MCMC sampling, parameter vector $\boldsymbol{\theta} = \{w_1, \dots, w_K, e_1, \dots, e_L, d_1, \dots, d_L, \sigma^2\}$ is sampled from the posterior distribution:
+
+$$P(\boldsymbol{\theta} \mid E) \propto P(E \mid \boldsymbol{\theta}) \cdot P(\boldsymbol{\theta})$$
+
+### 6.2 95% Highest Posterior Density (HPD) Interval
+The 95% HPD interval $[LR_{\text{low}}, LR_{\text{high}}]$ for the estimated $LR$ is calculated from the $M$ MCMC post-burn-in iterations:
+
+$$\int_{LR_{\text{low}}}^{LR_{\text{high}}} P(LR \mid E) \, dLR = 0.95$$
+
+The lower bound $LR_{\text{low}}$ is reported in court proceedings as the conservative statistical weight of evidence.

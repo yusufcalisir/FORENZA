@@ -185,6 +185,15 @@ try:
 except Exception as _batch_import_err:
     logger.warning(f"[boot] Batch router not loaded: {_batch_import_err}")
 
+# --- System Health & Diagnostics Router ---
+try:
+    from app.api.health_routes import router as health_router
+    app.include_router(health_router, prefix="/api/v1")
+    logger.info("[boot] System health API router registered at /api/v1/health")
+except Exception as _health_import_err:
+    logger.warning(f"[boot] Health router not loaded: {_health_import_err}")
+
+
 
 
 

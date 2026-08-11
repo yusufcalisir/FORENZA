@@ -10,7 +10,7 @@
   <a href="#-probabilistic-genotyping-engine"><img src="https://img.shields.io/badge/Genotyping-Metropolis--Hastings%20MCMC-orange?style=flat-square" /></a>
   <a href="#-hirisplex-s-phenotyping--ancestry"><img src="https://img.shields.io/badge/Phenotyping-HIrisPlex--S%20%2B%20BGA-purple?style=flat-square" /></a>
   <a href="#-cryptographic-ledger--zkp"><img src="https://img.shields.io/badge/Privacy-ZKP%20Circom%20%2B%20Polygon-black?style=flat-square" /></a>
-  <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/Tests-87%20Passed%20(100%25)-brightgreen?style=flat-square" /></a>
+  <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/Tests-92%20Passed%20(100%25)-brightgreen?style=flat-square" /></a>
 </p>
 
 ---
@@ -295,6 +295,8 @@ Ensures cryptographic privacy and immutable chain-of-custody compliance.
 | `/api/v1/forensic/hid/degradation-audit` | `POST` | `DegradationAuditRequest` | `degradation_index`, `is_lcn_sample`, `recommended_amplification_strategy` |
 | `/api/v1/forensic/anthropology/biological-profile` | `POST` | `BiologicalProfileRequest` | `estimated_sex`, `estimated_age_range`, `estimated_stature_cm`, `population_affinity` |
 | `/api/v1/forensic/anthropology/trauma-audit` | `POST` | `TraumaAuditRequest` | `sample_id`, `has_perimortem_trauma`, `observations`, `trauma_summary` |
+| `/api/v1/forensic/entomology/pmi` | `POST` | `EntomologyPmiRequest` | `species_name`, `required_adh`, `estimated_pmi_days`, `pmi_formatted_range` |
+| `/api/v1/forensic/entomology/succession` | `POST` | `SuccessionAuditRequest` | `sample_id`, `inferred_decomposition_stage`, `typical_timeframe_days`, `observed_families` |
 | `/api/v1/health/ready` | `GET` | None | `status`, `subsystems`, `audit_chain_intact` |
 | `/api/v1/health/live` | `GET` | None | `status`, `timestamp` |
 | `/api/v1/health/metrics` | `GET` | None | `uptime_seconds`, `audit_chain_block_count`, `memory_footprint_mb` |
@@ -459,9 +461,10 @@ python -m pytest backend/node/services/forensic/ backend/app/api/test_forensic_r
 | `test_dvi.py` | Missing Persons & Interpol DVI | 4 | ~1.44s | 100% (4/4) | Pedigree candidate ranking, N x M AM/PM identification matrix |
 | `test_hid.py` | Human Identification (HID) | 4 | ~1.87s | 100% (4/4) | Multi-modal joint LR synthesis, skeletal degradation audit |
 | `test_anthropology.py` | Forensic Anthropology | 5 | ~1.85s | 100% (5/5) | Trotter-Gleser stature regression, Suchey-Brooks age, trauma audit |
+| `test_entomology.py` | Forensic Entomology | 5 | ~1.89s | 100% (5/5) | ADH/ADD thermal development models, PMI_min estimation, succession |
 | `test_federated.py` | Multi-Node Federated Network | 6 | ~1.48s | 100% (6/6) | PeerRegistry heartbeat, NodeIdentity, Orchestrator distributed query |
 | `test_forensic_routes.py` | FastAPI Endpoint Integration | 7 | ~1.69s | 100% (7/7) | POST /lr, POST /kinship, POST /validate, Pydantic v2 rejection |
-| **Complete System Suite** | **Integrated System Surface** | **87** | **2.98s** | **100% (87/87)** | **Comprehensive Statistical & Integration Verification** |
+| **Complete System Suite** | **Integrated System Surface** | **92** | **2.76s** | **100% (92/92)** | **Comprehensive Statistical & Integration Verification** |
 
 ---
 

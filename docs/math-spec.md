@@ -262,6 +262,32 @@ $$\text{Affinity}_{\text{craniometric}} = \begin{cases}
 \text{Brachycephalic (Asian / Broad-Headed Affinity)} & \text{if } CI > 80.0
 \end{cases}$$
 
+---
+
+## 13. Forensic Entomology ADH Thermal Development Models
+
+### 13.1 Accumulated Degree Hours ($ADH$)
+For mean ambient temperature $T_{\text{ambient}}$ and species-specific base development threshold $T_{\text{base}}$:
+
+$$T_{\text{effective}} = \max(0, T_{\text{ambient}} - T_{\text{base}})$$
+
+Accumulated Degree Hours ($ADH$) over time $t$ (hours):
+
+$$ADH = \int_{0}^{t} (T(\tau) - T_{\text{base}}) \, d\tau \approx T_{\text{effective}} \cdot t$$
+
+### 13.2 Minimum Postmortem Interval ($PMI_{\text{min}}$)
+Given species development threshold $ADH_{\text{stage}}$ required to reach developmental stage $S$:
+
+$$PMI_{\text{min, hours}} = \frac{ADH_{\text{stage}}}{T_{\text{effective}}}$$
+
+$$PMI_{\text{min, days}} = \frac{PMI_{\text{min, hours}}}{24}$$
+
+Species base development thresholds ($T_{\text{base}}$):
+- *Calliphora vicina*: $T_{\text{base}} = 6.0^\circ\text{C}$
+- *Lucilia sericata*: $T_{\text{base}} = 9.0^\circ\text{C}$
+- *Sarcophaga carnaria*: $T_{\text{base}} = 8.0^\circ\text{C}$
+
+
 
 
 

@@ -225,6 +225,15 @@ try:
 except Exception as _anthro_import_err:
     logger.warning(f"[boot] Anthropology router not loaded: {_anthro_import_err}")
 
+# --- Forensic Entomology Router ---
+try:
+    from app.api.entomology_routes import router as entomology_router
+    app.include_router(entomology_router, prefix="/api/v1")
+    logger.info("[boot] Forensic Entomology API router registered at /api/v1/forensic/entomology")
+except Exception as _ento_import_err:
+    logger.warning(f"[boot] Entomology router not loaded: {_ento_import_err}")
+
+
 
 
 

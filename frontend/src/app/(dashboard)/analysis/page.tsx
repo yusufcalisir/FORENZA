@@ -18,7 +18,8 @@ import LineageDnaPanel from "@/components/analysis/LineageDnaPanel";
 import DviPanel from "@/components/analysis/DviPanel";
 import HumanIdPanel from "@/components/analysis/HumanIdPanel";
 import AnthropologyPanel from "@/components/analysis/AnthropologyPanel";
-import { Activity, UserCheck, Binary, Bone } from "lucide-react";
+import EntomologyPanel from "@/components/analysis/EntomologyPanel";
+import { Activity, UserCheck, Binary, Bone, Bug } from "lucide-react";
 import { useIngestStore } from "@/store/ingestStore";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -73,7 +74,7 @@ interface AnalysisData {
     tx_hash?: string;
 }
 
-type TabId = "statistical" | "probabilistic" | "relationship" | "bayesian" | "validation" | "lineage" | "dvi" | "hid" | "anthropology";
+type TabId = "statistical" | "probabilistic" | "relationship" | "bayesian" | "validation" | "lineage" | "dvi" | "hid" | "anthropology" | "entomology";
 
 // ─── API ─────────────────────────────────────────────────────────────────────
 
@@ -573,6 +574,14 @@ export default function AnalysisPage() {
                     onClick={setActiveTab}
                     badge="OSTEOLOGY"
                 />
+                <TabButton
+                    id="entomology"
+                    label="Forensic Entomology"
+                    icon={Bug}
+                    activeTab={activeTab}
+                    onClick={setActiveTab}
+                    badge="PMI-ADH"
+                />
             </div>
 
             {/* ── Tab Content ── */}
@@ -871,6 +880,18 @@ export default function AnalysisPage() {
                         transition={{ duration: 0.2 }}
                     >
                         <AnthropologyPanel />
+                    </motion.div>
+                )}
+
+                {activeTab === "entomology" && (
+                    <motion.div
+                        key="entomology"
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -6 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        <EntomologyPanel />
                     </motion.div>
                 )}
             </AnimatePresence>

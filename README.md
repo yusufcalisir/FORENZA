@@ -10,7 +10,7 @@
   <a href="#-probabilistic-genotyping-engine"><img src="https://img.shields.io/badge/Genotyping-Metropolis--Hastings%20MCMC-orange?style=flat-square" /></a>
   <a href="#-hirisplex-s-phenotyping--ancestry"><img src="https://img.shields.io/badge/Phenotyping-HIrisPlex--S%20%2B%20BGA-purple?style=flat-square" /></a>
   <a href="#-cryptographic-ledger--zkp"><img src="https://img.shields.io/badge/Privacy-ZKP%20Circom%20%2B%20Polygon-black?style=flat-square" /></a>
-  <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/Tests-54%20Passed%20(100%25)-brightgreen?style=flat-square" /></a>
+  <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/Tests-60%20Passed%20(100%25)-brightgreen?style=flat-square" /></a>
 </p>
 
 ---
@@ -283,6 +283,8 @@ Ensures cryptographic privacy and immutable chain-of-custody compliance.
 | `/api/v1/forensic/population/populations` | `GET` | None | `supported_populations`, `default_database_n`, `nrc2_recommendation` |
 | `/api/v1/forensic/population/frequency` | `POST` | `FrequencyBoundRequest` | `bounded_frequency`, `was_bounded`, `rarity_index`, `explanation` |
 | `/api/v1/forensic/population/fst` | `POST` | `FstDistanceRequest` | `fst_value`, `genetic_distance_neis`, `locus_fst_breakdown` |
+| `/api/v1/forensic/reports/generate` | `POST` | `ReportGenerateRequest` | `report_id`, `enfsi_verbal_scale`, `hpd_interval_95`, `compliance` |
+| `/api/v1/forensic/reports/audit` | `POST` | `AuditRequest` | `compliance_score`, `iso17025_status`, `checks`, `warnings` |
 | `/profile/ingest` | `POST` | `GenomicProfileIngest` | `decision` (ACCEPTED/QUARANTINED), `validity_score`, `anomaly_report` |
 | `/search/similarity` | `POST` | `SearchRequest` | Ranked list of profile similarity matches from Milvus |
 | `/profile/reconstruct/{id}` | `GET` | Query params | `ReconstructionResponse` (facial prompt & phenotype summary) |
@@ -437,9 +439,10 @@ python -m pytest backend/node/services/forensic/ backend/app/api/test_forensic_r
 | `test_validation.py` | Empirical Validation Lab | 8 | ~1.02s | 100% (8/8) | Seeded Pair Generator, Accuracy, FIR, FER, RMSE($\log_{10} LR$) |
 | `test_phenotyping.py` | DNA Phenotyping & Ancestry | 13 | ~1.54s | 100% (13/13) | IrisPlex eye, HIrisPlex hair, Fitzpatrick skin, 20-AIM Ancestry |
 | `test_population.py` | Population Genetics & Rare Variant | 10 | ~1.76s | 100% (10/10) | Wright's FST, Nei genetic distance, NRC II 5/2N bound, Dirichlet |
+| `test_reports.py` | Reporting & ISO 17025 Compliance | 6 | ~1.57s | 100% (6/6) | SWGDAM report compiler, ENFSI 7-tier scale, ISO 17025 auditor |
 | `test_federated.py` | Multi-Node Federated Network | 6 | ~1.48s | 100% (6/6) | PeerRegistry heartbeat, NodeIdentity, Orchestrator distributed query |
 | `test_forensic_routes.py` | FastAPI Endpoint Integration | 7 | ~1.69s | 100% (7/7) | POST /lr, POST /kinship, POST /validate, Pydantic v2 rejection |
-| **Complete System Suite** | **Integrated System Surface** | **54** | **2.00s** | **100% (54/54)** | **Comprehensive Statistical & Integration Verification** |
+| **Complete System Suite** | **Integrated System Surface** | **60** | **2.65s** | **100% (60/60)** | **Comprehensive Statistical & Integration Verification** |
 
 ---
 

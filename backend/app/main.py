@@ -169,6 +169,15 @@ try:
 except Exception as _pop_import_err:
     logger.warning(f"[boot] Population router not loaded: {_pop_import_err}")
 
+# --- Forensic Reporting & Compliance Router ---
+try:
+    from app.api.report_routes import router as report_router
+    app.include_router(report_router, prefix="/api/v1")
+    logger.info("[boot] Forensic reporting API router registered at /api/v1/forensic/reports")
+except Exception as _rep_import_err:
+    logger.warning(f"[boot] Report router not loaded: {_rep_import_err}")
+
+
 
 
 

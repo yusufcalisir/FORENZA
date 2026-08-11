@@ -122,3 +122,45 @@ The 95% HPD interval $[LR_{\text{low}}, LR_{\text{high}}]$ for the estimated $LR
 $$\int_{LR_{\text{low}}}^{LR_{\text{high}}} P(LR \mid E) \, dLR = 0.95$$
 
 The lower bound $LR_{\text{low}}$ is reported in court proceedings as the conservative statistical weight of evidence.
+
+---
+
+## 7. Population Genetics & Substructure Metrics
+
+### 7.1 Wright's Fixation Index ($F_{ST}$)
+To quantify population substructure differentiation between subpopulations $P_1$ and $P_2$:
+
+$$F_{ST} = \frac{H_T - H_S}{H_T}$$
+
+where $H_S = \frac{H_{S1} + H_{S2}}{2}$ is average subpopulation heterozygosity, and $H_T = 1 - \sum \bar{p}_i^2$ is total pooled population heterozygosity.
+
+Nei's standard genetic distance $D$ is calculated as:
+
+$$D = -\ln(1 - F_{ST})$$
+
+### 7.2 NRC II Recommendation 4.1 Rare Allele Bounding
+For rare or unobserved alleles in database of size $N$ individuals ($2N$ alleles):
+
+$$p_{\min} = \frac{5}{2N}$$
+
+If raw frequency $p < p_{\min}$, bounded frequency $p_{\text{bounded}} = p_{\min}$ is applied to prevent extreme overestimation of rarity.
+
+Dirichlet Laplace pseudo-count smoothing across $K$ allele categories with prior parameter $\alpha$:
+
+$$p_i = \frac{c_i + \alpha}{N_{\text{total}} + \alpha \cdot K}$$
+
+---
+
+## 8. ENFSI Evaluative Verbal Scale Mapping
+
+Continuous $LR$ and $\log_{10}(LR)$ values are mapped to the 7-tier ENFSI 2015 evaluative scale:
+
+$$V(LR) = \begin{cases} 
+\text{Extremely Strong Support for } H_p & \text{if } \log_{10}(LR) \ge 6 \\
+\text{Very Strong Support for } H_p & \text{if } 4 \le \log_{10}(LR) < 6 \\
+\text{Strong Support for } H_p & \text{if } 2 \le \log_{10}(LR) < 4 \\
+\text{Moderately Strong Support for } H_p & \text{if } 1 \le \log_{10}(LR) < 2 \\
+\text{Uninformative / Inconclusive} & \text{if } -1 < \log_{10}(LR) < 1 \\
+\text{Support for } H_d \text{ (Exclusion)} & \text{if } \log_{10}(LR) \le -1
+\end{cases}$$
+

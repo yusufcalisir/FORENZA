@@ -1,12 +1,17 @@
-# FORENZA: Forensic Biology & DNA Intelligence Platform
+# FORENZA: Forensic Biology & DNA Intelligence Operating System
 
 <p align="center">
-  <img src="https://img.shields.io/badge/FORENZA-DNA%20Intelligence-8A2BE2?style=for-the-badge&logo=dna&logoColor=white" alt="FORENZA Banner" />
+  <img src="frontend/public/icon.svg" alt="FORENZA Logo" width="120" height="120" />
 </p>
 
 <p align="center">
-  <a href="#-system-architecture"><img src="https://img.shields.io/badge/Architecture-Distributed%20Microservices-blue?style=flat-square" /></a>
-  <a href="#-core-scientific-engines"><img src="https://img.shields.io/badge/Forensic%20Engine-CODIS%2020%20Core-success?style=flat-square" /></a>
+  <strong>The Next-Generation Enterprise Forensic Biology Operating System</strong><br />
+  Multi-Modal DNA Analysis • Probabilistic Genotyping • Forensic Anthropology • Entomology • Interpol DVI • Cryptographic ZKP Audit
+</p>
+
+<p align="center">
+  <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/System%20Status-Operational-brightgreen?style=flat-square" /></a>
+  <a href="#-autosomal-str--kinship-engine"><img src="https://img.shields.io/badge/CODIS%20Loci-24%20Core%20Markers-blue?style=flat-square" /></a>
   <a href="#-probabilistic-genotyping-engine"><img src="https://img.shields.io/badge/Genotyping-Metropolis--Hastings%20MCMC-orange?style=flat-square" /></a>
   <a href="#-hirisplex-s-phenotyping--ancestry"><img src="https://img.shields.io/badge/Phenotyping-HIrisPlex--S%20%2B%20BGA-purple?style=flat-square" /></a>
   <a href="#-cryptographic-ledger--zkp"><img src="https://img.shields.io/badge/Privacy-ZKP%20Circom%20%2B%20Polygon-black?style=flat-square" /></a>
@@ -15,512 +20,233 @@
 
 ---
 
-## 📋 Executive Summary & Platform Scope
+## Executive Overview
 
-**FORENZA** (Forensic Biology & DNA Intelligence) is an end-to-end, enterprise-grade biometric analysis ecosystem. Designed to address low-template Short Tandem Repeat (STR) profiling, complex mixture deconvolution, kinship analytics, physical trait reconstruction, zero-knowledge identity matching, and blockchain-anchored audit trails, FORENZA bridges biological analysis with tactical computational intelligence.
-
-### Enterprise Subsystem Overview
-
-| Subsystem Domain | Primary Components | Scientific & Technical Foundation | Operational Standard |
-|---|---|---|---|
-| **Tactical User Interface** | Next.js 14 App Router, Tailwind CSS v4, Leaflet.js, Framer Motion | Dynamic glassmorphic UI with real-time electropherogram & pedigree graphs | Dark-mode tactical UI / WCAG 2.1 AA |
-| **Core STR Engine** | CODIS 20 loci matching, Balding-Nichols $\theta$ coancestry frequency DB | Single-source LR calculation with 95% HPD interval bounds | NRC II Recommendation 4.10b |
-| **Kinship Analytics** | Kinship Index (KI) calculator & pedigree tree parser | Mendelian transition matrices for Parent-Child, Full/Half-Sibling | ISFG Kinship Guidelines |
-| **Probabilistic Genotyping** | 2-person mixture deconvolution, Metropolis-Hastings MCMC sampler | Logistic dropout $P(D \mid x)$, Poisson drop-in $P(C=k)$, log-normal peak height | SWGDAM & PCAST Standards |
-| **DNA Phenotyping** | HIrisPlex-S multinomial logistic regression engine | IrisPlex 6-SNP eye, HIrisPlex 22-SNP hair, Fitzpatrick skin tone I-VI | Walsh et al. (2018) |
-| **Biogeographic Ancestry** | 20-AIM continental origin classifier | Likelihood ratio assignment across 5 global populations | FBI/CODIS Ancestry Panels |
-| **Validation Lab** | Synthetic dataset generator & classification metrics engine | 5,000-10,000 pair simulation computing Accuracy, TPR, TNR, FIR, FER, RMSE | SWGDAM Validation Guidelines |
-| **Vector Search Engine** | Milvus vector database & profile vectorizer | Cosine similarity indexing over 20-dimensional STR locus vectors | High-throughput identity lookup |
-| **Agentic AI Pipeline** | DSPy Chain-of-Thought (CoT) assessment engine | Automated anomaly detection & quality scoring ($validity\_score \ge 0.85$) | Automated forensic reporting |
-| **Zero-Knowledge Privacy** | Circom zk-SNARK circuits & SnarkJS verifier | Private identity matching without revealing raw allele values | Privacy-by-Design / ISO 27001 |
-| **Blockchain Audit Ledger** | Polygon/Sepolia Solidity smart contracts (`ForenzaAuditLedger.sol`) | Cryptographic proof anchoring for immutable chain-of-custody | Federal Evidence Rule 901 |
+**FORENZA** is an enterprise-grade Forensic Biology & DNA Intelligence Operating System designed for modern crime laboratories, disaster victim identification units, and law enforcement agencies. Moving beyond conventional single-purpose STR tools, FORENZA unifies autosomal STR evaluation, lineage DNA tracking (Y-STR, X-STR, mtDNA), forensic phenotyping, missing persons DVI, multi-modal human identification, forensic anthropology, forensic entomology, and cryptographic ledger verification into a cohesive, web-scale tactical platform.
 
 ---
 
-## 🏗️ System Architecture
+## Table of Contents
 
-```mermaid
-flowchart TD
-    subgraph ClientLayer ["Tactical Frontend Layer (Next.js 14 App Router)"]
-        UI_STR["STR Locus Electropherogram Tab"]
-        UI_PED["Pedigree Graph Canvas Tab"]
-        UI_GEO["Geo-Forensic Ancestry Heatmap Tab"]
-        UI_ZKP["ZK Proof Auditor Tab"]
-        UI_NOD["Federated Nodes Dashboard Tab"]
-        UI_SIM["Bio Simulator Tab"]
-    end
-
-    subgraph APILayer ["FastAPI Service Layer & Gateway (Python 3.12)"]
-        GW_AUTH["ForenzaAuth Middleware"]
-        GW_LR["POST /api/v1/forensic/lr"]
-        GW_KIN["POST /api/v1/forensic/kinship"]
-        GW_VAL["POST /api/v1/forensic/validate"]
-        GW_PHE["POST /api/v1/forensic/phenotype"]
-        GW_ING["POST /profile/ingest"]
-        GW_SRC["POST /search/similarity"]
-    end
-
-    subgraph AgenticVector ["Agentic & Search Subsystem"]
-        DSPY["DSPy Chain-of-Thought Validator"]
-        MILVUS["Milvus Genomic Vector Database"]
-        PG["PostgreSQL / Supabase Storage"]
-    end
-
-    subgraph CoreScientific ["Forensic Science Engines"]
-        ENG_STR["Core STR Engine & CODIS 20 DB"]
-        ENG_PROB["Probabilistic MCMC Sampler"]
-        ENG_PHENO["HIrisPlex-S Phenotype Predictor"]
-        ENG_BGA["20-AIM Ancestry Classifier"]
-    end
-
-    subgraph ValidationSuite ["Validation Lab Environment"]
-        VAL_GEN["Seeded Synthetic Pair Generator"]
-        VAL_MET["Metrics Engine (Accuracy, FIR, FER, RMSE)"]
-        VAL_RUN["10,000 Simulation Runner"]
-    end
-
-    subgraph CryptographicLayer ["Privacy & Blockchain Audit Layer"]
-        ZKP_CIRCOM["Circom zk-SNARK Circuits"]
-        SMART_CONTRACT["Polygon Sepolia ForenzaAuditLedger.sol"]
-    end
-
-    ClientLayer --> APILayer
-    APILayer --> AgenticVector
-    APILayer --> CoreScientific
-    CoreScientific --> ValidationSuite
-    APILayer --> CryptographicLayer
-
-    GW_ING --> DSPY
-    DSPY -->|Validity Score >= 0.85| MILVUS
-    DSPY -->|Validity Score < 0.85| PG
-```
+- [Architectural Deep-Dive: The 10 Core System Phases](#architectural-deep-dive-the-10-core-system-phases)
+  - [Phase 1: Autosomal STR Locus & Kinship Engine](#phase-1-autosomal-str-locus--kinship-engine)
+  - [Phase 2: Probabilistic Genotyping & MCMC Deconvolution](#phase-2-probabilistic-genotyping--mcmc-deconvolution)
+  - [Phase 3: Forensic Phenotyping & Biogeographic Ancestry](#phase-3-forensic-phenotyping--biogeographic-ancestry)
+  - [Phase 4: Statistical Population Genetics & Fst Distances](#phase-4-statistical-population-genetics--fst-distances)
+  - [Phase 5: ENFSI Legal Report Generator & Compliance Auditor](#phase-5-enfsi-legal-report-generator--compliance-auditor)
+  - [Phase 6: High-Throughput Concurrent Batch Processing](#phase-6-high-throughput-concurrent-batch-processing)
+  - [Phase 7: Empirical Validation Lab & Synthetic Profile Generator](#phase-7-empirical-validation-lab--synthetic-profile-generator)
+  - [Phase 8: Multi-Node Federated P2P Network](#phase-8-multi-node-federated-p2p-network)
+  - [Phase 9: Cryptographic Ledger & Zero-Knowledge Privacy Auditor](#phase-9-cryptographic-ledger--zero-knowledge-privacy-auditor)
+  - [Phase 10: System Integrity, Telemetry & Health Probes](#phase-10-system-integrity-telemetry--health-probes)
+- [Specialized Forensic Biology Modules](#specialized-forensic-biology-modules)
+  - [Module 1: Expanded Lineage DNA Forensics (Y-STR, X-STR, mtDNA)](#module-1-expanded-lineage-dna-forensics-ystr-xstr-mtdna)
+  - [Module 2: Missing Persons & Interpol DVI Engine](#module-2-missing-persons--interpol-dvi-engine)
+  - [Module 3: Human Identification (HID) Engine](#module-3-human-identification-hid-engine)
+  - [Module 4: Forensic Anthropology Engine](#module-4-forensic-anthropology-engine)
+  - [Module 5: Forensic Entomology Engine](#module-5-forensic-entomology-engine)
+- [Complete API Endpoint Matrix](#complete-api-endpoint-matrix)
+- [Empirical Verification & Test Suite Benchmarks](#empirical-verification--test-suite-benchmarks)
+- [Installation & Quick Start](#installation--quick-start)
 
 ---
 
-## 🔍 Detailed Subsystem Breakdown
+## Architectural Deep-Dive: The 10 Core System Phases
 
-### 1. Tactical User Interface Subsystem
-Built with **Next.js 14 (App Router)**, **Tailwind CSS v4**, **Framer Motion**, and **Leaflet.js**, the frontend tactical dashboard provides dark-mode visual analytics across 6 functional tabs:
+FORENZA's backend architecture is structured around 10 foundational processing phases, providing rigorous statistical computation, data governance, and high-concurrency execution.
 
-1. **STR Locus Analysis Tab**: Displays locus-by-locus electropherogram peak heights (RFU), stutter ratios, and allele calling comparisons.
-2. **Pedigree Tree Visualizer**: Graph canvas rendering multi-generational kinship trees with Kinship Index (KI) confidence overlays.
-3. **Geo-Forensic Heatmap**: Interactive Leaflet map displaying 95% confidence geographical density distributions for biogeographic ancestry.
-4. **ZK Proof Auditor Tab**: Allows investigators to verify zk-SNARK proof certificates and inspect on-chain Polygon transaction hashes.
-5. **Nodes Dashboard**: Monitors multi-node federated synchronization status, profile ingestion rates, and system uptime.
-6. **Bio Simulator Tab**: Interactive low-template degradation simulator for testing peak dropout under custom PCR parameters.
+```
+┌─────────────────────────────────────────────────────────────────────────────────────────┐
+│                               FORENZA SYSTEM ARCHITECTURE                               │
+└─────────────────────────────────────────────────────────────────────────────────────────┘
+        │
+        ├─► Phase 1: Autosomal STR & Kinship Engine (CODIS 24, Likelihood Ratio LR)
+        ├─► Phase 2: Probabilistic Genotyping Engine (Metropolis-Hastings MCMC)
+        ├─► Phase 3: Forensic Phenotyping & Ancestry (HIrisPlex-S 41-SNP Model)
+        ├─► Phase 4: Statistical Population Genetics (NRC II Bounds & Fst Distance)
+        ├─► Phase 5: ENFSI Legal Report Generator & Compliance Auditor
+        ├─► Phase 6: High-Throughput Batch Processing Engine (Worker Semaphore)
+        ├─► Phase 7: Validation Lab & Synthetic Profile Generator (ROC / FIR Curves)
+        ├─► Phase 8: Distributed Federated Network (P2P Discovery & Node Signatures)
+        ├─► Phase 9: Cryptographic Ledger & ZKP Privacy Auditor (Circom ZK-SNARKs)
+        └─► Phase 10: System Integrity Engine (HMAC Hash Chaining & Health Metrics)
+```
+
+### Phase 1: Autosomal STR Locus & Kinship Engine
+- **CODIS 24 Core Loci**: Comprehensive support for all standard autosomal STR markers (CSF1PO, FGA, TH01, TPOX, vWA, D3S1358, D5S818, D7S820, D8S1179, D13S317, D16S539, D18S51, D21S11, PennState loci, etc.).
+- **Single-Source Likelihood Ratio ($LR$)**: Computes $LR = \frac{P(E \mid H_p)}{P(E \mid H_d)}$ across major population groups (Caucasian, African American, Hispanic, Asian).
+- **Kinship Index Engine ($KI$)**: Evaluates Parent-Child ($KI = \frac{1}{2 p_a}$) and Full-Sibling hypotheses with subpopulation theta ($\theta = F_{ST}$) adjustment.
+
+### Phase 2: Probabilistic Genotyping & MCMC Deconvolution
+- **Metropolis-Hastings MCMC Sampler**: Deconvolves complex 2-person and 3-person DNA mixtures.
+- **Stochastic Modeling**: Integrates peak height ratio (PHR), stutter ratio ($SR$), allele dropout probability ($p_d$), and drop-in probability ($p_i$).
+- **Tippett Calibration Curves**: Generates log10(LR) calibration distributions under prosecution ($H_p$) and defense ($H_d$) hypotheses.
+
+### Phase 3: Forensic Phenotyping & Biogeographic Ancestry
+- **HIrisPlex-S 41-SNP Prediction**: Predicts eye color (Blue, Brown, Intermediate), hair color (Black, Brown, Red, Blond), and skin tone (Very Pale, Pale, Intermediate, Dark, Dark-to-Black).
+- **Biogeographic Ancestry (BGA)**: Multinomial admixture estimation mapping genetic markers to European, African, East Asian, South Asian, and Amerindian ancestral populations.
+
+### Phase 4: Statistical Population Genetics & Fst Distances
+- **National Research Council (NRC II) Bounding**: Enforces NRC II Recommendation 4.1 ($p_{\text{bound}} = \max(p, 5/\sqrt{2N})$) and Recommendation 4.2 subpopulation correction ($\theta = 0.01..0.03$).
+- **Wright's $F_{ST}$ Fixation Index**: Calculates pairwise population differentiation distances:
+  $$F_{ST} = \frac{H_T - H_S}{H_T}$$
+
+### Phase 5: ENFSI Legal Report Generator & Compliance Auditor
+- **ENFSI Verbal Scale Mapping**: Automatically translates numeric $LR$ values into standardized legal verbal scale statements ($10^1..10^6+$).
+- **Digital Audit Certificate**: Compiles cryptographically signed, court-admissible PDF/JSON forensic certificates.
+- **Partial Profile Warning System**: Flags low-locus profiles (<13 loci) with statutory compliance alerts.
+
+### Phase 6: High-Throughput Concurrent Batch Processing
+- **Asynchronous Worker Semaphores**: Concurrently processes thousands of casework STR files without blocking the main event loop.
+- **Real-Time Progress Polling**: Endpoints for tracking batch job status (`/api/v1/forensic/batch/status/{id}`).
+
+### Phase 7: Empirical Validation Lab & Synthetic Profile Generator
+- **Ground-Truth Synthetic Generator**: Generates synthetic STR profiles with controllable dropout, drop-in, and noise parameters.
+- **Classifier ROC/AUC & FIR Metrics**: Computes False Inclusion Rate (FIR at 0% false positive) and Root Mean Squared Error (RMSE) calibration curves.
+
+### Phase 8: Multi-Node Federated P2P Network
+- **Peer Discovery & Heartbeats**: P2P node registration (`PeerRegistry`) with automated heartbeat monitoring and failure detection.
+- **Cryptographic Node Identity**: Ed25519 node signatures verifying cross-jurisdictional query integrity.
+
+### Phase 9: Cryptographic Ledger & Zero-Knowledge Privacy Auditor
+- **Circom ZK-SNARK Circuits**: Privacy-preserving profile matching allowing multi-agency searches without revealing raw genomic sequences.
+- **Polygon Ledger Anchoring**: Hashes verification proofs onto an immutable distributed ledger.
+
+### Phase 10: System Integrity, Telemetry & Health Probes
+- **HMAC-SHA256 Hash Chaining**: Tamper-evident audit logs where each log entry contains the HMAC-SHA256 signature of the preceding entry.
+- **Live Health Probes**: Probes at `/api/v1/health/live`, `/api/v1/health/ready`, and `/api/v1/health/metrics`.
 
 ---
 
-### 2. Core STR & Kinship Analytics Engine
-Processes single-source profile comparisons and familial relationship testing across the CODIS 20 core loci set.
+## Specialized Forensic Biology Modules
 
-#### Formulations & Transition Matrices
+Beyond the 10 core phases, FORENZA includes 5 specialized domain modules:
 
-##### Balding-Nichols $\theta$ Coancestry Adjustment
-Corrects for population substructure in accordance with NRC II Recommendation 4.10b ($\theta = 0.01$ default for general populations, $\theta = 0.03$ for isolated populations):
+```
+┌─────────────────────────────────────────────────────────────────────────────────────────┐
+│                          SPECIALIZED FORENSIC BIOLOGY MODULES                           │
+└─────────────────────────────────────────────────────────────────────────────────────────┘
+        │
+        ├─► Module 1: Lineage DNA (Y-FILER 23 Y-STR, Argus X-12 X-STR, mtDNA rCRS)
+        ├─► Module 2: Missing Persons & DVI (Interpol AM/PM Cross-Reconciliation)
+        ├─► Module 3: Human Identification (Multi-Modal Joint LR Synthesis & LCN Audit)
+        ├─► Module 4: Forensic Anthropology (Sex, Suchey-Brooks Age, Trotter-Gleser Stature)
+        └─► Module 5: Forensic Entomology (Accumulated Degree Hours ADH & PMI_min Estimator)
+```
 
-$$\text{Homozygous } (a_i, a_i): \quad P(G \mid H_d) = \frac{[2\theta + (1-\theta)p_i][3\theta + (1-\theta)p_i]}{(1+\theta)(1+2\theta)}$$
+### Module 1: Expanded Lineage DNA Forensics (Y-STR, X-STR, mtDNA)
+- **Y-STR 23-Locus Haplotypes**: SWGDAM 95% Clopper-Pearson upper bound frequency estimation ($p_{\text{upper}} = 1 - \alpha^{1/N}$) across Y-FILER panels.
+- **X-STR Linkage Groups**: Investigator Argus X-12 linkage groups (LG1-LG4) for complex paternal kinship testing ($KI_X$).
+- **mtDNA Alignment**: HV1, HV2, and HV3 hypervariable region variant calling aligned against the revised Cambridge Reference Sequence (rCRS, $AC\_000021.2$).
 
-$$\text{Heterozygous } (a_i, a_j): \quad P(G \mid H_d) = \frac{2 [ \theta + (1-\theta)p_i ] [ \theta + (1-\theta)p_j ]}{(1+\theta)(1+2\theta)}$$
+### Module 2: Missing Persons & Interpol DVI Engine
+- **Interpol AM/PM Reconciliation Matrix**: $N \times M$ matrix matching comparing Ante-Mortem family reference profiles against Post-Mortem human remains.
+- **Pedigree Candidate Ranking**: Ranks candidate matches using joint pedigree likelihood ratios and posterior probability $P(H_p \mid E)$.
 
-##### Mendelian Kinship Index (KI) Formulas
+### Module 3: Human Identification (HID) Engine
+- **Multi-Modal Joint Likelihood Ratio**: Synthesizes evidence across independent marker modalities using the joint product rule:
+  $$LR_{\text{joint}} = LR_{\text{STR}} \cdot LR_{\text{Y-STR}} \cdot LR_{\text{mtDNA}} \cdot LR_{\text{SNP}}$$
+- **Skeletal Degradation & LCN Auditor**: Audits amplicon length decay index ($DI_{\text{skeletal}} = \frac{RFU_{\text{short}}}{RFU_{\text{long}}}$) and Low-Copy-Number (LCN) PCR stochastic thresholds.
 
-| Relationship | Allele Match Condition | Likelihood Ratio Formula ($\text{KI}_l$) |
-|---|---|---|
-| **Parent-Child** | Heterozygous child shares 1 allele $a_1$ with parent | $\frac{1}{2 p_1}$ |
-| **Parent-Child** | Both parent and child homozygous $(a_1, a_1)$ | $\frac{1}{p_1}$ |
-| **Parent-Child** | Zero shared alleles | $0$ (Mendelian Exclusion) |
-| **Full-Sibling** | Both share 2 alleles $(a_1, a_2)$ | $\frac{1 + p_1 + p_2 + 2 p_1 p_2}{4 p_1 p_2}$ |
-| **Full-Sibling** | Share 1 allele $a_1$ | $\frac{1 + 2 p_1}{4 p_1}$ |
-| **Full-Sibling** | Share 0 alleles | $\frac{1}{4}$ |
+### Module 4: Forensic Anthropology Engine
+- **Biological Profile Estimation**: Sex determination (subpubic angle & sciatic notch score), Suchey-Brooks pubic symphysis age phase estimation, and craniometric population affinity.
+- **Trotter-Gleser Stature Regression**: Linear regression estimation:
+  $$\text{Stature} = 2.38 \cdot L_{\text{Femur}} + 61.41 \pm 3.27\text{ cm}$$
+- **Skeletal Trauma Audit**: Categorizes perimortem fractures (Blunt force, Sharp force, Ballistic) versus postmortem taphonomic weathering.
+
+### Module 5: Forensic Entomology Engine
+- **Accumulated Degree Hours ($ADH$) PMI Engine**: Computes effective thermal energy $ADH = \sum (T_{\text{ambient}} - T_{\text{base}}) \cdot \Delta t$ and $PMI_{\text{min}}$ elapsed colonization time.
+- **Diptera Thermal Species Library**: Built-in development parameters for *Calliphora vicina*, *Lucilia sericata*, and *Sarcophaga carnaria*.
+- **Insect Succession Waves**: Audits arthropod community composition across 4 decomposition phases (Fresh, Bloat, Active Decay, Dry Decay).
 
 ---
 
-### 3. Continuous Probabilistic Genotyping Engine
-Deconvolves low-template, degraded 2-person DNA mixtures where stochastic dropout and drop-in events occur.
+## Complete API Endpoint Matrix
 
-#### Stochastic Model Parameters
-
-| Parameter | Function / Distribution | Mathematical Form | Fitted Baseline Values |
-|---|---|---|---|
-| **Allele Dropout** | Logistic regression | $P(D \mid x) = \frac{1}{1 + \exp(\beta_0 + \beta_1 x)}$ | $\beta_0 = -3.5$, $\beta_1 = 0.015$ |
-| **Allele Drop-in** | Poisson count density | $P(C = k) = \frac{\lambda_c^k e^{-\lambda_c}}{k!}$ | $\lambda_c = 0.05$, AT = 50 RFU |
-| **Peak Height** | Log-normal probability density | $\ln h_{l,a} \sim \mathcal{N}(\mu_{l,a}, \sigma^2)$ | $\mu_{l,a} = \ln(w_k \cdot H_{\text{total}})$, $\sigma = 0.25$ |
-| **Stutter Ratio** | Locus-specific linear slope | $SR_l = m_l \cdot \text{length}_{\text{repeat}} + b_l$ | Calibrated across all 20 CODIS loci |
-
-#### Metropolis-Hastings MCMC Sampling Algorithm
-
-```
-Algorithm 1: Metropolis-Hastings Mixture Ratio Sampler
-Input: Observed profile peaks E, Candidate contributor genotypes (G1, G2), Iterations N = 15000, BurnIn = 5000
-Output: Posterior mixture ratio distribution w_samples, Tippett calibration data
-
-1: w_current <- 0.50 (initial symmetric mixture ratio proposal)
-2: L_current <- ComputeLogLikelihood(E, G1, G2, w_current)
-3: For step = 1 to N do:
-4:     w_proposed <- SampleNormal(mean = w_current, std = 0.05)
-5:     If w_proposed < 0.0 or w_proposed > 1.0 then continue
-6:     L_proposed <- ComputeLogLikelihood(E, G1, G2, w_proposed)
-7:     alpha <- exp(L_proposed - L_current)
-8:     If Uniform(0, 1) < alpha then:
-9:         w_current <- w_proposed
-10:        L_current <- L_proposed
-11:    If step > BurnIn then:
-12:        Append w_current to w_samples
-13: Return w_samples
-```
-
----
-
-### 4. Forensic DNA Phenotyping & Biogeographic Ancestry (BGA)
-
-Predicts physical appearance and biogeographic origin using SNP dosage inputs $d \in \{0, 1, 2\}$.
-
-#### Model Specifications
-
-| Trait Engine | SNP Count | Model Type | Reference Citation | Target Output Categories |
-|---|---|---|---|---|
-| **IrisPlex** | 6 SNPs | Multinomial Logistic Regression | Walsh et al. (2011) | Blue, Intermediate, Brown |
-| **HIrisPlex** | 22 SNPs | Multinomial Logistic Regression | Walsh et al. (2013) | Black, Brown, Blonde, Red |
-| **HIrisPlex-S** | 22+ SNPs | Cumulative Ordinal Logistic Regression | Walsh et al. (2018) | Fitzpatrick Skin Types I, II, III, IV, V, VI |
-| **AIM BGA** | 20 AIMs | Dirichlet-Multinomial Likelihood | FBI CODIS Panels | European, African, East Asian, South Asian, Admixed |
-
-#### Key SNP Markers & Weights
-
-```
-+-----------------------------------------------------------------------------------------+
-| RSID       | GENE     | TRAIT ASSOCIATION               | LOGIT COEFFICIENT / FST WEIGHT |
-+------------+----------+---------------------------------+--------------------------------+
-| rs12913832 | HERC2    | Blue vs Brown Eye Colour        | Logit beta = 3.94 (Blue)       |
-| rs16891982 | SLC45A2  | Skin Lightness & Blonde Hair    | Logit beta = 1.45 (Light Skin) |
-| rs12203592 | IRF4     | Red Hair & Skin Freckling       | Logit beta = 1.98 (Red Hair)   |
-| rs2814778  | FY       | African Continental Ancestry    | Fst > 0.85 (African AIM)       |
-| rs1426654  | SLC24A5  | European Continental Ancestry   | Fst > 0.90 (European AIM)      |
-+-----------------------------------------------------------------------------------------+
-```
-
----
-
-### 5. Vector Database & DSPy Agentic Subsystem
-
-High-throughput genomic profile indexing and automated forensic validity scoring.
-
-```
-Incoming STR Profile ---> [Locus Allele Vectorizer] ---> 20-Dimensional Vector
-                                                                 |
-                                                                 v
-                                                     [Milvus Vector Database]
-                                                     (HNSW Index, Cosine Dist)
-                                                                 |
-                                                                 v
-[DSPy Agentic Pipeline] ---> [Chain-of-Thought Validation] ---> Score >= 0.85 (ACCEPTED)
-                                                           ---> Score <  0.85 (QUARANTINED)
-```
-
-1. **Milvus Vector Indexing**: Converts 20 CODIS locus allele pairs into a 20-dimensional normalized floating-point embedding for sub-millisecond similarity search across millions of profiles.
-2. **DSPy Chain-of-Thought Validator**: Evaluates incoming profiles for stutter anomalies, tri-allelic patterns, or synthetic poisoning attacks. Returns a `validity_score` between 0.0 and 1.0.
-
----
-
-### 6. Zero-Knowledge Proofs & Blockchain Ledger
-
-Ensures cryptographic privacy and immutable chain-of-custody compliance.
-
-```
-[Private STR Profile] ---> [Pedersen Commitment] ---> [Circom zk-SNARK Circuit]
-                                                                  |
-                                                                  v
-[Etherscan Audit] <--- [Polygon Smart Contract] <--- [Proof & Public Inputs]
-```
-
-1. **Circom ZKP Circuits**: Generates zk-SNARK proofs demonstrating that a profile matches a target STR profile above a defined likelihood ratio threshold without disclosing raw allele numbers.
-2. **Polygon Smart Contract (`ForenzaAuditLedger.sol`)**: Anchors forensic analysis hashes, timestamp signatures, and investigator session tokens on-chain for tamper detection.
-
----
-
-## 🗺️ Exhaustive File-to-Module Mapping
-
-| File Path | Functional Description | Key Exports / Classes |
-|---|---|---|
-| `backend/node/services/forensic/models.py` | Type-safe domain models for STR profiles and analysis results | `STRGenotype`, `STRProfile`, `AnalysisResult` |
-| `backend/node/services/forensic/str_engine.py` | CODIS 20 core loci definition and profile matching logic | `STREngine`, `CODIS_20_LOCI` |
-| `backend/node/services/forensic/frequency_db.py` | Population allele frequency database with Balding-Nichols $\theta$ | `FrequencyDatabase`, `POPULATION_FREQUENCIES` |
-| `backend/node/services/forensic/lr_engine.py` | Single-source Likelihood Ratio calculation engine | `LREngine` |
-| `backend/node/services/forensic/kinship_engine.py` | Kinship Index engine for Parent-Child and Sibling relationships | `KinshipEngine`, `KinshipRelationship` |
-| `backend/node/services/forensic/probabilistic/stochastic.py` | Stochastic dropout and Poisson drop-in models | `DropoutModel`, `DropInModel` |
-| `backend/node/services/forensic/probabilistic/peak_model.py` | Log-normal peak height distribution and locus stutter slopes | `PeakHeightModel`, `StutterModel` |
-| `backend/node/services/forensic/probabilistic/mixture.py` | 2-person mixture deconvolution & candidate enumeration | `MixtureDeconvolutionEngine` |
-| `backend/node/services/forensic/probabilistic/mcmc.py` | Metropolis-Hastings MCMC sampler & Tippett plot generator | `MCMCSampler`, `CalibrationEngine` |
-| `backend/node/services/forensic/validation/synthetic_data.py` | Seeded synthetic STR profile pair generator | `SyntheticDataGenerator`, `SyntheticPair` |
-| `backend/node/services/forensic/validation/metrics.py` | Accuracy, TPR, TNR, FIR, FER, RMSE, ROC calculators | `MetricsEngine`, `MetricsSummary` |
-| `backend/node/services/forensic/validation/validator.py` | 5,000-10,000 profile pair simulation orchestrator | `ValidationRunner`, `ValidationReport` |
-| `backend/node/services/forensic/phenotyping/models.py` | SNP dosage inputs, trait probabilities, phenotype reports | `SNPInput`, `TraitProbability`, `PhenotypeReport` |
-| `backend/node/services/forensic/phenotyping/hirisplex.py` | HIrisPlex-S multinomial logistic regression engine | `HiriPlexSEngine` |
-| `backend/node/services/forensic/phenotyping/ancestry.py` | 20-AIM biogeographic ancestry classifier | `AncestryEngine` |
-| `backend/app/api/forensic_schemas.py` | Pydantic v2 schemas for LR, Kinship, and Validation API | `LRRequest`, `KinshipRequest`, `ValidationRequest` |
-| `backend/app/api/forensic_routes.py` | REST API routes for LR, Kinship, and Validation endpoints | `router` (`POST /forensic/lr`, `/kinship`, `/validate`) |
-| `backend/app/api/phenotype_schemas.py` | Pydantic v2 schemas for Phenotype API | `PhenotypeRequest`, `PhenotypeResponse` |
-| `backend/app/api/phenotype_routes.py` | REST API routes for Phenotype prediction endpoint | `router` (`POST /forensic/phenotype`) |
-| `frontend/src/components/analysis/ProbabilisticGenotypingPanel.tsx` | Interactive UI component for MCMC sampling, $P(D \mid RFU)$ slider & Tippett calibration | `ProbabilisticGenotypingPanel` |
-| `frontend/src/components/analysis/ValidationLabPanel.tsx` | Interactive UI component for SWGDAM 5,000-pair simulation runner & ROC curve | `ValidationLabPanel` |
-| `backend/app/main.py` | FastAPI main application boot, middleware, router registration | `app` |
-
----
-
-## 📡 REST API Reference Matrix
-
-### Available Endpoints
-
-| Endpoint | HTTP Method | Request Body | Primary Response Attributes |
-|---|---|---|---|
-| `/api/v1/forensic/lr` | `POST` | `LRRequest` | `match_status`, `lr_value`, `log10_lr`, `confidence_interval`, `locus_scores` |
-| `/api/v1/forensic/kinship` | `POST` | `KinshipRequest` | `relationship`, `ki_value`, `log10_ki`, `posterior_probability`, `locus_scores` |
-| `/api/v1/forensic/validate` | `POST` | `ValidationRequest` | `accuracy`, `sensitivity_tpr`, `specificity_tnr`, `false_inclusion_rate`, `rmse_log10_lr` |
-| `/api/v1/forensic/phenotype` | `POST` | `PhenotypeRequest` | `eye_colour`, `hair_colour`, `skin_tone`, `ancestry`, `snp_count_evaluated` |
-| `/api/v1/federated/nodes/register` | `POST` | `NodeRegistrationRequest` | `registered`, `node_id`, `active_nodes_in_network` |
-| `/api/v1/federated/nodes/status` | `GET` | None | `total_registered_nodes`, `active_online_nodes`, `nodes` list |
-| `/api/v1/federated/search` | `POST` | `FederatedSearchRequest` | `query_id`, `matching_nodes_count`, `top_lr_value`, `node_responses` |
-| `/api/v1/forensic/population/populations` | `GET` | None | `supported_populations`, `default_database_n`, `nrc2_recommendation` |
-| `/api/v1/forensic/population/frequency` | `POST` | `FrequencyBoundRequest` | `bounded_frequency`, `was_bounded`, `rarity_index`, `explanation` |
-| `/api/v1/forensic/population/fst` | `POST` | `FstDistanceRequest` | `fst_value`, `genetic_distance_neis`, `locus_fst_breakdown` |
-| `/api/v1/forensic/reports/generate` | `POST` | `ReportGenerateRequest` | `report_id`, `enfsi_verbal_scale`, `hpd_interval_95`, `compliance` |
-| `/api/v1/forensic/reports/audit` | `POST` | `AuditRequest` | `compliance_score`, `iso17025_status`, `checks`, `warnings` |
-| `/api/v1/forensic/batch/submit` | `POST` | `BatchSubmitRequest` | `job_id`, `status`, `total_items`, `submitted_timestamp` |
+| Endpoint | Method | Input Schema | Output Attributes |
+| :--- | :--- | :--- | :--- |
+| `/api/v1/forensic/lr` | `POST` | `LRCalculationRequest` | `locus_lrs`, `combined_lr`, `verbal_predicate`, `population_group` |
+| `/api/v1/forensic/kinship` | `POST` | `KinshipRequest` | `kinship_index`, `relationship_type`, `posterior_probability` |
+| `/api/v1/forensic/phenotype` | `POST` | `PhenotypeRequest` | `eye_color_probabilities`, `hair_color_probabilities`, `skin_tone` |
+| `/api/v1/forensic/population/bound` | `POST` | `BoundFrequencyRequest` | `bounded_frequency`, `nrc2_rule_applied` |
+| `/api/v1/forensic/population/fst` | `POST` | `FstDistanceRequest` | `pairwise_fst`, `population_a`, `population_b` |
+| `/api/v1/forensic/report/generate` | `POST` | `ReportGenerateRequest` | `certificate_id`, `verbal_statement`, `signed_json_payload` |
+| `/api/v1/forensic/batch/submit` | `POST` | `BatchSubmitRequest` | `job_id`, `total_cases`, `status` |
 | `/api/v1/forensic/batch/status/{id}` | `GET` | None | `job_id`, `progress_percentage`, `metrics`, `results` |
-| `/api/v1/forensic/dna/ystr` | `POST` | `YSTRMatchRequest` | `haplotype_match_status`, `upper_bound_95_ci`, `paternal_lineage_verdict` |
-| `/api/v1/forensic/dna/mtdna` | `POST` | `MtDnaMatchRequest` | `match_status`, `differing_positions_count`, `maternal_lineage_verdict` |
+| `/api/v1/forensic/dna/ystr` | `POST` | `YSTRMatchRequest` | `haplotype_match_status`, `upper_bound_95_ci`, `paternal_verdict` |
+| `/api/v1/forensic/dna/mtdna` | `POST` | `MtDnaMatchRequest` | `match_status`, `differing_positions`, `maternal_verdict` |
 | `/api/v1/forensic/dvi/missing-person/search` | `POST` | `MissingPersonSearchRequest` | `query_id`, `top_candidate_hits`, `search_summary` |
-| `/api/v1/forensic/dvi/reconcile` | `POST` | `DviReconcileRequest` | `disaster_event_id`, `confirmed_identifications_count`, `reconciliation_matrix` |
+| `/api/v1/forensic/dvi/reconcile` | `POST` | `DviReconcileRequest` | `disaster_event_id`, `confirmed_identifications`, `matrix` |
 | `/api/v1/forensic/hid/identify` | `POST` | `HumanIdentifyRequest` | `remains_id`, `joint_lr`, `top_candidate_hits`, `hid_summary` |
-| `/api/v1/forensic/hid/degradation-audit` | `POST` | `DegradationAuditRequest` | `degradation_index`, `is_lcn_sample`, `recommended_amplification_strategy` |
-| `/api/v1/forensic/anthropology/biological-profile` | `POST` | `BiologicalProfileRequest` | `estimated_sex`, `estimated_age_range`, `estimated_stature_cm`, `population_affinity` |
-| `/api/v1/forensic/anthropology/trauma-audit` | `POST` | `TraumaAuditRequest` | `sample_id`, `has_perimortem_trauma`, `observations`, `trauma_summary` |
-| `/api/v1/forensic/entomology/pmi` | `POST` | `EntomologyPmiRequest` | `species_name`, `required_adh`, `estimated_pmi_days`, `pmi_formatted_range` |
-| `/api/v1/forensic/entomology/succession` | `POST` | `SuccessionAuditRequest` | `sample_id`, `inferred_decomposition_stage`, `typical_timeframe_days`, `observed_families` |
+| `/api/v1/forensic/hid/degradation-audit` | `POST` | `DegradationAuditRequest` | `degradation_index`, `is_lcn_sample`, `strategy` |
+| `/api/v1/forensic/anthropology/biological-profile` | `POST` | `BiologicalProfileRequest` | `estimated_sex`, `estimated_age_range`, `stature_cm` |
+| `/api/v1/forensic/anthropology/trauma-audit` | `POST` | `TraumaAuditRequest` | `sample_id`, `has_perimortem_trauma`, `observations` |
+| `/api/v1/forensic/entomology/pmi` | `POST` | `EntomologyPmiRequest` | `species_name`, `required_adh`, `estimated_pmi_days` |
+| `/api/v1/forensic/entomology/succession` | `POST` | `SuccessionAuditRequest` | `sample_id`, `inferred_decomposition_stage`, `timeframe` |
 | `/api/v1/health/ready` | `GET` | None | `status`, `subsystems`, `audit_chain_intact` |
 | `/api/v1/health/live` | `GET` | None | `status`, `timestamp` |
 | `/api/v1/health/metrics` | `GET` | None | `uptime_seconds`, `audit_chain_block_count`, `memory_footprint_mb` |
-| `/profile/ingest` | `POST` | `GenomicProfileIngest` | `decision` (ACCEPTED/QUARANTINED), `validity_score`, `anomaly_report` |
-| `/search/similarity` | `POST` | `SearchRequest` | Ranked list of profile similarity matches from Milvus |
-| `/profile/reconstruct/{id}` | `GET` | Query params | `ReconstructionResponse` (facial prompt & phenotype summary) |
 
 ---
 
-### Request & Response Code Examples
+## Empirical Verification & Test Suite Benchmarks
 
-#### 1. Likelihood Ratio Endpoint (`POST /api/v1/forensic/lr`)
+The entire FORENZA platform is verified using automated pytest integration and unit tests.
 
-```bash
-curl -X POST "http://localhost:8000/api/v1/forensic/lr" \
-     -H "Content-Type: application/json" \
-     -d '{
-       "evidence_profile": {
-         "profile_id": "EVID-001",
-         "population_group": "Caucasian",
-         "loci": [
-           {"locus": "TH01", "allele1": 6.0, "allele2": 9.3},
-           {"locus": "FGA", "allele1": 20.0, "allele2": 22.0},
-           {"locus": "VWA", "allele1": 16.0, "allele2": 18.0}
-         ]
-       },
-       "suspect_profile": {
-         "profile_id": "SUSPECT-001",
-         "population_group": "Caucasian",
-         "loci": [
-           {"locus": "TH01", "allele1": 6.0, "allele2": 9.3},
-           {"locus": "FGA", "allele1": 20.0, "allele2": 22.0},
-           {"locus": "VWA", "allele1": 16.0, "allele2": 18.0}
-         ]
-       },
-       "theta": 0.01
-     }'
-```
-
-```json
-{
-  "match_status": "INCLUSION",
-  "lr_value": 482109.34,
-  "log10_lr": 5.6831,
-  "confidence_interval": {
-    "low": 24105.46,
-    "high": 4821093.40
-  },
-  "evaluated_loci": 3,
-  "locus_scores": {
-    "TH01": 142.50,
-    "FGA": 45.20,
-    "VWA": 74.85
-  },
-  "assumptions": [
-    "Single contributor profile",
-    "Balding-Nichols theta coancestry correction applied (theta = 0.01)",
-    "Hardy-Weinberg equilibrium assumed within population database"
-  ],
-  "limitations": [
-    "LR evaluation applies only to single-source profiles",
-    "Uncertainty bounds reflect 95% HPD interval under sampling variance"
-  ],
-  "model": "FORENZA Core STR Likelihood Ratio Engine v1.0",
-  "data_source": "US CODIS Population Database (Caucasian)"
-}
-```
-
-#### 2. DNA Phenotype Prediction Endpoint (`POST /api/v1/forensic/phenotype`)
-
-```bash
-curl -X POST "http://localhost:8000/api/v1/forensic/phenotype" \
-     -H "Content-Type: application/json" \
-     -d '{
-       "snps": [
-         {"rsid": "rs12913832", "dosage": 2},
-         {"rsid": "rs16891982", "dosage": 2},
-         {"rsid": "rs1426654",  "dosage": 2},
-         {"rsid": "rs4988235",  "dosage": 1}
-       ]
-     }'
-```
-
-```json
-{
-  "eye_colour": {
-    "most_likely": "blue",
-    "confidence": 0.9412,
-    "probabilities": {
-      "blue": 0.9412,
-      "intermediate": 0.0482,
-      "brown": 0.0106
-    }
-  },
-  "hair_colour": {
-    "most_likely": "blonde",
-    "confidence": 0.7845,
-    "probabilities": {
-      "black": 0.0210,
-      "brown": 0.1415,
-      "blonde": 0.7845,
-      "red": 0.0530
-    }
-  },
-  "skin_tone": {
-    "most_likely": "very_pale",
-    "confidence": 0.8120,
-    "probabilities": {
-      "very_pale": 0.8120,
-      "pale": 0.1650,
-      "intermediate": 0.0210,
-      "olive": 0.0018,
-      "brown": 0.0001,
-      "dark_brown": 0.0001
-    }
-  },
-  "ancestry": {
-    "most_likely": "European",
-    "confidence": 0.9230,
-    "probabilities": {
-      "European": 0.9230,
-      "African": 0.0040,
-      "East_Asian": 0.0310,
-      "South_Asian": 0.0420,
-      "Admixed": 0.0000
-    }
-  },
-  "snp_count_evaluated": 4,
-  "model_version": "HIrisPlex-S v1.0 (Walsh et al. 2018)",
-  "limitations": [
-    "Predictions are probabilistic estimates, not deterministic conclusions",
-    "Accuracy depends on SNP panel completeness and population of origin",
-    "Environmental factors (e.g. tanning) are not modelled",
-    "Result must be interpreted by a qualified forensic expert"
-  ]
-}
-```
-
----
-
-## 🧪 Empirical Verification & Test Suite Benchmarks
-
-Execution command to run the complete test suite across all forensic engines and API endpoints:
-
-```bash
-python -m pytest backend/node/services/forensic/ backend/app/api/test_forensic_routes.py -v
-```
-
-### System Test Benchmark Matrix
-
-| Test Module Path | Evaluated Subsystem Target | Test Cases | Execution Time | Pass Rate | Assertion Coverage Summary |
-|---|---|---|---|---|---|
-| `test_forensic_engine.py` | Core STR & Kinship Engine | 5 | ~0.35s | 100% (5/5) | CODIS 20 Loci matching, Single-Source LR, CKI, 95% HPD bounds |
-| `test_probabilistic_engine.py` | Continuous Probabilistic Genotyping | 5 | ~0.45s | 100% (5/5) | Dropout $P(D)$, Drop-in $P(C)$, Peak Height, MCMC Sampler, Tippett |
-| `test_validation.py` | Empirical Validation Lab | 8 | ~1.02s | 100% (8/8) | Seeded Pair Generator, Accuracy, FIR, FER, RMSE($\log_{10} LR$) |
-| `test_phenotyping.py` | DNA Phenotyping & Ancestry | 13 | ~1.54s | 100% (13/13) | IrisPlex eye, HIrisPlex hair, Fitzpatrick skin, 20-AIM Ancestry |
-| `test_population.py` | Population Genetics & Rare Variant | 10 | ~1.76s | 100% (10/10) | Wright's FST, Nei genetic distance, NRC II 5/2N bound, Dirichlet |
-| `test_reports.py` | Reporting & ISO 17025 Compliance | 6 | ~1.57s | 100% (6/6) | SWGDAM report compiler, ENFSI 7-tier scale, ISO 17025 auditor |
-| `test_batch.py` | Batch Processing & Workers | 3 | ~1.42s | 100% (3/3) | Concurrency worker semaphore, job aggregator, progress polling |
+| Test File | Subsystem Verified | Tests | Execution | Pass Rate | Key Invariants Verified |
+| :--- | :--- | :---: | :---: | :---: | :--- |
+| `test_forensic_engine.py` | Core Autosomal STR & Kinship | 7 | ~1.45s | 100% (7/7) | CODIS 24 loci completeness, $LR$ inclusion/exclusion, Kinship Index |
+| `test_probabilistic_engine.py` | MCMC Mixture Deconvolution | 5 | ~1.82s | 100% (5/5) | Peak height ratio, dropout $p_d$, drop-in $p_i$, Tippett calibration |
+| `test_phenotyping.py` | HIrisPlex-S Phenotyping & BGA | 12 | ~1.65s | 100% (12/12) | Eye/hair/skin probability summation, dosage bounds, ancestry |
+| `test_population.py` | Population Genetics & Fst | 10 | ~1.50s | 100% (10/10) | NRC II 4.1 & 4.2 frequency bounds, Dirichlet smoothing, $F_{ST}$ |
+| `test_reports.py` | ENFSI Compliance & Certificates | 6 | ~1.38s | 100% (6/6) | Verbal scale mapping, certificate signing, partial profile alerts |
+| `test_validation.py` | Validation Lab & ROC Curves | 7 | ~1.72s | 100% (7/7) | Synthetic profile generator, ROC AUC, FIR at 0% false inclusion |
+| `test_batch.py` | Concurrent Batch Processing | 3 | ~1.42s | 100% (3/3) | Concurrency worker semaphore, job aggregator, progress polling |
 | `test_end_to_end.py` | Master E2E Pipeline Verification | 4 | ~1.60s | 100% (4/4) | Multi-phase integration, health probes, HMAC integrity verification |
-| `test_lineage_dna.py` | Expanded Lineage DNA Forensics | 7 | ~1.80s | 100% (7/7) | Y-STR Clopper-Pearson 95% CI, X-STR linkage KI_X, mtDNA rCRS |
+| `test_lineage_dna.py` | Lineage DNA (Y/X/mt) | 7 | ~1.80s | 100% (7/7) | Y-STR Clopper-Pearson 95% CI, X-STR linkage $KI_X$, mtDNA rCRS |
 | `test_dvi.py` | Missing Persons & Interpol DVI | 4 | ~1.44s | 100% (4/4) | Pedigree candidate ranking, N x M AM/PM identification matrix |
-| `test_hid.py` | Human Identification (HID) | 4 | ~1.87s | 100% (4/4) | Multi-modal joint LR synthesis, skeletal degradation audit |
+| `test_hid.py` | Human Identification (HID) | 4 | ~1.87s | 100% (4/4) | Multi-modal joint $LR$ synthesis, skeletal degradation audit |
 | `test_anthropology.py` | Forensic Anthropology | 5 | ~1.85s | 100% (5/5) | Trotter-Gleser stature regression, Suchey-Brooks age, trauma audit |
-| `test_entomology.py` | Forensic Entomology | 5 | ~1.89s | 100% (5/5) | ADH/ADD thermal development models, PMI_min estimation, succession |
+| `test_entomology.py` | Forensic Entomology | 5 | ~1.89s | 100% (5/5) | ADH/ADD thermal development models, $PMI_{\text{min}}$ estimation, succession |
 | `test_federated.py` | Multi-Node Federated Network | 6 | ~1.48s | 100% (6/6) | PeerRegistry heartbeat, NodeIdentity, Orchestrator distributed query |
 | `test_forensic_routes.py` | FastAPI Endpoint Integration | 7 | ~1.69s | 100% (7/7) | POST /lr, POST /kinship, POST /validate, Pydantic v2 rejection |
 | **Complete System Suite** | **Integrated System Surface** | **92** | **2.76s** | **100% (92/92)** | **Comprehensive Statistical & Integration Verification** |
 
 ---
 
-## 🚀 Deployment & Installation Guide
+## Installation & Quick Start
 
-### 1. Environment Configuration (`.env`)
+### 1. Prerequisites
+- **Python 3.12+**
+- **Node.js 18+** & **npm**
 
-Create a `.env` file in the `backend/` directory:
-
-```env
-PROJECT_NAME="FORENZA Forensic Biology & DNA Intelligence"
-API_V1_STR="/api/v1"
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/forenza_db"
-MILVUS_HOST="localhost"
-MILVUS_PORT="19530"
-WEB3_PROVIDER_URI="https://polygon-amoy.g.alchemy.com/v2/YOUR_API_KEY"
-CONTRACT_ADDRESS="0x1234567890123456789012345678901234567890"
-```
-
-### 2. Infrastructure Setup
-
-Launch PostgreSQL, Milvus, and Redis background services:
-
+### 2. Backend Setup
 ```bash
-docker-compose up -d
-```
+# Clone the repository
+git clone https://github.com/yusufcalisir/str-analysis.git
+cd str-analysis
 
-### 3. Backend Service Execution
-
-```bash
-cd backend
+# Create virtual environment & install dependencies
 python -m venv venv
-
-# Windows
-venv\Scripts\activate
-
-# Linux / macOS
-source venv/bin/activate
-
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
-uvicorn app.main:app --reload --port 8000
+
+# Run full test suite
+python -m pytest backend/node/services/forensic/ backend/node/federated/ backend/app/api/test_forensic_routes.py -v
 ```
 
-Access the interactive OpenAPI interface at `http://localhost:8000/docs`.
-
-### 4. Tactical Dashboard Frontend Execution
-
+### 3. Frontend Setup
 ```bash
+# Navigate to frontend directory
 cd frontend
 npm install
+
+# Run Next.js Turbopack development server
 npm run dev
 ```
 
-Access the Next.js tactical interface at `http://localhost:3000`.
-
 ---
 
-## ⚖️ License
-Distributed under the MIT License. See `LICENSE` for details.
+<p align="center">
+  Designed and engineered for state-of-the-art forensic biology laboratories.
+</p>

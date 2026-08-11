@@ -1,8 +1,10 @@
 from typing import Optional
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
-    PROJECT_NAME: str = "VANTAGE-STR"
+    model_config = SettingsConfigDict(case_sensitive=True, env_file=".env", extra="ignore")
+
+    PROJECT_NAME: str = "FORENZA"
     API_V1_STR: str = "/api/v1"
     
     # Deployment
@@ -30,11 +32,7 @@ class Settings(BaseSettings):
     DEPLOYER_PRIVATE_KEY: str = ""
     
     # Auth Settings
-    SECRET_KEY: str = "vantage-str-dev-secret-change-in-production"
+    SECRET_KEY: str = "forenza-str-dev-secret-change-in-production"
     SESSION_TOKEN_TTL_MINUTES: int = 15
-    
-    class Config:
-        case_sensitive = True
-        env_file = ".env"
 
 settings = Settings()

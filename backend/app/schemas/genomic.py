@@ -112,6 +112,8 @@ class GenomicProfileIngest(BaseModel):
 
 class GenomicProfileOut(BaseModel):
     """Response model for a successfully ingested genomic profile."""
+    model_config = ConfigDict(from_attributes=True)
+
     profile_id: UUID4
     node_id: str
     markers_received: int
@@ -120,9 +122,6 @@ class GenomicProfileOut(BaseModel):
     created_at: datetime = Field(default_factory=datetime.utcnow)
     latitude: Optional[float] = None
     longitude: Optional[float] = None
-
-    class Config:
-        from_attributes = True
 
 
 class MatchResult(BaseModel):

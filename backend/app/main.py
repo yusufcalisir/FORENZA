@@ -145,6 +145,13 @@ try:
 except Exception as _forensic_import_err:
     logger.warning(f"[boot] Forensic router not loaded: {_forensic_import_err}")
 
+# --- Forensic DNA Phenotyping Router ---
+try:
+    from app.api.phenotype_routes import router as phenotype_router
+    app.include_router(phenotype_router, prefix="/api/v1")
+    logger.info("[boot] Phenotype prediction API router registered at /api/v1/forensic/phenotype")
+except Exception as _pheno_import_err:
+    logger.warning(f"[boot] Phenotype router not loaded: {_pheno_import_err}")
 
 
 # ═══════════════════════════════════════════════════════════════════════════════

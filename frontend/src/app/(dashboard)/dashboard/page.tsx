@@ -4,24 +4,16 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import {
   ShieldCheck,
-  Dna,
   PackageCheck,
   Eye,
   Microscope,
   Fingerprint,
   Pill,
-  Syringe,
   GitGraph,
-  UserCheck,
-  Activity,
-  ArrowRight,
-  Sparkles,
-  FileCheck2,
-  Sliders,
-  CheckCircle2,
   ChevronRight
 } from "lucide-react";
 import Link from "next/link";
+import TacticalPageHeader from "@/components/common/TacticalPageHeader";
 import { useIngestStore } from "@/store/ingestStore";
 
 export default function ForensicDashboardPage() {
@@ -51,51 +43,15 @@ export default function ForensicDashboardPage() {
   const toxStatus = conc > 2.0 ? "FATAL" : conc > 0.5 ? "TOXIC / ELEVATED" : "THERAPEUTIC";
 
   return (
-    <div className="p-4 sm:p-6 space-y-6 font-mono text-tactical-text bg-slate-950 min-h-screen">
-      {/* ── Top Header & Case Controller Bar ── */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-2xl border border-tactical-border/80 bg-tactical-surface/60 shadow-xl backdrop-blur-md">
-        <div className="flex items-center gap-3.5">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.2)]">
-            <ShieldCheck className="w-6 h-6" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-base sm:text-lg font-black tracking-widest uppercase text-tactical-text">
-                FORENZA Operations Dashboard
-              </h1>
-              <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-cyan-500/10 border border-cyan-500/30 text-cyan-300">
-                ACTIVE CASE WORKSPACE
-              </span>
-            </div>
-            <p className="text-[11px] text-tactical-text-muted mt-0.5">
-              Live Forensic Intelligence Cards • Instant Subsystem Evaluation • Chain of Custody Verified
-            </p>
-          </div>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-2 text-xs">
-          <button
-            onClick={() => {
-              useIngestStore.getState().setLastIngested("test-profile-eu", "FORENSIC-LAB-ALPHA", 24);
-              setActiveCase("CASE-2026-EU-01");
-            }}
-            className="px-3 py-1.5 rounded-xl font-mono text-xs font-bold bg-cyan-500/15 border border-cyan-500/40 text-cyan-300 hover:bg-cyan-500/25 transition-all flex items-center gap-1.5"
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            Load Sample Case EU
-          </button>
-          <button
-            onClick={() => {
-              useIngestStore.getState().setLastIngested("test-profile-aa", "DISTRICT-DNA-LAB-01", 24);
-              setActiveCase("CASE-2026-AA-02");
-            }}
-            className="px-3 py-1.5 rounded-xl font-mono text-xs font-bold bg-purple-500/15 border border-purple-500/40 text-purple-300 hover:bg-purple-500/25 transition-all flex items-center gap-1.5"
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            Load Sample Case AA
-          </button>
-        </div>
-      </div>
+    <div className="p-3 sm:p-5 lg:p-6 space-y-6 font-mono text-tactical-text bg-slate-950 min-h-screen">
+      {/* ── Unified Tactical Page Header ── */}
+      <TacticalPageHeader
+        title="FORENZA Operations Dashboard"
+        subtitle="Live Forensic Intelligence Cards • Instant Subsystem Evaluation • Chain of Custody Verified"
+        badge="ACTIVE CASE WORKSPACE"
+        icon={ShieldCheck}
+        accentColor="cyan"
+      />
 
       {/* ── Subsystem Biological Intelligence Cards Grid ── */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

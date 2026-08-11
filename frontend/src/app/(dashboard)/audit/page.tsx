@@ -1,5 +1,7 @@
 "use client";
 
+import TacticalPageHeader from "@/components/common/TacticalPageHeader";
+
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -447,34 +449,14 @@ export default function AuditPage() {
             transition={{ duration: 0.3 }}
             className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 py-4 overflow-x-hidden font-mono"
         >
-            {/* ── Header ── */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-tactical-border pb-5">
-                <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#22C55E]/20 to-[#8B5CF6]/10 border border-[#22C55E]/30 shadow-[0_0_15px_rgba(34,197,94,0.2)]">
-                        <Shield className="w-5 h-5 text-[#22C55E]" />
-                    </div>
-                    <div>
-                        <div className="flex items-center gap-2">
-                            <h1 className="text-sm sm:text-base font-bold tracking-widest text-tactical-text uppercase">
-                                Forensic Audit Ledger
-                            </h1>
-                            <span className="text-[9px] font-bold text-[#8B5CF6] bg-[#8B5CF6]/10 border border-[#8B5CF6]/20 px-2 py-0.5 rounded-full">
-                                Solidity On-Chain Feed
-                            </span>
-                        </div>
-                        <p className="text-[10px] text-tactical-text-muted mt-0.5">
-                            Real-Time Blockchain Anchored Chain-of-Custody Feed
-                        </p>
-                    </div>
-                </div>
-
-                <div className="flex items-center gap-2 text-xs">
-                    <Activity className="w-4 h-4 text-[#22C55E] animate-pulse" />
-                    <span className="text-[10px] font-bold tracking-wider text-[#22C55E] uppercase">
-                        Live Blockchain Sync
-                    </span>
-                </div>
-            </div>
+            {/* ── Unified Tactical Page Header ── */}
+            <TacticalPageHeader
+                title="ISO Compliance Audit Ledger"
+                subtitle="Real-Time Blockchain Anchored Chain-of-Custody Feed • Polygon Smart Contract Event Feed"
+                badge="SOLIDITY ON-CHAIN"
+                icon={ShieldCheck}
+                accentColor="amber"
+            />
 
             {/* Chain Integrity */}
             <ChainIntegrity isValid={stats.is_chain_valid} address={CONTRACT_ADDRESS} />

@@ -2,7 +2,8 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShieldAlert, Lock, Search, Upload, CheckCircle, Brain, RefreshCw } from "lucide-react";
+import TacticalPageHeader from "@/components/common/TacticalPageHeader";
+import { GitGraph, ShieldAlert, Lock, Search, RefreshCw, Upload, CheckCircle } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { useIngestStore } from "@/store/ingestStore";
 
@@ -117,26 +118,23 @@ export default function InvestigationDashboard() {
                 </AnimatePresence>
 
                 {/* Header & Panic */}
-                <div className="flex justify-between items-center mb-2">
-                    <div className="flex items-center gap-3">
-                        <div className="w-1 h-8 bg-tactical-primary rounded-full" />
-                        <div>
-                            <h1 className="text-xl font-bold tracking-[0.2em] text-tactical-text uppercase">
-                                Investigation Command Center
-                            </h1>
-                            <p className="text-[10px] text-zinc-500 font-mono tracking-wider uppercase">
-                                FORENZA // LEVEL 4 CLEARANCE
-                            </p>
-                        </div>
-                    </div>
-                    <button
-                        onClick={handlePanic}
-                        className="group flex items-center gap-2 px-4 py-2 bg-red-950/30 hover:bg-red-900/40 text-red-500 border border-red-900/50 rounded transition-all font-mono text-xs font-bold uppercase tracking-wider"
-                    >
-                        <ShieldAlert className="w-4 h-4 group-hover:animate-pulse" />
-                        Panic: Revoke Access
-                    </button>
-                </div>
+                {/* ── Unified Tactical Page Header ── */}
+                <TacticalPageHeader
+                    title="Forensic Knowledge Graph"
+                    subtitle="Relational Case Subgraph • Pedigree Kinship Traversal • Level 4 Cryptographic Clearance"
+                    badge="PROPERTY GRAPH INSPECTOR"
+                    icon={GitGraph}
+                    accentColor="purple"
+                    actions={
+                        <button
+                            onClick={handlePanic}
+                            className="group flex items-center gap-2 px-3 py-1.5 bg-red-950/40 hover:bg-red-900/60 text-red-400 border border-red-900/60 rounded-xl transition-all font-mono text-xs font-bold uppercase tracking-wider cursor-pointer"
+                        >
+                            <ShieldAlert className="w-3.5 h-3.5 group-hover:animate-pulse" />
+                            <span>Revoke Access</span>
+                        </button>
+                    }
+                />
 
                 {/* Module 1: System Pulse */}
                 <SystemPulse />

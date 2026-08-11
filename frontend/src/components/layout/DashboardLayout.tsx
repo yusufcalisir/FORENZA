@@ -25,10 +25,10 @@ import { useIngestStore } from "@/store/ingestStore";
 /* ── Navigation Items ── */
 const NAV_ITEMS = [
     { id: "dashboard", label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+    { id: "nodes", label: "Federated Network", href: "/nodes", icon: Network },
     { id: "analysis", label: "Analysis Hub", href: "/analysis", icon: FlaskConical },
     { id: "investigation", label: "Knowledge Graph", href: "/investigation", icon: GitGraph },
     { id: "database", label: "DNA Database", href: "/database", icon: Database },
-    { id: "nodes", label: "Federated Network", href: "/nodes", icon: Network },
     { id: "audit", label: "ISO Audit Log", href: "/audit", icon: ShieldCheck },
 ] as const;
 
@@ -45,7 +45,13 @@ export default function DashboardLayout({
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-    const visibleNavItems = NAV_ITEMS;
+    // Check ingest state — Analysis Hub appears only when data is ingested
+    const isValid = useIngestStore((s) => s.isValid);
+
+    const visibleNavItems = NAV_ITEMS.filter((item) => {
+        if (item.id === "analysis") return isValid;
+        return true;
+    });
 
     return (
         <div className="flex min-h-screen lg:h-screen lg:overflow-hidden bg-tactical-bg text-tactical-text">

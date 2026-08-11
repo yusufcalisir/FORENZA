@@ -1,5 +1,7 @@
 "use client";
 
+import TacticalPageHeader from "@/components/common/TacticalPageHeader";
+
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import {
@@ -163,34 +165,14 @@ export default function DatabasePage() {
             transition={{ duration: 0.3 }}
             className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 py-4 overflow-x-hidden font-mono"
         >
-            {/* ── Header ── */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-tactical-border pb-5">
-                <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#06B6D4]/20 to-[#22C55E]/10 border border-[#06B6D4]/30 shadow-[0_0_15px_rgba(6,182,212,0.2)]">
-                        <Database className="w-5 h-5 text-[#06B6D4]" />
-                    </div>
-                    <div>
-                        <div className="flex items-center gap-2">
-                            <h1 className="text-sm sm:text-base font-bold tracking-widest text-tactical-text uppercase">
-                                Milvus Vector Database
-                            </h1>
-                            <span className="text-[9px] font-bold text-[#22C55E] bg-[#22C55E]/10 border border-[#22C55E]/20 px-2 py-0.5 rounded-full">
-                                Collection: str_profiles
-                            </span>
-                        </div>
-                        <p className="text-[10px] text-tactical-text-muted mt-0.5">
-                            Vector Engine v2.4 • 384-Dimension Cosine Similarity Embeddings
-                        </p>
-                    </div>
-                </div>
-
-                <div className="flex items-center gap-2 text-tactical-text-dim text-xs">
-                    <HardDrive className="w-4 h-4 text-[#06B6D4]" />
-                    <span className="text-[10px] font-semibold tracking-wider text-tactical-text-muted">
-                        24,847 Indexed DNA Vectors
-                    </span>
-                </div>
-            </div>
+            {/* ── Unified Tactical Page Header ── */}
+            <TacticalPageHeader
+                title="Forensic DNA Database"
+                subtitle="Milvus Vector Profile Registry • 24 Core CODIS Loci Indexes • HMAC Hash Sealed"
+                badge="COLLECTION: STR_PROFILES"
+                icon={Database}
+                accentColor="cyan"
+            />
 
             {/* ── Bio-Forensic Stats Strip ── */}
             <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">

@@ -5,19 +5,14 @@ import { motion } from "framer-motion";
 import {
   Network,
   Activity,
-  ShieldCheck,
   Server,
   Cpu,
-  Globe,
-  Radio,
-  CheckCircle2,
   Lock,
   Search,
-  Sparkles,
   Zap,
-  ArrowRight,
-  Database
+  CheckCircle2
 } from "lucide-react";
+import TacticalPageHeader from "@/components/common/TacticalPageHeader";
 import { useIngestStore } from "@/store/ingestStore";
 
 interface LabNode {
@@ -93,42 +88,15 @@ export default function NodesPage() {
   };
 
   return (
-    <div className="p-4 sm:p-6 space-y-6 font-mono text-tactical-text bg-slate-950 min-h-screen">
-      {/* ── Top Header ── */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-2xl border border-tactical-border/80 bg-tactical-surface/60 shadow-xl backdrop-blur-md">
-        <div className="flex items-center gap-3.5">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.2)]">
-            <Network className="w-6 h-6" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-base sm:text-lg font-black tracking-widest uppercase text-tactical-text">
-                Federated Forensic Network
-              </h1>
-              <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 flex items-center gap-1">
-                <Radio className="w-2.5 h-2.5 animate-pulse" />
-                4/4 PEERS ONLINE
-              </span>
-            </div>
-            <p className="text-[11px] text-tactical-text-muted mt-0.5">
-              Decentralized Laboratory Peer Consensus • Zero-Knowledge STR Ledger • Multi-Node Search
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-3 text-xs">
-          <div className="px-3 py-1.5 rounded-xl bg-black/40 border border-tactical-border/60 flex items-center gap-2">
-            <Activity className="w-3.5 h-3.5 text-cyan-400" />
-            <span className="text-zinc-400 text-[10px]">Avg Latency:</span>
-            <span className="font-bold text-emerald-400 font-mono">14 ms</span>
-          </div>
-          <div className="px-3 py-1.5 rounded-xl bg-black/40 border border-tactical-border/60 flex items-center gap-2">
-            <Database className="w-3.5 h-3.5 text-purple-400" />
-            <span className="text-zinc-400 text-[10px]">Total Indexed Profiles:</span>
-            <span className="font-bold text-purple-300 font-mono">57,320</span>
-          </div>
-        </div>
-      </div>
+    <div className="p-3 sm:p-5 lg:p-6 space-y-6 font-mono text-tactical-text bg-slate-950 min-h-screen">
+      {/* ── Unified Tactical Page Header ── */}
+      <TacticalPageHeader
+        title="Federated Forensic Network"
+        subtitle="Decentralized Laboratory Peer Consensus • Zero-Knowledge STR Ledger • Multi-Node Search"
+        badge="4/4 PEERS ONLINE"
+        icon={Network}
+        accentColor="cyan"
+      />
 
       {/* ── Main Layout: Laboratory Nodes Grid + Federated Query Inspector ── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

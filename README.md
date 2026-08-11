@@ -15,7 +15,7 @@
   <a href="#probabilistic-genotyping--mcmc-deconvolution"><img src="https://img.shields.io/badge/Genotyping-Metropolis--Hastings%20MCMC-orange?style=for-the-badge" /></a>
   <a href="#forensic-phenotyping--biogeographic-ancestry"><img src="https://img.shields.io/badge/Phenotyping-HIrisPlex--S%20%2B%20BGA-purple?style=for-the-badge" /></a>
   <a href="#cryptographic-ledger--zero-knowledge-privacy-auditor"><img src="https://img.shields.io/badge/Privacy-ZKP%20Circom%20%2B%20Polygon-black?style=for-the-badge&logo=polygon" /></a>
-  <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/Suite%20Status-137%2F137%20Passed%20(100%25)-brightgreen?style=for-the-badge&logo=pytest" /></a>
+  <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/Suite%20Status-142%2F142%20Passed%20(100%25)-brightgreen?style=for-the-badge&logo=pytest" /></a>
 </p>
 
 ---
@@ -466,6 +466,21 @@ graph TD
 
 ---
 
+### Microscopy Intelligence & Forensic Hair Analysis Subsystem
+
+> [!NOTE]
+> **Microscopic Cell Morphometry & Follicular Root DNA Routing**: Classifies microscopic cell/tissue morphometry (sperm head length/width, acrosome ratio), computes hair medullary index ($I_{\text{medulla}} = d_{\text{medulla}} / D_{\text{hair}}$), discriminates human ($I < 0.33$) vs. animal ($I \ge 0.50$) evidence, and routes samples for Nuclear 24-Locus STR vs. Mitochondrial DNA (HV1/HV2).
+
+- **Microscopic Cell Morphometry**: Spermatozoa head dimensions (length $\mu$m, width $\mu$m, acrosome coverage %).
+- **Hair Medullary Index ($I_{\text{medulla}}$)**:
+  $$I_{\text{medulla}} = \frac{d_{\text{medulla}}}{D_{\text{hair}}}$$
+- **DNA Extraction Strategy Decision Engine**:
+  - **Follicular Sheath Present**: Nuclear 24-Locus STR Profiling.
+  - **Shaft / Telogen Only**: Mitochondrial DNA (HV1/HV2) Sequencing.
+- **Software Implementation**: `backend/node/services/forensic/microscopy/classifier.py`.
+
+---
+
 ## Complete REST API Reference Matrix
 
 | Endpoint | Method | Request Payload Schema | Key Response Attributes |
@@ -506,6 +521,8 @@ graph TD
 | `/api/v1/forensic/evidence/audit-chain/{evidence_id}` | `GET` | None | `evidence_id`, `chain_intact`, `total_transfers`, `latest_custodian` |
 | `/api/v1/forensic/bpa/analyze-stain` | `POST` | `AnalyzeStainRequest` | `stain_id`, `impact_angle_deg`, `predicted_pattern`, `review_status` |
 | `/api/v1/forensic/bpa/verify-analyst` | `POST` | `VerifyAnalystRequest` | `stain_id`, `review_status`, `verification_record` |
+| `/api/v1/forensic/microscopy/classify-cell` | `POST` | `ClassifyCellRequest` | `cell_id`, `head_length_um`, `head_width_um`, `normal_morphology` |
+| `/api/v1/forensic/microscopy/hair-morphology` | `POST` | `HairMorphologyRequest` | `hair_id`, `medullary_index`, `species_origin`, `dna_routing` |
 | `/api/v1/health/ready` | `GET` | None | `status`, `subsystems`, `audit_chain_intact` |
 | `/api/v1/health/live` | `GET` | None | `status`, `timestamp` |
 | `/api/v1/health/metrics` | `GET` | None | `uptime_seconds`, `audit_chain_block_count`, `memory_footprint_mb` |
@@ -539,9 +556,10 @@ The entire FORENZA software surface is validated using automated Pytest suites.
 | `test_graph.py` | Forensic Knowledge Graph | 6 | ~2.09s | 100% (6/6) | Directed property graph, BFS path traversal, case subgraph extraction |
 | `test_evidence.py` | Crime Scene Evidence Subsystem | 6 | ~1.63s | 100% (6/6) | Evidence registration, spatial coords, SHA-256 custody ledger |
 | `test_bpa.py` | Evidence Image Analysis (BPA) | 5 | ~2.13s | 100% (5/5) | Ellipse morphometry, arcsin(W/L) impact angle, analyst sign-off |
+| `test_microscopy.py` | Microscopy Intelligence | 5 | ~2.01s | 100% (5/5) | Sperm morphometry, I_medulla hair index, nDNA/mtDNA routing |
 | `test_federated.py` | Multi-Node Federated Network | 6 | ~1.48s | 100% (6/6) | PeerRegistry heartbeat, NodeIdentity, Orchestrator distributed query |
 | `test_forensic_routes.py` | FastAPI Endpoint Integration | 7 | ~1.69s | 100% (7/7) | POST /lr, POST /kinship, POST /validate, Pydantic v2 rejection |
-| **Master Integrated Suite** | **Complete System Surface** | **137** | **4.51s** | **100% (137/137)** | **Comprehensive Statistical & Integration Verification** |
+| **Master Integrated Suite** | **Complete System Surface** | **142** | **3.85s** | **100% (142/142)** | **Comprehensive Statistical & Integration Verification** |
 
 ---
 

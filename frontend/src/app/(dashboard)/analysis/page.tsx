@@ -26,7 +26,8 @@ import ToxicologyPanel from "@/components/analysis/ToxicologyPanel";
 import SerologyPanel from "@/components/analysis/SerologyPanel";
 import EvidenceManagementPanel from "@/components/analysis/EvidenceManagementPanel";
 import BpaImagePanel from "@/components/analysis/BpaImagePanel";
-import { Activity, UserCheck, Binary, Bone, Bug, Leaf, Layers, Droplet, Pill, Syringe, PackageCheck, Eye } from "lucide-react";
+import MicroscopyPanel from "@/components/analysis/MicroscopyPanel";
+import { Activity, UserCheck, Binary, Bone, Bug, Leaf, Layers, Droplet, Pill, Syringe, PackageCheck, Eye, Microscope } from "lucide-react";
 import { useIngestStore } from "@/store/ingestStore";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -81,7 +82,7 @@ interface AnalysisData {
     tx_hash?: string;
 }
 
-type TabId = "statistical" | "probabilistic" | "relationship" | "bayesian" | "validation" | "lineage" | "dvi" | "hid" | "anthropology" | "entomology" | "botany" | "microbiology" | "fluid" | "toxicology" | "serology" | "evidence" | "bpa";
+type TabId = "statistical" | "probabilistic" | "relationship" | "bayesian" | "validation" | "lineage" | "dvi" | "hid" | "anthropology" | "entomology" | "botany" | "microbiology" | "fluid" | "toxicology" | "serology" | "evidence" | "bpa" | "microscopy";
 
 // ─── API ─────────────────────────────────────────────────────────────────────
 
@@ -645,6 +646,14 @@ export default function AnalysisPage() {
                     onClick={setActiveTab}
                     badge="IABPA"
                 />
+                <TabButton
+                    id="microscopy"
+                    label="Microscopy Intelligence"
+                    icon={Microscope}
+                    activeTab={activeTab}
+                    onClick={setActiveTab}
+                    badge="SWGMAT"
+                />
             </div>
 
             {/* ── Tab Content ── */}
@@ -1039,6 +1048,18 @@ export default function AnalysisPage() {
                         transition={{ duration: 0.2 }}
                     >
                         <BpaImagePanel />
+                    </motion.div>
+                )}
+
+                {activeTab === "microscopy" && (
+                    <motion.div
+                        key="microscopy"
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -6 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        <MicroscopyPanel />
                     </motion.div>
                 )}
             </AnimatePresence>

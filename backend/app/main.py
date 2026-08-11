@@ -297,6 +297,15 @@ try:
 except Exception as _bpa_import_err:
     logger.warning(f"[boot] BPA router not loaded: {_bpa_import_err}")
 
+# --- Microscopy Intelligence Router ---
+try:
+    from app.api.microscopy_routes import router as microscopy_router
+    app.include_router(microscopy_router, prefix="/api/v1")
+    logger.info("[boot] Microscopy Intelligence API router registered at /api/v1/forensic/microscopy")
+except Exception as _mic_import_err:
+    logger.warning(f"[boot] Microscopy router not loaded: {_mic_import_err}")
+
+
 
 
 

@@ -404,6 +404,25 @@ $$\alpha = \arcsin\left(\frac{W}{L}\right) \quad (\text{radians})$$
 
 $$\alpha_{\text{deg}} = \frac{180}{\pi} \cdot \arcsin\left(\frac{W}{L}\right) \quad (\text{degrees})$$
 
+---
+
+## 22. Microscopic Hair Medullary Index & Follicular Root DNA Routing
+
+### 22.1 Hair Medullary Index ($I_{\text{medulla}}$)
+For microscopic hair evidence with inner medulla shaft diameter $d_{\text{medulla}}$ and total hair shaft diameter $D_{\text{hair}}$:
+
+$$I_{\text{medulla}} = \frac{d_{\text{medulla}}}{D_{\text{hair}}}$$
+
+Species Origin Decision Boundary:
+
+$$\text{Species} = \begin{cases} \text{Human} & \text{if } I_{\text{medulla}} < 0.33 \\ \text{Non-Human Animal} & \text{if } I_{\text{medulla}} \ge 0.50 \end{cases}$$
+
+### 22.2 Follicular Root Sheath DNA Routing Protocol
+Given root morphology $R \in \{\text{Anagen With Sheath}, \text{Catagen With Sheath}, \text{Telogen Without Sheath}, \text{Shaft Only}\}$:
+
+$$\text{DNA Strategy} = \begin{cases} \text{Nuclear 24-Locus STR Profiling} & \text{if } R \text{ contains Sheath} \\ \text{Mitochondrial DNA (HV1/HV2) Sequencing} & \text{otherwise} \end{cases}$$
+
+
 
 
 

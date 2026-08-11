@@ -177,6 +177,15 @@ try:
 except Exception as _rep_import_err:
     logger.warning(f"[boot] Report router not loaded: {_rep_import_err}")
 
+# --- High-Throughput Batch Processing Router ---
+try:
+    from app.api.batch_routes import router as batch_router
+    app.include_router(batch_router, prefix="/api/v1")
+    logger.info("[boot] Batch processing API router registered at /api/v1/forensic/batch")
+except Exception as _batch_import_err:
+    logger.warning(f"[boot] Batch router not loaded: {_batch_import_err}")
+
+
 
 
 

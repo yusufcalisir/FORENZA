@@ -15,7 +15,7 @@
   <a href="#probabilistic-genotyping--mcmc-deconvolution"><img src="https://img.shields.io/badge/Genotyping-Metropolis--Hastings%20MCMC-orange?style=for-the-badge" /></a>
   <a href="#forensic-phenotyping--biogeographic-ancestry"><img src="https://img.shields.io/badge/Phenotyping-HIrisPlex--S%20%2B%20BGA-purple?style=for-the-badge" /></a>
   <a href="#cryptographic-ledger--zero-knowledge-privacy-auditor"><img src="https://img.shields.io/badge/Privacy-ZKP%20Circom%20%2B%20Polygon-black?style=for-the-badge&logo=polygon" /></a>
-  <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/Suite%20Status-115%2F115%20Passed%20(100%25)-brightgreen?style=for-the-badge&logo=pytest" /></a>
+  <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/Suite%20Status-120%2F120%20Passed%20(100%25)-brightgreen?style=for-the-badge&logo=pytest" /></a>
 </p>
 
 ---
@@ -405,6 +405,25 @@ graph TD
 
 ---
 
+### Forensic Serology Engine
+
+> [!NOTE]
+> **Blood Group Antigen & Dual Serology-DNA Integration**: Evaluates classical blood group systems (ABO, Rh D, Kell, Duffy), Lewis secretor status ($Se/se$), and integrates classical serological evidence with 24-locus autosomal STR profiles ($LR_{\text{combined}} = LR_{\text{serology}} \cdot LR_{\text{STR}}$).
+
+- **Classical Blood Group Systems**:
+  - **ABO System**: $A$ ($f \approx 0.40$), $B$ ($f \approx 0.11$), $AB$ ($f \approx 0.04$), $O$ ($f \approx 0.45$).
+  - **Rh System**: $D+$ ($f \approx 0.85$), $D-$ ($f \approx 0.15$).
+  - **Kell & Duffy Systems**: $K+, K-, Fy^{a+}, Fy^{b+}$.
+- **Lewis Secretor Status Auditor**:
+  - Classifies Secretor status ($Se, se$) in body fluids (Saliva, Semen, Sweat) via Lewis antigen phenotypes ($Le^{a-b+}, Le^{a+b-}, Le^{a-b-}$).
+- **Dual Serology + DNA Evidence Integrator**:
+  - Combines serological match probability with molecular STR profiles:
+    $$LR_{\text{combined}} = LR_{\text{serology}} \cdot LR_{\text{STR}}$$
+    $$\log_{10}(LR_{\text{combined}}) = \log_{10}(LR_{\text{serology}}) + \log_{10}(LR_{\text{STR}})$$
+- **Software Implementation**: `backend/node/services/forensic/serology/serology.py` and `integration.py`.
+
+---
+
 ## Complete REST API Reference Matrix
 
 | Endpoint | Method | Request Payload Schema | Key Response Attributes |
@@ -435,6 +454,8 @@ graph TD
 | `/api/v1/forensic/fluid/co-extraction-audit` | `POST` | `CoExtractionAuditRequest` | `str_co_extraction_compatible`, `rin_integrity_score`, `recommended_strategy` |
 | `/api/v1/forensic/toxicology/screen` | `POST` | `ToxicologyScreenRequest` | `sample_id`, `analyte_reports`, `toxicology_summary` |
 | `/api/v1/forensic/toxicology/bac-widmark` | `POST` | `WidmarkBacRequest` | `bac_current_g_per_dl`, `time_to_sobriety_hours`, `pmr_ratio` |
+| `/api/v1/forensic/serology/phenotype` | `POST` | `SerologyPhenotypeRequest` | `sample_id`, `abo_group`, `secretor_status`, `lr_serology` |
+| `/api/v1/forensic/serology/integrate-dna` | `POST` | `SerologyDnaIntegrateRequest` | `lr_serology`, `lr_str`, `lr_combined`, `log10_lr_combined` |
 | `/api/v1/health/ready` | `GET` | None | `status`, `subsystems`, `audit_chain_intact` |
 | `/api/v1/health/live` | `GET` | None | `status`, `timestamp` |
 | `/api/v1/health/metrics` | `GET` | None | `uptime_seconds`, `audit_chain_block_count`, `memory_footprint_mb` |
@@ -463,9 +484,11 @@ The entire FORENZA software surface is validated using automated Pytest suites.
 | `test_botany.py` | Forensic Botany Engine | 5 | ~1.98s | 100% (5/5) | rbcL/matK DNA barcoding, pollen morphology matching, habitat inference |
 | `test_microbiology.py` | Forensic Microbiology Engine | 7 | ~1.91s | 100% (7/7) | 16S rRNA taxonomic profiling, Bray-Curtis dissimilarity, body site origin |
 | `test_fluid.py` | Body Fluid Identification Engine | 5 | ~1.40s | 100% (5/5) | mRNA gene expression profiling, multinomial fluid probability, RIN audit |
+| `test_toxicology.py` | Forensic Toxicology Engine | 6 | ~1.76s | 100% (6/6) | Quantitative drug screening, U_95% uncertainty, Widmark BAC, PMR ratio |
+| `test_serology.py` | Forensic Serology Engine | 5 | ~1.63s | 100% (5/5) | ABO/Rh blood groups, Lewis secretor status, Serology+DNA LR fusion |
 | `test_federated.py` | Multi-Node Federated Network | 6 | ~1.48s | 100% (6/6) | PeerRegistry heartbeat, NodeIdentity, Orchestrator distributed query |
 | `test_forensic_routes.py` | FastAPI Endpoint Integration | 7 | ~1.69s | 100% (7/7) | POST /lr, POST /kinship, POST /validate, Pydantic v2 rejection |
-| **Master Integrated Suite** | **Complete System Surface** | **109** | **3.92s** | **100% (109/109)** | **Comprehensive Statistical & Integration Verification** |
+| **Master Integrated Suite** | **Complete System Surface** | **120** | **3.24s** | **100% (120/120)** | **Comprehensive Statistical & Integration Verification** |
 
 ---
 

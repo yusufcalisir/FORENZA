@@ -265,6 +265,15 @@ try:
 except Exception as _tox_import_err:
     logger.warning(f"[boot] Toxicology router not loaded: {_tox_import_err}")
 
+# --- Forensic Serology Router ---
+try:
+    from app.api.serology_routes import router as serology_router
+    app.include_router(serology_router, prefix="/api/v1")
+    logger.info("[boot] Forensic Serology API router registered at /api/v1/forensic/serology")
+except Exception as _ser_import_err:
+    logger.warning(f"[boot] Serology router not loaded: {_ser_import_err}")
+
+
 
 
 

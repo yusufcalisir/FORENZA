@@ -336,6 +336,27 @@ For electrophoretic peak heights of $28\text{S}$ and $18\text{S}$ ribosomal RNA 
 
 $$R_{28S/18S} = \frac{RFU_{28S}}{RFU_{18S}}$$
 
+---
+
+## 18. Forensic Serology Antigen Frequencies & Dual Serology-DNA Likelihood Ratio Synthesis
+
+### 18.1 Serological Population Frequency ($f_{\text{serology}}$)
+For blood group antigen phenotypes across ABO, Rh D, and Kell systems:
+
+$$f_{\text{serology}} = f_{\text{ABO}} \cdot f_{\text{Rh}} \cdot f_{\text{Kell}}$$
+
+Single-locus serological Likelihood Ratio ($LR_{\text{serology}}$):
+
+$$LR_{\text{serology}} = \frac{1}{f_{\text{serology}}}$$
+
+### 18.2 Combined Dual Serology + DNA Likelihood Ratio ($LR_{\text{combined}}$)
+Synthesizes classical serological evidence with 24-locus autosomal STR profiles using the independent product rule:
+
+$$LR_{\text{combined}} = LR_{\text{serology}} \cdot LR_{\text{STR}}$$
+
+$$\log_{10}(LR_{\text{combined}}) = \log_{10}(LR_{\text{serology}}) + \log_{10}(LR_{\text{STR}})$$
+
+
 
 
 

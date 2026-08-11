@@ -61,8 +61,8 @@ export default function LandingFooter() {
                             Access the live dashboard and begin forensic analysis immediately.
                         </p>
                     </div>
-                    <div className="w-full sm:w-auto">
-                        <LaunchDemoButton size="lg" className="w-full sm:w-auto" />
+                    <div>
+                        <LaunchDemoButton size="lg" />
                     </div>
                 </div>
             </div>

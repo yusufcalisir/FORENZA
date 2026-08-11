@@ -100,8 +100,22 @@ export default function LandingHero() {
                     into a single tactical intelligence platform.
                 </p>
 
-                {/* Metrics Bar - First on mobile (order-1), second on desktop (sm:order-2) */}
-                <div className="order-1 sm:order-2 grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3 max-w-4xl w-full mx-auto mb-6 sm:mb-0">
+                {/* CTAs - Mobile: First (order-1), Desktop: Second (sm:order-2) */}
+                <div className="order-1 sm:order-2 flex flex-row items-center justify-center gap-2.5 sm:gap-4 my-2 sm:mt-10 w-full max-w-md sm:max-w-none">
+                    <div className="flex-1 sm:flex-none">
+                        <LaunchDemoButton size="lg" className="w-full sm:w-auto" />
+                    </div>
+                    <a
+                        href="#bio-engine"
+                        onClick={scrollToBioEngine}
+                        className="flex-1 sm:flex-none flex items-center justify-center rounded-xl border border-tactical-border bg-tactical-surface/80 backdrop-blur-md px-3 sm:px-8 py-3.5 sm:py-4 font-mono text-xs font-medium tracking-wide text-tactical-text-muted hover:text-white hover:border-[#06B6D4]/50 hover:bg-tactical-surface-elevated transition-all duration-200 whitespace-nowrap"
+                    >
+                        <span>Explore Bio-Engine</span>
+                    </a>
+                </div>
+
+                {/* Metrics Bar - Mobile: Second (order-2), Desktop: First (sm:order-1) */}
+                <div className="order-2 sm:order-1 grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3 max-w-4xl w-full mx-auto my-6 sm:my-0">
                     {METRICS.map((m) => (
                         <div
                             key={m.label}
@@ -119,20 +133,6 @@ export default function LandingHero() {
                             </span>
                         </div>
                     ))}
-                </div>
-
-                {/* CTAs - Second on mobile (order-2), first on desktop (sm:order-1) - Side by Side on Mobile */}
-                <div className="order-2 sm:order-1 flex flex-row items-center justify-center gap-2 sm:gap-4 my-2 sm:mb-10 w-full max-w-md sm:max-w-none">
-                    <div className="flex-1 sm:flex-none">
-                        <LaunchDemoButton size="lg" className="w-full sm:w-auto" />
-                    </div>
-                    <a
-                        href="#bio-engine"
-                        onClick={scrollToBioEngine}
-                        className="flex-1 sm:flex-none flex items-center justify-center rounded-xl border border-tactical-border bg-tactical-surface/80 backdrop-blur-md px-3 sm:px-8 py-3.5 sm:py-4 font-mono text-xs font-medium tracking-wide text-tactical-text-muted hover:text-white hover:border-[#06B6D4]/50 hover:bg-tactical-surface-elevated transition-all duration-200 whitespace-nowrap"
-                    >
-                        <span>Explore Bio-Engine</span>
-                    </a>
                 </div>
             </div>
 

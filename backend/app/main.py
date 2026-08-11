@@ -817,7 +817,7 @@ class ReconstructionResponse(BaseModel):
     "/profile/reconstruct/{profile_id}",
     response_model=ReconstructionResponse,
 )
-async def reconstruct_face(profile_id: str, sex: str = "male") -> ReconstructionResponse:
+async def reconstruct_face(request: Request, profile_id: str, sex: str = "male") -> ReconstructionResponse:
     """
     Generate a forensic facial reconstruction from SNP phenotype data.
 

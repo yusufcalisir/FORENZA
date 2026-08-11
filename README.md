@@ -15,7 +15,7 @@
   <a href="#probabilistic-genotyping--mcmc-deconvolution"><img src="https://img.shields.io/badge/Genotyping-Metropolis--Hastings%20MCMC-orange?style=for-the-badge" /></a>
   <a href="#forensic-phenotyping--biogeographic-ancestry"><img src="https://img.shields.io/badge/Phenotyping-HIrisPlex--S%20%2B%20BGA-purple?style=for-the-badge" /></a>
   <a href="#cryptographic-ledger--zero-knowledge-privacy-auditor"><img src="https://img.shields.io/badge/Privacy-ZKP%20Circom%20%2B%20Polygon-black?style=for-the-badge&logo=polygon" /></a>
-  <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/Suite%20Status-120%2F120%20Passed%20(100%25)-brightgreen?style=for-the-badge&logo=pytest" /></a>
+  <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/Suite%20Status-126%2F126%20Passed%20(100%25)-brightgreen?style=for-the-badge&logo=pytest" /></a>
 </p>
 
 ---
@@ -424,6 +424,20 @@ graph TD
 
 ---
 
+### Forensic Knowledge Graph & Genetics Database Subsystem
+
+> [!NOTE]
+> **Multi-Relational Property Graph & Intelligence Ecosystem**: Transforms single-locus DNA profile calculators into a graph intelligence network $G = (V, E)$ connecting Case, Person, Evidence, Sample, DnaProfile, Reference, Scene, and Report nodes.
+
+- **Directed Relational Schema ($V, E$)**:
+  - **Nodes ($V$)**: `Case`, `Person`, `Evidence`, `Sample`, `DnaProfile`, `Reference`, `Scene`, `Report`.
+  - **Edges ($E$)**: `BIOLOGICAL_PARENT`, `DNA_CONTRIBUTOR`, `COLLECTED_FROM`, `MATCHED_TO`, `ASSOCIATED_CASE`, `SCENE_LOCATION`.
+- **Relational Path Traversal Algorithms**:
+  - Computes shortest relational distance ($d(u,v)$) and multi-hop adjacency matrix powers ($A^k$) between evidence stains and suspect/victim entities.
+- **Software Implementation**: `backend/node/services/forensic/graph/graph_engine.py`.
+
+---
+
 ## Complete REST API Reference Matrix
 
 | Endpoint | Method | Request Payload Schema | Key Response Attributes |
@@ -456,6 +470,9 @@ graph TD
 | `/api/v1/forensic/toxicology/bac-widmark` | `POST` | `WidmarkBacRequest` | `bac_current_g_per_dl`, `time_to_sobriety_hours`, `pmr_ratio` |
 | `/api/v1/forensic/serology/phenotype` | `POST` | `SerologyPhenotypeRequest` | `sample_id`, `abo_group`, `secretor_status`, `lr_serology` |
 | `/api/v1/forensic/serology/integrate-dna` | `POST` | `SerologyDnaIntegrateRequest` | `lr_serology`, `lr_str`, `lr_combined`, `log10_lr_combined` |
+| `/api/v1/forensic/graph/ingest-case` | `POST` | `IngestCaseGraphRequest` | `case_id`, `nodes_ingested`, `edges_ingested`, `graph_summary` |
+| `/api/v1/forensic/graph/traverse-path` | `POST` | `PathTraversalRequest` | `path_found`, `path_nodes`, `path_relations`, `distance` |
+| `/api/v1/forensic/graph/subgraph/{case_id}` | `GET` | None | `case_id`, `nodes`, `edges` |
 | `/api/v1/health/ready` | `GET` | None | `status`, `subsystems`, `audit_chain_intact` |
 | `/api/v1/health/live` | `GET` | None | `status`, `timestamp` |
 | `/api/v1/health/metrics` | `GET` | None | `uptime_seconds`, `audit_chain_block_count`, `memory_footprint_mb` |
@@ -486,9 +503,10 @@ The entire FORENZA software surface is validated using automated Pytest suites.
 | `test_fluid.py` | Body Fluid Identification Engine | 5 | ~1.40s | 100% (5/5) | mRNA gene expression profiling, multinomial fluid probability, RIN audit |
 | `test_toxicology.py` | Forensic Toxicology Engine | 6 | ~1.76s | 100% (6/6) | Quantitative drug screening, U_95% uncertainty, Widmark BAC, PMR ratio |
 | `test_serology.py` | Forensic Serology Engine | 5 | ~1.63s | 100% (5/5) | ABO/Rh blood groups, Lewis secretor status, Serology+DNA LR fusion |
+| `test_graph.py` | Forensic Knowledge Graph | 6 | ~2.09s | 100% (6/6) | Directed property graph, BFS path traversal, case subgraph extraction |
 | `test_federated.py` | Multi-Node Federated Network | 6 | ~1.48s | 100% (6/6) | PeerRegistry heartbeat, NodeIdentity, Orchestrator distributed query |
 | `test_forensic_routes.py` | FastAPI Endpoint Integration | 7 | ~1.69s | 100% (7/7) | POST /lr, POST /kinship, POST /validate, Pydantic v2 rejection |
-| **Master Integrated Suite** | **Complete System Surface** | **120** | **3.24s** | **100% (120/120)** | **Comprehensive Statistical & Integration Verification** |
+| **Master Integrated Suite** | **Complete System Surface** | **126** | **3.25s** | **100% (126/126)** | **Comprehensive Statistical & Integration Verification** |
 
 ---
 

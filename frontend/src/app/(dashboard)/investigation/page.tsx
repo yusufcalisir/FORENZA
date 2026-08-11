@@ -12,6 +12,7 @@ import EmbeddedAuditLog from "@/components/investigation/EmbeddedAuditLog";
 import InvestigatorSidebar from "@/components/investigation/InvestigatorSidebar";
 import { MatchResultCardDemo } from "@/components/analysis/MatchResultCard";
 import GeoForensicPanel from "@/components/analysis/GeoForensicPanel";
+import ForensicGraphPanel from "@/components/investigation/ForensicGraphPanel";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 
@@ -234,7 +235,12 @@ export default function InvestigationDashboard() {
                     </AnimatePresence>
                 </div>
 
-                {/* Module 3: The Live Ledger */}
+                {/* Forensic Knowledge Graph Subsystem */}
+                <div className="shrink-0 pt-4 border-t border-zinc-800">
+                    <ForensicGraphPanel />
+                </div>
+
+                {/* The Live Ledger */}
                 <div className="h-64 shrink-0">
                     <EmbeddedAuditLog />
                 </div>

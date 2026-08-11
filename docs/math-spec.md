@@ -356,6 +356,23 @@ $$LR_{\text{combined}} = LR_{\text{serology}} \cdot LR_{\text{STR}}$$
 
 $$\log_{10}(LR_{\text{combined}}) = \log_{10}(LR_{\text{serology}}) + \log_{10}(LR_{\text{STR}})$$
 
+---
+
+## 19. Forensic Knowledge Graph Relational Adjacency Matrix & Traversal Metrics
+
+### 19.1 Adjacency Matrix & Multi-Hop Path Count ($A_{ij}^k$)
+For a directed forensic knowledge graph $G = (V, E)$ with $|V| = N$ nodes across types $\{\text{Case}, \text{Person}, \text{Evidence}, \text{Sample}, \text{DnaProfile}, \text{Reference}, \text{Scene}, \text{Report}\}$, the binary adjacency matrix $\mathbf{A} \in \{0,1\}^{N \times N}$ is defined as:
+
+$$A_{ij} = \begin{cases} 1 & \text{if } (v_i, v_j) \in E \\ 0 & \text{otherwise} \end{cases}$$
+
+The element $(A^k)_{ij}$ in the $k$-th matrix power yields the exact number of relational paths of length $k$ between node $v_i$ and node $v_j$.
+
+### 19.2 Shortest Path Distance ($d(u,v)$)
+The geodesic distance $d(u,v)$ between evidence node $u \in V$ and person/scene node $v \in V$ is:
+
+$$d(u,v) = \min \{ k \mid (A^k)_{uv} > 0 \}$$
+
+
 
 
 

@@ -273,6 +273,15 @@ try:
 except Exception as _ser_import_err:
     logger.warning(f"[boot] Serology router not loaded: {_ser_import_err}")
 
+# --- Forensic Knowledge Graph Router ---
+try:
+    from app.api.graph_routes import router as graph_router
+    app.include_router(graph_router, prefix="/api/v1")
+    logger.info("[boot] Forensic Knowledge Graph API router registered at /api/v1/forensic/graph")
+except Exception as _graph_import_err:
+    logger.warning(f"[boot] Graph router not loaded: {_graph_import_err}")
+
+
 
 
 

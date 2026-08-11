@@ -59,14 +59,14 @@ type FilterType = "all" | "suspensions" | "queries";
 const DEMO_LOGS: LedgerEntry[] = [
     {
         index: 1005,
-        timestamp: new Date().toISOString(),
-        query_hash: `0x${Math.random().toString(16).slice(2)}...`,
-        node_id: "FORENZA-NODE-01",
+        timestamp: "2026-08-11T20:00:00.000Z",
+        query_hash: "0x8f3c719a4b220d91e84a92f0",
+        node_id: "FORENSIC-LAB-ALPHA",
         zkp_status: "verified",
         authorization_token: "VALID",
         compliance_decision: "authorized",
         metadata: { type: "Standard_Query" },
-        entry_hash: `0x8f3c719a4b220d91e84a${Math.random().toString(16).slice(2, 10)}`,
+        entry_hash: "0x8f3c719a4b220d91e84a1005",
         block_number: BigInt(123460),
         query_type: "Standard_Query"
     },

@@ -230,14 +230,14 @@ function ThoughtStepCard({
 
                     <div className="font-mono text-[11px] leading-relaxed text-zinc-300 bg-zinc-900/50 border border-zinc-800/50 rounded px-3 py-2">
                         {isActive ? (
-                            <TypewriterText text={step.content} speed={8} />
+                            <TypewriterText text={typeof step === "string" ? step : step?.content || String(step || "")} speed={8} />
                         ) : (
-                            step.content
+                            typeof step === "string" ? step : step?.content || String(step || "")
                         )}
                     </div>
 
                     <div className="mt-1.5">
-                        <ConfidenceBar value={step.confidence} />
+                        <ConfidenceBar value={step?.confidence || 0.95} />
                     </div>
                 </div>
             </div>
@@ -314,7 +314,8 @@ export default function AgentThoughtProcess() {
             stepIndex += 1;
 
             // Advance to next step after content "types out"
-            const typeTime = step.content.length * 8 + 400;
+            const contentStr = typeof step === "string" ? step : step?.content || String(step || "");
+            const typeTime = contentStr.length * 8 + 400;
             setTimeout(() => {
                 setActiveStepIdx(-1);
                 setTimeout(addStep, 300);

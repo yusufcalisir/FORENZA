@@ -62,8 +62,10 @@ export default function InvestigatorSidebar() {
                             {i < thoughts.length - 1 && <div className="w-px h-full bg-zinc-800 my-1" />}
                         </div>
                         <div className="flex-1 pb-4">
-                            <p className="text-xs text-zinc-300 font-mono">{thought.content}</p>
-                            <span className="text-[9px] text-zinc-600 font-mono mt-1 block">{thought.duration}ms</span>
+                            <p className="text-xs text-zinc-300 font-mono">
+                                {typeof thought === "string" ? thought : thought?.content || String(thought || "")}
+                            </p>
+                            <span className="text-[9px] text-zinc-600 font-mono mt-1 block">{(thought as any)?.duration || 100}ms</span>
                         </div>
                     </div>
                 ))}

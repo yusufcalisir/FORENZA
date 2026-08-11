@@ -452,14 +452,20 @@ export default function AnalysisPage() {
                     <div className="flex items-center gap-1.5 border-r border-tactical-border/60 pr-2 mr-1">
                         <span className="font-data text-[7px] text-zinc-500 uppercase font-bold hidden md:inline">Sample Cases:</span>
                         <button
-                            onClick={() => useIngestStore.getState().loadPresetProfile("test-profile-eu")}
-                            className="px-2 py-0.5 rounded text-[8px] font-mono bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/20 transition-all"
+                            onClick={() => {
+                                useIngestStore.getState().setLastIngested("test-profile-eu", "FORENSIC-LAB-ALPHA", 24);
+                                runAnalysis("test-profile-eu", population);
+                            }}
+                            className="px-2 py-0.5 rounded text-[8px] font-mono bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/20 transition-all cursor-pointer"
                         >
                             EU Reference
                         </button>
                         <button
-                            onClick={() => useIngestStore.getState().loadPresetProfile("test-profile-aa")}
-                            className="px-2 py-0.5 rounded text-[8px] font-mono bg-purple-500/10 border border-purple-500/30 text-purple-300 hover:bg-purple-500/20 transition-all"
+                            onClick={() => {
+                                useIngestStore.getState().setLastIngested("test-profile-aa", "DISTRICT-DNA-LAB-01", 24);
+                                runAnalysis("test-profile-aa", population);
+                            }}
+                            className="px-2 py-0.5 rounded text-[8px] font-mono bg-purple-500/10 border border-purple-500/30 text-purple-300 hover:bg-purple-500/20 transition-all cursor-pointer"
                         >
                             AA Reference
                         </button>

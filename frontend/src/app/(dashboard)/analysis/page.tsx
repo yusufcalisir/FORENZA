@@ -17,7 +17,8 @@ import ValidationLabPanel from "@/components/analysis/ValidationLabPanel";
 import LineageDnaPanel from "@/components/analysis/LineageDnaPanel";
 import DviPanel from "@/components/analysis/DviPanel";
 import HumanIdPanel from "@/components/analysis/HumanIdPanel";
-import { Activity, UserCheck, Binary } from "lucide-react";
+import AnthropologyPanel from "@/components/analysis/AnthropologyPanel";
+import { Activity, UserCheck, Binary, Bone } from "lucide-react";
 import { useIngestStore } from "@/store/ingestStore";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -72,7 +73,7 @@ interface AnalysisData {
     tx_hash?: string;
 }
 
-type TabId = "statistical" | "probabilistic" | "relationship" | "bayesian" | "validation" | "lineage" | "dvi" | "hid";
+type TabId = "statistical" | "probabilistic" | "relationship" | "bayesian" | "validation" | "lineage" | "dvi" | "hid" | "anthropology";
 
 // ─── API ─────────────────────────────────────────────────────────────────────
 
@@ -564,6 +565,14 @@ export default function AnalysisPage() {
                     onClick={setActiveTab}
                     badge="MULTI-MODAL"
                 />
+                <TabButton
+                    id="anthropology"
+                    label="Forensic Anthropology"
+                    icon={Bone}
+                    activeTab={activeTab}
+                    onClick={setActiveTab}
+                    badge="OSTEOLOGY"
+                />
             </div>
 
             {/* ── Tab Content ── */}
@@ -850,6 +859,18 @@ export default function AnalysisPage() {
                         transition={{ duration: 0.2 }}
                     >
                         <HumanIdPanel />
+                    </motion.div>
+                )}
+
+                {activeTab === "anthropology" && (
+                    <motion.div
+                        key="anthropology"
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -6 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        <AnthropologyPanel />
                     </motion.div>
                 )}
             </AnimatePresence>

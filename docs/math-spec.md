@@ -236,6 +236,33 @@ $$\text{Risk}_{\text{dropout}} = \begin{cases}
 \text{LOW (Standard Multiplex Protocol)} & \text{if } DI_{\text{skeletal}} < 1.25
 \end{cases}$$
 
+---
+
+## 12. Forensic Anthropology Osteological Morphometrics
+
+### 12.1 Trotter-Gleser Stature Regression
+For maximum femur length $L_{\text{femur}}$ (cm):
+
+$$\text{Stature}_{\text{est}} = 2.38 \cdot L_{\text{femur}} + 61.41 \pm 3.27 \text{ cm}$$
+
+For maximum tibia length $L_{\text{tibia}}$ (cm):
+
+$$\text{Stature}_{\text{est}} = 2.52 \cdot L_{\text{tibia}} + 78.62 \pm 3.37 \text{ cm}$$
+
+### 12.2 Craniometric Index & Population Affinity Classification
+Let $B_{\text{cranial}}$ be maximum cranial breadth (XCB) and $L_{\text{cranial}}$ be maximum cranial length (GOL):
+
+$$CI = \frac{B_{\text{cranial}}}{L_{\text{cranial}}} \times 100$$
+
+Affinity classification:
+
+$$\text{Affinity}_{\text{craniometric}} = \begin{cases} 
+\text{Dolichocephalic (African / Long-Headed Affinity)} & \text{if } CI < 75.0 \\
+\text{Mesocephalic (European / Medium-Headed Affinity)} & \text{if } 75.0 \le CI \le 80.0 \\
+\text{Brachycephalic (Asian / Broad-Headed Affinity)} & \text{if } CI > 80.0
+\end{cases}$$
+
+
 
 
 

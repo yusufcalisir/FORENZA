@@ -217,6 +217,15 @@ try:
 except Exception as _hid_import_err:
     logger.warning(f"[boot] HID router not loaded: {_hid_import_err}")
 
+# --- Forensic Anthropology Router ---
+try:
+    from app.api.anthropology_routes import router as anthropology_router
+    app.include_router(anthropology_router, prefix="/api/v1")
+    logger.info("[boot] Forensic Anthropology API router registered at /api/v1/forensic/anthropology")
+except Exception as _anthro_import_err:
+    logger.warning(f"[boot] Anthropology router not loaded: {_anthro_import_err}")
+
+
 
 
 

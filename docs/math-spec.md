@@ -388,6 +388,23 @@ $$H_0 = \text{SHA-256}(\text{EvidenceID} \parallel \text{SceneID} \parallel \tex
 
 $$H_k = \text{SHA-256}(H_{k-1} \parallel S_k \parallel R_k \parallel \text{Reason}_k \parallel t_k)$$
 
+---
+
+## 21. Bloodstain Pattern Morphometry & Trigonometric Impact Angle Estimation
+
+### 21.1 Ellipse Aspect Ratio ($\epsilon$)
+For fitted bloodstain ellipse with minor axis width $W$ and major axis length $L$ ($W \le L$):
+
+$$\epsilon = \frac{W}{L}$$
+
+### 21.2 Trigonometric Impact Angle ($\alpha$)
+The impact angle $\alpha$ relative to the target surface plane is:
+
+$$\alpha = \arcsin\left(\frac{W}{L}\right) \quad (\text{radians})$$
+
+$$\alpha_{\text{deg}} = \frac{180}{\pi} \cdot \arcsin\left(\frac{W}{L}\right) \quad (\text{degrees})$$
+
+
 
 
 

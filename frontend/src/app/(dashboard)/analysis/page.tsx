@@ -25,7 +25,8 @@ import BodyFluidPanel from "@/components/analysis/BodyFluidPanel";
 import ToxicologyPanel from "@/components/analysis/ToxicologyPanel";
 import SerologyPanel from "@/components/analysis/SerologyPanel";
 import EvidenceManagementPanel from "@/components/analysis/EvidenceManagementPanel";
-import { Activity, UserCheck, Binary, Bone, Bug, Leaf, Layers, Droplet, Pill, Syringe, PackageCheck } from "lucide-react";
+import BpaImagePanel from "@/components/analysis/BpaImagePanel";
+import { Activity, UserCheck, Binary, Bone, Bug, Leaf, Layers, Droplet, Pill, Syringe, PackageCheck, Eye } from "lucide-react";
 import { useIngestStore } from "@/store/ingestStore";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -80,7 +81,7 @@ interface AnalysisData {
     tx_hash?: string;
 }
 
-type TabId = "statistical" | "probabilistic" | "relationship" | "bayesian" | "validation" | "lineage" | "dvi" | "hid" | "anthropology" | "entomology" | "botany" | "microbiology" | "fluid" | "toxicology" | "serology" | "evidence";
+type TabId = "statistical" | "probabilistic" | "relationship" | "bayesian" | "validation" | "lineage" | "dvi" | "hid" | "anthropology" | "entomology" | "botany" | "microbiology" | "fluid" | "toxicology" | "serology" | "evidence" | "bpa";
 
 // ─── API ─────────────────────────────────────────────────────────────────────
 
@@ -636,6 +637,14 @@ export default function AnalysisPage() {
                     onClick={setActiveTab}
                     badge="ISO-21043"
                 />
+                <TabButton
+                    id="bpa"
+                    label="Image Analysis (BPA)"
+                    icon={Eye}
+                    activeTab={activeTab}
+                    onClick={setActiveTab}
+                    badge="IABPA"
+                />
             </div>
 
             {/* ── Tab Content ── */}
@@ -1018,6 +1027,18 @@ export default function AnalysisPage() {
                         transition={{ duration: 0.2 }}
                     >
                         <EvidenceManagementPanel />
+                    </motion.div>
+                )}
+
+                {activeTab === "bpa" && (
+                    <motion.div
+                        key="bpa"
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -6 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        <BpaImagePanel />
                     </motion.div>
                 )}
             </AnimatePresence>

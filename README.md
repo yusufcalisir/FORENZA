@@ -15,7 +15,7 @@
   <a href="#probabilistic-genotyping--mcmc-deconvolution"><img src="https://img.shields.io/badge/Genotyping-Metropolis--Hastings%20MCMC-orange?style=for-the-badge" /></a>
   <a href="#forensic-phenotyping--biogeographic-ancestry"><img src="https://img.shields.io/badge/Phenotyping-HIrisPlex--S%20%2B%20BGA-purple?style=for-the-badge" /></a>
   <a href="#cryptographic-ledger--zero-knowledge-privacy-auditor"><img src="https://img.shields.io/badge/Privacy-ZKP%20Circom%20%2B%20Polygon-black?style=for-the-badge&logo=polygon" /></a>
-  <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/Suite%20Status-132%2F132%20Passed%20(100%25)-brightgreen?style=for-the-badge&logo=pytest" /></a>
+  <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/Suite%20Status-137%2F137%20Passed%20(100%25)-brightgreen?style=for-the-badge&logo=pytest" /></a>
 </p>
 
 ---
@@ -451,6 +451,21 @@ graph TD
 
 ---
 
+### Evidence Image Analysis & Bloodstain Pattern Analysis (BPA) Subsystem
+
+> [!NOTE]
+> **Computer Vision Morphometry & Human-in-the-Loop Verification**: Extracts bloodstain minor axis ($W$) and major axis ($L$), estimates trigonometric impact angle ($\alpha = \arcsin(W/L)$), classifies spatter dynamics, and enforces board-certified human analyst review sign-off protocols.
+
+- **Computer Vision Stain Morphometry**:
+  - Stain width ($W$) & length ($L$) ellipse fitting.
+  - Trigonometric Impact Angle:
+    $$\alpha = \arcsin\left(\frac{W}{L}\right) \quad (\text{deg})$$
+- **Spatter Pattern Dynamics**: Classifies `PASSIVE_DROP`, `HIGH_VELOCITY_SPATTER`, `LOW_VELOCITY_SPATTER`, `CAST_OFF`, `WIPE_TRANSFER`.
+- **Human Analyst Review Protocol**: Mandates human analyst verification (`VERIFIED_BY_ANALYST`) before forensic report certification.
+- **Software Implementation**: `backend/node/services/forensic/bpa/analyzer.py`.
+
+---
+
 ## Complete REST API Reference Matrix
 
 | Endpoint | Method | Request Payload Schema | Key Response Attributes |
@@ -489,6 +504,8 @@ graph TD
 | `/api/v1/forensic/evidence/register` | `POST` | `RegisterEvidenceRequest` | `evidence_id`, `crime_scene_id`, `genesis_hash` |
 | `/api/v1/forensic/evidence/transfer-custody` | `POST` | `TransferCustodyRequest` | `evidence_id`, `transfer_id`, `current_hash` |
 | `/api/v1/forensic/evidence/audit-chain/{evidence_id}` | `GET` | None | `evidence_id`, `chain_intact`, `total_transfers`, `latest_custodian` |
+| `/api/v1/forensic/bpa/analyze-stain` | `POST` | `AnalyzeStainRequest` | `stain_id`, `impact_angle_deg`, `predicted_pattern`, `review_status` |
+| `/api/v1/forensic/bpa/verify-analyst` | `POST` | `VerifyAnalystRequest` | `stain_id`, `review_status`, `verification_record` |
 | `/api/v1/health/ready` | `GET` | None | `status`, `subsystems`, `audit_chain_intact` |
 | `/api/v1/health/live` | `GET` | None | `status`, `timestamp` |
 | `/api/v1/health/metrics` | `GET` | None | `uptime_seconds`, `audit_chain_block_count`, `memory_footprint_mb` |
@@ -521,9 +538,10 @@ The entire FORENZA software surface is validated using automated Pytest suites.
 | `test_serology.py` | Forensic Serology Engine | 5 | ~1.63s | 100% (5/5) | ABO/Rh blood groups, Lewis secretor status, Serology+DNA LR fusion |
 | `test_graph.py` | Forensic Knowledge Graph | 6 | ~2.09s | 100% (6/6) | Directed property graph, BFS path traversal, case subgraph extraction |
 | `test_evidence.py` | Crime Scene Evidence Subsystem | 6 | ~1.63s | 100% (6/6) | Evidence registration, spatial coords, SHA-256 custody ledger |
+| `test_bpa.py` | Evidence Image Analysis (BPA) | 5 | ~2.13s | 100% (5/5) | Ellipse morphometry, arcsin(W/L) impact angle, analyst sign-off |
 | `test_federated.py` | Multi-Node Federated Network | 6 | ~1.48s | 100% (6/6) | PeerRegistry heartbeat, NodeIdentity, Orchestrator distributed query |
 | `test_forensic_routes.py` | FastAPI Endpoint Integration | 7 | ~1.69s | 100% (7/7) | POST /lr, POST /kinship, POST /validate, Pydantic v2 rejection |
-| **Master Integrated Suite** | **Complete System Surface** | **132** | **3.40s** | **100% (132/132)** | **Comprehensive Statistical & Integration Verification** |
+| **Master Integrated Suite** | **Complete System Surface** | **137** | **4.51s** | **100% (137/137)** | **Comprehensive Statistical & Integration Verification** |
 
 ---
 

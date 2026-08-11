@@ -289,6 +289,15 @@ try:
 except Exception as _evid_import_err:
     logger.warning(f"[boot] Evidence router not loaded: {_evid_import_err}")
 
+# --- Evidence Image Analysis & BPA Router ---
+try:
+    from app.api.bpa_routes import router as bpa_router
+    app.include_router(bpa_router, prefix="/api/v1")
+    logger.info("[boot] Evidence Image Analysis & BPA API router registered at /api/v1/forensic/bpa")
+except Exception as _bpa_import_err:
+    logger.warning(f"[boot] BPA router not loaded: {_bpa_import_err}")
+
+
 
 
 

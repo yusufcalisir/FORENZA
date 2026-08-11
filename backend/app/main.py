@@ -305,6 +305,15 @@ try:
 except Exception as _mic_import_err:
     logger.warning(f"[boot] Microscopy router not loaded: {_mic_import_err}")
 
+# --- Touch DNA & Low-Template Genotyping Router ---
+try:
+    from app.api.touch_routes import router as touch_router
+    app.include_router(touch_router, prefix="/api/v1")
+    logger.info("[boot] Touch DNA & Low-Template API router registered at /api/v1/forensic/touch")
+except Exception as _touch_import_err:
+    logger.warning(f"[boot] Touch DNA router not loaded: {_touch_import_err}")
+
+
 
 
 

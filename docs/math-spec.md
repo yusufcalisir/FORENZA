@@ -422,6 +422,28 @@ Given root morphology $R \in \{\text{Anagen With Sheath}, \text{Catagen With She
 
 $$\text{DNA Strategy} = \begin{cases} \text{Nuclear 24-Locus STR Profiling} & \text{if } R \text{ contains Sheath} \\ \text{Mitochondrial DNA (HV1/HV2) Sequencing} & \text{otherwise} \end{cases}$$
 
+---
+
+## 23. Low-Template Touch DNA Stochastic Dropout Modeling & Substrate Efficiency
+
+### 23.1 Substrate Recovered DNA Mass ($m_{\text{recovered}}$)
+For input Touch DNA mass $m_{\text{input}}$ (pg) deposited on substrate $S$ with physical recovery efficiency $\eta(S)$:
+
+$$m_{\text{recovered}} = \eta(S) \cdot m_{\text{input}}$$
+
+where $\eta(\text{Smooth Non-Porous}) = 0.60$, $\eta(\text{Textured Non-Porous}) = 0.40$, $\eta(\text{Porous Fabric}) = 0.20$.
+
+### 23.2 Low-Template Allele Dropout Probability ($P(D)$)
+The stochastic allele dropout probability $P(D \mid m_{\text{recovered}})$ as a function of locus sensitivity parameter $\lambda$:
+
+$$P(D \mid m_{\text{recovered}}) = \exp\left(-\lambda \cdot m_{\text{recovered}}\right)$$
+
+### 23.3 Allele Drop-in Rate ($P(C)$)
+The drop-in probability $P(C)$ accounts for background exogenous contamination:
+
+$$P(C) = 0.01 + 0.05 \cdot P(D)$$
+
+
 
 
 

@@ -15,7 +15,7 @@
   <a href="#probabilistic-genotyping--mcmc-deconvolution"><img src="https://img.shields.io/badge/Genotyping-Metropolis--Hastings%20MCMC-orange?style=for-the-badge" /></a>
   <a href="#forensic-phenotyping--biogeographic-ancestry"><img src="https://img.shields.io/badge/Phenotyping-HIrisPlex--S%20%2B%20BGA-purple?style=for-the-badge" /></a>
   <a href="#cryptographic-ledger--zero-knowledge-privacy-auditor"><img src="https://img.shields.io/badge/Privacy-ZKP%20Circom%20%2B%20Polygon-black?style=for-the-badge&logo=polygon" /></a>
-  <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/Suite%20Status-142%2F142%20Passed%20(100%25)-brightgreen?style=for-the-badge&logo=pytest" /></a>
+  <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/Suite%20Status-147%2F147%20Passed%20(100%25)-brightgreen?style=for-the-badge&logo=pytest" /></a>
 </p>
 
 ---
@@ -481,6 +481,19 @@ graph TD
 
 ---
 
+### Touch DNA & Low-Template Probabilistic Genotyping Subsystem
+
+> [!NOTE]
+> **Substrate Transfer Efficiency & Low-Template Stochastic Modeling**: Models substrate DNA recovery efficiency ($\eta_{\text{substrate}}$) across porous and non-porous physical evidence (Clothing, Door Handles, Gun Grips, Steering Wheels), evaluates stochastic allele dropout probabilities ($P(D) = e^{-\lambda m}$), models drop-in rates ($P(C)$), and integrates directly with MCMC Probabilistic Genotyping.
+
+- **Substrate Recovery Efficiency ($\eta_{\text{substrate}}$)**: Smooth Non-Porous (60%), Textured Non-Porous (40%), Porous Fabric (20%).
+- **Stochastic Allele Dropout Model ($P(D)$)**:
+  $$P(D \mid m_{\text{DNA}}) = e^{-\lambda \cdot m_{\text{DNA}}}$$
+- **MCMC Mixture Contributor Deconvolution**: Evaluates 1-4 person low-template mixtures.
+- **Software Implementation**: `backend/node/services/forensic/touch_dna/touch_engine.py`.
+
+---
+
 ## Complete REST API Reference Matrix
 
 | Endpoint | Method | Request Payload Schema | Key Response Attributes |
@@ -523,6 +536,8 @@ graph TD
 | `/api/v1/forensic/bpa/verify-analyst` | `POST` | `VerifyAnalystRequest` | `stain_id`, `review_status`, `verification_record` |
 | `/api/v1/forensic/microscopy/classify-cell` | `POST` | `ClassifyCellRequest` | `cell_id`, `head_length_um`, `head_width_um`, `normal_morphology` |
 | `/api/v1/forensic/microscopy/hair-morphology` | `POST` | `HairMorphologyRequest` | `hair_id`, `medullary_index`, `species_origin`, `dna_routing` |
+| `/api/v1/forensic/touch/analyze-ltdna` | `POST` | `AnalyzeLtdnaRequest` | `sample_id`, `recovered_mass_pg`, `dropout_probability_pd`, `is_low_template` |
+| `/api/v1/forensic/touch/contributor-deconv` | `POST` | `ContributorDeconvRequest` | `sample_id`, `mixture_proportions`, `mcmc_acceptance_rate`, `log10_lr` |
 | `/api/v1/health/ready` | `GET` | None | `status`, `subsystems`, `audit_chain_intact` |
 | `/api/v1/health/live` | `GET` | None | `status`, `timestamp` |
 | `/api/v1/health/metrics` | `GET` | None | `uptime_seconds`, `audit_chain_block_count`, `memory_footprint_mb` |
@@ -557,9 +572,10 @@ The entire FORENZA software surface is validated using automated Pytest suites.
 | `test_evidence.py` | Crime Scene Evidence Subsystem | 6 | ~1.63s | 100% (6/6) | Evidence registration, spatial coords, SHA-256 custody ledger |
 | `test_bpa.py` | Evidence Image Analysis (BPA) | 5 | ~2.13s | 100% (5/5) | Ellipse morphometry, arcsin(W/L) impact angle, analyst sign-off |
 | `test_microscopy.py` | Microscopy Intelligence | 5 | ~2.01s | 100% (5/5) | Sperm morphometry, I_medulla hair index, nDNA/mtDNA routing |
+| `test_touch.py` | Touch DNA & Low-Template | 5 | ~1.82s | 100% (5/5) | Substrate efficiency, P(D) = exp(-lambda*m), MCMC deconv |
 | `test_federated.py` | Multi-Node Federated Network | 6 | ~1.48s | 100% (6/6) | PeerRegistry heartbeat, NodeIdentity, Orchestrator distributed query |
 | `test_forensic_routes.py` | FastAPI Endpoint Integration | 7 | ~1.69s | 100% (7/7) | POST /lr, POST /kinship, POST /validate, Pydantic v2 rejection |
-| **Master Integrated Suite** | **Complete System Surface** | **142** | **3.85s** | **100% (142/142)** | **Comprehensive Statistical & Integration Verification** |
+| **Master Integrated Suite** | **Complete System Surface** | **147** | **3.79s** | **100% (147/147)** | **Comprehensive Statistical & Integration Verification** |
 
 ---
 

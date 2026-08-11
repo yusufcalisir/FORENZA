@@ -12,6 +12,9 @@ import PedigreeTree from "@/components/analysis/PedigreeTree";
 import LociSensitivityMap from "@/components/analysis/LociSensitivityMap";
 import BayesianShiftChart from "@/components/analysis/BayesianShiftChart";
 import SuspectVisualizer from "@/components/analysis/SuspectVisualizer";
+import ProbabilisticGenotypingPanel from "@/components/analysis/ProbabilisticGenotypingPanel";
+import ValidationLabPanel from "@/components/analysis/ValidationLabPanel";
+import { Activity } from "lucide-react";
 import { useIngestStore } from "@/store/ingestStore";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -66,7 +69,7 @@ interface AnalysisData {
     tx_hash?: string;
 }
 
-type TabId = "statistical" | "relationship" | "bayesian";
+type TabId = "statistical" | "probabilistic" | "relationship" | "bayesian" | "validation";
 
 // ─── API ─────────────────────────────────────────────────────────────────────
 
@@ -503,6 +506,14 @@ export default function AnalysisPage() {
                     onClick={setActiveTab}
                 />
                 <TabButton
+                    id="probabilistic"
+                    label="Probabilistic MCMC"
+                    icon={Activity}
+                    activeTab={activeTab}
+                    onClick={setActiveTab}
+                    badge="SWGDAM"
+                />
+                <TabButton
                     id="relationship"
                     label="Relationship Mapping"
                     icon={GitBranch}
@@ -517,6 +528,14 @@ export default function AnalysisPage() {
                     activeTab={activeTab}
                     onClick={setActiveTab}
                     badge={analysis && analysis.degradation_index > 0.3 ? "⚠" : undefined}
+                />
+                <TabButton
+                    id="validation"
+                    label="Validation Lab"
+                    icon={FlaskConical}
+                    activeTab={activeTab}
+                    onClick={setActiveTab}
+                    badge="5K PAIRS"
                 />
             </div>
 
@@ -593,6 +612,30 @@ export default function AnalysisPage() {
                                 </aside>
                             </div>
                         )}
+                    </motion.div>
+                )}
+
+                {activeTab === "probabilistic" && (
+                    <motion.div
+                        key="probabilistic"
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -6 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        <ProbabilisticGenotypingPanel />
+                    </motion.div>
+                )}
+
+                {activeTab === "validation" && (
+                    <motion.div
+                        key="validation"
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -6 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        <ValidationLabPanel />
                     </motion.div>
                 )}
 

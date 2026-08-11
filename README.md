@@ -261,6 +261,8 @@ Ensures cryptographic privacy and immutable chain-of-custody compliance.
 | `backend/app/api/forensic_routes.py` | REST API routes for LR, Kinship, and Validation endpoints | `router` (`POST /forensic/lr`, `/kinship`, `/validate`) |
 | `backend/app/api/phenotype_schemas.py` | Pydantic v2 schemas for Phenotype API | `PhenotypeRequest`, `PhenotypeResponse` |
 | `backend/app/api/phenotype_routes.py` | REST API routes for Phenotype prediction endpoint | `router` (`POST /forensic/phenotype`) |
+| `frontend/src/components/analysis/ProbabilisticGenotypingPanel.tsx` | Interactive UI component for MCMC sampling, $P(D \mid RFU)$ slider & Tippett calibration | `ProbabilisticGenotypingPanel` |
+| `frontend/src/components/analysis/ValidationLabPanel.tsx` | Interactive UI component for SWGDAM 5,000-pair simulation runner & ROC curve | `ValidationLabPanel` |
 | `backend/app/main.py` | FastAPI main application boot, middleware, router registration | `app` |
 
 ---

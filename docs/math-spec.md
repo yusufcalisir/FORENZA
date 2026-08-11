@@ -322,6 +322,21 @@ For trace microbial evidence $E$ compared against body site hypothesis $H_{\text
 
 $$LR_{\text{microbiome}} = \frac{P(E \mid H_{\text{site}})}{P(E \mid H_{\text{bg}})}$$
 
+---
+
+## 16. mRNA Expression Profiling & Multinomial Body Fluid Identification
+
+### 16.1 Multinomial Softmax Fluid Probability ($P(\text{Fluid}_k \mid \mathbf{X})$)
+Given relative transcript expression intensities $\mathbf{X} = (X_1, X_2, \dots, X_M)$ across cell-type specific mRNA markers ($HBA1, PRM1, HTN3, CYP2B7P1, MMP7, SLC14A2$), the posterior probability for body fluid category $k \in \{\text{Venous Blood}, \text{Semen}, \text{Saliva}, \text{Vaginal Secretion}, \text{Menstrual Blood}, \text{Urine}\}$ is:
+
+$$P(\text{Fluid}_k \mid \mathbf{X}) = \frac{e^{\beta_{k0} + \sum_{m=1}^{M} \beta_{km} X_m}}{\sum_{j=1}^{K} e^{\beta_{j0} + \sum_{m=1}^{M} \beta_{jm} X_m}}$$
+
+### 16.2 RNA Ribosomal Integrity Ratio ($R_{28S/18S}$)
+For electrophoretic peak heights of $28\text{S}$ and $18\text{S}$ ribosomal RNA subunits:
+
+$$R_{28S/18S} = \frac{RFU_{28S}}{RFU_{18S}}$$
+
+
 
 
 

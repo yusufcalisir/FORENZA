@@ -15,7 +15,7 @@
   <a href="#probabilistic-genotyping--mcmc-deconvolution"><img src="https://img.shields.io/badge/Genotyping-Metropolis--Hastings%20MCMC-orange?style=for-the-badge" /></a>
   <a href="#forensic-phenotyping--biogeographic-ancestry"><img src="https://img.shields.io/badge/Phenotyping-HIrisPlex--S%20%2B%20BGA-purple?style=for-the-badge" /></a>
   <a href="#cryptographic-ledger--zero-knowledge-privacy-auditor"><img src="https://img.shields.io/badge/Privacy-ZKP%20Circom%20%2B%20Polygon-black?style=for-the-badge&logo=polygon" /></a>
-  <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/Suite%20Status-104%2F104%20Passed%20(100%25)-brightgreen?style=for-the-badge&logo=pytest" /></a>
+  <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/Suite%20Status-109%2F109%20Passed%20(100%25)-brightgreen?style=for-the-badge&logo=pytest" /></a>
 </p>
 
 ---
@@ -367,6 +367,27 @@ graph TD
 
 ---
 
+### Body Fluid Identification Engine
+
+> [!NOTE]
+> **mRNA Gene Expression & Stain Identification**: Classifies biological trace stain origins (Venous Blood, Semen, Saliva, Vaginal Secretions, Menstrual Blood, Urine) using cell-type specific mRNA transcript expression markers and multinomial softmax probability models.
+
+- **Cell-Type Specific mRNA Marker Panels**:
+  - **Venous Blood**: *HBA1*, *HBB*
+  - **Semen**: *PRM1*, *PRM2*, *KLK3*
+  - **Saliva**: *HTN3*, *STATH*
+  - **Vaginal Secretions**: *CYP2B7P1*, *MYOZ1*
+  - **Menstrual Blood**: *MMP7*, *MMP11*
+  - **Urine**: *SLC14A2*, *UMOD*
+- **Multinomial Softmax Probability Engine**:
+  - Calculates posterior fluid probability distribution:
+    $$P(\text{Fluid}_k \mid \mathbf{X}) = \frac{e^{\beta_{k0} + \sum \beta_{km} X_m}}{\sum_j e^{\beta_{j0} + \sum \beta_{jm} X_m}}$$
+- **RNA/DNA Co-Extraction & Compatibility Auditor**:
+  - Audits RNA yield (ng/µL), $R_{28S/18S}$ RNA Integrity Number (RIN), and downstream 24-locus STR co-extraction strategy.
+- **Software Implementation**: `backend/node/services/forensic/fluid/profiler.py` and `compatibility.py`.
+
+---
+
 ## Complete REST API Reference Matrix
 
 | Endpoint | Method | Request Payload Schema | Key Response Attributes |
@@ -393,6 +414,8 @@ graph TD
 | `/api/v1/forensic/botany/habitat-inference` | `POST` | `HabitatInferenceRequest` | `inferred_habitat_type`, `geographic_association`, `habitat_match_lr` |
 | `/api/v1/forensic/microbiology/classify` | `POST` | `MicrobiologyClassifyRequest` | `sample_id`, `shannon_diversity_index`, `dominant_genus` |
 | `/api/v1/forensic/microbiology/body-site-origin` | `POST` | `BodySiteOriginRequest` | `predicted_body_site`, `site_confidence_score`, `origin_likelihood_ratio` |
+| `/api/v1/forensic/fluid/identify` | `POST` | `FluidIdentifyRequest` | `sample_id`, `top_predicted_fluid`, `fluid_probabilities` |
+| `/api/v1/forensic/fluid/co-extraction-audit` | `POST` | `CoExtractionAuditRequest` | `str_co_extraction_compatible`, `rin_integrity_score`, `recommended_strategy` |
 | `/api/v1/health/ready` | `GET` | None | `status`, `subsystems`, `audit_chain_intact` |
 | `/api/v1/health/live` | `GET` | None | `status`, `timestamp` |
 | `/api/v1/health/metrics` | `GET` | None | `uptime_seconds`, `audit_chain_block_count`, `memory_footprint_mb` |
@@ -420,9 +443,10 @@ The entire FORENZA software surface is validated using automated Pytest suites.
 | `test_entomology.py` | Forensic Entomology Engine | 5 | ~1.89s | 100% (5/5) | ADH/ADD thermal development models, $PMI_{\text{min}}$ estimation, succession |
 | `test_botany.py` | Forensic Botany Engine | 5 | ~1.98s | 100% (5/5) | rbcL/matK DNA barcoding, pollen morphology matching, habitat inference |
 | `test_microbiology.py` | Forensic Microbiology Engine | 7 | ~1.91s | 100% (7/7) | 16S rRNA taxonomic profiling, Bray-Curtis dissimilarity, body site origin |
+| `test_fluid.py` | Body Fluid Identification Engine | 5 | ~1.40s | 100% (5/5) | mRNA gene expression profiling, multinomial fluid probability, RIN audit |
 | `test_federated.py` | Multi-Node Federated Network | 6 | ~1.48s | 100% (6/6) | PeerRegistry heartbeat, NodeIdentity, Orchestrator distributed query |
 | `test_forensic_routes.py` | FastAPI Endpoint Integration | 7 | ~1.69s | 100% (7/7) | POST /lr, POST /kinship, POST /validate, Pydantic v2 rejection |
-| **Master Integrated Suite** | **Complete System Surface** | **104** | **3.02s** | **100% (104/104)** | **Comprehensive Statistical & Integration Verification** |
+| **Master Integrated Suite** | **Complete System Surface** | **109** | **3.92s** | **100% (109/109)** | **Comprehensive Statistical & Integration Verification** |
 
 ---
 

@@ -21,7 +21,8 @@ import AnthropologyPanel from "@/components/analysis/AnthropologyPanel";
 import EntomologyPanel from "@/components/analysis/EntomologyPanel";
 import BotanyPanel from "@/components/analysis/BotanyPanel";
 import MicrobiologyPanel from "@/components/analysis/MicrobiologyPanel";
-import { Activity, UserCheck, Binary, Bone, Bug, Leaf, Layers } from "lucide-react";
+import BodyFluidPanel from "@/components/analysis/BodyFluidPanel";
+import { Activity, UserCheck, Binary, Bone, Bug, Leaf, Layers, Droplet } from "lucide-react";
 import { useIngestStore } from "@/store/ingestStore";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -76,7 +77,7 @@ interface AnalysisData {
     tx_hash?: string;
 }
 
-type TabId = "statistical" | "probabilistic" | "relationship" | "bayesian" | "validation" | "lineage" | "dvi" | "hid" | "anthropology" | "entomology" | "botany" | "microbiology";
+type TabId = "statistical" | "probabilistic" | "relationship" | "bayesian" | "validation" | "lineage" | "dvi" | "hid" | "anthropology" | "entomology" | "botany" | "microbiology" | "fluid";
 
 // ─── API ─────────────────────────────────────────────────────────────────────
 
@@ -600,6 +601,14 @@ export default function AnalysisPage() {
                     onClick={setActiveTab}
                     badge="16S-rRNA"
                 />
+                <TabButton
+                    id="fluid"
+                    label="Body Fluid Identification"
+                    icon={Droplet}
+                    activeTab={activeTab}
+                    onClick={setActiveTab}
+                    badge="mRNA-EXPR"
+                />
             </div>
 
             {/* ── Tab Content ── */}
@@ -934,6 +943,18 @@ export default function AnalysisPage() {
                         transition={{ duration: 0.2 }}
                     >
                         <MicrobiologyPanel />
+                    </motion.div>
+                )}
+
+                {activeTab === "fluid" && (
+                    <motion.div
+                        key="fluid"
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -6 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        <BodyFluidPanel />
                     </motion.div>
                 )}
             </AnimatePresence>

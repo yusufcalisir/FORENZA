@@ -249,6 +249,15 @@ try:
 except Exception as _micro_import_err:
     logger.warning(f"[boot] Microbiology router not loaded: {_micro_import_err}")
 
+# --- Body Fluid Identification Router ---
+try:
+    from app.api.fluid_routes import router as fluid_router
+    app.include_router(fluid_router, prefix="/api/v1")
+    logger.info("[boot] Body Fluid Identification API router registered at /api/v1/forensic/fluid")
+except Exception as _fluid_import_err:
+    logger.warning(f"[boot] Fluid router not loaded: {_fluid_import_err}")
+
+
 
 
 

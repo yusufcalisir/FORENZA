@@ -1,35 +1,89 @@
 # FORENZA: Forensic Biology & DNA Intelligence Operating System
 
 <p align="center">
-  <img src="frontend/public/icon.svg" alt="FORENZA Logo" width="120" height="120" />
+  <img src="frontend/public/icon.svg" alt="FORENZA Logo" width="130" height="130" />
 </p>
 
 <p align="center">
-  <strong>The Next-Generation Enterprise Forensic Biology Operating System</strong><br />
-  Multi-Modal DNA Analysis • Probabilistic Genotyping • Forensic Anthropology • Entomology • Interpol DVI • Cryptographic ZKP Audit
+  <strong>The Enterprise-Grade Computational Forensic Biology & DNA Intelligence Platform</strong><br />
+  A Next-Generation Convergence of Molecular Biology, Statistical Population Genetics & Distributed Software Engineering
 </p>
 
 <p align="center">
-  <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/System%20Status-Operational-brightgreen?style=flat-square" /></a>
-  <a href="#autosomal-str--kinship-engine"><img src="https://img.shields.io/badge/CODIS%20Loci-24%20Core%20Markers-blue?style=flat-square" /></a>
-  <a href="#probabilistic-genotyping--mcmc-deconvolution"><img src="https://img.shields.io/badge/Genotyping-Metropolis--Hastings%20MCMC-orange?style=flat-square" /></a>
-  <a href="#forensic-phenotyping--biogeographic-ancestry"><img src="https://img.shields.io/badge/Phenotyping-HIrisPlex--S%20%2B%20BGA-purple?style=flat-square" /></a>
-  <a href="#cryptographic-ledger--zero-knowledge-privacy-auditor"><img src="https://img.shields.io/badge/Privacy-ZKP%20Circom%20%2B%20Polygon-black?style=flat-square" /></a>
-  <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/Tests-92%20Passed%20(100%25)-brightgreen?style=flat-square" /></a>
+  <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/System%20Status-Operational-brightgreen?style=for-the-badge&logo=opsgenie" /></a>
+  <a href="#autosomal-str--kinship-engine"><img src="https://img.shields.io/badge/Genomics-CODIS%2024%20Core%20Loci-blue?style=for-the-badge&logo=dna" /></a>
+  <a href="#probabilistic-genotyping--mcmc-deconvolution"><img src="https://img.shields.io/badge/Genotyping-Metropolis--Hastings%20MCMC-orange?style=for-the-badge" /></a>
+  <a href="#forensic-phenotyping--biogeographic-ancestry"><img src="https://img.shields.io/badge/Phenotyping-HIrisPlex--S%20%2B%20BGA-purple?style=for-the-badge" /></a>
+  <a href="#cryptographic-ledger--zero-knowledge-privacy-auditor"><img src="https://img.shields.io/badge/Privacy-ZKP%20Circom%20%2B%20Polygon-black?style=for-the-badge&logo=polygon" /></a>
+  <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/Suite%20Status-92%2F92%20Passed%20(100%25)-brightgreen?style=for-the-badge&logo=pytest" /></a>
 </p>
 
 ---
 
 ## Executive Overview
 
-**FORENZA** is an enterprise-grade Forensic Biology & DNA Intelligence Operating System engineered for modern forensic laboratories, disaster victim identification (DVI) task forces, and legal intelligence agencies. FORENZA replaces legacy, single-function desktop utilities with a unified, distributed, microservice-ready platform that synthesizes multi-modal genetic markers, probabilistic mixture deconvolution, osteological morphometrics, entomological thermal development models, and zero-knowledge privacy-preserving audit ledgers.
+**FORENZA** is a state-of-the-art **Forensic Biology & DNA Intelligence Operating System** engineered at the intersection of molecular genetics, osteology, entomology, and enterprise software engineering. Designed for high-throughput forensic laboratories, mass casualty disaster victim identification (DVI) units, and law enforcement agencies, FORENZA replaces fragmented legacy tools with a unified, distributed, microservice-native platform.
+
+By coupling rigorous statistical genetics (Markov Chain Monte Carlo mixture deconvolution, Balding-Nichols subpopulation correction, HIrisPlex-S phenotyping) with modern engineering principles (FastAPI, Next.js Turbopack, asyncio concurrent semaphores, Circom zero-knowledge proofs, and HMAC-SHA256 hash chaining), FORENZA sets a new benchmark for court-admissible forensic intelligence.
+
+---
+
+## System Architecture: Biocomputational & Engineering Pipeline
+
+```mermaid
+graph TD
+    subgraph Evidence_Ingestion["1. Biological Evidence Ingestion"]
+        STR["Autosomal STR Profiles (CODIS 24)"]
+        Lineage["Lineage DNA (Y-STR, X-STR, mtDNA)"]
+        Bone["Skeletal Bone Morphometrics"]
+        Ento["Entomological Specimens & Temp"]
+    end
+
+    subgraph Biocomputational_Engines["2. Core Biocomputational Engines"]
+        MCMC["Probabilistic MCMC Mixture Deconvolution"]
+        Kinship["Kinship & Pedigree Likelihood Ratios"]
+        Pheno["HIrisPlex-S Phenotyping & Ancestry"]
+        Anthro["Trotter-Gleser Stature & Suchey-Brooks Age"]
+        ADH["Accumulated Degree Hours (ADH) PMI Estimator"]
+    end
+
+    subgraph Security_Governance["3. Security & Compliance Governance"]
+        ENFSI["ENFSI Verbal Scale Mapper"]
+        HMAC["HMAC-SHA256 Audit Log Hash Chaining"]
+        ZKP["Circom ZK-SNARK Privacy Match Engine"]
+        Poly["Polygon Ledger State Anchor"]
+    end
+
+    subgraph Application_Layer["4. Tactical SaaS Interface & REST APIs"]
+        API["FastAPI Microservices (/api/v1)"]
+        UI["Next.js Turbopack Tactical Dashboard"]
+    end
+
+    STR --> MCMC
+    STR --> Kinship
+    Lineage --> Kinship
+    Bone --> Anthro
+    Ento --> ADH
+    
+    MCMC --> ENFSI
+    Kinship --> ENFSI
+    Pheno --> ENFSI
+    Anthro --> ENFSI
+    ADH --> ENFSI
+    
+    ENFSI --> HMAC
+    HMAC --> ZKP
+    ZKP --> Poly
+    
+    Poly --> API
+    API --> UI
+```
 
 ---
 
 ## Table of Contents
 
-- [System Architecture Overview](#system-architecture-overview)
-- [Core Intelligence Subsystems](#core-intelligence-subsystems)
+- [Biocomputational Core Subsystems](#biocomputational-core-subsystems)
   - [Autosomal STR & Kinship Engine](#autosomal-str--kinship-engine)
   - [Probabilistic Genotyping & MCMC Deconvolution](#probabilistic-genotyping--mcmc-deconvolution)
   - [Forensic Phenotyping & Biogeographic Ancestry](#forensic-phenotyping--biogeographic-ancestry)
@@ -40,7 +94,7 @@
   - [Multi-Node Federated P2P Network](#multi-node-federated-p2p-network)
   - [Cryptographic Ledger & Zero-Knowledge Privacy Auditor](#cryptographic-ledger--zero-knowledge-privacy-auditor)
   - [System Integrity, Telemetry & Health Probes](#system-integrity-telemetry--health-probes)
-- [Specialized Biological Intelligence Engines](#specialized-biological-intelligence-engines)
+- [Tactical Forensic Intelligence Engines](#tactical-forensic-intelligence-engines)
   - [Expanded Lineage DNA Forensics (Y-STR, X-STR, mtDNA)](#expanded-lineage-dna-forensics-ystr-xstr-mtdna)
   - [Missing Persons & Interpol DVI Engine](#missing-persons--interpol-dvi-engine)
   - [Human Identification (HID) Engine](#human-identification-hid-engine)
@@ -52,55 +106,35 @@
 
 ---
 
-## System Architecture Overview
-
-```
-┌─────────────────────────────────────────────────────────────────────────────────────────────┐
-│                          FORENZA FORENSIC BIOLOGY OPERATING SYSTEM                          │
-└─────────────────────────────────────────────────────────────────────────────────────────────┘
-                                               │
- ┌─────────────────────────────────────────────┴─────────────────────────────────────────────┐
- │                               CORE INTELLIGENCE SUBSYSTEMS                                 │
- ├──────────────────────────────┬──────────────────────────────┬──────────────────────────────┤
- │ Autosomal STR & Kinship      │ Probabilistic MCMC Mixture   │ HIrisPlex-S Phenotyping      │
- │ Population Fst Genetics      │ ENFSI Compliance & Audit     │ High-Throughput Batch        │
- │ Empirical Validation Lab     │ P2P Federated Node Network   │ Circom ZK-SNARK Privacy      │
- └──────────────────────────────┴──────────────────────────────┴──────────────────────────────┘
-                                               │
- ┌─────────────────────────────────────────────┴─────────────────────────────────────────────┐
- │                         SPECIALIZED BIOLOGICAL INTELLIGENCE ENGINES                        │
- ├──────────────────────────────┬──────────────────────────────┬──────────────────────────────┤
- │ Lineage DNA (Y/X/mtDNA)      │ Interpol Missing Persons DVI │ Multi-Modal Human ID (HID)   │
- │ Forensic Anthropology        │ Forensic Entomology (PMI-ADH)│ System HMAC Integrity        │
- └──────────────────────────────┴──────────────────────────────┴──────────────────────────────┘
-```
-
----
-
-## Core Intelligence Subsystems
+## Biocomputational Core Subsystems
 
 ### Autosomal STR & Kinship Engine
 
-- **Scientific Foundation**: Implements standard short tandem repeat (STR) comparison across all 24 CODIS core loci (CSF1PO, FGA, TH01, TPOX, vWA, D3S1358, D5S818, D7S820, D8S1179, D13S317, D16S539, D18S51, D21S11, D1S1656, D2S441, D2S1338, D10S1248, D12S391, D19S433, D22S1045, SE33, Amelogenin, Y-Indel, DYS391).
+> [!NOTE]
+> **Biological & Mathematical Foundation**: Evaluates short tandem repeat (STR) allele configurations across all 24 CODIS core loci to establish identity or biological relationship probabilities.
+
+- **CODIS 24 Core Loci**: Comprehensive support for standard autosomal markers (CSF1PO, FGA, TH01, TPOX, vWA, D3S1358, D5S818, D7S820, D8S1179, D13S317, D16S539, D18S51, D21S11, D1S1656, D2S441, D2S1338, D10S1248, D12S391, D19S433, D22S1045, SE33, Amelogenin, Y-Indel, DYS391).
 - **Single-Source Likelihood Ratio ($LR$)**:
-  For a single-source evidence profile $E$ compared against suspect profile $S$ under prosecution hypothesis $H_p$ (suspect is the source) versus defense hypothesis $H_d$ (an unknown individual is the source):
+  For an evidence profile $E$ compared against suspect profile $S$ under prosecution hypothesis $H_p$ versus defense hypothesis $H_d$:
   $$LR = \frac{P(E \mid H_p)}{P(E \mid H_d)} = \prod_{l=1}^{L} LR_l$$
   - **Heterozygous Locus ($A_i A_j$)**:
     $$LR_l = \frac{1}{2 p_i p_j}$$
-  - **Homozygous Locus ($A_i A_i$) with Subpopulation Correction ($\theta$)**:
+  - **Homozygous Locus ($A_i A_i$) with Balding-Nichols Subpopulation Correction ($\theta$)**:
     $$LR_l = \frac{1}{p_i^2 + p_i(1-p_i)\theta}$$
 - **Kinship Index ($KI$) Engine**:
   - **Parent-Child ($KI_{\text{PC}}$)**:
     $$KI_{\text{PC}} = \frac{1}{2 p_a}$$
   - **Full-Sibling ($KI_{\text{FS}}$)**:
     $$KI_{\text{FS}} = \frac{p_a + p_b + 2\theta}{4 p_a p_b (1+\theta)}$$
-- **Implementation**: Located in `backend/node/services/forensic/str_engine.py`, `lr_engine.py`, and `kinship_engine.py`.
+- **Software Implementation**: `backend/node/services/forensic/str_engine.py`, `lr_engine.py`, and `kinship_engine.py`.
 
 ---
 
 ### Probabilistic Genotyping & MCMC Deconvolution
 
-- **Scientific Foundation**: Resolves complex 2-person and 3-person low-template or degraded DNA mixtures using Markov Chain Monte Carlo (MCMC) sampling based on SWGDAM guidelines.
+> [!IMPORTANT]
+> **Engineering Mechanism**: Deconvolves low-template, degraded, or multi-person DNA mixtures using Markov Chain Monte Carlo (MCMC) sampling based on SWGDAM guidelines.
+
 - **Log-Likelihood Calculation**:
   For observed peak heights $O_{la}$ and expected heights $E_{la}$ at locus $l$ and allele $a$:
   $$\ln L = \sum_{l=1}^{L} \sum_{a=1}^{A} \left[ -\frac{(O_{la} - E_{la})^2}{2 \sigma^2} - \ln(\sqrt{2\pi}\sigma) \right]$$
@@ -108,15 +142,17 @@
   - **Allele Dropout Probability ($p_d$)**: Logistic model dependent on peak height (RFU):
     $$p_d(\text{RFU}) = \frac{1}{1 + e^{\beta_0 + \beta_1 \cdot \text{RFU}}}$$
   - **Drop-in Rate ($p_i$)**: Poisson distribution for low-level spurious peaks above analytical threshold (AT).
-  - **Stutter Ratio ($SR$)**: Locus-specific $n-1$ backward stutter regression modeling.
+  - **Stutter Ratio ($SR$)**: Locus-specific $n-1$ backward stutter linear regression.
 - **Tippett Plot Calibration**: Generates log10(LR) probability distributions under true contributor ($H_p$) and non-contributor ($H_d$) scenarios to demonstrate specificity.
-- **Implementation**: Located in `backend/node/services/forensic/probabilistic/mcmc.py`, `mixture.py`, `stochastic.py`, and `peak_model.py`.
+- **Software Implementation**: `backend/node/services/forensic/probabilistic/mcmc.py`, `mixture.py`, `stochastic.py`, and `peak_model.py`.
 
 ---
 
 ### Forensic Phenotyping & Biogeographic Ancestry
 
-- **Scientific Foundation**: Predicts externally visible characteristics (EVCs) and biogeographic ancestry (BGA) from single nucleotide polymorphisms (SNPs).
+> [!TIP]
+> **Predictive Phenomics**: Infers externally visible characteristics (EVCs) and biogeographic ancestry (BGA) from single nucleotide polymorphisms (SNPs).
+
 - **HIrisPlex-S 41-SNP Model**:
   - **Eye Color**: 6-SNP model predicting Blue, Brown, or Intermediate iris pigmentation.
   - **Hair Color**: 22-SNP model predicting Black, Brown, Red, or Blond hair.
@@ -124,13 +160,12 @@
 - **Multinomial Logistic Regression**:
   $$P(Y = k \mid \mathbf{X}) = \frac{e^{\beta_{k0} + \sum_{m} \beta_{km} X_m}}{\sum_{j=1}^{K} e^{\beta_{j0} + \sum_{m} \beta_{jm} X_m}}$$
 - **Biogeographic Ancestry (BGA)**: Principal Component Analysis (PCA) and multinomial logit classification mapping markers to European, African, East Asian, South Asian, and Amerindian reference populations.
-- **Implementation**: Located in `backend/node/services/forensic/phenotyping/phenotype_engine.py`.
+- **Software Implementation**: `backend/node/services/forensic/phenotyping/phenotype_engine.py`.
 
 ---
 
 ### Statistical Population Genetics & Fst Distances
 
-- **Scientific Foundation**: Applies statutory population genetics corrections to prevent overestimating match probabilities in isolated or structured populations.
 - **National Research Council (NRC II) Bounding Rules**:
   - **Recommendation 4.1**: Allele frequencies bounded by database sample size $N$:
     $$p_{\text{bound}} = \max\left(p_{\text{obs}}, \frac{5}{2N}\right)$$
@@ -140,13 +175,12 @@
 - **Wright's $F_{ST}$ Fixation Index**:
   $$F_{ST} = \frac{H_T - H_S}{H_T}$$
   Calculates pairwise genetic distance across Caucasian, African American, Hispanic, and Asian allele frequency databases.
-- **Implementation**: Located in `backend/node/services/forensic/population/genetics.py`.
+- **Software Implementation**: `backend/node/services/forensic/population/genetics.py`.
 
 ---
 
 ### ENFSI Legal Report Generator & Compliance Auditor
 
-- **Scientific Foundation**: Automates legal compliance according to European Network of Forensic Science Institutes (ENFSI) guidelines.
 - **ENFSI Verbal Scale Mapping**:
   - $LR = 1$: "Neutral / Inconclusive"
   - $1 < LR \le 10$: "Slight support for $H_p$"
@@ -156,7 +190,7 @@
   - $LR > 1,000,000$: "Extremely strong support for $H_p$"
 - **Digital Certificate Cryptographic Signing**: Generates court-admissible PDF reports embedded with HMAC-SHA256 digital signatures.
 - **Partial Profile Statutory Warning**: Automatically flags profiles with fewer than 13 tested loci.
-- **Implementation**: Located in `backend/node/services/forensic/reports/compliance.py` and `generator.py`.
+- **Software Implementation**: `backend/node/services/forensic/reports/compliance.py` and `generator.py`.
 
 ---
 
@@ -164,7 +198,7 @@
 
 - **Architecture**: Asynchronous queue worker pipeline utilizing Python `asyncio.Semaphore` locks to process casework batch files concurrently without blocking REST API routes.
 - **Metrics Aggregation**: Tracks total cases submitted, completed cases, failure rates, and mean processing time per case.
-- **Implementation**: Located in `backend/node/services/forensic/batch/processor.py`.
+- **Software Implementation**: `backend/node/services/forensic/batch/processor.py`.
 
 ---
 
@@ -175,7 +209,7 @@
   - **False Inclusion Rate (FIR)**: Evaluates false inclusion rates at zero false positive thresholds.
   - **Receiver Operating Characteristic (ROC / AUC)**: Computes true positive rate versus false positive rate across $LR$ thresholds.
   - **RMSE Calibration**: Calibrates observed log10(LR) values against expected theoretical likelihoods.
-- **Implementation**: Located in `backend/node/services/forensic/validation/runner.py` and `generator.py`.
+- **Software Implementation**: `backend/node/services/forensic/validation/runner.py` and `generator.py`.
 
 ---
 
@@ -184,15 +218,18 @@
 - **Architecture**: Enables secure cross-jurisdictional DNA searching across decentralized forensic nodes without centralized database consolidation.
 - **PeerRegistry Node Discovery**: Manages dynamic node registration, heartbeat health monitoring, and routing.
 - **Ed25519 Cryptographic Signatures**: Signs node identity tokens (`NodeIdentity`) to verify query provenance and prevent unauthorized requests.
-- **Implementation**: Located in `backend/node/federated/registry.py` and `orchestrator.py`.
+- **Software Implementation**: `backend/node/federated/registry.py` and `orchestrator.py`.
 
 ---
 
 ### Cryptographic Ledger & Zero-Knowledge Privacy Auditor
 
+> [!WARNING]
+> **Privacy Architecture**: Protects genomic privacy by allowing agencies to verify identity matches without broadcasting raw DNA sequence data across networks.
+
 - **Circom ZK-SNARK Circuits**: Generates zero-knowledge proofs allowing agencies to prove a DNA profile match exists without disclosing private raw STR allele sequences.
 - **Polygon Ledger State Anchoring**: Hashes verification proofs and audit trails onto an immutable distributed ledger for immutable chain-of-custody tracking.
-- **Implementation**: Located in `backend/node/services/forensic/security/zk_auditor.py`.
+- **Software Implementation**: `backend/node/services/forensic/security/zk_auditor.py`.
 
 ---
 
@@ -204,11 +241,11 @@
   - `GET /api/v1/health/live`: Liveness verification probe.
   - `GET /api/v1/health/ready`: Readiness probe checking sub-engine initialization.
   - `GET /api/v1/health/metrics`: System telemetry reporting memory footprint, process uptime, and audit log block counts.
-- **Implementation**: Located in `backend/node/services/forensic/security/integrity.py` and `backend/app/api/health_routes.py`.
+- **Software Implementation**: `backend/node/services/forensic/security/integrity.py` and `backend/app/api/health_routes.py`.
 
 ---
 
-## Specialized Biological Intelligence Engines
+## Tactical Forensic Intelligence Engines
 
 ### Expanded Lineage DNA Forensics (Y-STR, X-STR, mtDNA)
 
@@ -222,7 +259,7 @@
 - **mtDNA Alignment Engine**:
   - Aligns hypervariable regions HV1 (16024-16365), HV2 (73-340), and HV3 (438-574) against the revised Cambridge Reference Sequence (rCRS, $AC\_000021.2$).
   - Calculates symmetric variant distance $d = |E \Delta S|$ for maternal lineage confirmation or exclusion.
-- **Implementation**: Located in `backend/node/services/forensic/dna/ystr.py`, `xstr.py`, and `mtdna.py`.
+- **Software Implementation**: `backend/node/services/forensic/dna/ystr.py`, `xstr.py`, and `mtdna.py`.
 
 ---
 
@@ -238,7 +275,7 @@
 - **Pedigree Candidate Ranking**:
   - Evaluates target missing person query profiles across multiple reference pedigree hypotheses (Parent-Child, Full-Sibling, Half-Sibling).
   - Calculates Bayesyen Posterior Probability $P(H_p \mid E, C_i) = \frac{LR \cdot P(H_p)}{LR \cdot P(H_p) + (1 - P(H_p))}$.
-- **Implementation**: Located in `backend/node/services/forensic/dvi/missing_persons.py` and `reconciliation.py`.
+- **Software Implementation**: `backend/node/services/forensic/dvi/missing_persons.py` and `reconciliation.py`.
 
 ---
 
@@ -252,7 +289,7 @@
   - Computes skeletal amplicon degradation index:
     $$DI_{\text{skeletal}} = \frac{RFU_{\text{short (<200bp)}}}{RFU_{\text{long (>300bp)}}}$$
   - Audits Low-Copy-Number (LCN) PCR stochastic thresholds (mean RFU < 150) and recommends short amplicon MiniSTR panels.
-- **Implementation**: Located in `backend/node/services/forensic/hid/remains.py` and `degradation.py`.
+- **Software Implementation**: `backend/node/services/forensic/hid/remains.py` and `degradation.py`.
 
 ---
 
@@ -268,7 +305,7 @@
 - **Skeletal Trauma & Taphonomy Auditor**:
   - Categorizes lesion timing (Antemortem healing, Perimortem fracture, Postmortem taphonomy).
   - Classifies trauma mechanism (Blunt force, Sharp force, Ballistic, Weathering flaking).
-- **Implementation**: Located in `backend/node/services/forensic/anthropology/profile.py` and `trauma.py`.
+- **Software Implementation**: `backend/node/services/forensic/anthropology/profile.py` and `trauma.py`.
 
 ---
 
@@ -290,7 +327,7 @@
     2. Bloated Stage Wave (Silphidae, Histeridae)
     3. Active Decay Wave (Piophilidae, Staphylinidae)
     4. Advanced / Dry Decay Wave (Dermestidae, Tineidae)
-- **Implementation**: Located in `backend/node/services/forensic/entomology/pmi.py` and `succession.py`.
+- **Software Implementation**: `backend/node/services/forensic/entomology/pmi.py` and `succession.py`.
 
 ---
 

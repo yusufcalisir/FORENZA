@@ -153,6 +153,15 @@ try:
 except Exception as _pheno_import_err:
     logger.warning(f"[boot] Phenotype router not loaded: {_pheno_import_err}")
 
+# --- Federated Multi-Node Router ---
+try:
+    from app.api.federated_routes import router as federated_router
+    app.include_router(federated_router, prefix="/api/v1")
+    logger.info("[boot] Federated multi-node API router registered at /api/v1/federated")
+except Exception as _fed_import_err:
+    logger.warning(f"[boot] Federated router not loaded: {_fed_import_err}")
+
+
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # RESPONSE MODELS

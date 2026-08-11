@@ -10,7 +10,7 @@
   <a href="#-probabilistic-genotyping-engine"><img src="https://img.shields.io/badge/Genotyping-Metropolis--Hastings%20MCMC-orange?style=flat-square" /></a>
   <a href="#-hirisplex-s-phenotyping--ancestry"><img src="https://img.shields.io/badge/Phenotyping-HIrisPlex--S%20%2B%20BGA-purple?style=flat-square" /></a>
   <a href="#-cryptographic-ledger--zkp"><img src="https://img.shields.io/badge/Privacy-ZKP%20Circom%20%2B%20Polygon-black?style=flat-square" /></a>
-  <a href="#-test-suite--verification"><img src="https://img.shields.io/badge/Tests-38%20Passed%20(100%25)-brightgreen?style=flat-square" /></a>
+  <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/Tests-44%20Passed%20(100%25)-brightgreen?style=flat-square" /></a>
 </p>
 
 ---
@@ -275,6 +275,9 @@ Ensures cryptographic privacy and immutable chain-of-custody compliance.
 | `/api/v1/forensic/kinship` | `POST` | `KinshipRequest` | `relationship`, `ki_value`, `log10_ki`, `posterior_probability`, `locus_scores` |
 | `/api/v1/forensic/validate` | `POST` | `ValidationRequest` | `accuracy`, `sensitivity_tpr`, `specificity_tnr`, `false_inclusion_rate`, `rmse_log10_lr` |
 | `/api/v1/forensic/phenotype` | `POST` | `PhenotypeRequest` | `eye_colour`, `hair_colour`, `skin_tone`, `ancestry`, `snp_count_evaluated` |
+| `/api/v1/federated/nodes/register` | `POST` | `NodeRegistrationRequest` | `registered`, `node_id`, `active_nodes_in_network` |
+| `/api/v1/federated/nodes/status` | `GET` | None | `total_registered_nodes`, `active_online_nodes`, `nodes` list |
+| `/api/v1/federated/search` | `POST` | `FederatedSearchRequest` | `query_id`, `matching_nodes_count`, `top_lr_value`, `node_responses` |
 | `/profile/ingest` | `POST` | `GenomicProfileIngest` | `decision` (ACCEPTED/QUARANTINED), `validity_score`, `anomaly_report` |
 | `/search/similarity` | `POST` | `SearchRequest` | Ranked list of profile similarity matches from Milvus |
 | `/profile/reconstruct/{id}` | `GET` | Query params | `ReconstructionResponse` (facial prompt & phenotype summary) |
@@ -428,8 +431,9 @@ python -m pytest backend/node/services/forensic/ backend/app/api/test_forensic_r
 | `test_probabilistic_engine.py` | Continuous Probabilistic Genotyping | 5 | ~0.45s | 100% (5/5) | Dropout $P(D)$, Drop-in $P(C)$, Peak Height, MCMC Sampler, Tippett |
 | `test_validation.py` | Empirical Validation Lab | 8 | ~1.02s | 100% (8/8) | Seeded Pair Generator, Accuracy, FIR, FER, RMSE($\log_{10} LR$) |
 | `test_phenotyping.py` | DNA Phenotyping & Ancestry | 13 | ~1.54s | 100% (13/13) | IrisPlex eye, HIrisPlex hair, Fitzpatrick skin, 20-AIM Ancestry |
+| `test_federated.py` | Multi-Node Federated Network | 6 | ~1.48s | 100% (6/6) | PeerRegistry heartbeat, NodeIdentity, Orchestrator distributed query |
 | `test_forensic_routes.py` | FastAPI Endpoint Integration | 7 | ~1.69s | 100% (7/7) | POST /lr, POST /kinship, POST /validate, Pydantic v2 rejection |
-| **Complete System Suite** | **Integrated System Surface** | **38** | **2.12s** | **100% (38/38)** | **Comprehensive Statistical & Integration Verification** |
+| **Complete System Suite** | **Integrated System Surface** | **44** | **2.08s** | **100% (44/44)** | **Comprehensive Statistical & Integration Verification** |
 
 ---
 

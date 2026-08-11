@@ -69,7 +69,7 @@ const FEATURES = [
 
 export default function LandingFeatures() {
     return (
-        <section id="features" className="min-h-[85vh] lg:min-h-screen flex flex-col justify-between py-12 px-4">
+        <section id="features" className="scroll-mt-20 min-h-[85vh] lg:min-h-screen flex flex-col justify-between py-12 px-4">
             <div className="my-auto mx-auto max-w-7xl w-full">
                 {/* Section header */}
                 <div className="text-center mb-12">

@@ -45,11 +45,17 @@ export default function LandingFooter() {
         if (!href.startsWith("#")) return;
         e.preventDefault();
         const id = href.replace("#", "");
-        document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+        const el = document.getElementById(id);
+        if (el) {
+            const headerOffset = 70;
+            const elementPosition = el.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+            window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+        }
     };
 
     return (
-        <footer id="footer" className="border-t border-tactical-border bg-tactical-surface/50">
+        <footer id="footer" className="scroll-mt-20 border-t border-tactical-border bg-tactical-surface/50">
             {/* CTA Banner */}
             <div className="border-b border-tactical-border">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-10 flex flex-col sm:flex-row items-center justify-between gap-5 text-center sm:text-left">

@@ -29,7 +29,10 @@ export default function LandingHeader() {
         const id = href.replace("#", "");
         const el = document.getElementById(id);
         if (el) {
-            el.scrollIntoView({ behavior: "smooth", block: "start" });
+            const headerOffset = 70;
+            const elementPosition = el.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+            window.scrollTo({ top: offsetPosition, behavior: "smooth" });
         }
     };
 

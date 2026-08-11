@@ -50,7 +50,10 @@ export default function LandingHero() {
         e.preventDefault();
         const el = document.getElementById("bio-engine");
         if (el) {
-            el.scrollIntoView({ behavior: "smooth", block: "start" });
+            const headerOffset = 70;
+            const elementPosition = el.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+            window.scrollTo({ top: offsetPosition, behavior: "smooth" });
         }
     };
 

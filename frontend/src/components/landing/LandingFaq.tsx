@@ -46,7 +46,7 @@ export default function LandingFaq() {
     const [openIdx, setOpenIdx] = useState<number | null>(0);
 
     return (
-        <section id="faq" className="min-h-[85vh] lg:min-h-screen flex flex-col justify-between py-12 px-4">
+        <section id="faq" className="scroll-mt-20 min-h-[85vh] lg:min-h-screen flex flex-col justify-between py-12 px-4">
             <div className="my-auto mx-auto max-w-3xl w-full">
                 {/* Header */}
                 <div className="text-center mb-10">

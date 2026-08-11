@@ -471,7 +471,7 @@ export default function LandingBioSimulator() {
     const [activeTab, setActiveTab] = useState<TabId>("phenotype");
 
     return (
-        <section id="bio-engine" className="min-h-[85vh] lg:min-h-screen flex flex-col justify-between py-12 px-4 bg-tactical-surface/20">
+        <section id="bio-engine" className="scroll-mt-20 min-h-[85vh] lg:min-h-screen flex flex-col justify-between py-12 px-4 bg-tactical-surface/20">
             <div className="my-auto mx-auto max-w-6xl w-full">
                 {/* Section header */}
                 <div className="text-center mb-8">

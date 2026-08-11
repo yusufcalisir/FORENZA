@@ -49,7 +49,7 @@ const PIPELINE_STEPS = [
 
 export default function LandingArchitecture() {
     return (
-        <section id="architecture" className="min-h-[85vh] lg:min-h-screen flex flex-col justify-between py-12 px-4 bg-tactical-surface/30">
+        <section id="architecture" className="scroll-mt-20 min-h-[85vh] lg:min-h-screen flex flex-col justify-between py-12 px-4 bg-tactical-surface/30">
             <div className="my-auto mx-auto max-w-7xl w-full">
                 {/* Header */}
                 <div className="text-center mb-12">

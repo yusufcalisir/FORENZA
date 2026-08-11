@@ -201,6 +201,15 @@ try:
 except Exception as _dna_import_err:
     logger.warning(f"[boot] Lineage DNA router not loaded: {_dna_import_err}")
 
+# --- Missing Persons & DVI Router ---
+try:
+    from app.api.dvi_routes import router as dvi_router
+    app.include_router(dvi_router, prefix="/api/v1")
+    logger.info("[boot] Missing Persons & DVI API router registered at /api/v1/forensic/dvi")
+except Exception as _dvi_import_err:
+    logger.warning(f"[boot] DVI router not loaded: {_dvi_import_err}")
+
+
 
 
 

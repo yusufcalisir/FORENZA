@@ -189,4 +189,26 @@ Symmetric difference count $d = |E \Delta S|$:
 
 $$\text{Verdict} = \begin{cases} \text{Cannot Be Excluded (Maternal Match)} & \text{if } d = 0 \\ \text{Inconclusive (Heteroplasmy / Mutation)} & \text{if } d = 1 \\ \text{Excluded (Different Lineages)} & \text{if } d \ge 2 \end{cases}$$
 
+---
+
+## 10. Missing Persons Candidate Ranking & Interpol DVI Reconciliation
+
+### 10.1 Pedigree Candidate Posterior Probability
+For a missing person target query $Q$ evaluated against database candidate $C_i$ with prior probability $P(H_p)$ (default $0.50$):
+
+$$P(H_p \mid E, C_i) = \frac{LR(Q, C_i) \cdot P(H_p)}{LR(Q, C_i) \cdot P(H_p) + (1 - P(H_p))}$$
+
+where $LR(Q, C_i) = \max \left( LR_{\text{Parent-Child}}, LR_{\text{Full-Sibling}} \right)$.
+
+### 10.2 Interpol DVI AM/PM Identification Thresholds
+For Ante-Mortem family reference $AM_i$ compared against Post-Mortem human remain $PM_j$:
+
+$$\text{Status}(AM_i, PM_j) = \begin{cases} 
+\text{CONFIRMED\_IDENTIFICATION} & \text{if } \log_{10} LR \ge 4.0 \\
+\text{PROBABLE\_IDENTIFICATION} & \text{if } 1.0 \le \log_{10} LR < 4.0 \\
+\text{EXCLUDED} & \text{if } \log_{10} LR \le -1.0 \\
+\text{INCONCLUSIVE} & \text{otherwise}
+\end{cases}$$
+
+
 

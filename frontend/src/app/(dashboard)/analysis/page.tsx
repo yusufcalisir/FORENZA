@@ -15,7 +15,8 @@ import SuspectVisualizer from "@/components/analysis/SuspectVisualizer";
 import ProbabilisticGenotypingPanel from "@/components/analysis/ProbabilisticGenotypingPanel";
 import ValidationLabPanel from "@/components/analysis/ValidationLabPanel";
 import LineageDnaPanel from "@/components/analysis/LineageDnaPanel";
-import { Activity } from "lucide-react";
+import DviPanel from "@/components/analysis/DviPanel";
+import { Activity, UserCheck } from "lucide-react";
 import { useIngestStore } from "@/store/ingestStore";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -70,7 +71,7 @@ interface AnalysisData {
     tx_hash?: string;
 }
 
-type TabId = "statistical" | "probabilistic" | "relationship" | "bayesian" | "validation" | "lineage";
+type TabId = "statistical" | "probabilistic" | "relationship" | "bayesian" | "validation" | "lineage" | "dvi";
 
 // ─── API ─────────────────────────────────────────────────────────────────────
 
@@ -546,6 +547,14 @@ export default function AnalysisPage() {
                     onClick={setActiveTab}
                     badge="Y/X/mt"
                 />
+                <TabButton
+                    id="dvi"
+                    label="Missing Persons & DVI"
+                    icon={UserCheck}
+                    activeTab={activeTab}
+                    onClick={setActiveTab}
+                    badge="INTERPOL"
+                />
             </div>
 
             {/* ── Tab Content ── */}
@@ -808,6 +817,18 @@ export default function AnalysisPage() {
                         transition={{ duration: 0.2 }}
                     >
                         <LineageDnaPanel />
+                    </motion.div>
+                )}
+
+                {activeTab === "dvi" && (
+                    <motion.div
+                        key="dvi"
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -6 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        <DviPanel />
                     </motion.div>
                 )}
             </AnimatePresence>

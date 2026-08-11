@@ -241,6 +241,15 @@ try:
 except Exception as _botany_import_err:
     logger.warning(f"[boot] Botany router not loaded: {_botany_import_err}")
 
+# --- Forensic Microbiology Router ---
+try:
+    from app.api.microbiology_routes import router as microbiology_router
+    app.include_router(microbiology_router, prefix="/api/v1")
+    logger.info("[boot] Forensic Microbiology API router registered at /api/v1/forensic/microbiology")
+except Exception as _micro_import_err:
+    logger.warning(f"[boot] Microbiology router not loaded: {_micro_import_err}")
+
+
 
 
 

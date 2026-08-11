@@ -15,7 +15,7 @@
   <a href="#probabilistic-genotyping--mcmc-deconvolution"><img src="https://img.shields.io/badge/Genotyping-Metropolis--Hastings%20MCMC-orange?style=for-the-badge" /></a>
   <a href="#forensic-phenotyping--biogeographic-ancestry"><img src="https://img.shields.io/badge/Phenotyping-HIrisPlex--S%20%2B%20BGA-purple?style=for-the-badge" /></a>
   <a href="#cryptographic-ledger--zero-knowledge-privacy-auditor"><img src="https://img.shields.io/badge/Privacy-ZKP%20Circom%20%2B%20Polygon-black?style=for-the-badge&logo=polygon" /></a>
-  <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/Suite%20Status-97%2F97%20Passed%20(100%25)-brightgreen?style=for-the-badge&logo=pytest" /></a>
+  <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/Suite%20Status-104%2F104%20Passed%20(100%25)-brightgreen?style=for-the-badge&logo=pytest" /></a>
 </p>
 
 ---
@@ -349,6 +349,24 @@ graph TD
 
 ---
 
+### Forensic Microbiology Engine
+
+> [!NOTE]
+> **Microbial Genomics & 16S rRNA Profiling**: Analyzes 16S rRNA hypervariable regions (V3-V4) and fungal ITS barcode relative abundance profiles to infer human body site origin (Sebaceous Skin, Oral Cavity, Vaginal Mucosa, Gut) and environmental soil origin dissimilarity ($D_{\text{Bray-Curtis}}$).
+
+- **16S rRNA Taxonomic Classifier**:
+  - Profiles bacterial phyla (*Actinomycetota*, *Bacillota*, *Bacteroidota*, *Pseudomonadota*).
+  - Computes Shannon Diversity Index $H' = -\sum p_i \ln p_i$.
+- **Bray-Curtis Community Dissimilarity Engine**:
+  - Evaluates distance between trace microbial evidence and reference samples:
+    $$D_{\text{Bray-Curtis}} = 1 - \frac{2 \sum \min(u_i, v_i)}{\sum u_i + \sum v_i}$$
+- **Human Body Site & Soil Origin Auditor**:
+  - Identifies site-specific indicator taxa (*Cutibacterium acnes*, *Streptococcus mitis*, *Lactobacillus gasseri*, *Bacteroides fragilis*).
+  - Calculates body site origin likelihood ratio ($LR_{\text{microbiome}}$).
+- **Software Implementation**: `backend/node/services/forensic/microbiology/classifier.py` and `origin.py`.
+
+---
+
 ## Complete REST API Reference Matrix
 
 | Endpoint | Method | Request Payload Schema | Key Response Attributes |
@@ -373,6 +391,8 @@ graph TD
 | `/api/v1/forensic/entomology/succession` | `POST` | `SuccessionAuditRequest` | `sample_id`, `inferred_decomposition_stage`, `timeframe` |
 | `/api/v1/forensic/botany/identify` | `POST` | `BotanyIdentifyRequest` | `specimen_id`, `top_species_hits`, `botany_summary` |
 | `/api/v1/forensic/botany/habitat-inference` | `POST` | `HabitatInferenceRequest` | `inferred_habitat_type`, `geographic_association`, `habitat_match_lr` |
+| `/api/v1/forensic/microbiology/classify` | `POST` | `MicrobiologyClassifyRequest` | `sample_id`, `shannon_diversity_index`, `dominant_genus` |
+| `/api/v1/forensic/microbiology/body-site-origin` | `POST` | `BodySiteOriginRequest` | `predicted_body_site`, `site_confidence_score`, `origin_likelihood_ratio` |
 | `/api/v1/health/ready` | `GET` | None | `status`, `subsystems`, `audit_chain_intact` |
 | `/api/v1/health/live` | `GET` | None | `status`, `timestamp` |
 | `/api/v1/health/metrics` | `GET` | None | `uptime_seconds`, `audit_chain_block_count`, `memory_footprint_mb` |
@@ -399,9 +419,10 @@ The entire FORENZA software surface is validated using automated Pytest suites.
 | `test_anthropology.py` | Forensic Anthropology Engine | 5 | ~1.85s | 100% (5/5) | Trotter-Gleser stature regression, Suchey-Brooks age, trauma audit |
 | `test_entomology.py` | Forensic Entomology Engine | 5 | ~1.89s | 100% (5/5) | ADH/ADD thermal development models, $PMI_{\text{min}}$ estimation, succession |
 | `test_botany.py` | Forensic Botany Engine | 5 | ~1.98s | 100% (5/5) | rbcL/matK DNA barcoding, pollen morphology matching, habitat inference |
+| `test_microbiology.py` | Forensic Microbiology Engine | 7 | ~1.91s | 100% (7/7) | 16S rRNA taxonomic profiling, Bray-Curtis dissimilarity, body site origin |
 | `test_federated.py` | Multi-Node Federated Network | 6 | ~1.48s | 100% (6/6) | PeerRegistry heartbeat, NodeIdentity, Orchestrator distributed query |
 | `test_forensic_routes.py` | FastAPI Endpoint Integration | 7 | ~1.69s | 100% (7/7) | POST /lr, POST /kinship, POST /validate, Pydantic v2 rejection |
-| **Master Integrated Suite** | **Complete System Surface** | **97** | **4.15s** | **100% (97/97)** | **Comprehensive Statistical & Integration Verification** |
+| **Master Integrated Suite** | **Complete System Surface** | **104** | **3.02s** | **100% (104/104)** | **Comprehensive Statistical & Integration Verification** |
 
 ---
 

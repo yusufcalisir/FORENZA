@@ -303,6 +303,26 @@ For botanical assemblage $A = \{s_1, s_2, \dots, s_k\}$ recovered from evidence 
 
 $$LR_{\text{habitat}} = \frac{P(A \mid H_{\text{scene}})}{P(A \mid H_{\text{bg}})} = \prod_{m=1}^{k} \frac{P(s_m \mid H_{\text{scene}})}{P(s_m \mid H_{\text{bg}})}$$
 
+---
+
+## 15. Forensic Microbiology 16S rRNA Abundance & Bray-Curtis Dissimilarity Metrics
+
+### 15.1 Shannon Diversity Index ($H'$)
+For microbial community relative abundance profile $\mathbf{p} = (p_1, p_2, \dots, p_S)$ across $S$ species:
+
+$$H' = -\sum_{i=1}^{S} p_i \ln(p_i)$$
+
+### 15.2 Bray-Curtis Dissimilarity ($D_{\text{Bray-Curtis}}$)
+For two microbial community relative abundance vectors $\mathbf{u}$ and $\mathbf{v}$ across common genera:
+
+$$D_{\text{Bray-Curtis}} = 1 - \frac{2 \sum_{i} \min(u_i, v_i)}{\sum_{i} (u_i + v_i)}$$
+
+### 15.3 Human Body Site Origin Likelihood Ratio ($LR_{\text{microbiome}}$)
+For trace microbial evidence $E$ compared against body site hypothesis $H_{\text{site}}$ (e.g. Skin, Oral, Vaginal, Gut) versus random background site $H_{\text{bg}}$:
+
+$$LR_{\text{microbiome}} = \frac{P(E \mid H_{\text{site}})}{P(E \mid H_{\text{bg}})}$$
+
+
 
 
 

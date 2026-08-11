@@ -20,7 +20,8 @@ import HumanIdPanel from "@/components/analysis/HumanIdPanel";
 import AnthropologyPanel from "@/components/analysis/AnthropologyPanel";
 import EntomologyPanel from "@/components/analysis/EntomologyPanel";
 import BotanyPanel from "@/components/analysis/BotanyPanel";
-import { Activity, UserCheck, Binary, Bone, Bug, Leaf } from "lucide-react";
+import MicrobiologyPanel from "@/components/analysis/MicrobiologyPanel";
+import { Activity, UserCheck, Binary, Bone, Bug, Leaf, Layers } from "lucide-react";
 import { useIngestStore } from "@/store/ingestStore";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -75,7 +76,7 @@ interface AnalysisData {
     tx_hash?: string;
 }
 
-type TabId = "statistical" | "probabilistic" | "relationship" | "bayesian" | "validation" | "lineage" | "dvi" | "hid" | "anthropology" | "entomology" | "botany";
+type TabId = "statistical" | "probabilistic" | "relationship" | "bayesian" | "validation" | "lineage" | "dvi" | "hid" | "anthropology" | "entomology" | "botany" | "microbiology";
 
 // ─── API ─────────────────────────────────────────────────────────────────────
 
@@ -591,6 +592,14 @@ export default function AnalysisPage() {
                     onClick={setActiveTab}
                     badge="PALYNOLOGY"
                 />
+                <TabButton
+                    id="microbiology"
+                    label="Forensic Microbiology"
+                    icon={Layers}
+                    activeTab={activeTab}
+                    onClick={setActiveTab}
+                    badge="16S-rRNA"
+                />
             </div>
 
             {/* ── Tab Content ── */}
@@ -913,6 +922,18 @@ export default function AnalysisPage() {
                         transition={{ duration: 0.2 }}
                     >
                         <BotanyPanel />
+                    </motion.div>
+                )}
+
+                {activeTab === "microbiology" && (
+                    <motion.div
+                        key="microbiology"
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -6 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        <MicrobiologyPanel />
                     </motion.div>
                 )}
             </AnimatePresence>

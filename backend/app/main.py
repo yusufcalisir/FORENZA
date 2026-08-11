@@ -137,6 +137,15 @@ app.add_middleware(
 # --- Security Middleware ---
 app.add_middleware(VantageAuthMiddleware)
 
+# --- Forensic Engine API Router ---
+try:
+    from app.api.forensic_routes import router as forensic_router
+    app.include_router(forensic_router, prefix="/api/v1")
+    logger.info("[boot] Forensic engine API router registered at /api/v1/forensic")
+except Exception as _forensic_import_err:
+    logger.warning(f"[boot] Forensic router not loaded: {_forensic_import_err}")
+
+
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # RESPONSE MODELS

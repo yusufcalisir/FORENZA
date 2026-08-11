@@ -22,7 +22,8 @@ import EntomologyPanel from "@/components/analysis/EntomologyPanel";
 import BotanyPanel from "@/components/analysis/BotanyPanel";
 import MicrobiologyPanel from "@/components/analysis/MicrobiologyPanel";
 import BodyFluidPanel from "@/components/analysis/BodyFluidPanel";
-import { Activity, UserCheck, Binary, Bone, Bug, Leaf, Layers, Droplet } from "lucide-react";
+import ToxicologyPanel from "@/components/analysis/ToxicologyPanel";
+import { Activity, UserCheck, Binary, Bone, Bug, Leaf, Layers, Droplet, Pill } from "lucide-react";
 import { useIngestStore } from "@/store/ingestStore";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -77,7 +78,7 @@ interface AnalysisData {
     tx_hash?: string;
 }
 
-type TabId = "statistical" | "probabilistic" | "relationship" | "bayesian" | "validation" | "lineage" | "dvi" | "hid" | "anthropology" | "entomology" | "botany" | "microbiology" | "fluid";
+type TabId = "statistical" | "probabilistic" | "relationship" | "bayesian" | "validation" | "lineage" | "dvi" | "hid" | "anthropology" | "entomology" | "botany" | "microbiology" | "fluid" | "toxicology";
 
 // ─── API ─────────────────────────────────────────────────────────────────────
 
@@ -609,6 +610,14 @@ export default function AnalysisPage() {
                     onClick={setActiveTab}
                     badge="mRNA-EXPR"
                 />
+                <TabButton
+                    id="toxicology"
+                    label="Forensic Toxicology"
+                    icon={Pill}
+                    activeTab={activeTab}
+                    onClick={setActiveTab}
+                    badge="ISO-17025"
+                />
             </div>
 
             {/* ── Tab Content ── */}
@@ -955,6 +964,18 @@ export default function AnalysisPage() {
                         transition={{ duration: 0.2 }}
                     >
                         <BodyFluidPanel />
+                    </motion.div>
+                )}
+
+                {activeTab === "toxicology" && (
+                    <motion.div
+                        key="toxicology"
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -6 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        <ToxicologyPanel />
                     </motion.div>
                 )}
             </AnimatePresence>

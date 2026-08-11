@@ -15,7 +15,7 @@
   <a href="#probabilistic-genotyping--mcmc-deconvolution"><img src="https://img.shields.io/badge/Genotyping-Metropolis--Hastings%20MCMC-orange?style=for-the-badge" /></a>
   <a href="#forensic-phenotyping--biogeographic-ancestry"><img src="https://img.shields.io/badge/Phenotyping-HIrisPlex--S%20%2B%20BGA-purple?style=for-the-badge" /></a>
   <a href="#cryptographic-ledger--zero-knowledge-privacy-auditor"><img src="https://img.shields.io/badge/Privacy-ZKP%20Circom%20%2B%20Polygon-black?style=for-the-badge&logo=polygon" /></a>
-  <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/Suite%20Status-109%2F109%20Passed%20(100%25)-brightgreen?style=for-the-badge&logo=pytest" /></a>
+  <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/Suite%20Status-115%2F115%20Passed%20(100%25)-brightgreen?style=for-the-badge&logo=pytest" /></a>
 </p>
 
 ---
@@ -388,6 +388,23 @@ graph TD
 
 ---
 
+### Forensic Toxicology Engine
+
+> [!NOTE]
+> **Quantitative Drug Screening & ISO 17025 Uncertainty**: Screen analytes across Whole Blood, Urine, Vitreous Humor, Hair, and Tissue matrices against reference therapeutic, toxic, and lethal ranges with expanded measurement uncertainty ($U_{95\%} = k \cdot u_c, k=2$).
+
+- **Quantitative Screening & Threshold Classification**:
+  - Maps measured concentrations ($C_{\text{meas}}$) to Baselt toxicological thresholds (`THERAPEUTIC`, `TOXIC`, `FATAL_LETHAL`).
+  - Calculates expanded measurement uncertainty:
+    $$U_{95\%} = k \cdot u_c = 2 \cdot \sqrt{u_{\text{cal}}^2 + u_{\text{rep}}^2 + u_{\text{matrix}}^2}$$
+- **Ethanol Widmark Pharmacokinetics & PMR Auditor**:
+  - Models Blood Alcohol Concentration (BAC) clearance:
+    $$BAC_t = BAC_0 - \beta \cdot t$$
+  - Audits Postmortem Redistribution (PMR) ratio $R_{\text{PMR}} = \frac{C_{\text{cardiac}}}{C_{\text{peripheral}}}$ to flag postmortem diffusion artifacts.
+- **Software Implementation**: `backend/node/services/forensic/toxicology/classifier.py` and `pharmacokinetics.py`.
+
+---
+
 ## Complete REST API Reference Matrix
 
 | Endpoint | Method | Request Payload Schema | Key Response Attributes |
@@ -416,6 +433,8 @@ graph TD
 | `/api/v1/forensic/microbiology/body-site-origin` | `POST` | `BodySiteOriginRequest` | `predicted_body_site`, `site_confidence_score`, `origin_likelihood_ratio` |
 | `/api/v1/forensic/fluid/identify` | `POST` | `FluidIdentifyRequest` | `sample_id`, `top_predicted_fluid`, `fluid_probabilities` |
 | `/api/v1/forensic/fluid/co-extraction-audit` | `POST` | `CoExtractionAuditRequest` | `str_co_extraction_compatible`, `rin_integrity_score`, `recommended_strategy` |
+| `/api/v1/forensic/toxicology/screen` | `POST` | `ToxicologyScreenRequest` | `sample_id`, `analyte_reports`, `toxicology_summary` |
+| `/api/v1/forensic/toxicology/bac-widmark` | `POST` | `WidmarkBacRequest` | `bac_current_g_per_dl`, `time_to_sobriety_hours`, `pmr_ratio` |
 | `/api/v1/health/ready` | `GET` | None | `status`, `subsystems`, `audit_chain_intact` |
 | `/api/v1/health/live` | `GET` | None | `status`, `timestamp` |
 | `/api/v1/health/metrics` | `GET` | None | `uptime_seconds`, `audit_chain_block_count`, `memory_footprint_mb` |

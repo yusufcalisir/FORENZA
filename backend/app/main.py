@@ -257,6 +257,15 @@ try:
 except Exception as _fluid_import_err:
     logger.warning(f"[boot] Fluid router not loaded: {_fluid_import_err}")
 
+# --- Forensic Toxicology Router ---
+try:
+    from app.api.toxicology_routes import router as toxicology_router
+    app.include_router(toxicology_router, prefix="/api/v1")
+    logger.info("[boot] Forensic Toxicology API router registered at /api/v1/forensic/toxicology")
+except Exception as _tox_import_err:
+    logger.warning(f"[boot] Toxicology router not loaded: {_tox_import_err}")
+
+
 
 
 

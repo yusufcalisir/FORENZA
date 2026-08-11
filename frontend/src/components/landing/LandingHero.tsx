@@ -100,22 +100,8 @@ export default function LandingHero() {
                     into a single tactical intelligence platform.
                 </p>
 
-                {/* CTAs - Mobile: First (order-1), Desktop: Second (sm:order-2) */}
-                <div className="order-1 sm:order-2 flex flex-row items-center justify-center gap-2.5 sm:gap-4 my-2 sm:mt-10 w-full max-w-md sm:max-w-none">
-                    <div className="flex-1 sm:flex-none">
-                        <LaunchDemoButton size="lg" className="w-full sm:w-auto" />
-                    </div>
-                    <a
-                        href="#bio-engine"
-                        onClick={scrollToBioEngine}
-                        className="flex-1 sm:flex-none flex items-center justify-center rounded-xl border border-tactical-border bg-tactical-surface/80 backdrop-blur-md px-3 sm:px-8 py-3.5 sm:py-4 font-mono text-xs font-medium tracking-wide text-tactical-text-muted hover:text-white hover:border-[#06B6D4]/50 hover:bg-tactical-surface-elevated transition-all duration-200 whitespace-nowrap"
-                    >
-                        <span>Explore Bio-Engine</span>
-                    </a>
-                </div>
-
-                {/* Metrics Bar - Mobile: Second (order-2), Desktop: First (sm:order-1) */}
-                <div className="order-2 sm:order-1 grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3 max-w-4xl w-full mx-auto my-6 sm:my-0">
+                {/* 4 Metrics Cards - Always ON TOP of the buttons on ALL screens */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3 max-w-4xl w-full mx-auto mb-6 sm:mb-8">
                     {METRICS.map((m) => (
                         <div
                             key={m.label}
@@ -133,6 +119,21 @@ export default function LandingHero() {
                             </span>
                         </div>
                     ))}
+                </div>
+
+                {/* CTAs - Always BELOW the 4 cards with perfect height & alignment parity */}
+                <div className="flex flex-row items-center justify-center gap-2.5 sm:gap-4 w-full max-w-sm sm:max-w-none">
+                    <div className="flex-1 sm:flex-none">
+                        <LaunchDemoButton size="md" className="w-full sm:w-auto hidden sm:inline-flex" />
+                        <LaunchDemoButton size="sm" className="w-full sm:hidden" />
+                    </div>
+                    <a
+                        href="#bio-engine"
+                        onClick={scrollToBioEngine}
+                        className="flex-1 sm:flex-none flex items-center justify-center rounded-xl border border-tactical-border bg-tactical-surface/80 backdrop-blur-md px-3.5 sm:px-6 py-2 sm:py-2.5 font-mono text-[10px] sm:text-xs font-medium tracking-wide text-tactical-text-muted hover:text-white hover:border-[#06B6D4]/50 hover:bg-tactical-surface-elevated transition-all duration-200 whitespace-nowrap"
+                    >
+                        <span>Explore Bio-Engine</span>
+                    </a>
                 </div>
             </div>
 

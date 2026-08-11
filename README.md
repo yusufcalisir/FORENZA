@@ -33,7 +33,7 @@
 | **Vector Search Engine** | Milvus vector database & profile vectorizer | Cosine similarity indexing over 20-dimensional STR locus vectors | High-throughput identity lookup |
 | **Agentic AI Pipeline** | DSPy Chain-of-Thought (CoT) assessment engine | Automated anomaly detection & quality scoring ($validity\_score \ge 0.85$) | Automated forensic reporting |
 | **Zero-Knowledge Privacy** | Circom zk-SNARK circuits & SnarkJS verifier | Private identity matching without revealing raw allele values | Privacy-by-Design / ISO 27001 |
-| **Blockchain Audit Ledger** | Polygon/Sepolia Solidity smart contracts (`VantageAuditLedger.sol`) | Cryptographic proof anchoring for immutable chain-of-custody | Federal Evidence Rule 901 |
+| **Blockchain Audit Ledger** | Polygon/Sepolia Solidity smart contracts (`ForenzaAuditLedger.sol`) | Cryptographic proof anchoring for immutable chain-of-custody | Federal Evidence Rule 901 |
 
 ---
 
@@ -51,7 +51,7 @@ flowchart TD
     end
 
     subgraph APILayer ["FastAPI Service Layer & Gateway (Python 3.12)"]
-        GW_AUTH["VantageAuth Middleware"]
+        GW_AUTH["ForenzaAuth Middleware"]
         GW_LR["POST /api/v1/forensic/lr"]
         GW_KIN["POST /api/v1/forensic/kinship"]
         GW_VAL["POST /api/v1/forensic/validate"]
@@ -81,7 +81,7 @@ flowchart TD
 
     subgraph CryptographicLayer ["Privacy & Blockchain Audit Layer"]
         ZKP_CIRCOM["Circom zk-SNARK Circuits"]
-        SMART_CONTRACT["Polygon Sepolia VantageAuditLedger.sol"]
+        SMART_CONTRACT["Polygon Sepolia ForenzaAuditLedger.sol"]
     end
 
     ClientLayer --> APILayer
@@ -234,7 +234,7 @@ Ensures cryptographic privacy and immutable chain-of-custody compliance.
 ```
 
 1. **Circom ZKP Circuits**: Generates zk-SNARK proofs demonstrating that a profile matches a target STR profile above a defined likelihood ratio threshold without disclosing raw allele numbers.
-2. **Polygon Smart Contract (`VantageAuditLedger.sol`)**: Anchors forensic analysis hashes, timestamp signatures, and investigator session tokens on-chain for tamper detection.
+2. **Polygon Smart Contract (`ForenzaAuditLedger.sol`)**: Anchors forensic analysis hashes, timestamp signatures, and investigator session tokens on-chain for tamper detection.
 
 ---
 

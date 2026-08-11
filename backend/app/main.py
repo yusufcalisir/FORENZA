@@ -1,7 +1,7 @@
 """
-VANTAGE-STR — Core API Entry Point.
+FORENZA — Core API Entry Point.
 
-Vertical Anonymous Network for Tactical Analysis of Genomic Evidence.
+Forensic Biology & DNA Intelligence Operating System.
 This module initializes the FastAPI application and registers the
 primary operational endpoints for health monitoring and profile ingestion.
 
@@ -412,7 +412,7 @@ def system_stats():
 @app.get("/")
 def root() -> dict:
     """Root endpoint — confirms the API process is alive."""
-    return {"message": "VANTAGE-STR API is operational", "status": "tactical_online"}
+    return {"message": "FORENZA API is operational", "status": "tactical_online"}
 
 
 @app.get("/health")

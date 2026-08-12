@@ -186,6 +186,7 @@ export interface SaasTranslation {
   footer: {
     rights: string;
     tagline: string;
+    brandSubtitle: string;
     status: string;
     columns: {
       col1Title: string;
@@ -538,6 +539,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
     footer: {
       rights: "FORENZA Forensic Systems. All rights reserved.",
       tagline: "Enterprise Biocomputational Forensic Intelligence & Evidence Operating System.",
+      brandSubtitle: "FORENSIC EVIDENCE OPERATING SYSTEM",
       status: "30 Active Subsystems",
       columns: {
         col1Title: "Platform Subsystems",
@@ -888,6 +890,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
     footer: {
       rights: "FORENZA Forensic Systems. Tüm hakları saklıdır.",
       tagline: "Kurumsal Biyobilişimsel Adli İstihbarat ve Delil İşletim Sistemi.",
+      brandSubtitle: "ADLİ DELİL İŞLETİM SİSTEMİ",
       status: "30 Modül Aktif",
       columns: {
         col1Title: "Platform Modülleri",

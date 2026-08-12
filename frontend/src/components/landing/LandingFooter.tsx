@@ -59,7 +59,7 @@ export default function LandingFooter() {
                                     FORENZA
                                 </span>
                                 <p className="font-mono text-[9px] tracking-widest text-cyan-400">
-                                    FORENSIC EVIDENCE OPERATING SYSTEM
+                                    {t.footer.brandSubtitle}
                                 </p>
                             </div>
                         </div>

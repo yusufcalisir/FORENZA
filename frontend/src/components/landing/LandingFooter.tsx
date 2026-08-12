@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { ShieldCheck, Activity, Cpu } from "lucide-react";
 import LaunchDemoButton from "./LaunchDemoButton";
 import ForenzaLogoIcon from "@/components/common/ForenzaLogoIcon";
 
@@ -36,7 +35,6 @@ const FOOTER_LINKS = [
 ];
 
 const TECH_BADGES = [
-    { label: "FastAPI Python 3.12", color: "#22C55E" },
     { label: "Next.js 16 Turbopack", color: "#06B6D4" },
     { label: "215/215 Pytest Suite", color: "#8B5CF6" },
     { label: "Circom zkSNARK", color: "#22C55E" },
@@ -44,13 +42,28 @@ const TECH_BADGES = [
 ];
 
 export default function LandingFooter() {
+    const scrollToSection = (targetId: string, e: React.MouseEvent) => {
+        e.preventDefault();
+        const cleanId = targetId.replace("#", "");
+        const el = document.getElementById(cleanId);
+        if (el) {
+            const headerOffset = 70;
+            const elementPosition = el.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+            window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+        }
+    };
+
     return (
-        <footer id="footer" className="border-t border-tactical-border bg-tactical-surface/50 font-mono">
+        <footer id="footer" className="border-t border-tactical-border/60 bg-black font-mono relative overflow-hidden">
+            {/* Ambient Background Glow */}
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[200px] bg-emerald-500/5 blur-[120px] rounded-full pointer-events-none" />
+
             {/* CTA Banner */}
-            <div className="border-b border-tactical-border bg-black/40">
+            <div className="border-b border-tactical-border/60 bg-black/40">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-10 flex flex-col sm:flex-row items-center justify-between gap-5 text-center sm:text-left">
                     <div>
-                        <h2 className="text-xl sm:text-2xl font-extrabold text-tactical-text mb-1">
+                        <h2 className="text-xl sm:text-2xl font-extrabold text-white mb-1">
                             Ready to Launch FORENZA Evidence OS?
                         </h2>
                         <p className="text-zinc-400 text-xs sm:text-sm">
@@ -103,9 +116,13 @@ export default function LandingFooter() {
                                 <ul className="space-y-2 text-xs">
                                     {col.links.map((link, lIdx) => (
                                         <li key={lIdx}>
-                                            <a href={link.href} className="text-zinc-400 hover:text-tactical-accent transition-colors">
+                                            <button
+                                                type="button"
+                                                onClick={(e) => scrollToSection(link.href, e)}
+                                                className="text-zinc-400 hover:text-emerald-400 transition-colors text-left bg-transparent border-0 p-0 cursor-pointer"
+                                            >
                                                 {link.label}
-                                            </a>
+                                            </button>
                                         </li>
                                     ))}
                                 </ul>

@@ -57,13 +57,23 @@ export default function LandingHero() {
                         className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"
                     >
                         <LaunchDemoButton label="Launch Live Evidence OS" className="w-full sm:w-auto text-sm py-3.5 px-8" />
-                        <a
-                            href="#subsystems"
-                            className="w-full sm:w-auto px-6 py-3.5 rounded-xl border border-tactical-border/80 bg-tactical-surface hover:bg-tactical-surface-elevated font-mono text-xs font-bold text-zinc-200 uppercase tracking-wider transition-all flex items-center justify-center gap-2"
+                        <button
+                            type="button"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                const el = document.getElementById("subsystems");
+                                if (el) {
+                                    const headerOffset = 70;
+                                    const elementPosition = el.getBoundingClientRect().top;
+                                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                                    window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+                                }
+                            }}
+                            className="w-full sm:w-auto px-6 py-3.5 rounded-xl border border-tactical-border/80 bg-tactical-surface hover:bg-tactical-surface-elevated font-mono text-xs font-bold text-zinc-200 uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer"
                         >
                             <Layers className="w-4 h-4 text-purple-400" />
                             Explore 30 Subsystems
-                        </a>
+                        </button>
                     </motion.div>
 
                     {/* Key Executive Telemetry Grid */}

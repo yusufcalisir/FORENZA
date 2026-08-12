@@ -6,6 +6,17 @@ import LaunchDemoButton from "./LaunchDemoButton";
 import ForenzaLogoIcon from "@/components/common/ForenzaLogoIcon";
 
 export default function LandingHeader() {
+    const scrollToSection = (id: string, e: React.MouseEvent) => {
+        e.preventDefault();
+        const el = document.getElementById(id);
+        if (el) {
+            const headerOffset = 70;
+            const elementPosition = el.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+            window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+        }
+    };
+
     return (
         <header className="sticky top-0 z-50 border-b border-tactical-border/60 bg-black/80 backdrop-blur-xl transition-all">
             <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
@@ -24,22 +35,38 @@ export default function LandingHeader() {
 
                 {/* Navigation Links */}
                 <nav className="hidden md:flex items-center gap-6 lg:gap-8 font-mono text-xs text-zinc-400">
-                    <a href="#bio-simulator" className="hover:text-emerald-400 transition-colors flex items-center gap-1.5 font-medium">
+                    <button 
+                        type="button"
+                        onClick={(e) => scrollToSection("bio-simulator", e)} 
+                        className="hover:text-emerald-400 transition-colors flex items-center gap-1.5 font-medium cursor-pointer bg-transparent border-0 p-0"
+                    >
                         <Activity className="w-3.5 h-3.5 text-cyan-400" />
                         Bio-Simulator
-                    </a>
-                    <a href="#subsystems" className="hover:text-emerald-400 transition-colors flex items-center gap-1.5 font-medium">
+                    </button>
+                    <button 
+                        type="button"
+                        onClick={(e) => scrollToSection("subsystems", e)} 
+                        className="hover:text-emerald-400 transition-colors flex items-center gap-1.5 font-medium cursor-pointer bg-transparent border-0 p-0"
+                    >
                         <Layers className="w-3.5 h-3.5 text-purple-400" />
                         30 Subsystems
-                    </a>
-                    <a href="#architecture" className="hover:text-emerald-400 transition-colors flex items-center gap-1.5 font-medium">
+                    </button>
+                    <button 
+                        type="button"
+                        onClick={(e) => scrollToSection("architecture", e)} 
+                        className="hover:text-emerald-400 transition-colors flex items-center gap-1.5 font-medium cursor-pointer bg-transparent border-0 p-0"
+                    >
                         <Cpu className="w-3.5 h-3.5 text-emerald-400" />
                         Evidence OS DAG
-                    </a>
-                    <a href="#security" className="hover:text-emerald-400 transition-colors flex items-center gap-1.5 font-medium">
+                    </button>
+                    <button 
+                        type="button"
+                        onClick={(e) => scrollToSection("security", e)} 
+                        className="hover:text-emerald-400 transition-colors flex items-center gap-1.5 font-medium cursor-pointer bg-transparent border-0 p-0"
+                    >
                         <Shield className="w-3.5 h-3.5 text-amber-400" />
                         Security &amp; ISO
-                    </a>
+                    </button>
                 </nav>
 
                 {/* Actions */}

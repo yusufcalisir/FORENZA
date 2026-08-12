@@ -93,7 +93,7 @@ export default function LandingFeatures() {
                                 <currentPillar.icon className="w-4 h-4 sm:w-5 sm:h-5" />
                             </div>
                             <div className="min-w-0">
-                                <h3 className="text-xs sm:text-base font-extrabold uppercase tracking-wider text-white truncate">
+                                <h3 className="text-xs sm:text-base font-extrabold uppercase tracking-wider text-white leading-snug break-words">
                                     {currentPillar.name}
                                 </h3>
                                 <p className="text-[9px] sm:text-[10px] text-zinc-400 mt-0.5 truncate">

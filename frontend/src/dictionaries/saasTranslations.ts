@@ -352,7 +352,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       pillars: [
         {
           name: "Probabilistic Genotyping & Population",
-          shortName: "Probabilistic & Population",
+          shortName: "Genotyping",
           badge: "CORE ENGINE",
           subsystems: [
             { id: "01", name: "Autosomal STR & Kinship Engine", badge: "CODIS-24", metrics: "24 Core Loci • LR Inclusion • Kinship Index", desc: "Calculates Likelihood Ratios for inclusion/exclusion across 24 core CODIS loci and evaluates parent-child / sibling kinship indices." },
@@ -364,7 +364,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
         },
         {
           name: "Lineage Forensics & Kinship Inference",
-          shortName: "Lineage & Kinship",
+          shortName: "Lineage DNA",
           badge: "HAPLOTYPE",
           subsystems: [
             { id: "06", name: "Y-STR Haplotype Forensics", badge: "Y-STR", metrics: "Clopper-Pearson 95% CI • Y-HRD Database • Haplotype", desc: "Computes Clopper-Pearson 95% binomial confidence intervals for Y-chromosome STR haplotypes with Y-HRD database matching." },
@@ -376,7 +376,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
         },
         {
           name: "Phenotyping & Biogeographic Ancestry",
-          shortName: "Phenotyping & Ancestry",
+          shortName: "Phenotyping",
           badge: "HIRISPLEX-S",
           subsystems: [
             { id: "11", name: "HIrisPlex-S Pigmentation Engine", badge: "HIRISPLEX", metrics: "Eye Color • Hair Color • Skin Tone", desc: "24-SNP HIrisPlex-S neural network model predicting iris color, hair pigmentation/morphology, and Fitzpatrick skin phototype." },
@@ -388,7 +388,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
         },
         {
           name: "Epigenetics & Environmental Aging",
-          shortName: "Epigenetics & Aging",
+          shortName: "Epigenetics",
           badge: "EPIGENETICS",
           subsystems: [
             { id: "16", name: "Horvath Epigenetic Age Clock", badge: "HORVATH", metrics: "5-CpG Methylation • Epigenetic Age ±2.8 yr", desc: "Quantifies DNA methylation levels at key CpG loci to estimate chronological age at time of deposition with ±2.8 year precision." },
@@ -400,7 +400,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
         },
         {
           name: "Pathology, Toxicology & Serology",
-          shortName: "Pathology & Toxicology",
+          shortName: "Pathology",
           badge: "PATHOLOGY",
           subsystems: [
             { id: "21", name: "Bloodstain Pattern Analysis (BPA)", badge: "BPA-3D", metrics: "Directionality • Area of Origin • Impact Angle", desc: "Calculates impact angle, stain directionality vectors, and 3D point-of-origin for bloodstain evidence." },
@@ -412,7 +412,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
         },
         {
           name: "LIMS, ISO 17025 QA/QC & Governance",
-          shortName: "LIMS & ISO 17025",
+          shortName: "ISO & LIMS",
           badge: "COMPLIANCE",
           subsystems: [
             { id: "26", name: "LIMS Accessioning & Chain of Custody", badge: "LIMS-HMAC", metrics: "SHA-256 Custody Ledger • Barcode Tracking", desc: "Manages LIMS sample accessioning, chain-of-custody ledgers, storage temperatures, and analyst sign-offs." },
@@ -692,7 +692,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       pillars: [
         {
           name: "Olasılıksal Genotipleme ve Popülasyon Analizleri",
-          shortName: "Olasılıksal Genotipleme",
+          shortName: "Olasılıksal",
           badge: "TEMEL MOTOR",
           subsystems: [
             { id: "01", name: "Otozomal STR ve Akrabalık Motoru", badge: "CODIS-24", metrics: "24 Çekirdek Lokus • LR Analizi • Akrabalık İndeksi", desc: "24 CODIS çekirdek lokusunda dahil etme/dışlama olabilirlik oranlarını (LR) ve akrabalık indekslerini hesaplar." },
@@ -704,7 +704,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
         },
         {
           name: "Soy Analizleri ve Akrabalık Çıkarımı",
-          shortName: "Soy & Akrabalık",
+          shortName: "Soy Analizi",
           badge: "HAPLOTİP",
           subsystems: [
             { id: "06", name: "Y-STR Haplotip Analizi", badge: "Y-STR", metrics: "Clopper-Pearson %95 Güven • Y-HRD Veri Tabanı", desc: "Y-kromozomu STR haplotipleri için Clopper-Pearson %95 binom güven aralıklarını hesaplar ve Y-HRD veri tabanıyla eşleştirir." },
@@ -716,7 +716,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
         },
         {
           name: "Fenotipleme ve Atasal Soy Tahmini",
-          shortName: "Fenotipleme & Soy",
+          shortName: "Fenotipleme",
           badge: "HIRISPLEX-S",
           subsystems: [
             { id: "11", name: "HIrisPlex-S Pigmentasyon Analizi", badge: "HIRISPLEX", metrics: "Göz Rengi • Saç Rengi • Ten Fototipi", desc: "Göz rengi, saç pigmentasyonu/morfolojisi ve Fitzpatrick ten fototipini tahmin eden 24-SNP HIrisPlex-S yapay zeka modeli." },
@@ -728,7 +728,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
         },
         {
           name: "Epigenetik ve Yaş Tayini",
-          shortName: "Epigenetik & Yaş",
+          shortName: "Epigenetik",
           badge: "EPİGENETİK",
           subsystems: [
             { id: "16", name: "Horvath Epigenetik Yaş Saati", badge: "HORVATH", metrics: "5-CpG Metilasyonu • Epigenetik Yaş ±2.8 Yıl", desc: "Delil bırakma anındaki kronolojik yaşı ±2.8 yıl hassasiyetle tahmin etmek için temel CpG lokuslarındaki metilasyon seviyelerini ölçer." },
@@ -740,7 +740,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
         },
         {
           name: "Adli Patoloji, Toksikoloji ve Seroloji",
-          shortName: "Patoloji & Toksikoloji",
+          shortName: "Patoloji",
           badge: "PATOLOJİ",
           subsystems: [
             { id: "21", name: "Kan Lekesi Deseni Analizi (BPA)", badge: "BPA-3D", metrics: "Yönelim • Çıkış Açısı • Darbe Açısı", desc: "Kan lekesi delilleri için darbe açısını, leke yönelim vektörlerini ve 3D çıkış noktasını hesaplar." },
@@ -752,7 +752,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
         },
         {
           name: "LIMS, ISO 17025 Kalite Kontrol ve Yönetişim",
-          shortName: "LIMS & Akreditasyon",
+          shortName: "LIMS & ISO",
           badge: "UYUMLULUK",
           subsystems: [
             { id: "26", name: "LIMS Kayıt ve Delil Zinciri Takibi", badge: "LIMS-HMAC", metrics: "SHA-256 Delil Kaydı • Barkodlu Takip", desc: "LIMS numune kabulünü, delil zinciri kayıtlarını, saklama sıcaklıklarını ve analist onaylarını yönetir." },

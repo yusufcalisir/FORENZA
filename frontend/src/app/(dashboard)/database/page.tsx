@@ -204,7 +204,7 @@ export default function DatabasePage() {
             <ActiveProfileBanner />
 
             {/* ── Bio-Forensic Stats Strip ── */}
-            <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
                 {[
                     { label: "Total Profiles", value: stats.total.toLocaleString(), color: "#FAFAFA", bg: "#111113", border: "#27272A" },
                     { label: "Complete (24 Loci)", value: stats.complete.toLocaleString(), color: "#22C55E", bg: "rgba(34,197,94,0.06)", border: "rgba(34,197,94,0.25)" },
@@ -214,7 +214,7 @@ export default function DatabasePage() {
                 ].map((s) => (
                     <div
                         key={s.label}
-                        className="rounded-xl border p-4 text-center transition-all hover:scale-[1.02] shadow-md"
+                        className="rounded-xl border p-4 text-center transition-all hover:scale-[1.02] shadow-md last:col-span-2 sm:last:col-span-1"
                         style={{ background: s.bg, borderColor: s.border }}
                     >
                         <p className="text-xl sm:text-2xl font-bold tabular-nums" style={{ color: s.color }}>
@@ -238,50 +238,56 @@ export default function DatabasePage() {
                         placeholder="Search by Profile ID (e.g. CASE-2026-EU) or Node..."
                         className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-tactical-border bg-tactical-surface
                             text-xs text-tactical-text placeholder:text-tactical-text-dim outline-none transition-all
-                            focus:border-[#06B6D4] focus:ring-1 focus:ring-[#06B6D4]/30 shadow-inner"
+                            focus:border-[#06B6D4] focus:ring-1 focus:ring-[#06B6D4]/30 shadow-inner font-mono"
                     />
                 </div>
-                <div className="flex items-center gap-2 justify-end">
-                    <Filter className="w-4 h-4 text-[#06B6D4]" />
-                    <select
-                        value={nodeFilter}
-                        onChange={(e) => { setNodeFilter(e.target.value); setPage(0); }}
-                        className="bg-tactical-surface border border-tactical-border rounded-xl px-3 py-2.5
-                            text-xs text-tactical-text outline-none focus:border-[#06B6D4] cursor-pointer min-w-[140px] shadow-sm"
-                    >
-                        <option value="all">All Network Nodes</option>
-                        {NODES.map((n) => (
-                            <option key={n} value={n}>{n}</option>
-                        ))}
-                    </select>
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                    <div className="flex items-center gap-2 w-full bg-[#070D18] border border-tactical-border rounded-xl px-3 py-1.5 focus-within:border-[#06B6D4]">
+                        <Filter className="w-4 h-4 text-[#06B6D4] shrink-0" />
+                        <select
+                            value={nodeFilter}
+                            onChange={(e) => { setNodeFilter(e.target.value); setPage(0); }}
+                            className="w-full bg-[#070D18] text-white text-xs outline-none cursor-pointer py-1 font-mono"
+                        >
+                            <option value="all" className="bg-[#070D18] text-white py-1">All Network Nodes</option>
+                            {NODES.map((n) => (
+                                <option key={n} value={n} className="bg-[#070D18] text-white py-1">{n}</option>
+                            ))}
+                        </select>
+                    </div>
                 </div>
             </div>
 
             {/* ── Table ── */}
             <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface overflow-hidden shadow-[0_0_40px_rgba(0,0,0,0.5)]">
-                {/* Head */}
-                <div className="grid grid-cols-[1fr_1fr_0.8fr] sm:grid-cols-[1.5fr_1.2fr_0.8fr_1.2fr_1fr_0.8fr] gap-0 bg-tactical-bg/80 border-b border-tactical-border">
+                {/* Desktop Table Head */}
+                <div className="hidden sm:grid sm:grid-cols-[1.5fr_1.2fr_0.8fr_1.2fr_1fr_0.8fr] gap-0 bg-tactical-bg/80 border-b border-tactical-border">
                     {[
-                        { key: "id" as SortKey, label: "Profile ID", mobile: true },
-                        { key: "originNode" as SortKey, label: "Origin Node", mobile: true },
-                        { key: "lociCount" as SortKey, label: "STR Loci", mobile: true },
-                        { key: null, label: "Sample Quality", mobile: false },
-                        { key: "insertedAt" as SortKey, label: "Indexed Timestamp", mobile: false },
-                        { key: null, label: "Vector ID", mobile: false },
+                        { key: "id" as SortKey, label: "Profile ID" },
+                        { key: "originNode" as SortKey, label: "Origin Node" },
+                        { key: "lociCount" as SortKey, label: "STR Loci" },
+                        { key: null, label: "Sample Quality" },
+                        { key: "insertedAt" as SortKey, label: "Indexed Timestamp" },
+                        { key: null, label: "Vector ID" },
                     ].map((col) => (
                         <button
                             key={col.label}
                             onClick={() => col.key && toggleSort(col.key)}
                             disabled={!col.key}
-                            className={`items-center gap-1.5 px-4 py-3.5 text-left
+                            className={`flex items-center gap-1.5 px-4 py-3.5 text-left
                                 text-[9px] font-bold uppercase tracking-widest text-tactical-text-dim
-                                ${col.key ? "hover:text-tactical-text cursor-pointer" : "cursor-default"}
-                                ${col.mobile ? "flex" : "hidden sm:flex"}`}
+                                ${col.key ? "hover:text-tactical-text cursor-pointer" : "cursor-default"}`}
                         >
                             {col.label}
                             {col.key && <SortIcon field={col.key} />}
                         </button>
                     ))}
+                </div>
+
+                {/* Mobile Header */}
+                <div className="flex sm:hidden items-center justify-between px-4 py-3 bg-tactical-bg/80 border-b border-tactical-border text-[9px] font-bold uppercase tracking-widest text-tactical-text-dim">
+                    <span>Indexed DNA Profiles ({pageData.length})</span>
+                    <span>Tap Row to Inspect</span>
                 </div>
 
                 {/* Body */}
@@ -299,56 +305,87 @@ export default function DatabasePage() {
                                     else if (profile.sampleType === "AA") loadSampleCaseAA();
                                     setInspectorOpen(true);
                                 }}
-                                className="grid grid-cols-[1fr_1fr_0.8fr] sm:grid-cols-[1.5fr_1.2fr_0.8fr_1.2fr_1fr_0.8fr] gap-0
-                                    hover:bg-tactical-surface-elevated/80 cursor-pointer transition-colors"
+                                className="hover:bg-tactical-surface-elevated/80 cursor-pointer transition-colors"
                             >
-                                {/* Profile ID */}
-                                <div className="flex items-center gap-2 px-4 py-3 min-w-0">
-                                    <Dna className="w-3.5 h-3.5 text-[#22C55E] flex-shrink-0" />
-                                    <span className="text-xs font-bold text-white truncate">
-                                        {profile.id}
-                                    </span>
+                                {/* Desktop Grid View */}
+                                <div className="hidden sm:grid sm:grid-cols-[1.5fr_1.2fr_0.8fr_1.2fr_1fr_0.8fr] gap-0 items-center">
+                                    {/* Profile ID */}
+                                    <div className="flex items-center gap-2 px-4 py-3 min-w-0">
+                                        <Dna className="w-3.5 h-3.5 text-[#22C55E] flex-shrink-0" />
+                                        <span className="text-xs font-bold text-white truncate">
+                                            {profile.id}
+                                        </span>
+                                    </div>
+
+                                    {/* Origin Node */}
+                                    <div className="flex items-center gap-1.5 px-4 py-3 min-w-0">
+                                        <MapPin className="w-3 h-3 text-[#06B6D4] flex-shrink-0" />
+                                        <span className="text-xs text-tactical-text-muted truncate">
+                                            {profile.originNode}
+                                        </span>
+                                    </div>
+
+                                    {/* Loci Count */}
+                                    <div className="flex items-center px-4 py-3">
+                                        <span className="text-xs font-bold tabular-nums text-[#22C55E]">
+                                            {profile.lociCount}
+                                        </span>
+                                        <span className="text-[9px] text-tactical-text-dim ml-1">/ 24 Loci</span>
+                                    </div>
+
+                                    {/* Quality */}
+                                    <div className="flex items-center px-4 py-3">
+                                        <span
+                                            className="text-[9px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg border"
+                                            style={{ color: q.color, background: q.bg, borderColor: q.border }}
+                                        >
+                                            {q.label}
+                                        </span>
+                                    </div>
+
+                                    {/* Indexed At */}
+                                    <div className="flex items-center px-4 py-3">
+                                        <span className="text-xs text-tactical-text-muted tabular-nums truncate">
+                                            {profile.insertedAt}
+                                        </span>
+                                    </div>
+
+                                    {/* Vector ID */}
+                                    <div className="flex items-center gap-1.5 px-4 py-3">
+                                        <Hash className="w-3 h-3 text-[#8B5CF6] flex-shrink-0" />
+                                        <span className="text-xs text-[#8B5CF6] font-bold tabular-nums">
+                                            #{profile.vectorId}
+                                        </span>
+                                    </div>
                                 </div>
 
-                                {/* Origin Node */}
-                                <div className="flex items-center gap-1.5 px-4 py-3 min-w-0">
-                                    <MapPin className="w-3 h-3 text-[#06B6D4] flex-shrink-0" />
-                                    <span className="text-xs text-tactical-text-muted truncate">
-                                        {profile.originNode}
-                                    </span>
-                                </div>
+                                {/* Mobile Card View */}
+                                <div className="p-3.5 sm:hidden space-y-2">
+                                    <div className="flex items-center justify-between gap-2">
+                                        <div className="flex items-center gap-2 min-w-0">
+                                            <Dna className="w-4 h-4 text-[#22C55E] shrink-0" />
+                                            <span className="text-xs font-bold text-white truncate font-mono">
+                                                {profile.id}
+                                            </span>
+                                        </div>
+                                        <span
+                                            className="text-[8px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border shrink-0"
+                                            style={{ color: q.color, background: q.bg, borderColor: q.border }}
+                                        >
+                                            {q.label}
+                                        </span>
+                                    </div>
 
-                                {/* Loci Count */}
-                                <div className="flex items-center px-4 py-3">
-                                    <span className="text-xs font-bold tabular-nums text-[#22C55E]">
-                                        {profile.lociCount}
-                                    </span>
-                                    <span className="text-[9px] text-tactical-text-dim ml-1">/ 24 Loci</span>
-                                </div>
-
-                                {/* Quality */}
-                                <div className="hidden sm:flex items-center px-4 py-3">
-                                    <span
-                                        className="text-[9px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg border"
-                                        style={{ color: q.color, background: q.bg, borderColor: q.border }}
-                                    >
-                                        {q.label}
-                                    </span>
-                                </div>
-
-                                {/* Indexed At */}
-                                <div className="hidden sm:flex items-center px-4 py-3">
-                                    <span className="text-xs text-tactical-text-muted tabular-nums truncate">
-                                        {profile.insertedAt}
-                                    </span>
-                                </div>
-
-                                {/* Vector ID */}
-                                <div className="hidden sm:flex items-center gap-1.5 px-4 py-3">
-                                    <Hash className="w-3 h-3 text-[#8B5CF6] flex-shrink-0" />
-                                    <span className="text-xs text-[#8B5CF6] font-bold tabular-nums">
-                                        #{profile.vectorId}
-                                    </span>
+                                    <div className="flex items-center justify-between text-[10px] text-zinc-400 font-mono pt-1 border-t border-tactical-border/40">
+                                        <div className="flex items-center gap-1 min-w-0">
+                                            <MapPin className="w-3 h-3 text-[#06B6D4] shrink-0" />
+                                            <span className="truncate">{profile.originNode}</span>
+                                        </div>
+                                        <div className="flex items-center gap-3 shrink-0">
+                                            <span className="text-[#22C55E] font-bold">{profile.lociCount}/24 Loci</span>
+                                            <span className="text-[#8B5CF6] font-bold">#{profile.vectorId}</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </motion.div>
                         );

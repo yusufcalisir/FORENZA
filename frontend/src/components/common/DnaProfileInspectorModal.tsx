@@ -12,20 +12,10 @@ import {
   Trash2,
   CheckCircle2,
   Globe,
-  Clock,
-  GitBranch,
   Sliders,
-  Activity,
-  Layers,
   Search,
 } from "lucide-react";
-import { useIngestStore, ActiveProfileData, SAMPLE_CASE_EU, SAMPLE_CASE_AA } from "@/store/ingestStore";
-
-const CODIS_PRESETS = [
-  "D3S1358", "vWA", "FGA", "TH01", "TPOX", "CSF1PO", "D5S818", "D13S317",
-  "D7S820", "D8S1179", "D21S11", "D18S51", "D16S539", "D2S1338", "D19S433",
-  "SE33", "AMEL", "D1S1656", "D12S391", "D2S441", "D10S1248", "D22S1045", "Penta_E", "Penta_D"
-];
+import { useIngestStore, ActiveProfileData } from "@/store/ingestStore";
 
 export default function DnaProfileInspectorModal() {
   const { isInspectorOpen, setInspectorOpen, activeProfile, setActiveProfile, loadSampleCaseEU, loadSampleCaseAA } = useIngestStore();
@@ -109,7 +99,6 @@ export default function DnaProfileInspectorModal() {
 
     // Dynamic inference calculation
     const hasHERC2_AA = newSnpMarkers["rs12913832"]?.genotype === "A/A";
-    const hasHERC2_GG = newSnpMarkers["rs12913832"]?.genotype === "G/G";
     const isEU = hasHERC2_AA || activeProfile.sampleType === "EU";
 
     const updatedProfile: ActiveProfileData = {
@@ -122,11 +111,11 @@ export default function DnaProfileInspectorModal() {
       snpMarkers: newSnpMarkers,
       phenotype: isEU
         ? {
-            eyeColor: "Blue (Mavi)",
+            eyeColor: "Blue",
             eyeColorProb: 94.2,
             skinType: "Type I / II (Fair Skin)",
             skinTypeProb: 92.0,
-            hairType: "Straight (Düz Saç)",
+            hairType: "Straight",
             hairTypeProb: 88.0,
             freckling: "Low / Moderate Ephelides",
           }
@@ -135,7 +124,7 @@ export default function DnaProfileInspectorModal() {
             eyeColorProb: 98.6,
             skinType: "Type V / VI (Deep Skin)",
             skinTypeProb: 96.0,
-            hairType: "Curly / Coily (Kıvırcık)",
+            hairType: "Curly / Coily",
             hairTypeProb: 94.0,
             freckling: "Absent",
           },
@@ -179,29 +168,29 @@ export default function DnaProfileInspectorModal() {
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-[100000] flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md font-mono">
+      <div className="fixed inset-0 z-[100000] flex items-center justify-center p-2 sm:p-6 bg-black/85 backdrop-blur-md font-mono">
         <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 15 }}
+          initial={{ opacity: 0, scale: 0.96, y: 10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 15 }}
-          className="relative w-full max-w-4xl max-h-[92vh] flex flex-col rounded-2xl border border-tactical-border/90 bg-[#070D18] text-tactical-text shadow-[0_0_80px_rgba(0,0,0,0.9)] overflow-hidden"
+          exit={{ opacity: 0, scale: 0.96, y: 10 }}
+          className="relative w-full max-w-4xl max-h-[94vh] flex flex-col rounded-2xl border border-tactical-border/90 bg-[#070D18] text-tactical-text shadow-[0_0_80px_rgba(0,0,0,0.9)] overflow-hidden"
         >
           {/* Top Bar / Header */}
-          <div className="flex items-center justify-between p-4 sm:p-5 border-b border-tactical-border/80 bg-tactical-surface/50">
-            <div className="flex items-center gap-3 min-w-0">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400">
+          <div className="flex items-center justify-between p-3.5 sm:p-5 border-b border-tactical-border/80 bg-tactical-surface/50 gap-2">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400">
                 <Dna className="h-5 w-5 animate-pulse" />
               </div>
               <div className="min-w-0">
-                <div className="flex items-center gap-2">
-                  <h2 className="text-sm sm:text-base font-black tracking-wider uppercase text-white truncate">
-                    DNA &amp; SNP Profile Terminal &amp; Inspector
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <h2 className="text-xs sm:text-base font-black tracking-wider uppercase text-white truncate">
+                    DNA &amp; SNP Profile Terminal
                   </h2>
-                  <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 shrink-0">
+                  <span className="px-1.5 py-0.5 rounded text-[8px] sm:text-[9px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 shrink-0">
                     ISO 17025
                   </span>
                 </div>
-                <p className="text-[10px] text-zinc-400 mt-0.5 truncate">
+                <p className="text-[9px] sm:text-[10px] text-zinc-400 mt-0.5 truncate">
                   Input custom STR loci, SNP markers, and inspect live phenotype &amp; geo-location predictions.
                 </p>
               </div>
@@ -216,36 +205,36 @@ export default function DnaProfileInspectorModal() {
           </div>
 
           {/* Quick Presets & Controls */}
-          <div className="flex flex-wrap items-center justify-between gap-2 px-4 sm:px-5 py-3 border-b border-tactical-border/60 bg-black/40 text-xs">
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] text-zinc-400 font-bold uppercase">Preset Cases:</span>
+          <div className="flex flex-wrap items-center justify-between gap-2 px-3.5 sm:px-5 py-2.5 border-b border-tactical-border/60 bg-black/40 text-xs">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="text-[9px] sm:text-[10px] text-zinc-400 font-bold uppercase">Presets:</span>
               <button
                 onClick={loadSampleCaseEU}
-                className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/25 transition-all flex items-center gap-1 cursor-pointer"
+                className="px-2 py-1 rounded-md text-[9px] sm:text-[10px] font-bold bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/25 transition-all flex items-center gap-1 cursor-pointer"
               >
                 <Sparkles className="w-3 h-3" />
                 Load Sample Case EU
               </button>
               <button
                 onClick={loadSampleCaseAA}
-                className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-purple-500/15 border border-purple-500/30 text-purple-300 hover:bg-purple-500/25 transition-all flex items-center gap-1 cursor-pointer"
+                className="px-2 py-1 rounded-md text-[9px] sm:text-[10px] font-bold bg-purple-500/15 border border-purple-500/30 text-purple-300 hover:bg-purple-500/25 transition-all flex items-center gap-1 cursor-pointer"
               >
                 <Sparkles className="w-3 h-3" />
                 Load Sample Case AA
               </button>
             </div>
 
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] text-zinc-400">STRs: <strong className="text-white">{strList.length}</strong></span>
-              <span className="text-[10px] text-zinc-400">SNPs: <strong className="text-cyan-400">{snpList.length}</strong></span>
+            <div className="flex items-center gap-2 text-[9px] sm:text-[10px]">
+              <span className="text-zinc-400">STRs: <strong className="text-white">{strList.length}</strong></span>
+              <span className="text-zinc-400">SNPs: <strong className="text-cyan-400">{snpList.length}</strong></span>
             </div>
           </div>
 
           {/* Modal Tabs */}
-          <div className="flex border-b border-tactical-border/80 bg-tactical-surface/30 px-4 sm:px-5 pt-2">
+          <div className="flex border-b border-tactical-border/80 bg-tactical-surface/30 px-3 sm:px-5 pt-2 overflow-x-auto scrollbar-none">
             {[
               { id: "inferred", label: "Inferred Features & Map", icon: Globe, color: "text-emerald-400" },
-              { id: "str", label: `STR Allele Markers (${strList.length})`, icon: Dna, color: "text-cyan-400" },
+              { id: "str", label: `STR Loci (${strList.length})`, icon: Dna, color: "text-cyan-400" },
               { id: "snp", label: `SNP Markers (${snpList.length})`, icon: Sliders, color: "text-purple-400" },
             ].map((tItem) => {
               const Icon = tItem.icon;
@@ -254,7 +243,7 @@ export default function DnaProfileInspectorModal() {
                 <button
                   key={tItem.id}
                   onClick={() => setTab(tItem.id as any)}
-                  className={`flex items-center gap-2 px-4 py-2.5 font-mono text-xs font-bold transition-all border-b-2 cursor-pointer ${
+                  className={`flex items-center gap-1.5 px-3 sm:px-4 py-2 font-mono text-[10px] sm:text-xs font-bold transition-all border-b-2 cursor-pointer shrink-0 whitespace-nowrap ${
                     isActive
                       ? `border-cyan-400 text-white bg-tactical-surface`
                       : `border-transparent text-zinc-400 hover:text-zinc-200`
@@ -268,72 +257,72 @@ export default function DnaProfileInspectorModal() {
           </div>
 
           {/* Modal Body / Scrollable Section */}
-          <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5">
+          <div className="flex-1 overflow-y-auto p-3.5 sm:p-6 space-y-4 sm:space-y-5">
             {/* ── TAB 1: INFERRED FEATURES & MAP ── */}
             {tab === "inferred" && (
-              <div className="space-y-5">
+              <div className="space-y-4 sm:space-y-5">
                 {/* Meta summary card */}
-                <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 p-4 rounded-xl border border-tactical-border/80 bg-black/50 text-xs">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 p-3 sm:p-4 rounded-xl border border-tactical-border/80 bg-black/50 text-xs">
                   <div>
-                    <span className="text-[9px] text-zinc-400 uppercase block">Active Profile ID</span>
-                    <span className="font-bold text-cyan-400 truncate block">{activeProfile.profileId}</span>
+                    <span className="text-[8px] sm:text-[9px] text-zinc-400 uppercase block font-bold">Active Profile ID</span>
+                    <span className="font-bold text-cyan-400 truncate block text-[10px] sm:text-xs">{activeProfile.profileId}</span>
                   </div>
                   <div>
-                    <span className="text-[9px] text-zinc-400 uppercase block">Originating Node</span>
-                    <span className="font-bold text-white truncate block">{activeProfile.nodeId}</span>
+                    <span className="text-[8px] sm:text-[9px] text-zinc-400 uppercase block font-bold">Originating Node</span>
+                    <span className="font-bold text-white truncate block text-[10px] sm:text-xs">{activeProfile.nodeId}</span>
                   </div>
                   <div>
-                    <span className="text-[9px] text-zinc-400 uppercase block">Kinship LR</span>
-                    <span className="font-bold text-emerald-400 truncate block">{activeProfile.kinshipLR}</span>
+                    <span className="text-[8px] sm:text-[9px] text-zinc-400 uppercase block font-bold">Kinship LR</span>
+                    <span className="font-bold text-emerald-400 truncate block text-[10px] sm:text-xs">{activeProfile.kinshipLR}</span>
                   </div>
                   <div>
-                    <span className="text-[9px] text-zinc-400 uppercase block">Horvath Epigenetic Age</span>
-                    <span className="font-bold text-amber-400 truncate block">{activeProfile.epigeneticAge} ± 2.1 yrs</span>
+                    <span className="text-[8px] sm:text-[9px] text-zinc-400 uppercase block font-bold">Epigenetic Age</span>
+                    <span className="font-bold text-amber-400 truncate block text-[10px] sm:text-xs">{activeProfile.epigeneticAge} ± 2.1 yrs</span>
                   </div>
                 </div>
 
                 {/* 2 Column layout: Phenotype & Ancestry */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5">
                   {/* Left: Phenotype Traits */}
-                  <div className="rounded-xl border border-tactical-border bg-tactical-surface/60 p-4 space-y-3">
+                  <div className="rounded-xl border border-tactical-border bg-tactical-surface/60 p-3.5 sm:p-4 space-y-3">
                     <div className="flex items-center gap-2 border-b border-tactical-border pb-2 text-xs font-bold text-emerald-400">
-                      <Eye className="w-4 h-4" />
+                      <Eye className="w-4 h-4 shrink-0" />
                       <span>INFERRED PHENOTYPE TRAITS (HIrisPlex-S)</span>
                     </div>
 
                     <div className="space-y-2 text-xs">
-                      <div className="flex justify-between items-center p-2 rounded bg-black/40 border border-tactical-border/60">
-                        <span className="text-zinc-400">Predicted Eye Color:</span>
-                        <span className="font-bold text-cyan-300">{activeProfile.phenotype.eyeColor} ({activeProfile.phenotype.eyeColorProb}%)</span>
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 p-2 rounded-lg bg-black/40 border border-tactical-border/60">
+                        <span className="text-zinc-400 text-[10px] sm:text-xs">Predicted Eye Color:</span>
+                        <span className="font-bold text-cyan-300 text-[10px] sm:text-xs">{activeProfile.phenotype.eyeColor} ({activeProfile.phenotype.eyeColorProb}%)</span>
                       </div>
 
-                      <div className="flex justify-between items-center p-2 rounded bg-black/40 border border-tactical-border/60">
-                        <span className="text-zinc-400">Fitzpatrick Skin Phototype:</span>
-                        <span className="font-bold text-amber-300">{activeProfile.phenotype.skinType} ({activeProfile.phenotype.skinTypeProb}%)</span>
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 p-2 rounded-lg bg-black/40 border border-tactical-border/60">
+                        <span className="text-zinc-400 text-[10px] sm:text-xs">Fitzpatrick Skin Phototype:</span>
+                        <span className="font-bold text-amber-300 text-[10px] sm:text-xs">{activeProfile.phenotype.skinType} ({activeProfile.phenotype.skinTypeProb}%)</span>
                       </div>
 
-                      <div className="flex justify-between items-center p-2 rounded bg-black/40 border border-tactical-border/60">
-                        <span className="text-zinc-400">Hair Morphology / Texture:</span>
-                        <span className="font-bold text-purple-300">{activeProfile.phenotype.hairType} ({activeProfile.phenotype.hairTypeProb}%)</span>
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 p-2 rounded-lg bg-black/40 border border-tactical-border/60">
+                        <span className="text-zinc-400 text-[10px] sm:text-xs">Hair Morphology / Texture:</span>
+                        <span className="font-bold text-purple-300 text-[10px] sm:text-xs">{activeProfile.phenotype.hairType} ({activeProfile.phenotype.hairTypeProb}%)</span>
                       </div>
 
-                      <div className="flex justify-between items-center p-2 rounded bg-black/40 border border-tactical-border/60">
-                        <span className="text-zinc-400">Ephelides (Freckling):</span>
-                        <span className="font-bold text-zinc-200">{activeProfile.phenotype.freckling}</span>
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 p-2 rounded-lg bg-black/40 border border-tactical-border/60">
+                        <span className="text-zinc-400 text-[10px] sm:text-xs">Ephelides (Freckling):</span>
+                        <span className="font-bold text-zinc-200 text-[10px] sm:text-xs">{activeProfile.phenotype.freckling}</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Right: Biogeographic Ancestry (BGA) */}
-                  <div className="rounded-xl border border-tactical-border bg-tactical-surface/60 p-4 space-y-3">
+                  <div className="rounded-xl border border-tactical-border bg-tactical-surface/60 p-3.5 sm:p-4 space-y-3">
                     <div className="flex items-center gap-2 border-b border-tactical-border pb-2 text-xs font-bold text-cyan-400">
-                      <Globe className="w-4 h-4" />
+                      <Globe className="w-4 h-4 shrink-0" />
                       <span>BIOGEOGRAPHIC ANCESTRY (55-SNP AIM)</span>
                     </div>
 
                     <div className="space-y-3 text-xs">
                       <div>
-                        <div className="flex justify-between text-[11px] mb-1">
+                        <div className="flex justify-between text-[10px] sm:text-[11px] mb-1">
                           <span className="text-white font-bold">{activeProfile.ancestry.primary}</span>
                           <span className="text-cyan-400 font-bold">{activeProfile.ancestry.primaryPct}%</span>
                         </div>
@@ -343,7 +332,7 @@ export default function DnaProfileInspectorModal() {
                       </div>
 
                       <div>
-                        <div className="flex justify-between text-[11px] mb-1">
+                        <div className="flex justify-between text-[10px] sm:text-[11px] mb-1">
                           <span className="text-zinc-300">{activeProfile.ancestry.secondary}</span>
                           <span className="text-purple-400 font-bold">{activeProfile.ancestry.secondaryPct}%</span>
                         </div>
@@ -360,33 +349,33 @@ export default function DnaProfileInspectorModal() {
                 </div>
 
                 {/* Geo-Location Heatmap Panel */}
-                <div className="rounded-xl border border-tactical-border bg-tactical-surface/60 p-4 space-y-3">
-                  <div className="flex items-center justify-between border-b border-tactical-border pb-2 text-xs font-bold text-amber-400">
+                <div className="rounded-xl border border-tactical-border bg-tactical-surface/60 p-3.5 sm:p-4 space-y-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 border-b border-tactical-border pb-2 text-xs font-bold text-amber-400">
                     <div className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-amber-400" />
+                      <MapPin className="w-4 h-4 text-amber-400 shrink-0" />
                       <span>ESTIMATED GEOGRAPHIC LOCATION &amp; COORDINATES</span>
                     </div>
-                    <span className="text-[10px] text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 rounded-full font-bold">
+                    <span className="text-[9px] sm:text-[10px] text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 rounded-full font-bold w-fit">
                       Confidence: {activeProfile.geoLocation.confidencePct}%
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-                    <div className="p-3 rounded-lg bg-black/50 border border-tactical-border/60 space-y-1">
-                      <span className="text-[9px] text-zinc-400 uppercase block">Latitude &amp; Longitude</span>
-                      <span className="font-bold text-amber-400 font-mono">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 text-xs">
+                    <div className="p-2.5 sm:p-3 rounded-lg bg-black/50 border border-tactical-border/60 space-y-1">
+                      <span className="text-[8px] sm:text-[9px] text-zinc-400 uppercase block font-bold">Latitude &amp; Longitude</span>
+                      <span className="font-bold text-amber-400 font-mono text-[10px] sm:text-xs">
                         {activeProfile.geoLocation.lat.toFixed(4)}° N, {activeProfile.geoLocation.lng.toFixed(4)}° E
                       </span>
                     </div>
 
-                    <div className="p-3 rounded-lg bg-black/50 border border-tactical-border/60 space-y-1">
-                      <span className="text-[9px] text-zinc-400 uppercase block">City &amp; Region</span>
-                      <span className="font-bold text-white">{activeProfile.geoLocation.cityRegion}</span>
+                    <div className="p-2.5 sm:p-3 rounded-lg bg-black/50 border border-tactical-border/60 space-y-1">
+                      <span className="text-[8px] sm:text-[9px] text-zinc-400 uppercase block font-bold">City &amp; Region</span>
+                      <span className="font-bold text-white text-[10px] sm:text-xs">{activeProfile.geoLocation.cityRegion}</span>
                     </div>
 
-                    <div className="p-3 rounded-lg bg-black/50 border border-tactical-border/60 space-y-1">
-                      <span className="text-[9px] text-zinc-400 uppercase block">Target Country</span>
-                      <span className="font-bold text-cyan-300">{activeProfile.geoLocation.country}</span>
+                    <div className="p-2.5 sm:p-3 rounded-lg bg-black/50 border border-tactical-border/60 space-y-1">
+                      <span className="text-[8px] sm:text-[9px] text-zinc-400 uppercase block font-bold">Target Country</span>
+                      <span className="font-bold text-cyan-300 text-[10px] sm:text-xs">{activeProfile.geoLocation.country}</span>
                     </div>
                   </div>
                 </div>
@@ -417,7 +406,7 @@ export default function DnaProfileInspectorModal() {
                   </button>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3">
                   {filteredStrList.map((item, idx) => (
                     <div
                       key={idx}
@@ -469,11 +458,11 @@ export default function DnaProfileInspectorModal() {
             {/* ── TAB 3: SNP MARKERS ── */}
             {tab === "snp" && (
               <div className="space-y-4">
-                <div className="flex justify-between items-center">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                   <span className="text-xs text-zinc-400 font-bold uppercase">55 AIM SNP Phenotype &amp; Ancestry Panel</span>
                   <button
                     onClick={addSnpRow}
-                    className="px-3 py-1.5 rounded-lg text-xs font-bold bg-purple-500/20 border border-purple-500/40 text-purple-300 hover:bg-purple-500/30 transition-all flex items-center gap-1.5 cursor-pointer"
+                    className="w-full sm:w-auto px-3 py-1.5 rounded-lg text-xs font-bold bg-purple-500/20 border border-purple-500/40 text-purple-300 hover:bg-purple-500/30 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     Add Custom SNP Marker
@@ -521,17 +510,17 @@ export default function DnaProfileInspectorModal() {
           </div>
 
           {/* Footer Actions */}
-          <div className="flex items-center justify-between p-4 border-t border-tactical-border/80 bg-tactical-surface/50">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 p-3.5 sm:p-4 border-t border-tactical-border/80 bg-tactical-surface/50">
             <button
               onClick={() => setInspectorOpen(false)}
-              className="px-4 py-2 rounded-xl text-xs font-bold text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors cursor-pointer"
+              className="px-4 py-2 rounded-xl text-xs font-bold text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors cursor-pointer text-center"
             >
               Cancel
             </button>
 
             <button
               onClick={handleSaveAndCalculate}
-              className="px-5 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-cyan-500 to-emerald-500 text-black shadow-lg hover:shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-all flex items-center gap-2 cursor-pointer"
+              className="px-5 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-cyan-500 to-emerald-500 text-black shadow-lg hover:shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-all flex items-center justify-center gap-2 cursor-pointer font-mono uppercase tracking-wider"
             >
               <CheckCircle2 className="w-4 h-4" />
               <span>Apply &amp; Recalculate Profile Features</span>

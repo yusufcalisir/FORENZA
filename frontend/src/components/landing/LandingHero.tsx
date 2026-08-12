@@ -33,7 +33,7 @@ export default function LandingHero() {
                         transition={{ duration: 0.6, delay: 0.1 }}
                         className="text-3xl sm:text-5xl lg:text-6xl font-extrabold font-mono tracking-tight text-white leading-tight"
                     >
-                        The World's Most Advanced{" "}
+                        Integrated Biocomputational{" "}
                         <span className="bg-gradient-to-r from-tactical-accent via-cyan-400 to-purple-400 bg-clip-text text-transparent">
                             Forensic Evidence OS
                         </span>

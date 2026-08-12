@@ -27,16 +27,19 @@ const INITIAL_STEPS_EN = [
 ];
 
 export default function InvestigatorSidebar() {
-  const { lang } = useSaasLanguage();
-  const isTr = lang === "tr";
+  // `mounted` from context is false on server, true after client hydration.
+  // This prevents React error #418 (SSR/CSR text content mismatch).
+  const { lang, mounted } = useSaasLanguage();
+  const isTr = mounted && lang === "tr";
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
-  // Initialize initial welcome & streaming thoughts
+  // Initialize welcome message only after mount (client-only, avoids SSR mismatch)
   useEffect(() => {
+    if (!mounted) return; // wait for hydration
     const welcomeMsg: ChatMessage = {
       id: "welcome-1",
       sender: "aura",

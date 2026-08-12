@@ -7,6 +7,8 @@ interface SaasLanguageContextType {
   lang: SaasLanguage;
   setLang: (lang: SaasLanguage) => void;
   t: SaasTranslation;
+  /** True only after the first client render. Use to guard hydration-sensitive text. */
+  mounted: boolean;
 }
 
 const SaasLanguageContext = createContext<SaasLanguageContextType | undefined>(undefined);
@@ -25,7 +27,14 @@ export function SaasLanguageProvider({
   // synchronously reads a different value → SSR/CSR mismatch.
   const [lang, setLangState] = useState<SaasLanguage>(initialLang);
 
+  // mounted flag — false on server / first render, true after hydration.
+  // Expose this so every consumer can safely gate lang-dependent JSX output.
+  const [mounted, setMounted] = useState(false);
+
   useEffect(() => {
+    // Mark hydration complete — must run before any lang changes below.
+    setMounted(true);
+
     // Phase 1: Respect saved user preference (highest priority).
     try {
       const saved = localStorage.getItem("forenza_saas_lang") as SaasLanguage | null;
@@ -71,7 +80,7 @@ export function SaasLanguageProvider({
   const t = saasTranslations[lang];
 
   return (
-    <SaasLanguageContext.Provider value={{ lang, setLang, t }}>
+    <SaasLanguageContext.Provider value={{ lang, setLang, t, mounted }}>
       {children}
     </SaasLanguageContext.Provider>
   );
@@ -84,6 +93,7 @@ export function useSaasLanguage() {
       lang: "en" as SaasLanguage,
       setLang: () => {},
       t: saasTranslations.en,
+      mounted: false,
     };
   }
   return context;

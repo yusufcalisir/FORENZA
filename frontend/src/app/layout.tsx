@@ -31,11 +31,11 @@ const SITE_URL = getSiteUrl();
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: "FORENZA",
-  description: "Forensic Evidence Operating System",
-  keywords: ["forensic DNA", "STR analysis", "kinship engine", "probabilistic genotyping", "MCMC", "HIrisPlex", "forensic evidence OS", "LIMS", "ISO 17025"],
-  authors: [{ name: "FORENZA Forensic Systems" }],
+  description: "FORENZA",
+  keywords: ["FORENZA", "DNA", "Forensic OS"],
+  authors: [{ name: "FORENZA" }],
   creator: "FORENZA",
-  publisher: "FORENZA Forensic Systems",
+  publisher: "FORENZA",
   icons: {
     icon: "/icon.svg",
   },
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     siteName: "FORENZA",
     title: "FORENZA",
-    description: "Forensic Evidence Operating System",
+    description: "FORENZA",
     images: [
       {
         url: `${SITE_URL}/og-image.png`,
@@ -58,9 +58,9 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "FORENZA",
-    description: "Forensic Evidence Operating System",
+    description: "FORENZA",
     images: [`${SITE_URL}/og-image.png`],
-    creator: "@forenza_forensic",
+    creator: "@forenza",
   },
   robots: {
     index: true,

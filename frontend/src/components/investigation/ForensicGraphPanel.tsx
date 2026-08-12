@@ -22,55 +22,55 @@ export default function ForensicGraphPanel() {
   ];
 
   return (
-    <div className="space-y-6 font-mono">
+    <div className="space-y-4 font-mono max-w-full overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-tactical-border/60 pb-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 shadow-[0_0_15px_rgba(99,102,241,0.15)]">
-            <Network className="w-5 h-5" />
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-tactical-border/60 pb-3">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 shrink-0">
+            <Network className="w-4 h-4" />
           </div>
-          <div>
-            <h2 className="text-sm sm:text-base font-bold tracking-widest text-tactical-text uppercase">
+          <div className="min-w-0">
+            <h2 className="text-xs sm:text-base font-bold tracking-wider text-white uppercase truncate">
               Forensic Knowledge Graph Engine
             </h2>
-            <p className="text-[10px] text-tactical-text-muted mt-0.5">
-              Multi-Relational Property Graph • Case-Person-Evidence Intelligence Network • Shortest Path Traversal
+            <p className="text-[9px] sm:text-[10px] text-zinc-400 mt-0.5 truncate">
+              Multi-Relational Property Graph • Case-Person-Evidence Intelligence Network
             </p>
           </div>
         </div>
 
-        <span className="text-xs font-bold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-3 py-1 rounded-lg">
+        <span className="text-[9px] sm:text-xs font-bold text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 px-2.5 py-1 rounded-lg shrink-0 w-fit">
           5 Nodes • 4 Directed Edges
         </span>
       </div>
 
       {/* Graph Visualizer Area */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Left Column: Node Explorer */}
-        <div className="md:col-span-2 rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 space-y-4 shadow-lg">
-          <span className="text-xs font-bold text-tactical-text uppercase tracking-wider block border-b border-tactical-border/40 pb-2">
+        <div className="lg:col-span-2 rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-4 space-y-3 shadow-lg">
+          <span className="text-xs font-bold text-white uppercase tracking-wider block border-b border-tactical-border/40 pb-2">
             Case Adjacency Network Graph (CASE-2026-001)
           </span>
 
-          <div className="space-y-3">
+          <div className="space-y-2">
             {nodes.map((n) => (
               <div
                 key={n.id}
                 onClick={() => setSelectedNode(n.id)}
-                className={`p-4 rounded-xl border transition-all cursor-pointer flex items-center justify-between ${
+                className={`p-3 rounded-xl border transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-2 ${
                   selectedNode === n.id
                     ? "bg-indigo-500/15 border-indigo-500/60 shadow-[0_0_15px_rgba(99,102,241,0.15)]"
-                    : "bg-black/20 border-tactical-border/40 hover:border-tactical-border/80"
+                    : "bg-black/30 border-tactical-border/40 hover:border-tactical-border/80"
                 }`}
               >
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-tactical-text">{n.label}</span>
-                    <span className="text-[9px] text-zinc-500">({n.id})</span>
+                <div className="space-y-0.5 min-w-0">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-xs font-bold text-white">{n.label}</span>
+                    <span className="text-[9px] text-zinc-400 font-mono">({n.id})</span>
                   </div>
-                  <p className="text-[10px] text-zinc-400">Entity Type: {n.type}</p>
+                  <p className="text-[9px] text-zinc-400 font-mono">Entity Type: {n.type}</p>
                 </div>
-                <span className={`px-2.5 py-1 rounded text-[9px] font-bold border uppercase ${n.color}`}>
+                <span className={`px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-bold border uppercase shrink-0 w-fit ${n.color}`}>
                   {n.badge}
                 </span>
               </div>
@@ -79,31 +79,29 @@ export default function ForensicGraphPanel() {
         </div>
 
         {/* Right Column: Path & Relationship Traversal Inspector */}
-        <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 space-y-4 shadow-lg">
-          <span className="text-xs font-bold text-tactical-text uppercase tracking-wider block border-b border-tactical-border/40 pb-2">
+        <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-4 space-y-3 shadow-lg">
+          <span className="text-xs font-bold text-white uppercase tracking-wider block border-b border-tactical-border/40 pb-2">
             Graph Traversal Inspector
           </span>
 
           <div className="space-y-3 text-xs">
-            <div className="p-3 rounded-xl bg-black/20 border border-tactical-border/40 space-y-1">
-              <span className="text-zinc-500 block">Selected Entity ID</span>
-              <p className="font-bold text-indigo-400 font-mono">{selectedNode}</p>
+            <div className="p-2.5 rounded-xl bg-black/40 border border-tactical-border/40 space-y-0.5">
+              <span className="text-zinc-500 text-[9px] block uppercase font-bold">Selected Entity ID</span>
+              <p className="font-bold text-indigo-400 font-mono text-xs">{selectedNode}</p>
             </div>
 
             <div className="space-y-2">
-              <span className="text-zinc-500 block text-[10px] font-bold uppercase">Relational Edges</span>
+              <span className="text-zinc-400 block text-[9px] font-bold uppercase">Relational Edges</span>
               {edges
                 .filter((e) => e.from === selectedNode || e.to === selectedNode)
                 .map((e, idx) => (
-                  <div key={idx} className="p-3 rounded-xl bg-black/30 border border-tactical-border/40 space-y-1">
-                    <div className="flex items-center gap-1.5 text-zinc-300 font-mono text-[10px]">
-                      <span>{e.from}</span>
-                      <ArrowRight className="w-3 h-3 text-indigo-400" />
-                      <span>{e.to}</span>
+                  <div key={idx} className="p-2.5 rounded-xl bg-black/40 border border-tactical-border/40 space-y-1">
+                    <div className="flex items-center gap-1.5 text-zinc-300 font-mono text-[9px] flex-wrap">
+                      <span className="text-zinc-400 font-bold">{e.from}</span>
+                      <ArrowRight className="w-3 h-3 text-indigo-400 shrink-0" />
+                      <span className="text-zinc-400 font-bold">{e.to}</span>
                     </div>
-                    <span className="text-emerald-400 font-bold text-[9px] block">
-                      Relation: {e.relation}
-                    </span>
+                    <p className="text-[9px] font-bold text-indigo-300 font-mono break-all">{e.relation}</p>
                   </div>
                 ))}
             </div>

@@ -1,11 +1,12 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { formatDistanceToNow } from "date-fns";
-import { ShieldCheck, Server, AlertTriangle, ExternalLink, Loader2 } from "lucide-react";
-import { useAccount, useChainId, useSwitchChain, useReadContract, useWatchContractEvent } from "wagmi";
+import { ShieldCheck, AlertTriangle, ExternalLink } from "lucide-react";
+import { useAccount, useChainId, useSwitchChain, useWatchContractEvent } from "wagmi";
 import { forensicAuditABI } from "@/config/wagmi";
 import { polygonAmoy } from "wagmi/chains";
 
-// Contract Address (Ideally from env or constants)
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_AUDIT_CONTRACT_ADDRESS as `0x${string}` || "0x0000000000000000000000000000000000000000";
 
 export default function EmbeddedAuditLog() {
@@ -14,12 +15,7 @@ export default function EmbeddedAuditLog() {
     const { isConnected } = useAccount();
     const [liveLogs, setLiveLogs] = useState<any[]>([]);
 
-    // Network Check
     const isWrongNetwork = isConnected && chainId !== polygonAmoy.id;
-
-    // Fetch Logs (Simplified: In prod, use The Graph or specialized indexer)
-    // Here we just listen to events or showing empty state until an event arrives
-    // Real implementation would need a 'getRecentLogs' view function on contract or Graph query
 
     useWatchContractEvent({
         address: CONTRACT_ADDRESS,
@@ -32,88 +28,106 @@ export default function EmbeddedAuditLog() {
                 time: new Date(),
                 status: "verified"
             }));
-            setLiveLogs(prev => [...newLogs, ...prev].slice(0, 50));
+            setLiveLogs(prev => [...newLogs, ...prev].slice(0, 10));
         },
     });
 
-    // Demo Data Hydration (if no live events)
     useEffect(() => {
         const timer = setTimeout(() => {
             if (liveLogs.length === 0) {
                 setLiveLogs([
-                    { id: "0x7f3a...9b1c", action: "Standard_Query", time: new Date(Date.now() - 1000 * 60), status: "verified" },
-                    { id: "0x2e9d...4f5a", action: "Cross_Ref_Check", time: new Date(Date.now() - 1000 * 180), status: "verified" },
-                    { id: "0x8b1c...3d2e", action: "Kinship_Analysis", time: new Date(Date.now() - 1000 * 420), status: "verified" },
+                    { id: "0x7f3a2b4c9b1c", action: "Standard_Query", time: new Date(Date.now() - 1000 * 60), status: "verified" },
+                    { id: "0x2e9d8f1c4f5a", action: "Cross_Ref_Check", time: new Date(Date.now() - 1000 * 180), status: "verified" },
+                    { id: "0x8b1c4a2d3d2e", action: "Kinship_Analysis", time: new Date(Date.now() - 1000 * 420), status: "verified" },
                 ]);
             }
-        }, 1500);
+        }, 1200);
         return () => clearTimeout(timer);
     }, [liveLogs.length]);
 
+    const hasScroll = liveLogs.length > 5;
+
     return (
-        <div className="bg-zinc-900/40 border border-zinc-800 rounded flex flex-col h-full overflow-hidden">
-            <div className="px-4 py-3 border-b border-zinc-800 flex justify-between items-center bg-zinc-900/50">
-                <div className="flex items-center gap-2">
-                    <ShieldCheck className="w-4 h-4 text-emerald-500" />
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400">Live Custom Audit Ledger</h3>
+        <div className="rounded-2xl border border-tactical-border/60 bg-tactical-surface/60 p-3 sm:p-4 space-y-3 font-mono w-full max-w-full overflow-hidden">
+            {/* Component Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-tactical-border/60 pb-3">
+                <div className="flex items-center gap-2 min-w-0">
+                    <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <h3 className="text-xs font-extrabold uppercase tracking-wider text-white truncate">
+                        Live Custom Audit Ledger
+                    </h3>
                 </div>
-                <div className="flex items-center gap-2">
+
+                <div className="flex items-center gap-2 shrink-0">
                     {isWrongNetwork ? (
-                        <span className="text-[10px] text-amber-500 font-mono uppercase animate-pulse">Wrong Network</span>
+                        <span className="text-[9px] font-bold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-md uppercase animate-pulse">
+                            Wrong Network
+                        </span>
                     ) : (
-                        <>
-                            <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                            <span className="text-[10px] text-emerald-500 font-mono uppercase">Syncing {polygonAmoy.name}</span>
-                        </>
+                        <div className="flex items-center gap-1.5 text-[9px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-md">
+                            <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse shrink-0" />
+                            <span>Syncing {polygonAmoy.name}</span>
+                        </div>
                     )}
                 </div>
             </div>
 
             {isWrongNetwork && (
-                <div className="bg-amber-500/10 border-b border-amber-500/20 px-4 py-2 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
-                        <span className="text-[10px] text-amber-500 font-mono">Switch to {polygonAmoy.name} to view live data</span>
+                <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-2.5 flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2 min-w-0">
+                        <AlertTriangle className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                        <span className="text-[9px] text-amber-300 font-mono truncate">Switch to {polygonAmoy.name} to view live data</span>
                     </div>
                     <button
                         onClick={() => switchChain({ chainId: polygonAmoy.id })}
-                        className="text-[10px] bg-amber-500/20 hover:bg-amber-500/30 text-amber-500 px-2 py-1 rounded transition-colors uppercase font-bold"
+                        className="text-[9px] bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 px-2 py-1 rounded-md transition-colors uppercase font-bold shrink-0 cursor-pointer"
                     >
-                        Switch Network
+                        Switch
                     </button>
                 </div>
             )}
 
-            <div className="flex-1 overflow-y-auto p-2 space-y-1">
+            {/* Log List (No scroll if <= 5 items, max-h only if > 5 items) */}
+            <div className={`space-y-2 max-w-full ${hasScroll ? "max-h-72 overflow-y-auto pr-1" : "h-auto"}`}>
                 {liveLogs.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center h-full text-zinc-600 gap-2">
+                    <div className="flex flex-col items-center justify-center py-6 text-zinc-500 gap-2">
                         <div className="w-16 h-0.5 bg-zinc-800 rounded-full overflow-hidden">
-                            <div className="w-1/2 h-full bg-zinc-600 animate-loading-bar" />
+                            <div className="w-1/2 h-full bg-emerald-500 animate-pulse" />
                         </div>
-                        <span className="text-[10px] font-mono">Listening for blocks...</span>
+                        <span className="text-[9px] font-mono">Listening for cryptographic audit blocks…</span>
                     </div>
                 ) : (
                     liveLogs.map((log, i) => (
-                        <div key={i} className="flex items-center justify-between p-2 rounded hover:bg-zinc-800/50 transition-colors border border-transparent hover:border-zinc-800/50 group">
-                            <div className="flex items-center gap-3">
-                                <span className={`w-1.5 h-1.5 rounded-full ${log.status === 'verified' ? 'bg-emerald-500' : 'bg-red-500'}`} />
-                                <span className="font-mono text-xs text-zinc-500">{log.id.substring(0, 10)}...</span>
-                                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border ${log.status === 'verified'
-                                    ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
-                                    : 'bg-red-500/10 text-red-500 border-red-500/20'
-                                    }`}>
+                        <div
+                            key={i}
+                            className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-2.5 rounded-xl border border-tactical-border/40 bg-black/40 hover:bg-black/60 transition-colors max-w-full"
+                        >
+                            {/* Left Info: Status Dot, Shortened TX Hash, Action Badge */}
+                            <div className="flex items-center gap-2 min-w-0 flex-wrap">
+                                <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${log.status === 'verified' ? 'bg-emerald-400' : 'bg-red-400'}`} />
+                                <span className="font-mono text-[10px] text-zinc-400 font-bold shrink-0">
+                                    {log.id.substring(0, 10)}…
+                                </span>
+                                <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded-md border shrink-0 ${
+                                    log.status === 'verified'
+                                        ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30'
+                                        : 'bg-red-500/10 text-red-300 border-red-500/30'
+                                }`}>
                                     {log.action}
                                 </span>
                             </div>
-                            <div className="flex items-center gap-3">
-                                <span className="text-[10px] text-zinc-600 font-mono">
+
+                            {/* Right Info: Time Distance + Scan Link */}
+                            <div className="flex items-center justify-between sm:justify-end gap-3 text-[9px] text-zinc-400 font-mono shrink-0">
+                                <span className="text-zinc-500 truncate">
                                     {formatDistanceToNow(log.time, { addSuffix: true })}
                                 </span>
                                 <a
                                     href={`https://amoy.polygonscan.com/tx/${log.id}`}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="text-zinc-700 hover:text-emerald-400 transition-colors"
+                                    className="p-1 rounded bg-zinc-800/60 hover:bg-emerald-500/20 text-zinc-400 hover:text-emerald-300 transition-colors"
+                                    title="View PolygonScan Explorer"
                                 >
                                     <ExternalLink className="w-3 h-3" />
                                 </a>

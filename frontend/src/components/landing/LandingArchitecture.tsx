@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import { Cpu, Network, CheckCircle2, ShieldCheck, Activity, Layers, ArrowRight } from "lucide-react";
-import NeonDnaScroll from "./NeonDnaScroll";
 
 export default function LandingArchitecture() {
     const layers = [
@@ -88,8 +87,6 @@ export default function LandingArchitecture() {
                         </motion.div>
                     ))}
                 </div>
-
-                <NeonDnaScroll targetId="solutions" />
             </div>
         </section>
     );

@@ -14,7 +14,6 @@ import {
     Lock,
     Zap,
 } from "lucide-react";
-import NeonDnaScroll from "./NeonDnaScroll";
 
 /* ── Types ── */
 type TabId = "phenotype" | "str" | "zkp";
@@ -526,11 +525,6 @@ export default function LandingBioSimulator() {
                         {activeTab === "zkp" && <ZkpTab />}
                     </div>
                 </div>
-            </div>
-
-            {/* Neon Scroll to Features (Desktop Only) */}
-            <div className="hidden sm:flex pt-4 justify-center">
-                <NeonDnaScroll targetId="features" />
             </div>
         </section>
     );

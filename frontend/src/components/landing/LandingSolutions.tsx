@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Search, Heart, Shield, FlaskConical, CheckCircle2, FileText } from "lucide-react";
-import NeonDnaScroll from "./NeonDnaScroll";
 
 const SOLUTIONS = [
     {
@@ -213,11 +212,6 @@ export default function LandingSolutions() {
                         </div>
                     </div>
                 </div>
-            </div>
-
-            {/* Neon Scroll to Security & Specs (Desktop Only) */}
-            <div className="hidden sm:flex pt-4 justify-center">
-                <NeonDnaScroll targetId="security-specs" />
             </div>
         </section>
     );

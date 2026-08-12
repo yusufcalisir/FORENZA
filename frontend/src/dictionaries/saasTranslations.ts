@@ -198,7 +198,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       launchDemo: "Launch Demo",
     },
     hero: {
-      badge: "30 Integrated Subsystems • Multi-Omic Forensic OS",
+      badge: "Multi-Omic Forensic Evidence OS",
       titleMain: "Integrated Biocomputational",
       titleHighlight: "Forensic Evidence OS",
       subtitle: "Enterprise multi-omic biocomputational platform integrating Autosomal & Lineage STRs, MCMC Probabilistic Genotyping, HIrisPlex-S Phenotyping, Horvath Epigenetic Aging, LIMS Workflow, QA/QC Gatekeeping, Analyst Governance, and ISO 17025 Court Reporting.",
@@ -538,7 +538,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       launchDemo: "Demo Platform",
     },
     hero: {
-      badge: "30 Entegre Adli Analiz Modülü • Çok Katmanlı Adli Biyoloji Platformu",
+      badge: "Çok Katmanlı Adli Biyoloji & Biyobilişim Platformu",
       titleMain: "Biyobilişimsel ve İstatistiksel",
       titleHighlight: "Adli Genetik Delil Platformu",
       subtitle: "Otozomal ve soy STR analizleri, MCMC olasılıksal genotipleme, HIrisPlex-S fenotip tahmini, Horvath epigenetik yaş saati, LIMS veri zinciri ve ISO/IEC 17025 adli rapor standartlarını tek bir işlem hattında birleştiren adli biyoloji platformu.",

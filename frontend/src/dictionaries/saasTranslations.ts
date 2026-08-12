@@ -31,6 +31,17 @@ export interface SecuritySpecItem {
   value: string;
 }
 
+export interface SolutionItem {
+  id: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  bulletPoints: string[];
+  sampleMetric: string;
+  sampleCode: string;
+  label: string;
+}
+
 export interface SaasTranslation {
   header: {
     bioSimulator: string;
@@ -46,6 +57,18 @@ export interface SaasTranslation {
     subtitle: string;
     launchDemo: string;
     exploreSubsystems: string;
+  };
+  solutions: {
+    badge: string;
+    title: string;
+    subtitle: string;
+    domainInspection: string;
+    activeStandard: string;
+    primaryMetric: string;
+    sessionTarget: string;
+    verificationStatus: string;
+    auditPassed: string;
+    items: SolutionItem[];
   };
   bioSimulator: {
     badge: string;
@@ -160,6 +183,79 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       subtitle: "Enterprise multi-omic biocomputational platform integrating Autosomal & Lineage STRs, MCMC Probabilistic Genotyping, HIrisPlex-S Phenotyping, Horvath Epigenetic Aging, LIMS Workflow, QA/QC Gatekeeping, Analyst Governance, and ISO 17025 Court Reporting.",
       launchDemo: "Launch Live Evidence OS",
       exploreSubsystems: "Explore 30 Subsystems",
+    },
+    solutions: {
+      badge: "Application Domains",
+      title: "Built for High-Stakes Environments",
+      subtitle: "FORENZA addresses the specific operational demands of four distinct forensic and scientific disciplines.",
+      domainInspection: "DOMAIN INSPECTION",
+      activeStandard: "Active Standard",
+      primaryMetric: "PRIMARY METRIC OUTPUT",
+      sessionTarget: "Session Target Reference",
+      verificationStatus: "Verification Status",
+      auditPassed: "Passed NRC II Audit",
+      items: [
+        {
+          id: "law-enforcement",
+          title: "Law Enforcement and Cold Cases",
+          subtitle: "Familial Searching & Degraded Sample LR Matching",
+          description: "Forensic units can upload partial or degraded STR profiles recovered from crime scenes and receive rapid likelihood ratio assessments against reference samples. The kinship engine identifies probable family relations when a direct match is unavailable, enabling familial searching workflows for unresolved cold cases.",
+          bulletPoints: [
+            "Partial profile LR calculation with missing loci handling",
+            "Familial search across multi-generational pedigrees",
+            "Geo-ancestry heatmap targeting for investigative geography",
+            "Immutable blockchain report for court admissibility",
+          ],
+          sampleMetric: "1.42e8 Likelihood Ratio",
+          sampleCode: "CASE_2026_COLD_09 — CODIS 20 Loci Matched",
+          label: "Law Enforcement",
+        },
+        {
+          id: "dvi",
+          title: "Disaster Victim Identification (DVI)",
+          subtitle: "Mass Casualty Rematch & Rapid Kinship Indexing",
+          description: "In mass casualty events, FORENZA provides rapid kinship indexing to match unidentified remains against family reference samples. The platform supports concurrent multi-sample processing with quality scoring, allowing identification teams to prioritize high-confidence matches under operational pressure.",
+          bulletPoints: [
+            "Concurrent multi-sample batch processing",
+            "Parent-child and sibling KI within minutes",
+            "Sample quality and degradation scoring",
+            "Interpol DVI compatible report export",
+          ],
+          sampleMetric: "99.999% Match Probability",
+          sampleCode: "DVI_BATCH_402 — Interpol Section 4 Standard",
+          label: "DVI Operations",
+        },
+        {
+          id: "border-security",
+          title: "Border Security & Kinship Verification",
+          subtitle: "NRC II Framework & Zero-Knowledge Identity Check",
+          description: "Verify declared kinship relationships at processing centers with statistical rigor. Likelihood ratios computed under the NRC II framework provide objective evidence that is resistant to interpretation bias. ZK verification allows identity confirmation without centralizing sensitive genetic data.",
+          bulletPoints: [
+            "NRC II LR computation for claimed relationships",
+            "ZK verification without central data exposure",
+            "Geo-ancestry cross-reference for documentation verification",
+            "Real-time processing with node-distributed computation",
+          ],
+          sampleMetric: "Zero Data Exposure (ZKP)",
+          sampleCode: "BORDER_CHECK_882 — Groth16 Verified",
+          label: "Border Security",
+        },
+        {
+          id: "research",
+          title: "Academic & Clinical Genetics Research",
+          subtitle: "Population Stratification & GTEx eQTL Integration",
+          description: "Research institutions can leverage FORENZA as a validated computational framework for population genetics studies. The platform provides reproducible LR calculations, exportable allele frequency matrices, and GTEx eQTL cross-references for 54 tissue types, supporting peer-reviewed genomics research.",
+          bulletPoints: [
+            "Exportable allele frequency matrices and LR results",
+            "GTEx eQTL data integration for 54 tissue types",
+            "Reproducible and auditable computation pipeline",
+            "Population stratification analysis and theta correction",
+          ],
+          sampleMetric: "54 Tissue eQTL Mapped",
+          sampleCode: "GENOMICS_STUDY_V2 — Balding-Nichols theta=0.03",
+          label: "Research Labs",
+        },
+      ],
     },
     bioSimulator: {
       badge: "Live Interactive Engine Sandbox",
@@ -394,77 +490,150 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
   tr: {
     header: {
       bioSimulator: "Bio-Simülatör",
-      subsystems: "30 Alt Sistem",
-      architecture: "Delil Sistem DAG'ı",
-      security: "Güvenlik & ISO",
-      launchDemo: "Demo OS Başlat",
+      subsystems: "30 Biyobilişim Modülü",
+      architecture: "Delil İşleme Mimarisi (DAG)",
+      security: "Güvenlik & Hukuki Uyum",
+      launchDemo: "Canlı Platformu Başlat",
     },
     hero: {
-      badge: "30 Entegre Alt Sistem • Multi-Omik Adli OS",
+      badge: "30 Entegre Biyobilişim Modülü • Multi-Omik Adli OS",
       titleMain: "Entegre Biyobilişimsel",
       titleHighlight: "Adli Delil İşletim Sistemi",
-      subtitle: "Otozomal ve Soy STR'ları, MCMC Olasılıksal Genotipleme, HIrisPlex-S Fenotipleme, Horvath Epigenetik Yaş Tayini, LIMS İş Akışı, Kalite Kontrol ve ISO 17025 Mahkeme Raporlamasını birleştiren kurumsal adli platform.",
+      subtitle: "Otozomal ve Soy STR Profilleri, MCMC Olasılıksal Genotipleme, HIrisPlex-S Fenotipleme, Horvath Epigenetik Yaş Tayini, LIMS İş Akışları ve ISO/IEC 17025 Adli Raporlamasını Tek Çatıda Toplayan Kurumsal Adli İstihbarat Platformu.",
       launchDemo: "Canlı Delil İşletim Sistemini Başlat",
-      exploreSubsystems: "30 Alt Sistemi İncele",
+      exploreSubsystems: "30 Biyobilişim Modülünü İncele",
+    },
+    solutions: {
+      badge: "Uygulama Alanları",
+      title: "Kritik ve Yüksek Riskli Operasyonlar İçin Tasarlandı",
+      subtitle: "FORENZA; adli tıp, kolluk kuvvetleri, afet kimliklendirme ve genetik araştırmaların karmaşık operasyonel gereksinimlerini karşılar.",
+      domainInspection: "ALAN İNCELEMESİ VE VERİ AKIŞI",
+      activeStandard: "Aktif Standart",
+      primaryMetric: "BİRİNCİL ANALİTİK ÇIKTI",
+      sessionTarget: "Oturum Hedef Referansı",
+      verificationStatus: "Doğrulama Durumu",
+      auditPassed: "NRC II Denetimi Onaylandı",
+      items: [
+        {
+          id: "law-enforcement",
+          title: "Kolluk Kuvvetleri ve Faili Meçhul Dosyalar",
+          subtitle: "Soybağı Taraması ve Bozunmuş Örneklerde Olabilirlik Oranı (LR) Analizi",
+          description: "Olay yerinden elde edilen kısmi veya bozunmuş STR profillerini analiz eder. Doğrudan eşleşme bulunamadığında soybağı motoru aracılığıyla akrabalık derecelerini belirleyerek faili meçhul dosyalar için akraba bazlı tarama (familial searching) imkanı sunar.",
+          bulletPoints: [
+            "Kayıp lokus içerikli eksik profillerde olabilirlik oranı (LR) hesaplaması",
+            "Çok kuşaklı soyağaçlarında akraba bazlı tarama (familial search)",
+            "Soruşturma coğrafyasına yönelik atasal köken ısı haritası",
+            "Mahkeme delil kabul edilebilirliğine uygun değişmez adli raporlama",
+          ],
+          sampleMetric: "1.42e8 Olabilirlik Oranı (LR)",
+          sampleCode: "CASE_2026_COLD_09 — CODIS 20 Lokus Eşleşti",
+          label: "Kolluk Kuvvetleri",
+        },
+        {
+          id: "dvi",
+          title: "Afet Kurbanlarının Kimlik Tespiti (DVI)",
+          subtitle: "Kitlesel Kayıplarda Hızlı Akrabalık İndeksi ve Kimliklendirme",
+          description: "Toplu ölümlerde ve afet durumlarında kurban naaşlarını referans aile örnekleriyle hızlı akrabalık indeksleri üzerinden eşleştirir. Interpol DVI Bölüm 4 standartlarına uygun yüksek hacimli eşleşme raporları üretir.",
+          bulletPoints: [
+            "Eşzamanlı çoklu numune toplu işleme altyapısı",
+            "Dakikalar içinde anne-baba ve kardeş akrabalık indeksi (KI)",
+            "Numune kalite ve DNA bozunma puanlaması",
+            "Interpol DVI Standart 4 ile tam uyumlu rapor çıktısı",
+          ],
+          sampleMetric: "%99.999 Eşleşme Olasılığı",
+          sampleCode: "DVI_BATCH_402 — Interpol Bölüm 4 Standardı",
+          label: "DVI Operasyonları",
+        },
+        {
+          id: "border-security",
+          title: "Sınır Güvenliği ve Akrabalık Doğrulaması",
+          subtitle: "NRC II Standartlarında İstatistiksel Analiz ve Sıfır Bilgi İspatı (ZKP)",
+          description: "Sınır geçişlerinde ve kimlik kontrol merkezlerinde beyan edilen akrabalık bağlarını istatistiksel kesinlikle doğrular. NRC II kuralları çerçevesinde hesaplanan olabilirlik oranları objektif adli delil sunar.",
+          bulletPoints: [
+            "Beyan edilen akrabalıklar için NRC II uyumlu LR hesaplaması",
+            "Merkezi veri riski olmaksızın Sıfır Bilgi İspatlı (ZKP) doğrulama",
+            "Belge doğrulaması için atasal coğrafya çapraz kontrolü",
+            "Dağıtık düğüm hesaplamasıyla gerçek zamanlı doğrulama",
+          ],
+          sampleMetric: "Sıfır Veri Açığı (ZKP)",
+          sampleCode: "BORDER_CHECK_882 — Groth16 Doğrulandı",
+          label: "Sınır Güvenliği",
+        },
+        {
+          id: "research",
+          title: "Akademik ve Klinik Genetik Araştırmaları",
+          subtitle: "Popülasyon Genetiği, Dirichlet Fst Düzeltmesi ve GTEx eQTL Entegrasyonu",
+          description: "Araştırma kurumları için tekrarlanabilir olabilirlik oranı hesaplamaları, dışa aktarılabilir alel frekans matrisleri ve 54 doku tipi için GTEx eQTL çapraz referansları sağlayan doğrulanmış biyobilişim altyapısı.",
+          bulletPoints: [
+            "Dışa aktarılabilir alel frekans matrisleri ve LR analiz çıktıları",
+            "54 doku tipi için GTEx eQTL veri entegrasyonu",
+            "Tekrarlanabilir ve denetlenebilir biyobilişim boru hattı",
+            "Popülasyon stratifikasyonu analizi ve Fst (theta) düzeltmesi",
+          ],
+          sampleMetric: "54 Doku eQTL Haritalandı",
+          sampleCode: "GENOMICS_STUDY_V2 — Balding-Nichols theta=0.03",
+          label: "Araştırma Laboratuvarları",
+        },
+      ],
     },
     bioSimulator: {
-      badge: "Canlı Etkileşimli Motor Test Alanı",
+      badge: "Canlı Etkileşimli Biyobilişim Test Alanı",
       title: "Gerçek Zamanlı Bio-Simülatör ve Test Ekranı",
       subtitle: "Çoklu örnek STR alel dekonvolüsyonunu, akrabalık olasılık oranlarını ve HIrisPlex-S fenotiplemesini gerçek zamanlı simüle edin.",
       tabs: {
         phenotype: "Fenotip Tahmini",
         str: "STR Lokus Analizi",
-        zkp: "ZK İspat Denetçisi",
+        zkp: "ZKP İspat Denetçisi",
       },
       phenotypeTab: {
         irisTitle: "Göz İris Pigmentasyonu (HERC2 / OCA2)",
         irisSub: "IrisPlex v2",
         targetGenotype: "Hedef Genotip",
         secondaryMarker: "İkincil Markör",
-        posteriorProb: "Sonralı Olasılık",
-        confidence: "Güven Oranı",
+        posteriorProb: "Sonralı Olasılık (Posterior Probability)",
+        confidence: "Güven Seviyesi",
         skinTitle: "Fitzpatrick Ten Fototipi (SLC24A5 / TYRP1)",
         skinSub: "HIrisPlex-S",
         hairTitle: "Saç Dokusu ve Morfolojisi (EDAR / FGFR2)",
         hairSub: "HairPlex",
         summaryTitle: "BİYOMETRİK ÖZET",
-        synced: "100% Senkronize",
+        synced: "%100 Senkronize",
         predictedIris: "TAHMİN EDİLEN İRİS",
         hairScore: "SAÇ DOKUSU SKORU",
-        accuracy: "Doğruluk",
+        accuracy: "Doğruluk Oranı",
       },
       strTab: {
         mixtureTitle: "DNA Karışım Dekonvolüsyonu (Metropolis-Hastings MCMC)",
         mixtureSub: "2-4 Katkıda Bulunan",
-        contributors: "Tespit Edilen Kişi Sayısı",
+        contributors: "Tespit Edilen Katkıcı Sayısı",
         deconvolution: "Dekonvolüsyon Olabilirlik Oranı (LR)",
         peakHeight: "Elektroferogram Pik Yüksekliği (RFU)",
         alleleCall: "CODIS Alel Eşleşmeleri",
         logLr: "Log10 LR Dahil Olma Skoru",
       },
       zkpTab: {
-        proofTitle: "Sıfır Bilgi Kriptografik İspat Denetçisi",
+        proofTitle: "Sıfır Bilgi Kriptografik İspat Denetçisi (ZKP)",
         proofSub: "Circom / Groth16",
         verifyButton: "ZK İspatını Doğrula",
         statusVerified: "DOĞRULANMIŞ İNVARİYANT",
-        hashLabel: "Genel İspat Özeti (Hash)",
+        hashLabel: "Genel İspat Özeti (Public Proof Hash)",
       },
     },
     subsystems: {
-      badge: "Alt Sistem Kayıt Defteri",
-      title: "30 Uzmanlaşmış Adli Alt Sistem",
+      badge: "Modül Kayıt Defteri",
+      title: "30 Uzmanlaşmış Biyobilişim Modülü",
       subtitle: "Adli biyoloji, olasılıksal genotipleme, epigenetik, patoloji, LIMS iş akışları ve mahkeme delil niteliğini kapsayan 6 ana mimari sütunda organize edilmiştir.",
-      searchPlaceholder: "Alt sistemleri filtreleyin...",
-      activeCount: "5 Aktif Biyobilişimsel Alt Sistem",
+      searchPlaceholder: "Modülleri filtreleyin...",
+      activeCount: "5 Aktif Biyobilişim Modülü",
       operationalStatus: "5 / 5 FAAL",
       pillars: [
         {
           name: "Olasılıksal Genotipleme ve Popülasyon Genetiği",
-          shortName: "Olasılıksal ve Popülasyon",
+          shortName: "Olasılıksal Genotipleme",
           badge: "TEMEL MOTOR",
           subsystems: [
-            { id: "01", name: "Otozomal STR ve Akrabalık Motoru", badge: "CODIS-24", metrics: "24 Çekirdek Lokus • LR Oranı • Akrabalık İndeksi", desc: "24 CODIS çekirdek lokusunda dahil etme/dışlama olabilirlik oranlarını ve anne-baba / kardeş akrabalık indekslerini hesaplar." },
-            { id: "02", name: "MCMC Olasılıksal Genotipleme", badge: "MCMC-MH", metrics: "Metropolis-Hastings • 2-4 Katkıda Bulunan • Dekonvolüsyon", desc: "Stokastik parametrelerle 2 ila 4 kişilik karmaşık DNA karışımları için Metropolis-Hastings MCMC dekonvolüsyonu yürütür." },
+            { id: "01", name: "Otozomal STR ve Akrabalık Motoru", badge: "CODIS-24", metrics: "24 Çekirdek Lokus • LR Analizi • Akrabalık İndeksi", desc: "24 CODIS çekirdek lokusunda dahil etme/dışlama olabilirlik oranlarını (LR) ve akrabalık indekslerini hesaplar." },
+            { id: "02", name: "MCMC Olasılıksal Genotipleme", badge: "MCMC-MH", metrics: "Metropolis-Hastings • 2-4 Katkıcı • Dekonvolüsyon", desc: "Stokastik parametrelerle 2 ila 4 kişilik karmaşık DNA karışımları için Metropolis-Hastings MCMC dekonvolüsyonu yürütür." },
             { id: "03", name: "Dirichlet Fst Popülasyon Genetiği", badge: "NRC-II", metrics: "Balding-Nichols • Fst Düzeltmesi • Dirichlet Yumuşatma", desc: "Alt popülasyon akrabalığı (Fst = 0.01 / 0.03) ile NRC II Tavsiye 4.1 ve 4.2 standartlarında Dirichlet yumuşatması uygular." },
             { id: "04", name: "Temas DNA'sı ve Düşük Miktarlı LTDNA", badge: "LTDNA-MOD", metrics: "Alel Düşmesi p_d • Alel Eklenmesi p_i • Yüzey Tespiti", desc: "Pürüzsüz ve gözenekli delillerden elde edilen düşük miktarlı temas DNA'ları için stokastik alel düşmesi (p_d) ve eklenmesini (p_i) modeller." },
             { id: "05", name: "Tippett Kalibrasyon Motoru", badge: "TIPPETT", metrics: "H_p vs H_d • Katkıda Bulunmayan LR • Kalibrasyon", desc: "Gerçek katkıda bulunan (H_p) ile katkıda bulunmayan (H_d) hipotezleri altında log10(LR) olasılık dağılımlarını Tippett eğrileriyle raporlar." }
@@ -472,10 +641,10 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
         },
         {
           name: "Soy Analizi ve Akrabalık Çıkarımı",
-          shortName: "Soy ve Akrabalık",
+          shortName: "Soy & Akrabalık",
           badge: "HAPLOTİP",
           subsystems: [
-            { id: "06", name: "Y-STR Haplotip Adli Analizi", badge: "Y-STR", metrics: "Clopper-Pearson 95% Güven • Y-HRD Veri Tabanı", desc: "Y-kromozomu STR haplotipleri için Clopper-Pearson 95% binom güven aralıklarını hesaplar ve Y-HRD veri tabanıyla eşleştirir." },
+            { id: "06", name: "Y-STR Haplotip Adli Analizi", badge: "Y-STR", metrics: "Clopper-Pearson %95 Güven • Y-HRD Veri Tabanı", desc: "Y-kromozomu STR haplotipleri için Clopper-Pearson %95 binom güven aralıklarını hesaplar ve Y-HRD veri tabanıyla eşleştirir." },
             { id: "07", name: "X-STR Bağlantı ve Akrabalık İndeksi", badge: "X-STR", metrics: "Bağlantı Dengesi • Kadın Akrabalık KI_X", desc: "X-kromozomal bağlantılı markör kümelerinin aktarım olasılıklarını ve kadın akrabalık olabilirlik oranlarını (KI_X) değerlendirir." },
             { id: "08", name: "mtDNA Kontrol Bölgesi Adli Analizi", badge: "mtDNA", metrics: "rCRS Hizalaması • RSRS • Haplogrup Ağacı", desc: "Anne soyu tespiti için hiperdeğişken bölgeleri (HV1/HV2/HV3) revize edilmiş Cambridge Referans Dizisi (rCRS) ile hizalar." },
             { id: "09", name: "DVI Toplu Afet & Kimlik Tespiti", badge: "DVI-PED", metrics: "Soyağacı Ağaçları • Akrabalık Aşamaları • DVI", desc: "Toplu ölümler ve felaket kurbanlarının kimlik tespiti (DVI) için referans akrabalarla soyağacı olabilirlik değerlendirmesi yapar." },
@@ -484,7 +653,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
         },
         {
           name: "Fenotipleme ve Coğrafi Soy Tahmini",
-          shortName: "Fenotipleme ve Soy",
+          shortName: "Fenotipleme & Soy",
           badge: "HIRISPLEX-S",
           subsystems: [
             { id: "11", name: "HIrisPlex-S Pigmentasyon Motoru", badge: "HIRISPLEX", metrics: "Göz Rengi • Saç Rengi • Ten Fototipi", desc: "Göz rengi, saç pigmentasyonu/morfolojisi ve Fitzpatrick ten fototipini tahmin eden 24-SNP HIrisPlex-S yapay zeka modeli." },
@@ -496,7 +665,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
         },
         {
           name: "Epigenetik ve Çevresel Yaş Tayini",
-          shortName: "Epigenetik ve Yaş",
+          shortName: "Epigenetik & Yaş",
           badge: "EPİGENETİK",
           subsystems: [
             { id: "16", name: "Horvath Epigenetik Yaş Saati", badge: "HORVATH", metrics: "5-CpG Metilasyonu • Epigenetik Yaş ±2.8 Yıl", desc: "Delil bırakma anındaki kronolojik yaşı ±2.8 yıl hassasiyetle tahmin etmek için temel CpG lokuslarındaki metilasyon seviyelerini ölçer." },
@@ -508,7 +677,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
         },
         {
           name: "Adli Patoloji, Toksikoloji ve Seroloji",
-          shortName: "Patoloji ve Toksikoloji",
+          shortName: "Patoloji & Toksikoloji",
           badge: "PATOLOJİ",
           subsystems: [
             { id: "21", name: "Kan Lekesi Deseni Analizi (BPA)", badge: "BPA-3D", metrics: "Yönelim • Çıkış Alanı • Darbe Açısı", desc: "Kan lekesi delilleri için darbe açısını, leke yönelim vektörlerini ve 3D çıkış noktasını hesaplar." },
@@ -520,7 +689,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
         },
         {
           name: "LIMS, ISO 17025 Kalite Kontrol ve Yönetişim",
-          shortName: "LIMS ve ISO 17025",
+          shortName: "LIMS & Hukuki Uyum",
           badge: "UYUMLULUK",
           subsystems: [
             { id: "26", name: "LIMS Kabul ve Delil Zinciri Takibi", badge: "LIMS-HMAC", metrics: "SHA-256 Delil Defteri • Barkod Takibi", desc: "LIMS numune kabulünü, delil zinciri kayıtlarını, saklama sıcaklıklarını ve analist onaylarını yönetir." },
@@ -575,7 +744,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       subtitle: "Müdahaleye karşı korumalı denetim izi, sıfır bilgi kanıtlı delil doğrulaması ve katı zincir takibi.",
       pillars: [
         {
-          title: "Sıfır Bilgi İspatlı Gizlilik Denetçisi",
+          title: "Sıfır Bilgi İspatlı Gizlilik Denetçisi (ZKP)",
           desc: "Ham STR alel profilleri izole kalır. Circom/SnarkJS zkSNARK devreleri, ham genomik verileri iletmeden DNA eşleşme kriterlerini doğrulayan Groth16 kriptografik ispatları üretir."
         },
         {
@@ -593,13 +762,13 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       ],
       specs: [
         { label: "Otozomal STR Desteği", value: "CODIS 24 Çekirdek Lokus (D3S1358, vWA, FGA, D8S1179, D21S11, D18S51, SE33, vb.)" },
-        { label: "Soy Adli Analizi", value: "Y-STR (Clopper-Pearson 95% Güven), X-STR (KI_X Bağlantısı), mtDNA rCRS Hizalaması" },
+        { label: "Soy Adli Analizi", value: "Y-STR (Clopper-Pearson %95 Güven), X-STR (KI_X Bağlantısı), mtDNA rCRS Hizalaması" },
         { label: "Olasılıksal Karışım MCMC", value: "Metropolis-Hastings 2-4 Katkıda Bulunan Dekonvolüsyonu (p_d Alel Düşmesi & p_i Alel Eklenmesi)" },
         { label: "Fenotip ve Epigenetik", value: "Genişletilmiş HIrisPlex-S (Göz/Saç/Ten/Çil) ve Horvath 5-CpG Epigenetik Yaş Saati" },
         { label: "Popülasyon Modelleri", value: "NRC II Tavsiye 4.1 ve 4.2 Balding-Nichols Dirichlet Alt Popülasyon Fst Düzeltmesi" },
         { label: "Cihaz Veri Kabulü", value: "CE GeneMapper CSV, qPCR Quantifiler Trio Cq/DI ve NGS MiSeq VCF Otomatik Geçidi" },
         { label: "ISO 17025 Uyumluluğu", value: "8 Bölümlü Resmi Sertifika Derleyici, 7 Noktalı Kalite Kontrol ve Uzman Tanık Mahkeme Modu" },
-        { label: "Doğrulanmış İnvarantlar", value: "215/215 Otomatik Pytest Test Paketi (100% Başarı Oranı)" },
+        { label: "Doğrulanmış İnvarantlar", value: "215/215 Otomatik Pytest Test Paketi (%100 Başarı Oranı)" },
         { label: "Ön Yüz Teknolojisi", value: "Next.js 16 Turbopack App Router, React 19, Tailwind CSS, Framer Motion" },
         { label: "Arka Yüz Teknolojisi", value: "FastAPI (Python 3.12), PyTorch, Scikit-learn, MCMC Metropolis-Hastings Motoru" },
         { label: "Gizlilik Denetçisi", value: "Circom zkSNARK Groth16 İspat Motoru + Polygon Kriptografik Kayıt Defteri" },
@@ -626,10 +795,10 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
     footer: {
       rights: "FORENZA Forensic Systems. Tüm hakları saklıdır.",
       tagline: "Kurumsal Biyobilişimsel Adli İstihbarat ve Delil İşletim Sistemi.",
-      status: "30 Alt Sistem Faal",
+      status: "30 Biyobilişim Modülü Faal",
       columns: {
-        col1Title: "Platform Alt Sistemleri",
-        col1Links: ["30 Alt Sistem Matrisi", "Delil OS DAG Mimarisi", "Multi-Omik Bio-Simülatör", "ISO 17025 Mahkeme Modu"],
+        col1Title: "Platform Modülleri",
+        col1Links: ["30 Biyobilişim Modülü", "Delil İşleme Mimarisi (DAG)", "Multi-Omik Bio-Simülatör", "ISO 17025 Mahkeme Modu"],
         col2Title: "Temel Yetenekler",
         col2Links: ["MCMC Olasılıksal Genotipleme", "HIrisPlex-S Fenotipleme", "Horvath Epigenetik Yaş Saati", "LIMS ve Cihaz Geçidi"],
         col3Title: "Delil Niteliği ve Standartlar",

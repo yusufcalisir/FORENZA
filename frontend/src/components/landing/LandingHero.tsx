@@ -21,10 +21,10 @@ export default function LandingHero() {
                         initial={{ opacity: 0, y: 15 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5 }}
-                        className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 rounded-full border border-tactical-accent/40 bg-tactical-accent/10 backdrop-blur-md max-w-full"
+                        className="inline-flex items-start sm:items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full border border-tactical-accent/40 bg-tactical-accent/10 backdrop-blur-md max-w-full text-left sm:text-center"
                     >
-                        <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-tactical-accent animate-pulse shrink-0" />
-                        <span className="font-mono text-[10px] sm:text-xs font-bold text-tactical-accent uppercase tracking-wider text-center leading-tight">
+                        <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-tactical-accent animate-pulse shrink-0 mt-0.5 sm:mt-0" />
+                        <span className="font-mono text-[10px] sm:text-xs font-bold text-tactical-accent uppercase tracking-wider leading-snug">
                             {t.hero.badge}
                         </span>
                     </motion.div>

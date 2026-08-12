@@ -501,9 +501,9 @@ export default function LandingBioSimulator() {
             <div className="my-auto mx-auto max-w-6xl w-full">
                 {/* Section header */}
                 <div className="text-center mb-6 sm:mb-8 px-2">
-                    <div className="inline-flex items-center gap-2 rounded-full border border-[#06B6D4]/30 bg-[#06B6D4]/5 px-3 sm:px-4 py-1.5 mb-2.5 shadow-[0_0_15px_rgba(6,182,212,0.1)] max-w-full">
-                        <Dna className="h-3.5 w-3.5 text-[#06B6D4] shrink-0" />
-                        <span className="font-mono text-[9px] sm:text-[10px] tracking-widest text-[#06B6D4] uppercase font-bold text-center truncate">
+                    <div className="inline-flex items-start sm:items-center gap-2 rounded-full border border-[#06B6D4]/30 bg-[#06B6D4]/5 px-3 sm:px-4 py-1.5 mb-2.5 shadow-[0_0_15px_rgba(6,182,212,0.1)] max-w-full text-left sm:text-center">
+                        <Dna className="h-3.5 w-3.5 text-[#06B6D4] shrink-0 mt-0.5 sm:mt-0" />
+                        <span className="font-mono text-[9px] sm:text-[10px] tracking-widest text-[#06B6D4] uppercase font-bold leading-snug">
                             {t.bioSimulator.badge}
                         </span>
                     </div>

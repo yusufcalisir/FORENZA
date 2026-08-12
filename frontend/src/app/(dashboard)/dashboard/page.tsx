@@ -296,19 +296,19 @@ export default function ForenzaDashboardPage() {
             </div>
 
             {/* ── HMAC Chain of Custody ── */}
-            <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-4 flex flex-col sm:flex-row items-start sm:items-center gap-3">
+            <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-3.5 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 sm:gap-3 max-w-full overflow-hidden">
                 <div className="flex items-center gap-2 shrink-0">
-                    <Lock className="w-4 h-4 text-amber-400" />
+                    <Lock className="w-4 h-4 text-amber-400 shrink-0" />
                     <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">Chain of Custody</span>
                 </div>
-                <div className="flex-1 min-w-0">
-                    <p className="text-[9px] text-zinc-400 font-mono truncate">
-                        HMAC-SHA256: <span className="text-amber-300">a7f9c21e…e04b</span> →
+                <div className="flex-1 min-w-0 max-w-full">
+                    <p className="text-[9px] sm:text-[10px] text-zinc-400 font-mono leading-relaxed break-all sm:break-normal">
+                        HMAC-SHA256: <span className="text-amber-300 font-bold">a7f9c21e…e04b</span> →
                         Block #1847291 → Polygon zkEVM →
-                        <span className="text-emerald-400"> VERIFIED ✓</span>
+                        <span className="text-emerald-400 font-bold"> VERIFIED ✓</span>
                     </p>
                 </div>
-                <Link href="/audit" className="shrink-0 text-[9px] font-bold text-amber-400 hover:text-amber-300 border border-amber-500/30 rounded-lg px-3 py-1.5 transition-colors uppercase tracking-wider">
+                <Link href="/audit" className="shrink-0 text-[9px] sm:text-[10px] font-bold text-amber-400 hover:text-amber-300 border border-amber-500/30 rounded-lg px-2.5 py-1.5 transition-colors uppercase tracking-wider whitespace-nowrap">
                     View ISO Audit Log →
                 </Link>
             </div>

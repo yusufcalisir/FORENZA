@@ -649,8 +649,8 @@ export default function AnalysisPage() {
 
                 {/* Right Panel */}
                 <div className="flex-1 min-w-0 flex flex-col gap-3">
-                    {/* Mobile Category Tabs */}
-                    <div className="flex gap-1 overflow-x-auto md:hidden pb-1">
+                    {/* Mobile Category Cards Grid (No horizontal scroll) */}
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:hidden gap-1.5 max-w-full">
                         {CATEGORIES.map((cat) => {
                             const CIcon = cat.icon;
                             const cc = COLOR_CLASSES[cat.color];
@@ -659,10 +659,13 @@ export default function AnalysisPage() {
                                 <button
                                     key={cat.id}
                                     onClick={() => handleCategoryClick(cat.id)}
-                                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider shrink-0 transition-all ${isActive ? `${cc.activeBg} border ${cc.border} ${cc.text}` : "bg-zinc-900/50 text-zinc-600 border border-zinc-800"}`}
+                                    className={`flex items-center gap-2 p-2 sm:p-2.5 rounded-xl text-[9px] font-bold uppercase tracking-wider transition-all text-left cursor-pointer border ${isActive
+                                        ? `${cc.activeBg} border ${cc.border} ${cc.text} shadow-md`
+                                        : "bg-tactical-surface/80 text-zinc-400 border-tactical-border/70 hover:border-zinc-700 hover:text-zinc-200"
+                                        }`}
                                 >
-                                    <CIcon className="w-3 h-3" />
-                                    {cat.label}
+                                    <CIcon className={`w-3.5 h-3.5 shrink-0 ${isActive ? cc.text : "text-zinc-500"}`} />
+                                    <span className="truncate">{cat.label}</span>
                                 </button>
                             );
                         })}

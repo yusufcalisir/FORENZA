@@ -75,10 +75,10 @@ export default function LandingSecuritySpecs() {
                 <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface overflow-hidden shadow-2xl font-mono">
                     <div className="border-b border-tactical-border/60 bg-black/60 px-6 py-4 flex items-center justify-between">
                         <span className="text-xs font-bold uppercase tracking-wider text-zinc-200">
-                            Technical Platform Specifications & Standards Matrix
+                            {t.security.matrixTitle}
                         </span>
                         <span className="px-2.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[9px] font-bold uppercase">
-                            215/215 PASSED
+                            {t.security.passedBadge}
                         </span>
                     </div>
 

@@ -156,20 +156,20 @@ export default function LandingFeatures() {
                 {/* Subsystem Matrix Telemetry Footer */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4 p-3.5 sm:p-5 rounded-2xl border border-tactical-border/80 bg-tactical-surface/40 text-center font-mono text-xs">
                     <div>
-                        <span className="text-zinc-500 text-[9px] sm:text-[10px] uppercase font-bold block">Total Subsystems</span>
-                        <span className="font-black text-emerald-400 text-sm sm:text-lg">30 / 30 Active</span>
+                        <span className="text-zinc-500 text-[9px] sm:text-[10px] uppercase font-bold block">{t.subsystems.totalSubsystemsLabel}</span>
+                        <span className="font-black text-emerald-400 text-sm sm:text-lg">{t.subsystems.totalSubsystemsValue}</span>
                     </div>
                     <div>
-                        <span className="text-zinc-500 text-[9px] sm:text-[10px] uppercase font-bold block">Architectural Layers</span>
-                        <span className="font-black text-cyan-400 text-sm sm:text-lg">6-Layer DAG</span>
+                        <span className="text-zinc-500 text-[9px] sm:text-[10px] uppercase font-bold block">{t.subsystems.archLayersLabel}</span>
+                        <span className="font-black text-cyan-400 text-sm sm:text-lg">{t.subsystems.archLayersValue}</span>
                     </div>
                     <div>
-                        <span className="text-zinc-500 text-[9px] sm:text-[10px] uppercase font-bold block">Pytest Invariants</span>
-                        <span className="font-black text-purple-400 text-sm sm:text-lg">215/215 Passed</span>
+                        <span className="text-zinc-500 text-[9px] sm:text-[10px] uppercase font-bold block">{t.subsystems.pytestInvariantsLabel}</span>
+                        <span className="font-black text-purple-400 text-sm sm:text-lg">{t.subsystems.pytestInvariantsValue}</span>
                     </div>
                     <div>
-                        <span className="text-zinc-500 text-[9px] sm:text-[10px] uppercase font-bold block">Standard Compliance</span>
-                        <span className="font-black text-amber-400 text-sm sm:text-lg">ISO/IEC 17025</span>
+                        <span className="text-zinc-500 text-[9px] sm:text-[10px] uppercase font-bold block">{t.subsystems.standardComplianceLabel}</span>
+                        <span className="font-black text-amber-400 text-sm sm:text-lg">{t.subsystems.standardComplianceValue}</span>
                     </div>
                 </div>
             </div>

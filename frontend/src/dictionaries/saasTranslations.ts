@@ -141,6 +141,14 @@ export interface SaasTranslation {
     searchPlaceholder: string;
     activeCount: string;
     operationalStatus: string;
+    totalSubsystemsLabel: string;
+    totalSubsystemsValue: string;
+    archLayersLabel: string;
+    archLayersValue: string;
+    pytestInvariantsLabel: string;
+    pytestInvariantsValue: string;
+    standardComplianceLabel: string;
+    standardComplianceValue: string;
     pillars: PillarItem[];
   };
   architecture: {
@@ -153,6 +161,8 @@ export interface SaasTranslation {
     badge: string;
     title: string;
     subtitle: string;
+    matrixTitle: string;
+    passedBadge: string;
     pillars: SecurityPillarItem[];
     specs: SecuritySpecItem[];
   };
@@ -348,7 +358,15 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       subtitle: "Organized into 6 core architectural pillars covering every domain of forensic biology, probabilistic genotyping, epigenetics, pathology, LIMS SOP chains, and court testimony.",
       searchPlaceholder: "Filter subsystems...",
       activeCount: "5 Active Biocomputational Subsystems",
-      operationalStatus: "5 / 5 OPERATIONAL",
+      operationalStatus: "Operational Status",
+      totalSubsystemsLabel: "Total Subsystems",
+      totalSubsystemsValue: "30 / 30 Active",
+      archLayersLabel: "Architectural Layers",
+      archLayersValue: "6-Layer DAG",
+      pytestInvariantsLabel: "Pytest Invariants",
+      pytestInvariantsValue: "215/215 Passed",
+      standardComplianceLabel: "Standard Compliance",
+      standardComplianceValue: "ISO/IEC 17025",
       pillars: [
         {
           name: "Probabilistic Genotyping & Population",
@@ -465,6 +483,8 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       badge: "Enterprise Security & Admissibility",
       title: "Cryptographic Evidence Custody & ISO 17025 Compliance",
       subtitle: "Tamper-evident audit logging, zero-knowledge evidence verification, and strict chain of custody.",
+      matrixTitle: "Technical Platform Specifications & Standards Matrix",
+      passedBadge: "215/215 PASSED",
       pillars: [
         {
           title: "Zero-Knowledge Privacy Auditor",
@@ -688,7 +708,15 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       subtitle: "Adli biyoloji, olasılıksal genotipleme, epigenetik, patoloji, LIMS iş akışları ve adli rapor standartlarını kapsayan 6 temel mimari kategoride sunulmaktadır.",
       searchPlaceholder: "Modülleri filtreleyin...",
       activeCount: "5 Aktif Adli Analiz Modülü",
-      operationalStatus: "5 / 5 FAAL",
+      operationalStatus: "Operasyonel Durum",
+      totalSubsystemsLabel: "Toplam Alt Sistem",
+      totalSubsystemsValue: "30 / 30 Aktif",
+      archLayersLabel: "Mimari Katmanlar",
+      archLayersValue: "6 Katmanlı DAG",
+      pytestInvariantsLabel: "Pytest İnvaryantları",
+      pytestInvariantsValue: "215/215 Başarılı",
+      standardComplianceLabel: "Standart Uyumluluk",
+      standardComplianceValue: "ISO/IEC 17025",
       pillars: [
         {
           name: "Olasılıksal Genotipleme ve Popülasyon Analizleri",
@@ -805,6 +833,8 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       badge: "Kurumsal Güvenlik ve ISO 17025 Standartları",
       title: "Kriptografik Delil Zinciri ve ISO 17025 Akreditasyonu",
       subtitle: "Müdahaleye karşı korumalı denetim izi, sıfır bilgi kanıtlı delil doğrulaması ve katı delil zinciri takibi.",
+      matrixTitle: "Teknik Platform Özellikleri ve Standartlar Matrisi",
+      passedBadge: "215/215 BAŞARILI",
       pillars: [
         {
           title: "Sıfır Bilgi İspatlı Gizlilik Denetçisi (ZKP)",

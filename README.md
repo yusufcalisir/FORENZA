@@ -10,6 +10,11 @@
 </p>
 
 <p align="center">
+  <a href="README.md"><strong>🇬🇧 English README</strong></a> | 
+  <a href="README_TR.md"><strong>🇹🇷 Türkçe Dokümantasyon</strong></a>
+</p>
+
+<p align="center">
   <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/System%20Status-Operational-brightgreen?style=for-the-badge&logo=opsgenie" /></a>
   <a href="#autosomal-str--kinship-engine"><img src="https://img.shields.io/badge/Genomics-CODIS%2024%20Core%20Loci-blue?style=for-the-badge&logo=dna" /></a>
   <a href="#probabilistic-genotyping--mcmc-deconvolution"><img src="https://img.shields.io/badge/Genotyping-Metropolis--Hastings%20MCMC-orange?style=for-the-badge" /></a>

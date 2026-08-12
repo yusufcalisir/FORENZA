@@ -10,10 +10,15 @@ import { polygonAmoy } from "wagmi/chains";
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_AUDIT_CONTRACT_ADDRESS as `0x${string}` || "0x0000000000000000000000000000000000000000";
 
 export default function EmbeddedAuditLog() {
+    const [mounted, setMounted] = useState(false);
     const chainId = useChainId();
     const { switchChain } = useSwitchChain();
     const { isConnected } = useAccount();
     const [liveLogs, setLiveLogs] = useState<any[]>([]);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const isWrongNetwork = isConnected && chainId !== polygonAmoy.id;
 
@@ -46,6 +51,14 @@ export default function EmbeddedAuditLog() {
     }, [liveLogs.length]);
 
     const hasScroll = liveLogs.length > 5;
+
+    if (!mounted) {
+        return (
+            <div className="rounded-2xl border border-tactical-border/60 bg-tactical-surface/60 p-4 font-mono w-full min-h-[140px] animate-pulse flex items-center justify-center text-xs text-zinc-500">
+                Initializing Audit Ledger…
+            </div>
+        );
+    }
 
     return (
         <div className="rounded-2xl border border-tactical-border/60 bg-tactical-surface/60 p-3 sm:p-4 space-y-3 font-mono w-full max-w-full overflow-hidden">

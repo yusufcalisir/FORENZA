@@ -18,30 +18,28 @@ export function SaasLanguageProvider({
   children: React.ReactNode;
   initialLang?: SaasLanguage;
 }) {
-  // Synchronous init: localStorage preference takes highest priority,
-  // then SSR-detected initialLang. No flash, no double-render.
-  const getInitialLang = (): SaasLanguage => {
-    if (typeof window !== "undefined") {
-      try {
-        const saved = localStorage.getItem("forenza_saas_lang") as SaasLanguage | null;
-        if (saved === "tr" || saved === "en") return saved;
-      } catch (_) {}
-    }
-    return initialLang;
-  };
+  // IMPORTANT: Must start with `initialLang` (not localStorage) so that the
+  // first client render exactly matches the server-rendered HTML.
+  // Reading localStorage here causes React Hydration Error #418 because the
+  // server has no localStorage and renders with initialLang, but the client
+  // synchronously reads a different value → SSR/CSR mismatch.
+  const [lang, setLangState] = useState<SaasLanguage>(initialLang);
 
-  const [lang, setLangState] = useState<SaasLanguage>(getInitialLang);
-
-  // Client-side timezone/browser fallback — ONLY runs when:
-  // 1. SSR headers were unavailable (initialLang stayed "en"), AND
-  // 2. No localStorage preference was saved by the user.
-  // This prevents flash when SSR already correctly detected TR.
   useEffect(() => {
+    // Phase 1: Respect saved user preference (highest priority).
     try {
       const saved = localStorage.getItem("forenza_saas_lang") as SaasLanguage | null;
-      if (saved === "tr" || saved === "en") return; // user preference already applied
-      if (initialLang !== "en") return;             // SSR already detected correctly, no need to re-detect
+      if (saved === "tr" || saved === "en") {
+        setLangState(saved);
+        return;
+      }
+    } catch (_) {}
 
+    // Phase 2: SSR already detected language correctly → nothing to do.
+    if (initialLang !== "en") return;
+
+    // Phase 3: SSR headers unavailable (local dev, etc.) → browser fallback.
+    try {
       const navLang = (navigator.language || "").toLowerCase();
       const navLangs = Array.from(navigator.languages || []).map((l) => l.toLowerCase());
       const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
@@ -82,7 +80,6 @@ export function SaasLanguageProvider({
 export function useSaasLanguage() {
   const context = useContext(SaasLanguageContext);
   if (!context) {
-    // Fallback if rendered outside provider
     return {
       lang: "en" as SaasLanguage,
       setLang: () => {},

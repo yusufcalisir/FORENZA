@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     ShieldCheck, Lock, CheckCircle, AlertTriangle,
-    FileText, Clock, Filter, ChevronDown, Activity
+    FileText, Clock, Filter, ChevronDown, Activity, ChevronRight
 } from "lucide-react";
 
 type LogLevel = "ALL" | "PASS" | "WARNING" | "FAIL";
@@ -52,63 +52,66 @@ export default function AuditPage() {
     };
 
     return (
-        <div className="space-y-6 font-mono">
+        <div className="space-y-4 font-mono max-w-full overflow-hidden">
             {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-tactical-border/60 pb-3">
                 <div>
-                    <div className="flex items-center gap-2 mb-1">
-                        <ShieldCheck className="w-4 h-4 text-amber-400" />
+                    <div className="flex items-center gap-2 mb-0.5">
+                        <ShieldCheck className="w-4 h-4 text-amber-400 shrink-0" />
                         <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest">FORENZA Compliance</span>
                     </div>
-                    <h1 className="text-base font-extrabold text-white tracking-tight">ISO 17025 Audit Log</h1>
-                    <p className="text-[10px] text-zinc-500 mt-0.5">HMAC-SHA256 Chain of Custody • Immutable Forensic Event Ledger • ZKP Verified</p>
+                    <h1 className="text-sm sm:text-base font-extrabold text-white tracking-tight">ISO 17025 Audit Log</h1>
+                    <p className="text-[9px] sm:text-[10px] text-zinc-400 mt-0.5">HMAC-SHA256 Chain of Custody • Immutable Forensic Event Ledger • ZKP Verified</p>
                 </div>
-                <div className="flex items-center gap-1.5">
-                    <Lock className="w-3.5 h-3.5 text-amber-400" />
+                <div className="flex items-center gap-1.5 shrink-0">
+                    <Lock className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                     <span className="text-[9px] font-bold text-amber-400 uppercase tracking-wider">Chain Integrity: VERIFIED</span>
                 </div>
             </div>
 
-            {/* Summary */}
-            <div className="grid grid-cols-3 gap-3">
+            {/* Summary Metrics */}
+            <div className="grid grid-cols-3 gap-2 sm:gap-3">
                 {([
                     { label: "Events PASS", value: counts.PASS, color: "text-emerald-400", bg: "border-emerald-500/30 bg-emerald-500/5" },
                     { label: "Events WARNING", value: counts.WARNING, color: "text-amber-400", bg: "border-amber-500/30 bg-amber-500/5" },
                     { label: "Events FAIL", value: counts.FAIL, color: "text-red-400", bg: "border-red-500/30 bg-red-500/5" },
                 ] as const).map((m) => (
                     <motion.div key={m.label} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-                        className={`rounded-xl border ${m.bg} p-4 text-center`}>
-                        <p className={`text-2xl font-extrabold ${m.color}`}>{m.value}</p>
-                        <p className="text-[9px] text-zinc-500 uppercase mt-1">{m.label}</p>
+                        className={`rounded-xl border ${m.bg} p-2.5 sm:p-4 text-center`}>
+                        <p className={`text-xl sm:text-2xl font-extrabold ${m.color}`}>{m.value}</p>
+                        <p className="text-[8px] sm:text-[9px] text-zinc-400 uppercase mt-0.5 font-bold truncate">{m.label}</p>
                     </motion.div>
                 ))}
             </div>
 
             {/* Filter Bar */}
-            <div className="flex items-center gap-2 flex-wrap">
-                <Filter className="w-3.5 h-3.5 text-zinc-500" />
-                <span className="text-[9px] text-zinc-600 uppercase font-bold">Filter:</span>
-                {(["ALL", "PASS", "WARNING", "FAIL"] as LogLevel[]).map((f) => (
-                    <button
-                        key={f}
-                        onClick={() => setFilter(f)}
-                        className={`px-3 py-1 rounded-lg text-[9px] font-bold uppercase tracking-wider border transition-all ${filter === f
-                            ? f === "ALL" ? "bg-zinc-800 border-zinc-600 text-white"
-                                : f === "PASS" ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-400"
-                                    : f === "WARNING" ? "bg-amber-500/15 border-amber-500/40 text-amber-400"
-                                        : "bg-red-500/15 border-red-500/40 text-red-400"
-                            : "bg-zinc-900/40 border-zinc-800/60 text-zinc-600 hover:text-zinc-300"
-                            }`}
-                    >
-                        {f}
-                    </button>
-                ))}
-                <span className="ml-auto text-[9px] text-zinc-600">{filtered.length} events</span>
+            <div className="flex items-center justify-between gap-2 flex-wrap bg-tactical-surface/80 p-2.5 rounded-xl border border-tactical-border/60">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                    <Filter className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+                    <span className="text-[9px] text-zinc-400 uppercase font-bold mr-1">Filter:</span>
+                    {(["ALL", "PASS", "WARNING", "FAIL"] as LogLevel[]).map((f) => (
+                        <button
+                            key={f}
+                            onClick={() => setFilter(f)}
+                            className={`px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase tracking-wider border transition-all cursor-pointer ${filter === f
+                                ? f === "ALL" ? "bg-zinc-800 border-zinc-600 text-white"
+                                    : f === "PASS" ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-300"
+                                        : f === "WARNING" ? "bg-amber-500/20 border-amber-500/50 text-amber-300"
+                                            : "bg-red-500/20 border-red-500/50 text-red-300"
+                                : "bg-black/40 border-tactical-border/60 text-zinc-400 hover:text-zinc-200"
+                                }`}
+                        >
+                            {f}
+                        </button>
+                    ))}
+                </div>
+                <span className="text-[9px] text-zinc-500 font-bold ml-auto">{filtered.length} events</span>
             </div>
 
-            {/* Log Table */}
-            <div className="rounded-2xl border border-tactical-border/60 bg-black/20 overflow-hidden">
-                <div className="hidden sm:grid grid-cols-12 px-4 py-2.5 border-b border-tactical-border/40 text-[8px] font-bold text-zinc-600 uppercase tracking-wider">
+            {/* Log Table / Cards */}
+            <div className="rounded-xl border border-tactical-border/60 bg-tactical-surface/60 overflow-hidden">
+                {/* Desktop Header */}
+                <div className="hidden md:grid grid-cols-12 px-4 py-2.5 border-b border-tactical-border/40 text-[8px] font-bold text-zinc-400 uppercase tracking-wider">
                     <span className="col-span-1">ID</span>
                     <span className="col-span-2">Timestamp</span>
                     <span className="col-span-4">Event</span>
@@ -117,48 +120,95 @@ export default function AuditPage() {
                     <span className="col-span-1">Standard</span>
                     <span className="col-span-1 text-right">Status</span>
                 </div>
+
                 {filtered.map((entry, i) => {
                     const sc = STATUS_CONF[entry.status];
                     const StatusIcon = sc.icon;
                     const isExpanded = expanded === entry.id;
                     return (
-                        <div key={entry.id} className="border-b border-tactical-border/20 last:border-0">
+                        <div key={entry.id} className="border-b border-tactical-border/30 last:border-0">
+                            {/* Desktop Row View */}
                             <motion.div
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{ delay: i * 0.03 }}
                                 onClick={() => setExpanded(isExpanded ? null : entry.id)}
-                                className="grid grid-cols-1 sm:grid-cols-12 items-center gap-1 sm:gap-0 px-4 py-3 cursor-pointer hover:bg-white/2 transition-colors"
+                                className="hidden md:grid grid-cols-12 items-center px-4 py-3 cursor-pointer hover:bg-white/5 transition-colors gap-2"
                             >
-                                <span className="col-span-1 text-[9px] font-bold text-zinc-500 font-mono">{entry.id}</span>
-                                <span className="col-span-2 text-[9px] text-zinc-500">{entry.timestamp}</span>
-                                <span className="col-span-4 text-[10px] text-zinc-200">{entry.event}</span>
-                                <span className="col-span-2 text-[9px] text-zinc-400">{entry.module}</span>
-                                <span className="col-span-1 text-[9px] text-zinc-500 truncate">{entry.analyst}</span>
-                                <span className="col-span-1 text-[9px] text-zinc-600">{entry.standard}</span>
+                                <span className="col-span-1 text-[9px] font-bold text-zinc-400 font-mono">{entry.id}</span>
+                                <span className="col-span-2 text-[9px] text-zinc-400 font-mono">{entry.timestamp}</span>
+                                <span className="col-span-4 text-[10px] text-zinc-100 font-bold truncate">{entry.event}</span>
+                                <span className="col-span-2 text-[9px] text-zinc-400 truncate">{entry.module}</span>
+                                <span className="col-span-1 text-[9px] text-zinc-400 truncate">{entry.analyst}</span>
+                                <span className="col-span-1 text-[9px] text-zinc-500 truncate">{entry.standard}</span>
                                 <div className="col-span-1 flex justify-end">
-                                    <span className={`flex items-center gap-1 text-[8px] font-bold border rounded px-1.5 py-0.5 ${sc.bg} ${sc.color}`}>
+                                    <span className={`flex items-center gap-1 text-[8px] font-bold border rounded-md px-1.5 py-0.5 ${sc.bg} ${sc.color}`}>
                                         <StatusIcon className="w-2.5 h-2.5" />
                                         {entry.status}
                                     </span>
                                 </div>
                             </motion.div>
+
+                            {/* Mobile Card View (Strictly Aligned) */}
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: i * 0.03 }}
+                                onClick={() => setExpanded(isExpanded ? null : entry.id)}
+                                className="md:hidden p-3 space-y-2 cursor-pointer hover:bg-white/5 transition-colors"
+                            >
+                                {/* Mobile Row 1: ID, Timestamp & Status Badge (Perfect Alignment) */}
+                                <div className="flex items-center justify-between gap-2">
+                                    <div className="flex items-center gap-2 min-w-0">
+                                        <span className="text-[9px] font-bold font-mono text-amber-300 bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded-md shrink-0">
+                                            {entry.id}
+                                        </span>
+                                        <div className="flex items-center gap-1 text-[9px] text-zinc-400 font-mono truncate">
+                                            <Clock className="w-3 h-3 text-zinc-500 shrink-0" />
+                                            <span className="truncate">{entry.timestamp}</span>
+                                        </div>
+                                    </div>
+                                    <span className={`flex items-center gap-1 text-[8px] font-bold border rounded-md px-2 py-0.5 shrink-0 ${sc.bg} ${sc.color}`}>
+                                        <StatusIcon className="w-2.5 h-2.5" />
+                                        {entry.status}
+                                    </span>
+                                </div>
+
+                                {/* Mobile Row 2: Event Title */}
+                                <p className="text-xs font-bold text-white leading-snug break-words">
+                                    {entry.event}
+                                </p>
+
+                                {/* Mobile Row 3: Module, Analyst & Standard */}
+                                <div className="flex items-center justify-between gap-2 text-[9px] text-zinc-400 pt-0.5">
+                                    <div className="flex items-center gap-1.5 min-w-0">
+                                        <span className="text-purple-300 truncate font-semibold">{entry.module}</span>
+                                        <span className="text-zinc-600">•</span>
+                                        <span className="text-zinc-400 truncate">{entry.analyst}</span>
+                                    </div>
+                                    <span className="text-[8px] font-mono text-zinc-500 bg-black/40 border border-tactical-border/50 rounded px-1.5 py-0.5 shrink-0">
+                                        {entry.standard}
+                                    </span>
+                                </div>
+                            </motion.div>
+
+                            {/* Expandable Detail */}
                             <AnimatePresence>
                                 {isExpanded && (
                                     <motion.div
                                         initial={{ opacity: 0, height: 0 }}
                                         animate={{ opacity: 1, height: "auto" }}
                                         exit={{ opacity: 0, height: 0 }}
-                                        className="px-4 pb-3 space-y-2 border-t border-tactical-border/20"
+                                        className="px-3 sm:px-4 pb-3 space-y-2 border-t border-tactical-border/20"
                                     >
-                                        <div className="pt-3 grid grid-cols-2 gap-2">
-                                            <div className="p-2 rounded-lg bg-black/30 border border-tactical-border/30">
-                                                <span className="text-[8px] text-zinc-600 uppercase block">HMAC-SHA256</span>
-                                                <span className="text-[10px] text-amber-400 font-mono font-bold">{entry.hmac}</span>
+                                        <div className="pt-2.5 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                            <div className="p-2 rounded-lg bg-black/40 border border-tactical-border/30">
+                                                <span className="text-[8px] text-zinc-500 uppercase block font-bold">HMAC-SHA256 Hash</span>
+                                                <span className="text-[10px] text-amber-400 font-mono font-bold truncate block">{entry.hmac}</span>
                                             </div>
-                                            <div className="p-2 rounded-lg bg-black/30 border border-tactical-border/30">
-                                                <span className="text-[8px] text-zinc-600 uppercase block">Chain Position</span>
-                                                <span className="text-[10px] text-cyan-400 font-mono font-bold">Block #1,847,{290 - i}</span>
+                                            <div className="p-2 rounded-lg bg-black/40 border border-tactical-border/30">
+                                                <span className="text-[8px] text-zinc-500 uppercase block font-bold">Polygon zkEVM Ledger</span>
+                                                <span className="text-[10px] text-cyan-400 font-mono font-bold truncate block">Block #1,847,{290 - i}</span>
                                             </div>
                                         </div>
                                     </motion.div>
@@ -170,11 +220,11 @@ export default function AuditPage() {
             </div>
 
             {/* Compliance Banner */}
-            <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-4 flex items-center gap-3">
+            <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-3.5 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center gap-2.5 max-w-full overflow-hidden">
                 <ShieldCheck className="w-5 h-5 text-amber-400 shrink-0" />
-                <div>
-                    <p className="text-[10px] font-bold text-amber-400 uppercase tracking-wider">ISO/IEC 17025:2017 Compliance Certificate</p>
-                    <p className="text-[9px] text-zinc-500 mt-0.5">All forensic analyses are performed under accredited quality management system. Chain of custody verified via HMAC-SHA256 on Polygon zkEVM immutable ledger. Expert witness admissibility certified.</p>
+                <div className="min-w-0">
+                    <p className="text-[10px] sm:text-xs font-bold text-amber-400 uppercase tracking-wider">ISO/IEC 17025:2017 Compliance Certificate</p>
+                    <p className="text-[9px] sm:text-[10px] text-zinc-400 mt-0.5 leading-relaxed break-words">All forensic analyses are performed under accredited quality management system. Chain of custody verified via HMAC-SHA256 on Polygon zkEVM immutable ledger. Expert witness admissibility certified.</p>
                 </div>
             </div>
         </div>

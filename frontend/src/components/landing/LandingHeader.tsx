@@ -2,15 +2,17 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Shield, Activity, Cpu, Layers, Menu, X } from "lucide-react";
+import { Shield, Activity, Cpu, Layers, Menu, X, BookOpen } from "lucide-react";
 import LaunchDemoButton from "./LaunchDemoButton";
 import ForenzaLogoIcon from "@/components/common/ForenzaLogoIcon";
 import SaaSLanguageToggle from "./SaaSLanguageToggle";
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
+import UserGuideModal from "@/components/common/UserGuideModal";
 
 export default function LandingHeader() {
-    const { t } = useSaasLanguage();
+    const { lang, t } = useSaasLanguage();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isGuideOpen, setIsGuideOpen] = useState(false);
 
     // Prevent body scrolling when mobile menu overlay is open
     useEffect(() => {
@@ -37,6 +39,8 @@ export default function LandingHeader() {
         }
     };
 
+    const guideLabel = lang === "tr" ? "Kullanım Kılavuzu" : "User Guide";
+
     return (
         <>
             <header className="sticky top-0 z-40 border-b border-tactical-border/60 bg-black/90 backdrop-blur-xl transition-all w-full max-w-full overflow-x-clip">
@@ -55,7 +59,15 @@ export default function LandingHeader() {
                     </Link>
 
                     {/* Navigation Links (Desktop) */}
-                    <nav className="hidden md:flex items-center gap-4 lg:gap-7 font-mono text-xs text-zinc-400">
+                    <nav className="hidden md:flex items-center gap-3 lg:gap-6 font-mono text-xs text-zinc-400">
+                        <button 
+                            type="button"
+                            onClick={(e) => scrollToSection("user-guide", e)} 
+                            className="hover:text-emerald-400 transition-colors flex items-center gap-1.5 font-medium cursor-pointer bg-transparent border-0 p-0 whitespace-nowrap"
+                        >
+                            <BookOpen className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                            <span>{guideLabel}</span>
+                        </button>
                         <button 
                             type="button"
                             onClick={(e) => scrollToSection("bio-simulator", e)} 
@@ -92,9 +104,19 @@ export default function LandingHeader() {
 
                     {/* Right Actions */}
                     <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+                        <button
+                            type="button"
+                            onClick={() => setIsGuideOpen(true)}
+                            className="px-2.5 py-1.5 rounded-xl font-mono text-[10px] sm:text-xs font-bold bg-cyan-500/15 border border-cyan-500/40 text-cyan-300 hover:bg-cyan-500/25 transition-all flex items-center gap-1.5 cursor-pointer shadow-[0_0_12px_rgba(6,182,212,0.15)]"
+                            title={guideLabel}
+                        >
+                            <BookOpen className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                            <span className="hidden sm:inline">{guideLabel}</span>
+                        </button>
+
                         <SaaSLanguageToggle />
                         
-                        {/* Compact Mobile Demo Button (⚡ on mobile, full on desktop) */}
+                        {/* Compact Mobile Demo Button */}
                         <LaunchDemoButton size="sm" label={t.header.launchDemo} compactMobile={true} />
 
                         {/* Mobile Hamburger Menu Toggle Button */}
@@ -109,6 +131,9 @@ export default function LandingHeader() {
                     </div>
                 </div>
             </header>
+
+            {/* User Guide Interactive Modal */}
+            <UserGuideModal isOpen={isGuideOpen} onClose={() => setIsGuideOpen(false)} />
 
             {/* ── Ultra-Fast 60FPS Mobile Menu Overlay (Pure CSS GPU Accelerated) ── */}
             <div
@@ -142,6 +167,18 @@ export default function LandingHeader() {
 
                 {/* Centered Modern Navigation Items */}
                 <div className="my-auto py-8 space-y-3 flex flex-col items-center justify-center w-full max-w-sm mx-auto">
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setIsMobileMenuOpen(false);
+                            setIsGuideOpen(true);
+                        }}
+                        className="w-full py-3.5 px-5 rounded-2xl border border-cyan-500/40 bg-cyan-500/10 text-sm font-bold text-cyan-300 hover:bg-cyan-500/20 transition-all duration-150 flex items-center justify-center gap-3 shadow-md text-center cursor-pointer group"
+                    >
+                        <BookOpen className="w-4 h-4 text-cyan-400 shrink-0 group-hover:scale-110 transition-transform" />
+                        <span>{guideLabel}</span>
+                    </button>
+
                     <button
                         type="button"
                         onClick={(e) => scrollToSection("bio-simulator", e)}

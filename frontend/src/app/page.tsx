@@ -8,6 +8,7 @@ import LandingArchitecture from "@/components/landing/LandingArchitecture";
 import LandingSolutions from "@/components/landing/LandingSolutions";
 import LandingSecuritySpecs from "@/components/landing/LandingSecuritySpecs";
 import LandingFaq from "@/components/landing/LandingFaq";
+import LandingUserGuide from "@/components/landing/LandingUserGuide";
 import LandingFooter from "@/components/landing/LandingFooter";
 import { SaasLanguageProvider } from "@/context/SaaSLanguageContext";
 import { SaasLanguage } from "@/dictionaries/saasTranslations";
@@ -46,6 +47,7 @@ export default async function RootPage() {
                     <LandingArchitecture />
                     <LandingSolutions />
                     <LandingSecuritySpecs />
+                    <LandingUserGuide />
                     <LandingFaq />
                     <LandingFooter />
                 </div>

@@ -161,7 +161,7 @@ export default function LimsWorkflowPanel() {
         </div>
 
         <div className="space-y-3">
-          {auditChain.map((step, i) => (
+          {auditChain?.map((step, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, x: -10 }}
@@ -171,14 +171,14 @@ export default function LimsWorkflowPanel() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-800 pb-2">
                 <div className="flex items-center gap-2">
                   <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                    STEP {step.step_index}: {step.step_name}
+                    STEP {step?.step_index}: {step?.step_name}
                   </span>
                   <span className="text-zinc-400 text-[10px] flex items-center gap-1">
-                    <User className="w-3 h-3 text-zinc-500" /> {step.operator}
+                    <User className="w-3 h-3 text-zinc-500" /> {step?.operator}
                   </span>
                 </div>
                 <span className="text-[10px] text-zinc-500 flex items-center gap-1">
-                  <Clock className="w-3 h-3 text-zinc-500" /> {step.timestamp}
+                  <Clock className="w-3 h-3 text-zinc-500" /> {step?.timestamp}
                 </span>
               </div>
 

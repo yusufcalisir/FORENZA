@@ -56,16 +56,18 @@ export default function InvestigatorSidebar() {
 
                 {/* Analysis Stream */}
                 {thoughts.map((thought, i) => (
-                    <div key={thought.step} className="flex gap-3">
+                    <div key={typeof thought === "object" && thought !== null && "step" in thought ? (thought.step as any) : i} className="flex gap-3">
                         <div className="w-8 flex flex-col items-center pt-2">
                             <div className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-pulse" />
                             {i < thoughts.length - 1 && <div className="w-px h-full bg-zinc-800 my-1" />}
                         </div>
                         <div className="flex-1 pb-4">
                             <p className="text-xs text-zinc-300 font-mono">
-                                {typeof thought === "string" ? thought : thought?.content || String(thought || "")}
+                                {typeof thought === "string" ? thought : (thought as any)?.content || String(thought || "")}
                             </p>
-                            <span className="text-[9px] text-zinc-600 font-mono mt-1 block">{(thought as any)?.duration || 100}ms</span>
+                            <span className="text-[9px] text-zinc-600 font-mono mt-1 block font-bold">
+                                {(typeof thought === "object" && thought !== null && (thought as any).duration) ? (thought as any).duration : 100}ms
+                            </span>
                         </div>
                     </div>
                 ))}

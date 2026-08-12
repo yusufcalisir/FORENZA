@@ -9,10 +9,6 @@
   30 Biocomputational Subsystems • FORENZA OS • ISO/IEC 17025:2017 Certified
 </p>
 
-<p align="center">
-  <a href="README.md"><strong>🇬🇧 English README</strong></a> | 
-  <a href="README_TR.md"><strong>🇹🇷 Türkçe Dokümantasyon</strong></a>
-</p>
 
 <p align="center">
   <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/System%20Status-Operational-brightgreen?style=for-the-badge&logo=opsgenie" /></a>

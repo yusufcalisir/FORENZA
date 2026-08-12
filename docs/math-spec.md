@@ -586,6 +586,21 @@ For narrative text engine $\mathcal{N}$ and mathematical statistical engine $\ma
 
 $$\mathcal{I}_{\text{math}} = \begin{cases} 1 \quad (\text{IMMUTABLE}), & \mathcal{N}(LR) \equiv \mathcal{M}(LR) \\ 0 \quad (\text{VIOLATION}), & \mathcal{N}(LR) \neq \mathcal{M}(LR) \end{cases}$$
 
+---
+
+## 32. Expert Witness Likelihood Ratio & Transposed Conditional Fallacy Prevention
+
+### 32.1 Evidence Likelihood Ratio ($LR$) vs Posterior Odds ($O_{\text{post}}$)
+By Bayes' Theorem:
+
+$$\underbrace{\frac{P(H_p \mid E)}{P(H_d \mid E)}}_{\text{Posterior Odds } O_{\text{post}}} = \underbrace{\frac{P(E \mid H_p)}{P(E \mid H_d)}}_{\text{Likelihood Ratio } LR} \times \underbrace{\frac{P(H_p)}{P(H_d)}}_{\text{Prior Odds } O_{\text{prior}}}$$
+
+### 32.2 Transposed Conditional Fallacy Prevention Invariant
+The expert witness evaluates exclusively $LR = \frac{P(E \mid H_p)}{P(E \mid H_d)}$, NEVER equating $LR$ to $P(H_p \mid E)$:
+
+$$LR \neq P(H_p \mid E) \quad (\text{Prosecutor's Fallacy Prevention Shield Active})$$
+
+
 
 
 

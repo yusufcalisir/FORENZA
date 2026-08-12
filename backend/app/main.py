@@ -369,6 +369,14 @@ try:
 except Exception as _iso_rep_import_err:
     logger.warning(f"[boot] ISO Report router not loaded: {_iso_rep_import_err}")
 
+# --- Expert Witness & Judicial Examination Router ---
+try:
+    from app.api.court_routes import router as court_router
+    app.include_router(court_router, prefix="/api/v1")
+    logger.info("[boot] Expert Witness API router registered at /api/v1/forensic/court")
+except Exception as _court_import_err:
+    logger.warning(f"[boot] Expert Witness router not loaded: {_court_import_err}")
+
 
 
 

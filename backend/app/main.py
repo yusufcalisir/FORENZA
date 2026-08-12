@@ -353,6 +353,14 @@ try:
 except Exception as _qc_import_err:
     logger.warning(f"[boot] QA/QC router not loaded: {_qc_import_err}")
 
+# --- Human Analyst Review & Dual-Sign-Off Router ---
+try:
+    from app.api.review_routes import router as review_router
+    app.include_router(review_router, prefix="/api/v1")
+    logger.info("[boot] Human Analyst Review API router registered at /api/v1/forensic/review")
+except Exception as _rev_import_err:
+    logger.warning(f"[boot] Human Review router not loaded: {_rev_import_err}")
+
 
 
 

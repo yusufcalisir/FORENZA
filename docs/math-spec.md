@@ -558,6 +558,21 @@ For locus minimum peak height $H_{\min} = \min(H_1, H_2)$:
 
 $$\text{Stochastic Status} = \begin{cases} \text{PASS}, & H_{\min} \ge 150\text{ RFU} \\ \text{STOCHASTIC\_THRESHOLD\_WARNING}, & H_{\min} < 150\text{ RFU} \end{cases}$$
 
+---
+
+## 30. Human Review Audit Chaining & Decision Concordance Metrics
+
+### 30.1 Court Admissibility Dual-Sign-Off Hash ($R_m$)
+For human analyst review decision block $m$ with previous hash $R_{m-1}$, sample ID $S$, AI recommendation $A$, human decision $D$, primary analyst $P$, technical reviewer $V$, timestamp $T$, and override justification $J$:
+
+$$R_m = \text{HMAC-SHA256}_{K_{\text{court}}}\left( R_{m-1} \parallel S \parallel A \parallel D \parallel P \parallel V \parallel T \parallel J \right)$$
+
+### 30.2 Decision Concordance Index ($C_{\text{analyst}}$)
+For $N$ reviewed forensic cases with $N_{\text{approved}}$ concordant approvals:
+
+$$C_{\text{analyst}} = \frac{N_{\text{approved}}}{N}$$
+
+
 
 
 

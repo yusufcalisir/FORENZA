@@ -183,7 +183,7 @@ export default function LandingHeader() {
                 <div className="pt-4 border-t border-tactical-border/60 flex flex-col items-center gap-3 w-full max-w-sm mx-auto">
                     <LaunchDemoButton size="lg" label={t.header.launchDemo} className="w-full py-3.5 text-xs font-bold" />
                     <span className="text-[10px] text-zinc-500 text-center font-mono">
-                        VANTAGE v3.0 • ISO/IEC 17025 Certified Evidence OS
+                        FORENZA • ISO/IEC 17025 Certified Evidence OS
                     </span>
                 </div>
             </div>

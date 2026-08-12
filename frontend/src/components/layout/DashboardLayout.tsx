@@ -195,7 +195,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         <div className="flex items-center gap-1.5">
                             <Dna className="w-3 h-3 text-cyan-400" />
                             <span className="font-mono text-[9px] text-zinc-500">Engine</span>
-                            <span className="font-mono text-[9px] text-cyan-400 font-bold">VANTAGE v3.0</span>
+                            <span className="font-mono text-[9px] text-cyan-400 font-bold">FORENZA OS</span>
                         </div>
                         <div className="h-3 w-px bg-tactical-border/60" />
                         <div className="flex items-center gap-1.5">

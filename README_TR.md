@@ -6,7 +6,7 @@
 
 <p align="center">
   <strong>Kurumsal Biyobilişimsel Adli Genetik ve Biyolojik Delil Platformu</strong><br />
-  30 Adli Biyocins Subsystem Modülü • VANTAGE v3.0 • ISO/IEC 17025:2017 Akredite Uyumlu
+  30 Adli Biyohesaplamalı Sistem Modülü • FORENZA OS • ISO/IEC 17025:2017 Akredite Uyumlu
 </p>
 
 <p align="center">

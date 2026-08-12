@@ -6,7 +6,7 @@
 
 <p align="center">
   <strong>The Enterprise-Grade Computational Forensic Biology & DNA Intelligence Platform</strong><br />
-  30 Biocomputational Subsystems • VANTAGE v3.0 • ISO/IEC 17025:2017 Certified
+  30 Biocomputational Subsystems • FORENZA OS • ISO/IEC 17025:2017 Certified
 </p>
 
 <p align="center">
@@ -89,7 +89,7 @@ graph TD
 
 ## Table of Contents
 
-- [VANTAGE SaaS Dashboard](#vantage-saas-dashboard)
+- [FORENZA SaaS Dashboard](#forenza-saas-dashboard)
 - [Biocomputational Core Subsystems](#biocomputational-core-subsystems)
   - [Autosomal STR & Kinship Engine](#autosomal-str--kinship-engine)
   - [Probabilistic Genotyping & MCMC Deconvolution](#probabilistic-genotyping--mcmc-deconvolution)
@@ -113,7 +113,7 @@ graph TD
 
 ---
 
-## VANTAGE SaaS Dashboard
+## FORENZA SaaS Dashboard
 
 FORENZA ships a full-featured **Next.js Turbopack** tactical SaaS dashboard with 6 module categories spanning all 30 biocomputational subsystems. The dashboard is accessible at `/dashboard` after launching the frontend dev server and requires no backend connection for demo mode.
 
@@ -122,7 +122,7 @@ FORENZA ships a full-featured **Next.js Turbopack** tactical SaaS dashboard with
 | Page | Route | Description |
 | :--- | :--- | :--- |
 | **Operations Command Center** | `/dashboard` | Live telemetry strip (DNA throughput, ZKP queue, LR engine), 6 module category cards, recent pipeline activity feed, HMAC chain of custody banner |
-| **VANTAGE Analysis Hub** | `/analysis` | 6-category left sidebar × 4–6 module tabs each = 30 modules. Interactive demo panels (STR locus table, MCMC slider, HIrisPlex-S confidence bars, Touch DNA dropout model, Toxicology Widmark, LIMS evidence chain, Synthetic Case Generator) |
+| **FORENZA Analysis Hub** | `/analysis` | 6-category left sidebar × 4–6 module tabs each = 30 modules. Interactive demo panels (STR locus table, MCMC slider, HIrisPlex-S confidence bars, Touch DNA dropout model, Toxicology Widmark, LIMS evidence chain, Synthetic Case Generator) |
 | **Federated Network Registry** | `/nodes` | 7 distributed forensic node cards with latency, profile count, last block hash, ISO status, and expandable capability list |
 | **DNA Database** | `/database` | CODIS-indexed profile table with vector search, quality filters, and node origin breakdown |
 | **Knowledge Graph** | `/investigation` | Forensic property graph visualizer (Case → Evidence → Person → Scene → DnaProfile edges) |

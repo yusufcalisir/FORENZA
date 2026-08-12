@@ -117,7 +117,7 @@ const MODULE_CARDS = [
         tab: "epigenetics",
         modules: 5,
         status: "OPERATIONAL",
-        badge: "VANTAGE CORE",
+        badge: "FORENZA CORE",
         metrics: [
             { label: "Synthetic Gen.", value: "∞ Cases" },
             { label: "ZKP Privacy", value: "Circom" },
@@ -156,7 +156,7 @@ export default function ForenzaDashboardPage() {
                         <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">FORENZA Evidence OS</span>
                     </div>
                     <h1 className="text-base font-extrabold text-white tracking-tight">Operations Command Center</h1>
-                    <p className="text-[10px] text-zinc-500 mt-0.5">VANTAGE v3.0 • 30 Biocomputational Subsystems • ISO/IEC 17025:2017</p>
+                    <p className="text-[10px] text-zinc-500 mt-0.5">FORENZA OS • 30 Biocomputational Subsystems • ISO/IEC 17025:2017</p>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                     <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/5 text-[9px] font-bold text-emerald-400 uppercase">

@@ -477,7 +477,7 @@ function PanelSyntheticCase() {
                 <p className="text-xs font-bold text-rose-400 mb-1">Synthetic Forensic Case Generator</p>
                 <p className="text-[10px] text-zinc-400 leading-relaxed">
                     Generates fully synthetic forensic cases with DNA profiles, mixture proportions, ground truth data, 
-                    and benchmark evaluation metrics. Used for VANTAGE academic validation and LR engine testing.
+                    and benchmark evaluation metrics. Used for FORENZA academic validation and LR engine testing.
                 </p>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -510,7 +510,7 @@ function PanelSyntheticCase() {
                             {[
                                 ["Contributors", "3 (A: 60%, B: 30%, C: 10%)"],
                                 ["True LR (Contributor A)", "Log10(LR) = +8.41"],
-                                ["VANTAGE LR Estimate", "Log10(LR) = +8.39"],
+                                ["FORENZA LR Estimate", "Log10(LR) = +8.39"],
                                 ["RMSE Error", "0.02 (Excellent)"],
                                 ["Dropout Events", "2 at D13S317"],
                                 ["Ground Truth Hash", "a7f9c2e…"],
@@ -539,7 +539,7 @@ function PanelGenericPlaceholder({ tab, category }: { tab: Tab; category: Catego
                     <p className={`text-sm font-bold ${c.text} mb-1`}>{tab.label}</p>
                     <p className="text-[10px] text-zinc-500 max-w-sm leading-relaxed">
                         This module provides {tab.label} capabilities as part of the FORENZA Evidence OS. 
-                        Live demo data is loaded automatically when the VANTAGE backend is active.
+                        Live demo data is loaded automatically when the FORENZA backend is active.
                     </p>
                 </div>
                 <div className="grid grid-cols-2 gap-3 w-full max-w-xs">
@@ -548,8 +548,8 @@ function PanelGenericPlaceholder({ tab, category }: { tab: Tab; category: Catego
                         <p className="text-xs font-bold text-emerald-400">OPERATIONAL</p>
                     </div>
                     <div className="p-3 rounded-xl bg-black/30 border border-tactical-border/40">
-                        <p className="text-[9px] text-zinc-600 uppercase mb-1">ISO Compliant</p>
-                        <p className="text-xs font-bold text-amber-400">ISO 17025</p>
+                        <p className="text-[9px] text-zinc-600 uppercase mb-1">ISO 17025 Status</p>
+                        <p className="text-xs font-bold text-cyan-400">VERIFIED</p>
                     </div>
                 </div>
             </div>
@@ -610,7 +610,7 @@ export default function AnalysisPage() {
             <div className="flex items-center justify-between flex-wrap gap-2">
                 <div className="flex items-center gap-2">
                     <FlaskConical className="w-4 h-4 text-cyan-400" />
-                    <h1 className="text-sm font-extrabold text-white tracking-tight">VANTAGE Analysis Hub</h1>
+                    <h1 className="text-sm font-extrabold text-white tracking-tight">FORENZA Analysis Hub</h1>
                     <span className="text-[9px] font-bold border border-cyan-500/30 rounded px-2 py-0.5 text-cyan-400 bg-cyan-500/5">30 Modules • 6 Categories</span>
                 </div>
                 <div className="flex items-center gap-2">

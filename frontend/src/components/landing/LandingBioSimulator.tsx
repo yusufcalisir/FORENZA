@@ -22,9 +22,9 @@ type TabId = "phenotype" | "str" | "zkp";
 /* ═════════════════════════════════════════════════════════════════════════════
    1. PHENOTYPE PREDICTION TAB (Rich Biometric Trait Reconstruction)
    ═════════════════════════════════════════════════════════════════════════════ */
-const EYE_COLORS = [
+const EYE_COLORS_DATA = [
     {
-        label: "Blue",
+        key: "blue" as const,
         color: "#38BDF8",
         glow: "rgba(56,189,248,0.3)",
         gene: "HERC2 rs12913832 (A/A)",
@@ -32,7 +32,7 @@ const EYE_COLORS = [
         secondary: "OCA2 rs1800407",
     },
     {
-        label: "Hazel",
+        key: "hazel" as const,
         color: "#D97706",
         glow: "rgba(217,119,6,0.3)",
         gene: "HERC2 / OCA2 Compound",
@@ -40,7 +40,7 @@ const EYE_COLORS = [
         secondary: "SLC45A2 rs16891982",
     },
     {
-        label: "Brown",
+        key: "brown" as const,
         color: "#92400E",
         glow: "rgba(146,64,14,0.3)",
         gene: "HERC2 rs12913832 (G/G)",
@@ -49,29 +49,32 @@ const EYE_COLORS = [
     },
 ];
 
-const SKIN_TYPES = [
-    { type: "Type I", label: "Very Pale", color: "#FDE68A", prob: 92 },
-    { type: "Type II", label: "Fair", color: "#FCD34D", prob: 78 },
-    { type: "Type III", label: "Medium", color: "#F59E0B", prob: 55 },
-    { type: "Type IV", label: "Olive", color: "#D97706", prob: 36 },
-    { type: "Type V", label: "Dark Brown", color: "#92400E", prob: 20 },
-    { type: "Type VI", label: "Deep Black", color: "#451A03", prob: 8 },
+const SKIN_TYPES_DATA = [
+    { type: "Type I", key: "vPale" as const, color: "#FDE68A", prob: 92 },
+    { type: "Type II", key: "fair" as const, color: "#FCD34D", prob: 78 },
+    { type: "Type III", key: "medium" as const, color: "#F59E0B", prob: 55 },
+    { type: "Type IV", key: "olive" as const, color: "#D97706", prob: 36 },
+    { type: "Type V", key: "dBrown" as const, color: "#92400E", prob: 20 },
+    { type: "Type VI", key: "dBlack" as const, color: "#451A03", prob: 8 },
 ];
 
-const HAIR_TYPES = [
-    { label: "Straight", score: "88%", gene: "EDAR rs3827072 (T/T)" },
-    { label: "Wavy", score: "12%", gene: "TCHH rs11803731" },
-    { label: "Curly", score: "2%", gene: "WNT10A rs7349332" },
+const HAIR_TYPES_DATA = [
+    { key: "straight" as const, score: "88%", gene: "EDAR rs3827072 (T/T)" },
+    { key: "wavy" as const, score: "12%", gene: "TCHH rs11803731" },
+    { key: "curly" as const, score: "2%", gene: "WNT10A rs7349332" },
 ];
 
 function PhenotypeTab() {
+    const { t } = useSaasLanguage();
+    const pTab = t.bioSimulator.phenotypeTab;
+
     const [selectedEye, setSelectedEye] = useState(0);
     const [selectedSkin, setSelectedSkin] = useState(0);
-    const currentEye = EYE_COLORS[selectedEye];
-    const currentSkin = SKIN_TYPES[selectedSkin];
+    const currentEye = EYE_COLORS_DATA[selectedEye];
+    const currentSkin = SKIN_TYPES_DATA[selectedSkin];
 
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 font-mono">
             {/* Left Col: Interactive Controls & Pigmentation Cards */}
             <div className="lg:col-span-7 space-y-4">
                 {/* Eye Pigmentation Panel */}
@@ -80,20 +83,20 @@ function PhenotypeTab() {
                         <div className="flex items-center gap-2 min-w-0">
                             <Eye className="h-4 w-4 text-[#38BDF8] shrink-0" />
                             <span className="font-mono text-[11px] sm:text-xs font-bold tracking-wider text-tactical-text uppercase truncate">
-                                Ocular Iris Pigmentation (HERC2 / OCA2)
+                                {pTab.irisTitle}
                             </span>
                         </div>
                         <span className="shrink-0 font-mono text-[9px] tracking-widest text-[#22C55E] bg-[#22C55E]/10 border border-[#22C55E]/20 px-2 py-0.5 rounded-full font-bold">
-                            IrisPlex v2
+                            {pTab.irisSub}
                         </span>
                     </div>
 
                     <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5">
-                        {EYE_COLORS.map((opt, i) => (
+                        {EYE_COLORS_DATA.map((opt, i) => (
                             <button
-                                key={opt.label}
+                                key={opt.key}
                                 onClick={() => setSelectedEye(i)}
-                                className={`flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-1 sm:gap-2 rounded-xl border p-2 sm:p-2.5 font-mono text-[10px] sm:text-xs transition-all duration-200 ${
+                                className={`flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-1 sm:gap-2 rounded-xl border p-2 sm:p-2.5 font-mono text-[10px] sm:text-xs transition-all duration-200 cursor-pointer ${
                                     selectedEye === i
                                         ? "border-[#38BDF8] bg-[#38BDF8]/10 text-white shadow-[0_0_15px_rgba(56,189,248,0.2)]"
                                         : "border-tactical-border bg-tactical-surface text-tactical-text-muted hover:border-tactical-border/80 hover:text-white"
@@ -104,7 +107,7 @@ function PhenotypeTab() {
                                         className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full border border-white/30 shrink-0"
                                         style={{ background: opt.color, boxShadow: `0 0 8px ${opt.glow}` }}
                                     />
-                                    <span className="font-semibold truncate">{opt.label}</span>
+                                    <span className="font-semibold truncate">{pTab.eyeColors[opt.key]}</span>
                                 </div>
                                 <span className="text-[9px] sm:text-[10px] opacity-75 shrink-0">{opt.prob}%</span>
                             </button>
@@ -114,17 +117,17 @@ function PhenotypeTab() {
                     {/* Progress Bar & Details */}
                     <div className="rounded-lg border border-tactical-border bg-tactical-surface p-3 space-y-2">
                         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center text-[11px] sm:text-xs font-mono gap-0.5">
-                            <span className="text-tactical-text-muted shrink-0">Target Genotype:</span>
+                            <span className="text-tactical-text-muted shrink-0">{pTab.targetGenotype}:</span>
                             <span className="font-bold text-[#38BDF8] truncate">{currentEye.gene}</span>
                         </div>
                         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center text-[11px] sm:text-xs font-mono gap-0.5">
-                            <span className="text-tactical-text-muted shrink-0">Secondary Marker:</span>
+                            <span className="text-tactical-text-muted shrink-0">{pTab.secondaryMarker}:</span>
                             <span className="text-tactical-text truncate">{currentEye.secondary}</span>
                         </div>
                         <div className="space-y-1 pt-1">
                             <div className="flex justify-between text-[10px] font-mono">
-                                <span className="text-tactical-text-dim">Posterior Probability</span>
-                                <span className="font-bold text-[#22C55E]">{currentEye.prob}% Confidence</span>
+                                <span className="text-tactical-text-dim">{pTab.posteriorProb}</span>
+                                <span className="font-bold text-[#22C55E]">{currentEye.prob}% {pTab.confidence}</span>
                             </div>
                             <div className="h-2 w-full rounded-full bg-tactical-border overflow-hidden">
                                 <div
@@ -142,20 +145,20 @@ function PhenotypeTab() {
                         <div className="flex items-center gap-2 min-w-0">
                             <Sliders className="h-4 w-4 text-[#F59E0B] shrink-0" />
                             <span className="font-mono text-[11px] sm:text-xs font-bold tracking-wider text-tactical-text uppercase truncate">
-                                Fitzpatrick Phototype (SLC24A5 / TYRP1)
+                                {pTab.skinTitle}
                             </span>
                         </div>
                         <span className="shrink-0 font-mono text-[9px] text-[#F59E0B] bg-[#F59E0B]/10 border border-[#F59E0B]/20 px-2 py-0.5 rounded-full font-bold">
-                            HIrisPlex-S
+                            {pTab.skinSub}
                         </span>
                     </div>
 
                     <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5 sm:gap-2">
-                        {SKIN_TYPES.map((st, i) => (
+                        {SKIN_TYPES_DATA.map((st, i) => (
                             <button
                                 key={st.type}
                                 onClick={() => setSelectedSkin(i)}
-                                className={`rounded-xl border p-2 font-mono text-[10px] flex flex-col items-center gap-1 transition-all ${
+                                className={`rounded-xl border p-2 font-mono text-[10px] flex flex-col items-center gap-1 transition-all cursor-pointer ${
                                     selectedSkin === i
                                         ? "border-[#F59E0B] bg-[#F59E0B]/10 text-white shadow-[0_0_12px_rgba(245,158,11,0.25)]"
                                         : "border-tactical-border bg-tactical-surface text-tactical-text-muted hover:border-tactical-border/80"
@@ -166,7 +169,7 @@ function PhenotypeTab() {
                                     style={{ background: st.color }}
                                 />
                                 <span className="font-bold">{st.type}</span>
-                                <span className="text-[9px] text-tactical-text-dim">{st.prob}%</span>
+                                <span className="text-[9px] text-tactical-text-dim">{pTab.skinTypes[st.key]}</span>
                             </button>
                         ))}
                     </div>
@@ -174,18 +177,18 @@ function PhenotypeTab() {
             </div>
 
             {/* Right Col: Biometric Summary Card */}
-            <div className="lg:col-span-5 flex flex-col justify-between rounded-xl border border-tactical-border bg-tactical-surface p-4 sm:p-5 shadow-xl space-y-4">
+            <div className="lg:col-span-5 flex flex-col justify-between rounded-xl border border-tactical-border bg-tactical-surface p-4 sm:p-5 shadow-xl space-y-4 font-mono">
                 <div>
                     <div className="flex items-center justify-between border-b border-tactical-border pb-2 mb-3">
                         <div className="flex items-center gap-2">
                             <Sparkles className="h-4 w-4 text-[#8B5CF6] shrink-0" />
                             <span className="font-mono text-xs font-bold tracking-wider text-tactical-text uppercase">
-                                Biometric Summary
+                                {pTab.summaryTitle}
                             </span>
                         </div>
                         <div className="flex items-center gap-1 text-[9px] font-mono text-[#22C55E] shrink-0">
                             <CheckCircle2 className="h-3 w-3" />
-                            <span>100% Synced</span>
+                            <span>{pTab.synced}</span>
                         </div>
                     </div>
 
@@ -202,10 +205,10 @@ function PhenotypeTab() {
 
                         <div>
                             <p className="font-mono text-xs font-bold text-white tracking-widest uppercase">
-                                Predicted Iris: <span style={{ color: currentEye.color }}>{currentEye.label}</span>
+                                {pTab.predictedIris}: <span style={{ color: currentEye.color }}>{pTab.eyeColors[currentEye.key]}</span>
                             </p>
                             <p className="font-mono text-[10px] text-tactical-text-muted mt-0.5">
-                                Skin phototype: {currentSkin.type} ({currentSkin.label})
+                                {pTab.skinPhototypeLabel}: {currentSkin.type} ({pTab.skinTypes[currentSkin.key]})
                             </p>
                         </div>
                     </div>
@@ -213,15 +216,15 @@ function PhenotypeTab() {
                     {/* Hair Morphology breakdown */}
                     <div className="mt-4 space-y-1.5">
                         <span className="font-mono text-[10px] text-tactical-text-dim uppercase tracking-wider block">
-                            Hair Texture Score
+                            {pTab.hairScore}
                         </span>
                         <div className="space-y-1.5">
-                            {HAIR_TYPES.map((h) => (
+                            {HAIR_TYPES_DATA.map((h) => (
                                 <div
-                                    key={h.label}
+                                    key={h.key}
                                     className="flex justify-between items-center rounded-lg border border-tactical-border/60 bg-tactical-bg/40 px-3 py-1.5 text-xs font-mono"
                                 >
-                                    <span className="text-tactical-text-muted">{h.label}</span>
+                                    <span className="text-tactical-text-muted">{pTab.hairTypes[h.key]}</span>
                                     <span className="font-bold text-[#8B5CF6]">{h.score}</span>
                                 </div>
                             ))}
@@ -231,7 +234,7 @@ function PhenotypeTab() {
 
                 <div className="pt-3 border-t border-tactical-border/60 flex justify-between items-center font-mono text-[10px] text-tactical-text-dim">
                     <span>IrisPlex / HIrisPlex-S</span>
-                    <span className="text-[#22C55E] font-bold">Accuracy 99.4%</span>
+                    <span className="text-[#22C55E] font-bold">{pTab.accuracy} 99.4%</span>
                 </div>
             </div>
         </div>
@@ -250,18 +253,20 @@ const STR_DATA = [
 ];
 
 function StrTab() {
+    const { t } = useSaasLanguage();
+    const sTab = t.bioSimulator.strTab;
     const [selectedIdx, setSelectedIdx] = useState(0);
     const currentStr = STR_DATA[selectedIdx];
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-4 font-mono">
             {/* Locus Tabs */}
             <div className="flex gap-1.5 sm:gap-2 flex-wrap border-b border-tactical-border pb-3">
                 {STR_DATA.map((str, i) => (
                     <button
                         key={str.name}
                         onClick={() => setSelectedIdx(i)}
-                        className={`flex items-center gap-1.5 rounded-xl border px-2.5 sm:px-3.5 py-1.5 font-mono text-[11px] sm:text-xs font-bold tracking-wider transition-all ${
+                        className={`flex items-center gap-1.5 rounded-xl border px-2.5 sm:px-3.5 py-1.5 font-mono text-[11px] sm:text-xs font-bold tracking-wider transition-all cursor-pointer ${
                             selectedIdx === i
                                 ? "border-[#06B6D4] bg-[#06B6D4]/10 text-[#06B6D4] shadow-[0_0_15px_rgba(6,182,212,0.2)]"
                                 : "border-tactical-border bg-tactical-surface text-tactical-text-muted hover:border-tactical-border/80"
@@ -279,10 +284,10 @@ function StrTab() {
                     <div className="flex items-center gap-2 min-w-0">
                         <Activity className="h-4 w-4 text-[#06B6D4] shrink-0" />
                         <span className="font-bold text-white uppercase tracking-wider truncate">
-                            Fluorescent Electropherogram — {currentStr.name} Locus
+                            {sTab.electropherogramTitle} — {currentStr.name}
                         </span>
                     </div>
-                    <span className="text-tactical-text-dim text-[9px] sm:text-[10px] shrink-0">CODIS Core 20 Panel</span>
+                    <span className="text-tactical-text-dim text-[9px] sm:text-[10px] shrink-0">{sTab.codisPanel}</span>
                 </div>
 
                 {/* RFU Peak Plot Area */}
@@ -309,7 +314,7 @@ function StrTab() {
                         return (
                             <div key={i} className="relative z-10 flex flex-col items-center gap-1 w-20">
                                 <span className="font-mono text-[10px] font-bold text-white bg-tactical-surface px-2 py-0.5 rounded border border-tactical-border">
-                                    Allele {allele}
+                                    {sTab.alleleLabel} {allele}
                                 </span>
                                 <div className="relative w-7 h-24 flex items-end">
                                     <div
@@ -321,7 +326,7 @@ function StrTab() {
                                     />
                                 </div>
                                 <span className="font-mono text-[9px] text-[#06B6D4] font-semibold">
-                                    {currentStr.rfu[i]} RFU
+                                    {currentStr.rfu[i]} {sTab.rfuLabel}
                                 </span>
                             </div>
                         );
@@ -331,15 +336,15 @@ function StrTab() {
                 {/* Statistical Details Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 pt-1">
                     <div className="rounded-lg border border-tactical-border bg-tactical-surface p-2.5 font-mono">
-                        <span className="text-[9px] text-tactical-text-dim block">Allele Call</span>
+                        <span className="text-[9px] text-tactical-text-dim block">{sTab.alleleCall}</span>
                         <span className="text-xs font-bold text-white">{currentStr.alleles.join(" / ")}</span>
                     </div>
                     <div className="rounded-lg border border-tactical-border bg-tactical-surface p-2.5 font-mono">
-                        <span className="text-[9px] text-tactical-text-dim block">Population Frequency</span>
+                        <span className="text-[9px] text-tactical-text-dim block">{sTab.popFreq}</span>
                         <span className="text-xs font-bold text-[#06B6D4]">{currentStr.freq}</span>
                     </div>
                     <div className="rounded-lg border border-tactical-border bg-tactical-surface p-2.5 font-mono">
-                        <span className="text-[9px] text-tactical-text-dim block">Locus Likelihood Ratio</span>
+                        <span className="text-[9px] text-tactical-text-dim block">{sTab.locusLr}</span>
                         <span className="text-xs font-bold text-[#22C55E]">{currentStr.lr}</span>
                     </div>
                 </div>
@@ -352,6 +357,8 @@ function StrTab() {
    3. ZK PROOF AUDITOR TAB (Groth16 SnarkJS Cryptographic Prover)
    ═════════════════════════════════════════════════════════════════════════════ */
 function ZkpTab() {
+    const { t } = useSaasLanguage();
+    const zTab = t.bioSimulator.zkpTab;
     const [status, setStatus] = useState<"idle" | "computing" | "verified">("idle");
     const [proofHash, setProofHash] = useState("");
 
@@ -366,24 +373,24 @@ function ZkpTab() {
     };
 
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 font-mono">
             {/* Circuit Metadata Panel */}
             <div className="lg:col-span-6 space-y-3">
                 <div className="rounded-xl border border-tactical-border bg-tactical-bg/80 p-3.5 sm:p-4 space-y-2.5 font-mono text-[11px] sm:text-xs shadow-md">
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-0.5 border-b border-tactical-border pb-2">
-                        <span className="text-tactical-text-dim shrink-0">Circuit Identifier:</span>
+                        <span className="text-tactical-text-dim shrink-0">{zTab.circuitId}:</span>
                         <span className="font-bold text-[#8B5CF6] truncate">dna_match_20loci.circom</span>
                     </div>
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-0.5 border-b border-tactical-border pb-2">
-                        <span className="text-tactical-text-dim shrink-0">Proving Scheme:</span>
+                        <span className="text-tactical-text-dim shrink-0">{zTab.provingScheme}:</span>
                         <span className="font-bold text-[#06B6D4] truncate">Groth16 / SnarkJS v0.7</span>
                     </div>
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-0.5 border-b border-tactical-border pb-2">
-                        <span className="text-tactical-text-dim shrink-0">Private Witness:</span>
+                        <span className="text-tactical-text-dim shrink-0">{zTab.privateWitness}:</span>
                         <span className="text-tactical-text-muted truncate">raw_str_alleles[20] (isolated)</span>
                     </div>
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-0.5">
-                        <span className="text-tactical-text-dim shrink-0">Public Verification Signal:</span>
+                        <span className="text-tactical-text-dim shrink-0">{zTab.publicSignal}:</span>
                         <span className="font-bold text-[#22C55E] truncate">match_score &gt;= threshold</span>
                     </div>
                 </div>
@@ -391,18 +398,18 @@ function ZkpTab() {
                 {status === "idle" && (
                     <button
                         onClick={handleGenerate}
-                        className="w-full rounded-xl bg-gradient-to-r from-[#8B5CF6] to-[#06B6D4] p-3.5 font-mono text-xs font-bold tracking-wider text-white shadow-lg hover:shadow-[0_0_25px_rgba(139,92,246,0.4)] transition-all flex items-center justify-center gap-2"
+                        className="w-full rounded-xl bg-gradient-to-r from-[#8B5CF6] to-[#06B6D4] p-3.5 font-mono text-xs font-bold tracking-wider text-white shadow-lg hover:shadow-[0_0_25px_rgba(139,92,246,0.4)] transition-all flex items-center justify-center gap-2 cursor-pointer"
                     >
                         <Lock className="h-4 w-4" />
-                        <span>Execute ZK Circuit Prover</span>
+                        <span>{zTab.executeBtn}</span>
                     </button>
                 )}
 
                 {status === "computing" && (
                     <div className="rounded-xl border border-[#8B5CF6]/40 bg-[#8B5CF6]/10 p-4 font-mono text-xs text-center space-y-2 animate-pulse">
                         <Activity className="h-5 w-5 text-[#8B5CF6] mx-auto animate-spin" />
-                        <p className="font-bold text-white">Computing R1CS Witness Constraints...</p>
-                        <p className="text-[10px] text-tactical-text-muted">Groth16 Prover Latency: &lt;12ms</p>
+                        <p className="font-bold text-white">{zTab.computing}</p>
+                        <p className="text-[10px] text-tactical-text-muted">{zTab.latency}</p>
                     </div>
                 )}
 
@@ -410,16 +417,16 @@ function ZkpTab() {
                     <div className="rounded-xl border border-[#22C55E]/40 bg-[#22C55E]/10 p-4 font-mono text-xs space-y-2 shadow-lg">
                         <div className="flex items-center gap-2 text-[#22C55E]">
                             <CheckCircle2 className="h-4 w-4" />
-                            <span className="font-bold text-xs">ZK Match Proof Generated</span>
+                            <span className="font-bold text-xs">{zTab.proofSuccess}</span>
                         </div>
                         <p className="text-[10px] text-tactical-text-muted">
-                            The match condition was proven cryptographically without revealing any raw STR profile data.
+                            {zTab.provenMsg}
                         </p>
                         <button
                             onClick={() => setStatus("idle")}
-                            className="text-[10px] text-[#06B6D4] hover:underline"
+                            className="text-[10px] text-[#06B6D4] hover:underline cursor-pointer"
                         >
-                            Reset Prover
+                            {zTab.resetBtn}
                         </button>
                     </div>
                 )}
@@ -430,18 +437,18 @@ function ZkpTab() {
                 <div>
                     <div className="flex items-center gap-2 text-tactical-text-dim border-b border-tactical-border/60 pb-2 mb-2">
                         <Terminal className="h-3.5 w-3.5 text-[#8B5CF6]" />
-                        <span>ZKP Execution Console</span>
+                        <span>{zTab.consoleTitle}</span>
                     </div>
 
                     <div className="space-y-1 text-tactical-text-muted">
-                        <p className="text-[#22C55E]">[INFO] Initializing Circom constraints...</p>
-                        <p>[INFO] Reading setup parameter file: powersOfTau28_ezkl.ptau</p>
-                        <p>[INFO] Witness signals generated (20 loci constraints satisfied)</p>
+                        <p className="text-[#22C55E]">{zTab.initInfo}</p>
+                        <p>{zTab.readingInfo}</p>
+                        <p>{zTab.witnessInfo}</p>
                         {status === "verified" && (
                             <>
-                                <p className="text-[#06B6D4]">[SUCCESS] Proof proof.json created cleanly.</p>
+                                <p className="text-[#06B6D4]">{zTab.successCreated}</p>
                                 <p className="text-white break-all pt-1">
-                                    <span className="text-tactical-text-dim block">Public Proof Hash:</span>
+                                    <span className="text-tactical-text-dim block">{zTab.publicHash}:</span>
                                     {proofHash}
                                 </p>
                             </>
@@ -449,9 +456,9 @@ function ZkpTab() {
                     </div>
                 </div>
 
-                <div className="pt-2 border-t border-tactical-border/60 flex justify-between items-center text-[9px] text-tactical-text-dim">
-                    <span>Polygon Testnet Ready</span>
-                    <span className="text-[#22C55E]">Zero Data Leakage Guaranteed</span>
+                <div className="pt-3 border-t border-tactical-border/60 flex justify-between items-center text-tactical-text-dim">
+                    <span>{zTab.testnetReady}</span>
+                    <span className="text-[#22C55E] font-bold">{zTab.zeroLeakage}</span>
                 </div>
             </div>
         </div>
@@ -492,7 +499,7 @@ export default function LandingBioSimulator() {
 
                 {/* Main Card Shell */}
                 <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface p-2.5 sm:p-5 shadow-[0_0_60px_rgba(0,0,0,0.6)]">
-                    {/* Navigation Tabs - 3 Column Grid on Mobile (No Scrolling, 100% visible) */}
+                    {/* Navigation Tabs - 3 Column Grid on Mobile */}
                     <div className="grid grid-cols-3 gap-1 sm:gap-2 border-b border-tactical-border/80 pb-3 mb-5">
                         {tabs.map((tab) => {
                             const Icon = tab.icon;
@@ -501,7 +508,7 @@ export default function LandingBioSimulator() {
                                 <button
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id)}
-                                    className={`flex items-center justify-center gap-1 sm:gap-2 px-1.5 sm:px-4 py-2 sm:py-2.5 rounded-xl font-mono text-[10px] sm:text-xs font-bold tracking-tight sm:tracking-wide transition-all duration-300 ${
+                                    className={`flex items-center justify-center gap-1 sm:gap-2 px-1.5 sm:px-4 py-2 sm:py-2.5 rounded-xl font-mono text-[10px] sm:text-xs font-bold tracking-tight sm:tracking-wide transition-all duration-300 cursor-pointer ${
                                         isActive
                                             ? "bg-tactical-surface-elevated text-white border border-tactical-border shadow-lg"
                                             : "text-tactical-text-muted hover:text-white hover:bg-tactical-surface-elevated/50 border border-transparent"

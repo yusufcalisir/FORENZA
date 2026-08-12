@@ -88,22 +88,22 @@ export default function LandingHero() {
                     >
                         <div className="p-4 rounded-2xl bg-black/40 border border-tactical-border/60 backdrop-blur-md">
                             <div className="text-2xl font-black text-tactical-accent">30</div>
-                            <div className="text-[10px] text-zinc-400 uppercase tracking-wider mt-1 font-bold">Forensic Subsystems</div>
+                            <div className="text-[10px] text-zinc-400 uppercase tracking-wider mt-1 font-bold">{t.hero.subsystemsStat}</div>
                         </div>
 
                         <div className="p-4 rounded-2xl bg-black/40 border border-tactical-border/60 backdrop-blur-md">
                             <div className="text-2xl font-black text-emerald-400">215/215</div>
-                            <div className="text-[10px] text-zinc-400 uppercase tracking-wider mt-1 font-bold">Verified Invariants</div>
+                            <div className="text-[10px] text-zinc-400 uppercase tracking-wider mt-1 font-bold">{t.hero.invariantsStat}</div>
                         </div>
 
                         <div className="p-4 rounded-2xl bg-black/40 border border-tactical-border/60 backdrop-blur-md">
                             <div className="text-2xl font-black text-cyan-400">ISO 17025</div>
-                            <div className="text-[10px] text-zinc-400 uppercase tracking-wider mt-1 font-bold">Court Admissible</div>
+                            <div className="text-[10px] text-zinc-400 uppercase tracking-wider mt-1 font-bold">{t.hero.courtStat}</div>
                         </div>
 
                         <div className="p-4 rounded-2xl bg-black/40 border border-tactical-border/60 backdrop-blur-md">
                             <div className="text-2xl font-black text-amber-400">zkSNARK</div>
-                            <div className="text-[10px] text-zinc-400 uppercase tracking-wider mt-1 font-bold">Privacy Auditor</div>
+                            <div className="text-[10px] text-zinc-400 uppercase tracking-wider mt-1 font-bold">{t.hero.privacyStat}</div>
                         </div>
                     </motion.div>
 

@@ -39,38 +39,38 @@ export default function LandingHeader() {
                 </Link>
 
                 {/* Navigation Links */}
-                <nav className="hidden md:flex items-center gap-6 lg:gap-8 font-mono text-xs text-zinc-400">
+                <nav className="hidden md:flex items-center gap-4 lg:gap-7 font-mono text-xs text-zinc-400">
                     <button 
                         type="button"
                         onClick={(e) => scrollToSection("bio-simulator", e)} 
-                        className="hover:text-emerald-400 transition-colors flex items-center gap-1.5 font-medium cursor-pointer bg-transparent border-0 p-0"
+                        className="hover:text-emerald-400 transition-colors flex items-center gap-1.5 font-medium cursor-pointer bg-transparent border-0 p-0 whitespace-nowrap"
                     >
-                        <Activity className="w-3.5 h-3.5 text-cyan-400" />
-                        {t.header.bioSimulator}
+                        <Activity className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                        <span>{t.header.bioSimulator}</span>
                     </button>
                     <button 
                         type="button"
                         onClick={(e) => scrollToSection("subsystems", e)} 
-                        className="hover:text-emerald-400 transition-colors flex items-center gap-1.5 font-medium cursor-pointer bg-transparent border-0 p-0"
+                        className="hover:text-emerald-400 transition-colors flex items-center gap-1.5 font-medium cursor-pointer bg-transparent border-0 p-0 whitespace-nowrap"
                     >
-                        <Layers className="w-3.5 h-3.5 text-purple-400" />
-                        {t.header.subsystems}
+                        <Layers className="w-3.5 h-3.5 text-purple-400 shrink-0" />
+                        <span>{t.header.subsystems}</span>
                     </button>
                     <button 
                         type="button"
                         onClick={(e) => scrollToSection("architecture", e)} 
-                        className="hover:text-emerald-400 transition-colors flex items-center gap-1.5 font-medium cursor-pointer bg-transparent border-0 p-0"
+                        className="hover:text-emerald-400 transition-colors flex items-center gap-1.5 font-medium cursor-pointer bg-transparent border-0 p-0 whitespace-nowrap"
                     >
-                        <Cpu className="w-3.5 h-3.5 text-emerald-400" />
-                        {t.header.architecture}
+                        <Cpu className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                        <span>{t.header.architecture}</span>
                     </button>
                     <button 
                         type="button"
                         onClick={(e) => scrollToSection("security", e)} 
-                        className="hover:text-emerald-400 transition-colors flex items-center gap-1.5 font-medium cursor-pointer bg-transparent border-0 p-0"
+                        className="hover:text-emerald-400 transition-colors flex items-center gap-1.5 font-medium cursor-pointer bg-transparent border-0 p-0 whitespace-nowrap"
                     >
-                        <Shield className="w-3.5 h-3.5 text-amber-400" />
-                        {t.header.security}
+                        <Shield className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                        <span>{t.header.security}</span>
                     </button>
                 </nav>
 

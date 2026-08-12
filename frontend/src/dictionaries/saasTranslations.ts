@@ -57,6 +57,10 @@ export interface SaasTranslation {
     subtitle: string;
     launchDemo: string;
     exploreSubsystems: string;
+    subsystemsStat: string;
+    invariantsStat: string;
+    courtStat: string;
+    privacyStat: string;
   };
   solutions: {
     badge: string;
@@ -80,6 +84,9 @@ export interface SaasTranslation {
       zkp: string;
     };
     phenotypeTab: {
+      eyeColors: { blue: string; hazel: string; brown: string };
+      skinTypes: { vPale: string; fair: string; medium: string; olive: string; dBrown: string; dBlack: string };
+      hairTypes: { straight: string; wavy: string; curly: string };
       irisTitle: string;
       irisSub: string;
       targetGenotype: string;
@@ -93,24 +100,38 @@ export interface SaasTranslation {
       summaryTitle: string;
       synced: string;
       predictedIris: string;
+      skinPhototypeLabel: string;
       hairScore: string;
       accuracy: string;
     };
     strTab: {
-      mixtureTitle: string;
-      mixtureSub: string;
-      contributors: string;
-      deconvolution: string;
-      peakHeight: string;
+      electropherogramTitle: string;
+      codisPanel: string;
+      alleleLabel: string;
+      rfuLabel: string;
       alleleCall: string;
-      logLr: string;
+      popFreq: string;
+      locusLr: string;
     };
     zkpTab: {
-      proofTitle: string;
-      proofSub: string;
-      verifyButton: string;
-      statusVerified: string;
-      hashLabel: string;
+      circuitId: string;
+      provingScheme: string;
+      privateWitness: string;
+      publicSignal: string;
+      executeBtn: string;
+      computing: string;
+      latency: string;
+      proofSuccess: string;
+      provenMsg: string;
+      resetBtn: string;
+      consoleTitle: string;
+      initInfo: string;
+      readingInfo: string;
+      witnessInfo: string;
+      successCreated: string;
+      testnetReady: string;
+      zeroLeakage: string;
+      publicHash: string;
     };
   };
   subsystems: {
@@ -172,9 +193,9 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
     header: {
       bioSimulator: "Bio-Simulator",
       subsystems: "30 Subsystems",
-      architecture: "Evidence OS DAG",
+      architecture: "Evidence DAG",
       security: "Security & ISO",
-      launchDemo: "Launch Demo OS",
+      launchDemo: "Launch Demo",
     },
     hero: {
       badge: "30 Integrated Subsystems • Multi-Omic Forensic OS",
@@ -183,6 +204,10 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       subtitle: "Enterprise multi-omic biocomputational platform integrating Autosomal & Lineage STRs, MCMC Probabilistic Genotyping, HIrisPlex-S Phenotyping, Horvath Epigenetic Aging, LIMS Workflow, QA/QC Gatekeeping, Analyst Governance, and ISO 17025 Court Reporting.",
       launchDemo: "Launch Live Evidence OS",
       exploreSubsystems: "Explore 30 Subsystems",
+      subsystemsStat: "Forensic Subsystems",
+      invariantsStat: "Verified Invariants",
+      courtStat: "Court Admissible",
+      privacyStat: "Privacy Auditor",
     },
     solutions: {
       badge: "Application Domains",
@@ -267,37 +292,54 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
         zkp: "ZK Proof Auditor",
       },
       phenotypeTab: {
+        eyeColors: { blue: "Blue", hazel: "Hazel", brown: "Brown" },
+        skinTypes: { vPale: "Very Pale", fair: "Fair", medium: "Medium", olive: "Olive", dBrown: "Dark Brown", dBlack: "Deep Black" },
+        hairTypes: { straight: "Straight", wavy: "Wavy", curly: "Curly" },
         irisTitle: "Ocular Iris Pigmentation (HERC2 / OCA2)",
         irisSub: "IrisPlex v2",
         targetGenotype: "Target Genotype",
         secondaryMarker: "Secondary Marker",
         posteriorProb: "Posterior Probability",
         confidence: "Confidence",
-        skinTitle: "Fitzpatrick Skin Phototype (SLC24A5 / TYRP1)",
+        skinTitle: "Fitzpatrick Phototype (SLC24A5 / TYRP1)",
         skinSub: "HIrisPlex-S",
         hairTitle: "Hair Texture & Morphology (EDAR / FGFR2)",
         hairSub: "HairPlex",
         summaryTitle: "BIOMETRIC SUMMARY",
         synced: "100% Synced",
         predictedIris: "PREDICTED IRIS",
+        skinPhototypeLabel: "Skin phototype",
         hairScore: "HAIR TEXTURE SCORE",
         accuracy: "Accuracy",
       },
       strTab: {
-        mixtureTitle: "DNA Mixture Deconvolution (Metropolis-Hastings MCMC)",
-        mixtureSub: "2-4 Contributors",
-        contributors: "Contributors Detected",
-        deconvolution: "Deconvolution Likelihood Ratio (LR)",
-        peakHeight: "Electropherogram Peak Height (RFU)",
-        alleleCall: "CODIS Allele Calls",
-        logLr: "Log10 LR Inclusion Score",
+        electropherogramTitle: "Fluorescent Electropherogram",
+        codisPanel: "CODIS Core 20 Panel",
+        alleleLabel: "Allele",
+        rfuLabel: "RFU",
+        alleleCall: "Allele Call",
+        popFreq: "Population Frequency",
+        locusLr: "Locus Likelihood Ratio",
       },
       zkpTab: {
-        proofTitle: "Zero-Knowledge Cryptographic Proof Auditor",
-        proofSub: "Circom / Groth16",
-        verifyButton: "Verify ZK Proof",
-        statusVerified: "VERIFIED INVARIANT",
-        hashLabel: "Public Proof Hash",
+        circuitId: "Circuit Identifier",
+        provingScheme: "Proving Scheme",
+        privateWitness: "Private Witness",
+        publicSignal: "Public Verification Signal",
+        executeBtn: "Execute ZK Circuit Prover",
+        computing: "Computing R1CS Witness Constraints...",
+        latency: "Groth16 Prover Latency: <12ms",
+        proofSuccess: "ZK Match Proof Generated",
+        provenMsg: "The match condition was proven cryptographically without revealing any raw STR profile data.",
+        resetBtn: "Reset Prover",
+        consoleTitle: "ZKP Execution Console",
+        initInfo: "[INFO] Initializing Circom constraints...",
+        readingInfo: "[INFO] Reading setup parameter file: powersOfTau28_ezkl.ptau",
+        witnessInfo: "[INFO] Witness signals generated (20 loci constraints satisfied)",
+        successCreated: "[SUCCESS] Proof proof.json created cleanly.",
+        testnetReady: "Polygon Testnet Ready",
+        zeroLeakage: "Zero Data Leakage Guaranteed",
+        publicHash: "Public Proof Hash",
       },
     },
     subsystems: {
@@ -476,7 +518,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
     footer: {
       rights: "FORENZA Forensic Systems. All rights reserved.",
       tagline: "Enterprise Biocomputational Forensic Intelligence & Evidence Operating System.",
-      status: "30 Subsystems Active",
+      status: "30 Active Subsystems",
       columns: {
         col1Title: "Platform Subsystems",
         col1Links: ["30 Subsystems Matrix", "Evidence OS DAG", "Multi-Omic Bio-Simulator", "ISO 17025 Court Mode"],
@@ -489,19 +531,23 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
   },
   tr: {
     header: {
-      bioSimulator: "Adli Simülatör",
-      subsystems: "30 Adli Analiz Modülü",
-      architecture: "Adli Akış Mimarisi (DAG)",
-      security: "Güvenlik & ISO 17025 Akreditasyonu",
-      launchDemo: "Canlı Sistemi Çalıştır",
+      bioSimulator: "Bio-Simülatör",
+      subsystems: "30 Subsystem",
+      architecture: "DAG Mimarisi",
+      security: "Güvenlik & ISO",
+      launchDemo: "Demo Platform",
     },
     hero: {
       badge: "30 Entegre Adli Analiz Modülü • Çok Katmanlı Adli Biyoloji Platformu",
       titleMain: "Biyobilişimsel ve İstatistiksel",
       titleHighlight: "Adli Genetik Delil Platformu",
       subtitle: "Otozomal ve soy STR analizleri, MCMC olasılıksal genotipleme, HIrisPlex-S fenotip tahmini, Horvath epigenetik yaş saati, LIMS veri zinciri ve ISO/IEC 17025 adli rapor standartlarını tek bir işlem hattında birleştiren adli biyoloji platformu.",
-      launchDemo: "Canlı Sistemi Çalıştır",
-      exploreSubsystems: "30 Adli Analiz Modülünü İncele",
+      launchDemo: "Canlı Platformu Başlat",
+      exploreSubsystems: "30 Modülü İncele",
+      subsystemsStat: "Adli Alt Sistem",
+      invariantsStat: "Doğrulanmış İnvaryant",
+      courtStat: "Mahkeme Uyumlu",
+      privacyStat: "Gizlilik Denetçisi",
     },
     solutions: {
       badge: "Kullanım Alanları",
@@ -586,6 +632,9 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
         zkp: "Kriptografik ZKP Denetimi",
       },
       phenotypeTab: {
+        eyeColors: { blue: "Mavi", hazel: "Ela", brown: "Kahverengi" },
+        skinTypes: { vPale: "Çok Açık Ten", fair: "Açık Ten", medium: "Buğday", olive: "Kumral", dBrown: "Esmer", dBlack: "Koyu Esmer" },
+        hairTypes: { straight: "Düz", wavy: "Dalgalı", curly: "Kıvırcık" },
         irisTitle: "İris Pigmentasyon Tespiti (HERC2 / OCA2)",
         irisSub: "IrisPlex v2",
         targetGenotype: "Hedef Genotip",
@@ -596,27 +645,41 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
         skinSub: "HIrisPlex-S",
         hairTitle: "Saç Yapısı ve Morfolojisi (EDAR / FGFR2)",
         hairSub: "HairPlex",
-        summaryTitle: "BİYOMETRİK DEĞERLENDİRME ÖZETİ",
+        summaryTitle: "BİYOMETRİK ÖZET",
         synced: "%100 Senkronize",
-        predictedIris: "TAHMİN EDİLEN İRİS RENGİ",
+        predictedIris: "TAHMİN EDİLEN İRİS",
+        skinPhototypeLabel: "Ten fototipi",
         hairScore: "SAÇ YAPISI PUANI",
         accuracy: "Doğruluk Oranı",
       },
       strTab: {
-        mixtureTitle: "DNA Karışım Ayrıştırması (Metropolis-Hastings MCMC)",
-        mixtureSub: "2-4 Katkıcı",
-        contributors: "Tespit Edilen Katkıcı Sayısı",
-        deconvolution: "Ayrıştırma Olabilirlik Oranı (LR)",
-        peakHeight: "Elektroferogram Pik Yüksekliği (RFU)",
-        alleleCall: "CODIS Alel Eşleşmeleri",
-        logLr: "Log10 LR Skoru",
+        electropherogramTitle: "Flüoresan Elektroferogram",
+        codisPanel: "CODIS Çekirdek 20 Paneli",
+        alleleLabel: "Alel",
+        rfuLabel: "RFU",
+        alleleCall: "Alel Tespiti",
+        popFreq: "Popülasyon Frekansı",
+        locusLr: "Lokus Olabilirlik Oranı (LR)",
       },
       zkpTab: {
-        proofTitle: "Sıfır Bilgi Kriptografik İspat Denetçisi (ZKP)",
-        proofSub: "Circom / Groth16",
-        verifyButton: "ZK İspatını Doğrula",
-        statusVerified: "DOĞRULANMIŞ İNVARİYANT",
-        hashLabel: "Genel İspat Özeti (Public Proof Hash)",
+        circuitId: "Devre Kimliği",
+        provingScheme: "İspat Şeması",
+        privateWitness: "Gizli Girdi (Witness)",
+        publicSignal: "Açık Sinyal",
+        executeBtn: "ZK İspat Motorunu Çalıştır",
+        computing: "R1CS Sınırları Hesaplanıyor...",
+        latency: "Groth16 Gecikmesi: <12ms",
+        proofSuccess: "ZK Eşleşme İspatı Üretildi",
+        provenMsg: "Eşleşme koşulu ham STR verisi açık edilmeden kriptografik olarak doğrulandı.",
+        resetBtn: "Sıfırla",
+        consoleTitle: "ZKP Konsolu",
+        initInfo: "[BİLGİ] Circom sınırları başlatılıyor...",
+        readingInfo: "[BİLGİ] Kurulum parametreleri okunuyor: powersOfTau28_ezkl.ptau",
+        witnessInfo: "[BİLGİ] Girdi sinyalleri üretildi (20 lokus doğrulandı)",
+        successCreated: "[BAŞARI] proof.json ispat dosyası üretildi.",
+        testnetReady: "Polygon Testnet Hazır",
+        zeroLeakage: "Sıfır Veri Sızıntısı Garantili",
+        publicHash: "Genel İspat Özeti",
       },
     },
     subsystems: {
@@ -795,10 +858,10 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
     footer: {
       rights: "FORENZA Forensic Systems. Tüm hakları saklıdır.",
       tagline: "Kurumsal Biyobilişimsel Adli İstihbarat ve Delil İşletim Sistemi.",
-      status: "30 Adli Analiz Modülü Faal",
+      status: "30 Modül Aktif",
       columns: {
         col1Title: "Platform Modülleri",
-        col1Links: ["30 Adli Analiz Modülü", "Delil İşleme Mimarisi (DAG)", "Biyolojik Simülatör", "ISO 17025 İfade Modu"],
+        col1Links: ["30 Subsystem Matrix", "Delil İşleme Mimarisi (DAG)", "Bio-Simülatör", "ISO 17025 İfade Modu"],
         col2Title: "Temel Yetenekler",
         col2Links: ["MCMC Olasılıksal Genotipleme", "HIrisPlex-S Fenotipleme", "Horvath Epigenetik Yaş Saati", "LIMS ve Cihaz Geçidi"],
         col3Title: "Adli Standartlar ve Akreditasyon",

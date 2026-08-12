@@ -8,7 +8,7 @@ import DnaLaunchTransition from "@/components/common/DnaLaunchTransition";
 export default function LaunchDemoButton({
     size = "md",
     className = "",
-    label = "Launch Demo",
+    label = "Launch Demo OS",
 }: {
     size?: "sm" | "md" | "lg";
     className?: string;
@@ -40,18 +40,10 @@ export default function LaunchDemoButton({
             <button
                 type="button"
                 onClick={handleClick}
-                className={`group relative inline-flex items-center justify-center p-0.5 overflow-hidden rounded-xl font-bold tracking-wider transition-all duration-300 shadow-[0_0_25px_rgba(34,197,94,0.25)] hover:shadow-[0_0_35px_rgba(34,197,94,0.5)] hover:scale-[1.02] cursor-pointer ${className}`}
+                className={`group relative inline-flex items-center justify-center font-extrabold tracking-wider transition-all duration-300 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-black shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 hover:scale-[1.02] active:scale-[0.98] cursor-pointer border border-emerald-400/50 ${sizeClasses} ${className}`}
             >
-                {/* Gradient Border Ring */}
-                <span className="absolute inset-0 bg-gradient-to-r from-[#22C55E] via-[#06B6D4] to-[#8B5CF6] group-hover:opacity-100 transition-opacity duration-300" />
-
-                {/* Inner Button Container */}
-                <span
-                    className={`relative flex items-center justify-center gap-2.5 rounded-[10px] bg-[#0A0A0B] group-hover:bg-[#22C55E] ${sizeClasses} text-white group-hover:text-black transition-all duration-300 w-full h-full`}
-                >
-                    <Zap className="h-4 w-4 text-[#22C55E] group-hover:text-black transition-colors shrink-0" />
-                    <span className="whitespace-nowrap">{label}</span>
-                </span>
+                <Zap className="h-4 w-4 text-black fill-black shrink-0 transition-transform group-hover:scale-110" />
+                <span className="whitespace-nowrap uppercase tracking-wider">{label}</span>
             </button>
         </>
     );

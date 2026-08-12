@@ -8,15 +8,11 @@ import {
   Dna,
   Eye,
   Globe,
-  Sliders,
   ShieldCheck,
-  Cpu,
-  ChevronRight,
-  FlaskConical,
-  Scale,
   Sparkles
 } from "lucide-react";
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
+import SaaSLanguageToggle from "@/components/landing/SaaSLanguageToggle";
 
 export default function UserGuideModal({
   isOpen,
@@ -25,7 +21,7 @@ export default function UserGuideModal({
   isOpen: boolean;
   onClose: () => void;
 }) {
-  const { lang, t } = useSaasLanguage();
+  const { lang } = useSaasLanguage();
   const [activeTab, setActiveTab] = useState<number>(0);
 
   if (!isOpen) return null;
@@ -154,19 +150,21 @@ export default function UserGuideModal({
           className="relative w-full max-w-4xl max-h-[92vh] flex flex-col rounded-2xl border border-cyan-500/40 bg-[#070D18] text-tactical-text shadow-[0_0_80px_rgba(6,182,212,0.2)] overflow-hidden"
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b border-tactical-border/80 bg-tactical-surface/60 shrink-0">
-            <div className="flex items-center gap-3">
+          <div className="flex items-center justify-between p-3.5 sm:p-4 border-b border-tactical-border/80 bg-tactical-surface/60 shrink-0 gap-2">
+            <div className="flex items-center gap-3 min-w-0">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-cyan-500/20 border border-cyan-500/40 text-cyan-300">
                 <BookOpen className="h-5 w-5 animate-pulse" />
               </div>
-              <div>
-                <h2 className="text-sm sm:text-base font-extrabold uppercase text-white tracking-wider flex items-center gap-2">
-                  <span>{isTr ? "FORENZA Proje Kullanım Kılavuzu" : "FORENZA SaaS Platform User Guide"}</span>
-                  <span className="px-2 py-0.5 rounded text-[8px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <h2 className="text-xs sm:text-base font-extrabold uppercase text-white tracking-wider font-mono leading-tight">
+                    {isTr ? "FORENZA Proje Kullanım Kılavuzu" : "FORENZA SaaS Platform User Guide"}
+                  </h2>
+                  <span className="px-1.5 py-0.5 rounded text-[8px] sm:text-[9px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shrink-0">
                     ISO 17025
                   </span>
-                </h2>
-                <p className="text-[10px] text-zinc-400 mt-0.5">
+                </div>
+                <p className="text-[9px] sm:text-[10px] text-zinc-400 mt-0.5 truncate leading-tight">
                   {isTr
                     ? "Biyo-Adli DNA Veri Analizi, Fenotip Tahmini ve Likelihood Ratio (LR) Kullanım Rehberi"
                     : "Comprehensive Biocomputational Intelligence & Forensic DNA Workstation Guide"}
@@ -174,18 +172,24 @@ export default function UserGuideModal({
               </div>
             </div>
 
-            <button
-              onClick={onClose}
-              className="p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors cursor-pointer shrink-0"
-            >
-              <X className="w-5 h-5" />
-            </button>
+            <div className="flex items-center gap-2 shrink-0">
+              {/* Modal-Specific Language Toggle */}
+              <SaaSLanguageToggle />
+
+              <button
+                onClick={onClose}
+                className="p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors cursor-pointer shrink-0"
+                title="Close Guide"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
           </div>
 
           {/* Guide Body */}
           <div className="flex flex-col md:flex-row flex-1 min-h-0 overflow-hidden">
-            {/* Sidebar Navigation */}
-            <div className="w-full md:w-64 border-b md:border-b-0 md:border-r border-tactical-border/80 bg-black/40 p-2 sm:p-3 flex flex-row md:flex-col gap-1 overflow-x-auto md:overflow-y-auto shrink-0 scrollbar-none">
+            {/* Sidebar Navigation (Wider & Full Text Visibility) */}
+            <div className="w-full md:w-72 border-b md:border-b-0 md:border-r border-tactical-border/80 bg-black/40 p-2.5 sm:p-3 flex flex-row md:flex-col gap-1.5 overflow-x-auto md:overflow-y-auto shrink-0 scrollbar-none">
               {guideChapters.map((chap, idx) => {
                 const Icon = chap.icon;
                 const isActive = activeTab === idx;
@@ -193,25 +197,25 @@ export default function UserGuideModal({
                   <button
                     key={chap.id}
                     onClick={() => setActiveTab(idx)}
-                    className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[10px] sm:text-xs font-bold text-left transition-all cursor-pointer shrink-0 ${
+                    className={`flex items-center gap-2.5 px-3 py-3 rounded-xl text-xs font-bold text-left transition-all cursor-pointer shrink-0 md:w-full ${
                       isActive
                         ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm"
-                        : "text-zinc-400 hover:text-zinc-200 hover:bg-white/5"
+                        : "text-zinc-400 hover:text-zinc-200 hover:bg-white/5 border border-transparent"
                     }`}
                   >
                     <Icon className={`w-4 h-4 shrink-0 ${chap.color}`} />
-                    <span className="truncate">{chap.title}</span>
+                    <span className="font-mono text-xs leading-snug break-words">{chap.title}</span>
                   </button>
                 );
               })}
             </div>
 
             {/* Chapter Content */}
-            <div className="flex-1 p-4 sm:p-6 overflow-y-auto space-y-4 bg-[#081220]">
-              <div className="flex items-center gap-2 border-b border-tactical-border/60 pb-3">
+            <div className="flex-1 p-4 sm:p-6 overflow-y-auto space-y-4 bg-[#081220] font-mono">
+              <div className="flex items-center gap-2.5 border-b border-tactical-border/60 pb-3">
                 {(() => {
                   const CurrentIcon = guideChapters[activeTab].icon;
-                  return <CurrentIcon className={`w-5 h-5 ${guideChapters[activeTab].color}`} />;
+                  return <CurrentIcon className={`w-5 h-5 ${guideChapters[activeTab].color} shrink-0`} />;
                 })()}
                 <h3 className="text-sm sm:text-base font-bold text-white uppercase tracking-wider font-mono">
                   {guideChapters[activeTab].title}
@@ -230,21 +234,20 @@ export default function UserGuideModal({
                 ))}
               </div>
 
-              <div className="pt-3 border-t border-tactical-border/40 flex items-center justify-between text-[10px] text-zinc-500">
+              <div className="pt-3 border-t border-tactical-border/40 flex items-center justify-between text-[10px] text-zinc-500 font-mono">
                 <span>FORENZA Evidence OS v2.4</span>
-                <span className="text-emerald-400 font-bold uppercase">SWGDAM &amp; ENFSI Compliant</span>
+                <span className="text-emerald-400 font-bold uppercase">
+                  {isTr ? "SWGDAM & ENFSI UYUMLU" : "SWGDAM & ENFSI COMPLIANT"}
+                </span>
               </div>
             </div>
           </div>
 
           {/* Footer Action */}
-          <div className="flex items-center justify-between p-3.5 sm:p-4 border-t border-tactical-border/80 bg-tactical-surface/60 shrink-0">
-            <span className="text-[10px] text-zinc-400 font-mono hidden sm:inline">
-              {isTr ? "İpucu: Üst gezinti çubuğundan dilediğiniz an TR | EN geçişi yapabilirsiniz." : "Tip: Toggle TR | EN in header to switch language instantly."}
-            </span>
+          <div className="flex items-center justify-end p-3 sm:p-4 border-t border-tactical-border/80 bg-tactical-surface/60 shrink-0 font-mono">
             <button
               onClick={onClose}
-              className="ml-auto px-5 py-2 rounded-xl text-xs font-bold bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 hover:bg-cyan-500/30 transition-all cursor-pointer font-mono uppercase tracking-wider"
+              className="px-5 py-2 rounded-xl text-xs font-bold bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 hover:bg-cyan-500/30 transition-all cursor-pointer font-mono uppercase tracking-wider"
             >
               {isTr ? "Kılavuzu Kapat" : "Close Guide"}
             </button>

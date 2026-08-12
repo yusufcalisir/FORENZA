@@ -9,6 +9,7 @@ import {
     Microscope, Fingerprint, Pill, Eye, Layers, Brain, Clock,
     FileText, Zap, BarChart3, Binary, Sparkles
 } from "lucide-react";
+import ActiveProfileBanner from "@/components/common/ActiveProfileBanner";
 
 // ── Mock live metrics ──
 const LIVE_METRICS = [
@@ -165,6 +166,9 @@ export default function ForenzaDashboardPage() {
                     </span>
                 </div>
             </div>
+
+            {/* ── Active Case DNA Profile & Live GIS Map Banner ── */}
+            <ActiveProfileBanner />
 
             {/* ── Live Metrics Strip ── */}
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">

@@ -16,6 +16,16 @@ import {
   Search,
 } from "lucide-react";
 import { useIngestStore, ActiveProfileData } from "@/store/ingestStore";
+import dynamic from "next/dynamic";
+
+const GeoForensicPanel = dynamic(() => import("@/components/analysis/GeoForensicPanel"), {
+    ssr: false,
+    loading: () => (
+        <div className="w-full h-48 flex items-center justify-center bg-tactical-surface/50 rounded-xl border border-tactical-border/60 text-zinc-400 font-mono text-xs">
+            Loading GIS Map Engine…
+        </div>
+    ),
+});
 
 export default function DnaProfileInspectorModal() {
   const { isInspectorOpen, setInspectorOpen, activeProfile, setActiveProfile, loadSampleCaseEU, loadSampleCaseAA } = useIngestStore();
@@ -26,6 +36,7 @@ export default function DnaProfileInspectorModal() {
   const [strList, setStrList] = useState<{ marker: string; a1: string; a2: string }[]>([]);
   const [snpList, setSnpList] = useState<{ rsid: string; genotype: string; trait: string }[]>([]);
   const [filterQuery, setFilterQuery] = useState("");
+  const [recalculatedBanner, setRecalculatedBanner] = useState(false);
 
   // Sync state when modal opens or activeProfile changes
   useEffect(() => {
@@ -75,7 +86,6 @@ export default function DnaProfileInspectorModal() {
   };
 
   const handleSaveAndCalculate = () => {
-    // Reconstruct strMarkers object
     const newStrMarkers: Record<string, { allele1: number; allele2: number }> = {};
     strList.forEach((item) => {
       if (item.marker) {
@@ -97,7 +107,6 @@ export default function DnaProfileInspectorModal() {
       }
     });
 
-    // Dynamic inference calculation
     const hasHERC2_AA = newSnpMarkers["rs12913832"]?.genotype === "A/A";
     const isEU = hasHERC2_AA || activeProfile.sampleType === "EU";
 
@@ -161,10 +170,23 @@ export default function DnaProfileInspectorModal() {
     };
 
     setActiveProfile(updatedProfile);
-    setInspectorOpen(false);
+    setRecalculatedBanner(true);
+    setTab("inferred"); // Automatically switch to Inferred Results & Map tab!
   };
 
   const filteredStrList = strList.filter((s) => s.marker.toLowerCase().includes(filterQuery.toLowerCase()));
+
+  const geoResults = activeProfile ? [
+    {
+      region: activeProfile.geoLocation.cityRegion,
+      lat: activeProfile.geoLocation.lat,
+      lng: activeProfile.geoLocation.lng,
+      probability: activeProfile.geoLocation.confidencePct / 100,
+      color: activeProfile.sampleType === "EU" ? "#06b6d4" : "#a855f7",
+      initial_radius_km: 150,
+      final_radius_km: 30,
+    }
+  ] : null;
 
   return (
     <AnimatePresence>
@@ -184,7 +206,7 @@ export default function DnaProfileInspectorModal() {
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5 flex-wrap">
                   <h2 className="text-xs sm:text-base font-black tracking-wider uppercase text-white truncate">
-                    DNA &amp; SNP Profile Terminal
+                    DNA &amp; SNP Profile Terminal &amp; Inspector
                   </h2>
                   <span className="px-1.5 py-0.5 rounded text-[8px] sm:text-[9px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 shrink-0">
                     ISO 17025
@@ -209,14 +231,14 @@ export default function DnaProfileInspectorModal() {
             <div className="flex items-center gap-1.5 flex-wrap">
               <span className="text-[9px] sm:text-[10px] text-zinc-400 font-bold uppercase">Presets:</span>
               <button
-                onClick={loadSampleCaseEU}
+                onClick={() => { loadSampleCaseEU(); setRecalculatedBanner(true); setTab("inferred"); }}
                 className="px-2 py-1 rounded-md text-[9px] sm:text-[10px] font-bold bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/25 transition-all flex items-center gap-1 cursor-pointer"
               >
                 <Sparkles className="w-3 h-3" />
                 Load Sample Case EU
               </button>
               <button
-                onClick={loadSampleCaseAA}
+                onClick={() => { loadSampleCaseAA(); setRecalculatedBanner(true); setTab("inferred"); }}
                 className="px-2 py-1 rounded-md text-[9px] sm:text-[10px] font-bold bg-purple-500/15 border border-purple-500/30 text-purple-300 hover:bg-purple-500/25 transition-all flex items-center gap-1 cursor-pointer"
               >
                 <Sparkles className="w-3 h-3" />
@@ -229,6 +251,22 @@ export default function DnaProfileInspectorModal() {
               <span className="text-zinc-400">SNPs: <strong className="text-cyan-400">{snpList.length}</strong></span>
             </div>
           </div>
+
+          {/* Recalculation Alert Banner */}
+          {recalculatedBanner && (
+            <div className="bg-emerald-500/10 border-b border-emerald-500/30 px-4 py-2.5 flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 text-emerald-300 font-mono text-[10px] sm:text-xs font-bold truncate">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 animate-pulse" />
+                <span className="truncate">✓ RECALCULATION COMPLETE: Phenotype, Ancestry &amp; Live GIS Map Updated Below!</span>
+              </div>
+              <button
+                onClick={() => setRecalculatedBanner(false)}
+                className="text-zinc-400 hover:text-white text-xs p-1"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
 
           {/* Modal Tabs */}
           <div className="flex border-b border-tactical-border/80 bg-tactical-surface/30 px-3 sm:px-5 pt-2 overflow-x-auto scrollbar-none">
@@ -348,7 +386,7 @@ export default function DnaProfileInspectorModal() {
                   </div>
                 </div>
 
-                {/* Geo-Location Heatmap Panel */}
+                {/* Geo-Location Coordinates Info */}
                 <div className="rounded-xl border border-tactical-border bg-tactical-surface/60 p-3.5 sm:p-4 space-y-3">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 border-b border-tactical-border pb-2 text-xs font-bold text-amber-400">
                     <div className="flex items-center gap-2">
@@ -377,6 +415,26 @@ export default function DnaProfileInspectorModal() {
                       <span className="text-[8px] sm:text-[9px] text-zinc-400 uppercase block font-bold">Target Country</span>
                       <span className="font-bold text-cyan-300 text-[10px] sm:text-xs">{activeProfile.geoLocation.country}</span>
                     </div>
+                  </div>
+                </div>
+
+                {/* Live GIS Map Engine Visualizer */}
+                <div className="rounded-xl border border-tactical-border bg-tactical-surface/60 p-3.5 sm:p-4 space-y-3">
+                  <div className="flex items-center justify-between border-b border-tactical-border pb-2 text-xs font-bold text-cyan-400">
+                    <div className="flex items-center gap-2">
+                      <Globe className="w-4 h-4 text-cyan-400 shrink-0" />
+                      <span>LIVE GIS FORENSIC MAP &amp; HEATMAP VISUALIZER</span>
+                    </div>
+                    <span className="text-[9px] text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 rounded-full font-bold">
+                      INTERACTIVE GIS ENGINE
+                    </span>
+                  </div>
+
+                  <div className="w-full h-64 sm:h-80 rounded-xl overflow-hidden border border-tactical-border/60">
+                    <GeoForensicPanel
+                      geoResults={geoResults}
+                      reliabilityScore={activeProfile.geoLocation.confidencePct / 100}
+                    />
                   </div>
                 </div>
               </div>
@@ -515,16 +573,18 @@ export default function DnaProfileInspectorModal() {
               onClick={() => setInspectorOpen(false)}
               className="px-4 py-2 rounded-xl text-xs font-bold text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors cursor-pointer text-center"
             >
-              Cancel
+              Close Inspector
             </button>
 
-            <button
-              onClick={handleSaveAndCalculate}
-              className="px-5 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-cyan-500 to-emerald-500 text-black shadow-lg hover:shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-all flex items-center justify-center gap-2 cursor-pointer font-mono uppercase tracking-wider"
-            >
-              <CheckCircle2 className="w-4 h-4" />
-              <span>Apply &amp; Recalculate Profile Features</span>
-            </button>
+            <div className="flex items-center gap-2 flex-col sm:flex-row">
+              <button
+                onClick={handleSaveAndCalculate}
+                className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-cyan-500 to-emerald-500 text-black shadow-lg hover:shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-all flex items-center justify-center gap-2 cursor-pointer font-mono uppercase tracking-wider"
+              >
+                <CheckCircle2 className="w-4 h-4" />
+                <span>Apply &amp; Recalculate Profile Features</span>
+              </button>
+            </div>
           </div>
         </motion.div>
       </div>

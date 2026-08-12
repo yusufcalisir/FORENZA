@@ -385,6 +385,14 @@ try:
 except Exception as _synth_import_err:
     logger.warning(f"[boot] Synthetic Case router not loaded: {_synth_import_err}")
 
+# --- Forensic Evidence OS Master Architecture Router ---
+try:
+    from app.api.evidence_os_routes import router as evidence_os_router
+    app.include_router(evidence_os_router, prefix="/api/v1")
+    logger.info("[boot] Forensic Evidence OS API router registered at /api/v1/forensic/os")
+except Exception as _os_import_err:
+    logger.warning(f"[boot] Evidence OS router not loaded: {_os_import_err}")
+
 
 
 

@@ -15,7 +15,7 @@
   <a href="#probabilistic-genotyping--mcmc-deconvolution"><img src="https://img.shields.io/badge/Genotyping-Metropolis--Hastings%20MCMC-orange?style=for-the-badge" /></a>
   <a href="#forensic-phenotyping--biogeographic-ancestry"><img src="https://img.shields.io/badge/Phenotyping-HIrisPlex--S%20%2B%20BGA-purple?style=for-the-badge" /></a>
   <a href="#cryptographic-ledger--zero-knowledge-privacy-auditor"><img src="https://img.shields.io/badge/Privacy-ZKP%20Circom%20%2B%20Polygon-black?style=for-the-badge&logo=polygon" /></a>
-  <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/Suite%20Status-209%2F209%20Passed%20(100%25)-brightgreen?style=for-the-badge&logo=pytest" /></a>
+  <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/Suite%20Status-215%2F215%20Passed%20(100%25)-brightgreen?style=for-the-badge&logo=pytest" /></a>
 </p>
 
 ---
@@ -552,6 +552,8 @@ graph TD
 | `/api/v1/forensic/court/generate-testimony-brief` | `POST` | `GenerateCourtTestimonyRequest` | `testimony_title`, `testimony_pillars`, `prosecutors_fallacy_shield`, `testimony_hmac_hash` |
 | `/api/v1/forensic/synthetic/generate-case` | `POST` | `GenerateSyntheticCaseRequest` | `synthetic_case_id`, `ground_truth_contributors`, `ground_truth_metrics` |
 | `/api/v1/forensic/synthetic/evaluate-benchmark` | `POST` | `EvaluateBenchmarkRequest` | `synthetic_case_id`, `log10_lr_rmse`, `roc_auc_score`, `self_validation_verdict` |
+| `/api/v1/forensic/os/system-architecture` | `GET` | None | `platform_name`, `layers`, `total_subsystems`, `system_status` |
+| `/api/v1/forensic/os/run-unified-pipeline` | `POST` | `RunUnifiedOsPipelineRequest` | `pipeline_id`, `execution_layers`, `master_os_hmac_hash` |
 | `/api/v1/forensic/phenotype/predict-extended` | `POST` | `PredictExtendedPhenotypeRequest` | `top_eye_color`, `freckling_risk`, `hair_morphology_probs`, `skin_tone_probs` |
 | `/api/v1/health/ready` | `GET` | None | `status`, `subsystems`, `audit_chain_intact` |
 | `/api/v1/health/live` | `GET` | None | `status`, `timestamp` |
@@ -580,6 +582,7 @@ The entire FORENZA software surface is validated using automated Pytest suites.
 | `test_iso_report_compiler.py` | ISO 17025 Forensic Report Generator | 6 | ~0.53s | 100% (6/6) | 8-section certificate compilation, mathematical immutability invariant |
 | `test_expert_witness.py` | Expert Witness & Judicial Examination Subsystem | 6 | ~0.36s | 100% (6/6) | 7-point testimony framework, Transposed Conditional Fallacy shield |
 | `test_synthetic_cases.py` | Synthetic Forensic Case Generator Subsystem | 6 | ~0.37s | 100% (6/6) | 100% ground-truth mixture synthesis, ROC-AUC self-validation |
+| `test_evidence_os.py` | Master Forensic Evidence OS Subsystem | 6 | ~0.27s | 100% (6/6) | 6-layer DAG orchestrator, unified end-to-end OS pipeline |
 | `test_batch.py` | Concurrent Batch Processing Engine | 3 | ~1.42s | 100% (3/3) | Concurrency worker semaphore, job aggregator, progress polling |
 | `test_end_to_end.py` | Master E2E Pipeline Verification | 4 | ~1.60s | 100% (4/4) | Multi-component integration, health probes, HMAC integrity verification |
 | `test_lineage_dna.py` | Lineage DNA Forensics (Y/X/mtDNA) | 7 | ~1.80s | 100% (7/7) | Y-STR Clopper-Pearson 95% CI, X-STR linkage $KI_X$, mtDNA rCRS |

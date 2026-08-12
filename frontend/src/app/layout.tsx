@@ -14,8 +14,12 @@ const jetbrainsMono = JetBrains_Mono({
   weight: ["300", "400", "500", "600", "700"],
 });
 
+// Resolve base URL: custom domain > Vercel auto URL > localhost
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL
+  ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://forenza.app"),
+  metadataBase: new URL(BASE_URL),
   title: "FORENZA: Forensic Evidence Operating System",
   description: "Enterprise multi-omic biocomputational forensic intelligence platform unifying DNA profiling, kinship, phenotyping, epigenetics, LIMS, QA/QC, and ISO 17025 court admissibility. Powered by VANTAGE v3.0.",
   keywords: ["forensic DNA", "STR analysis", "kinship engine", "probabilistic genotyping", "MCMC", "HIrisPlex", "forensic evidence OS", "LIMS", "ISO 17025"],

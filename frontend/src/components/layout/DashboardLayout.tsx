@@ -154,7 +154,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 </nav>
 
                 {/* Bottom */}
-                <div className="p-2 border-t border-tactical-border/60 space-y-0.5">
+                <div className="p-2 border-t border-tactical-border/60">
                     <Link
                         href="/"
                         className="group flex items-center gap-2.5 rounded-xl px-3 py-2 text-zinc-400 hover:text-white hover:bg-emerald-500/10 hover:border hover:border-emerald-500/20 transition-all font-mono text-[9px] font-bold uppercase tracking-wider border border-transparent"
@@ -162,14 +162,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         <Home className="w-4 h-4 shrink-0 text-zinc-500 group-hover:text-emerald-400 transition-colors" />
                         {!sidebarCollapsed && <span className="group-hover:text-emerald-300 transition-colors">Back to Site</span>}
                     </Link>
-                    <button
-                        onClick={() => setSidebarCollapsed((c) => !c)}
-                        className="w-full flex items-center justify-center rounded-xl p-2 text-zinc-600 hover:text-zinc-300 hover:bg-white/5 transition-all"
-                    >
-                        {sidebarCollapsed
-                            ? <ChevronRight className="w-4 h-4" />
-                            : <ChevronLeft className="w-4 h-4" />}
-                    </button>
                 </div>
             </motion.aside>
 

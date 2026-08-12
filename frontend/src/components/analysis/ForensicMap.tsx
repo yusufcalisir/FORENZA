@@ -1,13 +1,9 @@
 "use client";
 
 import { useMemo, useState, useEffect, useRef, useCallback } from "react";
-import { MapContainer, TileLayer, Circle, CircleMarker, Popup, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Circle, CircleMarker, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// TYPES
-// ═══════════════════════════════════════════════════════════════════════════════
 
 export interface GeoProbability {
     region: string;
@@ -22,6 +18,31 @@ export interface GeoProbability {
 export type ScanPhase = "idle" | "scanning" | "calculating" | "locked";
 
 // ═══════════════════════════════════════════════════════════════════════════════
+// MAP INITIALIZER & RESIZER (Fixes Leaflet gray tiles & wrong 0,0 center)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function MapInitializer({ lat, lng, zoom }: { lat: number; lng: number; zoom: number }) {
+    const map = useMap();
+
+    useEffect(() => {
+        if (!map) return;
+
+        // Force Leaflet to recalculate container dimensions immediately and after 200ms
+        map.invalidateSize();
+        map.setView([lat, lng], zoom, { animate: false });
+
+        const timer = setTimeout(() => {
+            map.invalidateSize();
+            map.setView([lat, lng], zoom, { animate: true });
+        }, 200);
+
+        return () => clearTimeout(timer);
+    }, [map, lat, lng, zoom]);
+
+    return null;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
 // HEATMAP LAYER
 // ═══════════════════════════════════════════════════════════════════════════════
 
@@ -30,9 +51,6 @@ function HeatmapLayer({ data }: { data: GeoProbability[] }) {
     const isMounted = useRef(true);
     const layerRef = useRef<L.Layer | null>(null);
 
-    // Patch HTMLCanvasElement.getContext to always pass willReadFrequently:true
-    // This silences the "Multiple readback operations" warning from leaflet.heat
-    // which internally calls getImageData without this flag.
     useEffect(() => {
         const original = HTMLCanvasElement.prototype.getContext;
         // @ts-ignore
@@ -44,7 +62,6 @@ function HeatmapLayer({ data }: { data: GeoProbability[] }) {
             return original.call(this, type, attrs);
         };
         return () => {
-            // Restore original on unmount
             HTMLCanvasElement.prototype.getContext = original;
         };
     }, []);
@@ -124,14 +141,14 @@ function ScanController({
         onPhaseChange("scanning");
 
         const t1 = setTimeout(() => {
-            map.flyTo([target.lat, target.lng], 4, { duration: 2.5 });
+            map.flyTo([target.lat, target.lng], 5, { duration: 1.8 });
             onPhaseChange("calculating");
-        }, 1000);
+        }, 500);
 
         const t2 = setTimeout(() => {
-            map.flyTo([target.lat, target.lng], 5, { duration: 1.5 });
+            map.flyTo([target.lat, target.lng], 6, { duration: 1.2 });
             onPhaseChange("locked");
-        }, 4000);
+        }, 2200);
 
         return () => {
             clearTimeout(t1);
@@ -155,13 +172,13 @@ function ConfidenceRing({
     phase: ScanPhase;
     onHover?: (region: string | null) => void;
 }) {
-    const initialR = (region.initial_radius_km || 2000) * 1000;
-    const finalR = (region.final_radius_km || 200) * 1000;
+    const initialR = (region.initial_radius_km || 300) * 1000;
+    const finalR = (region.final_radius_km || 50) * 1000;
     const [currentRadius, setCurrentRadius] = useState(initialR);
     const animRef = useRef<number | null>(null);
     const startTimeRef = useRef<number | null>(null);
 
-    const ANIMATION_DURATION = 3000;
+    const ANIMATION_DURATION = 2000;
 
     useEffect(() => {
         if (phase === "idle") {
@@ -211,24 +228,22 @@ function ConfidenceRing({
                 }}
                 pathOptions={{
                     fillColor: "#22C55E",
-                    fillOpacity: isLocked ? 0.12 : 0.06,
+                    fillOpacity: isLocked ? 0.15 : 0.08,
                     color: "#22C55E",
                     weight: isActive ? 2 : 1.5,
-                    opacity: isActive ? 0.7 : 0.5,
+                    opacity: isActive ? 0.8 : 0.6,
                     dashArray: isActive ? "8 4" : undefined,
-                    className: isActive ? "confidence-ring-pulse" : "",
                 }}
             />
             <CircleMarker
                 center={[region.lat, region.lng]}
-                radius={isLocked ? 6 : 4}
+                radius={isLocked ? 7 : 5}
                 pathOptions={{
-                    fillColor: region.color,
+                    fillColor: region.color || "#06b6d4",
                     fillOpacity: 1,
-                    color: "#fafafa",
+                    color: "#ffffff",
                     weight: isLocked ? 2 : 1,
                     opacity: 1,
-                    className: isLocked ? "centroid-locked-blink" : "",
                 }}
             />
         </>
@@ -241,7 +256,6 @@ function ConfidenceRing({
 
 export default function ForensicMap({
     data,
-    kinshipMatches,
     onScanPhaseChange,
     onRegionHover,
 }: {
@@ -253,11 +267,13 @@ export default function ForensicMap({
     const [phase, setPhase] = useState<ScanPhase>("idle");
 
     const center = useMemo<[number, number]>(() => {
-        if (data.length > 0) return [data[0].lat, data[0].lng];
-        return [30.0, 30.0];
+        if (data && data.length > 0 && data[0].lat && data[0].lng) {
+            return [data[0].lat, data[0].lng];
+        }
+        return [52.5200, 13.4050]; // Default Berlin, Germany
     }, [data]);
 
-    const topRegion = data[0] || null;
+    const topRegion = data && data.length > 0 ? data[0] : null;
 
     const handlePhaseChange = useCallback(
         (newPhase: ScanPhase) => {
@@ -270,7 +286,7 @@ export default function ForensicMap({
     return (
         <MapContainer
             center={center}
-            zoom={2}
+            zoom={5}
             scrollWheelZoom={true}
             zoomControl={false}
             attributionControl={false}
@@ -281,6 +297,8 @@ export default function ForensicMap({
                 background: "#0A0A0B",
             }}
         >
+            <MapInitializer lat={center[0]} lng={center[1]} zoom={5} />
+
             <TileLayer
                 url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
                 maxZoom={19}
@@ -315,10 +333,10 @@ export default function ForensicMap({
                     }}
                     pathOptions={{
                         fillColor: region.color,
-                        fillOpacity: 0.5,
+                        fillOpacity: 0.6,
                         color: region.color,
                         weight: 1.5,
-                        opacity: 0.6,
+                        opacity: 0.8,
                     }}
                 />
             ))}

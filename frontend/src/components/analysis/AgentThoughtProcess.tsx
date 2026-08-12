@@ -381,7 +381,7 @@ export default function AgentThoughtProcess() {
                 {/* Prompt line */}
                 <div className="font-mono text-[10px] text-zinc-600 mb-3 flex items-center gap-1.5">
                     <ChevronRight className="w-3 h-3 text-tactical-primary" />
-                    <span className="text-tactical-primary">vantage-agent</span>
+                    <span className="text-tactical-primary">forenza-agent</span>
                     <span className="text-zinc-700">$</span>
                     <span className="text-zinc-400">
                         investigate --query={investigation.queryId} --mode=forensic --iso17025

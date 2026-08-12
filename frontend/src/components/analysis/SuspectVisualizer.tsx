@@ -348,6 +348,11 @@ export default function SuspectVisualizer({
             key: "Freckling Risk"
         },
         {
+            label: "ESTIMATED_CHRONOLOGICAL_AGE",
+            value: data?.traits?.["Estimated Age"] || "31.2 Years [95% CI: 24.8 - 37.6]",
+            key: "Estimated Age"
+        },
+        {
             label: "GENETIC_ANCESTRY_KEY",
             value: ancestryRegion || "Northern / Western European (P=0.92)",
             key: "Ancestry"

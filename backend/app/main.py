@@ -313,6 +313,14 @@ try:
 except Exception as _touch_import_err:
     logger.warning(f"[boot] Touch DNA router not loaded: {_touch_import_err}")
 
+# --- Forensic Epigenetics & Age Estimation Router ---
+try:
+    from app.api.epigenetics_routes import router as epigenetics_router
+    app.include_router(epigenetics_router, prefix="/api/v1")
+    logger.info("[boot] Forensic Epigenetics & Age Estimation API router registered at /api/v1/forensic/epigenetics")
+except Exception as _epi_import_err:
+    logger.warning(f"[boot] Epigenetics router not loaded: {_epi_import_err}")
+
 
 
 

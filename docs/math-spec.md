@@ -461,6 +461,35 @@ $$U_{95\%} = k \cdot u_c \quad (k=2, \quad 95\% \text{ confidence level})$$
 
 $$\text{Confidence Interval} = \left[ \max(0, P_i - U_{95\%}), \min(1, P_i + U_{95\%}) \right]$$
 
+---
+
+## 25. Forensic DNA Epigenetic Clock & Epigenomic Age Estimation
+
+### 25.1 ElasticNet CpG Methylation Age Prediction ($\text{Age}_{\text{raw}}$)
+Given target CpG site methylation ratios $\beta_k \in [0, 1]$ across $M=5$ forensic markers (*ELOVL2*, *FHL2*, *TRIM59*, *KLF14*, *MIR29B2CHG*):
+
+$$\text{Age}_{\text{raw}} = \beta_0 + \sum_{k=1}^{M} w_k \cdot \beta_{\text{CpG}, k}$$
+
+where baseline intercept $\beta_0 = 14.8$, $w_{\text{ELOVL2}} = 52.4$, $w_{\text{FHL2}} = 38.6$, $w_{\text{TRIM59}} = 29.8$, $w_{\text{KLF14}} = -18.5$, $w_{\text{MIR29B2CHG}} = 24.1$.
+
+### 25.2 Tissue Intercept Calibration & Estimated Age ($\text{Age}_{\text{est}}$)
+With tissue offset $\delta_{\text{tissue}}$ ($\text{Blood} = +0.0$, $\text{Buccal} = +1.2$, $\text{Saliva} = -0.8$, $\text{Bone} = +2.1$ years):
+
+$$\text{Age}_{\text{est}} = \text{Age}_{\text{raw}} + \delta_{\text{tissue}}$$
+
+### 25.3 ISO 17025 Expanded Measurement Uncertainty & 95% Prediction Interval
+For standard error of estimation $S_E = 3.20$ years and coverage factor $k=2$:
+
+$$U_{95\%} = k \cdot S_E = 2 \cdot 3.20 = 6.40 \text{ years}$$
+
+$$\text{Prediction Interval}_{95\%} = \left[ \max(0, \text{Age}_{\text{est}} - U_{95\%}), \text{Age}_{\text{est}} + U_{95\%} \right]$$
+
+### 25.4 Biological Age Acceleration Delta ($\Delta_{\text{age}}$)
+For known chronological age $A_{\text{chrono}}$:
+
+$$\Delta_{\text{age}} = \text{Age}_{\text{est}} - A_{\text{chrono}}$$
+
+
 
 
 

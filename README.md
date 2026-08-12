@@ -15,7 +15,7 @@
   <a href="#probabilistic-genotyping--mcmc-deconvolution"><img src="https://img.shields.io/badge/Genotyping-Metropolis--Hastings%20MCMC-orange?style=for-the-badge" /></a>
   <a href="#forensic-phenotyping--biogeographic-ancestry"><img src="https://img.shields.io/badge/Phenotyping-HIrisPlex--S%20%2B%20BGA-purple?style=for-the-badge" /></a>
   <a href="#cryptographic-ledger--zero-knowledge-privacy-auditor"><img src="https://img.shields.io/badge/Privacy-ZKP%20Circom%20%2B%20Polygon-black?style=for-the-badge&logo=polygon" /></a>
-  <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/Suite%20Status-150%2F150%20Passed%20(100%25)-brightgreen?style=for-the-badge&logo=pytest" /></a>
+  <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/Suite%20Status-155%2F155%20Passed%20(100%25)-brightgreen?style=for-the-badge&logo=pytest" /></a>
 </p>
 
 ---
@@ -538,6 +538,7 @@ graph TD
 | `/api/v1/forensic/microscopy/hair-morphology` | `POST` | `HairMorphologyRequest` | `hair_id`, `medullary_index`, `species_origin`, `dna_routing` |
 | `/api/v1/forensic/touch/analyze-ltdna` | `POST` | `AnalyzeLtdnaRequest` | `sample_id`, `recovered_mass_pg`, `dropout_probability_pd`, `is_low_template` |
 | `/api/v1/forensic/touch/contributor-deconv` | `POST` | `ContributorDeconvRequest` | `sample_id`, `mixture_proportions`, `mcmc_acceptance_rate`, `log10_lr` |
+| `/api/v1/forensic/epigenetics/predict-age` | `POST` | `PredictAgeRequest` | `estimated_age_years`, `prediction_interval_lower`, `prediction_interval_upper`, `standard_error_years` |
 | `/api/v1/forensic/phenotype/predict-extended` | `POST` | `PredictExtendedPhenotypeRequest` | `top_eye_color`, `freckling_risk`, `hair_morphology_probs`, `skin_tone_probs` |
 | `/api/v1/health/ready` | `GET` | None | `status`, `subsystems`, `audit_chain_intact` |
 | `/api/v1/health/live` | `GET` | None | `status`, `timestamp` |
@@ -557,6 +558,7 @@ The entire FORENZA software surface is validated using automated Pytest suites.
 | `test_population.py` | Population Genetics & Fst Engine | 10 | ~1.50s | 100% (10/10) | NRC II 4.1 & 4.2 frequency bounds, Dirichlet smoothing, $F_{ST}$ |
 | `test_reports.py` | ENFSI Compliance & Audit Generator | 6 | ~1.38s | 100% (6/6) | Verbal scale mapping, certificate signing, partial profile alerts |
 | `test_validation.py` | Validation Lab & Synthetic Generator | 7 | ~1.72s | 100% (7/7) | Synthetic profile generator, ROC AUC, FIR at 0% false inclusion |
+| `test_epigenetics.py` | Epigenetic Clock & Age Estimation Engine | 5 | ~0.28s | 100% (5/5) | Horvath ElasticNet 5-CpG model, tissue offsets, 95% prediction intervals |
 | `test_batch.py` | Concurrent Batch Processing Engine | 3 | ~1.42s | 100% (3/3) | Concurrency worker semaphore, job aggregator, progress polling |
 | `test_end_to_end.py` | Master E2E Pipeline Verification | 4 | ~1.60s | 100% (4/4) | Multi-component integration, health probes, HMAC integrity verification |
 | `test_lineage_dna.py` | Lineage DNA Forensics (Y/X/mtDNA) | 7 | ~1.80s | 100% (7/7) | Y-STR Clopper-Pearson 95% CI, X-STR linkage $KI_X$, mtDNA rCRS |

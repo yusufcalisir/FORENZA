@@ -28,7 +28,8 @@ import EvidenceManagementPanel from "@/components/analysis/EvidenceManagementPan
 import BpaImagePanel from "@/components/analysis/BpaImagePanel";
 import MicroscopyPanel from "@/components/analysis/MicroscopyPanel";
 import TouchDnaPanel from "@/components/analysis/TouchDnaPanel";
-import { Activity, UserCheck, Binary, Bone, Bug, Leaf, Layers, Droplet, Pill, Syringe, PackageCheck, Eye, Microscope, Fingerprint } from "lucide-react";
+import AgeEstimationPanel from "@/components/analysis/AgeEstimationPanel";
+import { Activity, UserCheck, Binary, Bone, Bug, Leaf, Layers, Droplet, Pill, Syringe, PackageCheck, Eye, Microscope, Fingerprint, Clock } from "lucide-react";
 import { useIngestStore } from "@/store/ingestStore";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -83,7 +84,7 @@ interface AnalysisData {
     tx_hash?: string;
 }
 
-type TabId = "statistical" | "probabilistic" | "relationship" | "bayesian" | "validation" | "lineage" | "dvi" | "hid" | "anthropology" | "entomology" | "botany" | "microbiology" | "fluid" | "toxicology" | "serology" | "evidence" | "bpa" | "microscopy" | "touch";
+type TabId = "statistical" | "probabilistic" | "relationship" | "bayesian" | "validation" | "lineage" | "dvi" | "hid" | "anthropology" | "entomology" | "botany" | "microbiology" | "fluid" | "toxicology" | "serology" | "evidence" | "bpa" | "microscopy" | "touch" | "epigenetics";
 
 // ─── API ─────────────────────────────────────────────────────────────────────
 
@@ -554,12 +555,12 @@ export default function AnalysisPage() {
 
                     <button
                         onClick={() => {
-                            if (!["anthropology", "bpa", "microscopy"].includes(activeTab)) {
+                            if (!["anthropology", "bpa", "microscopy", "epigenetics"].includes(activeTab)) {
                                 setActiveTab("anthropology");
                             }
                         }}
                         className={`px-3.5 py-2 rounded-t-lg font-mono text-xs font-bold transition-all border-b-2 flex items-center gap-2 ${
-                            ["anthropology", "bpa", "microscopy"].includes(activeTab)
+                            ["anthropology", "bpa", "microscopy", "epigenetics"].includes(activeTab)
                                 ? "border-purple-400 text-purple-300 bg-purple-500/10"
                                 : "border-transparent text-tactical-text-muted hover:text-tactical-text hover:bg-tactical-surface-elevated"
                         }`}
@@ -616,11 +617,12 @@ export default function AnalysisPage() {
                         </>
                     )}
 
-                    {["anthropology", "bpa", "microscopy"].includes(activeTab) && (
+                    {["anthropology", "bpa", "microscopy", "epigenetics"].includes(activeTab) && (
                         <>
                             <TabButton id="anthropology" label="Forensic Anthropology" icon={Bone} activeTab={activeTab} onClick={setActiveTab} badge="OSTEOLOGY" />
                             <TabButton id="bpa" label="Image Analysis (BPA)" icon={Eye} activeTab={activeTab} onClick={setActiveTab} badge="IABPA" />
                             <TabButton id="microscopy" label="Microscopy Intelligence" icon={Microscope} activeTab={activeTab} onClick={setActiveTab} badge="SWGMAT" />
+                            <TabButton id="epigenetics" label="Epigenetic Clock (Age)" icon={Clock} activeTab={activeTab} onClick={setActiveTab} badge="CpG-AGE" />
                         </>
                     )}
 
@@ -1060,6 +1062,18 @@ export default function AnalysisPage() {
                         transition={{ duration: 0.2 }}
                     >
                         <TouchDnaPanel />
+                    </motion.div>
+                )}
+
+                {activeTab === "epigenetics" && (
+                    <motion.div
+                        key="epigenetics"
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -6 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        <AgeEstimationPanel />
                     </motion.div>
                 )}
             </AnimatePresence>

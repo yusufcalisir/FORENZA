@@ -59,15 +59,7 @@ export default function LandingHeader() {
                     </Link>
 
                     {/* Navigation Links (Desktop) */}
-                    <nav className="hidden md:flex items-center gap-3 lg:gap-6 font-mono text-xs text-zinc-400">
-                        <button 
-                            type="button"
-                            onClick={(e) => scrollToSection("user-guide", e)} 
-                            className="hover:text-emerald-400 transition-colors flex items-center gap-1.5 font-medium cursor-pointer bg-transparent border-0 p-0 whitespace-nowrap"
-                        >
-                            <BookOpen className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-                            <span>{guideLabel}</span>
-                        </button>
+                    <nav className="hidden md:flex items-center gap-4 lg:gap-7 font-mono text-xs text-zinc-400">
                         <button 
                             type="button"
                             onClick={(e) => scrollToSection("bio-simulator", e)} 

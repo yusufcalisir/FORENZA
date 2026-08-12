@@ -345,6 +345,14 @@ try:
 except Exception as _inst_import_err:
     logger.warning(f"[boot] Instrument Gateway router not loaded: {_inst_import_err}")
 
+# --- Forensic Quality Assurance & Quality Control (QA/QC) Router ---
+try:
+    from app.api.qc_routes import router as qc_router
+    app.include_router(qc_router, prefix="/api/v1")
+    logger.info("[boot] Forensic QA/QC Gatekeeper API router registered at /api/v1/forensic/qc")
+except Exception as _qc_import_err:
+    logger.warning(f"[boot] QA/QC router not loaded: {_qc_import_err}")
+
 
 
 

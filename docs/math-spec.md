@@ -542,6 +542,23 @@ Given Small Autosomal concentration $[\text{SA}]$ and Large Autosomal concentrat
 
 $$DI = \frac{[\text{SA}]}{\max(\epsilon, [\text{LA}])} \quad (\epsilon = 10^{-6})$$
 
+---
+
+## 29. Forensic Quality Assurance & Heterozygote Balance Math
+
+### 29.1 Heterozygote Peak Height Ratio ($Hb$)
+For heterozygous locus alleles with peak heights $H_1, H_2 \ge AT$ ($AT = 50\text{ RFU}$):
+
+$$Hb = \frac{\min(H_1, H_2)}{\max(H_1, H_2)}$$
+
+$$\text{Status} = \begin{cases} \text{PASS}, & Hb \ge 0.60 \\ \text{ALLELE\_IMBALANCE\_WARNING}, & Hb < 0.60 \end{cases}$$
+
+### 29.2 Stochastic Thresholding ($T_{\text{stoch}}$)
+For locus minimum peak height $H_{\min} = \min(H_1, H_2)$:
+
+$$\text{Stochastic Status} = \begin{cases} \text{PASS}, & H_{\min} \ge 150\text{ RFU} \\ \text{STOCHASTIC\_THRESHOLD\_WARNING}, & H_{\min} < 150\text{ RFU} \end{cases}$$
+
+
 
 
 

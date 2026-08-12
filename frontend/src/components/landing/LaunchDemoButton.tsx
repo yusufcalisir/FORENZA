@@ -25,8 +25,11 @@ export default function LaunchDemoButton({
 
     const handleClick = () => {
         setIsTransitioning(true);
+        // Prefetch so Next.js starts loading the dashboard while animation plays
+        router.prefetch("/dashboard");
     };
 
+    // Navigate while overlay is still covering the screen — no SaaS flash
     const handleTransitionComplete = () => {
         router.push("/dashboard");
     };

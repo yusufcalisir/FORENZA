@@ -16,7 +16,7 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://forenza.app"),
-  title: "FORENZA — Forensic Evidence Operating System",
+  title: "FORENZA: Forensic Evidence Operating System",
   description: "Enterprise multi-omic biocomputational forensic intelligence platform unifying DNA profiling, kinship, phenotyping, epigenetics, LIMS, QA/QC, and ISO 17025 court admissibility. Powered by VANTAGE v3.0.",
   keywords: ["forensic DNA", "STR analysis", "kinship engine", "probabilistic genotyping", "MCMC", "HIrisPlex", "forensic evidence OS", "LIMS", "ISO 17025"],
   authors: [{ name: "FORENZA Forensic Systems" }],
@@ -30,21 +30,21 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://forenza.app",
     siteName: "FORENZA Evidence OS",
-    title: "FORENZA — Forensic Evidence Operating System",
+    title: "FORENZA: Forensic Evidence Operating System",
     description: "30 biocomputational subsystems. STR profiling, MCMC genotyping, HIrisPlex-S phenotyping, Horvath epigenetic clock, toxicology, LIMS & ISO 17025 court reports. Powered by VANTAGE v3.0.",
     images: [
       {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "FORENZA Forensic Evidence Operating System — Neon Biology Background",
+        alt: "FORENZA Forensic Evidence Operating System",
         type: "image/png",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "FORENZA — Forensic Evidence Operating System",
+    title: "FORENZA: Forensic Evidence Operating System",
     description: "30 biocomputational subsystems. STR profiling, MCMC genotyping, HIrisPlex-S phenotyping, ISO 17025 court reports. VANTAGE v3.0.",
     images: ["/og-image.png"],
     creator: "@forenza_forensic",

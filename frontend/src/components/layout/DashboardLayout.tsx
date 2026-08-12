@@ -157,10 +157,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <div className="p-2 border-t border-tactical-border/60 space-y-0.5">
                     <Link
                         href="/"
-                        className="group flex items-center gap-3 rounded-xl px-3 py-2 text-zinc-600 hover:text-zinc-300 hover:bg-white/5 transition-all font-mono text-[9px] font-bold uppercase tracking-wider"
+                        className="group flex items-center gap-2.5 rounded-xl px-3 py-2 text-zinc-400 hover:text-white hover:bg-emerald-500/10 hover:border hover:border-emerald-500/20 transition-all font-mono text-[9px] font-bold uppercase tracking-wider border border-transparent"
                     >
-                        <Home className="w-4 h-4 shrink-0 text-zinc-700 group-hover:text-zinc-400" />
-                        {!sidebarCollapsed && <span>Landing Page</span>}
+                        <Home className="w-4 h-4 shrink-0 text-zinc-500 group-hover:text-emerald-400 transition-colors" />
+                        {!sidebarCollapsed && <span className="group-hover:text-emerald-300 transition-colors">Back to Site</span>}
                     </Link>
                     <button
                         onClick={() => setSidebarCollapsed((c) => !c)}

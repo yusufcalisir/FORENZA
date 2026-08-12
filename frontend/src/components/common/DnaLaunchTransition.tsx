@@ -37,10 +37,11 @@ export default function DnaLaunchTransition({ onComplete, autoStart = true }: Dn
           return prev + 1;
         }
         clearInterval(interval);
+        // Notify parent to navigate — do NOT hide overlay here.
+        // The overlay disappears naturally when Next.js unmounts this page.
         setTimeout(() => {
-          setIsVisible(false);
           if (onComplete) onComplete();
-        }, 600);
+        }, 400);
         return prev;
       });
     }, 450);

@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
-import { Shield, Activity, Cpu, Layers, Menu, X, Sparkles, ArrowRight } from "lucide-react";
+import { Shield, Activity, Cpu, Layers, Menu, X } from "lucide-react";
 import LaunchDemoButton from "./LaunchDemoButton";
 import ForenzaLogoIcon from "@/components/common/ForenzaLogoIcon";
 import SaaSLanguageToggle from "./SaaSLanguageToggle";
@@ -13,7 +12,7 @@ export default function LandingHeader() {
     const { t } = useSaasLanguage();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-    // Prevent body scrolling when full-screen mobile menu is open
+    // Prevent body scrolling when mobile menu overlay is open
     useEffect(() => {
         if (isMobileMenuOpen) {
             document.body.style.overflow = "hidden";
@@ -111,104 +110,83 @@ export default function LandingHeader() {
                 </div>
             </header>
 
-            {/* ── Ultra-Modern Full-Screen Mobile Menu Overlay ── */}
-            <AnimatePresence>
-                {isMobileMenuOpen && (
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.96 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.96 }}
-                        transition={{ duration: 0.25, ease: "easeOut" }}
-                        className="fixed inset-0 z-50 flex flex-col justify-between bg-[#0A0A0B]/98 backdrop-blur-3xl px-4 py-5 font-mono overflow-y-auto"
-                    >
-                        {/* Overlay Header */}
-                        <div className="flex items-center justify-between border-b border-tactical-border/60 pb-4">
-                            <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-2">
-                                <ForenzaLogoIcon size={32} className="shadow-lg shadow-emerald-500/10" />
-                                <span className="font-mono text-base font-extrabold tracking-wider text-white">
-                                    FORENZA
-                                </span>
-                            </Link>
+            {/* ── Ultra-Fast 60FPS Mobile Menu Overlay (Pure CSS GPU Accelerated) ── */}
+            <div
+                className={`fixed inset-0 z-50 flex flex-col justify-between bg-[#0A0A0B] px-4 py-5 font-mono transition-all duration-150 ease-out ${
+                    isMobileMenuOpen
+                        ? "opacity-100 pointer-events-auto translate-y-0"
+                        : "opacity-0 pointer-events-none -translate-y-2"
+                }`}
+            >
+                {/* Overlay Header */}
+                <div className="flex items-center justify-between border-b border-tactical-border/60 pb-4">
+                    <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-2">
+                        <ForenzaLogoIcon size={32} className="shadow-lg shadow-emerald-500/10" />
+                        <span className="font-mono text-base font-extrabold tracking-wider text-white">
+                            FORENZA
+                        </span>
+                    </Link>
 
-                            <div className="flex items-center gap-3">
-                                <SaaSLanguageToggle />
-                                <button
-                                    type="button"
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                    aria-label="Close mobile menu"
-                                    className="flex items-center justify-center p-2 rounded-xl border border-emerald-500/40 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 transition-all cursor-pointer"
-                                >
-                                    <X className="h-5 w-5" />
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Centered Modern Navigation Items */}
-                        <div className="my-auto py-8 space-y-3.5 flex flex-col items-center justify-center w-full max-w-sm mx-auto">
-                            <motion.button
-                                initial={{ opacity: 0, y: 15 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.05 }}
-                                type="button"
-                                onClick={(e) => scrollToSection("bio-simulator", e)}
-                                className="w-full py-3.5 px-5 rounded-2xl border border-tactical-border/80 bg-tactical-surface/90 hover:bg-emerald-500/10 hover:border-emerald-500/50 text-sm font-bold text-zinc-100 hover:text-emerald-300 transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] text-center cursor-pointer group"
-                            >
-                                <Activity className="w-4 h-4 text-cyan-400 shrink-0 group-hover:scale-110 transition-transform" />
-                                <span>{t.header.bioSimulator}</span>
-                            </motion.button>
-
-                            <motion.button
-                                initial={{ opacity: 0, y: 15 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.1 }}
-                                type="button"
-                                onClick={(e) => scrollToSection("subsystems", e)}
-                                className="w-full py-3.5 px-5 rounded-2xl border border-tactical-border/80 bg-tactical-surface/90 hover:bg-emerald-500/10 hover:border-emerald-500/50 text-sm font-bold text-zinc-100 hover:text-emerald-300 transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] text-center cursor-pointer group"
-                            >
-                                <Layers className="w-4 h-4 text-purple-400 shrink-0 group-hover:scale-110 transition-transform" />
-                                <span>{t.header.subsystems}</span>
-                            </motion.button>
-
-                            <motion.button
-                                initial={{ opacity: 0, y: 15 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.15 }}
-                                type="button"
-                                onClick={(e) => scrollToSection("architecture", e)}
-                                className="w-full py-3.5 px-5 rounded-2xl border border-tactical-border/80 bg-tactical-surface/90 hover:bg-emerald-500/10 hover:border-emerald-500/50 text-sm font-bold text-zinc-100 hover:text-emerald-300 transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] text-center cursor-pointer group"
-                            >
-                                <Cpu className="w-4 h-4 text-emerald-400 shrink-0 group-hover:scale-110 transition-transform" />
-                                <span>{t.header.architecture}</span>
-                            </motion.button>
-
-                            <motion.button
-                                initial={{ opacity: 0, y: 15 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.2 }}
-                                type="button"
-                                onClick={(e) => scrollToSection("security", e)}
-                                className="w-full py-3.5 px-5 rounded-2xl border border-tactical-border/80 bg-tactical-surface/90 hover:bg-emerald-500/10 hover:border-emerald-500/50 text-sm font-bold text-zinc-100 hover:text-emerald-300 transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] text-center cursor-pointer group"
-                            >
-                                <Shield className="w-4 h-4 text-amber-400 shrink-0 group-hover:scale-110 transition-transform" />
-                                <span>{t.header.security}</span>
-                            </motion.button>
-                        </div>
-
-                        {/* Overlay Footer Action */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.25 }}
-                            className="pt-4 border-t border-tactical-border/60 flex flex-col items-center gap-3 w-full max-w-sm mx-auto"
+                    <div className="flex items-center gap-3">
+                        <SaaSLanguageToggle />
+                        <button
+                            type="button"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            aria-label="Close mobile menu"
+                            className="flex items-center justify-center p-2 rounded-xl border border-emerald-500/40 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 transition-colors cursor-pointer"
                         >
-                            <LaunchDemoButton size="lg" label={t.header.launchDemo} className="w-full py-3.5 text-xs font-bold" />
-                            <span className="text-[10px] text-zinc-500 text-center font-mono">
-                                VANTAGE v3.0 • ISO/IEC 17025 Certified Evidence OS
-                            </span>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                            <X className="h-5 w-5" />
+                        </button>
+                    </div>
+                </div>
+
+                {/* Centered Modern Navigation Items */}
+                <div className="my-auto py-8 space-y-3 flex flex-col items-center justify-center w-full max-w-sm mx-auto">
+                    <button
+                        type="button"
+                        onClick={(e) => scrollToSection("bio-simulator", e)}
+                        className="w-full py-3.5 px-5 rounded-2xl border border-tactical-border/80 bg-tactical-surface text-sm font-bold text-zinc-100 hover:text-emerald-300 hover:border-emerald-500/50 hover:bg-emerald-500/10 transition-all duration-150 flex items-center justify-center gap-3 shadow-md text-center cursor-pointer group"
+                    >
+                        <Activity className="w-4 h-4 text-cyan-400 shrink-0 group-hover:scale-110 transition-transform" />
+                        <span>{t.header.bioSimulator}</span>
+                    </button>
+
+                    <button
+                        type="button"
+                        onClick={(e) => scrollToSection("subsystems", e)}
+                        className="w-full py-3.5 px-5 rounded-2xl border border-tactical-border/80 bg-tactical-surface text-sm font-bold text-zinc-100 hover:text-emerald-300 hover:border-emerald-500/50 hover:bg-emerald-500/10 transition-all duration-150 flex items-center justify-center gap-3 shadow-md text-center cursor-pointer group"
+                    >
+                        <Layers className="w-4 h-4 text-purple-400 shrink-0 group-hover:scale-110 transition-transform" />
+                        <span>{t.header.subsystems}</span>
+                    </button>
+
+                    <button
+                        type="button"
+                        onClick={(e) => scrollToSection("architecture", e)}
+                        className="w-full py-3.5 px-5 rounded-2xl border border-tactical-border/80 bg-tactical-surface text-sm font-bold text-zinc-100 hover:text-emerald-300 hover:border-emerald-500/50 hover:bg-emerald-500/10 transition-all duration-150 flex items-center justify-center gap-3 shadow-md text-center cursor-pointer group"
+                    >
+                        <Cpu className="w-4 h-4 text-emerald-400 shrink-0 group-hover:scale-110 transition-transform" />
+                        <span>{t.header.architecture}</span>
+                    </button>
+
+                    <button
+                        type="button"
+                        onClick={(e) => scrollToSection("security", e)}
+                        className="w-full py-3.5 px-5 rounded-2xl border border-tactical-border/80 bg-tactical-surface text-sm font-bold text-zinc-100 hover:text-emerald-300 hover:border-emerald-500/50 hover:bg-emerald-500/10 transition-all duration-150 flex items-center justify-center gap-3 shadow-md text-center cursor-pointer group"
+                    >
+                        <Shield className="w-4 h-4 text-amber-400 shrink-0 group-hover:scale-110 transition-transform" />
+                        <span>{t.header.security}</span>
+                    </button>
+                </div>
+
+                {/* Overlay Footer Action */}
+                <div className="pt-4 border-t border-tactical-border/60 flex flex-col items-center gap-3 w-full max-w-sm mx-auto">
+                    <LaunchDemoButton size="lg" label={t.header.launchDemo} className="w-full py-3.5 text-xs font-bold" />
+                    <span className="text-[10px] text-zinc-500 text-center font-mono">
+                        VANTAGE v3.0 • ISO/IEC 17025 Certified Evidence OS
+                    </span>
+                </div>
+            </div>
         </>
     );
 }

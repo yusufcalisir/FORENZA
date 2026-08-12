@@ -8,7 +8,8 @@ import ForenzaLogoIcon from "@/components/common/ForenzaLogoIcon";
 export default function LandingHeader() {
     const scrollToSection = (id: string, e: React.MouseEvent) => {
         e.preventDefault();
-        const el = document.getElementById(id);
+        const cleanId = id.replace("#", "");
+        const el = document.getElementById(cleanId) || (cleanId.includes("bio") ? document.getElementById("bio-simulator") : null);
         if (el) {
             const headerOffset = 70;
             const elementPosition = el.getBoundingClientRect().top;

@@ -21,10 +21,30 @@ export function SaasLanguageProvider({
   const [lang, setLangState] = useState<SaasLanguage>(initialLang);
 
   useEffect(() => {
-    // Only override if the user manually selected a preference in a previous session
+    // 1. If user previously manually toggled language, respect their choice
     const savedLang = localStorage.getItem("forenza_saas_lang") as SaasLanguage | null;
     if (savedLang === "tr" || savedLang === "en") {
       setLangState(savedLang);
+      return;
+    }
+
+    // 2. Client-side auto-detection fallback (browser language & timezone)
+    try {
+      const navLang = (navigator.language || "").toLowerCase();
+      const navLangs = Array.from(navigator.languages || []).map((l) => l.toLowerCase());
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+
+      const isTurkish =
+        navLang.startsWith("tr") ||
+        navLangs.some((l) => l.startsWith("tr")) ||
+        tz.includes("Istanbul") ||
+        tz.includes("Turkey");
+
+      if (isTurkish) {
+        setLangState("tr");
+      }
+    } catch (e) {
+      console.warn("Language auto-detection error", e);
     }
   }, []);
 

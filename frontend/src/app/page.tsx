@@ -20,17 +20,18 @@ export const metadata: Metadata = {
 export default async function RootPage() {
     const headersList = await headers();
     
-    // Server-side IP Geolocation detection via Vercel & Cloudflare headers
-    const country = headersList.get("x-vercel-ip-country") || headersList.get("cf-ipcountry");
+    // Server-side Geolocation & Language detection
+    const country = headersList.get("x-vercel-ip-country") || headersList.get("cf-ipcountry") || headersList.get("x-country") || "";
     const acceptLang = headersList.get("accept-language") || "";
+    const timezone = headersList.get("x-vercel-ip-timezone") || headersList.get("x-timezone") || "";
     
     let initialLang: SaasLanguage = "en";
     
-    if (country) {
-        // Strict IP Geolocation: Only set Turkish if incoming IP is explicitly from Turkey ('TR')
-        initialLang = country.toUpperCase() === "TR" ? "tr" : "en";
-    } else if (acceptLang.toLowerCase().startsWith("tr")) {
-        // Fallback Accept-Language header if no IP header is present
+    const isTurkishCountry = country.toUpperCase() === "TR";
+    const isTurkishLang = /tr(-[a-z]{2})?|\btr\b/i.test(acceptLang);
+    const isTurkishTz = /istanbul|turkey/i.test(timezone);
+
+    if (isTurkishCountry || isTurkishLang || isTurkishTz) {
         initialLang = "tr";
     }
 

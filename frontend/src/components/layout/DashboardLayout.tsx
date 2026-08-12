@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import ForenzaLogoIcon from "@/components/common/ForenzaLogoIcon";
+import DnaProfileInspectorModal from "@/components/common/DnaProfileInspectorModal";
 
 const NAV_ITEMS = [
     { id: "dashboard", label: "Dashboard", href: "/dashboard", icon: LayoutDashboard, color: "text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/25" },
@@ -212,6 +213,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <main className="flex-1 overflow-y-auto p-4 lg:p-5">
                     {children}
                 </main>
+                <DnaProfileInspectorModal />
             </div>
         </div>
     );

@@ -1,7 +1,6 @@
 "use client";
 
 import TacticalPageHeader from "@/components/common/TacticalPageHeader";
-
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import {
@@ -14,11 +13,14 @@ import {
     Hash,
     Filter,
     Server,
-    HardDrive,
     Sparkles,
     ShieldCheck,
-    Cpu,
+    Eye,
+    Globe,
+    Sliders,
+    ArrowRight,
 } from "lucide-react";
+import { useIngestStore, SAMPLE_CASE_EU, SAMPLE_CASE_AA } from "@/store/ingestStore";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -29,6 +31,7 @@ interface ProfileRecord {
     insertedAt: string;
     quality: "complete" | "partial" | "degraded";
     vectorId: number;
+    sampleType?: "EU" | "AA" | "CUSTOM";
 }
 
 // ─── Mock Data Generator ─────────────────────────────────────────────────────
@@ -50,7 +53,29 @@ function seededRandom(seed: number): () => number {
 function generateProfiles(count: number): ProfileRecord[] {
     const rand = seededRandom(42);
     const profiles: ProfileRecord[] = [];
-    for (let i = 0; i < count; i++) {
+
+    // Top Featured Sample Cases
+    profiles.push({
+        id: SAMPLE_CASE_EU.profileId,
+        originNode: SAMPLE_CASE_EU.nodeId,
+        lociCount: SAMPLE_CASE_EU.markerCount,
+        insertedAt: "2026-08-12 18:30",
+        quality: "complete",
+        vectorId: 100001,
+        sampleType: "EU",
+    });
+
+    profiles.push({
+        id: SAMPLE_CASE_AA.profileId,
+        originNode: SAMPLE_CASE_AA.nodeId,
+        lociCount: SAMPLE_CASE_AA.markerCount,
+        insertedAt: "2026-08-12 18:32",
+        quality: "complete",
+        vectorId: 100002,
+        sampleType: "AA",
+    });
+
+    for (let i = 2; i < count; i++) {
         const loci = Math.floor(rand() * 15) + 10;
         const quality: ProfileRecord["quality"] =
             loci >= 18 ? "complete" : loci >= 14 ? "partial" : "degraded";
@@ -76,7 +101,7 @@ const ALL_PROFILES = generateProfiles(24_847);
 // ─── Quality Badge Config ────────────────────────────────────────────────────
 
 const QUALITY_CONFIG = {
-    complete: { label: "COMPLETE (20 LOCI)", color: "#22C55E", bg: "rgba(34,197,94,0.12)", border: "rgba(34,197,94,0.3)" },
+    complete: { label: "COMPLETE (24 LOCI)", color: "#22C55E", bg: "rgba(34,197,94,0.12)", border: "rgba(34,197,94,0.3)" },
     partial: { label: "PARTIAL (14+ LOCI)", color: "#06B6D4", bg: "rgba(6,182,212,0.12)", border: "rgba(6,182,212,0.3)" },
     degraded: { label: "DEGRADED (<14 LOCI)", color: "#EF4444", bg: "rgba(239,68,68,0.12)", border: "rgba(239,68,68,0.3)" },
 } as const;
@@ -86,9 +111,9 @@ const QUALITY_CONFIG = {
 type SortKey = "id" | "originNode" | "lociCount" | "insertedAt";
 type SortDir = "asc" | "desc";
 
-// ─── Page Component ──────────────────────────────────────────────────────────
-
 export default function DatabasePage() {
+    const { activeProfile, setInspectorOpen, loadSampleCaseEU, loadSampleCaseAA } = useIngestStore();
+
     const [search, setSearch] = useState("");
     const [nodeFilter, setNodeFilter] = useState<string>("all");
     const [sortKey, setSortKey] = useState<SortKey>("id");
@@ -168,17 +193,94 @@ export default function DatabasePage() {
             {/* ── Unified Tactical Page Header ── */}
             <TacticalPageHeader
                 title="Forensic DNA Database"
-                subtitle="Milvus Vector Profile Registry • 24 Core CODIS Loci Indexes • HMAC Hash Sealed"
+                subtitle="Milvus Vector Profile Registry • 24 Core CODIS Loci & 55 AIM SNPs • HMAC Hash Sealed"
                 badge="COLLECTION: STR_PROFILES"
                 icon={Database}
                 accentColor="cyan"
             />
 
+            {/* ── ACTIVE DNA PROFILE BANNER & FEATURE INSPECTOR ── */}
+            {activeProfile && (
+                <div className="rounded-2xl border border-cyan-500/40 bg-[#081220] p-4 sm:p-5 space-y-4 shadow-[0_0_40px_rgba(6,182,212,0.15)] relative overflow-hidden">
+                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-tactical-border/80 pb-3">
+                        <div className="flex items-center gap-3">
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-cyan-500/20 border border-cyan-500/40 text-cyan-300">
+                                <Dna className="w-5 h-5 animate-pulse" />
+                            </div>
+                            <div>
+                                <div className="flex items-center gap-2">
+                                    <h3 className="text-sm sm:text-base font-bold text-white tracking-wider">
+                                        ACTIVE CASE: {activeProfile.profileId}
+                                    </h3>
+                                    <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                                        {activeProfile.sampleType} CASE
+                                    </span>
+                                </div>
+                                <p className="text-[10px] text-zinc-400">
+                                    Node: <span className="text-cyan-300">{activeProfile.nodeId}</span> • {activeProfile.markerCount} CODIS Loci • {activeProfile.snpCount} AIM SNPs
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={() => setInspectorOpen(true)}
+                                className="px-4 py-2 rounded-xl text-xs font-bold bg-cyan-500/20 border border-cyan-500/40 text-cyan-200 hover:bg-cyan-500/30 transition-all flex items-center gap-2 cursor-pointer shadow-[0_0_15px_rgba(6,182,212,0.2)]"
+                            >
+                                <Sliders className="w-4 h-4 text-cyan-400" />
+                                <span>Open DNA &amp; SNP Terminal</span>
+                                <ArrowRight className="w-3.5 h-3.5" />
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Feature Highlights Strip */}
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                        {/* Phenotype */}
+                        <div className="p-3 rounded-xl bg-black/50 border border-tactical-border/80 space-y-1.5">
+                            <div className="flex items-center gap-1.5 text-emerald-400 font-bold text-[11px]">
+                                <Eye className="w-3.5 h-3.5" />
+                                <span>Inferred Phenotype</span>
+                            </div>
+                            <div className="space-y-0.5 text-[10px]">
+                                <p><span className="text-zinc-400">Eye:</span> <strong className="text-white">{activeProfile.phenotype.eyeColor}</strong> ({activeProfile.phenotype.eyeColorProb}%)</p>
+                                <p><span className="text-zinc-400">Skin:</span> <strong className="text-amber-300">{activeProfile.phenotype.skinType}</strong></p>
+                                <p><span className="text-zinc-400">Hair:</span> <strong className="text-purple-300">{activeProfile.phenotype.hairType}</strong></p>
+                            </div>
+                        </div>
+
+                        {/* Ancestry */}
+                        <div className="p-3 rounded-xl bg-black/50 border border-tactical-border/80 space-y-1.5">
+                            <div className="flex items-center gap-1.5 text-cyan-400 font-bold text-[11px]">
+                                <Globe className="w-3.5 h-3.5" />
+                                <span>Biogeographic Ancestry</span>
+                            </div>
+                            <div className="space-y-0.5 text-[10px]">
+                                <p><span className="text-zinc-400">Primary:</span> <strong className="text-cyan-300">{activeProfile.ancestry.primary}</strong> ({activeProfile.ancestry.primaryPct}%)</p>
+                                <p><span className="text-zinc-400">Cluster:</span> <span className="text-zinc-200">{activeProfile.ancestry.populationCluster}</span></p>
+                            </div>
+                        </div>
+
+                        {/* Geo Location */}
+                        <div className="p-3 rounded-xl bg-black/50 border border-tactical-border/80 space-y-1.5">
+                            <div className="flex items-center gap-1.5 text-amber-400 font-bold text-[11px]">
+                                <MapPin className="w-3.5 h-3.5" />
+                                <span>Estimated Geo-Location</span>
+                            </div>
+                            <div className="space-y-0.5 text-[10px]">
+                                <p><span className="text-zinc-400">Coords:</span> <strong className="text-amber-300">{activeProfile.geoLocation.lat.toFixed(4)}° N, {activeProfile.geoLocation.lng.toFixed(4)}° E</strong></p>
+                                <p><span className="text-zinc-400">Target:</span> <span className="text-white font-bold">{activeProfile.geoLocation.cityRegion}, {activeProfile.geoLocation.country}</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* ── Bio-Forensic Stats Strip ── */}
             <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
                 {[
                     { label: "Total Profiles", value: stats.total.toLocaleString(), color: "#FAFAFA", bg: "#111113", border: "#27272A" },
-                    { label: "Complete (20 Loci)", value: stats.complete.toLocaleString(), color: "#22C55E", bg: "rgba(34,197,94,0.06)", border: "rgba(34,197,94,0.25)" },
+                    { label: "Complete (24 Loci)", value: stats.complete.toLocaleString(), color: "#22C55E", bg: "rgba(34,197,94,0.06)", border: "rgba(34,197,94,0.25)" },
                     { label: "Partial Profiles", value: stats.partial.toLocaleString(), color: "#06B6D4", bg: "rgba(6,182,212,0.06)", border: "rgba(6,182,212,0.25)" },
                     { label: "Degraded Profiles", value: stats.degraded.toLocaleString(), color: "#EF4444", bg: "rgba(239,68,68,0.06)", border: "rgba(239,68,68,0.25)" },
                     { label: "Active Network Nodes", value: stats.uniqueNodes.toString(), color: "#8B5CF6", bg: "rgba(139,92,246,0.06)", border: "rgba(139,92,246,0.25)" },
@@ -206,7 +308,7 @@ export default function DatabasePage() {
                         type="text"
                         value={search}
                         onChange={(e) => { setSearch(e.target.value); setPage(0); }}
-                        placeholder="Search by Profile ID (e.g. PRF-000100) or Node..."
+                        placeholder="Search by Profile ID (e.g. CASE-2026-EU) or Node..."
                         className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-tactical-border bg-tactical-surface
                             text-xs text-tactical-text placeholder:text-tactical-text-dim outline-none transition-all
                             focus:border-[#06B6D4] focus:ring-1 focus:ring-[#06B6D4]/30 shadow-inner"
@@ -265,8 +367,13 @@ export default function DatabasePage() {
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{ delay: i * 0.005 }}
+                                onClick={() => {
+                                    if (profile.sampleType === "EU") loadSampleCaseEU();
+                                    else if (profile.sampleType === "AA") loadSampleCaseAA();
+                                    setInspectorOpen(true);
+                                }}
                                 className="grid grid-cols-[1fr_1fr_0.8fr] sm:grid-cols-[1.5fr_1.2fr_0.8fr_1.2fr_1fr_0.8fr] gap-0
-                                    hover:bg-tactical-surface-elevated/60 transition-colors"
+                                    hover:bg-tactical-surface-elevated/80 cursor-pointer transition-colors"
                             >
                                 {/* Profile ID */}
                                 <div className="flex items-center gap-2 px-4 py-3 min-w-0">
@@ -289,7 +396,7 @@ export default function DatabasePage() {
                                     <span className="text-xs font-bold tabular-nums text-[#22C55E]">
                                         {profile.lociCount}
                                     </span>
-                                    <span className="text-[9px] text-tactical-text-dim ml-1">/ 20 Loci</span>
+                                    <span className="text-[9px] text-tactical-text-dim ml-1">/ 24 Loci</span>
                                 </div>
 
                                 {/* Quality */}

@@ -9,22 +9,22 @@ export default function LandingHero() {
     const { t } = useSaasLanguage();
 
     return (
-        <section className="relative overflow-hidden pt-12 pb-16 lg:pt-20 lg:pb-24 border-b border-tactical-border/60">
+        <section className="relative overflow-hidden pt-8 pb-12 sm:pt-16 sm:pb-20 lg:pt-20 lg:pb-24 border-b border-tactical-border/60 max-w-full">
             {/* Background Glow Overlay */}
             <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-gradient-to-tr from-cyan-500/10 via-tactical-accent/20 to-purple-600/10 blur-[120px] rounded-full pointer-events-none" />
 
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
-                <div className="text-center max-w-4xl mx-auto space-y-6">
+            <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 relative z-10">
+                <div className="text-center max-w-4xl mx-auto space-y-4 sm:space-y-6">
                     
                     {/* Top Announcement Badge */}
                     <motion.div
                         initial={{ opacity: 0, y: 15 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5 }}
-                        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-tactical-accent/40 bg-tactical-accent/10 backdrop-blur-md"
+                        className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 rounded-full border border-tactical-accent/40 bg-tactical-accent/10 backdrop-blur-md max-w-full"
                     >
-                        <Sparkles className="w-4 h-4 text-tactical-accent animate-pulse" />
-                        <span className="font-mono text-xs font-bold text-tactical-accent uppercase tracking-wider">
+                        <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-tactical-accent animate-pulse shrink-0" />
+                        <span className="font-mono text-[10px] sm:text-xs font-bold text-tactical-accent uppercase tracking-wider text-center leading-tight">
                             {t.hero.badge}
                         </span>
                     </motion.div>
@@ -34,10 +34,10 @@ export default function LandingHero() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: 0.1 }}
-                        className="text-3xl sm:text-5xl lg:text-6xl font-extrabold font-mono tracking-tight text-white leading-tight"
+                        className="text-2xl sm:text-5xl lg:text-6xl font-extrabold font-mono tracking-tight text-white leading-tight"
                     >
                         {t.hero.titleMain}{" "}
-                        <span className="bg-gradient-to-r from-emerald-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent">
+                        <span className="bg-gradient-to-r from-emerald-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent block sm:inline">
                             {t.hero.titleHighlight}
                         </span>
                     </motion.h1>
@@ -47,7 +47,7 @@ export default function LandingHero() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: 0.2 }}
-                        className="text-sm sm:text-base text-zinc-300 font-mono leading-relaxed max-w-3xl mx-auto"
+                        className="text-xs sm:text-base text-zinc-300 font-mono leading-relaxed max-w-3xl mx-auto px-2"
                     >
                         {t.hero.subtitle}
                     </motion.p>
@@ -57,9 +57,9 @@ export default function LandingHero() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: 0.3 }}
-                        className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"
+                        className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 pt-2 sm:pt-4"
                     >
-                        <LaunchDemoButton label={t.hero.launchDemo} className="w-full sm:w-auto text-sm py-3.5 px-8" />
+                        <LaunchDemoButton label={t.hero.launchDemo} className="w-full sm:w-auto text-xs sm:text-sm py-3 px-6 sm:px-8" />
                         <button
                             type="button"
                             onClick={(e) => {
@@ -72,7 +72,7 @@ export default function LandingHero() {
                                     window.scrollTo({ top: offsetPosition, behavior: "smooth" });
                                 }
                             }}
-                            className="w-full sm:w-auto px-6 py-3.5 rounded-xl border border-tactical-border/80 bg-tactical-surface hover:bg-tactical-surface-elevated font-mono text-xs font-bold text-zinc-200 uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer"
+                            className="w-full sm:w-auto px-6 py-3 rounded-xl border border-tactical-border/80 bg-tactical-surface hover:bg-tactical-surface-elevated font-mono text-xs font-bold text-zinc-200 uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer"
                         >
                             <Layers className="w-4 h-4 text-purple-400" />
                             {t.hero.exploreSubsystems}
@@ -84,26 +84,26 @@ export default function LandingHero() {
                         initial={{ opacity: 0, y: 25 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: 0.4 }}
-                        className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-10 border-t border-tactical-border/50 font-mono"
+                        className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4 pt-8 sm:pt-10 border-t border-tactical-border/50 font-mono"
                     >
-                        <div className="p-4 rounded-2xl bg-black/40 border border-tactical-border/60 backdrop-blur-md">
-                            <div className="text-2xl font-black text-tactical-accent">30</div>
-                            <div className="text-[10px] text-zinc-400 uppercase tracking-wider mt-1 font-bold">{t.hero.subsystemsStat}</div>
+                        <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-black/40 border border-tactical-border/60 backdrop-blur-md">
+                            <div className="text-xl sm:text-2xl font-black text-tactical-accent">30</div>
+                            <div className="text-[9px] sm:text-[10px] text-zinc-400 uppercase tracking-wider mt-1 font-bold">{t.hero.subsystemsStat}</div>
                         </div>
 
-                        <div className="p-4 rounded-2xl bg-black/40 border border-tactical-border/60 backdrop-blur-md">
-                            <div className="text-2xl font-black text-emerald-400">215/215</div>
-                            <div className="text-[10px] text-zinc-400 uppercase tracking-wider mt-1 font-bold">{t.hero.invariantsStat}</div>
+                        <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-black/40 border border-tactical-border/60 backdrop-blur-md">
+                            <div className="text-xl sm:text-2xl font-black text-emerald-400">215/215</div>
+                            <div className="text-[9px] sm:text-[10px] text-zinc-400 uppercase tracking-wider mt-1 font-bold">{t.hero.invariantsStat}</div>
                         </div>
 
-                        <div className="p-4 rounded-2xl bg-black/40 border border-tactical-border/60 backdrop-blur-md">
-                            <div className="text-2xl font-black text-cyan-400">ISO 17025</div>
-                            <div className="text-[10px] text-zinc-400 uppercase tracking-wider mt-1 font-bold">{t.hero.courtStat}</div>
+                        <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-black/40 border border-tactical-border/60 backdrop-blur-md">
+                            <div className="text-xl sm:text-2xl font-black text-cyan-400">ISO 17025</div>
+                            <div className="text-[9px] sm:text-[10px] text-zinc-400 uppercase tracking-wider mt-1 font-bold">{t.hero.courtStat}</div>
                         </div>
 
-                        <div className="p-4 rounded-2xl bg-black/40 border border-tactical-border/60 backdrop-blur-md">
-                            <div className="text-2xl font-black text-amber-400">zkSNARK</div>
-                            <div className="text-[10px] text-zinc-400 uppercase tracking-wider mt-1 font-bold">{t.hero.privacyStat}</div>
+                        <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-black/40 border border-tactical-border/60 backdrop-blur-md">
+                            <div className="text-xl sm:text-2xl font-black text-amber-400">zkSNARK</div>
+                            <div className="text-[9px] sm:text-[10px] text-zinc-400 uppercase tracking-wider mt-1 font-bold">{t.hero.privacyStat}</div>
                         </div>
                     </motion.div>
 

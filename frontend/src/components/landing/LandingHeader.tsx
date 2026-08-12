@@ -23,22 +23,22 @@ export default function LandingHeader() {
     };
 
     return (
-        <header className="sticky top-0 z-50 border-b border-tactical-border/60 bg-black/80 backdrop-blur-xl transition-all">
-            <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
+        <header className="sticky top-0 z-50 border-b border-tactical-border/60 bg-black/85 backdrop-blur-xl transition-all max-w-full overflow-hidden">
+            <div className="mx-auto flex max-w-7xl items-center justify-between px-3 py-2.5 sm:px-6 lg:px-8 gap-2">
                 {/* Brand Logo */}
-                <Link href="/" className="flex items-center gap-2.5 group shrink-0">
-                    <ForenzaLogoIcon size={34} className="group-hover:scale-105 transition-all duration-300 shadow-lg shadow-emerald-500/10" />
-                    <div className="flex items-center gap-2">
-                        <span className="font-mono text-base font-extrabold tracking-wider text-white">
+                <Link href="/" className="flex items-center gap-1.5 sm:gap-2.5 group shrink-0 min-w-0">
+                    <ForenzaLogoIcon size={30} className="sm:w-[34px] sm:h-[34px] group-hover:scale-105 transition-all duration-300 shadow-lg shadow-emerald-500/10 shrink-0" />
+                    <div className="flex items-center gap-1.5 min-w-0">
+                        <span className="font-mono text-sm sm:text-base font-extrabold tracking-wider text-white">
                             FORENZA
                         </span>
-                        <span className="rounded-full bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 text-[9px] font-mono font-bold text-emerald-400">
+                        <span className="hidden sm:inline-flex rounded-full bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 text-[9px] font-mono font-bold text-emerald-400 whitespace-nowrap">
                             EVIDENCE OS
                         </span>
                     </div>
                 </Link>
 
-                {/* Navigation Links */}
+                {/* Navigation Links (Desktop) */}
                 <nav className="hidden md:flex items-center gap-4 lg:gap-7 font-mono text-xs text-zinc-400">
                     <button 
                         type="button"
@@ -74,8 +74,8 @@ export default function LandingHeader() {
                     </button>
                 </nav>
 
-                {/* Actions */}
-                <div className="flex items-center gap-3 shrink-0">
+                {/* Right Actions */}
+                <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
                     <SaaSLanguageToggle />
                     <LaunchDemoButton size="sm" label={t.header.launchDemo} />
                 </div>

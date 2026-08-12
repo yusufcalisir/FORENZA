@@ -394,22 +394,22 @@ export default function DatabasePage() {
             </div>
 
             {/* ── Pagination ── */}
-            <div className="flex items-center justify-between pt-2">
-                <span className="text-xs text-tactical-text-dim">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-tactical-border/60">
+                <span className="text-xs text-tactical-text-dim text-center sm:text-left font-mono">
                     Showing <span className="text-tactical-text font-bold">{page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, sorted.length)}</span> of{" "}
-                    <span className="text-[#06B6D4] font-bold">{sorted.length.toLocaleString()}</span> profiles
+                    <span className="text-[#06B6D4] font-bold">{sorted.length.toLocaleString()}</span> indexed profiles
                 </span>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 shrink-0">
                     <button
                         onClick={() => setPage((p) => Math.max(0, p - 1))}
                         disabled={page === 0}
                         className="px-3.5 py-1.5 rounded-xl border border-tactical-border bg-tactical-surface text-xs text-tactical-text-muted
                             hover:text-white hover:border-[#06B6D4] transition-all
-                            disabled:opacity-30 disabled:cursor-not-allowed"
+                            disabled:opacity-30 disabled:cursor-not-allowed font-mono cursor-pointer"
                     >
                         Prev
                     </button>
-                    <span className="text-xs text-tactical-text-muted px-2 tabular-nums">
+                    <span className="text-xs text-tactical-text-muted px-2 font-mono tabular-nums font-bold">
                         {page + 1} / {totalPages}
                     </span>
                     <button
@@ -417,7 +417,7 @@ export default function DatabasePage() {
                         disabled={page >= totalPages - 1}
                         className="px-3.5 py-1.5 rounded-xl border border-tactical-border bg-tactical-surface text-xs text-tactical-text-muted
                             hover:text-white hover:border-[#06B6D4] transition-all
-                            disabled:opacity-30 disabled:cursor-not-allowed"
+                            disabled:opacity-30 disabled:cursor-not-allowed font-mono cursor-pointer"
                     >
                         Next
                     </button>
@@ -425,14 +425,14 @@ export default function DatabasePage() {
             </div>
 
             {/* ── Footer ── */}
-            <div className="flex items-center justify-between pt-3 border-t border-tactical-border/60 text-[10px] text-tactical-text-dim">
-                <div className="flex items-center gap-2">
-                    <Server className="w-3.5 h-3.5 text-[#06B6D4]" />
-                    <span>Milvus v2.4 • IVF_FLAT Index • Dimension 384 • Distance: COSINE</span>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 pt-3 border-t border-tactical-border/60 text-[10px] text-tactical-text-dim font-mono">
+                <div className="flex items-center gap-2 min-w-0">
+                    <Server className="w-3.5 h-3.5 text-[#06B6D4] shrink-0" />
+                    <span className="truncate">Milvus v2.4 • IVF_FLAT Index • Dimension 384 • Distance: COSINE</span>
                 </div>
-                <div className="flex items-center gap-2 text-[#22C55E]">
-                    <ShieldCheck className="w-3.5 h-3.5" />
-                    <span>Isolated Biometric Ledger</span>
+                <div className="flex items-center gap-1.5 text-[#22C55E] shrink-0">
+                    <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
+                    <span className="font-bold uppercase tracking-wider whitespace-nowrap">Isolated Biometric Ledger</span>
                 </div>
             </div>
         </motion.div>

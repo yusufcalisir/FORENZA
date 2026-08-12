@@ -1,147 +1,100 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { Dna } from "lucide-react";
+import { motion } from "framer-motion";
+import { Dna, ShieldCheck, Activity, Cpu, Sparkles, Scale, Lock, Layers } from "lucide-react";
 import LaunchDemoButton from "./LaunchDemoButton";
-import NeonDnaScroll from "./NeonDnaScroll";
-
-const METRICS = [
-    { value: 20, suffix: " / 20", label: "CODIS Core Loci", color: "#22C55E" },
-    { value: 12, prefix: "< ", suffix: "ms", label: "ZK Proof Generation", color: "#06B6D4" },
-    { value: 99.4, suffix: "%", label: "Phenotype Accuracy", color: "#8B5CF6" },
-    { value: 54, suffix: "", label: "GTEx Tissue eQTLs", color: "#22C55E" },
-];
-
-function CountUp({ target, prefix = "", suffix = "" }: { target: number; prefix?: string; suffix?: string }) {
-    const [val, setVal] = useState(0);
-    const ref = useRef<HTMLSpanElement>(null);
-
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                if (!entry.isIntersecting) return;
-                observer.disconnect();
-                let start = 0;
-                const duration = 1600;
-                const step = (timestamp: number) => {
-                    if (!start) start = timestamp;
-                    const progress = Math.min((timestamp - start) / duration, 1);
-                    const eased = 1 - Math.pow(1 - progress, 3);
-                    setVal(parseFloat((eased * target).toFixed(1)));
-                    if (progress < 1) requestAnimationFrame(step);
-                };
-                requestAnimationFrame(step);
-            },
-            { threshold: 0.5 }
-        );
-        if (ref.current) observer.observe(ref.current);
-        return () => observer.disconnect();
-    }, [target]);
-
-    return (
-        <span ref={ref} className="tabular-nums">
-            {prefix}{Number.isInteger(target) ? Math.round(val) : val.toFixed(1)}{suffix}
-        </span>
-    );
-}
 
 export default function LandingHero() {
-    const scrollToBioEngine = (e: React.MouseEvent) => {
-        e.preventDefault();
-        const el = document.getElementById("bio-engine");
-        if (el) {
-            const headerOffset = 70;
-            const elementPosition = el.getBoundingClientRect().top;
-            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-            window.scrollTo({ top: offsetPosition, behavior: "smooth" });
-        }
-    };
-
     return (
-        <section className="relative min-h-[100dvh] lg:min-h-screen flex flex-col items-center justify-between overflow-hidden px-4 pt-16 sm:pt-20 pb-6 sm:pb-8">
-            {/* Background mesh / grid */}
-            <div className="absolute inset-0 pointer-events-none select-none">
-                {/* Gradient orbs */}
-                <div className="absolute top-1/4 left-1/3 w-[600px] h-[600px] rounded-full bg-[#22C55E]/5 blur-[120px]" />
-                <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] rounded-full bg-[#06B6D4]/5 blur-[100px]" />
-                <div className="absolute top-1/3 right-1/3 w-[400px] h-[400px] rounded-full bg-[#8B5CF6]/5 blur-[90px]" />
-                {/* Grid overlay */}
-                <div
-                    className="absolute inset-0 opacity-[0.04]"
-                    style={{
-                        backgroundImage: `linear-gradient(#22C55E 1px, transparent 1px), linear-gradient(90deg, #22C55E 1px, transparent 1px)`,
-                        backgroundSize: "60px 60px",
-                    }}
-                />
-            </div>
+        <section className="relative overflow-hidden pt-12 pb-16 lg:pt-20 lg:pb-24 border-b border-tactical-border/60">
+            {/* Background Glow Overlay */}
+            <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-gradient-to-tr from-cyan-500/10 via-tactical-accent/20 to-purple-600/10 blur-[120px] rounded-full pointer-events-none" />
 
-            <div className="my-auto relative z-10 mx-auto max-w-5xl text-center flex flex-col items-center">
-                {/* Eyebrow badge */}
-                <div className="inline-flex items-center gap-2 rounded-full border border-[#06B6D4]/30 bg-[#06B6D4]/5 px-3.5 sm:px-4 py-1.5 mb-3 sm:mb-6 shadow-[0_0_20px_rgba(6,182,212,0.1)]">
-                    <Dna className="h-3.5 w-3.5 text-[#06B6D4]" />
-                    <span className="font-mono text-[9px] sm:text-[10px] tracking-widest text-[#06B6D4] font-medium uppercase">
-                        ADVANCED FORENSIC DNA INTELLIGENCE PLATFORM
-                    </span>
-                </div>
-
-                {/* Main headline */}
-                <h1 className="text-3xl sm:text-5xl lg:text-7xl font-bold tracking-tight text-tactical-text mb-3 sm:mb-4 leading-tight">
-                    Forensic DNA Profiling{" "}
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#22C55E] via-[#06B6D4] to-[#8B5CF6]">
-                        Redefined
-                    </span>
-                    <br />
-                    <span className="text-xl sm:text-3xl lg:text-5xl font-normal text-tactical-text-muted">
-                        by Statistical Rigor
-                    </span>
-                </h1>
-
-                {/* Subheading */}
-                <p className="max-w-xl sm:max-w-2xl mx-auto text-xs sm:text-base text-tactical-text-muted mb-4 sm:mb-8 leading-relaxed font-light">
-                    FORENZA combines likelihood ratio STR analysis, generative phenotype reconstruction,
-                    and zero-knowledge cryptographic verification with immutable blockchain chain of custody
-                    into a single tactical intelligence platform.
-                </p>
-
-                {/* 4 Metrics Cards - Always ON TOP of the buttons on ALL screens */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 max-w-4xl w-full mx-auto mb-4 sm:mb-8">
-                    {METRICS.map((m) => (
-                        <div
-                            key={m.label}
-                            className="rounded-xl border border-tactical-border bg-tactical-surface/50 backdrop-blur-sm px-2.5 sm:px-5 py-2.5 sm:py-4 flex flex-col items-center justify-center gap-0.5 sm:gap-1 hover:border-tactical-border/80 transition-colors shadow-lg"
-                        >
-                            <span
-                                className="font-mono text-lg sm:text-3xl font-bold tabular-nums"
-                                style={{ color: m.color }}
-                            >
-                                {m.prefix && <span className="text-xs sm:text-base">{m.prefix}</span>}
-                                <CountUp target={m.value} suffix={m.suffix} />
-                            </span>
-                            <span className="font-mono text-[8px] sm:text-[9px] tracking-widest text-tactical-text-dim uppercase text-center leading-tight">
-                                {m.label}
-                            </span>
-                        </div>
-                    ))}
-                </div>
-
-                {/* CTAs - Single LaunchDemoButton instance with equal height & alignment parity */}
-                <div className="flex flex-row items-center justify-center gap-2 sm:gap-4 w-full max-w-xs sm:max-w-none">
-                    <div className="flex-1 sm:flex-none">
-                        <LaunchDemoButton size="md" className="w-full sm:w-auto" />
-                    </div>
-                    <a
-                        href="#bio-engine"
-                        onClick={scrollToBioEngine}
-                        className="flex-1 sm:flex-none flex items-center justify-center rounded-xl border border-tactical-border bg-tactical-surface/80 backdrop-blur-md px-4 sm:px-8 py-2.5 sm:py-3.5 font-mono text-xs font-medium tracking-wide text-tactical-text-muted hover:text-white hover:border-[#06B6D4]/50 hover:bg-tactical-surface-elevated transition-all duration-200 whitespace-nowrap"
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
+                <div className="text-center max-w-4xl mx-auto space-y-6">
+                    
+                    {/* Top Announcement Badge */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 15 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5 }}
+                        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-tactical-accent/40 bg-tactical-accent/10 backdrop-blur-md"
                     >
-                        <span>Explore Bio-Engine</span>
-                    </a>
-                </div>
-            </div>
+                        <Sparkles className="w-4 h-4 text-tactical-accent animate-pulse" />
+                        <span className="font-mono text-xs font-bold text-tactical-accent uppercase tracking-wider">
+                            30 Integrated Subsystems • Multi-Omic Forensic OS v3.0
+                        </span>
+                    </motion.div>
 
-            {/* Neon Animated DNA Helix Scroll Indicator (Desktop Only) */}
-            <div className="hidden sm:block pt-4 z-20">
-                <NeonDnaScroll targetId="bio-engine" />
+                    {/* Main Headline */}
+                    <motion.h1
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.1 }}
+                        className="text-3xl sm:text-5xl lg:text-6xl font-extrabold font-mono tracking-tight text-white leading-tight"
+                    >
+                        The World's Most Advanced{" "}
+                        <span className="bg-gradient-to-r from-tactical-accent via-cyan-400 to-purple-400 bg-clip-text text-transparent">
+                            Forensic Evidence OS
+                        </span>
+                    </motion.h1>
+
+                    {/* Subtitle */}
+                    <motion.p
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.2 }}
+                        className="text-sm sm:text-base text-zinc-300 font-mono leading-relaxed max-w-3xl mx-auto"
+                    >
+                        Enterprise multi-omic biocomputational platform integrating Autosomal & Lineage STRs, MCMC Probabilistic Genotyping, HIrisPlex-S Phenotyping, Horvath Epigenetic Aging, LIMS Workflow, QA/QC Gatekeeping, Analyst Governance, and ISO 17025 Court Reporting.
+                    </motion.p>
+
+                    {/* CTA Actions */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.3 }}
+                        className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"
+                    >
+                        <LaunchDemoButton label="Launch Live Evidence OS" className="w-full sm:w-auto text-sm py-3.5 px-8" />
+                        <a
+                            href="#subsystems"
+                            className="w-full sm:w-auto px-6 py-3.5 rounded-xl border border-tactical-border/80 bg-tactical-surface hover:bg-tactical-surface-elevated font-mono text-xs font-bold text-zinc-200 uppercase tracking-wider transition-all flex items-center justify-center gap-2"
+                        >
+                            <Layers className="w-4 h-4 text-purple-400" />
+                            Explore 30 Subsystems
+                        </a>
+                    </motion.div>
+
+                    {/* Key Executive Telemetry Grid */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 25 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.4 }}
+                        className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-10 border-t border-tactical-border/50 font-mono"
+                    >
+                        <div className="p-4 rounded-2xl bg-black/40 border border-tactical-border/60 backdrop-blur-md">
+                            <div className="text-2xl font-black text-tactical-accent">30</div>
+                            <div className="text-[10px] text-zinc-400 uppercase tracking-wider mt-1 font-bold">Forensic Subsystems</div>
+                        </div>
+
+                        <div className="p-4 rounded-2xl bg-black/40 border border-tactical-border/60 backdrop-blur-md">
+                            <div className="text-2xl font-black text-emerald-400">215/215</div>
+                            <div className="text-[10px] text-zinc-400 uppercase tracking-wider mt-1 font-bold">Verified Invariants</div>
+                        </div>
+
+                        <div className="p-4 rounded-2xl bg-black/40 border border-tactical-border/60 backdrop-blur-md">
+                            <div className="text-2xl font-black text-cyan-400">ISO 17025</div>
+                            <div className="text-[10px] text-zinc-400 uppercase tracking-wider mt-1 font-bold">Court Admissible</div>
+                        </div>
+
+                        <div className="p-4 rounded-2xl bg-black/40 border border-tactical-border/60 backdrop-blur-md">
+                            <div className="text-2xl font-black text-amber-400">zkSNARK</div>
+                            <div className="text-[10px] text-zinc-400 uppercase tracking-wider mt-1 font-bold">Privacy Auditor</div>
+                        </div>
+                    </motion.div>
+
+                </div>
             </div>
         </section>
     );

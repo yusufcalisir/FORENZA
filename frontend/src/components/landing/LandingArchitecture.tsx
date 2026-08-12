@@ -9,7 +9,7 @@ export default function LandingArchitecture() {
     const layers = t.architecture.layers;
 
     return (
-        <section id="architecture" className="py-16 lg:py-24 border-b border-tactical-border/60">
+        <section id="architecture" className="py-16 lg:py-24 border-b border-tactical-border/60 w-full max-w-full overflow-hidden">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-12">
                 
                 {/* Header */}

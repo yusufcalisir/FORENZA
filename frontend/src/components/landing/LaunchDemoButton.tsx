@@ -9,10 +9,12 @@ export default function LaunchDemoButton({
     size = "md",
     className = "",
     label = "Launch Demo OS",
+    compactMobile = false,
 }: {
     size?: "sm" | "md" | "lg";
     className?: string;
     label?: string;
+    compactMobile?: boolean;
 }) {
     const router = useRouter();
     const [isTransitioning, setIsTransitioning] = useState(false);
@@ -25,11 +27,9 @@ export default function LaunchDemoButton({
 
     const handleClick = () => {
         setIsTransitioning(true);
-        // Prefetch so Next.js starts loading the dashboard while animation plays
         router.prefetch("/dashboard");
     };
 
-    // Navigate while overlay is still covering the screen — no SaaS flash
     const handleTransitionComplete = () => {
         router.push("/dashboard");
     };
@@ -43,10 +43,18 @@ export default function LaunchDemoButton({
             <button
                 type="button"
                 onClick={handleClick}
-                className={`group relative inline-flex items-center justify-center font-extrabold tracking-wider transition-all duration-300 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-black shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 hover:scale-[1.02] active:scale-[0.98] cursor-pointer border border-emerald-400/50 ${sizeClasses} ${className}`}
+                aria-label={label}
+                title={label}
+                className={`group relative inline-flex items-center justify-center font-extrabold tracking-wider transition-all duration-300 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-black shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 hover:scale-[1.02] active:scale-[0.98] cursor-pointer border border-emerald-400/50 ${
+                    compactMobile
+                        ? "p-2 sm:px-3.5 sm:py-1.5 font-mono text-[10px]"
+                        : sizeClasses
+                } ${className}`}
             >
                 <Zap className="h-4 w-4 text-black fill-black shrink-0 transition-transform group-hover:scale-110" />
-                <span className="whitespace-nowrap uppercase tracking-wider">{label}</span>
+                <span className={`whitespace-nowrap uppercase tracking-wider ${compactMobile ? "hidden sm:inline" : ""}`}>
+                    {label}
+                </span>
             </button>
         </>
     );

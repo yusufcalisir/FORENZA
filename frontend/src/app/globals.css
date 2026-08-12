@@ -105,6 +105,14 @@
     @apply border-border;
   }
 
+  html, body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+  }
+
   body {
     @apply bg-tactical-bg text-tactical-text;
     font-feature-settings: "rlig" 1, "calt" 1;

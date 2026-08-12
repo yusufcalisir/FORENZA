@@ -43,7 +43,7 @@ export default function LandingFooter() {
     };
 
     return (
-        <footer id="footer" className="border-t border-tactical-border/60 bg-black font-mono relative overflow-hidden">
+        <footer id="footer" className="border-t border-tactical-border/60 bg-black font-mono relative overflow-hidden w-full max-w-full">
             {/* Ambient Background Glow */}
             <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[200px] bg-emerald-500/5 blur-[120px] rounded-full pointer-events-none" />
 

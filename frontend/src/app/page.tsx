@@ -37,16 +37,18 @@ export default async function RootPage() {
 
     return (
         <SaasLanguageProvider initialLang={initialLang}>
-            <div className="min-h-screen bg-tactical-bg text-tactical-text">
-                <LandingHeader />
-                <LandingHero />
-                <LandingBioSimulator />
-                <LandingFeatures />
-                <LandingArchitecture />
-                <LandingSolutions />
-                <LandingSecuritySpecs />
-                <LandingFaq />
-                <LandingFooter />
+            <div className="min-h-screen bg-tactical-bg text-tactical-text w-full max-w-full overflow-x-hidden relative flex flex-col items-center">
+                <div className="w-full max-w-full overflow-x-hidden">
+                    <LandingHeader />
+                    <LandingHero />
+                    <LandingBioSimulator />
+                    <LandingFeatures />
+                    <LandingArchitecture />
+                    <LandingSolutions />
+                    <LandingSecuritySpecs />
+                    <LandingFaq />
+                    <LandingFooter />
+                </div>
             </div>
         </SaasLanguageProvider>
     );

@@ -17,7 +17,7 @@ export default function LandingFaq() {
     ];
 
     return (
-        <section id="faq" className="scroll-mt-20 py-16 px-4 font-mono border-b border-tactical-border/60">
+        <section id="faq" className="scroll-mt-20 py-16 px-4 font-mono border-b border-tactical-border/60 w-full max-w-full overflow-hidden">
             <div className="mx-auto max-w-3xl w-full space-y-10">
                 
                 {/* Header */}

@@ -22,7 +22,7 @@ export default function LandingSecuritySpecs() {
     }));
 
     return (
-        <section id="security" className="scroll-mt-20 flex flex-col justify-between py-16 px-4 bg-tactical-surface/30 border-b border-tactical-border/60">
+        <section id="security" className="scroll-mt-20 flex flex-col justify-between py-16 px-4 bg-tactical-surface/30 border-b border-tactical-border/60 w-full max-w-full overflow-hidden">
             <div className="mx-auto max-w-7xl w-full space-y-12">
                 
                 {/* Header */}

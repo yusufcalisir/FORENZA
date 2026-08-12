@@ -8,58 +8,74 @@ import {
     Database,
     FlaskConical,
     ShieldCheck,
-    Dna,
     GitGraph,
     LayoutDashboard,
-    Activity,
-    ChevronLeft,
-    ChevronRight,
-    Radio,
     Menu,
     X,
     Home,
+    ChevronLeft,
+    ChevronRight,
+    Dna,
+    Activity,
+    Radio,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-
-import { useIngestStore } from "@/store/ingestStore";
 import ForenzaLogoIcon from "@/components/common/ForenzaLogoIcon";
 
-/* ── Navigation Items ── */
 const NAV_ITEMS = [
-    { id: "dashboard", label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { id: "nodes", label: "Federated Network", href: "/nodes", icon: Network },
-    { id: "analysis", label: "Analysis Hub", href: "/analysis", icon: FlaskConical },
-    { id: "investigation", label: "Knowledge Graph", href: "/investigation", icon: GitGraph },
-    { id: "database", label: "DNA Database", href: "/database", icon: Database },
-    { id: "audit", label: "ISO Audit Log", href: "/audit", icon: ShieldCheck },
+    { id: "dashboard", label: "Dashboard", href: "/dashboard", icon: LayoutDashboard, color: "text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/25" },
+    { id: "analysis", label: "Analysis Hub", href: "/analysis", icon: FlaskConical, color: "text-cyan-400", bg: "bg-cyan-500/10", border: "border-cyan-500/25" },
+    { id: "nodes", label: "Federated Network", href: "/nodes", icon: Network, color: "text-purple-400", bg: "bg-purple-500/10", border: "border-purple-500/25" },
+    { id: "database", label: "DNA Database", href: "/database", icon: Database, color: "text-blue-400", bg: "bg-blue-500/10", border: "border-blue-500/25" },
+    { id: "investigation", label: "Knowledge Graph", href: "/investigation", icon: GitGraph, color: "text-indigo-400", bg: "bg-indigo-500/10", border: "border-indigo-500/25" },
+    { id: "audit", label: "ISO Audit Log", href: "/audit", icon: ShieldCheck, color: "text-amber-400", bg: "bg-amber-500/10", border: "border-amber-500/25" },
 ] as const;
 
-/* ── Mock network data ── */
-const MOCK_NODES_ONLINE = 7;
-const MOCK_LATENCY = 12;
-
-export default function DashboardLayout({
-    children,
+function NavItem({
+    item,
+    isActive,
+    collapsed,
 }: {
-    children: React.ReactNode;
+    item: typeof NAV_ITEMS[number];
+    isActive: boolean;
+    collapsed: boolean;
 }) {
+    const Icon = item.icon;
+    return (
+        <Link
+            href={item.href}
+            className={`group relative flex items-center gap-3 rounded-xl px-3 py-2.5 transition-all duration-200 font-mono text-xs font-bold tracking-wider uppercase
+                ${isActive
+                    ? `${item.bg} ${item.color} border ${item.border} shadow-sm`
+                    : "text-zinc-500 hover:text-zinc-200 hover:bg-white/5"
+                }`}
+        >
+            <Icon className={`w-4 h-4 shrink-0 ${isActive ? item.color : "text-zinc-600 group-hover:text-zinc-400"}`} />
+            {!collapsed && (
+                <span className="truncate leading-none">{item.label}</span>
+            )}
+            {isActive && !collapsed && (
+                <span className={`ml-auto h-1.5 w-1.5 rounded-full ${item.color.replace("text-", "bg-")} shrink-0`} />
+            )}
+            {collapsed && (
+                <div className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3 whitespace-nowrap rounded-lg border border-tactical-border bg-zinc-900 px-3 py-1.5 text-[10px] font-bold text-zinc-200 opacity-0 shadow-xl transition-all group-hover:opacity-100 z-[200]">
+                    {item.label}
+                </div>
+            )}
+        </Link>
+    );
+}
+
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-    // Check ingest state — Analysis Hub appears only when data is ingested
-    const isValid = useIngestStore((s) => s.isValid);
-
-    const visibleNavItems = NAV_ITEMS.filter((item) => {
-        if (item.id === "analysis") return isValid;
-        return true;
-    });
+    const activeId = NAV_ITEMS.find((item) => pathname.startsWith(item.href))?.id ?? "dashboard";
 
     return (
-        <div className="flex min-h-screen lg:h-screen lg:overflow-hidden bg-tactical-bg text-tactical-text">
-            {/* ════════════════════════════════════════════════
-          MOBILE SIDEBAR OVERLAY
-         ════════════════════════════════════════════════ */}
+        <div className="flex min-h-screen lg:h-screen lg:overflow-hidden bg-[#080c14] text-tactical-text">
+            {/* ── Mobile Overlay ── */}
             <AnimatePresence>
                 {mobileMenuOpen && (
                     <>
@@ -68,199 +84,142 @@ export default function DashboardLayout({
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setMobileMenuOpen(false)}
-                            className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm lg:hidden"
+                            className="fixed inset-0 z-[60] bg-black/70 backdrop-blur-sm lg:hidden"
                         />
                         <motion.aside
                             initial={{ x: "-100%" }}
                             animate={{ x: 0 }}
                             exit={{ x: "-100%" }}
-                            transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                            className="fixed inset-y-0 left-0 z-[70] w-64 bg-tactical-surface border-r border-tactical-border lg:hidden"
+                            transition={{ type: "spring", damping: 25, stiffness: 220 }}
+                            className="fixed inset-y-0 left-0 z-[70] w-64 bg-[#0a0f1a] border-r border-tactical-border lg:hidden flex flex-col"
                         >
-                            <div className="flex h-14 items-center justify-between px-4 border-b border-tactical-border">
-                                <span className="font-data text-xs font-bold tracking-widest text-tactical-primary">FORENZA</span>
-                                <button onClick={() => setMobileMenuOpen(false)} className="text-tactical-text-dim hover:text-white transition-colors">
-                                    <X className="h-5 w-5" />
+                            <div className="flex h-14 items-center justify-between px-4 border-b border-tactical-border/60">
+                                <div className="flex items-center gap-2.5">
+                                    <ForenzaLogoIcon size={28} />
+                                    <span className="font-mono text-xs font-extrabold tracking-widest text-white">FORENZA</span>
+                                </div>
+                                <button onClick={() => setMobileMenuOpen(false)}>
+                                    <X className="w-4 h-4 text-zinc-400" />
                                 </button>
                             </div>
-                            <nav className="p-4 space-y-2">
-                                {visibleNavItems.map((item) => {
-                                    const Icon = item.icon;
-                                    const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
-                                    return (
-                                        <Link
-                                            key={item.id}
-                                            href={item.href}
-                                            onClick={() => setMobileMenuOpen(false)}
-                                            className={`flex items-center gap-3 px-4 py-3 rounded-lg border transition-all ${isActive
-                                                ? "bg-tactical-primary/10 border-tactical-primary/30 text-tactical-primary"
-                                                : "border-transparent text-tactical-text-dim hover:bg-tactical-surface-elevated hover:text-white"
-                                                }`}
-                                        >
-                                            <Icon className="h-4 w-4" />
-                                            <span className="font-data text-xs font-medium tracking-wide">{item.label}</span>
-                                        </Link>
-                                    );
-                                })}
+                            <nav className="flex-1 overflow-y-auto p-3 space-y-1">
+                                {NAV_ITEMS.map((item) => (
+                                    <NavItem key={item.id} item={item} isActive={activeId === item.id} collapsed={false} />
+                                ))}
                             </nav>
+                            <div className="p-3 border-t border-tactical-border/60">
+                                <Link href="/" className="flex items-center gap-2 px-3 py-2 rounded-xl text-zinc-500 hover:text-zinc-300 font-mono text-[10px] font-bold uppercase tracking-wider transition-colors">
+                                    <Home className="w-3.5 h-3.5" />
+                                    Back to Landing
+                                </Link>
+                            </div>
                         </motion.aside>
                     </>
                 )}
             </AnimatePresence>
 
-            {/* ════════════════════════════════════════════════
-          DESKTOP SIDEBAR
-         ════════════════════════════════════════════════ */}
-            <aside
-                className={`
-          relative hidden flex-col border-r border-tactical-border
-          bg-tactical-surface transition-all duration-300 ease-out lg:flex
-          ${sidebarCollapsed ? "w-16" : "w-52"}
-        `}
+            {/* ── Desktop Sidebar ── */}
+            <motion.aside
+                animate={{ width: sidebarCollapsed ? 60 : 220 }}
+                transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                className="hidden lg:flex flex-col bg-[#0a0f1a] border-r border-tactical-border/60 overflow-hidden shrink-0"
             >
                 {/* Logo */}
-                <div className="flex h-14 items-center justify-center border-b border-tactical-border px-3">
-                    <div className="flex items-center gap-2 overflow-hidden">
-                        <ForenzaLogoIcon size={32} />
-                        {!sidebarCollapsed && (
-                            <span className="font-data text-xs font-semibold tracking-widest text-tactical-primary whitespace-nowrap">
-                                FORENZA OS
-                            </span>
-                        )}
-                    </div>
+                <div className={`flex h-14 items-center border-b border-tactical-border/60 ${sidebarCollapsed ? "justify-center px-2" : "px-4 gap-2.5"}`}>
+                    <ForenzaLogoIcon size={28} className="shrink-0" />
+                    {!sidebarCollapsed && (
+                        <div className="min-w-0">
+                            <p className="font-mono text-[11px] font-extrabold tracking-widest text-white truncate">FORENZA</p>
+                            <p className="font-mono text-[8px] tracking-widest text-emerald-500/70 truncate">EVIDENCE OS</p>
+                        </div>
+                    )}
                 </div>
 
-                {/* Nav Links */}
-                <nav className="flex-1 space-y-1 px-2 py-4">
-                    {visibleNavItems.map((item) => {
-                        const Icon = item.icon;
-                        const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
-                        return (
-                            <Link
-                                key={item.id}
-                                href={item.href}
-                                title={item.label}
-                                className={`
-                  group relative flex w-full items-center gap-3 rounded-md px-3 py-2.5
-                  text-sm transition-all duration-200
-                  ${isActive
-                                        ? "bg-tactical-primary/10 text-[#22C55E]"
-                                        : "text-tactical-text-muted hover:bg-tactical-surface-elevated hover:text-tactical-text"
-                                    }
-                `}
-                                style={isActive ? { textShadow: "0 0 12px rgba(34,197,94,0.5), 0 0 24px rgba(34,197,94,0.2)" } : undefined}
-                            >
-                                <Icon className={`h-4 w-4 shrink-0 transition-all duration-200 ${isActive ? "drop-shadow-[0_0_6px_rgba(34,197,94,0.6)]" : ""}`} />
-                                {!sidebarCollapsed && (
-                                    <span className="font-data text-xs font-medium tracking-wide whitespace-nowrap">
-                                        {item.label}
-                                    </span>
-                                )}
-                                {/* Active indicator bar */}
-                                {isActive && (
-                                    <div className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-r bg-tactical-primary shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
-                                )}
-                                {/* Tooltip when collapsed */}
-                                {sidebarCollapsed && (
-                                    <div className="
-                    pointer-events-none absolute left-full ml-2 rounded-md
-                    bg-tactical-surface-elevated px-2.5 py-1.5 text-xs font-medium
-                    text-tactical-text opacity-0 shadow-lg
-                    transition-opacity group-hover:opacity-100
-                    border border-tactical-border
-                  ">
-                                        {item.label}
-                                    </div>
-                                )}
-                            </Link>
-                        );
-                    })}
+                {/* Case Badge */}
+                {!sidebarCollapsed && (
+                    <div className="mx-3 mt-3 px-3 py-2 rounded-xl bg-emerald-500/5 border border-emerald-500/20">
+                        <div className="flex items-center gap-1.5">
+                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                            <span className="font-mono text-[9px] font-bold text-emerald-400 uppercase tracking-wider truncate">CASE-2026-FORENZA</span>
+                        </div>
+                        <p className="font-mono text-[8px] text-zinc-500 mt-0.5 truncate">30 Subsystems Active</p>
+                    </div>
+                )}
+
+                {/* Nav */}
+                <nav className="flex-1 overflow-y-auto p-2 space-y-0.5 mt-2">
+                    {NAV_ITEMS.map((item) => (
+                        <NavItem key={item.id} item={item} isActive={activeId === item.id} collapsed={sidebarCollapsed} />
+                    ))}
                 </nav>
 
-                {/* Collapse toggle */}
-                <button
-                    onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-                    className="
-            flex h-10 items-center justify-center border-t border-tactical-border
-            text-tactical-text-dim transition-colors hover:text-tactical-text
-          "
-                >
-                    {sidebarCollapsed ? (
-                        <ChevronRight className="h-4 w-4" />
-                    ) : (
-                        <ChevronLeft className="h-4 w-4" />
-                    )}
-                </button>
-            </aside>
+                {/* Bottom */}
+                <div className="p-2 border-t border-tactical-border/60 space-y-0.5">
+                    <Link
+                        href="/"
+                        className="group flex items-center gap-3 rounded-xl px-3 py-2 text-zinc-600 hover:text-zinc-300 hover:bg-white/5 transition-all font-mono text-[9px] font-bold uppercase tracking-wider"
+                    >
+                        <Home className="w-4 h-4 shrink-0 text-zinc-700 group-hover:text-zinc-400" />
+                        {!sidebarCollapsed && <span>Landing Page</span>}
+                    </Link>
+                    <button
+                        onClick={() => setSidebarCollapsed((c) => !c)}
+                        className="w-full flex items-center justify-center rounded-xl p-2 text-zinc-600 hover:text-zinc-300 hover:bg-white/5 transition-all"
+                    >
+                        {sidebarCollapsed
+                            ? <ChevronRight className="w-4 h-4" />
+                            : <ChevronLeft className="w-4 h-4" />}
+                    </button>
+                </div>
+            </motion.aside>
 
-            {/* ════════════════════════════════════════════════
-          MAIN CONTENT AREA
-         ════════════════════════════════════════════════ */}
-            <div className="flex flex-1 flex-col min-h-screen lg:h-full lg:overflow-hidden overflow-x-hidden">
-                {/* ── Header ── */}
-                <header className="flex h-14 shrink-0 items-center justify-between border-b border-tactical-border bg-tactical-surface px-3 sm:px-4 lg:px-6 overflow-hidden">
-                    {/* Left: Branding & Mobile Toggle */}
-                    <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-                        <button
-                            onClick={() => setMobileMenuOpen(true)}
-                            className="p-1 text-tactical-text-dim hover:text-tactical-text lg:hidden flex-shrink-0"
-                        >
-                            <Menu className="h-5 w-5" />
-                        </button>
-                        {/* Back to Landing Page */}
-                        <Link
-                            href="/"
-                            title="Platform Overview"
-                            className="flex-shrink-0 p-1 text-tactical-text-dim hover:text-tactical-primary transition-colors"
-                        >
-                            <Home className="h-4 w-4" />
-                        </Link>
-                        <h1 className="font-data text-[10px] sm:text-xs lg:text-sm font-bold tracking-[0.1em] sm:tracking-[0.15em] text-tactical-text uppercase truncate">
-                            FORENZA
-                        </h1>
-                        <span className="text-tactical-border hidden md:inline flex-shrink-0">|</span>
-                        <span className="font-data text-[10px] lg:text-[11px] tracking-wider text-tactical-text-muted hidden md:inline truncate">
-                            TACTICAL FORENSIC NETWORK
-                        </span>
+            {/* ── Main Content ── */}
+            <div className="flex flex-1 flex-col min-w-0 overflow-hidden">
+                {/* Mobile topbar */}
+                <header className="lg:hidden flex h-12 items-center justify-between px-4 border-b border-tactical-border/60 bg-[#0a0f1a] shrink-0">
+                    <button onClick={() => setMobileMenuOpen(true)}>
+                        <Menu className="w-5 h-5 text-zinc-400" />
+                    </button>
+                    <div className="flex items-center gap-2">
+                        <ForenzaLogoIcon size={24} />
+                        <span className="font-mono text-xs font-extrabold tracking-widest text-white">FORENZA</span>
                     </div>
-
-                    {/* Right: Network status */}
-                    <div className="flex items-center gap-1.5 sm:gap-2 lg:gap-5 flex-shrink-0">
-                        {/* Global Network Status */}
-                        <div className="flex items-center gap-1 lg:gap-2 rounded-full border border-tactical-primary/20 bg-tactical-primary/5 px-1.5 py-0.5 sm:px-2 sm:py-1 lg:px-3 lg:py-1.5">
-                            <div className="relative flex h-1 w-1 sm:h-1.5 sm:w-1.5 lg:h-2 lg:w-2">
-                                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-tactical-primary opacity-60" />
-                                <span className="relative inline-flex h-1 w-1 sm:h-1.5 sm:w-1.5 lg:h-2 lg:w-2 rounded-full bg-tactical-primary" />
-                            </div>
-                            <span className="font-data text-[7px] sm:text-[8px] lg:text-[10px] font-semibold tracking-widest text-tactical-primary uppercase truncate max-w-[30px] sm:max-w-none">
-                                <span className="hidden sm:inline">ONLINE</span>
-                                <span className="sm:hidden">ON</span>
-                            </span>
-                        </div>
-
-                        {/* Nodes count - Hidden on small mobile */}
-                        <div className="hidden items-center gap-1.5 text-tactical-text-muted sm:flex">
-                            <Radio className="h-3 w-3" />
-                            <span className="font-data text-[10px] tracking-wider whitespace-nowrap">
-                                {MOCK_NODES_ONLINE} NODES
-                            </span>
-                        </div>
-
-                        {/* Latency - Small on mobile */}
-                        <div className="flex items-center gap-1 text-tactical-text-dim lg:gap-1.5">
-                            <Activity className="h-2.5 w-2.5 sm:h-3 sm:w-3 flex-shrink-0" />
-                            <span className="font-data text-[8px] sm:text-[9px] lg:text-[10px] tracking-wider whitespace-nowrap">
-                                {MOCK_LATENCY}ms
-                            </span>
-                        </div>
+                    <div className="flex items-center gap-1.5">
+                        <Radio className="w-3.5 h-3.5 text-emerald-400" />
+                        <span className="font-mono text-[9px] text-emerald-400 font-bold">LIVE</span>
                     </div>
                 </header>
 
-                {/* ── Page Content ── */}
-                <main className="flex-1 overflow-y-auto p-4 sm:p-6">
+                {/* Top Status Bar */}
+                <div className="hidden lg:flex h-9 items-center justify-between px-5 border-b border-tactical-border/40 bg-black/40 shrink-0">
+                    <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-1.5">
+                            <Activity className="w-3 h-3 text-emerald-400" />
+                            <span className="font-mono text-[9px] text-zinc-500 uppercase tracking-wider">30 Subsystems</span>
+                            <span className="font-mono text-[9px] text-emerald-400 font-bold">ONLINE</span>
+                        </div>
+                        <div className="h-3 w-px bg-tactical-border/60" />
+                        <div className="flex items-center gap-1.5">
+                            <Dna className="w-3 h-3 text-cyan-400" />
+                            <span className="font-mono text-[9px] text-zinc-500">Engine</span>
+                            <span className="font-mono text-[9px] text-cyan-400 font-bold">VANTAGE v3.0</span>
+                        </div>
+                        <div className="h-3 w-px bg-tactical-border/60" />
+                        <div className="flex items-center gap-1.5">
+                            <ShieldCheck className="w-3 h-3 text-amber-400" />
+                            <span className="font-mono text-[9px] text-zinc-500">ISO/IEC 17025:2017</span>
+                            <span className="font-mono text-[9px] text-amber-400 font-bold">CERTIFIED</span>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <Radio className="w-3 h-3 text-emerald-400 animate-pulse" />
+                        <span className="font-mono text-[9px] text-emerald-400 font-bold uppercase tracking-widest">CASE-2026-FORENZA • ACTIVE</span>
+                    </div>
+                </div>
+
+                <main className="flex-1 overflow-y-auto p-4 lg:p-5">
                     {children}
                 </main>
-
             </div>
         </div>
     );

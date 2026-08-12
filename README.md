@@ -1,7 +1,7 @@
 # FORENZA: Forensic Evidence Operating System
 
 <p align="center">
-  <img src="frontend/public/og-image.png" alt="FORENZA — Forensic Evidence Operating System" width="800" />
+  <img src="frontend/public/icon.svg" alt="FORENZA Logo" width="130" height="130" />
 </p>
 
 <p align="center">

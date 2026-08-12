@@ -1,6 +1,7 @@
 "use client";
 
 import { Lock, FileCheck, AlertOctagon, Cpu } from "lucide-react";
+import NeonDnaScroll from "./NeonDnaScroll";
 
 const SECURITY_PILLARS = [
     {
@@ -126,6 +127,7 @@ export default function LandingSecuritySpecs() {
                     </div>
                 </div>
 
+                <NeonDnaScroll targetId="faq" />
             </div>
         </section>
     );

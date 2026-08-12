@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Dna, ShieldCheck, Activity, Cpu, Sparkles, Scale, Lock, Layers } from "lucide-react";
 import LaunchDemoButton from "./LaunchDemoButton";
+import NeonDnaScroll from "./NeonDnaScroll";
 
 export default function LandingHero() {
     return (
@@ -95,6 +96,7 @@ export default function LandingHero() {
                     </motion.div>
 
                 </div>
+                <NeonDnaScroll targetId="bio-simulator" />
             </div>
         </section>
     );

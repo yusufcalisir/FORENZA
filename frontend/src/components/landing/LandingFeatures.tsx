@@ -6,6 +6,7 @@ import {
     Binary, Dna, Activity, Bone, Bug, Leaf, Droplet, Pill, Syringe, 
     PackageCheck, Eye, Microscope, Fingerprint, Clock, Cpu, FileText, Scale, Sparkles, Layers, CheckCircle2, ShieldCheck, Zap
 } from "lucide-react";
+import NeonDnaScroll from "./NeonDnaScroll";
 
 export default function LandingFeatures() {
     const [selectedPillar, setSelectedPillar] = useState<number>(0);
@@ -268,6 +269,7 @@ export default function LandingFeatures() {
                     </div>
                 </div>
 
+                <NeonDnaScroll targetId="architecture" />
             </div>
         </section>
     );

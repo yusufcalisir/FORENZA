@@ -2,8 +2,11 @@
 
 import { motion } from "framer-motion";
 import { Cpu, Network, CheckCircle2, ShieldCheck, Activity, Layers, ArrowRight } from "lucide-react";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 export default function LandingArchitecture() {
+    const { t } = useSaasLanguage();
+
     const layers = [
         {
             layer: "Layer 1: Multi-Omic Evidence Ingestion",
@@ -45,13 +48,13 @@ export default function LandingArchitecture() {
                 <div className="text-center max-w-3xl mx-auto space-y-3">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-300 font-mono text-xs font-bold uppercase">
                         <Cpu className="w-3.5 h-3.5" />
-                        Directed Acyclic Graph Architecture
+                        {t.architecture.badge}
                     </div>
                     <h2 className="text-2xl sm:text-4xl font-extrabold font-mono text-white tracking-tight">
-                        Forensic Evidence OS Directed Acyclic Graph (DAG)
+                        {t.architecture.title}
                     </h2>
                     <p className="text-xs sm:text-sm text-zinc-400 font-mono">
-                        6-layer directed pipeline orchestrating all 30 biocomputational engines from raw sample ingestion to certified court admissibility.
+                        {t.architecture.subtitle}
                     </p>
                 </div>
 

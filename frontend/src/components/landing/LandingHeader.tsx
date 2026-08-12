@@ -4,8 +4,12 @@ import Link from "next/link";
 import { Shield, Activity, Cpu, Layers } from "lucide-react";
 import LaunchDemoButton from "./LaunchDemoButton";
 import ForenzaLogoIcon from "@/components/common/ForenzaLogoIcon";
+import SaaSLanguageToggle from "./SaaSLanguageToggle";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 export default function LandingHeader() {
+    const { t } = useSaasLanguage();
+
     const scrollToSection = (id: string, e: React.MouseEvent) => {
         e.preventDefault();
         const cleanId = id.replace("#", "");
@@ -42,7 +46,7 @@ export default function LandingHeader() {
                         className="hover:text-emerald-400 transition-colors flex items-center gap-1.5 font-medium cursor-pointer bg-transparent border-0 p-0"
                     >
                         <Activity className="w-3.5 h-3.5 text-cyan-400" />
-                        Bio-Simulator
+                        {t.header.bioSimulator}
                     </button>
                     <button 
                         type="button"
@@ -50,7 +54,7 @@ export default function LandingHeader() {
                         className="hover:text-emerald-400 transition-colors flex items-center gap-1.5 font-medium cursor-pointer bg-transparent border-0 p-0"
                     >
                         <Layers className="w-3.5 h-3.5 text-purple-400" />
-                        30 Subsystems
+                        {t.header.subsystems}
                     </button>
                     <button 
                         type="button"
@@ -58,7 +62,7 @@ export default function LandingHeader() {
                         className="hover:text-emerald-400 transition-colors flex items-center gap-1.5 font-medium cursor-pointer bg-transparent border-0 p-0"
                     >
                         <Cpu className="w-3.5 h-3.5 text-emerald-400" />
-                        Evidence OS DAG
+                        {t.header.architecture}
                     </button>
                     <button 
                         type="button"
@@ -66,13 +70,14 @@ export default function LandingHeader() {
                         className="hover:text-emerald-400 transition-colors flex items-center gap-1.5 font-medium cursor-pointer bg-transparent border-0 p-0"
                     >
                         <Shield className="w-3.5 h-3.5 text-amber-400" />
-                        Security &amp; ISO
+                        {t.header.security}
                     </button>
                 </nav>
 
                 {/* Actions */}
                 <div className="flex items-center gap-3 shrink-0">
-                    <LaunchDemoButton size="sm" label="Launch Demo OS" />
+                    <SaaSLanguageToggle />
+                    <LaunchDemoButton size="sm" label={t.header.launchDemo} />
                 </div>
             </div>
         </header>

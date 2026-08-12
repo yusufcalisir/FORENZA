@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 import {
     Eye,
     Dna,
@@ -463,11 +464,11 @@ function ZkpTab() {
 const TABS: { id: TabId; label: string; shortLabel: string; icon: React.ElementType; color: string }[] = [
     { id: "phenotype", label: "Phenotype Prediction", shortLabel: "Phenotype", icon: Eye, color: "#22C55E" },
     { id: "str", label: "STR Locus Analysis", shortLabel: "STR Analysis", icon: Dna, color: "#06B6D4" },
-    { id: "zkp", label: "ZK Proof Auditor", shortLabel: "ZK Auditor", icon: ShieldCheck, color: "#8B5CF6" },
 ];
 
 export default function LandingBioSimulator() {
     const [activeTab, setActiveTab] = useState<TabId>("phenotype");
+    const { t } = useSaasLanguage();
 
     return (
         <section id="bio-simulator" className="scroll-mt-20 min-h-[85vh] lg:min-h-screen flex flex-col justify-between py-12 px-4 bg-tactical-surface/20">
@@ -477,18 +478,14 @@ export default function LandingBioSimulator() {
                     <div className="inline-flex items-center gap-2 rounded-full border border-[#06B6D4]/30 bg-[#06B6D4]/5 px-4 py-1.5 mb-3 shadow-[0_0_15px_rgba(6,182,212,0.1)]">
                         <Dna className="h-4 w-4 text-[#06B6D4]" />
                         <span className="font-mono text-[10px] tracking-widest text-[#06B6D4] uppercase font-bold">
-                            Interactive Bio-Analysis Simulator
+                            {t.bioSimulator.badge}
                         </span>
                     </div>
                     <h2 className="text-3xl sm:text-4xl font-bold text-tactical-text mb-3">
-                        Explore Analytical Modules{" "}
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#22C55E] via-[#06B6D4] to-[#8B5CF6]">
-                            In Action
-                        </span>
+                        {t.bioSimulator.title}
                     </h2>
                     <p className="max-w-xl mx-auto text-tactical-text-muted text-xs sm:text-sm leading-relaxed">
-                        Test the real-time phenotype scoring, capillary electropherogram peak visualizer,
-                        and zero-knowledge prover modules directly below.
+                        {t.bioSimulator.subtitle}
                     </p>
                 </div>
 

@@ -1,13 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 import { 
     Binary, Dna, Activity, Bone, Bug, Leaf, Droplet, Pill, Syringe, 
     PackageCheck, Eye, Microscope, Fingerprint, Clock, Cpu, FileText, Scale, Sparkles, Layers, CheckCircle2, ShieldCheck, Zap
 } from "lucide-react";
 
 export default function LandingFeatures() {
+    const { t } = useSaasLanguage();
     const [selectedPillar, setSelectedPillar] = useState<number>(0);
 
     const pillars = [
@@ -134,13 +136,13 @@ export default function LandingFeatures() {
                 <div className="text-center max-w-3xl mx-auto space-y-4">
                     <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 text-emerald-300 text-xs font-bold uppercase tracking-wider shadow-lg shadow-emerald-500/10">
                         <Sparkles className="w-4 h-4 text-emerald-400 animate-pulse" />
-                        <span>30 Integrated Forensic Engines • ISO/IEC 17025 Compliant</span>
+                        <span>{t.subsystems.badge}</span>
                     </div>
                     <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
-                        30 Biocomputational &amp; Forensic Subsystems
+                        {t.subsystems.title}
                     </h2>
                     <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed max-w-2xl mx-auto">
-                        Organized into 6 core architectural pillars covering every domain of forensic biology, probabilistic genotyping, epigenetics, pathology, LIMS SOP chains, and court testimony.
+                        {t.subsystems.subtitle}
                     </p>
                 </div>
 

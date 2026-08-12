@@ -3,8 +3,11 @@
 import { motion } from "framer-motion";
 import { Dna, ShieldCheck, Activity, Cpu, Sparkles, Scale, Lock, Layers } from "lucide-react";
 import LaunchDemoButton from "./LaunchDemoButton";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 export default function LandingHero() {
+    const { t } = useSaasLanguage();
+
     return (
         <section className="relative overflow-hidden pt-12 pb-16 lg:pt-20 lg:pb-24 border-b border-tactical-border/60">
             {/* Background Glow Overlay */}
@@ -22,7 +25,7 @@ export default function LandingHero() {
                     >
                         <Sparkles className="w-4 h-4 text-tactical-accent animate-pulse" />
                         <span className="font-mono text-xs font-bold text-tactical-accent uppercase tracking-wider">
-                            30 Integrated Subsystems • Multi-Omic Forensic OS v3.0
+                            {t.hero.badge}
                         </span>
                     </motion.div>
 
@@ -33,9 +36,9 @@ export default function LandingHero() {
                         transition={{ duration: 0.6, delay: 0.1 }}
                         className="text-3xl sm:text-5xl lg:text-6xl font-extrabold font-mono tracking-tight text-white leading-tight"
                     >
-                        Integrated Biocomputational{" "}
+                        {t.hero.titleMain}{" "}
                         <span className="bg-gradient-to-r from-emerald-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent">
-                            Forensic Evidence OS
+                            {t.hero.titleHighlight}
                         </span>
                     </motion.h1>
 
@@ -46,7 +49,7 @@ export default function LandingHero() {
                         transition={{ duration: 0.6, delay: 0.2 }}
                         className="text-sm sm:text-base text-zinc-300 font-mono leading-relaxed max-w-3xl mx-auto"
                     >
-                        Enterprise multi-omic biocomputational platform integrating Autosomal & Lineage STRs, MCMC Probabilistic Genotyping, HIrisPlex-S Phenotyping, Horvath Epigenetic Aging, LIMS Workflow, QA/QC Gatekeeping, Analyst Governance, and ISO 17025 Court Reporting.
+                        {t.hero.subtitle}
                     </motion.p>
 
                     {/* CTA Actions */}
@@ -56,7 +59,7 @@ export default function LandingHero() {
                         transition={{ duration: 0.6, delay: 0.3 }}
                         className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"
                     >
-                        <LaunchDemoButton label="Launch Live Evidence OS" className="w-full sm:w-auto text-sm py-3.5 px-8" />
+                        <LaunchDemoButton label={t.hero.launchDemo} className="w-full sm:w-auto text-sm py-3.5 px-8" />
                         <button
                             type="button"
                             onClick={(e) => {
@@ -72,7 +75,7 @@ export default function LandingHero() {
                             className="w-full sm:w-auto px-6 py-3.5 rounded-xl border border-tactical-border/80 bg-tactical-surface hover:bg-tactical-surface-elevated font-mono text-xs font-bold text-zinc-200 uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer"
                         >
                             <Layers className="w-4 h-4 text-purple-400" />
-                            Explore 30 Subsystems
+                            {t.hero.exploreSubsystems}
                         </button>
                     </motion.div>
 

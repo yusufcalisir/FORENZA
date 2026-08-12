@@ -8,6 +8,7 @@ import LandingSolutions from "@/components/landing/LandingSolutions";
 import LandingSecuritySpecs from "@/components/landing/LandingSecuritySpecs";
 import LandingFaq from "@/components/landing/LandingFaq";
 import LandingFooter from "@/components/landing/LandingFooter";
+import { SaasLanguageProvider } from "@/context/SaaSLanguageContext";
 
 export const metadata: Metadata = {
     title: "FORENZA Forensic Evidence OS",
@@ -16,16 +17,18 @@ export const metadata: Metadata = {
 
 export default function RootPage() {
     return (
-        <div className="min-h-screen bg-tactical-bg text-tactical-text">
-            <LandingHeader />
-            <LandingHero />
-            <LandingBioSimulator />
-            <LandingFeatures />
-            <LandingArchitecture />
-            <LandingSolutions />
-            <LandingSecuritySpecs />
-            <LandingFaq />
-            <LandingFooter />
-        </div>
+        <SaasLanguageProvider>
+            <div className="min-h-screen bg-tactical-bg text-tactical-text">
+                <LandingHeader />
+                <LandingHero />
+                <LandingBioSimulator />
+                <LandingFeatures />
+                <LandingArchitecture />
+                <LandingSolutions />
+                <LandingSecuritySpecs />
+                <LandingFaq />
+                <LandingFooter />
+            </div>
+        </SaasLanguageProvider>
     );
 }

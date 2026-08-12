@@ -1,6 +1,7 @@
 "use client";
 
 import { Lock, FileCheck, AlertOctagon, Cpu } from "lucide-react";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 const SECURITY_PILLARS = [
     {
@@ -45,6 +46,8 @@ const SPECS = [
 ];
 
 export default function LandingSecuritySpecs() {
+    const { t } = useSaasLanguage();
+
     return (
         <section id="security" className="scroll-mt-20 flex flex-col justify-between py-16 px-4 bg-tactical-surface/30 border-b border-tactical-border/60">
             <div className="mx-auto max-w-7xl w-full space-y-12">
@@ -54,14 +57,14 @@ export default function LandingSecuritySpecs() {
                     <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-1.5 shadow-lg">
                         <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
                         <span className="font-mono text-xs font-bold text-emerald-300 uppercase tracking-wider">
-                            Security, Specifications & ISO Standards
+                            {t.security.badge}
                         </span>
                     </div>
                     <h2 className="text-3xl sm:text-5xl font-extrabold font-mono text-white tracking-tight">
-                        Privacy by Design, Certified Admissibility
+                        {t.security.title}
                     </h2>
                     <p className="max-w-2xl mx-auto text-zinc-400 font-mono text-xs sm:text-sm leading-relaxed">
-                        Built on non-negotiable security principles and mathematical invariants ensuring complete compliance with ISO/IEC 17025:2017, SWGDAM, and ENFSI guidelines.
+                        {t.security.subtitle}
                     </p>
                 </div>
 

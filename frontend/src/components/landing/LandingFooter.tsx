@@ -3,6 +3,7 @@
 import Link from "next/link";
 import LaunchDemoButton from "./LaunchDemoButton";
 import ForenzaLogoIcon from "@/components/common/ForenzaLogoIcon";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 const FOOTER_LINKS = [
     {
@@ -42,6 +43,8 @@ const TECH_BADGES = [
 ];
 
 export default function LandingFooter() {
+    const { t } = useSaasLanguage();
+
     const scrollToSection = (targetId: string, e: React.MouseEvent) => {
         e.preventDefault();
         const cleanId = targetId.replace("#", "");
@@ -59,48 +62,31 @@ export default function LandingFooter() {
             {/* Ambient Background Glow */}
             <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[200px] bg-emerald-500/5 blur-[120px] rounded-full pointer-events-none" />
 
-            {/* CTA Banner */}
-            <div className="border-b border-tactical-border/60 bg-black/40">
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-10 flex flex-col sm:flex-row items-center justify-between gap-5 text-center sm:text-left">
-                    <div>
-                        <h2 className="text-xl sm:text-2xl font-extrabold text-white mb-1">
-                            Ready to Launch FORENZA Evidence OS?
-                        </h2>
-                        <p className="text-zinc-400 text-xs sm:text-sm">
-                            Access all 30 biocomputational forensic subsystems in the live SaaS dashboard.
-                        </p>
-                    </div>
-                    <div>
-                        <LaunchDemoButton size="lg" label="Launch Demo OS" />
-                    </div>
-                </div>
-            </div>
-
-            {/* Main Footer Content */}
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
-                <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
-                    {/* Brand Column */}
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 relative z-10">
+                <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 pb-8 border-b border-tactical-border/60">
+                    
+                    {/* Brand Info */}
                     <div className="lg:col-span-2 space-y-4">
                         <div className="flex items-center gap-3">
-                            <ForenzaLogoIcon size={36} />
+                            <ForenzaLogoIcon size={38} className="shadow-lg shadow-emerald-500/10" />
                             <div>
-                                <p className="font-mono text-sm font-bold tracking-widest text-tactical-text">
+                                <span className="font-mono text-xl font-extrabold tracking-wider text-white">
                                     FORENZA
-                                </p>
+                                </span>
                                 <p className="font-mono text-[9px] tracking-widest text-cyan-400">
                                     FORENSIC EVIDENCE OPERATING SYSTEM
                                 </p>
                             </div>
                         </div>
                         <p className="text-zinc-400 text-xs leading-relaxed max-w-sm">
-                            Enterprise multi-omic biocomputational intelligence platform unifying DNA profiling, kinship, phenotyping, epigenetics, pathology, LIMS, QA/QC, and court admissibility.
+                            {t.footer.tagline}
                         </p>
 
                         <div className="flex items-center gap-2 pt-1">
                             <div className="flex items-center gap-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/5 px-3 py-1">
                                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
                                 <span className="text-[10px] font-bold text-emerald-400 uppercase">
-                                    30 Subsystems Active (v3.0.0-PROD)
+                                    {t.footer.status}
                                 </span>
                             </div>
                         </div>
@@ -134,7 +120,7 @@ export default function LandingFooter() {
                 {/* Tech Stack Badges */}
                 <div className="mt-8 pt-8 border-t border-tactical-border/60 flex flex-wrap items-center justify-between gap-4">
                     <p className="text-[10px] text-zinc-500">
-                        &copy; 2026 FORENZA Forensic Systems. All Rights Reserved. ISO/IEC 17025:2017 Admissible.
+                        &copy; 2026 {t.footer.rights}
                     </p>
                     <div className="flex flex-wrap gap-2">
                         {TECH_BADGES.map((b, bIdx) => (

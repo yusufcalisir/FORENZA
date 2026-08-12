@@ -45,21 +45,11 @@ export const metadata: Metadata = {
     siteName: "FORENZA",
     title: "FORENZA",
     description: "FORENZA",
-    images: [
-      {
-        url: `${SITE_URL}/og-image.png`,
-        width: 1200,
-        height: 630,
-        alt: "FORENZA",
-        type: "image/png",
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "FORENZA",
     description: "FORENZA",
-    images: [`${SITE_URL}/og-image.png`],
     creator: "@forenza",
   },
   robots: {

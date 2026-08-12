@@ -464,6 +464,7 @@ function ZkpTab() {
 const TABS: { id: TabId; label: string; shortLabel: string; icon: React.ElementType; color: string }[] = [
     { id: "phenotype", label: "Phenotype Prediction", shortLabel: "Phenotype", icon: Eye, color: "#22C55E" },
     { id: "str", label: "STR Locus Analysis", shortLabel: "STR Analysis", icon: Dna, color: "#06B6D4" },
+    { id: "zkp", label: "ZK Proof Auditor", shortLabel: "ZK Auditor", icon: ShieldCheck, color: "#8B5CF6" },
 ];
 
 export default function LandingBioSimulator() {

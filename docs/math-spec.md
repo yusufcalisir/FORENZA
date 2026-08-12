@@ -572,6 +572,21 @@ For $N$ reviewed forensic cases with $N_{\text{approved}}$ concordant approvals:
 
 $$C_{\text{analyst}} = \frac{N_{\text{approved}}}{N}$$
 
+---
+
+## 31. ISO 17025 Report Hash Integrity & Mathematical Immutability Invariant
+
+### 31.1 ISO 17025 Cryptographic Certificate Hash ($H_{\text{cert}}$)
+For 8-section ISO certificate with Case ID $C$, Sample ID $S$, calculated $\log_{10} LR$, ENFSI scale predicate $E$, primary analyst $P$, technical reviewer $V$, and timestamp $T$:
+
+$$H_{\text{cert}} = \text{HMAC-SHA256}_{K_{\text{iso}}}\left( C \parallel S \parallel \log_{10} LR \parallel E \parallel P \parallel V \parallel T \right)$$
+
+### 31.2 Mathematical Immutability Invariant ($\mathcal{I}_{\text{math}}$)
+For narrative text engine $\mathcal{N}$ and mathematical statistical engine $\mathcal{M}$:
+
+$$\mathcal{I}_{\text{math}} = \begin{cases} 1 \quad (\text{IMMUTABLE}), & \mathcal{N}(LR) \equiv \mathcal{M}(LR) \\ 0 \quad (\text{VIOLATION}), & \mathcal{N}(LR) \neq \mathcal{M}(LR) \end{cases}$$
+
+
 
 
 

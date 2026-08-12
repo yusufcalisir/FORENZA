@@ -361,6 +361,14 @@ try:
 except Exception as _rev_import_err:
     logger.warning(f"[boot] Human Review router not loaded: {_rev_import_err}")
 
+# --- Court-Admissible ISO 17025 Forensic Report Generator Router ---
+try:
+    from app.api.iso_report_routes import router as iso_report_router
+    app.include_router(iso_report_router, prefix="/api/v1")
+    logger.info("[boot] ISO 17025 Report Generator API router registered at /api/v1/forensic/reports")
+except Exception as _iso_rep_import_err:
+    logger.warning(f"[boot] ISO Report router not loaded: {_iso_rep_import_err}")
+
 
 
 

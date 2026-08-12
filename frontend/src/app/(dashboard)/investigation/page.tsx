@@ -1,10 +1,9 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import TacticalPageHeader from "@/components/common/TacticalPageHeader";
 import { GitGraph, ShieldAlert, Lock, Search, RefreshCw, Upload, CheckCircle } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
 import { useIngestStore } from "@/store/ingestStore";
 
 import SystemPulse from "@/components/investigation/SystemPulse";
@@ -44,7 +43,6 @@ export default function InvestigationDashboard() {
 
     const handlePanic = () => {
         setPanicMode(true);
-        // In a real app, this would call /auth/logout and purge local storage
         console.log("PANIC: Session Revoked, Token Purged, WebSocket Closed.");
     };
 
@@ -55,20 +53,14 @@ export default function InvestigationDashboard() {
         setZkpStatus('generating');
 
         try {
-            // 1. Trigger ZKP Worker (Mocked for Demo if artifacts missing)
-            // Real implementation would look like AnalysisPage.tsx worker logic
-            // For dashboard flow, we simulate the cryptographic delay
-
             await new Promise(resolve => setTimeout(resolve, 2500));
 
             setZkpStatus('verified');
-            setShieldActive(false); // Hide shield once verified
+            setShieldActive(false);
 
-            // 2. Fetch Analysis Data
             const data = await fetchAnalysis(activeProfileId, "European");
             setAnalysisResult(data);
 
-            // 3. Update Global Store
             setLastIngested(activeProfileId, "FORENZA-NODE-01", 24);
 
         } catch (error) {
@@ -89,16 +81,16 @@ export default function InvestigationDashboard() {
 
     if (panicMode) {
         return (
-            <div className="flex flex-col items-center justify-center h-[80vh] text-red-500 space-y-4 bg-zinc-950">
+            <div className="flex flex-col items-center justify-center min-h-[60vh] text-red-500 space-y-4 font-mono">
                 <motion.div
                     initial={{ scale: 0.8, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     className="p-6 bg-red-500/10 rounded-full border border-red-500/20"
                 >
-                    <Lock className="w-16 h-16 animate-pulse" />
+                    <Lock className="w-12 h-12 animate-pulse" />
                 </motion.div>
-                <h1 className="text-2xl font-bold tracking-[0.2em] uppercase">Session Terminated</h1>
-                <div className="flex flex-col items-center space-y-1 text-zinc-500 font-mono text-sm">
+                <h1 className="text-xl font-bold tracking-[0.2em] uppercase">Session Terminated</h1>
+                <div className="flex flex-col items-center space-y-1 text-zinc-500 font-mono text-xs">
                     <p>Blockchain Access Token Revoked</p>
                     <p>Local Key Material Shredded</p>
                     <p>Audit Log: <span className="text-red-400">EMERGENCY_EXIT_0x9F2A</span></p>
@@ -108,9 +100,9 @@ export default function InvestigationDashboard() {
     }
 
     return (
-        <div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-zinc-950">
-            {/* Main Content Area */}
-            <div className="flex-1 flex flex-col p-6 overflow-y-auto space-y-6 relative">
+        <div className="flex flex-col xl:flex-row gap-6 w-full max-w-full font-mono relative">
+            {/* Main Content Area (Natural Page Flow - No inner scrollbar) */}
+            <div className="flex-1 space-y-6 min-w-0">
 
                 {/* ZKP Shield Overlay */}
                 <AnimatePresence>
@@ -118,7 +110,6 @@ export default function InvestigationDashboard() {
                 </AnimatePresence>
 
                 {/* Header & Panic */}
-                {/* ── Unified Tactical Page Header ── */}
                 <TacticalPageHeader
                     title="Forensic Knowledge Graph"
                     subtitle="Relational Case Subgraph • Pedigree Kinship Traversal • Level 4 Cryptographic Clearance"
@@ -140,7 +131,7 @@ export default function InvestigationDashboard() {
                 <SystemPulse />
 
                 {/* Module 2: The Forensic Vault (Search vs Result) */}
-                <div className="flex-1 min-h-[500px] flex flex-col relative w-full">
+                <div className="w-full">
                     <AnimatePresence mode="wait">
                         {!analysisResult ? (
                             <motion.div
@@ -148,20 +139,18 @@ export default function InvestigationDashboard() {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -20 }}
-                                className="flex-1 bg-zinc-900/20 border border-zinc-800 rounded-lg p-8 flex flex-col items-center justify-center relative overflow-hidden group"
+                                className="bg-tactical-surface/60 border border-tactical-border/70 rounded-2xl p-6 sm:p-10 flex flex-col items-center justify-center relative overflow-hidden group"
                             >
-                                <div className="absolute inset-0 bg-grid-zinc-900/50 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] pointer-events-none" />
-
-                                <div className="relative z-10 text-center space-y-8 max-w-lg">
-                                    <div className="mx-auto w-20 h-20 bg-zinc-800 rounded-full flex items-center justify-center border border-zinc-700 shadow-xl group-hover:border-emerald-500/50 transition-colors">
-                                        <Search className="w-10 h-10 text-zinc-500 group-hover:text-emerald-400 transition-colors" />
+                                <div className="relative z-10 text-center space-y-6 max-w-lg">
+                                    <div className="mx-auto w-16 h-16 bg-purple-500/10 rounded-2xl flex items-center justify-center border border-purple-500/30 shadow-xl group-hover:border-purple-500/60 transition-colors">
+                                        <Search className="w-8 h-8 text-purple-400" />
                                     </div>
 
                                     <div className="space-y-2">
-                                        <h2 className="text-3xl font-bold text-zinc-200 tracking-tight">Forensic Vault Search</h2>
-                                        <p className="text-zinc-500 leading-relaxed">
+                                        <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">Forensic Vault Search</h2>
+                                        <p className="text-zinc-400 text-xs leading-relaxed">
                                             Upload raw `.fsa` files or enter STR profile manually.
-                                            <span className="text-emerald-500 block mt-2 font-mono text-xs border border-emerald-500/20 bg-emerald-500/5 py-1 px-2 rounded inline-block">
+                                            <span className="text-emerald-400 block mt-2 font-mono text-[10px] font-bold border border-emerald-500/30 bg-emerald-500/10 py-1 px-2.5 rounded-lg inline-block">
                                                 <Lock className="w-3 h-3 inline mr-1 mb-0.5" />
                                                 Zero-Knowledge Proof Enabled
                                             </span>
@@ -172,7 +161,7 @@ export default function InvestigationDashboard() {
                                         <button
                                             onClick={runInvestigation}
                                             disabled={isAnalyzing}
-                                            className="px-8 py-3 bg-zinc-100 hover:bg-white text-zinc-900 rounded font-bold transition-all flex items-center gap-2 shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_25px_rgba(255,255,255,0.2)]"
+                                            className="px-6 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold rounded-xl transition-all flex items-center gap-2 text-xs font-mono uppercase tracking-wider cursor-pointer shadow-lg shadow-emerald-500/20"
                                         >
                                             {isAnalyzing ? (
                                                 <>
@@ -194,35 +183,35 @@ export default function InvestigationDashboard() {
                                 key="result-mode"
                                 initial={{ opacity: 0, scale: 0.95 }}
                                 animate={{ opacity: 1, scale: 1 }}
-                                className="flex-1 flex flex-col md:flex-row gap-6 h-full"
+                                className="flex flex-col lg:flex-row gap-6 w-full"
                             >
                                 {/* Left: Match Stats */}
-                                <div className="flex-1 space-y-6">
-                                    <div className="flex justify-between items-center bg-zinc-900/40 p-3 rounded border border-zinc-800">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-8 h-8 rounded bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
-                                                <CheckCircle className="w-5 h-5 text-emerald-400" />
+                                <div className="flex-1 space-y-4 min-w-0">
+                                    <div className="flex justify-between items-center bg-tactical-surface/80 p-3 rounded-xl border border-tactical-border/70">
+                                        <div className="flex items-center gap-2.5">
+                                            <div className="w-8 h-8 rounded-xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/30">
+                                                <CheckCircle className="w-4 h-4 text-emerald-400" />
                                             </div>
                                             <div>
-                                                <h3 className="text-sm font-bold text-zinc-200">Match Verified</h3>
-                                                <p className="text-[10px] text-zinc-500 font-mono">ZKP Hash: 0x9a7...3b2</p>
+                                                <h3 className="text-xs font-bold text-white">Match Verified</h3>
+                                                <p className="text-[9px] text-zinc-400 font-mono">ZKP Hash: 0x9a7...3b2</p>
                                             </div>
                                         </div>
                                         <button
                                             onClick={resetInvestigation}
-                                            className="text-xs text-zinc-500 hover:text-zinc-300 font-mono underline"
+                                            className="text-xs text-zinc-400 hover:text-emerald-300 font-mono underline cursor-pointer"
                                         >
                                             New Search
                                         </button>
                                     </div>
 
-                                    <div className="grid grid-cols-1 gap-6">
+                                    <div className="w-full max-w-full overflow-hidden">
                                         <MatchResultCardDemo />
                                     </div>
                                 </div>
 
                                 {/* Right: Geo-Forensic Intelligence */}
-                                <div className="w-full md:flex-1 h-[720px] min-h-[500px]">
+                                <div className="w-full lg:w-1/2 min-h-[450px]">
                                     <GeoForensicPanel
                                         geoResults={analysisResult?.geo_analysis_results || null}
                                         reliabilityScore={analysisResult?.geo_reliability_score || 0}
@@ -234,18 +223,18 @@ export default function InvestigationDashboard() {
                 </div>
 
                 {/* Forensic Knowledge Graph Subsystem */}
-                <div className="shrink-0 pt-4 border-t border-zinc-800">
+                <div className="pt-4 border-t border-tactical-border/60">
                     <ForensicGraphPanel />
                 </div>
 
                 {/* The Live Ledger */}
-                <div className="h-64 shrink-0">
+                <div className="pt-4 border-t border-tactical-border/60">
                     <EmbeddedAuditLog />
                 </div>
             </div>
 
             {/* Sidebar: Agentic Intelligence */}
-            <div className="w-96 border-l border-zinc-800 bg-zinc-950/30 hidden xl:block backdrop-blur-sm">
+            <div className="w-full xl:w-80 shrink-0 border border-tactical-border/60 rounded-2xl bg-tactical-surface/60 overflow-hidden h-fit xl:sticky xl:top-20">
                 <InvestigatorSidebar />
             </div>
         </div>

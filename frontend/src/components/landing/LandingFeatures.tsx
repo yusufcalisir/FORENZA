@@ -1,152 +1,170 @@
 "use client";
 
-import { Binary, Dna, Eye, Syringe, PackageCheck, Scale } from "lucide-react";
-import NeonDnaScroll from "./NeonDnaScroll";
-
-const FEATURES = [
-    {
-        icon: Binary,
-        title: "Probabilistic Genotyping & Population",
-        description:
-            "MCMC Metropolis-Hastings 2-4 person mixture deconvolution with Dirichlet Fst subpopulation correction, Tippett calibration, and low-template touch LTDNA dropout recovery.",
-        tags: ["MCMC MIXTURE", "DIRICHLET FST", "TIPPETT CALIBRATION", "LTDNA TOUCH"],
-        color: "#22C55E",
-        glow: "rgba(34,197,94,0.12)",
-    },
-    {
-        icon: Dna,
-        title: "Lineage Forensics & Kinship Indexing",
-        description:
-            "Y-STR Clopper-Pearson 95% binomial confidence intervals, X-STR linkage kinship KIX, mtDNA rCRS alignment, and Interpol DVI mass casualty pedigree trees.",
-        tags: ["Y-STR HAPLOTYPE", "X-STR LINKAGE", "MTDNA RCRS", "DVI PEDIGREE"],
-        color: "#06B6D4",
-        glow: "rgba(6,182,212,0.12)",
-    },
-    {
-        icon: Eye,
-        title: "Phenotyping, Epigenetics & Genomics",
-        description:
-            "HIrisPlex-S Extended phenotype prediction for eye, hair, skin tone and freckles, Horvath 5-CpG epigenetic clock, tDMR tissue deconvolution, and 5-tier joint evidence fusion.",
-        tags: ["HIRISPLEX-S", "HORVATH CLOCK", "TDMR TISSUE", "5-TIER FUSION"],
-        color: "#8B5CF6",
-        glow: "rgba(139,92,246,0.12)",
-    },
-    {
-        icon: Syringe,
-        title: "Biology, Serology & Pathology Engines",
-        description:
-            "ABO/Rh blood group serology, FUT2/FUT3 secretor status, Forensic Pathology PMI Algor mortis clock, Widmark BAC clearance, and impact angle bloodstain BPA physics.",
-        tags: ["ABO/RH SEROLOGY", "FUT2 SECRETOR", "TOXICOLOGY BAC", "BPA SPATTER"],
-        color: "#22C55E",
-        glow: "rgba(34,197,94,0.12)",
-    },
-    {
-        icon: PackageCheck,
-        title: "LIMS Workflow, Gateway & QA/QC",
-        description:
-            "9-Step SOP accessioning chain, automated CE GeneMapper/qPCR/NGS parsers, 7-point QA/QC inspection matrix, and dual-analyst sign-off governance with HMAC audit trail.",
-        tags: ["LIMS 9-STEP SOP", "INSTRUMENT PARSER", "7-POINT QC", "DUAL SIGN-OFF"],
-        color: "#06B6D4",
-        glow: "rgba(6,182,212,0.12)",
-    },
-    {
-        icon: Scale,
-        title: "ISO Certificate & Expert Witness Court Mode",
-        description:
-            "8-Section ISO 17025 certified report compiler, 7-Point Judicial Testimony Framework, Prosecutor's Fallacy Prevention Shield, and Master Evidence OS DAG orchestrator.",
-        tags: ["ISO 17025 CERT", "COURT MODE", "PROSECUTOR SHIELD", "EVIDENCE OS DAG"],
-        color: "#8B5CF6",
-        glow: "rgba(139,92,246,0.12)",
-    },
-];
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { 
+    Binary, Dna, Activity, Bone, Bug, Leaf, Droplet, Pill, Syringe, 
+    PackageCheck, Eye, Microscope, Fingerprint, Clock, Cpu, FileText, Scale, Sparkles, Layers 
+} from "lucide-react";
 
 export default function LandingFeatures() {
+    const [selectedPillar, setSelectedPillar] = useState<number>(0);
+
+    const pillars = [
+        {
+            name: "Probabilistic Genotyping & Population",
+            icon: Binary,
+            color: "text-cyan-400 border-cyan-500/40 bg-cyan-500/10",
+            subsystems: [
+                { name: "Autosomal STR & Kinship Engine", desc: "CODIS 24 loci inclusion/exclusion LR calculation & kinship index." },
+                { name: "MCMC Probabilistic Genotyping", desc: "Metropolis-Hastings MCMC 2-4 person mixture deconvolution." },
+                { name: "Dirichlet Fst Population Genetics", desc: "NRC II Recommendation 4.1 & 4.2 subpopulation Fst correction." },
+                { name: "Touch DNA & Low-Template LTDNA", desc: "Stochastic dropout (p_d) & drop-in (p_i) recovery model." },
+                { name: "Tippett Calibration Engine", desc: "Log10 LR calibration under H_p vs H_d non-contributor distributions." }
+            ]
+        },
+        {
+            name: "Lineage Forensics & Kinship",
+            icon: Dna,
+            color: "text-purple-400 border-purple-500/40 bg-purple-500/10",
+            subsystems: [
+                { name: "Y-STR Haplotype Forensics", desc: "Clopper-Pearson 95% binomial confidence intervals & Y-HRD lookup." },
+                { name: "X-STR Linkage & Kinship Index", desc: "Linked marker transmission probabilities & female kinship KIX." },
+                { name: "mtDNA Control Region Forensics", desc: "rCRS / RSRS revised Cambridge reference alignment & haplogroups." },
+                { name: "DVI Mass Disaster Kinship Trees", desc: "Automated victim identification pedigree tree matching." },
+                { name: "Lineage Haplotype Fusion", desc: "Integrated Y/X/mtDNA joint likelihood ratio synthesis." }
+            ]
+        },
+        {
+            name: "Phenotyping, Epigenetics & Genomics",
+            icon: Eye,
+            color: "text-emerald-400 border-emerald-500/40 bg-emerald-500/10",
+            subsystems: [
+                { name: "HIrisPlex-S Phenotype Prediction", desc: "Extended Eye, Hair, Skin Tone & Freckling risk probability." },
+                { name: "Horvath 5-CpG Epigenetic Clock", desc: "DNA methylation age prediction with U_95% uncertainty." },
+                { name: "Tissue Specific tDMR Epigenetics", desc: "Body fluid tissue deconvolution via CpG methylation." },
+                { name: "AHRR Smoking Epigenetic Biomarker", desc: "Environmental exposure & lifestyle methylation profile." },
+                { name: "Multi-Layer Evidence Fusion", desc: "5-Tier joint evidence LR synthesis (STR+SNP+mt+Y+Epigenetics)." }
+            ]
+        },
+        {
+            name: "Biology, Serology & Pathology",
+            icon: Syringe,
+            color: "text-rose-400 border-rose-500/40 bg-rose-500/10",
+            subsystems: [
+                { name: "ABO/Rh Blood Group Serology", desc: "Serological antigen phenotype matching & secretor status." },
+                { name: "Lewis Non-Secretor Assay", desc: "FUT2/FUT3 gene secretor status & serology-DNA fusion." },
+                { name: "Forensic Pathology & PMI Clock", desc: "Algor, Rigor & Livor mortis Post-Mortem Interval estimation." },
+                { name: "Toxicology Widmark BAC Engine", desc: "Widmark clearance rate & PMR cardiac redistribution." },
+                { name: "Bloodstain Pattern Analysis BPA", desc: "Directional impact angle, Area of Origin & spatter physics." }
+            ]
+        },
+        {
+            name: "LIMS Workflow, Gateway & QA/QC",
+            icon: PackageCheck,
+            color: "text-amber-400 border-amber-500/40 bg-amber-500/10",
+            subsystems: [
+                { name: "LIMS-Lite Workflow SOP Chain", desc: "9-Step SOP accessioning, operator ID, reagent lot HMAC." },
+                { name: "Automated Instrument Gateway", desc: "CE GeneMapper, qPCR Quantifiler Trio Cq & NGS MiSeq VCF." },
+                { name: "QA/QC Gatekeeper Engine", desc: "7-Point quality inspection matrix, Hb ratio, NC/PC controls." },
+                { name: "Human Analyst Review & Governance", desc: "Dual sign-off governance, override rationale logging, HMAC hash." },
+                { name: "Concurrent Batch Engine", desc: "Multi-sample worker semaphore concurrency & job aggregator." }
+            ]
+        },
+        {
+            name: "ISO Certificate & Court Mode",
+            icon: Scale,
+            color: "text-indigo-400 border-indigo-500/40 bg-indigo-500/10",
+            subsystems: [
+                { name: "ISO 17025 Certificate Compiler", desc: "8-Section formal certificate compilation with HMAC signing." },
+                { name: "Court / Expert Witness Mode", desc: "7-Point judicial testimony framework & brief exporter." },
+                { name: "Transposed Conditional Fallacy Shield", desc: "Prosecutor's Fallacy protection guarding against LR misinterpretation." },
+                { name: "Synthetic Case & Benchmark Harness", desc: "100% ground-truth mixture generator & ROC-AUC validation." },
+                { name: "Master Forensic Evidence OS DAG", desc: "6-Layer Directed Acyclic Graph orchestrator for all 30 subsystems." }
+            ]
+        }
+    ];
+
     return (
-        <section id="features" className="scroll-mt-20 min-h-[85vh] lg:min-h-screen flex flex-col justify-between py-12 px-4">
-            <div className="my-auto mx-auto max-w-7xl w-full">
-                {/* Section header */}
-                <div className="text-center mb-12">
-                    <div className="inline-flex items-center gap-2 rounded-full border border-[#22C55E]/30 bg-[#22C55E]/5 px-4 py-1.5 mb-3 shadow-[0_0_15px_rgba(34,197,94,0.1)]">
-                        <span className="h-1.5 w-1.5 rounded-full bg-[#22C55E] animate-pulse" />
-                        <span className="font-mono text-[10px] tracking-widest text-[#22C55E] uppercase font-bold">
-                            30 Subsystems • 6 Core Pillars
-                        </span>
+        <section id="subsystems" className="py-16 lg:py-24 border-b border-tactical-border/60 bg-black/40">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-12">
+                
+                {/* Header */}
+                <div className="text-center max-w-3xl mx-auto space-y-3">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-purple-500/30 bg-purple-500/10 text-purple-300 font-mono text-xs font-bold uppercase">
+                        <Layers className="w-3.5 h-3.5" />
+                        Complete 30-Subsystem Taxonomy Matrix
                     </div>
-                    <h2 className="text-3xl sm:text-5xl font-bold text-tactical-text mb-3">
-                        Six Core Analytical Pillars
+                    <h2 className="text-2xl sm:text-4xl font-extrabold font-mono text-white tracking-tight">
+                        30 Biocomputational & Forensic Subsystems
                     </h2>
-                    <p className="max-w-xl mx-auto text-tactical-text-muted text-xs sm:text-sm leading-relaxed">
-                        From raw STR profile ingestion to cryptographically anchored forensic reports, each module
-                        is engineered for precision at the intersection of genetics and intelligence.
+                    <p className="text-xs sm:text-sm text-zinc-400 font-mono">
+                        Grouped into 6 core architectural pillars covering every domain of forensic biology, genetics, and courtroom testimony.
                     </p>
                 </div>
 
-                {/* Feature Grid with Fixed Bottom Tag Divider Baseline */}
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-                    {FEATURES.map((feature) => {
-                        const Icon = feature.icon;
+                {/* Pillar Selector Buttons */}
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2.5 font-mono text-xs">
+                    {pillars.map((pillar, idx) => {
+                        const Icon = pillar.icon;
+                        const isSelected = selectedPillar === idx;
                         return (
-                            <div
-                                key={feature.title}
-                                className="group flex flex-col justify-between h-full rounded-2xl border border-tactical-border bg-tactical-surface p-6 hover:border-tactical-border/80 transition-all duration-300 hover:-translate-y-1 shadow-lg"
-                                onMouseEnter={(e) => {
-                                    (e.currentTarget as HTMLDivElement).style.boxShadow = `0 0 40px ${feature.glow}`;
-                                }}
-                                onMouseLeave={(e) => {
-                                    (e.currentTarget as HTMLDivElement).style.boxShadow = "none";
-                                }}
+                            <button
+                                key={idx}
+                                onClick={() => setSelectedPillar(idx)}
+                                className={`p-3 rounded-xl border text-left transition-all flex flex-col justify-between gap-2 cursor-pointer ${
+                                    isSelected
+                                        ? `${pillar.color} font-bold shadow-lg scale-[1.02]`
+                                        : "border-tactical-border/60 bg-tactical-surface/40 hover:bg-tactical-surface text-zinc-400"
+                                }`}
                             >
-                                {/* Top Content Area */}
-                                <div className="flex-1">
-                                    {/* Icon */}
-                                    <div
-                                        className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl border transition-transform duration-300 group-hover:scale-110"
-                                        style={{
-                                            background: `${feature.color}15`,
-                                            borderColor: `${feature.color}35`,
-                                            color: feature.color,
-                                            boxShadow: `0 0 20px ${feature.color}20`,
-                                        }}
-                                    >
-                                        <Icon className="h-5 w-5" />
-                                    </div>
-
-                                    {/* Title */}
-                                    <h3 className="font-bold text-tactical-text text-base mb-2 leading-snug">
-                                        {feature.title}
-                                    </h3>
-
-                                    {/* Description */}
-                                    <p className="text-tactical-text-muted text-xs leading-relaxed mb-5">
-                                        {feature.description}
-                                    </p>
-                                </div>
-
-                                {/* Bottom Tag Chips Area */}
-                                <div className="mt-auto pt-4 border-t border-tactical-border/50 min-h-[72px] flex flex-wrap content-start gap-2">
-                                    {feature.tags.map((tag) => (
-                                        <span
-                                            key={tag}
-                                            className="rounded-lg border px-2 py-0.5 font-mono text-[9px] font-bold tracking-widest uppercase transition-all"
-                                            style={{
-                                                borderColor: `${feature.color}35`,
-                                                color: feature.color,
-                                                background: `${feature.color}0D`,
-                                            }}
-                                        >
-                                            {tag}
-                                        </span>
-                                    ))}
-                                </div>
-                            </div>
+                                <Icon className="w-4 h-4" />
+                                <span className="text-[10px] uppercase tracking-wider block font-bold leading-snug">
+                                    {pillar.name}
+                                </span>
+                            </button>
                         );
                     })}
                 </div>
-            </div>
 
-            {/* Neon Scroll to Architecture (Desktop Only) */}
-            <div className="hidden sm:flex pt-4 justify-center">
-                <NeonDnaScroll targetId="architecture" />
+                {/* Selected Pillar Subsystems Display */}
+                <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-6 shadow-2xl space-y-6">
+                    <div className="flex items-center justify-between border-b border-tactical-border/40 pb-4">
+                        <div className="flex items-center gap-3">
+                            <span className="text-xs font-mono font-bold uppercase tracking-wider text-zinc-200">
+                                {pillars[selectedPillar].name} Subsystem Matrix
+                            </span>
+                        </div>
+                        <span className="px-2.5 py-1 rounded bg-black/60 border border-tactical-border/60 text-tactical-accent font-mono text-[9px] font-bold uppercase">
+                            5 Integrated Engines
+                        </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {pillars[selectedPillar].subsystems.map((sub, sIdx) => (
+                            <motion.div
+                                key={sIdx}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.3, delay: sIdx * 0.05 }}
+                                className="p-4 rounded-xl border border-tactical-border/60 bg-black/40 hover:border-tactical-accent/40 transition-all space-y-2 group"
+                            >
+                                <div className="flex items-center gap-2">
+                                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-tactical-accent/20 font-mono text-[9px] font-bold text-tactical-accent">
+                                        {sIdx + 1}
+                                    </span>
+                                    <h3 className="font-mono text-xs font-bold text-zinc-200 group-hover:text-tactical-accent transition-colors">
+                                        {sub.name}
+                                    </h3>
+                                </div>
+                                <p className="font-mono text-[10px] text-zinc-400 leading-relaxed">
+                                    {sub.desc}
+                                </p>
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+
             </div>
         </section>
     );

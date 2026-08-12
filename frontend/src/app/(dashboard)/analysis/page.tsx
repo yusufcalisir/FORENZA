@@ -28,7 +28,7 @@ import EvidenceManagementPanel from "@/components/analysis/EvidenceManagementPan
 import BpaImagePanel from "@/components/analysis/BpaImagePanel";
 import MicroscopyPanel from "@/components/analysis/MicroscopyPanel";
 import TouchDnaPanel from "@/components/analysis/TouchDnaPanel";
-import AgeEstimationPanel from "@/components/analysis/AgeEstimationPanel";
+import ComprehensiveEpigenomicsPanel from "@/components/analysis/ComprehensiveEpigenomicsPanel";
 import { Activity, UserCheck, Binary, Bone, Bug, Leaf, Layers, Droplet, Pill, Syringe, PackageCheck, Eye, Microscope, Fingerprint, Clock } from "lucide-react";
 import { useIngestStore } from "@/store/ingestStore";
 
@@ -1073,7 +1073,7 @@ export default function AnalysisPage() {
                         exit={{ opacity: 0, y: -6 }}
                         transition={{ duration: 0.2 }}
                     >
-                        <AgeEstimationPanel />
+                        <ComprehensiveEpigenomicsPanel />
                     </motion.div>
                 )}
             </AnimatePresence>

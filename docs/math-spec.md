@@ -489,6 +489,30 @@ For known chronological age $A_{\text{chrono}}$:
 
 $$\Delta_{\text{age}} = \text{Age}_{\text{est}} - A_{\text{chrono}}$$
 
+---
+
+## 26. Epigenetic Tissue-of-Origin Deconvolution & Environmental Biomarkers
+
+### 26.1 Dirichlet-Multinomial Tissue Mixture Deconvolution ($\mathbf{p}_{\text{tissue}}$)
+Given sample tDMR methylation vector $\mathbf{\beta}_{\text{sample}} = (\beta_1, \dots, \beta_K)$ across $K$ tissue-specific loci and reference profile matrix $\mathbf{M}$:
+
+$$D_j = \sum_{k=1}^{K} \left( \beta_{k, \text{sample}} - M_{k, j} \right)^2$$
+
+$$L_j = \exp\left( -\lambda \cdot D_j \right) \quad (\lambda = 10.0)$$
+
+$$p_{\text{tissue}, j} = \frac{L_j}{\sum_{m=1}^{T} L_m}$$
+
+### 26.2 Tissue Likelihood Ratio ($LR_{\text{tissue}}$)
+For top predicted tissue $T_1$ and secondary tissue hypothesis $T_2$:
+
+$$LR_{\text{tissue}} = \frac{p_{\text{tissue}, 1}}{\max(\epsilon, p_{\text{tissue}, 2})} \quad (\epsilon = 10^{-4})$$
+
+### 26.3 AHRR Smoking Biomarker Classification
+For cg05575921 methylation ratio $\beta_{\text{AHRR}} \in [0, 1]$:
+
+$$\text{Status} = \begin{cases} \text{Current Heavy Smoker}, & \beta_{\text{AHRR}} < 0.55 \\ \text{Former / Light Smoker}, & 0.55 \le \beta_{\text{AHRR}} < 0.80 \\ \text{Non-Smoker}, & \beta_{\text{AHRR}} \ge 0.80 \end{cases}$$
+
+
 
 
 

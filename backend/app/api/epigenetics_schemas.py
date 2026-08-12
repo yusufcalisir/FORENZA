@@ -42,3 +42,58 @@ class PredictAgeResponse(BaseModel):
     aging_status: str
     cpg_locus_contributions: List[CpgContributionDetail]
     model_provenance: str
+
+
+class DeconvolveTissueRequest(BaseModel):
+    tdmr_methylation: Dict[str, float] = Field(
+        default={
+            "tDMR_BLOOD_01": 0.88,
+            "tDMR_BUCCAL_01": 0.12,
+            "tDMR_SALIVA_01": 0.15,
+            "tDMR_SEMEN_01": 0.05,
+            "tDMR_EPITHELIAL_01": 0.10,
+            "tDMR_BONE_01": 0.08
+        },
+        description="Dictionary mapping tDMR locus names to methylation beta values in [0.0, 1.0]."
+    )
+
+
+class DeconvolveTissueResponse(BaseModel):
+    top_predicted_tissue: str
+    top_tissue_probability: float
+    tissue_probabilities: Dict[str, float]
+    lr_tissue: float
+    log10_lr_tissue: float
+    tdmr_loci_evaluated: int
+    deconvolution_method: str
+
+
+class LifestyleProfileRequest(BaseModel):
+    ahrr_cg05575921_beta: float = Field(
+        default=0.85,
+        description="Methylation beta value at AHRR locus cg05575921 [0.0, 1.0]."
+    )
+    slc6a3_beta: Optional[float] = Field(
+        default=0.50,
+        description="Optional methylation beta value at SLC6A3 [0.0, 1.0]."
+    )
+    per2_beta: Optional[float] = Field(
+        default=0.40,
+        description="Optional methylation beta value at PER2 [0.0, 1.0]."
+    )
+    bmal1_beta: Optional[float] = Field(
+        default=0.60,
+        description="Optional methylation beta value at BMAL1 [0.0, 1.0]."
+    )
+
+
+class LifestyleProfileResponse(BaseModel):
+    ahrr_methylation_beta: float
+    smoking_status: str
+    smoking_probability: float
+    estimated_pack_years: float
+    alcohol_index_score: float
+    alcohol_exposure_level: str
+    circadian_phase: str
+    estimated_tod_window: str
+    biomarker_panel: str

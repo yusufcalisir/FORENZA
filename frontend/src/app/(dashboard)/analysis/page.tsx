@@ -36,7 +36,8 @@ import QualityAssurancePanel from "@/components/analysis/QualityAssurancePanel";
 import HumanReviewPanel from "@/components/analysis/HumanReviewPanel";
 import IsoReportGeneratorPanel from "@/components/analysis/IsoReportGeneratorPanel";
 import ExpertWitnessPanel from "@/components/analysis/ExpertWitnessPanel";
-import { Activity, UserCheck, Binary, Bone, Bug, Leaf, Layers, Droplet, Pill, Syringe, PackageCheck, Eye, Microscope, Fingerprint, Clock, Cpu, FileText, Scale } from "lucide-react";
+import SyntheticCaseGeneratorPanel from "@/components/analysis/SyntheticCaseGeneratorPanel";
+import { Activity, UserCheck, Binary, Bone, Bug, Leaf, Layers, Droplet, Pill, Syringe, PackageCheck, Eye, Microscope, Fingerprint, Clock, Cpu, FileText, Scale, Sparkles } from "lucide-react";
 import { useIngestStore } from "@/store/ingestStore";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -91,7 +92,7 @@ interface AnalysisData {
     tx_hash?: string;
 }
 
-type TabId = "statistical" | "probabilistic" | "relationship" | "bayesian" | "validation" | "lineage" | "dvi" | "hid" | "anthropology" | "entomology" | "botany" | "microbiology" | "fluid" | "toxicology" | "serology" | "evidence" | "bpa" | "microscopy" | "touch" | "epigenetics" | "genomics" | "lims" | "instrument" | "qc" | "review" | "isoreport" | "court";
+type TabId = "statistical" | "probabilistic" | "relationship" | "bayesian" | "validation" | "lineage" | "dvi" | "hid" | "anthropology" | "entomology" | "botany" | "microbiology" | "fluid" | "toxicology" | "serology" | "evidence" | "bpa" | "microscopy" | "touch" | "epigenetics" | "genomics" | "lims" | "instrument" | "qc" | "review" | "isoreport" | "court" | "synthetic";
 
 // ─── API ─────────────────────────────────────────────────────────────────────
 
@@ -594,12 +595,12 @@ export default function AnalysisPage() {
 
                     <button
                         onClick={() => {
-                            if (!["toxicology", "serology", "evidence", "touch", "lims", "instrument", "review", "isoreport", "court"].includes(activeTab)) {
+                            if (!["toxicology", "serology", "evidence", "touch", "lims", "instrument", "review", "isoreport", "court", "synthetic"].includes(activeTab)) {
                                 setActiveTab("toxicology");
                             }
                         }}
                         className={`px-3.5 py-2 rounded-t-lg font-mono text-xs font-bold transition-all border-b-2 flex items-center gap-2 ${
-                            ["toxicology", "serology", "evidence", "touch", "lims", "instrument", "review", "isoreport", "court"].includes(activeTab)
+                            ["toxicology", "serology", "evidence", "touch", "lims", "instrument", "review", "isoreport", "court", "synthetic"].includes(activeTab)
                                 ? "border-amber-400 text-amber-300 bg-amber-500/10"
                                 : "border-transparent text-tactical-text-muted hover:text-tactical-text hover:bg-tactical-surface-elevated"
                         }`}
@@ -644,7 +645,7 @@ export default function AnalysisPage() {
                         </>
                     )}
 
-                    {["toxicology", "serology", "evidence", "touch", "lims", "instrument", "review", "isoreport", "court"].includes(activeTab) && (
+                    {["toxicology", "serology", "evidence", "touch", "lims", "instrument", "review", "isoreport", "court", "synthetic"].includes(activeTab) && (
                         <>
                             <TabButton id="toxicology" label="Forensic Toxicology" icon={Pill} activeTab={activeTab} onClick={setActiveTab} badge="ISO-17025" />
                             <TabButton id="serology" label="Forensic Serology" icon={Syringe} activeTab={activeTab} onClick={setActiveTab} badge="ABO-Rh" />
@@ -655,6 +656,7 @@ export default function AnalysisPage() {
                             <TabButton id="review" label="Analyst Review & Sign-Off" icon={UserCheck} activeTab={activeTab} onClick={setActiveTab} badge="DUAL-SIG" />
                             <TabButton id="isoreport" label="ISO 17025 Certificate Report" icon={FileText} activeTab={activeTab} onClick={setActiveTab} badge="REPORT" />
                             <TabButton id="court" label="Court / Expert Witness Mode" icon={Scale} activeTab={activeTab} onClick={setActiveTab} badge="COURT" />
+                            <TabButton id="synthetic" label="Synthetic Case & Benchmark" icon={Sparkles} activeTab={activeTab} onClick={setActiveTab} badge="BENCHMARK" />
                         </>
                     )}
                 </div>
@@ -1196,6 +1198,18 @@ export default function AnalysisPage() {
                         transition={{ duration: 0.2 }}
                     >
                         <ExpertWitnessPanel />
+                    </motion.div>
+                )}
+
+                {activeTab === "synthetic" && (
+                    <motion.div
+                        key="synthetic"
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -6 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        <SyntheticCaseGeneratorPanel />
                     </motion.div>
                 )}
             </AnimatePresence>

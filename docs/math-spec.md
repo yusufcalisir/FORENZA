@@ -600,6 +600,21 @@ The expert witness evaluates exclusively $LR = \frac{P(E \mid H_p)}{P(E \mid H_d
 
 $$LR \neq P(H_p \mid E) \quad (\text{Prosecutor's Fallacy Prevention Shield Active})$$
 
+---
+
+## 33. Synthetic Case Stochastic Mixture Generation & Ground-Truth Validation Metrics
+
+### 33.1 Stochastic Peak Height Synthesis ($H_{a,l}$)
+For allele $a$ at locus $l$ across $K$ synthetic contributors with mixture proportions $m_k$, degradation factor $d_k$, and baseline RFU $H_0 = 2000$:
+
+$$H_{a,l} = \sum_{k=1}^K \mathbb{I}(a \in G_{k,l}) \cdot m_k \cdot H_0 \cdot (1 - d_k \cdot 0.5) + \epsilon \quad (\epsilon \sim \mathcal{N}(0, \sigma^2))$$
+
+### 33.2 Log-LR Root Mean Square Error ($RMSE_{\text{log10LR}}$)
+For $N$ synthetic benchmark scenarios with true likelihood ratio $\log_{10} LR_{\text{true}, i}$ and engine output $\log_{10} LR_{\text{calc}, i}$:
+
+$$RMSE_{\text{log10LR}} = \sqrt{\frac{1}{N} \sum_{i=1}^N \left( \log_{10} LR_{\text{calc}, i} - \log_{10} LR_{\text{true}, i} \right)^2}$$
+
+
 
 
 

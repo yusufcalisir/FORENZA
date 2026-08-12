@@ -377,6 +377,14 @@ try:
 except Exception as _court_import_err:
     logger.warning(f"[boot] Expert Witness router not loaded: {_court_import_err}")
 
+# --- Synthetic Forensic Case Generator & Academic Validation Router ---
+try:
+    from app.api.synthetic_routes import router as synthetic_router
+    app.include_router(synthetic_router, prefix="/api/v1")
+    logger.info("[boot] Synthetic Case Generator API router registered at /api/v1/forensic/synthetic")
+except Exception as _synth_import_err:
+    logger.warning(f"[boot] Synthetic Case router not loaded: {_synth_import_err}")
+
 
 
 

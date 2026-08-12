@@ -321,6 +321,14 @@ try:
 except Exception as _epi_import_err:
     logger.warning(f"[boot] Epigenetics router not loaded: {_epi_import_err}")
 
+# --- Multi-Layered Forensic Genomics Router ---
+try:
+    from app.api.genomics_routes import router as genomics_router
+    app.include_router(genomics_router, prefix="/api/v1")
+    logger.info("[boot] Multi-Layered Forensic Genomics API router registered at /api/v1/forensic/genomics")
+except Exception as _gen_import_err:
+    logger.warning(f"[boot] Multi-Layered Genomics router not loaded: {_gen_import_err}")
+
 
 
 

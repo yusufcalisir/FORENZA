@@ -512,6 +512,23 @@ For cg05575921 methylation ratio $\beta_{\text{AHRR}} \in [0, 1]$:
 
 $$\text{Status} = \begin{cases} \text{Current Heavy Smoker}, & \beta_{\text{AHRR}} < 0.55 \\ \text{Former / Light Smoker}, & 0.55 \le \beta_{\text{AHRR}} < 0.80 \\ \text{Non-Smoker}, & \beta_{\text{AHRR}} \ge 0.80 \end{cases}$$
 
+---
+
+## 27. Multi-Layered Forensic Genomics Architecture & Joint Likelihood Synthesis
+
+### 27.1 Synthesized Multi-Omic Joint Likelihood Ratio ($LR_{\text{joint}}$)
+Given non-linked genomic evidence layers $k \in \{\text{STR}, \text{SNP}, \text{mtDNA}, \text{Y}, \text{WGS}\}$:
+
+$$LR_{\text{joint}} = \prod_{k=1}^{5} LR_k$$
+
+$$\log_{10} LR_{\text{joint}} = \sum_{k=1}^{5} \log_{10} LR_k$$
+
+### 27.2 Composite Probability of Exclusion ($PE_{\text{joint}}$)
+For individual layer exclusion probabilities $PE_k \in [0, 1]$:
+
+$$PE_{\text{joint}} = 1 - \prod_{k=1}^{5} \left( 1 - PE_k \right)$$
+
+
 
 
 

@@ -20,8 +20,8 @@ const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
-  title: "FORENZA: Forensic Evidence Operating System",
-  description: "Enterprise multi-omic biocomputational forensic intelligence platform unifying DNA profiling, kinship, phenotyping, epigenetics, LIMS, QA/QC, and ISO 17025 court admissibility. Powered by VANTAGE v3.0.",
+  title: "FORENZA | Forensic Evidence Operating System",
+  description: "Enterprise multi-omic biocomputational forensic intelligence platform unifying DNA profiling, kinship, phenotyping, epigenetics, LIMS, QA/QC, and ISO 17025 court admissibility.",
   keywords: ["forensic DNA", "STR analysis", "kinship engine", "probabilistic genotyping", "MCMC", "HIrisPlex", "forensic evidence OS", "LIMS", "ISO 17025"],
   authors: [{ name: "FORENZA Forensic Systems" }],
   creator: "FORENZA",
@@ -32,10 +32,9 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://forenza.app",
     siteName: "FORENZA Evidence OS",
-    title: "FORENZA: Forensic Evidence Operating System",
-    description: "30 biocomputational subsystems. STR profiling, MCMC genotyping, HIrisPlex-S phenotyping, Horvath epigenetic clock, toxicology, LIMS & ISO 17025 court reports. Powered by VANTAGE v3.0.",
+    title: "FORENZA | Forensic Evidence Operating System",
+    description: "30 biocomputational subsystems. STR profiling, MCMC genotyping, HIrisPlex-S phenotyping, Horvath epigenetic clock, toxicology, LIMS and ISO 17025 court reports.",
     images: [
       {
         url: "/og-image.png",
@@ -48,8 +47,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "FORENZA: Forensic Evidence Operating System",
-    description: "30 biocomputational subsystems. STR profiling, MCMC genotyping, HIrisPlex-S phenotyping, ISO 17025 court reports. VANTAGE v3.0.",
+    title: "FORENZA | Forensic Evidence Operating System",
+    description: "30 biocomputational subsystems. STR profiling, MCMC genotyping, HIrisPlex-S phenotyping, ISO 17025 court reports.",
     images: ["/og-image.png"],
     creator: "@forenza_forensic",
   },

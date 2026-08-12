@@ -34,7 +34,7 @@ export default function LandingHero() {
                         className="text-3xl sm:text-5xl lg:text-6xl font-extrabold font-mono tracking-tight text-white leading-tight"
                     >
                         Integrated Biocomputational{" "}
-                        <span className="bg-gradient-to-r from-tactical-accent via-cyan-400 to-purple-400 bg-clip-text text-transparent">
+                        <span className="bg-gradient-to-r from-emerald-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent">
                             Forensic Evidence OS
                         </span>
                     </motion.h1>

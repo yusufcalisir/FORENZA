@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 import { SaasLanguage, saasTranslations, SaasTranslation } from "@/dictionaries/saasTranslations";
 
 interface SaasLanguageContextType {
@@ -18,35 +18,20 @@ export function SaasLanguageProvider({
   children: React.ReactNode;
   initialLang?: SaasLanguage;
 }) {
-  const [lang, setLangState] = useState<SaasLanguage>(initialLang);
-
-  useEffect(() => {
-    // 1. If user previously manually toggled language, respect their choice
-    const savedLang = localStorage.getItem("forenza_saas_lang") as SaasLanguage | null;
-    if (savedLang === "tr" || savedLang === "en") {
-      setLangState(savedLang);
-      return;
+  // Determine the correct starting language once, before first render.
+  // Priority: 1) localStorage saved user choice, 2) SSR-detected initialLang.
+  // This runs synchronously on the client to avoid any post-render flash.
+  const getInitialLang = (): SaasLanguage => {
+    if (typeof window !== "undefined") {
+      try {
+        const saved = localStorage.getItem("forenza_saas_lang") as SaasLanguage | null;
+        if (saved === "tr" || saved === "en") return saved;
+      } catch (_) {}
     }
+    return initialLang;
+  };
 
-    // 2. Client-side auto-detection fallback (browser language & timezone)
-    try {
-      const navLang = (navigator.language || "").toLowerCase();
-      const navLangs = Array.from(navigator.languages || []).map((l) => l.toLowerCase());
-      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
-
-      const isTurkish =
-        navLang.startsWith("tr") ||
-        navLangs.some((l) => l.startsWith("tr")) ||
-        tz.includes("Istanbul") ||
-        tz.includes("Turkey");
-
-      if (isTurkish) {
-        setLangState("tr");
-      }
-    } catch (e) {
-      console.warn("Language auto-detection error", e);
-    }
-  }, []);
+  const [lang, setLangState] = useState<SaasLanguage>(getInitialLang);
 
   const setLang = (newLang: SaasLanguage) => {
     setLangState(newLang);

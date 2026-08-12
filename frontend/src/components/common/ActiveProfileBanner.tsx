@@ -38,18 +38,22 @@ export default function ActiveProfileBanner() {
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-cyan-500/20 border border-cyan-500/40 text-cyan-300">
                         <Dna className="w-5 h-5 animate-pulse" />
                     </div>
-                    <div className="min-w-0 space-y-0.5">
+                    <div className="min-w-0 space-y-1">
                         <div className="flex items-center gap-2 flex-wrap">
-                            <h3 className="text-xs sm:text-base font-extrabold text-white tracking-wider truncate font-mono">
+                            <h3 className="text-xs sm:text-base font-extrabold text-white tracking-wider font-mono leading-tight break-words">
                                 ACTIVE CASE: {activeProfile.profileId}
                             </h3>
                             <span className="px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shrink-0">
                                 {activeProfile.sampleType} CASE
                             </span>
                         </div>
-                        <p className="text-[9px] sm:text-[10px] text-zinc-400 mt-0.5 truncate font-mono">
-                            Node: <span className="text-cyan-300 font-bold">{activeProfile.nodeId}</span> • {activeProfile.markerCount} CODIS Loci • {activeProfile.snpCount} AIM SNPs
-                        </p>
+                        <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[9px] sm:text-[10px] text-zinc-400 font-mono">
+                            <span>Node: <strong className="text-cyan-300">{activeProfile.nodeId}</strong></span>
+                            <span className="text-zinc-600">•</span>
+                            <span className="text-zinc-300 font-bold">{activeProfile.markerCount} CODIS Loci</span>
+                            <span className="text-zinc-600">•</span>
+                            <span className="text-zinc-300 font-bold">{activeProfile.snpCount} AIM SNPs</span>
+                        </div>
                     </div>
                 </div>
 

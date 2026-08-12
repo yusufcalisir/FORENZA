@@ -10,6 +10,7 @@ import {
     Droplets, Pill, Eye, Bug, Leaf, Bone, Syringe,
     PackageCheck, Scale, Zap, Database,
 } from "lucide-react";
+import ActiveProfileBanner from "@/components/common/ActiveProfileBanner";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -605,27 +606,43 @@ export default function AnalysisPage() {
     };
 
     return (
-        <div className="flex flex-col gap-4 font-mono h-full">
+        <div className="flex flex-col gap-5 font-mono max-w-full overflow-hidden">
             {/* ── Page Header ── */}
-            <div className="flex items-center justify-between flex-wrap gap-2">
-                <div className="flex items-center gap-2">
-                    <FlaskConical className="w-4 h-4 text-cyan-400" />
-                    <h1 className="text-sm font-extrabold text-white tracking-tight">FORENZA Analysis Hub</h1>
-                    <span className="text-[9px] font-bold border border-cyan-500/30 rounded px-2 py-0.5 text-cyan-400 bg-cyan-500/5">30 Modules • 6 Categories</span>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-tactical-border/60 pb-3">
+                <div>
+                    <div className="flex items-center gap-2 mb-0.5">
+                        <FlaskConical className="w-4 h-4 text-cyan-400" />
+                        <h1 className="text-sm sm:text-base font-extrabold text-white tracking-tight uppercase">
+                            FORENZA Analysis Hub
+                        </h1>
+                        <span className="text-[9px] font-bold border border-cyan-500/30 rounded px-2 py-0.5 text-cyan-400 bg-cyan-500/10">
+                            30 Modules • 6 Categories
+                        </span>
+                    </div>
+                    <p className="text-[10px] text-zinc-400">
+                        Comprehensive Biocomputational Intelligence &amp; Forensic DNA Workstation
+                    </p>
                 </div>
                 <div className="flex items-center gap-2">
-                    <span className="flex items-center gap-1.5 text-[9px] font-bold text-emerald-400">
+                    <span className="flex items-center gap-1.5 text-[9px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-lg">
                         <Radio className="w-3 h-3 animate-pulse" />
-                        CASE-2026-FORENZA • DEMO MODE
+                        LIVE • CASE-2026-FORENZA
                     </span>
                 </div>
             </div>
 
-            {/* ── Main Layout: Left Category Nav + Right Content ── */}
-            <div className="flex gap-4 flex-1 min-h-0">
-                {/* Left Category Nav */}
-                <div className="hidden md:flex flex-col gap-1 shrink-0 w-44">
-                    <p className="text-[8px] font-bold text-zinc-600 uppercase tracking-widest px-2 mb-1">Categories</p>
+            {/* ── Active Case DNA Profile & GIS Map Banner ── */}
+            <ActiveProfileBanner />
+
+            {/* ── Level 1: Category Selector Bar ── */}
+            <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
+                        Step 1: Select Subsystem Category
+                    </span>
+                    <span className="text-[9px] text-zinc-500">6 Categories Available</span>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
                     {CATEGORIES.map((cat) => {
                         const CIcon = cat.icon;
                         const cc = COLOR_CLASSES[cat.color];
@@ -634,91 +651,83 @@ export default function AnalysisPage() {
                             <button
                                 key={cat.id}
                                 onClick={() => handleCategoryClick(cat.id)}
-                                className={`flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-left transition-all ${isActive
-                                    ? `${cc.activeBg} border ${cc.border} ${cc.text}`
-                                    : "text-zinc-500 hover:text-zinc-200 hover:bg-white/5"
-                                    }`}
+                                className={`flex items-center gap-2 p-2.5 rounded-xl text-xs font-bold transition-all text-left cursor-pointer border ${
+                                    isActive
+                                        ? `${cc.activeBg} border ${cc.border} ${cc.text} shadow-[0_0_15px_rgba(6,182,212,0.15)]`
+                                        : "bg-tactical-surface/80 text-zinc-400 border-tactical-border/70 hover:border-zinc-700 hover:text-zinc-200"
+                                }`}
                             >
-                                <CIcon className={`w-3.5 h-3.5 shrink-0 ${isActive ? cc.text : "text-zinc-600"}`} />
-                                <span className="text-[10px] font-bold truncate">{cat.label}</span>
-                                {isActive && <div className={`ml-auto h-1.5 w-1.5 rounded-full ${cc.text.replace("text-", "bg-")} shrink-0`} />}
+                                <CIcon className={`w-4 h-4 shrink-0 ${isActive ? cc.text : "text-zinc-500"}`} />
+                                <span className="truncate text-[10px] uppercase tracking-wider">{cat.label}</span>
+                            </button>
+                        );
+                    })}
+                </div>
+            </div>
+
+            {/* ── Level 2: Selected Category Workspace & Sub-Module Nav ── */}
+            <div className="rounded-2xl border border-tactical-border/80 bg-[#070D18] p-4 sm:p-6 space-y-4 shadow-xl">
+                {/* Category Header */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-tactical-border/60 pb-3">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                        <div className={`p-2 rounded-xl border ${c.border} ${c.bg} shrink-0`}>
+                            <CatIcon className={`w-4 h-4 ${c.text}`} />
+                        </div>
+                        <div className="min-w-0">
+                            <h2 className={`text-xs sm:text-sm font-bold ${c.text} uppercase tracking-wider`}>
+                                {category.label}
+                            </h2>
+                            <p className="text-[10px] text-zinc-400">
+                                {category.tabs.length} Specialized Sub-Modules • ISO/IEC 17025 Compliant
+                            </p>
+                        </div>
+                    </div>
+
+                    <span className="text-[9px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-lg shrink-0 w-fit">
+                        ALL MODULES OPERATIONAL
+                    </span>
+                </div>
+
+                {/* Sub-Module Tabs Bar */}
+                <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none pb-1">
+                    {category.tabs.map((tab) => {
+                        const TabIcon = tab.icon;
+                        const isActive = activeTab === tab.id;
+                        return (
+                            <button
+                                key={tab.id}
+                                onClick={() => setActiveTab(tab.id)}
+                                className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all shrink-0 cursor-pointer ${
+                                    isActive
+                                        ? `${c.activeBg} border ${c.border} ${c.text} shadow-sm`
+                                        : "bg-black/40 text-zinc-400 border border-tactical-border/50 hover:text-zinc-200 hover:border-zinc-700"
+                                }`}
+                            >
+                                <TabIcon className="w-3.5 h-3.5" />
+                                <span>{tab.label}</span>
+                                {tab.badge && (
+                                    <span className="px-1.5 py-0.5 rounded text-[8px] bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                                        {tab.badge}
+                                    </span>
+                                )}
                             </button>
                         );
                     })}
                 </div>
 
-                {/* Right Panel */}
-                <div className="flex-1 min-w-0 flex flex-col gap-3">
-                    {/* Mobile Category Cards Grid (No horizontal scroll) */}
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:hidden gap-1.5 max-w-full">
-                        {CATEGORIES.map((cat) => {
-                            const CIcon = cat.icon;
-                            const cc = COLOR_CLASSES[cat.color];
-                            const isActive = activeCategory === cat.id;
-                            return (
-                                <button
-                                    key={cat.id}
-                                    onClick={() => handleCategoryClick(cat.id)}
-                                    className={`flex items-center gap-2 p-2 sm:p-2.5 rounded-xl text-[9px] font-bold uppercase tracking-wider transition-all text-left cursor-pointer border ${isActive
-                                        ? `${cc.activeBg} border ${cc.border} ${cc.text} shadow-md`
-                                        : "bg-tactical-surface/80 text-zinc-400 border-tactical-border/70 hover:border-zinc-700 hover:text-zinc-200"
-                                        }`}
-                                >
-                                    <CIcon className={`w-3.5 h-3.5 shrink-0 ${isActive ? cc.text : "text-zinc-500"}`} />
-                                    <span className="truncate">{cat.label}</span>
-                                </button>
-                            );
-                        })}
-                    </div>
-
-                    {/* Category Header */}
-                    <div className={`flex items-center justify-between px-4 py-3 rounded-xl border ${c.border} ${c.bg}`}>
-                        <div className="flex items-center gap-2">
-                            <CatIcon className={`w-4 h-4 ${c.text}`} />
-                            <span className={`text-xs font-bold ${c.text} uppercase tracking-wider`}>{category.label}</span>
-                            <span className="text-[9px] text-zinc-600">{category.tabs.length} modules</span>
-                        </div>
-                        <span className="text-[8px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded px-1.5 py-0.5">ALL OPERATIONAL</span>
-                    </div>
-
-                    {/* Module Tab Bar */}
-                    <div className="flex flex-wrap gap-1.5">
-                        {category.tabs.map((tab) => {
-                            const TabIcon = tab.icon;
-                            const isActive = activeTab === tab.id;
-                            return (
-                                <button
-                                    key={tab.id}
-                                    onClick={() => setActiveTab(tab.id)}
-                                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all ${isActive
-                                        ? `${c.activeBg} border ${c.border} ${c.text}`
-                                        : "bg-zinc-900/50 text-zinc-500 border border-zinc-800/60 hover:text-zinc-300 hover:border-zinc-700"
-                                        }`}
-                                >
-                                    <TabIcon className="w-3 h-3" />
-                                    {tab.label}
-                                    {tab.badge && (
-                                        <span className="px-1 py-0.5 rounded text-[7px] bg-amber-500/20 text-amber-400 border border-amber-500/30">{tab.badge}</span>
-                                    )}
-                                </button>
-                            );
-                        })}
-                    </div>
-
-                    {/* Panel Content */}
-                    <AnimatePresence mode="wait">
-                        <motion.div
-                            key={`${activeCategory}-${activeTab}`}
-                            initial={{ opacity: 0, y: 6 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -6 }}
-                            transition={{ duration: 0.18 }}
-                            className="rounded-2xl border border-tactical-border/50 bg-[#0a0f1a] p-5 flex-1"
-                        >
-                            {renderPanel(activeTab, category)}
-                        </motion.div>
-                    </AnimatePresence>
-                </div>
+                {/* Panel Content */}
+                <AnimatePresence mode="wait">
+                    <motion.div
+                        key={`${activeCategory}-${activeTab}`}
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -6 }}
+                        transition={{ duration: 0.18 }}
+                        className="pt-2"
+                    >
+                        {renderPanel(activeTab, category)}
+                    </motion.div>
+                </AnimatePresence>
             </div>
         </div>
     );

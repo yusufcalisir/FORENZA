@@ -8,6 +8,7 @@ import {
     Database,
     FlaskConical,
     ShieldCheck,
+    Dna,
     GitGraph,
     LayoutDashboard,
     Activity,
@@ -119,9 +120,8 @@ export default function DashboardLayout({
                 {/* Logo */}
                 <div className="flex h-14 items-center justify-center border-b border-tactical-border px-3">
                     <div className="flex items-center gap-2 overflow-hidden">
-                        <div className="relative flex h-8 w-8 shrink-0 items-center justify-center">
-                            <div className="absolute inset-0 rounded-md bg-tactical-primary/10" />
-                            <ShieldCheck className="h-4 w-4 text-tactical-primary" />
+                        <div className="relative flex h-8 w-8 shrink-0 items-center justify-center border border-tactical-primary/30 rounded-md bg-tactical-primary/10">
+                            <Dna className="h-4 w-4 text-tactical-primary animate-pulse" />
                         </div>
                         {!sidebarCollapsed && (
                             <span className="font-data text-xs font-semibold tracking-widest text-tactical-primary whitespace-nowrap">

@@ -10,8 +10,8 @@ import LandingFaq from "@/components/landing/LandingFaq";
 import LandingFooter from "@/components/landing/LandingFooter";
 
 export const metadata: Metadata = {
-    title: "FORENZA — Forensic Biology & DNA Intelligence",
-    description: "Advanced probabilistic DNA analysis platform for forensic biology, kinship inference, and phenotyping.",
+    title: "FORENZA Forensic Evidence OS",
+    description: "Enterprise Multi-Omic Biocomputational Forensic Intelligence Platform",
 };
 
 export default function RootPage() {

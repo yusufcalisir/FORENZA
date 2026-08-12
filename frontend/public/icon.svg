@@ -1,10 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
-  <rect width="32" height="32" rx="8" fill="#0A0A0B"/>
-  <rect x="0.5" y="0.5" width="31" height="31" rx="7.5" stroke="#22C55E" stroke-opacity="0.3"/>
-  <g transform="translate(4, 4)">
-    <path d="m2 15 3-3 3 3 3-3 3 3 3-3 3 3" stroke="#22C55E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="m2 9 3 3 3-3 3 3 3-3 3 3 3-3" stroke="#06B6D4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M15 2c-1.7 1.7-1.7 4.3 0 6 1.7 1.7 4.3 1.7 6 0" stroke="#8B5CF6" stroke-width="2" stroke-linecap="round"/>
-    <path d="M9 22c-1.7-1.7-1.7-4.3 0-6 1.7-1.7 4.3-1.7 6 0" stroke="#22C55E" stroke-width="2" stroke-linecap="round"/>
+  <rect width="32" height="32" rx="8" fill="#090D16"/>
+  <rect x="0.5" y="0.5" width="31" height="31" rx="7.5" stroke="#10B981" stroke-opacity="0.35"/>
+  <g transform="translate(4, 4)" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M2 15c6.667-6 13.333 6 20 0"/>
+    <path d="M2 9c6.667 6 13.333-6 20 0"/>
+    <path d="m17 6-2.5 2.5"/>
+    <path d="m14 11-1.5 1.5"/>
+    <path d="m17 16-2.5 2.5"/>
+    <path d="m11 6-2.5 2.5"/>
+    <path d="m8 11-1.5 1.5"/>
+    <path d="m11 16-2.5 2.5"/>
   </g>
+  <circle cx="24" cy="7" r="2.8" fill="#10B981"/>
+  <circle cx="24" cy="7" r="4.5" fill="#10B981" fill-opacity="0.3"/>
 </svg>

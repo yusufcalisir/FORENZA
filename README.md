@@ -654,8 +654,8 @@ The entire FORENZA software surface is validated using automated Pytest suites.
 ### 2. Backend Environment Setup
 ```bash
 # Clone the repository
-git clone https://github.com/yusufcalisir/str-analysis.git
-cd str-analysis
+git clone https://github.com/yusufcalisir/FORENZA.git
+cd FORENZA
 
 # Create virtual environment & install dependencies
 python -m venv venv

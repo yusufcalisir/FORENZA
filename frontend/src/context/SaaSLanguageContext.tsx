@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import { SaasLanguage, saasTranslations, SaasTranslation } from "@/dictionaries/saasTranslations";
 
 interface SaasLanguageContextType {
@@ -18,9 +18,8 @@ export function SaasLanguageProvider({
   children: React.ReactNode;
   initialLang?: SaasLanguage;
 }) {
-  // Determine the correct starting language once, before first render.
-  // Priority: 1) localStorage saved user choice, 2) SSR-detected initialLang.
-  // This runs synchronously on the client to avoid any post-render flash.
+  // Synchronous init: localStorage preference takes highest priority,
+  // then SSR-detected initialLang. No flash, no double-render.
   const getInitialLang = (): SaasLanguage => {
     if (typeof window !== "undefined") {
       try {
@@ -32,6 +31,35 @@ export function SaasLanguageProvider({
   };
 
   const [lang, setLangState] = useState<SaasLanguage>(getInitialLang);
+
+  // Client-side timezone/browser fallback — ONLY runs when:
+  // 1. SSR headers were unavailable (initialLang stayed "en"), AND
+  // 2. No localStorage preference was saved by the user.
+  // This prevents flash when SSR already correctly detected TR.
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("forenza_saas_lang") as SaasLanguage | null;
+      if (saved === "tr" || saved === "en") return; // user preference already applied
+      if (initialLang !== "en") return;             // SSR already detected correctly, no need to re-detect
+
+      const navLang = (navigator.language || "").toLowerCase();
+      const navLangs = Array.from(navigator.languages || []).map((l) => l.toLowerCase());
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+
+      const isTurkish =
+        navLang.startsWith("tr") ||
+        navLangs.some((l) => l.startsWith("tr")) ||
+        tz.includes("Istanbul") ||
+        tz.includes("Turkey");
+
+      if (isTurkish) {
+        setLangState("tr");
+      }
+    } catch (e) {
+      console.warn("Language auto-detection error", e);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const setLang = (newLang: SaasLanguage) => {
     setLangState(newLang);

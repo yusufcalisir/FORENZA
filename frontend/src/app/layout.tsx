@@ -37,7 +37,9 @@ export const metadata: Metadata = {
   creator: "FORENZA",
   publisher: "FORENZA",
   icons: {
-    icon: "/icon.svg",
+    icon: "/icon.png",
+    shortcut: "/icon.png",
+    apple: "/icon.png",
   },
   openGraph: {
     type: "website",

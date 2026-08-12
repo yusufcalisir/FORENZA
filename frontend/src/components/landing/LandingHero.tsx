@@ -9,7 +9,7 @@ export default function LandingHero() {
     const { t } = useSaasLanguage();
 
     return (
-        <section className="relative overflow-hidden pt-8 pb-12 sm:pt-16 sm:pb-20 lg:pt-20 lg:pb-24 border-b border-tactical-border/60 max-w-full">
+        <section className="relative overflow-hidden pt-8 pb-12 sm:pt-16 sm:pb-20 lg:pt-20 lg:pb-24 border-b border-tactical-border/60 max-w-full w-full">
             {/* Background Glow Overlay */}
             <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-gradient-to-tr from-cyan-500/10 via-tactical-accent/20 to-purple-600/10 blur-[120px] rounded-full pointer-events-none" />
 
@@ -52,14 +52,17 @@ export default function LandingHero() {
                         {t.hero.subtitle}
                     </motion.p>
 
-                    {/* CTA Actions */}
+                    {/* CTA Actions - Side-by-Side on Mobile */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: 0.3 }}
-                        className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 pt-2 sm:pt-4"
+                        className="grid grid-cols-2 sm:flex sm:flex-row items-center justify-center gap-2 sm:gap-4 pt-2 sm:pt-4 max-w-full"
                     >
-                        <LaunchDemoButton label={t.hero.launchDemo} className="w-full sm:w-auto text-xs sm:text-sm py-3 px-6 sm:px-8" />
+                        <LaunchDemoButton 
+                            label={t.hero.launchDemo} 
+                            className="w-full sm:w-auto text-[10px] sm:text-xs py-2.5 sm:py-3 px-2 sm:px-6 truncate" 
+                        />
                         <button
                             type="button"
                             onClick={(e) => {
@@ -72,10 +75,10 @@ export default function LandingHero() {
                                     window.scrollTo({ top: offsetPosition, behavior: "smooth" });
                                 }
                             }}
-                            className="w-full sm:w-auto px-6 py-3 rounded-xl border border-tactical-border/80 bg-tactical-surface hover:bg-tactical-surface-elevated font-mono text-xs font-bold text-zinc-200 uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer"
+                            className="w-full sm:w-auto px-2 sm:px-6 py-2.5 sm:py-3 rounded-xl border border-tactical-border/80 bg-tactical-surface hover:bg-tactical-surface-elevated font-mono text-[10px] sm:text-xs font-bold text-zinc-200 uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 cursor-pointer truncate"
                         >
-                            <Layers className="w-4 h-4 text-purple-400" />
-                            {t.hero.exploreSubsystems}
+                            <Layers className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-400 shrink-0" />
+                            <span className="truncate">{t.hero.exploreSubsystems}</span>
                         </button>
                     </motion.div>
 

@@ -45,13 +45,13 @@ export default function LaunchDemoButton({
                 onClick={handleClick}
                 aria-label={label}
                 title={label}
-                className={`group relative inline-flex items-center justify-center font-extrabold tracking-wider transition-all duration-300 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-black shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 hover:scale-[1.02] active:scale-[0.98] cursor-pointer border border-emerald-400/50 ${
+                className={`group relative inline-flex items-center justify-center gap-1.5 sm:gap-2 font-mono font-bold tracking-wider transition-all duration-300 rounded-xl bg-tactical-surface/90 hover:bg-emerald-500/10 text-emerald-400 border border-emerald-500/40 hover:border-emerald-400/80 shadow-[0_0_15px_rgba(16,185,129,0.15)] hover:shadow-[0_0_25px_rgba(16,185,129,0.3)] hover:scale-[1.02] active:scale-[0.98] cursor-pointer ${
                     compactMobile
                         ? "p-2 sm:px-3.5 sm:py-1.5 font-mono text-[10px]"
                         : sizeClasses
                 } ${className}`}
             >
-                <Zap className="h-4 w-4 text-black fill-black shrink-0 transition-transform group-hover:scale-110" />
+                <Zap className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-emerald-400 fill-emerald-400/20 shrink-0 transition-transform group-hover:scale-110" />
                 <span className={`whitespace-nowrap uppercase tracking-wider ${compactMobile ? "hidden sm:inline" : ""}`}>
                     {label}
                 </span>

@@ -532,7 +532,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
   tr: {
     header: {
       bioSimulator: "Bio-Simülatör",
-      subsystems: "30 Subsystem",
+      subsystems: "30 Alt Sistem",
       architecture: "DAG Mimarisi",
       security: "Güvenlik & ISO",
       launchDemo: "Demo Platform",
@@ -861,7 +861,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       status: "30 Modül Aktif",
       columns: {
         col1Title: "Platform Modülleri",
-        col1Links: ["30 Subsystem Matrix", "Delil İşleme Mimarisi (DAG)", "Bio-Simülatör", "ISO 17025 İfade Modu"],
+        col1Links: ["30 Alt Sistem Matrisi", "Delil İşleme Mimarisi (DAG)", "Bio-Simülatör", "ISO 17025 İfade Modu"],
         col2Title: "Temel Yetenekler",
         col2Links: ["MCMC Olasılıksal Genotipleme", "HIrisPlex-S Fenotipleme", "Horvath Epigenetik Yaş Saati", "LIMS ve Cihaz Geçidi"],
         col3Title: "Adli Standartlar ve Akreditasyon",

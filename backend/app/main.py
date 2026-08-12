@@ -329,6 +329,22 @@ try:
 except Exception as _gen_import_err:
     logger.warning(f"[boot] Multi-Layered Genomics router not loaded: {_gen_import_err}")
 
+# --- LIMS-Lite Sample Accessioning & Workflow Router ---
+try:
+    from app.api.lims_routes import router as lims_router
+    app.include_router(lims_router, prefix="/api/v1")
+    logger.info("[boot] LIMS-Lite Workflow API router registered at /api/v1/forensic/lims")
+except Exception as _lims_import_err:
+    logger.warning(f"[boot] LIMS router not loaded: {_lims_import_err}")
+
+# --- Automated Analytical Instrument Gateway Router ---
+try:
+    from app.api.instrument_routes import router as instrument_router
+    app.include_router(instrument_router, prefix="/api/v1")
+    logger.info("[boot] Instrument Gateway API router registered at /api/v1/forensic/instruments")
+except Exception as _inst_import_err:
+    logger.warning(f"[boot] Instrument Gateway router not loaded: {_inst_import_err}")
+
 
 
 

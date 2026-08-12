@@ -528,6 +528,21 @@ For individual layer exclusion probabilities $PE_k \in [0, 1]$:
 
 $$PE_{\text{joint}} = 1 - \prod_{k=1}^{5} \left( 1 - PE_k \right)$$
 
+---
+
+## 28. LIMS Audit Hash Chaining & Instrument Degradation Index
+
+### 28.1 HMAC-SHA256 Workflow Chaining ($H_n$)
+For sample workflow step $n$ with previous hash $H_{n-1}$, sample ID $S$, step name $W$, operator $O$, instrument $I$, reagent lot $L$, timestamp $T$, and step result $R$:
+
+$$H_n = \text{HMAC-SHA256}_{K_{\text{secret}}}\left( H_{n-1} \parallel S \parallel W \parallel O \parallel I \parallel L \parallel T \parallel R \right)$$
+
+### 28.2 qPCR Quantifiler Degradation Index ($DI$)
+Given Small Autosomal concentration $[\text{SA}]$ and Large Autosomal concentration $[\text{LA}]$ in ng/µL:
+
+$$DI = \frac{[\text{SA}]}{\max(\epsilon, [\text{LA}])} \quad (\epsilon = 10^{-6})$$
+
+
 
 
 

@@ -30,7 +30,9 @@ import MicroscopyPanel from "@/components/analysis/MicroscopyPanel";
 import TouchDnaPanel from "@/components/analysis/TouchDnaPanel";
 import ComprehensiveEpigenomicsPanel from "@/components/analysis/ComprehensiveEpigenomicsPanel";
 import MultiLayerGenomicsPanel from "@/components/analysis/MultiLayerGenomicsPanel";
-import { Activity, UserCheck, Binary, Bone, Bug, Leaf, Layers, Droplet, Pill, Syringe, PackageCheck, Eye, Microscope, Fingerprint, Clock } from "lucide-react";
+import LimsWorkflowPanel from "@/components/analysis/LimsWorkflowPanel";
+import InstrumentIngestionPanel from "@/components/analysis/InstrumentIngestionPanel";
+import { Activity, UserCheck, Binary, Bone, Bug, Leaf, Layers, Droplet, Pill, Syringe, PackageCheck, Eye, Microscope, Fingerprint, Clock, Cpu } from "lucide-react";
 import { useIngestStore } from "@/store/ingestStore";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -85,7 +87,7 @@ interface AnalysisData {
     tx_hash?: string;
 }
 
-type TabId = "statistical" | "probabilistic" | "relationship" | "bayesian" | "validation" | "lineage" | "dvi" | "hid" | "anthropology" | "entomology" | "botany" | "microbiology" | "fluid" | "toxicology" | "serology" | "evidence" | "bpa" | "microscopy" | "touch" | "epigenetics" | "genomics";
+type TabId = "statistical" | "probabilistic" | "relationship" | "bayesian" | "validation" | "lineage" | "dvi" | "hid" | "anthropology" | "entomology" | "botany" | "microbiology" | "fluid" | "toxicology" | "serology" | "evidence" | "bpa" | "microscopy" | "touch" | "epigenetics" | "genomics" | "lims" | "instrument";
 
 // ─── API ─────────────────────────────────────────────────────────────────────
 
@@ -588,12 +590,12 @@ export default function AnalysisPage() {
 
                     <button
                         onClick={() => {
-                            if (!["toxicology", "serology", "evidence", "touch"].includes(activeTab)) {
+                            if (!["toxicology", "serology", "evidence", "touch", "lims", "instrument"].includes(activeTab)) {
                                 setActiveTab("toxicology");
                             }
                         }}
                         className={`px-3.5 py-2 rounded-t-lg font-mono text-xs font-bold transition-all border-b-2 flex items-center gap-2 ${
-                            ["toxicology", "serology", "evidence", "touch"].includes(activeTab)
+                            ["toxicology", "serology", "evidence", "touch", "lims", "instrument"].includes(activeTab)
                                 ? "border-amber-400 text-amber-300 bg-amber-500/10"
                                 : "border-transparent text-tactical-text-muted hover:text-tactical-text hover:bg-tactical-surface-elevated"
                         }`}
@@ -637,12 +639,14 @@ export default function AnalysisPage() {
                         </>
                     )}
 
-                    {["toxicology", "serology", "evidence", "touch"].includes(activeTab) && (
+                    {["toxicology", "serology", "evidence", "touch", "lims", "instrument"].includes(activeTab) && (
                         <>
                             <TabButton id="toxicology" label="Forensic Toxicology" icon={Pill} activeTab={activeTab} onClick={setActiveTab} badge="ISO-17025" />
                             <TabButton id="serology" label="Forensic Serology" icon={Syringe} activeTab={activeTab} onClick={setActiveTab} badge="ABO-Rh" />
                             <TabButton id="evidence" label="Crime Scene Evidence" icon={PackageCheck} activeTab={activeTab} onClick={setActiveTab} badge="ISO-21043" />
                             <TabButton id="touch" label="Touch DNA & Low-Template" icon={Fingerprint} activeTab={activeTab} onClick={setActiveTab} badge="LTDNA" />
+                            <TabButton id="lims" label="LIMS Workflow" icon={PackageCheck} activeTab={activeTab} onClick={setActiveTab} badge="ISO-17025" />
+                            <TabButton id="instrument" label="Instrument Gateway" icon={Cpu} activeTab={activeTab} onClick={setActiveTab} badge="PARSER" />
                         </>
                     )}
                 </div>
@@ -1088,6 +1092,30 @@ export default function AnalysisPage() {
                         transition={{ duration: 0.2 }}
                     >
                         <MultiLayerGenomicsPanel />
+                    </motion.div>
+                )}
+
+                {activeTab === "lims" && (
+                    <motion.div
+                        key="lims"
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -6 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        <LimsWorkflowPanel />
+                    </motion.div>
+                )}
+
+                {activeTab === "instrument" && (
+                    <motion.div
+                        key="instrument"
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -6 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        <InstrumentIngestionPanel />
                     </motion.div>
                 )}
             </AnimatePresence>

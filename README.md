@@ -15,7 +15,7 @@
   <a href="#probabilistic-genotyping--mcmc-deconvolution"><img src="https://img.shields.io/badge/Genotyping-Metropolis--Hastings%20MCMC-orange?style=for-the-badge" /></a>
   <a href="#forensic-phenotyping--biogeographic-ancestry"><img src="https://img.shields.io/badge/Phenotyping-HIrisPlex--S%20%2B%20BGA-purple?style=for-the-badge" /></a>
   <a href="#cryptographic-ledger--zero-knowledge-privacy-auditor"><img src="https://img.shields.io/badge/Privacy-ZKP%20Circom%20%2B%20Polygon-black?style=for-the-badge&logo=polygon" /></a>
-  <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/Suite%20Status-167%2F167%20Passed%20(100%25)-brightgreen?style=for-the-badge&logo=pytest" /></a>
+  <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/Suite%20Status-179%2F179%20Passed%20(100%25)-brightgreen?style=for-the-badge&logo=pytest" /></a>
 </p>
 
 ---
@@ -542,6 +542,10 @@ graph TD
 | `/api/v1/forensic/epigenetics/deconvolve-tissue` | `POST` | `DeconvolveTissueRequest` | `top_predicted_tissue`, `tissue_probabilities`, `lr_tissue` |
 | `/api/v1/forensic/epigenetics/lifestyle-profile` | `POST` | `LifestyleProfileRequest` | `smoking_status`, `smoking_probability`, `circadian_phase` |
 | `/api/v1/forensic/genomics/synthesize-layers` | `POST` | `MultiLayerGenomicsRequest` | `joint_likelihood_ratio`, `log10_joint_likelihood_ratio`, `enfsi_verbal_predicate` |
+| `/api/v1/forensic/lims/case/create` | `POST` | `CreateCaseRequest` | `case_id`, `investigator_name`, `jurisdiction` |
+| `/api/v1/forensic/lims/sample/accession` | `POST` | `AccessionSampleRequest` | `sample_id`, `case_id`, `accession_timestamp` |
+| `/api/v1/forensic/lims/workflow/step` | `POST` | `RecordWorkflowStepRequest` | `step_name`, `operator_id`, `hmac_signature` |
+| `/api/v1/forensic/instruments/ingest-output` | `POST` | `IngestInstrumentOutputRequest` | `status`, `instrument_type`, `parsed_data` |
 | `/api/v1/forensic/phenotype/predict-extended` | `POST` | `PredictExtendedPhenotypeRequest` | `top_eye_color`, `freckling_risk`, `hair_morphology_probs`, `skin_tone_probs` |
 | `/api/v1/health/ready` | `GET` | None | `status`, `subsystems`, `audit_chain_intact` |
 | `/api/v1/health/live` | `GET` | None | `status`, `timestamp` |
@@ -563,6 +567,8 @@ The entire FORENZA software surface is validated using automated Pytest suites.
 | `test_validation.py` | Validation Lab & Synthetic Generator | 7 | ~1.72s | 100% (7/7) | Synthetic profile generator, ROC AUC, FIR at 0% false inclusion |
 | `test_epigenetics.py` | Epigenomics & Methylation Research Subsystem | 11 | ~0.42s | 100% (11/11) | Horvath 5-CpG clock, tDMR tissue deconvolve, AHRR smoking biomarker |
 | `test_multi_layer_genomics.py` | Multi-Layered Forensic Genomics Architecture | 6 | ~0.25s | 100% (6/6) | 5-tier evidence fusion, LR_joint synthesis, PE_joint, ENFSI verbal scale |
+| `test_lims.py` | LIMS-Lite Accessioning & Workflow Subsystem | 6 | ~0.27s | 100% (6/6) | 9-step SOP chain, operator ID, reagent lot validation, HMAC audit |
+| `test_instruments.py` | Automated Analytical Instrument Gateway | 6 | ~0.25s | 100% (6/6) | CE GeneMapper, qPCR Quantifiler Trio Cq & DI, NGS MiSeq VCF |
 | `test_batch.py` | Concurrent Batch Processing Engine | 3 | ~1.42s | 100% (3/3) | Concurrency worker semaphore, job aggregator, progress polling |
 | `test_end_to_end.py` | Master E2E Pipeline Verification | 4 | ~1.60s | 100% (4/4) | Multi-component integration, health probes, HMAC integrity verification |
 | `test_lineage_dna.py` | Lineage DNA Forensics (Y/X/mtDNA) | 7 | ~1.80s | 100% (7/7) | Y-STR Clopper-Pearson 95% CI, X-STR linkage $KI_X$, mtDNA rCRS |

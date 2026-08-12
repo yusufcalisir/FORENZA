@@ -461,15 +461,15 @@ function ZkpTab() {
 /* ═════════════════════════════════════════════════════════════════════════════
    MAIN CONTAINER WITH STUNNING TABS & OPTIMIZED HEIGHT
    ═════════════════════════════════════════════════════════════════════════════ */
-const TABS: { id: TabId; label: string; shortLabel: string; icon: React.ElementType; color: string }[] = [
-    { id: "phenotype", label: "Phenotype Prediction", shortLabel: "Phenotype", icon: Eye, color: "#22C55E" },
-    { id: "str", label: "STR Locus Analysis", shortLabel: "STR Analysis", icon: Dna, color: "#06B6D4" },
-    { id: "zkp", label: "ZK Proof Auditor", shortLabel: "ZK Auditor", icon: ShieldCheck, color: "#8B5CF6" },
-];
-
 export default function LandingBioSimulator() {
     const [activeTab, setActiveTab] = useState<TabId>("phenotype");
     const { t } = useSaasLanguage();
+
+    const tabs = [
+        { id: "phenotype" as TabId, label: t.bioSimulator.tabs.phenotype, shortLabel: t.bioSimulator.tabs.phenotype, icon: Eye, color: "#22C55E" },
+        { id: "str" as TabId, label: t.bioSimulator.tabs.str, shortLabel: t.bioSimulator.tabs.str, icon: Dna, color: "#06B6D4" },
+        { id: "zkp" as TabId, label: t.bioSimulator.tabs.zkp, shortLabel: t.bioSimulator.tabs.zkp, icon: ShieldCheck, color: "#8B5CF6" },
+    ];
 
     return (
         <section id="bio-simulator" className="scroll-mt-20 min-h-[85vh] lg:min-h-screen flex flex-col justify-between py-12 px-4 bg-tactical-surface/20">
@@ -494,7 +494,7 @@ export default function LandingBioSimulator() {
                 <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface p-2.5 sm:p-5 shadow-[0_0_60px_rgba(0,0,0,0.6)]">
                     {/* Navigation Tabs - 3 Column Grid on Mobile (No Scrolling, 100% visible) */}
                     <div className="grid grid-cols-3 gap-1 sm:gap-2 border-b border-tactical-border/80 pb-3 mb-5">
-                        {TABS.map((tab) => {
+                        {tabs.map((tab) => {
                             const Icon = tab.icon;
                             const isActive = activeTab === tab.id;
                             return (

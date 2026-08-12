@@ -5,36 +5,6 @@ import LaunchDemoButton from "./LaunchDemoButton";
 import ForenzaLogoIcon from "@/components/common/ForenzaLogoIcon";
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
-const FOOTER_LINKS = [
-    {
-        heading: "Platform Subsystems",
-        links: [
-            { label: "30 Subsystems Matrix", href: "#subsystems" },
-            { label: "Evidence OS DAG", href: "#architecture" },
-            { label: "Multi-Omic Bio-Simulator", href: "#bio-simulator" },
-            { label: "ISO 17025 Court Mode", href: "#subsystems" },
-        ],
-    },
-    {
-        heading: "Core Capabilities",
-        links: [
-            { label: "MCMC Probabilistic Genotyping", href: "#subsystems" },
-            { label: "HIrisPlex-S Phenotyping", href: "#subsystems" },
-            { label: "Horvath Epigenetic Clock", href: "#subsystems" },
-            { label: "LIMS & Instrument Gateway", href: "#subsystems" },
-        ],
-    },
-    {
-        heading: "Admissibility & Standards",
-        links: [
-            { label: "ISO/IEC 17025:2017", href: "#security" },
-            { label: "SWGDAM & ENFSI Rules", href: "#security" },
-            { label: "Circom ZKP Privacy Auditor", href: "#security" },
-            { label: "HMAC Chain of Custody", href: "#security" },
-        ],
-    },
-];
-
 const TECH_BADGES = [
     { label: "Next.js 16 Turbopack", color: "#06B6D4" },
     { label: "215/215 Pytest Suite", color: "#8B5CF6" },
@@ -44,6 +14,21 @@ const TECH_BADGES = [
 
 export default function LandingFooter() {
     const { t } = useSaasLanguage();
+
+    const footerLinks = [
+        {
+            heading: t.footer.columns.col1Title,
+            links: t.footer.columns.col1Links.map((label, i) => ({ label, href: ["#subsystems", "#architecture", "#bio-simulator", "#subsystems"][i] })),
+        },
+        {
+            heading: t.footer.columns.col2Title,
+            links: t.footer.columns.col2Links.map((label, i) => ({ label, href: ["#subsystems", "#subsystems", "#subsystems", "#subsystems"][i] })),
+        },
+        {
+            heading: t.footer.columns.col3Title,
+            links: t.footer.columns.col3Links.map((label, i) => ({ label, href: ["#security", "#security", "#security", "#security"][i] })),
+        },
+    ];
 
     const scrollToSection = (targetId: string, e: React.MouseEvent) => {
         e.preventDefault();
@@ -94,7 +79,7 @@ export default function LandingFooter() {
 
                     {/* Footer Nav Links */}
                     <div className="lg:col-span-3 grid grid-cols-2 sm:grid-cols-3 gap-8">
-                        {FOOTER_LINKS.map((col, idx) => (
+                        {footerLinks.map((col, idx) => (
                             <div key={idx} className="space-y-3">
                                 <h3 className="text-xs font-bold text-zinc-200 uppercase tracking-wider">
                                     {col.heading}

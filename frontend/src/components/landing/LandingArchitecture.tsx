@@ -6,39 +6,7 @@ import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 export default function LandingArchitecture() {
     const { t } = useSaasLanguage();
-
-    const layers = [
-        {
-            layer: "Layer 1: Multi-Omic Evidence Ingestion",
-            badge: "INGESTION",
-            nodes: ["Autosomal STR", "Forensic SNP", "mtDNA rCRS", "Y-STR", "ABO/Rh Serology", "mRNA Body Fluid", "16S Microbiology"]
-        },
-        {
-            layer: "Layer 2: Biocomputational Inference Engine",
-            badge: "INFERENCE",
-            nodes: ["MCMC Mixture Deconvolution", "Kinship Index", "HIrisPlex-S Phenotype", "Dirichlet Fst Population"]
-        },
-        {
-            layer: "Layer 3: Directed Case Graph & Ledger",
-            badge: "LEDGER",
-            nodes: ["Case Graph Engine", "LIMS Accessioning", "HMAC Chain of Custody"]
-        },
-        {
-            layer: "Layer 4: ISO 17025 QA/QC Gatekeeper",
-            badge: "QA/QC",
-            nodes: ["ISO 17025 Inspection", "Heterozygote Balance Hb", "Stochastic ST", "Control Verification"]
-        },
-        {
-            layer: "Layer 5: Human Analyst Governance",
-            badge: "GOVERNANCE",
-            nodes: ["Dual Sign-Off Review", "Override Rationale Logger", "Prosecutor Fallacy Shield"]
-        },
-        {
-            layer: "Layer 6: Court-Admissible Reporting",
-            badge: "REPORTING",
-            nodes: ["ISO 17025 Certificate Compiler", "PDF Exporter", "Expert Witness Court Mode"]
-        }
-    ];
+    const layers = t.architecture.layers;
 
     return (
         <section id="architecture" className="py-16 lg:py-24 border-b border-tactical-border/60">

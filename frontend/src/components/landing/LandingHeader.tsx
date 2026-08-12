@@ -96,6 +96,8 @@ export default function LandingHeader() {
 
                     {/* Right Actions */}
                     <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+                        <SaaSLanguageToggle />
+
                         <button
                             type="button"
                             onClick={() => setIsGuideOpen(true)}
@@ -105,8 +107,6 @@ export default function LandingHeader() {
                             <BookOpen className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
                             <span className="hidden sm:inline">{guideLabel}</span>
                         </button>
-
-                        <SaaSLanguageToggle />
                         
                         {/* Compact Mobile Demo Button */}
                         <LaunchDemoButton size="sm" label={t.header.launchDemo} compactMobile={true} />
@@ -161,18 +161,6 @@ export default function LandingHeader() {
                 <div className="my-auto py-8 space-y-3 flex flex-col items-center justify-center w-full max-w-sm mx-auto">
                     <button
                         type="button"
-                        onClick={() => {
-                            setIsMobileMenuOpen(false);
-                            setIsGuideOpen(true);
-                        }}
-                        className="w-full py-3.5 px-5 rounded-2xl border border-cyan-500/40 bg-cyan-500/10 text-sm font-bold text-cyan-300 hover:bg-cyan-500/20 transition-all duration-150 flex items-center justify-center gap-3 shadow-md text-center cursor-pointer group"
-                    >
-                        <BookOpen className="w-4 h-4 text-cyan-400 shrink-0 group-hover:scale-110 transition-transform" />
-                        <span>{guideLabel}</span>
-                    </button>
-
-                    <button
-                        type="button"
                         onClick={(e) => scrollToSection("bio-simulator", e)}
                         className="w-full py-3.5 px-5 rounded-2xl border border-tactical-border/80 bg-tactical-surface text-sm font-bold text-zinc-100 hover:text-emerald-300 hover:border-emerald-500/50 hover:bg-emerald-500/10 transition-all duration-150 flex items-center justify-center gap-3 shadow-md text-center cursor-pointer group"
                     >
@@ -205,6 +193,18 @@ export default function LandingHeader() {
                     >
                         <Shield className="w-4 h-4 text-amber-400 shrink-0 group-hover:scale-110 transition-transform" />
                         <span>{t.header.security}</span>
+                    </button>
+
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setIsMobileMenuOpen(false);
+                            setIsGuideOpen(true);
+                        }}
+                        className="w-full py-3.5 px-5 rounded-2xl border border-cyan-500/40 bg-cyan-500/10 text-sm font-bold text-cyan-300 hover:bg-cyan-500/20 transition-all duration-150 flex items-center justify-center gap-3 shadow-md text-center cursor-pointer group"
+                    >
+                        <BookOpen className="w-4 h-4 text-cyan-400 shrink-0 group-hover:scale-110 transition-transform" />
+                        <span>{guideLabel}</span>
                     </button>
                 </div>
 

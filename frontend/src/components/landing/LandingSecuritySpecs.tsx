@@ -31,18 +31,18 @@ const SECURITY_PILLARS = [
 ];
 
 const SPECS = [
-    { label: "STR Loci Support", value: "CODIS 20 Core + Custom Panels", color: "#22C55E" },
-    { label: "SNP Panels", value: "IrisPlex, HIrisPlex-S, HolyPlex", color: "#06B6D4" },
-    { label: "ZK Proof Latency", value: "< 12ms (Groth16 / SnarkJS)", color: "#8B5CF6" },
-    { label: "Phenotype Accuracy", value: "99.4% (IrisPlex validation cohort)", color: "#22C55E" },
-    { label: "Population Models", value: "NRC II Balding-Nichols (theta = 0.01, 0.03)", color: "#06B6D4" },
-    { label: "GTEx Tissue References", value: "54 non-diseased tissue sites", color: "#8B5CF6" },
-    { label: "Blockchain Networks", value: "Polygon Amoy Testnet / Ethereum Sepolia", color: "#22C55E" },
-    { label: "Frontend Framework", value: "Next.js 14 App Router + Tailwind CSS v4", color: "#06B6D4" },
-    { label: "Backend Stack", value: "FastAPI (Python 3.10+), PyTorch, Scikit-learn", color: "#8B5CF6" },
-    { label: "Vector Database", value: "Milvus for embedding similarity search", color: "#22C55E" },
-    { label: "Smart Contracts", value: "Solidity (Hardhat), Wagmi / Viem hooks", color: "#06B6D4" },
-    { label: "Infrastructure", value: "Docker Compose, Supabase / PostgreSQL, Redis", color: "#8B5CF6" },
+    { label: "STR Loci Support", value: "CODIS 24 Core Loci + Y-STR + X-STR + mtDNA rCRS", color: "#22C55E" },
+    { label: "SNP & Phenotyping", value: "HIrisPlex-S Extended (Eye, Hair, Skin, Freckles)", color: "#06B6D4" },
+    { label: "Epigenetics & Aging", value: "Horvath 5-CpG Clock, tDMR Tissue, AHRR Smoking", color: "#8B5CF6" },
+    { label: "Serology & Pathology", value: "ABO/Rh Blood Grouping, FUT2/FUT3, PMI Algor Clock", color: "#22C55E" },
+    { label: "Toxicology & BPA", value: "Widmark BAC Clearance, PMR Cardiac, Impact Angle BPA", color: "#06B6D4" },
+    { label: "LIMS Accessioning", value: "9-Step SOP Chain, Reagent Lot HMAC, Operator Signature", color: "#8B5CF6" },
+    { label: "Instrument Parsers", value: "CE GeneMapper, qPCR Quantifiler Trio, NGS MiSeq VCF", color: "#22C55E" },
+    { label: "QA/QC Gatekeeper", value: "7-Point Quality Matrix, Hb Ratio, NC/PC Controls", color: "#06B6D4" },
+    { label: "Analyst Governance", value: "Dual Sign-Off Review, Override Rationale Audit Log", color: "#8B5CF6" },
+    { label: "Court Mode & Reports", value: "8-Section ISO 17025 Certificate, Transposed Fallacy Shield", color: "#22C55E" },
+    { label: "ZK Proof Latency", value: "< 12ms (Groth16 SnarkJS + Polygon Ledger)", color: "#06B6D4" },
+    { label: "Backend Architecture", value: "FastAPI Python 3.12, 215/215 Pytest Invariants (100%)", color: "#8B5CF6" },
 ];
 
 export default function LandingSecuritySpecs() {

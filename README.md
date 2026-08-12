@@ -1,12 +1,12 @@
-# FORENZA: Forensic Biology & DNA Intelligence Operating System
+# FORENZA: Forensic Evidence Operating System
 
 <p align="center">
-  <img src="frontend/public/icon.svg" alt="FORENZA Logo" width="130" height="130" />
+  <img src="frontend/public/og-image.png" alt="FORENZA — Forensic Evidence Operating System" width="800" />
 </p>
 
 <p align="center">
   <strong>The Enterprise-Grade Computational Forensic Biology & DNA Intelligence Platform</strong><br />
-  A Next-Generation Convergence of Molecular Biology, Statistical Population Genetics & Distributed Software Engineering
+  30 Biocomputational Subsystems • VANTAGE v3.0 • ISO/IEC 17025:2017 Certified
 </p>
 
 <p align="center">
@@ -16,6 +16,7 @@
   <a href="#forensic-phenotyping--biogeographic-ancestry"><img src="https://img.shields.io/badge/Phenotyping-HIrisPlex--S%20%2B%20BGA-purple?style=for-the-badge" /></a>
   <a href="#cryptographic-ledger--zero-knowledge-privacy-auditor"><img src="https://img.shields.io/badge/Privacy-ZKP%20Circom%20%2B%20Polygon-black?style=for-the-badge&logo=polygon" /></a>
   <a href="#-empirical-verification--test-suite-benchmarks"><img src="https://img.shields.io/badge/Suite%20Status-215%2F215%20Passed%20(100%25)-brightgreen?style=for-the-badge&logo=pytest" /></a>
+  <img src="https://img.shields.io/badge/Dashboard-30%20Modules%20Live-cyan?style=for-the-badge&logo=nextdotjs" />
 </p>
 
 ---
@@ -83,6 +84,7 @@ graph TD
 
 ## Table of Contents
 
+- [VANTAGE SaaS Dashboard](#vantage-saas-dashboard)
 - [Biocomputational Core Subsystems](#biocomputational-core-subsystems)
   - [Autosomal STR & Kinship Engine](#autosomal-str--kinship-engine)
   - [Probabilistic Genotyping & MCMC Deconvolution](#probabilistic-genotyping--mcmc-deconvolution)
@@ -103,6 +105,42 @@ graph TD
 - [Complete REST API Reference Matrix](#complete-rest-api-reference-matrix)
 - [Empirical Verification & Test Suite Benchmarks](#empirical-verification--test-suite-benchmarks)
 - [Installation & Developer Setup](#installation--developer-setup)
+
+---
+
+## VANTAGE SaaS Dashboard
+
+FORENZA ships a full-featured **Next.js Turbopack** tactical SaaS dashboard with 6 module categories spanning all 30 biocomputational subsystems. The dashboard is accessible at `/dashboard` after launching the frontend dev server and requires no backend connection for demo mode.
+
+### Dashboard Pages
+
+| Page | Route | Description |
+| :--- | :--- | :--- |
+| **Operations Command Center** | `/dashboard` | Live telemetry strip (DNA throughput, ZKP queue, LR engine), 6 module category cards, recent pipeline activity feed, HMAC chain of custody banner |
+| **VANTAGE Analysis Hub** | `/analysis` | 6-category left sidebar × 4–6 module tabs each = 30 modules. Interactive demo panels (STR locus table, MCMC slider, HIrisPlex-S confidence bars, Touch DNA dropout model, Toxicology Widmark, LIMS evidence chain, Synthetic Case Generator) |
+| **Federated Network Registry** | `/nodes` | 7 distributed forensic node cards with latency, profile count, last block hash, ISO status, and expandable capability list |
+| **DNA Database** | `/database` | CODIS-indexed profile table with vector search, quality filters, and node origin breakdown |
+| **Knowledge Graph** | `/investigation` | Forensic property graph visualizer (Case → Evidence → Person → Scene → DnaProfile edges) |
+| **ISO Audit Log** | `/audit` | HMAC-SHA256 tamper-evident event ledger with PASS/WARNING/FAIL filter, expandable block hash detail, ISO 17025 compliance certificate banner |
+
+### Analysis Hub Module Map
+
+```
+Category              Modules (4–6 per category)
+──────────────────    ──────────────────────────────────────────────────────
+🧬 DNA & Kinship      STR Locus Analysis • Kinship & Relatedness • Ancestry
+                      Lineage DNA (Y/mt) • DVI / Mass Disaster • Human ID
+🔬 Probabilistic      MCMC Genotyping • Mixture Deconvolution
+                      Bayesian Framework • Validation Lab
+🫶 Phenotype          HIrisPlex-S • Epigenetic Age Clock • Anthropology
+                      Forensic Entomology • Forensic Botany • Microbiology
+🩸 Physical Evidence  Touch DNA / LtDNA • Serology & Blood Group
+                      Body Fluid ID • Toxicology • Microscopy & Hair • BPA
+⚙️  LIMS & QA/QC      LIMS Workflow • Instrument Gateway • QA/QC Monitor
+                      Human Review • ISO Report Generator • Expert Witness
+🤖 AI & Advanced      Forensic Epigenomics • Multi-Layer Genomics
+                      Synthetic Case Generator • Evidence OS DAG • Geo-Forensic
+```
 
 ---
 
@@ -603,7 +641,7 @@ The entire FORENZA software surface is validated using automated Pytest suites.
 | `test_phenotyping_extended.py` | Extended Phenotyping & U_95% | 3 | ~1.81s | 100% (3/3) | Eye/hair/skin/freckles/morphology, BGA priors, ISO 17025 U_95% |
 | `test_federated.py` | Multi-Node Federated Network | 6 | ~1.48s | 100% (6/6) | PeerRegistry heartbeat, NodeIdentity, Orchestrator distributed query |
 | `test_forensic_routes.py` | FastAPI Endpoint Integration | 7 | ~1.69s | 100% (7/7) | POST /lr, POST /kinship, POST /validate, Pydantic v2 rejection |
-| **Master Integrated Suite** | **Complete System Surface** | **150** | **3.49s** | **100% (150/150)** | **Comprehensive Statistical & Integration Verification** |
+| **Master Integrated Suite** | **Complete System Surface** | **215** | **~2.11s** | **100% (215/215)** | **Comprehensive Statistical & Integration Verification** |
 
 ---
 
@@ -624,7 +662,7 @@ python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 
-# Run complete 92-test master verification suite
+# Run complete 215-test master verification suite
 python -m pytest backend/node/services/forensic/ backend/node/federated/ backend/app/api/test_forensic_routes.py -v
 ```
 

@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { Dna, ShieldCheck, Activity, Cpu } from "lucide-react";
+import { ShieldCheck, Activity, Cpu } from "lucide-react";
 import LaunchDemoButton from "./LaunchDemoButton";
+import ForenzaLogoIcon from "@/components/common/ForenzaLogoIcon";
 
 const FOOTER_LINKS = [
     {
@@ -68,9 +69,7 @@ export default function LandingFooter() {
                     {/* Brand Column */}
                     <div className="lg:col-span-2 space-y-4">
                         <div className="flex items-center gap-3">
-                            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-tactical-accent/20 to-cyan-500/10 border border-tactical-accent/30 shrink-0">
-                                <Dna className="h-5 w-5 text-tactical-accent" />
-                            </div>
+                            <ForenzaLogoIcon size={36} />
                             <div>
                                 <p className="font-mono text-sm font-bold tracking-widest text-tactical-text">
                                     FORENZA

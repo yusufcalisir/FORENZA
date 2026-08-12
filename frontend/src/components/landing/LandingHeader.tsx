@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { Dna, ArrowRight, Shield, Activity, Sparkles, Cpu, Layers } from "lucide-react";
+import { ArrowRight, Shield, Activity, Sparkles, Cpu, Layers } from "lucide-react";
 import LaunchDemoButton from "./LaunchDemoButton";
+import ForenzaLogoIcon from "@/components/common/ForenzaLogoIcon";
 
 export default function LandingHeader() {
     return (
@@ -10,11 +11,7 @@ export default function LandingHeader() {
             <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3.5 sm:px-6 lg:px-8">
                 {/* Brand Logo */}
                 <Link href="/" className="flex items-center gap-3 group">
-                    <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-tactical-accent via-cyan-500 to-blue-600 p-0.5 shadow-lg shadow-tactical-accent/20 group-hover:scale-105 transition-all duration-300">
-                        <div className="flex h-full w-full items-center justify-center rounded-[10px] bg-black">
-                            <Dna className="h-5 w-5 text-tactical-accent animate-pulse" />
-                        </div>
-                    </div>
+                    <ForenzaLogoIcon size={36} className="group-hover:scale-105 transition-all duration-300 shadow-lg shadow-emerald-500/10" />
                     <div className="flex flex-col">
                         <div className="flex items-center gap-2">
                             <span className="font-mono text-base font-extrabold tracking-wider text-white">

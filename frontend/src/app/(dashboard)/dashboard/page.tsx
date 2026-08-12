@@ -211,19 +211,29 @@ export default function ForenzaDashboardPage() {
                                 className={`rounded-2xl border ${c.border} ${c.bg} p-5 flex flex-col gap-4 transition-all duration-200 cursor-pointer`}
                             >
                                 {/* Card Header */}
-                                <div className="flex items-start justify-between gap-3">
-                                    <div className="flex items-center gap-3 min-w-0">
-                                        <div className={`p-2 rounded-xl border ${c.border} bg-black/30 shrink-0`}>
-                                            <Icon className={`w-4 h-4 ${c.text}`} />
+                                <div className="space-y-2">
+                                    <div className="flex items-start justify-between gap-2">
+                                        <div className="flex items-center gap-2.5 min-w-0">
+                                            <div className={`p-2 rounded-xl border ${c.border} bg-black/40 shrink-0`}>
+                                                <Icon className={`w-4 h-4 ${c.text}`} />
+                                            </div>
+                                            <h3 className="text-xs sm:text-sm font-extrabold text-white leading-tight break-words">
+                                                {card.title}
+                                            </h3>
                                         </div>
-                                        <div className="min-w-0">
-                                            <p className="text-xs font-bold text-white leading-tight truncate">{card.title}</p>
-                                            <p className="text-[9px] text-zinc-500 leading-tight mt-0.5 truncate">{card.subtitle}</p>
+                                        <div className="flex flex-col sm:flex-row items-end sm:items-center gap-1 shrink-0">
+                                            <span className={`text-[8px] font-bold border rounded px-1.5 py-0.5 ${c.badge}`}>{card.badge}</span>
+                                            <span className="text-[8px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded px-1.5 py-0.5">{card.status}</span>
                                         </div>
                                     </div>
-                                    <div className="flex flex-col items-end gap-1 shrink-0">
-                                        <span className={`text-[8px] font-bold border rounded px-1.5 py-0.5 ${c.badge}`}>{card.badge}</span>
-                                        <span className="text-[8px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded px-1.5 py-0.5">{card.status}</span>
+
+                                    {/* Subtitle Tags (Responsive Wrap - No Truncation) */}
+                                    <div className="flex flex-wrap gap-1 pt-0.5">
+                                        {card.subtitle.split(' • ').map((tag) => (
+                                            <span key={tag} className="text-[8px] sm:text-[9px] font-mono font-medium text-zinc-300 bg-black/40 border border-tactical-border/50 rounded-md px-1.5 py-0.5">
+                                                {tag}
+                                            </span>
+                                        ))}
                                     </div>
                                 </div>
 

@@ -5,7 +5,8 @@ import { Cpu, Network, CheckCircle2, ShieldCheck, Activity, Layers, ArrowRight }
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 export default function LandingArchitecture() {
-    const { t } = useSaasLanguage();
+    const { t, lang } = useSaasLanguage();
+    const isTr = lang === "tr";
     const layers = t.architecture.layers;
 
     return (
@@ -50,7 +51,7 @@ export default function LandingArchitecture() {
                                         <span className="text-zinc-300 font-bold">{node}</span>
                                         <span className="flex items-center gap-1 text-emerald-400 font-bold">
                                             <CheckCircle2 className="w-3 h-3" />
-                                            ACTIVE
+                                            {isTr ? "AKTİF" : "ACTIVE"}
                                         </span>
                                     </div>
                                 ))}

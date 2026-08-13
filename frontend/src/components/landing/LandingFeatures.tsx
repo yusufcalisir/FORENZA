@@ -18,7 +18,8 @@ const PILLAR_STYLES = [
 ];
 
 export default function LandingFeatures() {
-    const { t } = useSaasLanguage();
+    const { t, lang } = useSaasLanguage();
+    const isTr = lang === "tr";
     const [selectedPillar, setSelectedPillar] = useState<number>(0);
 
     const pillars = t.subsystems.pillars.map((p, idx) => ({
@@ -38,45 +39,48 @@ export default function LandingFeatures() {
                 {/* Section Header */}
                 <div className="text-center max-w-3xl mx-auto space-y-3 sm:space-y-4 px-2">
                     <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 text-emerald-300 text-[10px] sm:text-xs font-bold uppercase tracking-wider shadow-lg shadow-emerald-500/10">
-                        <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400 animate-pulse shrink-0" />
-                        <span className="truncate">{t.subsystems.badge}</span>
+                        <Layers className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                        <span>{t.subsystems.badge}</span>
                     </div>
-                    <h2 className="text-2xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
+                    <h2 className="text-xl sm:text-3xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight">
                         {t.subsystems.title}
                     </h2>
-                    <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed max-w-2xl mx-auto">
+                    <p className="text-xs sm:text-sm text-zinc-400 max-w-2xl mx-auto leading-relaxed">
                         {t.subsystems.subtitle}
                     </p>
                 </div>
 
-                {/* Architectural Pillar Selector Buttons */}
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3">
-                    {pillars.map((pillar, idx) => {
-                        const Icon = pillar.icon;
+                {/* 6 Category Selection Tabs */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3">
+                    {pillars.map((p, idx) => {
                         const isSelected = selectedPillar === idx;
                         return (
                             <button
-                                key={idx}
+                                key={p.shortName}
+                                type="button"
                                 onClick={() => setSelectedPillar(idx)}
-                                className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border text-left transition-all duration-300 flex flex-col justify-between gap-2 sm:gap-3 cursor-pointer relative overflow-hidden group ${
+                                className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl border transition-all duration-300 flex flex-col items-center text-center gap-2 cursor-pointer relative overflow-hidden group ${
                                     isSelected
-                                        ? `${pillar.accentBorder} ${pillar.accentBg} ${pillar.accentGlow} shadow-xl scale-[1.01]`
-                                        : "border-tactical-border/70 bg-tactical-surface/60 hover:bg-tactical-surface hover:border-zinc-700 text-zinc-400"
+                                        ? `${p.accentBorder} ${p.accentBg} shadow-lg ${p.accentGlow}`
+                                        : "border-tactical-border/60 bg-tactical-surface/40 hover:border-tactical-border hover:bg-tactical-surface/80 text-zinc-400 hover:text-zinc-200"
                                 }`}
                             >
-                                <div className="flex items-center justify-between">
-                                    <div className={`p-1.5 sm:p-2 rounded-xl border ${isSelected ? `${pillar.accentBorder} bg-black/40 ${pillar.accentText}` : "border-tactical-border/60 bg-black/40 text-zinc-400"}`}>
-                                        <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                                    </div>
-                                    <span className={`text-[8px] sm:text-[9px] font-bold px-1.5 sm:px-2 py-0.5 rounded ${isSelected ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40" : "bg-black/40 text-zinc-500"}`}>
-                                        0{idx + 1}
-                                    </span>
+                                <div className={`p-2 rounded-lg border transition-all ${
+                                    isSelected 
+                                        ? `${p.accentBorder} bg-black/40 ${p.accentText}` 
+                                        : "border-transparent bg-zinc-800/40 text-zinc-400 group-hover:text-zinc-200"
+                                }`}>
+                                    <p.icon className="w-4 h-4 sm:w-5 sm:h-5" />
                                 </div>
-                                <div>
-                                    <span className={`text-[10px] sm:text-xs font-bold uppercase tracking-wider block leading-snug truncate ${isSelected ? "text-white" : "text-zinc-300 group-hover:text-white"}`}>
-                                        {pillar.shortName}
+                                <div className="space-y-0.5 min-w-0 w-full">
+                                    <span className="text-[9px] sm:text-[10px] text-zinc-400 font-bold block">
+                                        {isTr ? `KATEGORİ 0${idx + 1}` : `PILLAR 0${idx + 1}`}
                                     </span>
-                                    <span className="text-[8px] sm:text-[9px] text-zinc-500 block pt-0.5 font-bold">5 ENGINES</span>
+                                    <span className={`text-[11px] sm:text-xs font-bold block truncate ${
+                                        isSelected ? "text-white" : ""
+                                    }`}>
+                                        {p.shortName}
+                                    </span>
                                 </div>
                             </button>
                         );
@@ -97,7 +101,7 @@ export default function LandingFeatures() {
                                     {currentPillar.name}
                                 </h3>
                                 <p className="text-[9px] sm:text-[10px] text-zinc-400 mt-0.5 truncate">
-                                    Pillar 0{selectedPillar + 1} • 5 Active Biocomputational Subsystems
+                                    {isTr ? `Kategori 0${selectedPillar + 1} • ${t.subsystems.activeCount}` : `Pillar 0${selectedPillar + 1} • ${t.subsystems.activeCount}`}
                                 </p>
                             </div>
                         </div>
@@ -105,7 +109,7 @@ export default function LandingFeatures() {
                         <div className="flex items-center gap-2 shrink-0">
                             <span className="px-2.5 py-1 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5">
                                 <CheckCircle2 className="w-3 h-3 text-emerald-400 shrink-0" />
-                                5 / 5 OPERATIONAL
+                                {isTr ? "5 / 5 AKTİF & OPERASYONEL" : "5 / 5 OPERATIONAL"}
                             </span>
                         </div>
                     </div>
@@ -132,7 +136,7 @@ export default function LandingFeatures() {
                                         </div>
                                         <span className="text-[8px] sm:text-[9px] font-bold text-emerald-400 flex items-center gap-1">
                                             <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                                            ACTIVE
+                                            {isTr ? "AKTİF" : "ACTIVE"}
                                         </span>
                                     </div>
 
@@ -140,13 +144,14 @@ export default function LandingFeatures() {
                                         {sub.name}
                                     </h4>
 
-                                    <p className="font-mono text-[10px] sm:text-[11px] text-zinc-400 leading-relaxed">
+                                    <p className="text-[10px] sm:text-xs text-zinc-400 leading-relaxed">
                                         {sub.desc}
                                     </p>
                                 </div>
 
-                                <div className="pt-2 sm:pt-3 border-t border-tactical-border/40 flex items-center justify-between text-[8px] sm:text-[9px] font-bold text-zinc-500">
-                                    <span className="truncate text-zinc-400">{sub.metrics}</span>
+                                <div className="pt-2 sm:pt-3 border-t border-tactical-border/40 flex items-center justify-between text-[9px] sm:text-[10px] text-zinc-400 font-mono">
+                                    <span className="text-zinc-500">{t.subsystems.operationalStatus}</span>
+                                    <span className="text-emerald-400 font-bold">{sub.metrics}</span>
                                 </div>
                             </motion.div>
                         ))}

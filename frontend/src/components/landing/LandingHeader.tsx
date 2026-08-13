@@ -2,17 +2,29 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Shield, Activity, Cpu, Layers, Menu, X, BookOpen } from "lucide-react";
+import { Shield, Activity, Cpu, Layers, Menu, X, BookOpen, KeyRound } from "lucide-react";
 import LaunchDemoButton from "./LaunchDemoButton";
 import ForenzaLogoIcon from "@/components/common/ForenzaLogoIcon";
 import SaaSLanguageToggle from "./SaaSLanguageToggle";
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 import UserGuideModal from "@/components/common/UserGuideModal";
+import ApiKeySettingsModal from "@/components/common/ApiKeySettingsModal";
+import { getActiveModeLabel, hasLiveApiKeys } from "@/services/apiClient";
 
 export default function LandingHeader() {
     const { lang, t } = useSaasLanguage();
+    const isTr = lang === "tr";
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isGuideOpen, setIsGuideOpen] = useState(false);
+    const [isApiModalOpen, setIsApiModalOpen] = useState(false);
+    const [modeInfo, setModeInfo] = useState({ label: "DEMO SİMÜLASYON MODU", isLive: false });
+
+    useEffect(() => {
+        const updateMode = () => setModeInfo(getActiveModeLabel(isTr));
+        updateMode();
+        window.addEventListener("forenza-apikeys-updated", updateMode);
+        return () => window.removeEventListener("forenza-apikeys-updated", updateMode);
+    }, [isTr]);
 
     // Prevent body scrolling when mobile menu overlay is open
     useEffect(() => {
@@ -98,6 +110,22 @@ export default function LandingHeader() {
                     <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
                         <SaaSLanguageToggle />
 
+                        {/* Active Engine Mode Status Pill & Key Launcher */}
+                        <button
+                            type="button"
+                            onClick={() => setIsApiModalOpen(true)}
+                            className={`px-2.5 py-1.5 rounded-xl font-mono text-[10px] sm:text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-md ${
+                                modeInfo.isLive
+                                    ? "bg-emerald-500/20 border border-emerald-500/50 text-emerald-300 hover:bg-emerald-500/30 shadow-emerald-500/20"
+                                    : "bg-purple-500/15 border border-purple-500/40 text-purple-300 hover:bg-purple-500/25 shadow-purple-500/15"
+                            }`}
+                            title={isTr ? "API Anahtarlarını Yönet (Demo vs Canlı)" : "Manage API Keys (Demo vs Live)"}
+                        >
+                            <KeyRound className={`w-3.5 h-3.5 shrink-0 ${modeInfo.isLive ? "text-emerald-400" : "text-purple-400"}`} />
+                            <span className="hidden lg:inline">{modeInfo.label}</span>
+                            <span className="lg:hidden">{modeInfo.isLive ? "LIVE API" : "DEMO"}</span>
+                        </button>
+
                         <button
                             type="button"
                             onClick={() => setIsGuideOpen(true)}
@@ -126,6 +154,9 @@ export default function LandingHeader() {
 
             {/* User Guide Interactive Modal */}
             <UserGuideModal isOpen={isGuideOpen} onClose={() => setIsGuideOpen(false)} />
+
+            {/* API Credentials Settings Modal */}
+            <ApiKeySettingsModal isOpen={isApiModalOpen} onClose={() => setIsApiModalOpen(false)} />
 
             {/* ── Ultra-Fast 60FPS Mobile Menu Overlay (Pure CSS GPU Accelerated) ── */}
             <div

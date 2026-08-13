@@ -46,7 +46,10 @@
 - **Unified Intelligence Platform:** Replaces standalone, single-purpose legacy desktop software with a distributed microservices gateway and interactive web workstation.
 - **Multi-Omic Analytical Scope:** Integrates 30 specialized subsystems spanning CODIS 24 Autosomal STRs, Y-STR & mtDNA lineages, MCMC probabilistic mixture deconvolution, HIrisPlex-S phenotyping, 55-SNP AIM biogeographic ancestry, Horvath 5-CpG epigenetic age estimation, skeletal morphometrics, entomological PMI, and bloodstain pattern analysis (BPA).
 - **Court-Admissible Standardization:** Automated SWGDAM 2020 and ENFSI 2017 verbal scale report generation converting Likelihood Ratios into formal expert witness testimony documents.
+- **Dual-Engine Architecture (Demo vs. Live BYO-Key Mode):** Instant out-of-the-box operation with simulated biocomputational models, seamlessly upgrading to live production execution when users supply their custom API keys (Google Gemini 2.0 Flash, OpenAI GPT-4o, Groq LLaMA, NCBI E-utilities, Python FastAPI endpoints) via an interactive in-app modal or environment variables.
 - **Zero-Knowledge Privacy Preservation:** Employs Circom/Groth16 ZK-SNARK zero-knowledge proofs and Polygon blockchain anchor logging, enabling cross-border inter-agency profile matching without disclosing raw genomic profiles outside accredited laboratories.
+
+See [API Key & Production Integration Guide](file:///c:/Users/Yusuf/str-analysis/docs/api-key-integration.md) for full configuration details.
 
 ---
 

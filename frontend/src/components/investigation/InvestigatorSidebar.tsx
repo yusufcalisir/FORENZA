@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Brain, Bot, Send, User, Sparkles, ShieldCheck, Dna, Eye, Scale, Cpu, AlertCircle } from "lucide-react";
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
+import { getStoredApiKeys } from "@/services/apiClient";
 
 interface ChatMessage {
   id: string;
@@ -84,7 +85,8 @@ export default function InvestigatorSidebar() {
         body: JSON.stringify({
           message: query,
           history: updatedHistory.map(m => ({ sender: m.sender, text: m.text })),
-          lang: isTr ? "tr" : "en"
+          lang: isTr ? "tr" : "en",
+          userApiKeys: getStoredApiKeys()
         })
       });
 

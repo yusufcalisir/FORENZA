@@ -10,7 +10,8 @@ import {
   Globe,
   ShieldCheck,
   Sparkles,
-  ChevronDown
+  ChevronDown,
+  KeyRound
 } from "lucide-react";
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 import SaaSLanguageToggle from "@/components/landing/SaaSLanguageToggle";
@@ -95,6 +96,19 @@ export default function UserGuideModal({
         "Epigenetic Age Clock: Biyolojik numunenin bırakıldığı andaki kronolojik yaşını 5 CpG metilasyon lokusunda ±2.1 yıl sapma payı ile hesaplar.",
         "Zero-Knowledge Proof (Circom/Groth16): Kriptografik ZK-SNARK ispatları üreterek ham DNA dizilimlerini laboratuvar dışına aktarmadan kimlik doğrulama yapılmasını sağlar."
       ]
+    },
+    {
+      id: "byo-key-mode",
+      title: "6. Çift Motorlu Mimari & Kendi API Anahtarını Getir (BYO-Key)",
+      icon: KeyRound,
+      color: "text-purple-400",
+      border: "border-purple-500/40",
+      bg: "bg-purple-500/15",
+      content: [
+        "Demo Simülasyon Modu: Ücretsiz, anında çalışan ve yüksek gerçeklikteki biyo-hesaplamalı model motorudur.",
+        "Canlı Üretim Modu (BYO-Key): Header'daki 'DEMO SİMÜLASYON MODU' rozetine tıklayarak kendi Google Gemini, OpenAI, Groq, NCBI veya FastAPI backend uç noktalarınızı tanımlayabilirsiniz.",
+        "Sıfır Veri Sızıntısı: Girdiğiniz API anahtarları yalnızca tarayıcınızın yerel depolamasında (localStorage) saklanır ve doğrudan ilgili AI sunucusuna iletilir."
+      ]
     }
   ] : [
     {
@@ -159,6 +173,19 @@ export default function UserGuideModal({
       content: [
         "Epigenetic Age Clock: Estimates biological age at sample collection using 5-CpG methylation levels with ±2.1 years margin of error.",
         "Zero-Knowledge Proofs (Groth16): Generates cryptographic SNARK proofs to verify profile matches without disclosing raw genomic data outside accredited ISO 17025 labs."
+      ]
+    },
+    {
+      id: "byo-key-mode",
+      title: "6. Dual-Engine Architecture & BYO-API Key Setup",
+      icon: KeyRound,
+      color: "text-purple-400",
+      border: "border-purple-500/40",
+      bg: "bg-purple-500/15",
+      content: [
+        "Demo Simulation Mode: Free, instant, high-fidelity out-of-the-box biocomputational model engine.",
+        "Live Production Mode (BYO-Key): Click the '[DEMO SIMULATION]' badge in the header to enter custom Google Gemini, OpenAI, Groq, NCBI, or FastAPI backend endpoints.",
+        "Zero Data Leakage: All entered API keys reside exclusively in your browser's local storage and are transmitted directly to destination AI models."
       ]
     }
   ];

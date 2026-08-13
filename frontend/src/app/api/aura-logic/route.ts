@@ -35,7 +35,7 @@ Rules:
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { message, history = [], lang = "tr" } = body;
+    const { message, history = [], lang = "tr", userApiKeys = {} } = body;
 
     if (!message || typeof message !== "string") {
       return NextResponse.json({ error: "Message is required" }, { status: 400 });
@@ -44,11 +44,11 @@ export async function POST(req: NextRequest) {
     const isTr = lang === "tr";
     const systemPrompt = isTr ? SYSTEM_PROMPT_TR : SYSTEM_PROMPT_EN;
 
-    // Check for API Keys in Environment Variables
-    const geminiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
-    const openaiKey = process.env.OPENAI_API_KEY;
-    const groqKey = process.env.GROQ_API_KEY;
-    const ollamaUrl = process.env.OLLAMA_BASE_URL;
+    // Resolve API keys (User-provided keys in BYO-Key modal override ENV vars)
+    const geminiKey = userApiKeys.geminiKey?.trim() || process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
+    const openaiKey = userApiKeys.openaiKey?.trim() || process.env.OPENAI_API_KEY;
+    const groqKey = userApiKeys.groqKey?.trim() || process.env.GROQ_API_KEY;
+    const ollamaUrl = userApiKeys.ollamaUrl?.trim() || process.env.OLLAMA_BASE_URL;
 
     // 1. Try Gemini API
     if (geminiKey) {

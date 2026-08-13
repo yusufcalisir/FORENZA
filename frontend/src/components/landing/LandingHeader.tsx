@@ -108,8 +108,6 @@ export default function LandingHeader() {
 
                     {/* Right Actions */}
                     <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
-                        <SaaSLanguageToggle />
-
                         {/* Compact Key Icon Launcher with Live Status Indicator Dot */}
                         <button
                             type="button"
@@ -140,6 +138,9 @@ export default function LandingHeader() {
                         
                         {/* Compact Mobile Demo Button */}
                         <LaunchDemoButton size="sm" label={t.header.launchDemo} compactMobile={true} />
+
+                        {/* Global Language Toggle (Positioned on the far right) */}
+                        <SaaSLanguageToggle />
 
                         {/* Mobile Hamburger Menu Toggle Button */}
                         <button

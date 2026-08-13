@@ -291,7 +291,7 @@ function StrTab() {
                 </div>
 
                 {/* RFU Peak Plot Area */}
-                <div className="relative h-36 w-full rounded-lg border border-tactical-border bg-black/60 p-2 sm:p-3 flex items-end justify-around overflow-hidden">
+                <div className="relative h-48 sm:h-52 w-full rounded-lg border border-tactical-border bg-black/60 pt-7 pb-3 px-3 sm:pt-8 sm:pb-4 sm:px-6 flex items-end justify-around overflow-hidden">
                     {/* Background Grid Lines */}
                     <div
                         className="absolute inset-0 opacity-[0.1]"
@@ -302,7 +302,7 @@ function StrTab() {
                     />
 
                     {/* RFU Scale on Y Axis */}
-                    <div className="absolute left-1.5 top-1.5 bottom-1.5 flex flex-col justify-between font-mono text-[7px] sm:text-[8px] text-tactical-text-dim pointer-events-none">
+                    <div className="absolute left-2 top-2 bottom-3 flex flex-col justify-between font-mono text-[7px] sm:text-[8px] text-tactical-text-dim pointer-events-none">
                         <span>5000 RFU</span>
                         <span>2500 RFU</span>
                         <span>0 RFU</span>
@@ -312,11 +312,11 @@ function StrTab() {
                     {currentStr.alleles.map((allele, i) => {
                         const heightPct = (currentStr.rfu[i] / 5000) * 100;
                         return (
-                            <div key={i} className="relative z-10 flex flex-col items-center gap-1 w-16 sm:w-20">
-                                <span className="font-mono text-[9px] sm:text-[10px] font-bold text-white bg-tactical-surface px-1.5 py-0.5 rounded border border-tactical-border whitespace-nowrap">
+                            <div key={i} className="relative z-10 flex flex-col items-center gap-1.5 w-20 sm:w-24">
+                                <span className="font-mono text-[10px] sm:text-xs font-bold text-white bg-tactical-surface/95 border border-tactical-border/90 px-2.5 py-0.5 rounded-md shadow-md whitespace-nowrap">
                                     {sTab.alleleLabel} {allele}
                                 </span>
-                                <div className="relative w-5 sm:w-7 h-24 flex items-end">
+                                <div className="relative w-6 sm:w-8 h-28 sm:h-32 flex items-end">
                                     <div
                                         className="w-full rounded-t-md transition-all duration-500 shadow-[0_0_15px_rgba(6,182,212,0.4)]"
                                         style={{
@@ -325,7 +325,7 @@ function StrTab() {
                                         }}
                                     />
                                 </div>
-                                <span className="font-mono text-[8px] sm:text-[9px] text-[#06B6D4] font-semibold whitespace-nowrap">
+                                <span className="font-mono text-[9px] sm:text-[10px] text-[#06B6D4] font-semibold whitespace-nowrap">
                                     {currentStr.rfu[i]} {sTab.rfuLabel}
                                 </span>
                             </div>

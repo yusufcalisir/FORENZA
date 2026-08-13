@@ -110,20 +110,22 @@ export default function LandingHeader() {
                     <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
                         <SaaSLanguageToggle />
 
-                        {/* Active Engine Mode Status Pill & Key Launcher */}
+                        {/* Compact Key Icon Launcher with Live Status Indicator Dot */}
                         <button
                             type="button"
                             onClick={() => setIsApiModalOpen(true)}
-                            className={`px-2.5 py-1.5 rounded-xl font-mono text-[10px] sm:text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-md ${
+                            aria-label="API Credentials Settings"
+                            className={`relative p-2 rounded-xl border transition-all flex items-center justify-center cursor-pointer ${
                                 modeInfo.isLive
-                                    ? "bg-emerald-500/20 border border-emerald-500/50 text-emerald-300 hover:bg-emerald-500/30 shadow-emerald-500/20"
-                                    : "bg-purple-500/15 border border-purple-500/40 text-purple-300 hover:bg-purple-500/25 shadow-purple-500/15"
+                                    ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/25 shadow-[0_0_12px_rgba(16,185,129,0.2)]"
+                                    : "bg-purple-500/15 border-purple-500/40 text-purple-300 hover:bg-purple-500/25"
                             }`}
-                            title={isTr ? "API Anahtarlarını Yönet (Demo vs Canlı)" : "Manage API Keys (Demo vs Live)"}
+                            title={modeInfo.isLive ? (isTr ? "API Anahtarları Aktif (Canlı Mod)" : "API Keys Active (Live Production)") : (isTr ? "API Anahtarlarını Yönet (Demo Modu)" : "Manage API Keys (Demo Mode)")}
                         >
-                            <KeyRound className={`w-3.5 h-3.5 shrink-0 ${modeInfo.isLive ? "text-emerald-400" : "text-purple-400"}`} />
-                            <span className="hidden lg:inline">{modeInfo.label}</span>
-                            <span className="lg:hidden">{modeInfo.isLive ? "LIVE API" : "DEMO"}</span>
+                            <KeyRound className={`w-4 h-4 ${modeInfo.isLive ? "text-emerald-400" : "text-purple-400"}`} />
+                            {modeInfo.isLive && (
+                                <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-400 animate-pulse border border-black" />
+                            )}
                         </button>
 
                         <button

@@ -62,7 +62,7 @@ Analyze this forensic dataset and return structured results containing:
 
           return NextResponse.json({
             success: true,
-            provider: "Google Gemini 2.0 Flash AI",
+            provider: "Google Gemini AI",
             badge: "LIVE GEMINI",
             moduleType,
             analysis: parsed
@@ -98,8 +98,8 @@ Analyze this forensic dataset and return structured results containing:
           const replyText = data.choices?.[0]?.message?.content || "{}";
           return NextResponse.json({
             success: true,
-            provider: "OpenAI GPT-4o-mini AI",
-            badge: "LIVE GPT-4o",
+            provider: "OpenAI AI",
+            badge: "LIVE OPENAI",
             moduleType,
             analysis: JSON.parse(replyText)
           });

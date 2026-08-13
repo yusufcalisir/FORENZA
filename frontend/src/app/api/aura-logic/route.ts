@@ -89,7 +89,7 @@ export async function POST(req: NextRequest) {
           if (replyText) {
             return NextResponse.json({
               reply: replyText,
-              provider: "Google Gemini 2.0 Flash",
+              provider: "Google Gemini AI",
               badge: "GEMINI AI"
             });
           }
@@ -131,8 +131,8 @@ export async function POST(req: NextRequest) {
           if (replyText) {
             return NextResponse.json({
               reply: replyText,
-              provider: "OpenAI GPT-4o-mini",
-              badge: "GPT-4o AI"
+              provider: "OpenAI AI",
+              badge: "OPENAI AI"
             });
           }
         }
@@ -173,7 +173,7 @@ export async function POST(req: NextRequest) {
           if (replyText) {
             return NextResponse.json({
               reply: replyText,
-              provider: "Groq LLaMA 3.3 70B",
+              provider: "Groq AI",
               badge: "GROQ AI"
             });
           }

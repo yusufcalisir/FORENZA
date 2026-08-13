@@ -116,7 +116,7 @@ export default function ApiKeySettingsModal({
               {/* Google Gemini Key */}
               <div>
                 <label className="block text-xs font-bold text-zinc-300 mb-1.5 flex items-center justify-between">
-                  <span>Google Gemini API Key (Gemini 2.0 Flash)</span>
+                  <span>Google Gemini API Key</span>
                   <span className="text-[10px] text-purple-400 font-normal">GEMINI_API_KEY</span>
                 </label>
                 <input
@@ -131,7 +131,7 @@ export default function ApiKeySettingsModal({
               {/* OpenAI Key */}
               <div>
                 <label className="block text-xs font-bold text-zinc-300 mb-1.5 flex items-center justify-between">
-                  <span>OpenAI API Key (GPT-4o / GPT-4o-mini)</span>
+                  <span>OpenAI API Key</span>
                   <span className="text-[10px] text-purple-400 font-normal">OPENAI_API_KEY</span>
                 </label>
                 <input
@@ -146,7 +146,7 @@ export default function ApiKeySettingsModal({
               {/* Groq Key */}
               <div>
                 <label className="block text-xs font-bold text-zinc-300 mb-1.5 flex items-center justify-between">
-                  <span>Groq API Key (LLaMA 3.3 70B Versatile)</span>
+                  <span>Groq API Key</span>
                   <span className="text-[10px] text-purple-400 font-normal">GROQ_API_KEY</span>
                 </label>
                 <input

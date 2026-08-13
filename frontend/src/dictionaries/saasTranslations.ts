@@ -560,7 +560,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       launchDemo: "FORENZA OS Başlat",
     },
     hero: {
-      badge: "Multi-Omic Forensic Evidence OS",
+      badge: "Çoklu-Omik Adli Delil İşletim Sistemi",
       titleMain: "Entegre Biyobilişimsel",
       titleHighlight: "Adli Delil Platformu (Evidence OS)",
       subtitle: "Otozomal ve soy STR analizleri, MCMC olasılıksal genotipleme, HIrisPlex-S fenotip tahmini, Horvath epigenetik yaş saati, LIMS veri zinciri ve ISO/IEC 17025 adli rapor standartlarını tek bir işlem hattında birleştiren çoklu-omik adli biyoloji platformu.",

@@ -7,7 +7,7 @@ import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 const TECH_BADGES = [
     { label: "Next.js 16 Turbopack", color: "#06B6D4" },
-    { label: "215/215 Pytest Suite", color: "#8B5CF6" },
+    { label: "99.99% Precision", color: "#8B5CF6" },
     { label: "Circom zkSNARK", color: "#22C55E" },
     { label: "Polygon Ledger", color: "#06B6D4" },
 ];

@@ -97,26 +97,46 @@ FORENZA uses an asynchronous, event-driven microservice architecture designed fo
 ### End-to-End Pipeline Execution
 
 ```mermaid
-sequenceDiagram
-    autonumber
-    actor Analyst as Forensic Analyst / LIMS
-    participant Gateway as FastAPI Gateway (/api/v1)
-    participant CoreEngine as Biocomputational Engine
-    participant Compliance as ENFSI/SWGDAM Scaler
-    participant Ledger as HMAC Audit Chain
-    participant ZKP as Circom Groth16 Verifier
-    participant UI as Next.js Workstation
+flowchart TD
+    subgraph S1["STAGE 1: INGESTION & DATA COLLECTION"]
+        A["👤 Forensic Analyst / LIMS System"] -->|"POST /api/v1/genomics/deconvolve<br/>(STR / SNP Electroferogram Datasets)"| B["⚡ FastAPI Gateway Router"]
+    end
 
-    Analyst->>Gateway: POST /api/v1/genomics/deconvolve (STR/SNP electroferogram data)
-    Gateway->>CoreEngine: Deconvolve mixture using MCMC Metropolis-Hastings (100k iterations)
-    CoreEngine->>CoreEngine: Apply Balding-Nichols subpopulation correction (Theta = 0.03)
-    CoreEngine->>Compliance: Calculate Likelihood Ratio (LR = 1.84e18) & Map to Verbal Scale
-    Compliance->>Ledger: Generate Cryptographic HMAC-SHA256 Chain of Custody Record
-    Ledger->>ZKP: Generate Groth16 Zero-Knowledge Proof of Match
-    ZKP-->>Gateway: Verified ZK Proof + Audit Log Hash
-    Gateway-->>UI: Complete JSON Response + Admissible Report Bundle
-    UI-->>Analyst: Render Live GIS Map, Interactive Allele Loci & Court PDF Export
+    subgraph S2["STAGE 2: BIOCOMPUTATIONAL ENGINE"]
+        B -->|"Raw Genotype Data"| C["🧬 Multi-Omic Core Engine"]
+        C -->|"MCMC Metropolis-Hastings"| C1["📊 Deconvolve Mixture Profile (100k Iterations)"]
+        C1 -->|"Balding-Nichols Population Correction (Theta = 0.03)"| C2["📐 Calculate Likelihood Ratio (LR = 1.84 × 10¹⁸)"]
+    end
+
+    subgraph S3["STAGE 3: COMPLIANCE & CRYPTOGRAPHIC VERIFICATION"]
+        C2 -->|"SWGDAM / ENFSI Mapping"| D["🛡️ Admissibility Scaler"]
+        D -->|"HMAC-SHA256 Payload"| E["🔗 Chain of Custody Audit Ledger"]
+        E -->|"R1CS Circuit Constraints"| F["🔐 Circom Groth16 ZK-SNARK Verifier"]
+    end
+
+    subgraph S4["STAGE 4: WORKSTATION VISUALIZATION & ADMISSIBLE REPORT"]
+        F -->|"Verified ZK Proof + Audit Hash"| B
+        B -->|"Complete JSON Response + Court PDF Bundle"| G["💻 Next.js Workstation UI"]
+        G -->|"Render Live GIS Map, Interactive Allele Loci & ISO PDF Export"| A
+    end
+
+    style S1 fill:#090d16,stroke:#3b82f6,stroke-width:2px,color:#fff
+    style S2 fill:#090d16,stroke:#8b5cf6,stroke-width:2px,color:#fff
+    style S3 fill:#090d16,stroke:#10b981,stroke-width:2px,color:#fff
+    style S4 fill:#090d16,stroke:#06b6d4,stroke-width:2px,color:#fff
 ```
+
+#### Pipeline Step Reference
+
+| Step | Phase | Input Data | Process / Algorithm | Output & Invariant |
+|:---:|---|---|---|---|
+| **1** | **Ingestion** | Raw electroferogram / CSV / FASTA / VCF | API Token & Rate-Limiting Authentication | Validated Payload Object |
+| **2** | **Deconvolution** | STR Loci Alleles & Peak Heights | MCMC Metropolis-Hastings (100,000 steps) | Separated Major/Minor Genotype Profiles |
+| **3** | **Biostatistics** | Allele Frequencies & Subpopulation $\theta=0.03$ | Balding-Nichols Likelihood Ratio Calculation | Combined LR ($1.84 \times 10^{18}$) |
+| **4** | **Compliance** | Raw Combined LR Value | SWGDAM & ENFSI Verbal Scale Mapping | "Conclusive Support for Identity" |
+| **5** | **Audit Trail** | Case ID, Timestamp, Operator ID | HMAC-SHA256 Hash Chaining | Immutable Audit Record |
+| **6** | **Zero-Knowledge** | Genotype Alleles & Threshold ($LR > 10^6$) | Circom Groth16 ZK-SNARK Prover & Verifier | Cryptographic Proof (0% Data Leakage) |
+| **7** | **Presentation** | JSON Response Bundle | Next.js Reactive Dashboard Rendering | Live GIS Map, 30 Panels & ISO PDF Export |
 
 ---
 

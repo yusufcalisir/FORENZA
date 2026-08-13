@@ -655,7 +655,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       },
       phenotypeTab: {
         eyeColors: { blue: "Mavi", hazel: "Ela", brown: "Kahverengi" },
-        skinTypes: { vPale: "Çok Açık Ten", fair: "Açık Ten", medium: "Buğday", olive: "Kumral", dBrown: "Esmer", dBlack: "Koyu Esmer" },
+        skinTypes: { vPale: "Çok Açık Ten", fair: "Açık Ten", medium: "Buğday Ten", olive: "Kumral / Buğday", dBrown: "Koyu Esmer", dBlack: "Çok Koyu Ten" },
         hairTypes: { straight: "Düz", wavy: "Dalgalı", curly: "Kıvırcık" },
         irisTitle: "İris Pigmentasyon Tespiti (HERC2 / OCA2)",
         irisSub: "IrisPlex v2",

@@ -65,7 +65,8 @@ const HAIR_TYPES_DATA = [
 ];
 
 function PhenotypeTab() {
-    const { t } = useSaasLanguage();
+    const { t, lang } = useSaasLanguage();
+    const isTr = lang === "tr";
     const pTab = t.bioSimulator.phenotypeTab;
 
     const [selectedEye, setSelectedEye] = useState(0);
@@ -91,51 +92,32 @@ function PhenotypeTab() {
                         </span>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5">
-                        {EYE_COLORS_DATA.map((opt, i) => (
+                    <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
+                        {EYE_COLORS_DATA.map((eye, i) => (
                             <button
-                                key={opt.key}
+                                key={eye.key}
                                 onClick={() => setSelectedEye(i)}
-                                className={`flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-1 sm:gap-2 rounded-xl border p-1.5 sm:p-2.5 font-mono text-[10px] sm:text-xs transition-all duration-200 cursor-pointer ${
+                                className={`rounded-lg sm:rounded-xl border p-2 sm:p-2.5 font-mono text-[10px] sm:text-xs flex items-center justify-between transition-all cursor-pointer ${
                                     selectedEye === i
                                         ? "border-[#38BDF8] bg-[#38BDF8]/10 text-white shadow-[0_0_15px_rgba(56,189,248,0.2)]"
-                                        : "border-tactical-border bg-tactical-surface text-tactical-text-muted hover:border-tactical-border/80 hover:text-white"
+                                        : "border-tactical-border bg-tactical-surface text-tactical-text-muted hover:border-tactical-border/80"
                                 }`}
                             >
-                                <div className="flex items-center gap-1 min-w-0">
+                                <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
                                     <span
-                                        className="h-2 w-2 sm:h-3 sm:w-3 rounded-full border border-white/30 shrink-0"
-                                        style={{ background: opt.color, boxShadow: `0 0 8px ${opt.glow}` }}
+                                        className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full shrink-0 shadow-sm"
+                                        style={{ background: eye.color }}
                                     />
-                                    <span className="font-semibold truncate">{pTab.eyeColors[opt.key]}</span>
+                                    <span className="font-bold truncate">{pTab.eyeColors[eye.key]}</span>
                                 </div>
-                                <span className="text-[8px] sm:text-[10px] opacity-75 shrink-0">{opt.prob}%</span>
+                                <span className="font-bold text-[#38BDF8] text-[9px] sm:text-[10px] shrink-0">{eye.prob}%</span>
                             </button>
                         ))}
                     </div>
 
-                    {/* Progress Bar & Details */}
-                    <div className="rounded-lg border border-tactical-border bg-tactical-surface p-2.5 sm:p-3 space-y-1.5 sm:space-y-2">
-                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center text-[10px] sm:text-xs font-mono gap-0.5">
-                            <span className="text-tactical-text-muted shrink-0">{pTab.targetGenotype}:</span>
-                            <span className="font-bold text-[#38BDF8] break-all sm:truncate">{currentEye.gene}</span>
-                        </div>
-                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center text-[10px] sm:text-xs font-mono gap-0.5">
-                            <span className="text-tactical-text-muted shrink-0">{pTab.secondaryMarker}:</span>
-                            <span className="text-tactical-text break-all sm:truncate">{currentEye.secondary}</span>
-                        </div>
-                        <div className="space-y-1 pt-1 border-t border-tactical-border/60">
-                            <div className="flex flex-col sm:flex-row sm:justify-between text-[9px] sm:text-[10px] font-mono gap-0.5">
-                                <span className="text-tactical-text-dim">{pTab.posteriorProb}</span>
-                                <span className="font-bold text-[#22C55E]">{currentEye.prob}% {pTab.confidence}</span>
-                            </div>
-                            <div className="h-1.5 sm:h-2 w-full rounded-full bg-tactical-border overflow-hidden">
-                                <div
-                                    className="h-full rounded-full bg-gradient-to-r from-[#22C55E] via-[#38BDF8] to-[#8B5CF6] transition-all duration-500"
-                                    style={{ width: `${currentEye.prob}%` }}
-                                />
-                            </div>
-                        </div>
+                    <div className="pt-2 border-t border-tactical-border/60 flex flex-wrap justify-between gap-1 text-[9px] sm:text-[10px] text-tactical-text-dim">
+                        <span>{pTab.targetGenotype}: <strong className="text-white font-mono">{currentEye.gene}</strong></span>
+                        <span>{pTab.secondaryMarker}: <strong className="text-white font-mono">{currentEye.secondary}</strong></span>
                     </div>
                 </div>
 
@@ -168,7 +150,7 @@ function PhenotypeTab() {
                                     className="h-2 w-full rounded border border-white/20"
                                     style={{ background: st.color }}
                                 />
-                                <span className="font-bold whitespace-nowrap">{st.type}</span>
+                                <span className="font-bold whitespace-nowrap">{isTr ? st.type.replace("Type", "Tip") : st.type}</span>
                                 <span className="text-[8px] text-tactical-text-dim text-center truncate w-full">{pTab.skinTypes[st.key]}</span>
                             </button>
                         ))}
@@ -208,7 +190,7 @@ function PhenotypeTab() {
                                 {pTab.predictedIris}: <span style={{ color: currentEye.color }}>{pTab.eyeColors[currentEye.key]}</span>
                             </p>
                             <p className="font-mono text-[9px] sm:text-[10px] text-tactical-text-muted mt-0.5">
-                                {pTab.skinPhototypeLabel}: {currentSkin.type} ({pTab.skinTypes[currentSkin.key]})
+                                {pTab.skinPhototypeLabel}: {isTr ? currentSkin.type.replace("Type", "Tip") : currentSkin.type} ({pTab.skinTypes[currentSkin.key]})
                             </p>
                         </div>
                     </div>

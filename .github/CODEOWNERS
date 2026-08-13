@@ -1,0 +1,15 @@
+# Global Code Ownership Rules for FORENZA
+* @yusufcalisir
+
+# Frontend Workstation & UI Components
+/frontend/ @yusufcalisir
+
+# Python FastAPI Microservices Gateway & Forensic Engines
+/backend/ @yusufcalisir
+
+# ZK-SNARK Prover & Cryptographic Circuits
+/circuits/ @yusufcalisir
+
+# Documentation & Specifications
+/docs/ @yusufcalisir
+/README.md @yusufcalisir

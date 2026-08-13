@@ -1,0 +1,43 @@
+name: 🐛 Bug Report
+description: Create a report to help us improve FORENZA Evidence OS
+title: "[BUG]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: Thank you for taking the time to report a bug in FORENZA.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: A clear and concise description of what the bug is.
+      placeholder: Tell us what happened...
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: How to reproduce?
+      description: Steps to reproduce the behavior.
+      placeholder: |
+        1. Go to '/analysis'
+        2. Click on 'Run Live AI Sweep'
+        3. See error
+    validations:
+      required: true
+  - type: dropdown
+    id: module
+    attributes:
+      label: Affected Subsystem Module
+      options:
+        - STR Loci & Kinship Engine
+        - HIrisPlex-S DNA Phenotyping
+        - 55-SNP AIM Ancestry & GIS Map
+        - Horvath Epigenetic Clock
+        - BPA 3D Bloodstain Spatter
+        - Circom ZK-SNARK Prover
+        - Aura Logic AI Assistant
+        - General Frontend Workstation
+        - Python FastAPI Backend Gateway
+    validations:
+      required: true

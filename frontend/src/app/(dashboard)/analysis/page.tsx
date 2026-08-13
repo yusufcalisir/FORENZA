@@ -157,22 +157,22 @@ function PanelSTR() {
                     </div>
                 ))}
             </div>
-            <div className="rounded-xl border border-tactical-border/50 bg-black/20 overflow-hidden">
-                <div className="grid grid-cols-5 px-4 py-2 border-b border-tactical-border/40 text-[8px] font-bold text-zinc-600 uppercase tracking-wider">
-                    <span>Locus</span>
-                    <span>Evidence</span>
-                    <span>Reference</span>
-                    <span>LR Component</span>
-                    <span className="text-right">Status</span>
+            <div className="rounded-xl border border-tactical-border/60 bg-black/40 overflow-hidden shadow-inner font-mono">
+                <div className="grid grid-cols-5 items-center px-4 py-2.5 border-b border-tactical-border/50 text-[9px] font-bold text-zinc-400 uppercase tracking-wider bg-black/60">
+                    <span className="truncate">Locus</span>
+                    <span className="truncate">Evidence</span>
+                    <span className="truncate">Reference</span>
+                    <span className="truncate whitespace-nowrap text-emerald-400/90">LR Score</span>
+                    <span className="text-right truncate">Status</span>
                 </div>
                 {loci.map((l, i) => (
-                    <div key={i} className="grid grid-cols-5 items-center px-4 py-2 border-b border-tactical-border/20 last:border-0 hover:bg-white/2 transition-colors">
-                        <span className="text-[10px] font-bold text-white font-mono">{l.locus}</span>
-                        <span className="text-[10px] text-zinc-300 font-mono">{l.evid}</span>
-                        <span className="text-[10px] text-zinc-300 font-mono">{l.ref}</span>
-                        <span className="text-[10px] text-emerald-400 font-mono">{l.lr}</span>
+                    <div key={i} className="grid grid-cols-5 items-center px-4 py-2 border-b border-tactical-border/20 last:border-0 hover:bg-white/[0.03] transition-colors">
+                        <span className="text-[10px] font-bold text-white truncate">{l.locus}</span>
+                        <span className="text-[10px] text-zinc-300 truncate">{l.evid}</span>
+                        <span className="text-[10px] text-zinc-300 truncate">{l.ref}</span>
+                        <span className="text-[10px] text-emerald-400 font-bold truncate">{l.lr}</span>
                         <div className="flex justify-end">
-                            <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
+                            <CheckCircle className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                         </div>
                     </div>
                 ))}

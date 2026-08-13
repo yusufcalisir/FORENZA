@@ -375,61 +375,75 @@ function ZkpTab() {
     return (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 font-mono max-w-full overflow-hidden">
             {/* Circuit Metadata Panel */}
-            <div className="lg:col-span-6 space-y-3">
-                <div className="rounded-xl border border-tactical-border bg-tactical-bg/80 p-3 sm:p-4 space-y-2 font-mono text-[10px] sm:text-xs shadow-md">
-                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-0.5 border-b border-tactical-border pb-1.5">
-                        <span className="text-tactical-text-dim shrink-0">{zTab.circuitId}:</span>
-                        <span className="font-bold text-[#8B5CF6] break-all sm:truncate">dna_match_20loci.circom</span>
+            <div className="lg:col-span-6 flex flex-col justify-between rounded-xl border border-tactical-border bg-tactical-bg/80 p-3.5 sm:p-4 space-y-3 font-mono text-[10px] sm:text-xs shadow-md">
+                <div className="space-y-2">
+                    <div className="flex items-center justify-between border-b border-tactical-border/60 pb-2">
+                        <span className="font-bold text-zinc-300 uppercase tracking-wider text-[10px] sm:text-xs flex items-center gap-1.5">
+                            <ShieldCheck className="w-3.5 h-3.5 text-purple-400" />
+                            R1CS Circuit Constraints
+                        </span>
+                        <span className="px-2 py-0.5 rounded text-[8px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                            Zero-Knowledge
+                        </span>
                     </div>
-                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-0.5 border-b border-tactical-border pb-1.5">
-                        <span className="text-tactical-text-dim shrink-0">{zTab.provingScheme}:</span>
-                        <span className="font-bold text-[#06B6D4] break-all sm:truncate">Groth16 / SnarkJS v0.7</span>
-                    </div>
-                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-0.5 border-b border-tactical-border pb-1.5">
-                        <span className="text-tactical-text-dim shrink-0">{zTab.privateWitness}:</span>
-                        <span className="text-tactical-text-muted break-all sm:truncate">raw_str_alleles[20] (isolated)</span>
-                    </div>
-                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-0.5">
-                        <span className="text-tactical-text-dim shrink-0">{zTab.publicSignal}:</span>
-                        <span className="font-bold text-[#22C55E] break-all sm:truncate">match_score &gt;= threshold</span>
+
+                    <div className="space-y-1.5 pt-1 text-[10px] sm:text-xs">
+                        <div className="flex justify-between items-center py-1 border-b border-tactical-border/40">
+                            <span className="text-tactical-text-dim">{zTab.circuitId}:</span>
+                            <span className="font-bold text-purple-300 truncate">dna_match_20loci.circom</span>
+                        </div>
+                        <div className="flex justify-between items-center py-1 border-b border-tactical-border/40">
+                            <span className="text-tactical-text-dim">{zTab.provingScheme}:</span>
+                            <span className="font-bold text-cyan-400">Groth16 / SnarkJS v0.7</span>
+                        </div>
+                        <div className="flex justify-between items-center py-1 border-b border-tactical-border/40">
+                            <span className="text-tactical-text-dim">{zTab.privateWitness}:</span>
+                            <span className="text-zinc-300 truncate">raw_str_alleles[20] (isolated)</span>
+                        </div>
+                        <div className="flex justify-between items-center py-1">
+                            <span className="text-tactical-text-dim">{zTab.publicSignal}:</span>
+                            <span className="font-bold text-emerald-400">match_score &ge; threshold</span>
+                        </div>
                     </div>
                 </div>
 
-                {status === "idle" && (
-                    <button
-                        onClick={handleGenerate}
-                        className="w-full rounded-xl bg-gradient-to-r from-[#8B5CF6] to-[#06B6D4] p-3 sm:p-3.5 font-mono text-xs font-bold tracking-wider text-white shadow-lg hover:shadow-[0_0_25px_rgba(139,92,246,0.4)] transition-all flex items-center justify-center gap-2 cursor-pointer"
-                    >
-                        <Lock className="h-4 w-4 shrink-0" />
-                        <span>{zTab.executeBtn}</span>
-                    </button>
-                )}
-
-                {status === "computing" && (
-                    <div className="rounded-xl border border-[#8B5CF6]/40 bg-[#8B5CF6]/10 p-3.5 font-mono text-xs text-center space-y-1.5 animate-pulse">
-                        <Activity className="h-5 w-5 text-[#8B5CF6] mx-auto animate-spin" />
-                        <p className="font-bold text-white text-[11px] sm:text-xs">{zTab.computing}</p>
-                        <p className="text-[9px] sm:text-[10px] text-tactical-text-muted">{zTab.latency}</p>
-                    </div>
-                )}
-
-                {status === "verified" && (
-                    <div className="rounded-xl border border-[#22C55E]/40 bg-[#22C55E]/10 p-3.5 font-mono text-xs space-y-1.5 shadow-lg">
-                        <div className="flex items-center gap-2 text-[#22C55E]">
-                            <CheckCircle2 className="h-4 w-4 shrink-0" />
-                            <span className="font-bold text-xs">{zTab.proofSuccess}</span>
-                        </div>
-                        <p className="text-[9px] sm:text-[10px] text-tactical-text-muted">
-                            {zTab.provenMsg}
-                        </p>
+                {/* Tactical Action Trigger */}
+                <div className="pt-2 border-t border-tactical-border/60">
+                    {status === "idle" && (
                         <button
-                            onClick={() => setStatus("idle")}
-                            className="text-[9px] sm:text-[10px] text-[#06B6D4] hover:underline cursor-pointer"
+                            type="button"
+                            onClick={handleGenerate}
+                            className="w-full py-2.5 px-4 rounded-xl bg-purple-500/15 border border-purple-500/40 hover:border-purple-400 hover:bg-purple-500/25 text-purple-200 font-mono text-[11px] sm:text-xs font-bold tracking-wider transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_15px_rgba(139,92,246,0.15)] hover:shadow-[0_0_25px_rgba(139,92,246,0.3)] active:scale-[0.99]"
                         >
-                            {zTab.resetBtn}
+                            <Lock className="h-3.5 w-3.5 text-purple-400 shrink-0" />
+                            <span>{zTab.executeBtn}</span>
                         </button>
-                    </div>
-                )}
+                    )}
+
+                    {status === "computing" && (
+                        <div className="py-2.5 px-3 rounded-xl border border-purple-500/40 bg-purple-500/10 font-mono text-[10px] sm:text-xs text-center flex items-center justify-center gap-2 text-purple-300 animate-pulse">
+                            <Activity className="h-3.5 w-3.5 text-purple-400 animate-spin" />
+                            <span className="font-bold">{zTab.computing}</span>
+                            <span className="text-zinc-500 text-[9px]">({zTab.latency})</span>
+                        </div>
+                    )}
+
+                    {status === "verified" && (
+                        <div className="py-2 px-3 rounded-xl border border-emerald-500/40 bg-emerald-500/10 font-mono text-[10px] sm:text-xs flex items-center justify-between gap-2 shadow-sm">
+                            <div className="flex items-center gap-1.5 text-emerald-400 font-bold">
+                                <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
+                                <span>{zTab.proofSuccess}</span>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setStatus("idle")}
+                                className="text-[9px] text-cyan-400 hover:text-cyan-300 underline cursor-pointer"
+                            >
+                                {zTab.resetBtn}
+                            </button>
+                        </div>
+                    )}
+                </div>
             </div>
 
             {/* Cryptographic Console Log Output */}

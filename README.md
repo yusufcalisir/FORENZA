@@ -98,32 +98,15 @@ FORENZA uses an asynchronous, event-driven microservice architecture designed fo
 
 ```mermaid
 flowchart TD
-    subgraph S1["STAGE 1: INGESTION & DATA COLLECTION"]
-        A["👤 Forensic Analyst / LIMS System"] -->|"POST /api/v1/genomics/deconvolve<br/>(STR / SNP Electroferogram Datasets)"| B["⚡ FastAPI Gateway Router"]
-    end
-
-    subgraph S2["STAGE 2: BIOCOMPUTATIONAL ENGINE"]
-        B -->|"Raw Genotype Data"| C["🧬 Multi-Omic Core Engine"]
-        C -->|"MCMC Metropolis-Hastings"| C1["📊 Deconvolve Mixture Profile (100k Iterations)"]
-        C1 -->|"Balding-Nichols Population Correction (Theta = 0.03)"| C2["📐 Calculate Likelihood Ratio (LR = 1.84 × 10¹⁸)"]
-    end
-
-    subgraph S3["STAGE 3: COMPLIANCE & CRYPTOGRAPHIC VERIFICATION"]
-        C2 -->|"SWGDAM / ENFSI Mapping"| D["🛡️ Admissibility Scaler"]
-        D -->|"HMAC-SHA256 Payload"| E["🔗 Chain of Custody Audit Ledger"]
-        E -->|"R1CS Circuit Constraints"| F["🔐 Circom Groth16 ZK-SNARK Verifier"]
-    end
-
-    subgraph S4["STAGE 4: WORKSTATION VISUALIZATION & ADMISSIBLE REPORT"]
-        F -->|"Verified ZK Proof + Audit Hash"| B
-        B -->|"Complete JSON Response + Court PDF Bundle"| G["💻 Next.js Workstation UI"]
-        G -->|"Render Live GIS Map, Interactive Allele Loci & ISO PDF Export"| A
-    end
-
-    style S1 fill:#090d16,stroke:#3b82f6,stroke-width:2px,color:#fff
-    style S2 fill:#090d16,stroke:#8b5cf6,stroke-width:2px,color:#fff
-    style S3 fill:#090d16,stroke:#10b981,stroke-width:2px,color:#fff
-    style S4 fill:#090d16,stroke:#06b6d4,stroke-width:2px,color:#fff
+    A["👤 Forensic Analyst / LIMS System"] -->|"POST /api/v1/genomics/deconvolve<br/>(STR / SNP Electroferogram Datasets)"| B["⚡ FastAPI Gateway Router"]
+    B -->|"Raw Genotype Data"| C["🧬 Multi-Omic Core Engine"]
+    C -->|"100,000 Iterations"| D["📊 MCMC Mixture Deconvolution"]
+    D -->|"Balding-Nichols Population Correction (Theta = 0.03)"| E["📐 Calculate Likelihood Ratio (LR = 1.84 × 10¹⁸)"]
+    E -->|"SWGDAM / ENFSI Verbal Mapping"| F["🛡️ Admissibility Scaler"]
+    F -->|"HMAC-SHA256 Payload"| G["🔗 Chain of Custody Audit Ledger"]
+    G -->|"R1CS Circuit Constraints"| H["🔐 Circom Groth16 ZK-SNARK Verifier"]
+    H -->|"Verified ZK Proof + Audit Log Hash"| I["💻 Next.js Workstation UI"]
+    I -->|"Render Live GIS Map, Interactive Allele Loci & ISO PDF Export"| A
 ```
 
 #### Pipeline Step Reference

@@ -56,22 +56,24 @@ export default function LandingHeader() {
     return (
         <>
             <header className="sticky top-0 z-40 border-b border-tactical-border/60 bg-black/90 backdrop-blur-xl transition-all w-full max-w-full overflow-x-clip">
-                <div className="mx-auto flex max-w-7xl items-center justify-between px-3 py-2.5 sm:px-6 lg:px-8 gap-2">
-                    {/* Brand Logo */}
-                    <Link href="/" className="flex items-center gap-1.5 sm:gap-2.5 group shrink-0 min-w-0">
-                        <ForenzaLogoIcon size={30} className="sm:w-[34px] sm:h-[34px] group-hover:scale-105 transition-all duration-300 shadow-lg shadow-emerald-500/10 shrink-0" />
-                        <div className="flex items-center gap-1.5 min-w-0">
-                            <span className="font-mono text-sm sm:text-base font-extrabold tracking-wider text-white">
-                                FORENZA
-                            </span>
-                            <span className="hidden lg:inline-flex rounded-full bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 text-[9px] font-mono font-bold text-emerald-400 whitespace-nowrap">
-                                EVIDENCE OS
-                            </span>
-                        </div>
-                    </Link>
+                <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-2.5 sm:px-6 lg:px-8 gap-4">
+                    {/* Left: Brand Logo & Title */}
+                    <div className="flex items-center shrink-0">
+                        <Link href="/" className="flex items-center gap-2 group shrink-0 min-w-0">
+                            <ForenzaLogoIcon size={32} className="group-hover:scale-105 transition-all duration-300 shadow-lg shadow-emerald-500/10 shrink-0" />
+                            <div className="flex items-center gap-1.5 min-w-0">
+                                <span className="font-mono text-sm sm:text-base font-extrabold tracking-wider text-white">
+                                    FORENZA
+                                </span>
+                                <span className="hidden xl:inline-flex rounded-full bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 text-[9px] font-mono font-bold text-emerald-400 whitespace-nowrap">
+                                    EVIDENCE OS
+                                </span>
+                            </div>
+                        </Link>
+                    </div>
 
-                    {/* Navigation Links (Desktop) */}
-                    <nav className="hidden md:flex items-center gap-4 lg:gap-7 font-mono text-xs text-zinc-400">
+                    {/* Center: Navigation Links (Desktop) */}
+                    <nav className="hidden md:flex items-center justify-center gap-6 lg:gap-8 font-mono text-xs text-zinc-400">
                         <button 
                             type="button"
                             onClick={(e) => scrollToSection("bio-simulator", e)} 
@@ -106,9 +108,9 @@ export default function LandingHeader() {
                         </button>
                     </nav>
 
-                    {/* Right Actions */}
-                    <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
-                        {/* Compact Key Icon Launcher with Live Status Indicator Dot */}
+                    {/* Right: Actions Group (Key, Guide, Demo, Language) */}
+                    <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+                        {/* 1. Key Button (Icon only) */}
                         <button
                             type="button"
                             onClick={() => setIsApiModalOpen(true)}
@@ -126,20 +128,21 @@ export default function LandingHeader() {
                             )}
                         </button>
 
+                        {/* 2. User Guide Button (Icon only in nav) */}
                         <button
                             type="button"
                             onClick={() => setIsGuideOpen(true)}
-                            className="px-2.5 py-1.5 rounded-xl font-mono text-[10px] sm:text-xs font-bold bg-cyan-500/15 border border-cyan-500/40 text-cyan-300 hover:bg-cyan-500/25 transition-all flex items-center gap-1.5 cursor-pointer shadow-[0_0_12px_rgba(6,182,212,0.15)]"
+                            aria-label={guideLabel}
+                            className="p-2 rounded-xl border border-cyan-500/40 bg-cyan-500/15 text-cyan-300 hover:bg-cyan-500/25 hover:border-cyan-400/80 transition-all flex items-center justify-center cursor-pointer shadow-[0_0_12px_rgba(6,182,212,0.15)]"
                             title={guideLabel}
                         >
-                            <BookOpen className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-                            <span className="hidden sm:inline">{guideLabel}</span>
+                            <BookOpen className="w-4 h-4 text-cyan-400 shrink-0" />
                         </button>
-                        
-                        {/* Compact Mobile Demo Button */}
-                        <LaunchDemoButton size="sm" label={t.header.launchDemo} compactMobile={true} />
 
-                        {/* Global Language Toggle (Positioned on the far right) */}
+                        {/* 3. Launch Demo Button (Icon only in nav) */}
+                        <LaunchDemoButton iconOnly={true} label={t.header.launchDemo} />
+
+                        {/* 4. Global Language Toggle (Positioned on the far right) */}
                         <SaaSLanguageToggle />
 
                         {/* Mobile Hamburger Menu Toggle Button */}

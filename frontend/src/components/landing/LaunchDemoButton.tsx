@@ -10,11 +10,13 @@ export default function LaunchDemoButton({
     className = "",
     label = "Launch FORENZA OS",
     compactMobile = false,
+    iconOnly = false,
 }: {
     size?: "sm" | "md" | "lg";
     className?: string;
     label?: string;
     compactMobile?: boolean;
+    iconOnly?: boolean;
 }) {
     const router = useRouter();
     const [isTransitioning, setIsTransitioning] = useState(false);
@@ -45,16 +47,20 @@ export default function LaunchDemoButton({
                 onClick={handleClick}
                 aria-label={label}
                 title={label}
-                className={`group relative inline-flex items-center justify-center gap-1.5 sm:gap-2 font-mono font-bold tracking-wider transition-all duration-300 rounded-xl bg-tactical-surface/90 hover:bg-emerald-500/10 text-emerald-400 border border-emerald-500/40 hover:border-emerald-400/80 shadow-[0_0_15px_rgba(16,185,129,0.15)] hover:shadow-[0_0_25px_rgba(16,185,129,0.3)] hover:scale-[1.02] active:scale-[0.98] cursor-pointer ${
-                    compactMobile
-                        ? "p-2 sm:px-3.5 sm:py-1.5 font-mono text-[10px]"
-                        : sizeClasses
+                className={`group relative inline-flex items-center justify-center font-mono font-bold tracking-wider transition-all duration-300 rounded-xl bg-tactical-surface/90 hover:bg-emerald-500/15 text-emerald-400 border border-emerald-500/40 hover:border-emerald-400/80 shadow-[0_0_15px_rgba(16,185,129,0.15)] hover:shadow-[0_0_25px_rgba(16,185,129,0.3)] hover:scale-[1.02] active:scale-[0.98] cursor-pointer ${
+                    iconOnly
+                        ? "p-2"
+                        : compactMobile
+                        ? "p-2 sm:px-3.5 sm:py-1.5 font-mono text-[10px] gap-1.5 sm:gap-2"
+                        : `${sizeClasses} gap-1.5 sm:gap-2`
                 } ${className}`}
             >
-                <Zap className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-emerald-400 fill-emerald-400/20 shrink-0 transition-transform group-hover:scale-110" />
-                <span className={`whitespace-nowrap uppercase tracking-wider ${compactMobile ? "hidden sm:inline" : ""}`}>
-                    {label}
-                </span>
+                <Zap className="h-4 w-4 text-emerald-400 fill-emerald-400/20 shrink-0 transition-transform group-hover:scale-110" />
+                {!iconOnly && (
+                    <span className={`whitespace-nowrap uppercase tracking-wider ${compactMobile ? "hidden sm:inline" : ""}`}>
+                        {label}
+                    </span>
+                )}
             </button>
         </>
     );

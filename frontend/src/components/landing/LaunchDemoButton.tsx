@@ -8,7 +8,7 @@ import DnaLaunchTransition from "@/components/common/DnaLaunchTransition";
 export default function LaunchDemoButton({
     size = "md",
     className = "",
-    label = "Launch Demo OS",
+    label = "Launch FORENZA OS",
     compactMobile = false,
 }: {
     size?: "sm" | "md" | "lg";

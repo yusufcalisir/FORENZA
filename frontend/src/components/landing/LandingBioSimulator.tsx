@@ -260,20 +260,20 @@ function StrTab() {
 
     return (
         <div className="space-y-3 sm:space-y-4 font-mono max-w-full overflow-hidden">
-            {/* Locus Tabs */}
-            <div className="flex gap-1.5 sm:gap-2 overflow-x-auto pb-2 scrollbar-none border-b border-tactical-border max-w-full">
+            {/* Locus Selection Cards (Mobile: Full-view Grid, Desktop: Flex Row) */}
+            <div className="grid grid-cols-2 min-[420px]:grid-cols-3 sm:flex sm:flex-wrap items-center gap-1.5 sm:gap-2 pb-2.5 border-b border-tactical-border max-w-full">
                 {STR_DATA.map((str, i) => (
                     <button
                         key={str.name}
                         onClick={() => setSelectedIdx(i)}
-                        className={`flex items-center gap-1 sm:gap-1.5 rounded-xl border px-2.5 sm:px-3.5 py-1.5 font-mono text-[10px] sm:text-xs font-bold tracking-wider transition-all cursor-pointer shrink-0 whitespace-nowrap ${
+                        className={`flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1.5 rounded-xl border px-2 sm:px-3.5 py-1.5 font-mono text-[10px] sm:text-xs font-bold tracking-wider transition-all cursor-pointer text-center sm:text-left ${
                             selectedIdx === i
-                                ? "border-[#06B6D4] bg-[#06B6D4]/10 text-[#06B6D4] shadow-[0_0_15px_rgba(6,182,212,0.2)]"
-                                : "border-tactical-border bg-tactical-surface text-tactical-text-muted hover:border-tactical-border/80"
+                                ? "border-[#06B6D4] bg-[#06B6D4]/15 text-[#06B6D4] shadow-[0_0_15px_rgba(6,182,212,0.25)]"
+                                : "border-tactical-border/80 bg-tactical-surface/70 text-tactical-text-muted hover:border-tactical-border hover:bg-tactical-surface hover:text-white"
                         }`}
                     >
                         <span>{str.name}</span>
-                        <span className="text-[8px] sm:text-[10px] font-normal opacity-70">[{str.alleles.join(", ")}]</span>
+                        <span className="text-[8px] sm:text-[10px] font-normal opacity-75">[{str.alleles.join(", ")}]</span>
                     </button>
                 ))}
             </div>

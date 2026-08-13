@@ -30,7 +30,7 @@ const SITE_URL = getSiteUrl();
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "FORENZA",
+  title: "FORENZA | Multi-Omic Forensic Evidence OS",
   description: "Enterprise Multi-Omic Biocomputational Forensic Intelligence Platform & Evidence Operating System.",
   keywords: ["FORENZA", "DNA", "Forensic OS", "CODIS", "Kinship", "HIrisPlex-S", "MCMC"],
   authors: [{ name: "FORENZA Systems" }],

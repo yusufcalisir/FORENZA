@@ -14,7 +14,7 @@ import { SaasLanguageProvider } from "@/context/SaaSLanguageContext";
 import { SaasLanguage } from "@/dictionaries/saasTranslations";
 
 export const metadata: Metadata = {
-    title: "FORENZA",
+    title: "FORENZA | Multi-Omic Forensic Evidence OS",
     description: "Enterprise Multi-Omic Biocomputational Forensic Intelligence Platform",
 };
 

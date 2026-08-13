@@ -158,6 +158,36 @@ export default function ApiKeySettingsModal({
                 />
               </div>
 
+              {/* Anthropic Claude Key */}
+              <div>
+                <label className="block text-xs font-bold text-zinc-300 mb-1.5 flex items-center justify-between">
+                  <span>Anthropic Claude API Key</span>
+                  <span className="text-[10px] text-purple-400 font-normal">ANTHROPIC_API_KEY</span>
+                </label>
+                <input
+                  type={showKeys ? "text" : "password"}
+                  value={keys.anthropicKey || ""}
+                  onChange={e => setKeys({ ...keys, anthropicKey: e.target.value })}
+                  placeholder="sk-ant-api03-..."
+                  className="w-full bg-black/60 border border-tactical-border/80 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-purple-500/60 transition-all font-mono"
+                />
+              </div>
+
+              {/* DeepSeek Key */}
+              <div>
+                <label className="block text-xs font-bold text-zinc-300 mb-1.5 flex items-center justify-between">
+                  <span>DeepSeek API Key</span>
+                  <span className="text-[10px] text-purple-400 font-normal">DEEPSEEK_API_KEY</span>
+                </label>
+                <input
+                  type={showKeys ? "text" : "password"}
+                  value={keys.deepseekKey || ""}
+                  onChange={e => setKeys({ ...keys, deepseekKey: e.target.value })}
+                  placeholder="sk-deepseek-..."
+                  className="w-full bg-black/60 border border-tactical-border/80 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-purple-500/60 transition-all font-mono"
+                />
+              </div>
+
               {/* NCBI E-utilities Key */}
               <div>
                 <label className="block text-xs font-bold text-zinc-300 mb-1.5 flex items-center justify-between">

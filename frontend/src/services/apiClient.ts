@@ -2,6 +2,8 @@ export interface ApiKeysConfig {
   geminiKey?: string;
   openaiKey?: string;
   groqKey?: string;
+  anthropicKey?: string;
+  deepseekKey?: string;
   ncbiKey?: string;
   backendUrl?: string;
   polygonRpc?: string;
@@ -38,6 +40,8 @@ export function hasLiveApiKeys(): boolean {
     keys.geminiKey?.trim() ||
     keys.openaiKey?.trim() ||
     keys.groqKey?.trim() ||
+    keys.anthropicKey?.trim() ||
+    keys.deepseekKey?.trim() ||
     keys.ncbiKey?.trim() ||
     keys.backendUrl?.trim()
   );

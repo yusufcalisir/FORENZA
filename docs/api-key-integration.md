@@ -10,13 +10,14 @@ FORENZA is engineered with a **Dual-Engine Architecture**:
 
 ## 1. Supported API Providers & Environment Variables
 
-| Category | Provider / Service | Environment Variable | Header / Client Modal Key | Supported Features |
+| Provider / Protocol | Model / Protocol | Environment Var | Client Key Name | Purpose |
 |---|---|---|---|---|
-| **AI LLM** | Google Gemini API | `GEMINI_API_KEY` | `geminiKey` | Aura Logic AI chat, natural language court testimony synthesis |
-| **AI LLM** | OpenAI API | `OPENAI_API_KEY` | `openaiKey` | GPT-4o / GPT-4o-mini ad-hoc forensic query processing |
-| **AI LLM** | Groq Cloud | `GROQ_API_KEY` | `groqKey` | LLaMA 3.3 70B high-speed inference |
-| **AI LLM** | Local Ollama | `OLLAMA_BASE_URL` | `ollamaUrl` | Air-gapped / local LLM inference |
-| **Genomics** | NCBI Entrez E-utilities | `NCBI_API_KEY` | `ncbiKey` | High-throughput rsID, SRA, and PubMed bibliography queries |
+| **Google** | Gemini API | `GEMINI_API_KEY` | `geminiKey` | Live Aura Logic chat & multi-omic JSON sweeps |
+| **OpenAI** | GPT-4o / GPT-4o-mini | `OPENAI_API_KEY` | `openaiKey` | Live Aura Logic chat & forensic reasoning |
+| **Groq** | LLaMA 3.3 70B | `GROQ_API_KEY` | `groqKey` | Ultra-fast inference engine |
+| **Anthropic** | Claude 3.5 Sonnet | `ANTHROPIC_API_KEY` | `anthropicKey` | High-precision scientific reasoning & report synthesis |
+| **DeepSeek** | DeepSeek V3 / R1 | `DEEPSEEK_API_KEY` | `deepseekKey` | Advanced mathematical biocomputational analysis |
+| **NCBI** | Entrez E-utilities | `NCBI_API_KEY` | `ncbiKey` | Live dbSNP & PubMed literature searches |
 | **Backend** | Python FastAPI Engine | `FASTAPI_BACKEND_URL` | `backendUrl` | 30 microservice endpoints (MCMC, BPA, Horvath Clock) |
 | **Ledger** | Polygon Testnet/Mainnet | `POLYGON_RPC_URL` | `polygonRpc` | ZK-SNARK Circom Groth16 proof anchoring |
 
@@ -26,9 +27,9 @@ FORENZA is engineered with a **Dual-Engine Architecture**:
 
 ### Option A: Interactive In-App Key Manager (Recommended for Users)
 1. Open the FORENZA web app.
-2. Click the **`[DEMO SİMÜLASYON MODU]`** / **`[DEMO SIMULATION MODE]`** badge in the top navigation header.
-3. Enter your API credentials into the maskable input fields.
-4. Click **`Save & Activate Mode`**. The header badge will immediately switch to **`[CANLI ÜRETİM MODU]`** / **`[LIVE PRODUCTION MODE]`**.
+2. Click the **Key Icon** in the top navigation header.
+3. Enter your API credentials into the maskable input fields (Gemini, OpenAI, Groq, Anthropic, DeepSeek, etc.).
+4. Click **`Save & Activate Mode`**. The header status dot will immediately turn green for **`[LIVE PRODUCTION MODE]`**.
 
 ### Option B: Self-Hosted Environment Variables (Recommended for Accredited Labs)
 Create a `.env.local` file in the `frontend` root directory:
@@ -38,6 +39,8 @@ Create a `.env.local` file in the `frontend` root directory:
 GEMINI_API_KEY="AIzaSyYourGeminiKeyHere..."
 OPENAI_API_KEY="sk-proj-YourOpenAIKeyHere..."
 GROQ_API_KEY="gsk_YourGroqKeyHere..."
+ANTHROPIC_API_KEY="sk-ant-api03-YourAnthropicKeyHere..."
+DEEPSEEK_API_KEY="sk-deepseek-YourDeepseekKeyHere..."
 
 # Science & LIMS Connections
 NCBI_API_KEY="ncbi_api_key_here"

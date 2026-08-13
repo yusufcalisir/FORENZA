@@ -109,7 +109,87 @@ Analyze this forensic dataset and return structured results containing:
       }
     }
 
-    // 3. Fallback Native Biocomputational Engine Results
+    const anthropicKey = userApiKeys.anthropicKey?.trim() || process.env.ANTHROPIC_API_KEY;
+    const deepseekKey = userApiKeys.deepseekKey?.trim() || process.env.DEEPSEEK_API_KEY;
+
+    // 3. Try Anthropic Claude API
+    if (anthropicKey) {
+      try {
+        const anthropicRes = await fetch("https://api.anthropic.com/v1/messages", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-api-key": anthropicKey,
+            "anthropic-version": "2023-06-01"
+          },
+          body: JSON.stringify({
+            model: "claude-3-5-sonnet-20241022",
+            max_tokens: 1024,
+            system: `${systemPrompt}\n\nIMPORTANT: Return ONLY valid, parseable JSON. Do not include markdown code blocks or explanatory text outside JSON.`,
+            messages: [{ role: "user", content: userPrompt }]
+          })
+        });
+
+        if (anthropicRes.ok) {
+          const data = await anthropicRes.json();
+          const rawText = data.content?.[0]?.text || "";
+          let parsed = null;
+          try {
+            const cleanJson = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
+            parsed = JSON.parse(cleanJson);
+          } catch (_) {
+            parsed = { summary: rawText, metrics: { status: "OK" } };
+          }
+          return NextResponse.json({
+            success: true,
+            provider: "Anthropic Claude AI",
+            badge: "LIVE CLAUDE",
+            moduleType,
+            analysis: parsed
+          });
+        }
+      } catch (err) {
+        console.warn("Anthropic API module analysis failed, falling through:", err);
+      }
+    }
+
+    // 4. Try DeepSeek API
+    if (deepseekKey) {
+      try {
+        const deepseekRes = await fetch("https://api.deepseek.com/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${deepseekKey}`
+          },
+          body: JSON.stringify({
+            model: "deepseek-chat",
+            messages: [
+              { role: "system", content: `${systemPrompt}\n\nIMPORTANT: Return strictly valid JSON.` },
+              { role: "user", content: userPrompt }
+            ],
+            response_format: { type: "json_object" },
+            temperature: 0.2
+          })
+        });
+
+        if (deepseekRes.ok) {
+          const data = await deepseekRes.json();
+          const replyText = data.choices?.[0]?.message?.content || "{}";
+          return NextResponse.json({
+            success: true,
+            provider: "DeepSeek AI",
+            badge: "LIVE DEEPSEEK",
+            moduleType,
+            analysis: JSON.parse(replyText)
+          });
+        }
+      } catch (err) {
+        console.warn("DeepSeek API module analysis failed, falling through:", err);
+      }
+    }
+
+    // 5. Fallback Native Biocomputational Engine Results
     const fallbackResults: Record<string, any> = {
       str_kinship: {
         summary: isTr

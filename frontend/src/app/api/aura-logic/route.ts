@@ -48,6 +48,8 @@ export async function POST(req: NextRequest) {
     const geminiKey = userApiKeys.geminiKey?.trim() || process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
     const openaiKey = userApiKeys.openaiKey?.trim() || process.env.OPENAI_API_KEY;
     const groqKey = userApiKeys.groqKey?.trim() || process.env.GROQ_API_KEY;
+    const anthropicKey = userApiKeys.anthropicKey?.trim() || process.env.ANTHROPIC_API_KEY;
+    const deepseekKey = userApiKeys.deepseekKey?.trim() || process.env.DEEPSEEK_API_KEY;
     const ollamaUrl = userApiKeys.ollamaUrl?.trim() || process.env.OLLAMA_BASE_URL;
 
     // 1. Try Gemini API
@@ -180,6 +182,76 @@ export async function POST(req: NextRequest) {
         }
       } catch (err) {
         console.warn("Groq API call failed, falling through:", err);
+      }
+    }
+
+    // 4. Try Anthropic Claude API
+    if (anthropicKey) {
+      try {
+        const anthropicRes = await fetch("https://api.anthropic.com/v1/messages", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-api-key": anthropicKey,
+            "anthropic-version": "2023-06-01"
+          },
+          body: JSON.stringify({
+            model: "claude-3-5-sonnet-20241022",
+            max_tokens: 1024,
+            system: systemPrompt,
+            messages: [{ role: "user", content: message }]
+          })
+        });
+
+        if (anthropicRes.ok) {
+          const data = await anthropicRes.json();
+          const replyText = data.content?.[0]?.text;
+          if (replyText) {
+            return NextResponse.json({
+              reply: replyText,
+              provider: "Anthropic Claude AI",
+              badge: "CLAUDE AI"
+            });
+          }
+        }
+      } catch (err) {
+        console.warn("Anthropic API call failed, falling through:", err);
+      }
+    }
+
+    // 5. Try DeepSeek API
+    if (deepseekKey) {
+      try {
+        const deepseekRes = await fetch("https://api.deepseek.com/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${deepseekKey}`
+          },
+          body: JSON.stringify({
+            model: "deepseek-chat",
+            messages: [
+              { role: "system", content: systemPrompt },
+              { role: "user", content: message }
+            ],
+            temperature: 0.3,
+            max_tokens: 1024
+          })
+        });
+
+        if (deepseekRes.ok) {
+          const data = await deepseekRes.json();
+          const replyText = data.choices?.[0]?.message?.content;
+          if (replyText) {
+            return NextResponse.json({
+              reply: replyText,
+              provider: "DeepSeek AI",
+              badge: "DEEPSEEK AI"
+            });
+          }
+        }
+      } catch (err) {
+        console.warn("DeepSeek API call failed, falling through:", err);
       }
     }
 

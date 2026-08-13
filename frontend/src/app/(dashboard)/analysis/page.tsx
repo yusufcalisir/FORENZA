@@ -692,8 +692,8 @@ export default function AnalysisPage() {
                     </span>
                 </div>
 
-                {/* Sub-Module Tabs Bar */}
-                <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none pb-1">
+                {/* Sub-Module Tabs Bar (Responsive Grid on Mobile, Flex on Desktop) */}
+                <div className="grid grid-cols-1 min-[420px]:grid-cols-2 md:flex md:flex-wrap items-center gap-1.5 pb-1">
                     {category.tabs.map((tab) => {
                         const TabIcon = tab.icon;
                         const isActive = activeTab === tab.id;
@@ -701,16 +701,18 @@ export default function AnalysisPage() {
                             <button
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id)}
-                                className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all shrink-0 cursor-pointer ${
+                                className={`flex items-center justify-between sm:justify-start gap-1.5 px-3 py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer ${
                                     isActive
                                         ? `${c.activeBg} border ${c.border} ${c.text} shadow-sm`
                                         : "bg-black/40 text-zinc-400 border border-tactical-border/50 hover:text-zinc-200 hover:border-zinc-700"
                                 }`}
                             >
-                                <TabIcon className="w-3.5 h-3.5" />
-                                <span>{tab.label}</span>
+                                <div className="flex items-center gap-1.5 min-w-0">
+                                    <TabIcon className="w-3.5 h-3.5 shrink-0" />
+                                    <span className="truncate">{tab.label}</span>
+                                </div>
                                 {tab.badge && (
-                                    <span className="px-1.5 py-0.5 rounded text-[8px] bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                                    <span className="px-1.5 py-0.5 rounded text-[8px] bg-amber-500/20 text-amber-300 border border-amber-500/30 shrink-0">
                                         {tab.badge}
                                     </span>
                                 )}

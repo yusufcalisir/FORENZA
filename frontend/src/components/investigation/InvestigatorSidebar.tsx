@@ -253,8 +253,8 @@ export default function InvestigatorSidebar() {
         <div ref={chatEndRef} />
       </div>
 
-      {/* ── Quick Action Suggestion Chips ── */}
-      <div className="px-3 py-2 border-t border-tactical-border/40 bg-black/30 overflow-x-auto flex items-center gap-1.5 scrollbar-none shrink-0">
+      {/* ── Quick Action Suggestion Chips (Full-View Wrap on Mobile) ── */}
+      <div className="px-3 py-2 border-t border-tactical-border/40 bg-black/30 flex flex-wrap items-center gap-1.5 shrink-0">
         {quickPrompts.map((chip, idx) => {
           const ChipIcon = chip.icon;
           return (
@@ -263,10 +263,10 @@ export default function InvestigatorSidebar() {
               type="button"
               onClick={() => handleSendMessage(chip.query)}
               disabled={isTyping}
-              className="px-2.5 py-1 rounded-lg border border-tactical-border/80 bg-tactical-surface/60 text-[10px] font-bold text-zinc-300 hover:text-cyan-300 hover:border-cyan-500/50 hover:bg-cyan-500/10 disabled:opacity-40 transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer shrink-0"
+              className="flex-1 min-w-[125px] px-2.5 py-1.5 rounded-lg border border-tactical-border/80 bg-tactical-surface/60 text-[10px] font-bold text-zinc-300 hover:text-cyan-300 hover:border-cyan-500/50 hover:bg-cyan-500/10 disabled:opacity-40 transition-all flex items-center justify-center gap-1.5 text-center cursor-pointer"
             >
               <ChipIcon className="w-3 h-3 text-cyan-400 shrink-0" />
-              <span>{chip.label}</span>
+              <span className="truncate">{chip.label}</span>
             </button>
           );
         })}

@@ -77,6 +77,16 @@ export function SaasLanguageProvider({
     }
   };
 
+  // Dynamically synchronize browser tab title with active language
+  useEffect(() => {
+    if (typeof document !== "undefined") {
+      document.title =
+        lang === "tr"
+          ? "FORENZA | Çoklu-Omik Adli Delil İşletim Sistemi"
+          : "FORENZA | Multi-Omic Forensic Evidence OS";
+    }
+  }, [lang]);
+
   const t = saasTranslations[lang];
 
   return (

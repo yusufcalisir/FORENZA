@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import DNAIngestForm from "@/components/forms/DNAIngestForm";
+import ModuleAiBanner from "@/components/common/ModuleAiBanner";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -395,6 +396,9 @@ export default function DashboardContent() {
 
     return (
         <div className="flex flex-col min-h-full lg:h-[calc(100vh-140px)] gap-4 p-1 overflow-x-hidden overflow-y-auto lg:overflow-hidden">
+            {/* Live AI Biocomputational Control Bar */}
+            <ModuleAiBanner moduleName="FORENZA Multi-Omic Biocomputational Engine" moduleType="full_multiomic" />
+
             {/* Main 3-Column Layout */}
             <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr_280px] gap-4 h-full">
 

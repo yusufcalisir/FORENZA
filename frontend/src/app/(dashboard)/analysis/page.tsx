@@ -11,6 +11,7 @@ import {
     PackageCheck, Scale, Zap, Database,
 } from "lucide-react";
 import ActiveProfileBanner from "@/components/common/ActiveProfileBanner";
+import ModuleAiBanner from "@/components/common/ModuleAiBanner";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -630,6 +631,9 @@ export default function AnalysisPage() {
                     </span>
                 </div>
             </div>
+
+            {/* ── Live AI Control Banner ── */}
+            <ModuleAiBanner moduleName="FORENZA Multi-Omic Analysis Workstation" moduleType="full_multiomic" />
 
             {/* ── Active Case DNA Profile & GIS Map Banner ── */}
             <ActiveProfileBanner />

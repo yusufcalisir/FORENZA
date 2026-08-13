@@ -1,0 +1,53 @@
+name: FORENZA Enterprise CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # ── Job 1: Frontend Next.js Build & Type Check ──
+  frontend-build:
+    name: Frontend Build & TypeScript Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/instruction-setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: 'frontend/package-lock.json'
+
+      - name: Install Frontend Dependencies
+        run: npm --prefix frontend ci
+
+      - name: Run Next.js Production Build
+        run: npm --prefix frontend run build
+
+  # ── Job 2: Backend Python Microservices Test Suite ──
+  python-test-suite:
+    name: Python 30-Subsystem Test Suite (pytest)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest pytest-asyncio pydantic fastapi numpy scipy
+
+      - name: Execute 200+ Forensic Subsystem Unit Tests
+        env:
+          PYTHONPATH: ".:backend"
+        run: |
+          pytest backend/node/services/forensic

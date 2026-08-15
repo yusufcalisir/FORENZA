@@ -630,13 +630,13 @@ export default function AnalysisPage() {
                         </span>
                     </div>
                     <p className="text-[10px] text-zinc-400">
-                        Comprehensive Biocomputational Intelligence &amp; Forensic DNA Workstation
+                        Academic &amp; Research Multi-Omic Biocomputational Intelligence Workstation • ISO/IEC 17025 Reporting Aligned
                     </p>
                 </div>
                 <div className="flex items-center gap-2">
-                    <span className="flex items-center gap-1.5 text-[9px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-lg">
+                    <span className="flex items-center gap-1.5 text-[9px] font-bold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-lg">
                         <Radio className="w-3 h-3 animate-pulse" />
-                        LIVE • CASE-2026-FORENZA
+                        SIMULATION • CASE-2026-FORENZA
                     </span>
                 </div>
             </div>

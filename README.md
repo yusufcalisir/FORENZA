@@ -2,7 +2,7 @@
 
 <p align="center">
   <strong>Enterprise Multi-Omic Biocomputational Forensic Intelligence Platform</strong><br />
-  ISO/IEC 17025:2017 Accredited Architecture • 30 Integrated Subsystems • Zero-Knowledge Evidence Verification
+  ISO/IEC 17025:2017 Aligned Architecture • 30 Integrated Subsystems • Zero-Knowledge Evidence Verification
 </p>
 
 <p align="center">
@@ -34,8 +34,9 @@
 8. [Empirical Verification & Analytical Benchmarks](#8-empirical-verification--analytical-benchmarks)
 9. [Installation & Developer Setup](#9-installation--developer-setup)
 10. [Related Work & Academic References](#10-related-work--academic-references)
-11. [Academic Citation Format](#11-academic-citation-format)
-12. [Author & Maintenance](#12-author--maintenance)
+11. [Legal & Forensic Casework Disclaimer](#11-legal--forensic-casework-disclaimer)
+12. [Academic Citation Format](#12-academic-citation-format)
+13. [Author & Maintenance](#13-author--maintenance)
 
 ---
 
@@ -475,7 +476,19 @@ FORENZA's biocomputational models are derived from peer-reviewed literature and 
 
 ---
 
-## 11. Academic Citation Format
+## 11. Legal & Forensic Casework Disclaimer
+
+> [!CAUTION]
+> **RESEARCH & SIMULATION PLATFORM NOTICE**
+> 
+> FORENZA is an academic, research, and algorithmic simulation demonstration platform. Analytical results, Likelihood Ratios ($LR$), phenotype predictions, and simulated court certificates generated herein are intended solely for biocomputational validation, educational demonstrations, and algorithm benchmarking.
+> 
+> - **Not Certified for Direct Adjudication:** This software is not a replacement for an accredited, physical forensic DNA testing laboratory. Outputs from this system must not be utilized as the sole basis for live judicial prosecution, criminal sentencing, or active casework without empirical wet-lab validation.
+> - **ISO/IEC 17025 Alignment Clarification:** References to ISO/IEC 17025:2017 denote adherence to standardized biostatistical reporting formats, 7-point QA/QC inspection matrices, and SWGDAM/ENFSI guideline structures. ISO/IEC 17025 is an institutional accreditation granted to physical testing facilities and does not constitute a product certification for standalone software.
+
+---
+
+## 12. Academic Citation Format
 
 If you use FORENZA in scientific research or technical benchmark reports, please use the following BibTeX entry:
 
@@ -493,7 +506,7 @@ If you use FORENZA in scientific research or technical benchmark reports, please
 
 ---
 
-## 12. Author & Maintenance
+## 13. Author & Maintenance
 
 - **Author & Lead Architect:** Yusuf Çalışır ([@yusufcalisir](https://github.com/yusufcalisir))
 - **Repository:** [yusufcalisir/FORENZA](https://github.com/yusufcalisir/FORENZA)

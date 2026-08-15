@@ -102,6 +102,24 @@ export default function LandingFooter() {
                     </div>
                 </div>
 
+                {/* Academic & Research Simulation Disclaimer */}
+                <div className="mt-8 p-5 rounded-2xl border border-amber-500/25 bg-amber-500/5 backdrop-blur-sm space-y-2 text-left">
+                    <div className="flex flex-wrap items-center gap-2">
+                        <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[9px] font-bold uppercase tracking-wider">
+                            {t.footer.disclaimer.badge}
+                        </span>
+                        <h4 className="text-xs font-bold text-amber-200">
+                            {t.footer.disclaimer.title}
+                        </h4>
+                    </div>
+                    <p className="text-[11px] text-zinc-300 leading-relaxed">
+                        {t.footer.disclaimer.text}
+                    </p>
+                    <p className="text-[10px] text-amber-400/80 italic">
+                        * {t.footer.disclaimer.isoNote}
+                    </p>
+                </div>
+
                 {/* Tech Stack Badges */}
                 <div className="mt-8 pt-8 border-t border-tactical-border/60 flex flex-wrap items-center justify-between gap-4">
                     <p className="text-[10px] text-zinc-500">

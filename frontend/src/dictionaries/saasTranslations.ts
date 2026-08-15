@@ -196,6 +196,12 @@ export interface SaasTranslation {
       col3Title: string;
       col3Links: string[];
     };
+    disclaimer: {
+      badge: string;
+      title: string;
+      text: string;
+      isoNote: string;
+    };
   };
 }
 
@@ -547,7 +553,13 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
         col2Title: "Core Capabilities",
         col2Links: ["MCMC Probabilistic Genotyping", "HIrisPlex-S Phenotyping", "Horvath Epigenetic Clock", "LIMS & Instrument Gateway"],
         col3Title: "Admissibility & Standards",
-        col3Links: ["ISO/IEC 17025:2017", "SWGDAM & ENFSI Rules", "Circom ZKP Privacy Auditor", "HMAC Chain of Custody"],
+        col3Links: ["ISO/IEC 17025:2017 Format", "SWGDAM & ENFSI Rules", "Circom ZKP Privacy Auditor", "HMAC Chain of Custody"],
+      },
+      disclaimer: {
+        badge: "Academic & Demonstration Disclaimer",
+        title: "Research & Simulation Environment Notice",
+        text: "FORENZA is an academic research, algorithmic verification, and simulation demonstration platform. Analytical results, likelihood ratios (LR), phenotype predictions, and simulated court certificates generated herein are intended solely for computational validation, educational demonstration, and research benchmarking. This software is not a replacement for an accredited forensic DNA laboratory and must not be used as the sole basis for live judicial prosecution, criminal sentencing, or active casework without accredited laboratory validation.",
+        isoNote: "ISO/IEC 17025 alignment denotes compliance with SWGDAM/ENFSI biostatistical reporting format guidelines and does not constitute formal laboratory accreditation."
       }
     },
   },
@@ -897,8 +909,14 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
         col1Links: ["30 Alt Sistem Matrisi", "Delil İşleme Mimarisi (DAG)", "Bio-Simülatör", "ISO 17025 İfade Modu"],
         col2Title: "Temel Yetenekler",
         col2Links: ["MCMC Olasılıksal Genotipleme", "HIrisPlex-S Fenotipleme", "Horvath Epigenetik Yaş Saati", "LIMS ve Cihaz Geçidi"],
-        col3Title: "Adli Standartlar ve Akreditasyon",
-        col3Links: ["ISO/IEC 17025:2017", "SWGDAM ve ENFSI Kuralları", "Circom ZKP Gizlilik Denetçisi", "HMAC Delil Zinciri"],
+        col3Title: "Adli Standartlar ve Uyumluluk",
+        col3Links: ["ISO/IEC 17025:2017 Formatı", "SWGDAM ve ENFSI Kuralları", "Circom ZKP Gizlilik Denetçisi", "HMAC Delil Zinciri"],
+      },
+      disclaimer: {
+        badge: "Akademik ve Simülasyon Sorumluluk Reddi",
+        title: "Araştırma ve Simülasyon Ortamı Bildirimi",
+        text: "FORENZA, akademik araştırma, algoritmik doğrulama ve simülasyon demonstrasyon platformudur. Burada üretilen analitik çıktılar, olabilirlik oranları (LR), fenotip tahminleri ve simüle edilmiş mahkeme raporları yalnızca algoritmik doğrulama, eğitim ve araştırma kıyaslaması amacıyla tasarlanmıştır. Bu yazılım akredite bir adli DNA laboratuvarının yerini almaz; deneysel laboratuvar doğrulaması olmaksızın gerçek adli kovuşturma, cezai hüküm veya aktif vaka süreçlerinde tek başına karar mercii olarak kullanılamaz.",
+        isoNote: "ISO/IEC 17025 uyumluluğu, SWGDAM/ENFSI biyoistatistiksel raporlama standartlarına uygunluk anlamına gelir ve laboratuvarın kurumsal akreditasyonu yerine geçmez."
       }
     },
   },

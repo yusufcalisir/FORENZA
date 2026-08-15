@@ -78,7 +78,7 @@ function generateProfiles(count: number): ProfileRecord[] {
     for (let i = 2; i < count; i++) {
         const loci = Math.floor(rand() * 15) + 10;
         const quality: ProfileRecord["quality"] =
-            loci >= 18 ? "complete" : loci >= 14 ? "partial" : "degraded";
+            loci === 24 ? "complete" : loci >= 14 ? "partial" : "degraded";
         const month = String(Math.floor(rand() * 12) + 1).padStart(2, "0");
         const day = String(Math.floor(rand() * 28) + 1).padStart(2, "0");
         const hour = String(Math.floor(rand() * 24)).padStart(2, "0");
@@ -102,7 +102,7 @@ const ALL_PROFILES = generateProfiles(24_847);
 
 const QUALITY_CONFIG = {
     complete: { label: "COMPLETE (24 LOCI)", color: "#22C55E", bg: "rgba(34,197,94,0.12)", border: "rgba(34,197,94,0.3)" },
-    partial: { label: "PARTIAL (14+ LOCI)", color: "#06B6D4", bg: "rgba(6,182,212,0.12)", border: "rgba(6,182,212,0.3)" },
+    partial: { label: "PARTIAL (14-23 LOCI)", color: "#06B6D4", bg: "rgba(6,182,212,0.12)", border: "rgba(6,182,212,0.3)" },
     degraded: { label: "DEGRADED (<14 LOCI)", color: "#EF4444", bg: "rgba(239,68,68,0.12)", border: "rgba(239,68,68,0.3)" },
 } as const;
 
@@ -249,8 +249,8 @@ export default function DatabasePage() {
                         {[
                             { label: "Total Profiles", value: stats.total.toLocaleString(), color: "#FAFAFA", bg: "#111113", border: "#27272A" },
                             { label: "Complete (24 Loci)", value: stats.complete.toLocaleString(), color: "#22C55E", bg: "rgba(34,197,94,0.06)", border: "rgba(34,197,94,0.25)" },
-                            { label: "Partial Profiles", value: stats.partial.toLocaleString(), color: "#06B6D4", bg: "rgba(6,182,212,0.06)", border: "rgba(6,182,212,0.25)" },
-                            { label: "Degraded Profiles", value: stats.degraded.toLocaleString(), color: "#EF4444", bg: "rgba(239,68,68,0.06)", border: "rgba(239,68,68,0.25)" },
+                            { label: "Partial (14-23 Loci)", value: stats.partial.toLocaleString(), color: "#06B6D4", bg: "rgba(6,182,212,0.06)", border: "rgba(6,182,212,0.25)" },
+                            { label: "Degraded (<14 Loci)", value: stats.degraded.toLocaleString(), color: "#EF4444", bg: "rgba(239,68,68,0.06)", border: "rgba(239,68,68,0.25)" },
                             { label: "Active Network Nodes", value: stats.uniqueNodes.toString(), color: "#8B5CF6", bg: "rgba(139,92,246,0.06)", border: "rgba(139,92,246,0.25)" },
                         ].map((s) => (
                             <div
@@ -398,7 +398,11 @@ export default function DatabasePage() {
                                                             className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-bold tracking-wider uppercase border"
                                                             style={{ color: q.color, background: q.bg, borderColor: q.border }}
                                                         >
-                                                            {q.label}
+                                                            {p.quality === "complete"
+                                                                ? "COMPLETE (24/24 LOCI)"
+                                                                : p.quality === "partial"
+                                                                    ? `PARTIAL (${p.lociCount}/24 LOCI)`
+                                                                    : `DEGRADED (${p.lociCount}/24 LOCI)`}
                                                         </span>
                                                     </td>
                                                     <td className="py-3 px-4 text-tactical-text-dim text-[11px]">

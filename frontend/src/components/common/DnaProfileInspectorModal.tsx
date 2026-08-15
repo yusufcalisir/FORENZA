@@ -290,8 +290,8 @@ export default function DnaProfileInspectorModal() {
           </div>
 
           {/* ── Navigation Tab Bar ── */}
-          <div className="flex items-center justify-between px-3 sm:px-4 border-b border-tactical-border/70 bg-[#080d19] shrink-0">
-            <div className="flex items-center gap-1 sm:gap-2">
+          <div className="flex items-center justify-between px-3 sm:px-4 border-b border-tactical-border/70 bg-[#080d19] shrink-0 overflow-x-auto">
+            <div className="flex items-center gap-1 sm:gap-2 shrink-0">
               {[
                 { id: "inferred", label: "Predictions & GIS Map", icon: Globe, badge: null, color: "text-emerald-400" },
                 { id: "str", label: "STR Alleles", icon: Dna, badge: `${strList.length} Loci`, color: "text-cyan-400" },
@@ -303,7 +303,7 @@ export default function DnaProfileInspectorModal() {
                   <button
                     key={tItem.id}
                     onClick={() => setTab(tItem.id as any)}
-                    className={`flex items-center gap-1.5 py-2.5 px-3 font-mono text-xs font-bold transition-all border-b-2 cursor-pointer ${
+                    className={`flex items-center gap-1.5 py-2.5 px-2.5 sm:px-3 font-mono text-[11px] sm:text-xs font-bold transition-all border-b-2 cursor-pointer whitespace-nowrap shrink-0 ${
                       isActive
                         ? "text-white border-cyan-400 bg-cyan-500/10"
                         : "text-zinc-400 border-transparent hover:text-zinc-200 hover:bg-white/5"
@@ -534,7 +534,7 @@ export default function DnaProfileInspectorModal() {
 
                 {/* Structured Table */}
                 <div className="rounded-xl border border-tactical-border/70 bg-black/40 overflow-hidden">
-                  <div className="max-h-[50vh] overflow-y-auto">
+                  <div className="max-h-[50vh] overflow-y-auto overflow-x-auto">
                     <table className="w-full text-left text-xs font-mono">
                       <thead className="sticky top-0 bg-[#0a101d] border-b border-tactical-border/80 text-zinc-400 text-[10px] uppercase tracking-wider select-none z-10">
                         <tr>
@@ -637,7 +637,7 @@ export default function DnaProfileInspectorModal() {
 
                 {/* Structured Table */}
                 <div className="rounded-xl border border-tactical-border/70 bg-black/40 overflow-hidden">
-                  <div className="max-h-[50vh] overflow-y-auto">
+                  <div className="max-h-[50vh] overflow-y-auto overflow-x-auto">
                     <table className="w-full text-left text-xs font-mono">
                       <thead className="sticky top-0 bg-[#0a101d] border-b border-tactical-border/80 text-zinc-400 text-[10px] uppercase tracking-wider select-none z-10">
                         <tr>

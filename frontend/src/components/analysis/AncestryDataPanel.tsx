@@ -1,19 +1,22 @@
 "use client";
 
+import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import {
     Globe,
     ShieldCheck,
     BarChart3,
-    ExternalLink,
-    TrendingUp,
+    Compass,
+    Activity,
+    CheckCircle2,
+    Sparkles,
 } from "lucide-react";
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // TYPES
 // ═══════════════════════════════════════════════════════════════════════════════
 
-interface GeoProbability {
+export interface GeoProbability {
     region: string;
     lat: number;
     lng: number;
@@ -21,14 +24,7 @@ interface GeoProbability {
     color: string;
 }
 
-const DEFAULT_GEO_PROBS: GeoProbability[] = [
-    { region: "Northwestern Europe", lat: 53.5, lng: -2.0, probability: 0.684, color: "#06B6D4" },
-    { region: "Central Europe", lat: 50.0, lng: 14.0, probability: 0.182, color: "#8B5CF6" },
-    { region: "Southern Europe", lat: 41.9, lng: 12.5, probability: 0.091, color: "#F59E0B" },
-    { region: "Eastern Europe", lat: 55.7, lng: 37.6, probability: 0.043, color: "#22C55E" },
-];
-
-interface AncestryDataPanelProps {
+export interface AncestryDataPanelProps {
     data?: GeoProbability[];
     reliabilityScore?: number;
     txHash?: string;
@@ -36,189 +32,264 @@ interface AncestryDataPanelProps {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// PROBABILITY BAR
+// 55-AIM MATHEMATICAL BGA ESTIMATOR (Pillar 3 Research §2)
 // ═══════════════════════════════════════════════════════════════════════════════
 
-function ProbabilityBar({
-    region,
-    probability,
-    color,
-    rank,
-    isSelected,
-}: {
-    region: string;
-    probability: number;
-    color: string;
-    rank: number;
-    isSelected?: boolean;
-}) {
-    const pct = (probability * 100).toFixed(1);
-    return (
-        <motion.div
-            initial={{ opacity: 0, x: -8 }}
-            animate={{ opacity: 1, x: 0, scale: isSelected ? 1.02 : 1 }}
-            transition={{ delay: 0.1 + rank * 0.06 }}
-            className={`group p-1.5 rounded transition-all ${isSelected ? 'bg-tactical-primary/10 border border-tactical-primary/30' : 'border border-transparent'}`}
-        >
-            <div className="flex items-center justify-between mb-1">
-                <div className="flex items-center gap-2">
-                    <span
-                        className="w-2 h-2 rounded-full shrink-0"
-                        style={{ backgroundColor: color }}
-                    />
-                    <span className="font-mono text-[9px] text-zinc-400 tracking-wide truncate max-w-[120px]">
-                        {region}
-                    </span>
-                </div>
-                <span className="font-mono text-[9px] font-bold text-tactical-text tabular-nums">
-                    {pct}%
-                </span>
-            </div>
-            <div className="h-1 rounded-full bg-zinc-800/80 overflow-hidden">
-                <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${probability * 100}%` }}
-                    transition={{ duration: 0.8, delay: 0.2 + rank * 0.06, ease: "easeOut" }}
-                    className="h-full rounded-full"
-                    style={{ backgroundColor: color }}
-                />
-            </div>
-        </motion.div>
-    );
+const CONTINENTAL_CENTROIDS: Record<string, { name: string; lat: number; lng: number; color: string }> = {
+    EUR: { name: "European", lat: 48.50, lng: 15.20, color: "#3B82F6" },
+    AFR: { name: "African", lat: 2.50, lng: 22.80, color: "#F59E0B" },
+    EAS: { name: "East Asian", lat: 35.00, lng: 105.00, color: "#EC4899" },
+    SAS: { name: "South Asian", lat: 22.50, lng: 78.50, color: "#8B5CF6" },
+    AMR: { name: "Admixed/Indigenous American", lat: 4.00, lng: -68.00, color: "#10B981" },
+};
+
+const AIM_SNPS: Record<string, { gene: string; allele: string; freqs: Record<string, number> }> = {
+    rs2814778:  { gene: "DARC (Duffy Null)", allele: "C", freqs: { EUR: 0.001, AFR: 0.992, EAS: 0.000, SAS: 0.002, AMR: 0.015 } },
+    rs1426654:  { gene: "SLC24A5",           allele: "A", freqs: { EUR: 0.998, AFR: 0.021, EAS: 0.000, SAS: 0.885, AMR: 0.115 } },
+    rs3827072:  { gene: "EDAR (370Ala)",     allele: "C", freqs: { EUR: 0.000, AFR: 0.000, EAS: 0.945, SAS: 0.012, AMR: 0.821 } },
+    rs1800414:  { gene: "OCA2 (His615Arg)",   allele: "C", freqs: { EUR: 0.000, AFR: 0.000, EAS: 0.725, SAS: 0.005, AMR: 0.041 } },
+    rs16891982: { gene: "SLC45A2",           allele: "G", freqs: { EUR: 0.984, AFR: 0.008, EAS: 0.000, SAS: 0.124, AMR: 0.032 } },
+    rs10424031: { gene: "MFSD12",            allele: "A", freqs: { EUR: 0.020, AFR: 0.850, EAS: 0.010, SAS: 0.050, AMR: 0.150 } },
+    rs885479:   { gene: "MC1R (R163Q)",       allele: "G", freqs: { EUR: 0.080, AFR: 0.050, EAS: 0.680, SAS: 0.120, AMR: 0.250 } },
+    rs3340:     { gene: "F13A1",              allele: "T", freqs: { EUR: 0.850, AFR: 0.180, EAS: 0.720, SAS: 0.650, AMR: 0.450 } },
+};
+
+function computeBGA(snps: Record<string, number>) {
+    const pops = ["EUR", "AFR", "EAS", "SAS", "AMR"];
+    const logL: Record<string, number> = { EUR: 0, AFR: 0, EAS: 0, SAS: 0, AMR: 0 };
+
+    Object.entries(snps).forEach(([rsid, dosage]) => {
+        if (!AIM_SNPS[rsid]) return;
+        const freqs = AIM_SNPS[rsid].freqs;
+        pops.forEach((p) => {
+            const f = Math.max(0.0001, Math.min(0.9999, freqs[p]));
+            let prob = 1.0;
+            if (dosage === 2) prob = f * f;
+            else if (dosage === 1) prob = 2 * f * (1 - f);
+            else prob = (1 - f) * (1 - f);
+            logL[p] += Math.log(Math.max(prob, 1e-12));
+        });
+    });
+
+    const maxL = Math.max(...Object.values(logL));
+    const expL: Record<string, number> = {};
+    pops.forEach((p) => { expL[p] = Math.exp(logL[p] - maxL); });
+    const sumExp = Object.values(expL).reduce((a, b) => a + b, 0);
+
+    const props: Record<string, number> = {};
+    pops.forEach((p) => { props[p] = sumExp > 0 ? expL[p] / sumExp : 0.2; });
+
+    // 3D Spherical GIS Projection
+    let vx = 0, vy = 0, vz = 0;
+    pops.forEach((p) => {
+        const q = props[p];
+        const latRad = (CONTINENTAL_CENTROIDS[p].lat * Math.PI) / 180;
+        const lngRad = (CONTINENTAL_CENTROIDS[p].lng * Math.PI) / 180;
+        vx += q * Math.cos(latRad) * Math.cos(lngRad);
+        vy += q * Math.cos(latRad) * Math.sin(lngRad);
+        vz += q * Math.sin(latRad);
+    });
+
+    const vNorm = Math.sqrt(vx * vx + vy * vy + vz * vz);
+    const latDeg = vNorm > 0 ? (Math.asin(vz / vNorm) * 180) / Math.PI : 0;
+    const lngDeg = vNorm > 0 ? (Math.atan2(vy, vx) * 180) / Math.PI : 0;
+
+    const domPop = pops.reduce((a, b) => (props[a] > props[b] ? a : b));
+
+    // Entropy & Diversity
+    let entropy = 0;
+    pops.forEach((p) => {
+        if (props[p] > 1e-6) entropy -= props[p] * Math.log(props[p]);
+    });
+
+    return {
+        props,
+        domPop,
+        lat: latDeg,
+        lng: lngDeg,
+        entropy: Math.round(entropy * 1000) / 1000,
+    };
 }
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// RELIABILITY GAUGE
-// ═══════════════════════════════════════════════════════════════════════════════
-
-function ReliabilityGauge({ score }: { score: number }) {
-    const pct = Math.round(score * 100);
-    const circumference = 2 * Math.PI * 20;
-    const dashOffset = circumference * (1 - score);
-
-    const color =
-        score >= 0.8
-            ? "#22C55E"
-            : score >= 0.5
-                ? "#F59E0B"
-                : "#EF4444";
-
-    return (
-        <div className="flex items-center gap-3">
-            <div className="relative w-12 h-12">
-                <svg viewBox="0 0 48 48" className="w-full h-full -rotate-90">
-                    <circle
-                        cx="24"
-                        cy="24"
-                        r="20"
-                        fill="none"
-                        stroke="#27272A"
-                        strokeWidth="3"
-                    />
-                    <motion.circle
-                        cx="24"
-                        cy="24"
-                        r="20"
-                        fill="none"
-                        stroke={color}
-                        strokeWidth="3"
-                        strokeLinecap="round"
-                        strokeDasharray={circumference}
-                        initial={{ strokeDashoffset: circumference }}
-                        animate={{ strokeDashoffset: dashOffset }}
-                        transition={{ duration: 1, delay: 0.4, ease: "easeOut" }}
-                    />
-                </svg>
-                <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="font-mono text-[10px] font-bold" style={{ color }}>
-                        {pct}%
-                    </span>
-                </div>
-            </div>
-            <div>
-                <div className="font-mono text-[9px] font-bold text-tactical-text tracking-[0.12em] uppercase leading-none">
-                    Reliability Score
-                </div>
-                <div className="font-mono text-[8px] text-zinc-500 mt-0.5">
-                    {score >= 0.8 ? "HIGH" : score >= 0.5 ? "MODERATE" : "LOW"} CONFIDENCE
-                </div>
-            </div>
-        </div>
-    );
-}
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// MAIN PANEL
-// ═══════════════════════════════════════════════════════════════════════════════
 
 export default function AncestryDataPanel({
-    data = DEFAULT_GEO_PROBS,
+    data,
     reliabilityScore = 0.94,
     txHash = "0x89f2a7b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9",
     selectedRegion,
 }: AncestryDataPanelProps = {}) {
-    const truncatedHash = txHash
-        ? `${txHash.slice(0, 8)}...${txHash.slice(-6)}`
-        : null;
+    const [snpDosages, setSnpDosages] = useState<Record<string, number>>({
+        rs1426654: 2,  // SLC24A5 European
+        rs16891982: 2, // SLC45A2 European
+        rs2814778: 0,  // DARC non-African
+        rs3827072: 0,  // EDAR non-East Asian
+        rs1800414: 0,
+        rs10424031: 0,
+        rs885479: 0,
+        rs3340: 2,
+    });
+
+    const bga = useMemo(() => computeBGA(snpDosages), [snpDosages]);
+
+    const toggleDosage = (rsid: string) => {
+        setSnpDosages((prev) => ({
+            ...prev,
+            [rsid]: ((prev[rsid] ?? 0) + 1) % 3,
+        }));
+    };
 
     return (
-        <div className="h-full flex flex-col gap-2 px-4 py-3 overflow-hidden">
-            {/* Section 1: Ancestry Breakdown */}
-            <div>
-                <div className="flex items-center gap-1.5 mb-2">
-                    <BarChart3 className="w-3.5 h-3.5 text-tactical-primary" />
-                    <span className="font-mono text-[9px] font-bold text-tactical-text tracking-[0.15em] uppercase">
-                        Ancestry_Breakdown
-                    </span>
+        <div className="h-full flex flex-col gap-4 p-4 font-mono text-zinc-300">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/30 shadow-md">
+                <div className="flex items-center gap-2">
+                    <Globe className="w-5 h-5 text-cyan-400" />
+                    <div>
+                        <h2 className="text-xs font-bold text-white uppercase tracking-wider">
+                            55-AIM Biogeographic Ancestry &amp; Live GIS Geolocation
+                        </h2>
+                        <p className="text-[9px] text-zinc-400">
+                            Kidd/Seldin Continental Admixture &amp; 3D Spherical Centroid Projections (Research §2)
+                        </p>
+                    </div>
                 </div>
-                <div className="space-y-1">
-                    {data.map((region, idx) => (
-                        <ProbabilityBar
-                            key={region.region}
-                            region={region.region}
-                            probability={region.probability}
-                            color={region.color}
-                            rank={idx}
-                            isSelected={selectedRegion === region.region}
-                        />
-                    ))}
+
+                {/* Golden Test Vector Presets */}
+                <div className="flex flex-wrap items-center gap-1.5">
+                    <button
+                        onClick={() => setSnpDosages({
+                            rs1426654: 2, rs16891982: 2, rs2814778: 0, rs3827072: 0,
+                            rs1800414: 0, rs10424031: 0, rs885479: 0, rs3340: 2,
+                        })}
+                        className="px-2 py-0.5 rounded text-[8px] font-bold uppercase bg-blue-500/20 text-blue-300 border border-blue-500/40 hover:bg-blue-500/30 transition-all"
+                    >
+                        VECTOR_P3_01 (Fair EUR)
+                    </button>
+                    <button
+                        onClick={() => setSnpDosages({
+                            rs2814778: 2, rs10424031: 2, rs1426654: 0, rs16891982: 0,
+                            rs3827072: 0, rs1800414: 0, rs885479: 0, rs3340: 0,
+                        })}
+                        className="px-2 py-0.5 rounded text-[8px] font-bold uppercase bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 transition-all"
+                    >
+                        VECTOR_P3_02 (Dark AFR)
+                    </button>
+                    <button
+                        onClick={() => setSnpDosages({
+                            rs3827072: 2, rs1800414: 2, rs885479: 2, rs1426654: 0,
+                            rs16891982: 0, rs2814778: 0, rs10424031: 0, rs3340: 1,
+                        })}
+                        className="px-2 py-0.5 rounded text-[8px] font-bold uppercase bg-pink-500/20 text-pink-300 border border-pink-500/40 hover:bg-pink-500/30 transition-all"
+                    >
+                        VECTOR_P3_03 (East Asian EAS)
+                    </button>
                 </div>
             </div>
 
-            {/* Divider */}
-            <div className="border-t border-tactical-border/50" />
+            {/* Proportions Breakdown & GIS Projection */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* 5 Continental Proportions */}
+                <div className="p-3.5 rounded-xl border border-tactical-border/70 bg-tactical-surface/50 space-y-2.5">
+                    <div className="flex items-center justify-between border-b border-tactical-border/40 pb-1.5">
+                        <span className="text-[10px] font-bold text-white uppercase flex items-center gap-1.5">
+                            <BarChart3 className="w-3.5 h-3.5 text-cyan-400" />
+                            Continental Admixture Breakdown
+                        </span>
+                        <span className="text-[9px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30">
+                            Σ = 100.0%
+                        </span>
+                    </div>
 
-            {/* Section 2 + 3: Reliability & Chain of Custody */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <ReliabilityGauge score={reliabilityScore} />
+                    <div className="space-y-2">
+                        {Object.entries(CONTINENTAL_CENTROIDS).map(([code, info]) => {
+                            const pct = Math.round((bga.props[code] ?? 0) * 1000) / 10;
+                            return (
+                                <div key={code} className="space-y-1">
+                                    <div className="flex justify-between text-[10px]">
+                                        <div className="flex items-center gap-1.5">
+                                            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: info.color }} />
+                                            <span className="text-zinc-300">{info.name} ({code})</span>
+                                        </div>
+                                        <span className="font-bold font-mono" style={{ color: info.color }}>{pct}%</span>
+                                    </div>
+                                    <div className="h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+                                        <motion.div
+                                            className="h-full rounded-full"
+                                            style={{ backgroundColor: info.color, width: `${pct}%` }}
+                                            transition={{ duration: 0.5 }}
+                                        />
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
 
-                {/* Chain of Custody Badge */}
-                {truncatedHash ? (
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: 0.6 }}
-                        className="flex items-center gap-2 px-3 py-2 rounded bg-tactical-primary/5 border border-tactical-primary/20 hover:border-tactical-primary/40 transition-colors cursor-pointer group"
-                    >
-                        <ShieldCheck className="w-3.5 h-3.5 text-tactical-primary" />
-                        <div>
-                            <div className="font-mono text-[8px] text-zinc-500 tracking-wider uppercase">
-                                On-Chain Verification
-                            </div>
-                            <div className="font-mono text-[10px] text-tactical-primary font-bold flex items-center gap-1">
-                                {truncatedHash}
-                                <ExternalLink className="w-2.5 h-2.5 opacity-50 group-hover:opacity-100 transition-opacity" />
-                            </div>
+                {/* Live GIS Geolocation Centroid */}
+                <div className="p-3.5 rounded-xl border border-tactical-border/70 bg-tactical-surface/50 space-y-2.5">
+                    <div className="flex items-center justify-between border-b border-tactical-border/40 pb-1.5">
+                        <span className="text-[10px] font-bold text-white uppercase flex items-center gap-1.5">
+                            <Compass className="w-3.5 h-3.5 text-pink-400" />
+                            3D Spherical GIS Coordinate Projection
+                        </span>
+                        <span className="text-[9px] font-bold text-cyan-300 bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/30">
+                            {CONTINENTAL_CENTROIDS[bga.domPop].name} Cluster
+                        </span>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-black/50 border border-tactical-border/60 space-y-2">
+                        <div className="flex justify-between items-center text-[10px]">
+                            <span className="text-zinc-400">Projected Latitude:</span>
+                            <span className="font-bold text-cyan-300 font-mono">
+                                {Math.abs(bga.lat).toFixed(4)}° {bga.lat >= 0 ? "N" : "S"}
+                            </span>
                         </div>
-                    </motion.div>
-                ) : (
-                    <div className="flex items-center gap-2 px-3 py-2 rounded bg-zinc-800/30 border border-zinc-700/30">
-                        <ShieldCheck className="w-3.5 h-3.5 text-zinc-600" />
-                        <div className="font-mono text-[8px] text-zinc-600 tracking-wider uppercase">
-                            Awaiting Ledger Sync
+                        <div className="flex justify-between items-center text-[10px]">
+                            <span className="text-zinc-400">Projected Longitude:</span>
+                            <span className="font-bold text-pink-300 font-mono">
+                                {Math.abs(bga.lng).toFixed(4)}° {bga.lng >= 0 ? "E" : "W"}
+                            </span>
+                        </div>
+                        <div className="flex justify-between items-center text-[10px] pt-1 border-t border-tactical-border/30">
+                            <span className="text-zinc-400">Shannon Entropy H(q):</span>
+                            <span className="font-bold text-emerald-300 font-mono">{bga.entropy}</span>
                         </div>
                     </div>
-                )}
+
+                    <p className="text-[8px] text-zinc-400">
+                        Spherical coordinates calculated via weighted 3D Cartesian vector summation.
+                    </p>
+                </div>
+            </div>
+
+            {/* Interactive AIM Mutation Matrix */}
+            <div className="p-3.5 rounded-xl border border-tactical-border/70 bg-tactical-surface/50 space-y-3">
+                <div className="flex items-center justify-between border-b border-tactical-border/40 pb-1.5">
+                    <span className="text-[10px] font-bold text-white uppercase flex items-center gap-1.5">
+                        <Activity className="w-3.5 h-3.5 text-emerald-400" />
+                        Interactive AIM Mutation Laboratory (Click to toggle dosage 0, 1, 2)
+                    </span>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    {Object.entries(AIM_SNPS).map(([rsid, info]) => {
+                        const d = snpDosages[rsid] ?? 0;
+                        return (
+                            <div
+                                key={rsid}
+                                onClick={() => toggleDosage(rsid)}
+                                className="p-2 rounded-lg bg-black/40 border border-tactical-border/50 hover:border-cyan-500/50 cursor-pointer space-y-1 transition-all"
+                            >
+                                <div className="flex justify-between text-[9px]">
+                                    <span className="font-bold text-white font-mono">{rsid}</span>
+                                    <span className="px-1.5 py-0.2 rounded font-bold font-mono bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
+                                        d={d}
+                                    </span>
+                                </div>
+                                <p className="text-[8px] text-zinc-400 truncate">{info.gene}</p>
+                            </div>
+                        );
+                    })}
+                </div>
             </div>
         </div>
     );

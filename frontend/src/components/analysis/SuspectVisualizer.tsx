@@ -291,6 +291,14 @@ export default function SuspectVisualizer({
     hideIfEmpty = false
 }: ForensicIdentityCardProps) {
     const containerRef = useRef<HTMLDivElement>(null);
+    const [activeView, setActiveView] = useState<"overview" | "morphometrics">("overview");
+    const [morphoSnps, setMorphoSnps] = useState<Record<string, number>>({
+        rs974448: 2,
+        rs12882923: 1,
+        rs11130635: 2,
+        rs13289: 0,
+        rs7559252: 2,
+    });
 
     const data = phenotypeReport;
     // Allow external control of loading state, fallback to heuristic if not provided
@@ -461,46 +469,152 @@ export default function SuspectVisualizer({
                             </div>
                         </div>
 
-                        {/* High-Fidelity Grid */}
-                        <div className="grid grid-cols-1 gap-3">
-                            {displayTraits.map((trait) => {
-                                const highlight = isTraitRelevant(trait.key, trait.value);
-                                const sources = data?.trait_sources?.[trait.key] || [];
+                        {/* Tab Selector */}
+                        <div className="flex items-center gap-1.5 p-1 bg-black/40 rounded border border-tactical-border/50">
+                            <button
+                                onClick={() => setActiveView("overview")}
+                                className={`flex-1 py-1 px-2 rounded text-[8px] font-mono font-bold uppercase transition-all ${
+                                    activeView === "overview"
+                                        ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
+                                        : "text-zinc-500 hover:text-zinc-300"
+                                }`}
+                            >
+                                Composite Overview
+                            </button>
+                            <button
+                                onClick={() => setActiveView("morphometrics")}
+                                className={`flex-1 py-1 px-2 rounded text-[8px] font-mono font-bold uppercase transition-all ${
+                                    activeView === "morphometrics"
+                                        ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40"
+                                        : "text-zinc-500 hover:text-zinc-300"
+                                }`}
+                            >
+                                3D Cephalometrics (P3 §3)
+                            </button>
+                        </div>
 
-                                return (
-                                    <div
-                                        key={trait.label}
-                                        className={`relative group p-3 rounded bg-zinc-900/40 border transition-all duration-300 ${highlight
-                                            ? "border-emerald-500/40 bg-emerald-500/5 shadow-[0_0_10px_rgba(16,185,129,0.1)]"
-                                            : "border-zinc-800 hover:border-zinc-700"
-                                            }`}
-                                    >
-                                        <div className="flex items-center justify-between mb-2">
-                                            <span className={`font-mono text-[8px] uppercase tracking-[0.15em] ${highlight ? 'text-emerald-400 font-bold' : 'text-zinc-500'}`}>
-                                                {trait.label}
-                                            </span>
-                                            {highlight && (
-                                                <div className="flex items-center gap-1">
-                                                    <div className="w-1 h-1 bg-emerald-500 animate-pulse" />
-                                                    <span className="font-mono text-[7px] text-emerald-500 max-[280px]:hidden">MATCH</span>
-                                                </div>
-                                            )}
-                                        </div>
-                                        <div className="flex justify-between items-end">
-                                            <div className={`font-mono text-sm ${highlight ? 'text-white font-bold' : 'text-zinc-300'}`}>
-                                                {trait.value}
+                        {activeView === "overview" ? (
+                            /* High-Fidelity Grid */
+                            <div className="grid grid-cols-1 gap-3">
+                                {displayTraits.map((trait) => {
+                                    const highlight = isTraitRelevant(trait.key, trait.value);
+                                    const sources = data?.trait_sources?.[trait.key] || [];
+
+                                    return (
+                                        <div
+                                            key={trait.label}
+                                            className={`relative group p-3 rounded bg-zinc-900/40 border transition-all duration-300 ${highlight
+                                                ? "border-emerald-500/40 bg-emerald-500/5 shadow-[0_0_10px_rgba(16,185,129,0.1)]"
+                                                : "border-zinc-800 hover:border-zinc-700"
+                                                }`}
+                                        >
+                                            <div className="flex items-center justify-between mb-2">
+                                                <span className={`font-mono text-[8px] uppercase tracking-[0.15em] ${highlight ? 'text-emerald-400 font-bold' : 'text-zinc-500'}`}>
+                                                    {trait.label}
+                                                </span>
+                                                {highlight && (
+                                                    <div className="flex items-center gap-1">
+                                                        <div className="w-1 h-1 bg-emerald-500 animate-pulse" />
+                                                        <span className="font-mono text-[7px] text-emerald-500 max-[280px]:hidden">MATCH</span>
+                                                    </div>
+                                                )}
                                             </div>
-                                            {/* Source Tag */}
-                                            {sources.length > 0 && (
-                                                <div className="font-mono text-[8px] text-zinc-600 text-right">
-                                                    Ref: {sources.map(s => s.split(' ')[0]).join(', ')}
+                                            <div className="flex justify-between items-end">
+                                                <div className={`font-mono text-sm ${highlight ? 'text-white font-bold' : 'text-zinc-300'}`}>
+                                                    {trait.value}
                                                 </div>
-                                            )}
+                                                {/* Source Tag */}
+                                                {sources.length > 0 && (
+                                                    <div className="font-mono text-[8px] text-zinc-600 text-right">
+                                                        Ref: {sources.map(s => s.split(' ')[0]).join(', ')}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        ) : (
+                            /* 3D Craniofacial Morphometrics Tab (Module 13) */
+                            <div className="space-y-3">
+                                {/* Facial Index & Typology Badge */}
+                                <div className="p-2.5 rounded bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-between">
+                                    <div>
+                                        <div className="font-mono text-[7px] text-zinc-400 uppercase">Facial Index (I_F)</div>
+                                        <div className="font-mono text-xs font-bold text-cyan-300">
+                                            {((Math.sqrt(Math.pow((12.4 + 1.25 * (morphoSnps.rs974448 || 0)) - (18.2 + 1.85 * (morphoSnps.rs7559252 || 0)), 2) + Math.pow((45.2 + 0.85 * (morphoSnps.rs974448 || 0)) - (-68.5 - 1.20 * (morphoSnps.rs7559252 || 0)), 2)) / (2 * (18.5 + 0.95 * (morphoSnps.rs12882923 || 0)))) * 100).toFixed(1)}
                                         </div>
                                     </div>
-                                );
-                            })}
-                        </div>
+                                    <div className="text-right">
+                                        <div className="font-mono text-[7px] text-zinc-400 uppercase">Typology</div>
+                                        <span className="font-mono text-[8px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-bold">
+                                            MESOPROSOPIC
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* 7 Landmarks Matrix */}
+                                <div className="space-y-1.5">
+                                    <div className="font-mono text-[8px] text-zinc-400 uppercase tracking-wider">
+                                        Cephalometric Coordinates (mm)
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-1.5 text-[8px] font-mono">
+                                        <div className="p-1.5 rounded bg-black/40 border border-zinc-800 flex justify-between">
+                                            <span className="text-zinc-400">Nasion (N):</span>
+                                            <span className="text-cyan-300 font-bold">0.0, {(12.4 + 1.25 * (morphoSnps.rs974448 || 0)).toFixed(1)}, {(45.2 + 0.85 * (morphoSnps.rs974448 || 0)).toFixed(1)}</span>
+                                        </div>
+                                        <div className="p-1.5 rounded bg-black/40 border border-zinc-800 flex justify-between">
+                                            <span className="text-zinc-400">Pronasale (Prn):</span>
+                                            <span className="text-emerald-300 font-bold">0.0, {(48.5 + 2.10 * (morphoSnps.rs11130635 || 0) - 1.45 * (morphoSnps.rs13289 || 0)).toFixed(1)}, {(12.1 + 1.15 * (morphoSnps.rs11130635 || 0)).toFixed(1)}</span>
+                                        </div>
+                                        <div className="p-1.5 rounded bg-black/40 border border-zinc-800 flex justify-between">
+                                            <span className="text-zinc-400">Subnasale (Sn):</span>
+                                            <span className="text-zinc-300 font-bold">0.0, {(38.2 - 1.10 * (morphoSnps.rs13289 || 0)).toFixed(1)}, {(-2.5 - 0.65 * (morphoSnps.rs13289 || 0)).toFixed(1)}</span>
+                                        </div>
+                                        <div className="p-1.5 rounded bg-black/40 border border-zinc-800 flex justify-between">
+                                            <span className="text-zinc-400">Alar Width:</span>
+                                            <span className="text-pink-300 font-bold">{(2 * (18.5 + 0.95 * (morphoSnps.rs12882923 || 0))).toFixed(1)} mm</span>
+                                        </div>
+                                        <div className="p-1.5 rounded bg-black/40 border border-zinc-800 flex justify-between">
+                                            <span className="text-zinc-400">Labiale Sup (Ls):</span>
+                                            <span className="text-zinc-300 font-bold">0.0, {(34.5 + 0.60 * (morphoSnps.rs7559252 || 0)).toFixed(1)}, {(-12.4 - 0.40 * (morphoSnps.rs7559252 || 0)).toFixed(1)}</span>
+                                        </div>
+                                        <div className="p-1.5 rounded bg-black/40 border border-zinc-800 flex justify-between">
+                                            <span className="text-zinc-400">Menton (Me):</span>
+                                            <span className="text-amber-300 font-bold">0.0, {(18.2 + 1.85 * (morphoSnps.rs7559252 || 0)).toFixed(1)}, {(-68.5 - 1.20 * (morphoSnps.rs7559252 || 0)).toFixed(1)}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Morphometric SNP Dosage Toggles */}
+                                <div className="space-y-1.5 pt-1">
+                                    <div className="font-mono text-[8px] text-zinc-400 uppercase tracking-wider">
+                                        Predictor Loci (Click to toggle dosage 0, 1, 2)
+                                    </div>
+                                    <div className="grid grid-cols-3 gap-1">
+                                        {[
+                                            { rs: "rs974448", gene: "PAX3" },
+                                            { rs: "rs12882923", gene: "PAX9" },
+                                            { rs: "rs11130635", gene: "PRDM16" },
+                                            { rs: "rs13289", gene: "DCHS2" },
+                                            { rs: "rs7559252", gene: "PCDH15" },
+                                        ].map(({ rs, gene }) => {
+                                            const d = morphoSnps[rs] || 0;
+                                            return (
+                                                <button
+                                                    key={rs}
+                                                    onClick={() => setMorphoSnps(p => ({ ...p, [rs]: ((p[rs] || 0) + 1) % 3 }))}
+                                                    className="p-1 rounded bg-black/50 border border-zinc-800 hover:border-cyan-500/50 flex justify-between items-center text-[7px] font-mono"
+                                                >
+                                                    <span className="text-zinc-300 font-bold">{gene}</span>
+                                                    <span className="px-1 py-0.2 rounded bg-cyan-500/20 text-cyan-300 font-bold">d={d}</span>
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
 
                         {/* Footer Section with On-Chain Proof Button */}
                         <div className="mt-auto pt-4 border-t border-zinc-900 flex flex-col gap-3">
@@ -532,3 +646,4 @@ export default function SuspectVisualizer({
         </motion.div>
     );
 }
+

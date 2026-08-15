@@ -1187,6 +1187,102 @@ $$X_i^* = 2 \cdot p_i \quad (\text{Global mean dosage imputation})$$
 
 $$P_{\text{adjusted}}(Y = k) = \frac{\exp \left( \frac{\hat{L}_k}{\sqrt{1 + \lambda \cdot M}} \right)}{\sum_{l=1}^K \exp \left( \frac{\hat{L}_l}{\sqrt{1 + \lambda \cdot M}} \right)} \quad (\lambda = 0.35)$$
 
+---
+
+## 46. 55-SNP AIM Biogeographic Ancestry (BGA) System & Live GIS Geolocation (Module 12)
+
+The 55-AIM BGA framework estimates continental admixture proportions across 5 major biogeographic clusters (**EUR**, **AFR**, **EAS**, **SAS**, **AMR**) using validated Ancestry Informative Markers (Kidd et al. / Seldin et al.) and projects geographic origins onto a 3D spherical coordinate space with 95% bivariate confidence ellipses.
+
+### 46.1 Bayesian Posterior Admixture Estimation
+
+For observed genotype profile $G = \{g_1, \dots, g_N\}$ across $N$ informative SNP markers:
+
+$$\ln L(G \mid C_j) = \sum_{m=1}^N \ln P(g_m \mid p_{m, j})$$
+
+where Hardy-Weinberg genotype probabilities are:
+
+$$P(g_m \mid p_{m, j}) = \begin{cases} p_{m, j}^2, & g_m = 2 \quad (\text{Homozygous Alt}) \\ 2 p_{m, j} (1 - p_{m, j}), & g_m = 1 \quad (\text{Heterozygous}) \\ (1 - p_{m, j})^2, & g_m = 0 \quad (\text{Homozygous Ref}) \end{cases}$$
+
+Under a uniform Dirichlet prior ($\alpha_j = 1.0$), posterior admixture proportions $\mathbf{q} = (q_{\text{EUR}}, q_{\text{AFR}}, q_{\text{EAS}}, q_{\text{SAS}}, q_{\text{AMR}})^T$ are recovered via Softmax:
+
+$$q_j = \frac{\exp(\ln L(G \mid C_j) - \max_k \ln L(G \mid C_k))}{\sum_{l=1}^5 \exp(\ln L(G \mid C_l) - \max_k \ln L(G \mid C_k))}$$
+
+#### Mandatory Sum-to-Unity Invariant:
+$$\left| \left( \sum_{j=1}^5 q_j \right) - 1.0 \right| \le 1.0 \times 10^{-6}$$
+
+### 46.2 3D Spherical Coordinate Projection & Bivariate Uncertainty Geometry
+
+Continental reference centroid coordinates:
+* **EUR:** $(+48.50^\circ\text{N}, +15.20^\circ\text{E})$
+* **AFR:** $(+02.50^\circ\text{N}, +22.80^\circ\text{E})$
+* **EAS:** $(+35.00^\circ\text{N}, +105.00^\circ\text{E})$
+* **SAS:** $(+22.50^\circ\text{N}, +78.50^\circ\text{E})$
+* **AMR:** $(+04.00^\circ\text{N}, -68.00^\circ\text{W})$
+
+Weighted 3D Cartesian vector summation:
+
+$$\mathbf{V}_{\text{pred}} = \sum_{j=1}^5 q_j \begin{pmatrix} \cos(\text{Lat}_j) \cos(\text{Lng}_j) \\ \cos(\text{Lat}_j) \sin(\text{Lng}_j) \\ \sin(\text{Lat}_j) \end{pmatrix} = \begin{pmatrix} \bar{x} \\ \bar{y} \\ \bar{z} \end{pmatrix}$$
+
+$$\bar{\theta}_{\text{Lat}} = \arcsin\left(\frac{\bar{z}}{\|\mathbf{V}_{\text{pred}}\|}\right), \quad \bar{\theta}_{\text{Lng}} = \text{atan2}(\bar{y}, \bar{x})$$
+
+#### 95% Confidence Ellipse ($\chi^2_2 = 5.991$):
+
+$$\sigma_{\text{Lat}}^2 = \sum q_j (\text{Lat}_j - \bar{\theta}_{\text{Lat}})^2, \quad \sigma_{\text{Lng}}^2 = \sum q_j (\text{Lng}_j - \bar{\theta}_{\text{Lng}})^2, \quad \sigma_{\text{Lat, Lng}} = \sum q_j (\text{Lat}_j - \bar{\theta}_{\text{Lat}})(\text{Lng}_j - \bar{\theta}_{\text{Lng}})$$
+
+$$\lambda_{1, 2} = \frac{\sigma_{\text{Lat}}^2 + \sigma_{\text{Lng}}^2 \pm \sqrt{(\sigma_{\text{Lat}}^2 - \sigma_{\text{Lng}}^2)^2 + 4 \sigma_{\text{Lat, Lng}}^2}}{2}$$
+
+$$a = \sqrt{5.991 \cdot \lambda_1}, \quad b = \sqrt{5.991 \cdot \lambda_2}, \quad \theta_{\text{tilt}} = \frac{1}{2} \text{atan2}\left(2 \sigma_{\text{Lat, Lng}}, \sigma_{\text{Lat}}^2 - \sigma_{\text{Lng}}^2\right)$$
+
+---
+
+## 47. Craniofacial Morphometrics & 3D Shape Space Reconstruction (Module 13)
+
+The Craniofacial Morphometrics Engine reconstructs 3D facial shape deformations from predictive SNP dosages across canonical GWAS effect loci (Claes et al. paradigm), deriving exact 3D millimetric coordinates $(x, y, z)$ for primary cephalometric landmarks and computing clinical facial indices.
+
+### 47.1 Primary Craniofacial Predictor Loci & Effect Sizes
+
+| SNP Locus (rsID) | Target Gene | Morphometric Structural Effect | Effect Allele | Effect Size ($w_k$) |
+| :--- | :--- | :--- | :--- | :--- |
+| **rs974448** | **PAX3** | Cranial Vault Width & Nasion Position | `T` | $+0.412\text{ SD}$ |
+| **rs12882923**| **PAX9** | Bizygomatic Breadth & Midface Breadth | `C` | $+0.385\text{ SD}$ |
+| **rs11130635**| **PRDM16** | Nasal Bridge Elevation & Projection | `A` | $+0.452\text{ SD}$ |
+| **rs13289** | **DCHS2** | Nasal Tip Morphology & Subnasale Angle | `G` | $-0.321\text{ SD}$ |
+| **rs7559252** | **PCDH15** | Chin Prominence & Mandibular Convexity | `C` | $+0.298\text{ SD}$ |
+
+### 47.2 3D Cephalometric Landmark Reconstruction Equations (mm)
+
+1. **Nasion ($N$):**
+   $$x = 0.00, \quad y = 12.4 + 1.25 X_{\text{PAX3}}, \quad z = 45.2 + 0.85 X_{\text{PAX3}}$$
+
+2. **Pronasale ($Prn$ - Nasal Apex):**
+   $$x = 0.00, \quad y = 48.5 + 2.10 X_{\text{PRDM16}} - 1.45 X_{\text{DCHS2}}, \quad z = 12.1 + 1.15 X_{\text{PRDM16}}$$
+
+3. **Subnasale ($Sn$):**
+   $$x = 0.00, \quad y = 38.2 - 1.10 X_{\text{DCHS2}}, \quad z = -2.5 - 0.65 X_{\text{DCHS2}}$$
+
+4. **Alare Left ($Al_L$) & Right ($Al_R$):**
+   $$x_{Al_L} = -18.5 - 0.95 X_{\text{PAX9}}, \quad x_{Al_R} = +18.5 + 0.95 X_{\text{PAX9}}$$
+   $$y = 36.1 + 0.45 X_{\text{PAX9}}, \quad z = 2.1 + 0.30 X_{\text{PAX9}}$$
+
+5. **Labiale Superius ($Ls$):**
+   $$x = 0.00, \quad y = 34.5 + 0.60 X_{\text{PCDH15}}, \quad z = -12.4 - 0.40 X_{\text{PCDH15}}$$
+
+6. **Menton ($Me$ - Chin Base):**
+   $$x = 0.00, \quad y = 18.2 + 1.85 X_{\text{PCDH15}}, \quad z = -68.5 - 1.20 X_{\text{PCDH15}}$$
+
+### 47.3 Morphological Dimensions & Clinical Facial Index ($I_F$)
+
+$$h_{\text{face}} = \|N - Me\|_2 = \sqrt{(y_N - y_{Me})^2 + (z_N - z_{Me})^2}$$
+
+$$w_{\text{alar}} = \|Al_R - Al_L\|_2 = 2 \cdot |x_{Al_R}|$$
+
+$$I_F = \frac{h_{\text{face}}}{w_{\text{alar}}} \times 100$$
+
+* **Bilateral Midline Symmetry Invariant:** $x_N = x_{Prn} = x_{Sn} = x_{Ls} = x_{Me} = 0.00$ and $x_{Al_L} = -x_{Al_R}$.
+* **Vertical Z-Monotonicity Invariant:** $z_N > z_{Prn} > z_{Sn} > z_{Ls} > z_{Me}$ for all valid $X \in \{0, 1, 2\}^5$.
+
+
+
 
 
 

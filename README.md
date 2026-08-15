@@ -526,9 +526,30 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** Missingness uncertainty scaling penalty ($\lambda = 0.35$ flattens confidence as missing loci ratio increases).
   - **`G`:** Full tri-trait composite prediction bundle.
   - **`H`:** API integration across all 4 dedicated endpoints: `/hirisplex-s/predict`, `/hirisplex-s/eye-color`, `/hirisplex-s/hair-color`, `/hirisplex-s/skin-phototype`.
+* **`VECTOR_P3_03` (East Asian Coarse Hair & Ancestry — Module 12):** `rs3827072: C/C (2)`, `rs1800414: C/C (2)`, `rs885479: G/G (2)` $\implies q_{\text{EAS}} \ge 0.95$, Nearest Centroid: East Asian $(+35.00^\circ\text{N}, +105.00^\circ\text{E})$.
+* **`VECTOR_12_AIM_A-H` (55-SNP AIM BGA & Live GIS Geolocation — Module 12):**
+  - **`A`:** Admixture Sum-to-Unity Invariant ($|\sum q_j - 1.0| \le 10^{-6}$) verified across single, mixed, and boundary genotypes under uniform Dirichlet prior.
+  - **`B`:** DARC Duffy Null (`rs2814778: C/C`) African population fixation ($p_{\text{AFR}} = 0.992 \implies q_{\text{AFR}} > 0.85$).
+  - **`C`:** SLC24A5 Thr111Ala (`rs1426654`) & SLC45A2 (`rs16891982`) European ($q_{\text{EUR}} > 0.85$) vs South Asian differentiation.
+  - **`D`:** EDAR 370Ala (`rs3827072: C/C`) and OCA2 His615Arg (`rs1800414: C/C`) East Asian continental specificity ($q_{\text{EAS}} > 0.90$).
+  - **`E`:** 3D Spherical Coordinate Projection: weighted Cartesian vector sum ($\mathbf{V}_{\text{pred}}$) correctly projects geographic latitude and longitude with spherical boundary wrapping.
+  - **`F`:** Bivariate 95% Confidence Ellipse geometry ($a, b, \theta_{\text{tilt}}$) calculated via covariance matrix eigenvalues ($\chi^2_2 = 5.991$).
+  - **`G`:** Shannon Entropy $H(\mathbf{q})$ and Simpson Diversity $D$ for 3-tier admixture complexity classification (`HOMOGENEOUS`, `BI_ADMIXED`, `MULTI_ADMIXED`).
+  - **`H`:** API integration testing across `/ancestry/55-aim/predict` and `/ancestry/55-aim/gis-coordinates`.
+* **`VECTOR_13_MORPHO_A-H` (Craniofacial Morphometrics & 3D Shape Space Reconstruction — Module 13):**
+  - **`A`:** Baseline Reference 3D Landmark Geometry ($X_i = 0$) verified against canonical Claes et al. coordinates ($N=(0, 12.4, 45.2), Me=(0, 18.2, -68.5)$ mm).
+  - **`B`:** Bilateral Midline Symmetry Invariant ($x_N = x_{Prn} = x_{Sn} = x_{Ls} = x_{Me} = 0.00$ and $x_{Al_L} = -x_{Al_R}$) strictly preserved across all dosage configurations.
+  - **`C`:** PRDM16 (`rs11130635`) and DCHS2 (`rs13289`) nasal bridge elevation and nasal apex projection ($y_{Prn} = 52.70\text{ mm}, z_{Prn} = 14.40\text{ mm}$).
+  - **`D`:** PAX9 (`rs12882923`) bizygomatic / alar breadth expansion ($w_{\text{alar}} = 40.80\text{ mm}$).
+  - **`E`:** PCDH15 (`rs7559252`) chin prominence and mandibular convexity ($y_{Me} = 21.90\text{ mm}, z_{Me} = -70.90\text{ mm}$).
+  - **`F`:** Morphological facial height ($h_{\text{face}}$), nasal height ($h_{\text{nasal}}$), and clinical Facial Index ($I_F$) typology classification (`EURYPROSOPIC`, `MESOPROSOPIC`, `LEPTOPROSOPIC`).
+  - **`G`:** Anatomical Vertical Z-Monotonicity ($z_N > z_{Prn} > z_{Sn} > z_{Ls} > z_{Me}$) invariant maintained across all parameter extremes.
+  - **`H`:** API integration testing across `/morphometrics/craniofacial/reconstruct-3d` and `/morphometrics/craniofacial/landmarks`.
 * **`VECTOR_P6_01` (Chain of Custody Tamper Detection):** Merkle tree root divergence verified upon a single-second timestamp modification ($P_{\text{detection}} = 100\%$).
 * **`VECTOR_P6_02` (ISO 17025 Measurement Uncertainty):** Combined $u_c = 0.05385 \text{ ng/}\mu\text{L}$ and expanded $U_{95\%} = 0.1077 \text{ ng/}\mu\text{L}$ ($k=2.00$).
 * **`VECTOR_P6_03` (ENFSI Verbal Statement Mapping):** $LR = 3.5 \times 10^7$ maps deterministically to Verbal Tier 6 ("Extremely strong support for prosecution proposition").
+
+
 
 
 

@@ -277,3 +277,173 @@ async def predict_hirisplex_skin_phototype(body: HIrisPlexSPredictionRequest) ->
         missing_loci_count=skin.missing_loci_count,
     )
 
+
+# ── Module 12 55-AIM BGA & Live GIS Endpoints ─────────────────────────────────
+from node.services.forensic.phenotyping.aim_bga_engine import AIMBGAEngine
+from .phenotype_schemas import (
+    AIMPredictionRequest, AIMPredictionResponse,
+    GISCoordinatesSchema, ConfidenceEllipseSchema,
+)
+
+_aim_bga_engine = AIMBGAEngine()
+
+
+@router.post(
+    "/ancestry/55-aim/predict",
+    response_model=AIMPredictionResponse,
+    summary="55-AIM Continental Biogeographic Ancestry & GIS Geolocation (Module 12)",
+    description="Calculates 5-continental Bayesian Dirichlet admixture (EUR, AFR, EAS, SAS, AMR) and 3D spherical GIS coordinates with 95% confidence ellipse. (Research §2)",
+    status_code=status.HTTP_200_OK,
+)
+async def predict_55_aim_ancestry(body: AIMPredictionRequest) -> AIMPredictionResponse:
+    try:
+        res = _aim_bga_engine.analyze_bga_profile(body.snp_dosages)
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"55-AIM ancestry analysis failed: {str(exc)}"
+        )
+
+    ellipse_schema = ConfidenceEllipseSchema(
+        semi_major_deg=res.gis_projection.confidence_ellipse.semi_major_deg,
+        semi_minor_deg=res.gis_projection.confidence_ellipse.semi_minor_deg,
+        semi_major_km=res.gis_projection.confidence_ellipse.semi_major_km,
+        semi_minor_km=res.gis_projection.confidence_ellipse.semi_minor_km,
+        tilt_angle_deg=res.gis_projection.confidence_ellipse.tilt_angle_deg,
+    )
+
+    gis_schema = GISCoordinatesSchema(
+        latitude=res.gis_projection.latitude,
+        longitude=res.gis_projection.longitude,
+        formatted_coords=res.gis_projection.formatted_coords,
+        nearest_centroid=res.gis_projection.nearest_centroid,
+        confidence_ellipse=ellipse_schema,
+    )
+
+    return AIMPredictionResponse(
+        proportions=res.proportions,
+        dominant_population=res.dominant_population,
+        dominant_proportion=res.dominant_proportion,
+        admixture_classification=res.admixture_classification,
+        shannon_entropy=res.shannon_entropy,
+        simpson_diversity=res.simpson_diversity,
+        assayed_snps_count=res.assayed_snps_count,
+        gis_projection=gis_schema,
+        prosecutors_fallacy_shield=res.prosecutors_fallacy_shield,
+    )
+
+
+@router.post(
+    "/ancestry/55-aim/gis-coordinates",
+    response_model=GISCoordinatesSchema,
+    summary="3D Spherical GIS Coordinate Projection (Module 12)",
+    status_code=status.HTTP_200_OK,
+)
+async def project_55_aim_gis_coordinates(body: AIMPredictionRequest) -> GISCoordinatesSchema:
+    try:
+        res = _aim_bga_engine.analyze_bga_profile(body.snp_dosages)
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"GIS coordinate projection failed: {str(exc)}"
+        )
+
+    ellipse_schema = ConfidenceEllipseSchema(
+        semi_major_deg=res.gis_projection.confidence_ellipse.semi_major_deg,
+        semi_minor_deg=res.gis_projection.confidence_ellipse.semi_minor_deg,
+        semi_major_km=res.gis_projection.confidence_ellipse.semi_major_km,
+        semi_minor_km=res.gis_projection.confidence_ellipse.semi_minor_km,
+        tilt_angle_deg=res.gis_projection.confidence_ellipse.tilt_angle_deg,
+    )
+
+    return GISCoordinatesSchema(
+        latitude=res.gis_projection.latitude,
+        longitude=res.gis_projection.longitude,
+        formatted_coords=res.gis_projection.formatted_coords,
+        nearest_centroid=res.gis_projection.nearest_centroid,
+        confidence_ellipse=ellipse_schema,
+    )
+
+
+# ── Module 13 Craniofacial Morphometrics & 3D Landmark Endpoints ─────────────
+from node.services.forensic.phenotyping.morphometrics_engine import MorphometricsEngine
+from .phenotype_schemas import (
+    CraniofacialReconstructionRequest, CraniofacialReconstructionResponse,
+    CephalometricLandmarksSchema, FacialIndicesSchema, Point3DSchema,
+)
+
+_morpho_engine = MorphometricsEngine()
+
+
+@router.post(
+    "/morphometrics/craniofacial/reconstruct-3d",
+    response_model=CraniofacialReconstructionResponse,
+    summary="3D Craniofacial Cephalometric Landmark Reconstruction (Module 13)",
+    description="Reconstructs 7 primary 3D facial landmarks (N, Prn, Sn, Al_L, Al_R, Ls, Me) and morphological facial indices from PAX3, PAX9, PRDM16, DCHS2, PCDH15. (Research §3)",
+    status_code=status.HTTP_200_OK,
+)
+async def reconstruct_craniofacial_3d(body: CraniofacialReconstructionRequest) -> CraniofacialReconstructionResponse:
+    try:
+        res = _morpho_engine.analyze_craniofacial_morphology(body.snp_dosages)
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"3D Craniofacial reconstruction failed: {str(exc)}"
+        )
+
+    lm = res.landmarks
+    landmarks_schema = CephalometricLandmarksSchema(
+        nasion=Point3DSchema(x=lm.nasion.x, y=lm.nasion.y, z=lm.nasion.z),
+        pronasale=Point3DSchema(x=lm.pronasale.x, y=lm.pronasale.y, z=lm.pronasale.z),
+        subnasale=Point3DSchema(x=lm.subnasale.x, y=lm.subnasale.y, z=lm.subnasale.z),
+        alare_left=Point3DSchema(x=lm.alare_left.x, y=lm.alare_left.y, z=lm.alare_left.z),
+        alare_right=Point3DSchema(x=lm.alare_right.x, y=lm.alare_right.y, z=lm.alare_right.z),
+        labiale_superius=Point3DSchema(x=lm.labiale_superius.x, y=lm.labiale_superius.y, z=lm.labiale_superius.z),
+        menton=Point3DSchema(x=lm.menton.x, y=lm.menton.y, z=lm.menton.z),
+    )
+
+    idx = res.indices
+    indices_schema = FacialIndicesSchema(
+        morphological_facial_height_mm=idx.morphological_facial_height_mm,
+        alar_breadth_mm=idx.alar_breadth_mm,
+        nasal_height_mm=idx.nasal_height_mm,
+        nasal_projection_mm=idx.nasal_projection_mm,
+        facial_index_ratio=idx.facial_index_ratio,
+        facial_typology=idx.facial_typology,
+    )
+
+    return CraniofacialReconstructionResponse(
+        landmarks=landmarks_schema,
+        indices=indices_schema,
+        assayed_loci_count=res.assayed_loci_count,
+        prosecutors_fallacy_shield=res.prosecutors_fallacy_shield,
+    )
+
+
+@router.post(
+    "/morphometrics/craniofacial/landmarks",
+    response_model=CephalometricLandmarksSchema,
+    summary="Extract 3D Cephalometric Coordinates Only (Module 13)",
+    status_code=status.HTTP_200_OK,
+)
+async def get_cephalometric_landmarks_only(body: CraniofacialReconstructionRequest) -> CephalometricLandmarksSchema:
+    try:
+        lm = _morpho_engine.reconstruct_3d_landmarks(body.snp_dosages)
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Landmark extraction failed: {str(exc)}"
+        )
+
+    return CephalometricLandmarksSchema(
+        nasion=Point3DSchema(x=lm.nasion.x, y=lm.nasion.y, z=lm.nasion.z),
+        pronasale=Point3DSchema(x=lm.pronasale.x, y=lm.pronasale.y, z=lm.pronasale.z),
+        subnasale=Point3DSchema(x=lm.subnasale.x, y=lm.subnasale.y, z=lm.subnasale.z),
+        alare_left=Point3DSchema(x=lm.alare_left.x, y=lm.alare_left.y, z=lm.alare_left.z),
+        alare_right=Point3DSchema(x=lm.alare_right.x, y=lm.alare_right.y, z=lm.alare_right.z),
+        labiale_superius=Point3DSchema(x=lm.labiale_superius.x, y=lm.labiale_superius.y, z=lm.labiale_superius.z),
+        menton=Point3DSchema(x=lm.menton.x, y=lm.menton.y, z=lm.menton.z),
+    )
+
+
+

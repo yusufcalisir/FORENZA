@@ -4,34 +4,11 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     ShieldCheck, Lock, CheckCircle, AlertTriangle,
-    FileText, Clock, Filter, ChevronDown, Activity, ChevronRight
+    FileText, Clock, Filter, ChevronDown, Activity, ChevronRight, Hash
 } from "lucide-react";
+import { useForensicCaseStore } from "@/store/forensicCaseStore";
 
 type LogLevel = "ALL" | "PASS" | "WARNING" | "FAIL";
-
-interface AuditEntry {
-    id: string;
-    timestamp: string;
-    event: string;
-    module: string;
-    analyst: string;
-    hmac: string;
-    status: "PASS" | "WARNING" | "FAIL";
-    standard: string;
-}
-
-const AUDIT_LOG: AuditEntry[] = [
-    { id: "AUD-0891", timestamp: "2026-08-12 11:52:14", event: "STR profile analyzed — EVID-2026-901", module: "STR Locus Engine", analyst: "Dr. Morrison", hmac: "a7f9c21…e04b", status: "PASS", standard: "ISO 17025 §5.4" },
-    { id: "AUD-0890", timestamp: "2026-08-12 11:51:33", event: "HIrisPlex-S phenotype report compiled", module: "Phenotyping Engine", analyst: "Dr. Chen", hmac: "b3d82f4…a19c", status: "PASS", standard: "SWGDAM 2023" },
-    { id: "AUD-0889", timestamp: "2026-08-12 11:49:07", event: "3-contributor mixture deconvolution", module: "MCMC Engine", analyst: "Dr. Morrison", hmac: "c1e45b7…d52a", status: "PASS", standard: "ILAC G19" },
-    { id: "AUD-0888", timestamp: "2026-08-12 11:44:28", event: "ISO 17025 court report signed", module: "Report Generator", analyst: "Prof. Ahmed", hmac: "d9f12a3…7e81", status: "PASS", standard: "ISO 17025 §7.8" },
-    { id: "AUD-0887", timestamp: "2026-08-12 11:39:55", event: "Epigenetic age clock — donor age 38±3.4", module: "Horvath Clock", analyst: "Dr. Chen", hmac: "e4a67c9…b23d", status: "PASS", standard: "ENFSI 2022" },
-    { id: "AUD-0886", timestamp: "2026-08-12 11:35:12", event: "Touch DNA LtDNA threshold warning", module: "Touch DNA Engine", analyst: "Dr. Morrison", hmac: "f7b23e1…c490", status: "WARNING", standard: "SWGDAM LTDNA" },
-    { id: "AUD-0885", timestamp: "2026-08-12 11:28:44", event: "QC control out of ±2σ range", module: "QA/QC Monitor", analyst: "Lab Tech B", hmac: "g2d89f5…a17b", status: "WARNING", standard: "ISO 17025 §6.5" },
-    { id: "AUD-0884", timestamp: "2026-08-12 11:21:09", event: "ZKP proof verification failed (missing artifacts)", module: "ZKP Auditor", analyst: "System", hmac: "h5c41d8…f23e", status: "FAIL", standard: "Circom zkSNARK" },
-    { id: "AUD-0883", timestamp: "2026-08-12 10:58:31", event: "Toxicology Widmark BAC — FATAL threshold exceeded", module: "Toxicology Engine", analyst: "Dr. Chen", hmac: "i8e72b3…c910", status: "PASS", standard: "ISO 17025 §5.4" },
-    { id: "AUD-0882", timestamp: "2026-08-12 10:44:16", event: "Synthetic case benchmark — RMSE 0.02", module: "Synthetic Generator", analyst: "System", hmac: "j1f34c7…e845", status: "PASS", standard: "OSAC TR" },
-];
 
 const STATUS_CONF = {
     PASS: { color: "text-emerald-400", bg: "bg-emerald-500/10 border-emerald-500/30", icon: CheckCircle },
@@ -40,15 +17,16 @@ const STATUS_CONF = {
 };
 
 export default function AuditPage() {
+    const { auditTrail, activeCase } = useForensicCaseStore();
     const [filter, setFilter] = useState<LogLevel>("ALL");
     const [expanded, setExpanded] = useState<string | null>(null);
 
-    const filtered = filter === "ALL" ? AUDIT_LOG : AUDIT_LOG.filter((e) => e.status === filter);
+    const filtered = filter === "ALL" ? auditTrail : auditTrail.filter((e) => e.status === filter);
 
     const counts = {
-        PASS: AUDIT_LOG.filter((e) => e.status === "PASS").length,
-        WARNING: AUDIT_LOG.filter((e) => e.status === "WARNING").length,
-        FAIL: AUDIT_LOG.filter((e) => e.status === "FAIL").length,
+        PASS: auditTrail.filter((e) => e.status === "PASS").length,
+        WARNING: auditTrail.filter((e) => e.status === "WARNING").length,
+        FAIL: auditTrail.filter((e) => e.status === "FAIL").length,
     };
 
     return (
@@ -66,6 +44,24 @@ export default function AuditPage() {
                 <div className="flex items-center gap-1.5 shrink-0">
                     <Lock className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                     <span className="text-[9px] font-bold text-amber-400 uppercase tracking-wider">Chain Integrity: VERIFIED</span>
+                </div>
+            </div>
+
+            {/* Active Case Context Bar */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-3 rounded-xl border border-cyan-500/30 bg-cyan-500/5">
+                <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="p-1.5 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 shrink-0">
+                        <Hash className="w-4 h-4" />
+                    </div>
+                    <div className="min-w-0">
+                        <span className="text-xs font-bold text-white truncate block">{activeCase.metadata.caseId} — {activeCase.metadata.caseTitle}</span>
+                        <span className="text-[10px] text-zinc-400">{activeCase.metadata.jurisdiction} • Lead: {activeCase.metadata.leadAnalyst}</span>
+                    </div>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                    <span className="px-2.5 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[9px] font-bold uppercase">
+                        {activeCase.metadata.status}
+                    </span>
                 </div>
             </div>
 

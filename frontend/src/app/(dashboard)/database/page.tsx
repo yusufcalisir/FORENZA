@@ -18,6 +18,7 @@ import {
     Eye,
 } from "lucide-react";
 import { useIngestStore, SAMPLE_CASE_EU, SAMPLE_CASE_AA } from "@/store/ingestStore";
+import { useForensicCaseStore } from "@/store/forensicCaseStore";
 import ActiveProfileBanner from "@/components/common/ActiveProfileBanner";
 import FederatedNetworkPanel from "@/components/analysis/FederatedNetworkPanel";
 
@@ -407,14 +408,20 @@ export default function DatabasePage() {
                                                         <div className="flex items-center justify-end gap-1.5">
                                                             {p.sampleType === "EU" ? (
                                                                 <button
-                                                                    onClick={loadSampleCaseEU}
+                                                                    onClick={() => {
+                                                                        loadSampleCaseEU();
+                                                                        useForensicCaseStore.getState().selectCase(SAMPLE_CASE_EU.profileId);
+                                                                    }}
                                                                     className="px-2 py-1 rounded bg-[#06B6D4]/15 border border-[#06B6D4]/30 text-[#06B6D4] hover:bg-[#06B6D4]/25 text-[10px] font-bold transition-all cursor-pointer"
                                                                 >
                                                                     Load EU
                                                                 </button>
                                                             ) : p.sampleType === "AA" ? (
                                                                 <button
-                                                                    onClick={loadSampleCaseAA}
+                                                                    onClick={() => {
+                                                                        loadSampleCaseAA();
+                                                                        useForensicCaseStore.getState().selectCase(SAMPLE_CASE_AA.profileId);
+                                                                    }}
                                                                     className="px-2 py-1 rounded bg-purple-500/15 border border-purple-500/30 text-purple-400 hover:bg-purple-500/25 text-[10px] font-bold transition-all cursor-pointer"
                                                                 >
                                                                     Load AA

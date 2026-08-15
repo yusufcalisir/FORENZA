@@ -1281,6 +1281,43 @@ $$I_F = \frac{h_{\text{face}}}{w_{\text{alar}}} \times 100$$
 * **Bilateral Midline Symmetry Invariant:** $x_N = x_{Prn} = x_{Sn} = x_{Ls} = x_{Me} = 0.00$ and $x_{Al_L} = -x_{Al_R}$.
 * **Vertical Z-Monotonicity Invariant:** $z_N > z_{Prn} > z_{Sn} > z_{Ls} > z_{Me}$ for all valid $X \in \{0, 1, 2\}^5$.
 
+---
+
+## 48. Hair Texture Dynamics & Androgenetic Alopecia (Balding Risk PRS) Engine (Module 14)
+
+The Hair Morphology Engine estimates biophysical hair fiber cross-sectional area, curl density index ($C_{\text{curl}}$), and androgenetic alopecia (male-pattern baldness) polygenic risk scores ($\text{PRS}_{\text{balding}}$) mapped to the Hamilton-Norwood scale.
+
+### 48.1 Hair Fiber Cross-Sectional Geometry & Curl Density Index
+
+1. **Biophysical Cross-Sectional Area ($\mu\text{m}^2$):**
+   $$\text{Area } (\mu\text{m}^2) = 3850.0 + 1420.0 \cdot X_{\text{EDAR}} \quad (X_{\text{EDAR}} \in \{0, 1, 2\} \text{ at rs3827072})$$
+
+2. **Curl Density Index ($C_{\text{curl}} \in [0.0, 10.0]$):**
+   $$C_{\text{curl}} = \max\left(0.0, \; \min\left(10.0, \; 1.20 + 1.85 \cdot X_{\text{TCHH}} + 1.42 \cdot X_{\text{WNT10A}} - 2.10 \cdot X_{\text{EDAR}}\right)\right)$$
+
+   - `TCHH rs11803731 (Trichohyalin)`: Curl induction ($+1.85$)
+   - `WNT10A rs7349332`: Curl induction ($+1.42$)
+   - `EDAR rs3827072 (Val370Ala)`: Thickening and straightening ($-2.10$)
+
+3. **Phenotypic Texture Classification:**
+   - **`STRAIGHT` ($C_{\text{curl}} < 2.0$):** Fiber diameter $85.0 - 110.0\ \mu\text{m}$ if $X_{\text{EDAR}} = 2$, else $70.0 - 85.0\ \mu\text{m}$.
+   - **`WAVY` ($2.0 \le C_{\text{curl}} < 4.5$):** Fiber diameter $65.0 - 80.0\ \mu\text{m}$.
+   - **`CURLY` ($4.5 \le C_{\text{curl}} < 7.0$):** Fiber diameter $55.0 - 70.0\ \mu\text{m}$.
+   - **`KINKY_WOOLLY` ($C_{\text{curl}} \ge 7.0$):** Fiber diameter $45.0 - 60.0\ \mu\text{m}$.
+
+### 48.2 Androgenetic Alopecia Polygenic Risk Score ($\text{PRS}_{\text{balding}}$)
+
+$$\text{PRS}_{\text{balding}} = 0.982 X_{\text{rs6152}} + 0.541 X_{\text{rs2180439}} + 0.485 X_{\text{rs1160312}} + 0.362 X_{\text{rs756853}}$$
+
+- **Hamilton-Norwood Scale Mapping:**
+  - $\text{PRS} < 0.50 \implies$ **Grade I / II** (Minimal or No Hair Loss, Low Risk)
+  - $0.50 \le \text{PRS} < 1.20 \implies$ **Grade III** (Slight Temporal / Vertex Recess, Moderate Risk)
+  - $1.20 \le \text{PRS} < 2.10 \implies$ **Grade IV / V** (Moderate Vertex Loss, Elevated Risk)
+  - $\text{PRS} \ge 2.10 \implies$ **Grade VI / VII** (Severe / Extensive Balding, High Risk)
+
+- **Domain Boundaries:** $0.00 \le \text{PRS}_{\text{balding}} \le 4.740$.
+
+
 
 
 

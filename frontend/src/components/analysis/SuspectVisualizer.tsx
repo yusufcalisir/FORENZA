@@ -291,13 +291,22 @@ export default function SuspectVisualizer({
     hideIfEmpty = false
 }: ForensicIdentityCardProps) {
     const containerRef = useRef<HTMLDivElement>(null);
-    const [activeView, setActiveView] = useState<"overview" | "morphometrics">("overview");
+    const [activeView, setActiveView] = useState<"overview" | "morphometrics" | "hair_balding">("overview");
     const [morphoSnps, setMorphoSnps] = useState<Record<string, number>>({
         rs974448: 2,
         rs12882923: 1,
         rs11130635: 2,
         rs13289: 0,
         rs7559252: 2,
+    });
+    const [hairSnps, setHairSnps] = useState<Record<string, number>>({
+        rs3827072: 2,
+        rs11803731: 0,
+        rs7349332: 0,
+        rs6152: 1,
+        rs2180439: 1,
+        rs1160312: 0,
+        rs756853: 1,
     });
 
     const data = phenotypeReport;
@@ -470,26 +479,36 @@ export default function SuspectVisualizer({
                         </div>
 
                         {/* Tab Selector */}
-                        <div className="flex items-center gap-1.5 p-1 bg-black/40 rounded border border-tactical-border/50">
+                        <div className="flex items-center gap-1 p-1 bg-black/40 rounded border border-tactical-border/50">
                             <button
                                 onClick={() => setActiveView("overview")}
-                                className={`flex-1 py-1 px-2 rounded text-[8px] font-mono font-bold uppercase transition-all ${
+                                className={`flex-1 py-1 px-1.5 rounded text-[7.5px] font-mono font-bold uppercase transition-all ${
                                     activeView === "overview"
                                         ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
                                         : "text-zinc-500 hover:text-zinc-300"
                                 }`}
                             >
-                                Composite Overview
+                                Overview
                             </button>
                             <button
                                 onClick={() => setActiveView("morphometrics")}
-                                className={`flex-1 py-1 px-2 rounded text-[8px] font-mono font-bold uppercase transition-all ${
+                                className={`flex-1 py-1 px-1.5 rounded text-[7.5px] font-mono font-bold uppercase transition-all ${
                                     activeView === "morphometrics"
                                         ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40"
                                         : "text-zinc-500 hover:text-zinc-300"
                                 }`}
                             >
-                                3D Cephalometrics (P3 §3)
+                                3D Ceph (P3 §3)
+                            </button>
+                            <button
+                                onClick={() => setActiveView("hair_balding")}
+                                className={`flex-1 py-1 px-1.5 rounded text-[7.5px] font-mono font-bold uppercase transition-all ${
+                                    activeView === "hair_balding"
+                                        ? "bg-amber-500/20 text-amber-300 border border-amber-500/40"
+                                        : "text-zinc-500 hover:text-zinc-300"
+                                }`}
+                            >
+                                Hair &amp; Balding (P3 §4)
                             </button>
                         </div>
 
@@ -534,7 +553,7 @@ export default function SuspectVisualizer({
                                     );
                                 })}
                             </div>
-                        ) : (
+                        ) : activeView === "morphometrics" ? (
                             /* 3D Craniofacial Morphometrics Tab (Module 13) */
                             <div className="space-y-3">
                                 {/* Facial Index & Typology Badge */}
@@ -614,7 +633,85 @@ export default function SuspectVisualizer({
                                     </div>
                                 </div>
                             </div>
+                        ) : (
+                            /* Hair Dynamics & Balding PRS Tab (Module 14) */
+                            <div className="space-y-3">
+                                {/* Fiber Cross-Section & Curl Index Summary */}
+                                <div className="grid grid-cols-2 gap-2">
+                                    <div className="p-2 rounded bg-amber-500/10 border border-amber-500/30">
+                                        <div className="font-mono text-[7px] text-zinc-400 uppercase">Fiber Area</div>
+                                        <div className="font-mono text-xs font-bold text-amber-300">
+                                            {(3850.0 + 1420.0 * (hairSnps.rs3827072 || 0)).toFixed(0)} μm²
+                                        </div>
+                                        <div className="font-mono text-[7px] text-zinc-400">
+                                            {(hairSnps.rs3827072 || 0) >= 2 ? "Thick Asian (EDAR)" : "Fine/Medium European"}
+                                        </div>
+                                    </div>
+                                    <div className="p-2 rounded bg-purple-500/10 border border-purple-500/30">
+                                        <div className="font-mono text-[7px] text-zinc-400 uppercase">Curl Index (C_curl)</div>
+                                        <div className="font-mono text-xs font-bold text-purple-300">
+                                            {Math.max(0, Math.min(10, 1.20 + 1.85 * (hairSnps.rs11803731 || 0) + 1.42 * (hairSnps.rs7349332 || 0) - 2.10 * (hairSnps.rs3827072 || 0))).toFixed(2)}
+                                        </div>
+                                        <div className="font-mono text-[7px] text-zinc-400">
+                                            {Math.max(0, 1.20 + 1.85 * (hairSnps.rs11803731 || 0) + 1.42 * (hairSnps.rs7349332 || 0) - 2.10 * (hairSnps.rs3827072 || 0)) < 2 ? "STRAIGHT" : "WAVY / CURLY"}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Androgenetic Alopecia Hamilton-Norwood Meter */}
+                                <div className="p-2.5 rounded bg-black/40 border border-tactical-border/60 space-y-1.5">
+                                    <div className="flex justify-between items-center text-[8px] font-mono">
+                                        <span className="text-zinc-400">Balding PRS Score:</span>
+                                        <span className="text-rose-400 font-bold">
+                                            {(0.982 * (hairSnps.rs6152 || 0) + 0.541 * (hairSnps.rs2180439 || 0) + 0.485 * (hairSnps.rs1160312 || 0) + 0.362 * (hairSnps.rs756853 || 0)).toFixed(3)}
+                                        </span>
+                                    </div>
+                                    <div className="flex justify-between items-center text-[8px] font-mono">
+                                        <span className="text-zinc-400">Hamilton-Norwood Scale:</span>
+                                        <span className="px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40 font-bold">
+                                            {(0.982 * (hairSnps.rs6152 || 0) + 0.541 * (hairSnps.rs2180439 || 0) + 0.485 * (hairSnps.rs1160312 || 0) + 0.362 * (hairSnps.rs756853 || 0)) < 0.50
+                                                ? "GRADE I / II"
+                                                : (0.982 * (hairSnps.rs6152 || 0) + 0.541 * (hairSnps.rs2180439 || 0) + 0.485 * (hairSnps.rs1160312 || 0) + 0.362 * (hairSnps.rs756853 || 0)) < 1.20
+                                                ? "GRADE III"
+                                                : (0.982 * (hairSnps.rs6152 || 0) + 0.541 * (hairSnps.rs2180439 || 0) + 0.485 * (hairSnps.rs1160312 || 0) + 0.362 * (hairSnps.rs756853 || 0)) < 2.10
+                                                ? "GRADE IV / V"
+                                                : "GRADE VI / VII"}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* Hair & Balding SNP Toggles */}
+                                <div className="space-y-1.5 pt-1">
+                                    <div className="font-mono text-[8px] text-zinc-400 uppercase tracking-wider">
+                                        Hair &amp; Balding Loci (Click to toggle dosage)
+                                    </div>
+                                    <div className="grid grid-cols-4 gap-1">
+                                        {[
+                                            { rs: "rs3827072", gene: "EDAR" },
+                                            { rs: "rs11803731", gene: "TCHH" },
+                                            { rs: "rs7349332", gene: "WNT10" },
+                                            { rs: "rs6152", gene: "AR" },
+                                            { rs: "rs2180439", gene: "20p11" },
+                                            { rs: "rs1160312", gene: "20p11b" },
+                                            { rs: "rs756853", gene: "HDAC9" },
+                                        ].map(({ rs, gene }) => {
+                                            const d = hairSnps[rs] || 0;
+                                            return (
+                                                <button
+                                                    key={rs}
+                                                    onClick={() => setHairSnps(p => ({ ...p, [rs]: ((p[rs] || 0) + 1) % 3 }))}
+                                                    className="p-1 rounded bg-black/50 border border-zinc-800 hover:border-amber-500/50 flex justify-between items-center text-[7px] font-mono"
+                                                >
+                                                    <span className="text-zinc-300 font-bold">{gene}</span>
+                                                    <span className="px-1 py-0.2 rounded bg-amber-500/20 text-amber-300 font-bold">d={d}</span>
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            </div>
                         )}
+
 
                         {/* Footer Section with On-Chain Proof Button */}
                         <div className="mt-auto pt-4 border-t border-zinc-900 flex flex-col gap-3">

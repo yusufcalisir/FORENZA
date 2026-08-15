@@ -545,9 +545,19 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** Morphological facial height ($h_{\text{face}}$), nasal height ($h_{\text{nasal}}$), and clinical Facial Index ($I_F$) typology classification (`EURYPROSOPIC`, `MESOPROSOPIC`, `LEPTOPROSOPIC`).
   - **`G`:** Anatomical Vertical Z-Monotonicity ($z_N > z_{Prn} > z_{Sn} > z_{Ls} > z_{Me}$) invariant maintained across all parameter extremes.
   - **`H`:** API integration testing across `/morphometrics/craniofacial/reconstruct-3d` and `/morphometrics/craniofacial/landmarks`.
+* **`VECTOR_14_HAIR_A-H` (Hair Texture Dynamics & Balding Risk PRS — Module 14):**
+  - **`A`:** Baseline Reference State ($X_i = 0$) verified with baseline fiber area ($3850.0\ \mu\text{m}^2$), baseline curl index ($C_{\text{curl}} = 1.20$, `STRAIGHT`), and $\text{PRS} = 0.00$ (`GRADE_I_II`).
+  - **`B`:** EDAR (`rs3827072`) linear additive fiber area expansion ($\text{Area} = 3850.0 + 1420.0 \cdot X_{\text{EDAR}}\ \mu\text{m}^2$).
+  - **`C`:** TCHH (`rs11803731`) and WNT10A (`rs7349332`) curl induction ($C_{\text{curl}} = 7.74$, `KINKY_WOOLLY`).
+  - **`D`:** Intermediate curl density threshold transitions (`WAVY` and `CURLY` classification).
+  - **`E`:** Androgenetic alopecia polygenic risk score exact additive weights (AR `rs6152`, 20p11 `rs2180439`, `rs1160312`, HDAC9 `rs756853`).
+  - **`F`:** Hamilton-Norwood clinical 4-tier risk grade mapping (`GRADE_I_II`, `GRADE_III`, `GRADE_IV_V`, `GRADE_VI_VII`).
+  - **`G`:** Mathematical bounds: $C_{\text{curl}}$ clamped in $[0.0, 10.0]$ and $\text{PRS}_{\text{balding}} \in [0.00, 4.740]$.
+  - **`H`:** API integration testing across `/phenotyping/hair/morphology-and-balding`, `/texture-index`, and `/balding-prs`.
 * **`VECTOR_P6_01` (Chain of Custody Tamper Detection):** Merkle tree root divergence verified upon a single-second timestamp modification ($P_{\text{detection}} = 100\%$).
 * **`VECTOR_P6_02` (ISO 17025 Measurement Uncertainty):** Combined $u_c = 0.05385 \text{ ng/}\mu\text{L}$ and expanded $U_{95\%} = 0.1077 \text{ ng/}\mu\text{L}$ ($k=2.00$).
 * **`VECTOR_P6_03` (ENFSI Verbal Statement Mapping):** $LR = 3.5 \times 10^7$ maps deterministically to Verbal Tier 6 ("Extremely strong support for prosecution proposition").
+
 
 
 

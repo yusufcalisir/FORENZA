@@ -446,4 +446,98 @@ async def get_cephalometric_landmarks_only(body: CraniofacialReconstructionReque
     )
 
 
+# ── Module 14 Hair Texture Dynamics & Balding PRS Endpoints ──────────────────
+from node.services.forensic.phenotyping.hair_texture_balding_engine import HairTextureBaldingEngine
+from .phenotype_schemas import (
+    HairAnalysisRequest, HairMorphologyCombinedResponse,
+    HairTextureResponse, BaldingPRSResponse,
+)
+
+_hair_engine = HairTextureBaldingEngine()
+
+
+@router.post(
+    "/phenotyping/hair/morphology-and-balding",
+    response_model=HairMorphologyCombinedResponse,
+    summary="Composite Hair Texture Dynamics & Balding PRS Prediction (Module 14)",
+    description="Estimates hair fiber cross-sectional area, curl density index, and androgenetic alopecia Hamilton-Norwood PRS. (Research §4)",
+    status_code=status.HTTP_200_OK,
+)
+async def analyze_hair_morphology_and_balding(body: HairAnalysisRequest) -> HairMorphologyCombinedResponse:
+    try:
+        res = _hair_engine.analyze_hair_profile(body.snp_dosages)
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Hair analysis failed: {str(exc)}"
+        )
+
+    return HairMorphologyCombinedResponse(
+        texture=HairTextureResponse(
+            curl_density_index=res.texture.curl_density_index,
+            texture_category=res.texture.texture_category,
+            fiber_cross_sectional_area_um2=res.texture.fiber_cross_sectional_area_um2,
+            estimated_fiber_diameter_um=res.texture.estimated_fiber_diameter_um,
+            assayed_texture_snps=res.texture.assayed_texture_snps,
+        ),
+        balding=BaldingPRSResponse(
+            prs_score=res.balding.prs_score,
+            hamilton_norwood_grade=res.balding.hamilton_norwood_grade,
+            clinical_description=res.balding.clinical_description,
+            risk_level=res.balding.risk_level,
+            assayed_balding_snps=res.balding.assayed_balding_snps,
+        ),
+        prosecutors_fallacy_shield=res.prosecutors_fallacy_shield,
+    )
+
+
+@router.post(
+    "/phenotyping/hair/texture-index",
+    response_model=HairTextureResponse,
+    summary="Calculate Curl Density Index & Fiber Area (Module 14)",
+    status_code=status.HTTP_200_OK,
+)
+async def get_hair_texture_index(body: HairAnalysisRequest) -> HairTextureResponse:
+    try:
+        res = _hair_engine.compute_hair_texture(body.snp_dosages)
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Hair texture computation failed: {str(exc)}"
+        )
+
+    return HairTextureResponse(
+        curl_density_index=res.curl_density_index,
+        texture_category=res.texture_category,
+        fiber_cross_sectional_area_um2=res.fiber_cross_sectional_area_um2,
+        estimated_fiber_diameter_um=res.estimated_fiber_diameter_um,
+        assayed_texture_snps=res.assayed_texture_snps,
+    )
+
+
+@router.post(
+    "/phenotyping/hair/balding-prs",
+    response_model=BaldingPRSResponse,
+    summary="Calculate Androgenetic Alopecia PRS & Hamilton-Norwood Grade (Module 14)",
+    status_code=status.HTTP_200_OK,
+)
+async def get_balding_prs(body: HairAnalysisRequest) -> BaldingPRSResponse:
+    try:
+        res = _hair_engine.compute_balding_prs(body.snp_dosages)
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Balding PRS computation failed: {str(exc)}"
+        )
+
+    return BaldingPRSResponse(
+        prs_score=res.prs_score,
+        hamilton_norwood_grade=res.hamilton_norwood_grade,
+        clinical_description=res.clinical_description,
+        risk_level=res.risk_level,
+        assayed_balding_snps=res.assayed_balding_snps,
+    )
+
+
+
 

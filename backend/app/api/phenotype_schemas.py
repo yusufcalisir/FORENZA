@@ -162,4 +162,37 @@ class CraniofacialReconstructionResponse(BaseModel):
     prosecutors_fallacy_shield: str
 
 
+# ── Module 14 Hair Texture Dynamics & Balding PRS Schemas ─────────────────────
+
+class HairTextureResponse(BaseModel):
+    curl_density_index: float
+    texture_category: str
+    fiber_cross_sectional_area_um2: float
+    estimated_fiber_diameter_um: str
+    assayed_texture_snps: int
+
+
+class BaldingPRSResponse(BaseModel):
+    prs_score: float
+    hamilton_norwood_grade: str
+    clinical_description: str
+    risk_level: str
+    assayed_balding_snps: int
+
+
+class HairAnalysisRequest(BaseModel):
+    snp_dosages: Dict[str, float] = Field(
+        ...,
+        description="Map of rsID to dosage (0, 1, or 2) for EDAR, TCHH, WNT10A, AR rs6152, rs2180439, rs1160312, rs756853.",
+        examples=[{"rs3827072": 2, "rs11803731": 0, "rs7349332": 0, "rs6152": 2}],
+    )
+
+
+class HairMorphologyCombinedResponse(BaseModel):
+    texture: HairTextureResponse
+    balding: BaldingPRSResponse
+    prosecutors_fallacy_shield: str
+
+
+
 

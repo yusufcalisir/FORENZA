@@ -1,0 +1,20 @@
+{
+  "name": "@forenza/proto",
+  "version": "2.0.0",
+  "description": "Cross-platform Protocol Buffer definitions for FORENZA multi-omic forensic pipelines",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "build:ts": "protoc --ts_out=./generated --proto_path=. *.proto",
+    "build:py": "protoc --python_out=../../backend/app/proto --proto_path=. *.proto"
+  },
+  "keywords": [
+    "forensics",
+    "protobuf",
+    "grpc",
+    "str-dna",
+    "zkp"
+  ],
+  "author": "FORENZA Systems",
+  "license": "Apache-2.0"
+}

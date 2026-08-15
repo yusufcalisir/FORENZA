@@ -108,8 +108,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install pytest pytest-asyncio pydantic pydantic-settings fastapi httpx numpy scipy
 
-      - name: Execute 200+ Forensic Subsystem Unit Tests
+      - name: Execute 241 Automated Unit Tests
         env:
-          PYTHONPATH: ".:backend"
+          PYTHONPATH: ".:backend:backend/app"
         run: |
-          pytest backend/node/services/forensic
+          pytest backend/node backend/app/api backend/app/core backend/app/infrastructure backend/test_mock_client.py

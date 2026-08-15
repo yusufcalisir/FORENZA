@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package forenza.cases;
+
+import "google/protobuf/timestamp.proto";
+import "genomic_profile.proto";
+
+enum CaseStatus {
+  CASE_STATUS_UNSPECIFIED = 0;
+  ACTIVE_INVESTIGATION = 1;
+  LAB_PROCESSING = 2;
+  PEER_REVIEW = 3;
+  COURT_ADMISSIBLE = 4;
+  ARCHIVED = 5;
+}
+
+message ForensicCase {
+  string case_id = 1;
+  string jurisdiction_code = 2;
+  string lead_examiner = 3;
+  CaseStatus status = 4;
+  google.protobuf.Timestamp opened_at = 5;
+  google.protobuf.Timestamp last_modified = 6;
+  
+  repeated forenza.genomics.GenomicProfile evidence_profiles = 7;
+  repeated forenza.genomics.GenomicProfile reference_profiles = 8;
+  
+  double combined_lr = 9;
+  string swgdam_verbal_scale = 10;
+  bool is_iso17025_certified = 11;
+}
+
+message CaseSearchRequest {
+  string query = 1;
+  string jurisdiction_code = 2;
+  CaseStatus status_filter = 3;
+}
+
+message CaseSearchResponse {
+  repeated ForensicCase cases = 1;
+  int32 total_matches = 2;
+}

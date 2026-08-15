@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package forenza.zkp;
+
+import "google/protobuf/timestamp.proto";
+
+message Groth16Proof {
+  repeated string a = 1; // G1 point [x, y]
+  repeated string b_row1 = 2; // G2 point [[x0, x1], [y0, y1]]
+  repeated string b_row2 = 3;
+  repeated string c = 4; // G1 point [x, y]
+  string protocol = 5; // "groth16"
+  string curve = 6;    // "bn128" / "bn254"
+}
+
+message ZKMatchProofRequest {
+  string suspect_profile_hash = 1;
+  string evidence_profile_hash = 2;
+  double match_threshold_lr = 3;
+  bytes salt_commitment = 4;
+}
+
+message ZKMatchProofResponse {
+  bool is_verified = 1;
+  Groth16Proof proof = 2;
+  repeated string public_signals = 3;
+  google.protobuf.Timestamp verified_at = 4;
+  string verification_key_hash = 5;
+}

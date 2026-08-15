@@ -9,17 +9,36 @@ export default function LandingFaq() {
     const [openIdx, setOpenIdx] = useState<number | null>(0);
 
     const faqs = [
-        { q: t.faq.questions.q1, a: t.faq.questions.a1, color: "#22C55E" },
-        { q: t.faq.questions.q2, a: t.faq.questions.a2, color: "#06B6D4" },
-        { q: t.faq.questions.q3, a: t.faq.questions.a3, color: "#8B5CF6" },
-        { q: t.faq.questions.q4, a: t.faq.questions.a4, color: "#22C55E" },
-        { q: t.faq.questions.q5, a: t.faq.questions.a5, color: "#06B6D4" },
+        { id: "faq-1", q: t.faq.questions.q1, a: t.faq.questions.a1, color: "#22C55E" },
+        { id: "faq-2", q: t.faq.questions.q2, a: t.faq.questions.a2, color: "#06B6D4" },
+        { id: "faq-3", q: t.faq.questions.q3, a: t.faq.questions.a3, color: "#8B5CF6" },
+        { id: "faq-4", q: t.faq.questions.q4, a: t.faq.questions.a4, color: "#22C55E" },
+        { id: "faq-5", q: t.faq.questions.q5, a: t.faq.questions.a5, color: "#06B6D4" },
     ];
+
+    // Structured JSON-LD Data for SEO FAQPage
+    const jsonLd = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": faqs.map((faq) => ({
+            "@type": "Question",
+            "name": faq.q,
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": faq.a,
+            },
+        })),
+    };
 
     return (
         <section id="faq" className="scroll-mt-20 py-16 px-4 font-mono border-b border-tactical-border/60 w-full max-w-full overflow-hidden">
+            {/* SEO Structured Data */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
+
             <div className="mx-auto max-w-3xl w-full space-y-10">
-                
                 {/* Header */}
                 <div className="text-center space-y-3">
                     <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-4 py-1.5 shadow-lg">
@@ -36,18 +55,20 @@ export default function LandingFaq() {
                     </p>
                 </div>
 
-                {/* FAQ Accordions */}
+                {/* FAQ Accordions - Permanent DOM for SSR & SEO */}
                 <div className="space-y-3">
                     {faqs.map((faq, i) => {
                         const isOpen = openIdx === i;
                         return (
                             <div
-                                key={i}
+                                key={faq.id}
                                 className="rounded-2xl border border-tactical-border/80 bg-tactical-surface overflow-hidden transition-all duration-200 shadow-xl"
                                 style={isOpen ? { borderColor: `${faq.color}60` } : {}}
                             >
                                 <button
                                     onClick={() => setOpenIdx(isOpen ? null : i)}
+                                    aria-expanded={isOpen}
+                                    aria-controls={`faq-answer-${i}`}
                                     className="w-full flex items-center justify-between gap-4 px-6 py-4 text-left hover:bg-tactical-surface-elevated/50 transition-colors cursor-pointer"
                                 >
                                     <span className="font-bold text-zinc-200 text-xs sm:text-sm leading-snug pr-2">
@@ -60,24 +81,33 @@ export default function LandingFaq() {
                                         style={{ color: isOpen ? faq.color : undefined }}
                                     />
                                 </button>
-                                {isOpen && (
-                                    <div className="px-6 pb-5">
-                                        <div
-                                            className="h-px mb-3"
-                                            style={{
-                                                background: `linear-gradient(to right, ${faq.color}40, transparent)`,
-                                            }}
-                                        />
-                                        <p className="text-zinc-400 text-xs sm:text-sm leading-relaxed">
-                                            {faq.a}
-                                        </p>
+                                
+                                <div
+                                    id={`faq-answer-${i}`}
+                                    role="region"
+                                    aria-labelledby={`faq-question-${i}`}
+                                    className={`grid transition-all duration-300 ease-in-out ${
+                                        isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+                                    }`}
+                                >
+                                    <div className="overflow-hidden">
+                                        <div className="px-6 pb-5">
+                                            <div
+                                                className="h-px mb-3"
+                                                style={{
+                                                    background: `linear-gradient(to right, ${faq.color}40, transparent)`,
+                                                }}
+                                            />
+                                            <p className="text-zinc-400 text-xs sm:text-sm leading-relaxed">
+                                                {faq.a}
+                                            </p>
+                                        </div>
                                     </div>
-                                )}
+                                </div>
                             </div>
                         );
                     })}
                 </div>
-
             </div>
         </section>
     );

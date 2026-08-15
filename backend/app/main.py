@@ -126,6 +126,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
+        "https://forenzaos.vercel.app",
+        "https://forenza-xi.vercel.app",
         "https://vantage-str.vercel.app",
         "https://str-analysis.vercel.app",
     ],

@@ -6,6 +6,8 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/yusufcalisir/FORENZA/actions/workflows/ci.yml"><img src="https://github.com/yusufcalisir/FORENZA/actions/workflows/ci.yml/badge.svg" alt="CI/CD Pipeline" /></a>
+  <a href="https://forenzaos.vercel.app"><img src="https://img.shields.io/badge/Deployment-forenzaos.vercel.app-success?style=flat-square&logo=vercel" alt="Live Deployment" /></a>
   <a href="https://python.org"><img src="https://img.shields.io/badge/Python-3.11%2B-blue?style=flat-square&logo=python" /></a>
   <a href="https://nextjs.org"><img src="https://img.shields.io/badge/Next.js-16%20Turbopack-black?style=flat-square&logo=nextdotjs" /></a>
   <a href="https://fastapi.tiangolo.com"><img src="https://img.shields.io/badge/FastAPI-Microservices-009688?style=flat-square&logo=fastapi" /></a>
@@ -20,12 +22,12 @@
 2. [Master System Architecture & Dataflow](#2-master-system-architecture--dataflow)
 3. [Complete Clean Architecture Directory Structure](#3-complete-clean-architecture-directory-structure)
 4. [30-Subsystem Reference Catalog](#4-30-subsystem-reference-catalog)
-   - [Pillar 1: DNA & Kinship Analysis](#pillar-1-dna--kinship-analysis)
-   - [Pillar 2: Probabilistic Genotyping & Population Genetics](#pillar-2-probabilistic-genotyping--population-genetics)
-   - [Pillar 3: Phenotype, Ancestry & Epigenetics](#pillar-3-phenotype-ancestry--epigenetics)
-   - [Pillar 4: Physical Evidence & Environmental Forensics](#pillar-4-physical-evidence--environmental-forensics)
-   - [Pillar 5: LIMS, QA/QC & Regulatory Governance](#pillar-5-lims-qaqc--regulatory-governance)
-   - [Pillar 6: AI & Cryptographic Omics](#pillar-6-ai--cryptographic-omics)
+   - [Pillar 1: Probabilistic Genotyping & Population Genetics](#pillar-1-probabilistic-genotyping--population-genetics)
+   - [Pillar 2: Lineage Forensics & Kinship Inference](#pillar-2-lineage-forensics--kinship-inference)
+   - [Pillar 3: Phenotyping & Biogeographic Ancestry](#pillar-3-phenotyping--biogeographic-ancestry)
+   - [Pillar 4: Epigenetics & Environmental Aging](#pillar-4-epigenetics--environmental-aging)
+   - [Pillar 5: Physical Evidence, Pathology & Trace Forensics](#pillar-5-physical-evidence-pathology--trace-forensics)
+   - [Pillar 6: LIMS, ISO 17025 QA/QC & Cryptographic Governance](#pillar-6-lims-iso-17025-qaqc--cryptographic-governance)
 5. [Mathematical & Biocomputational Formulations](#5-mathematical--biocomputational-formulations)
 6. [Security, Compliance & Chain-of-Custody Integrity](#6-security-compliance--chain-of-custody-integrity)
 7. [Complete REST API Reference Matrix](#7-complete-rest-api-reference-matrix)

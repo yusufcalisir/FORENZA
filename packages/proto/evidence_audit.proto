@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package forenza.audit;
+
+import "google/protobuf/timestamp.proto";
+
+enum AuditAction {
+  AUDIT_ACTION_UNSPECIFIED = 0;
+  SAMPLE_ACCESSIONED = 1;
+  ANALYSIS_STARTED = 2;
+  LR_CALCULATED = 3;
+  REPORT_GENERATED = 4;
+  EVIDENCE_SEALED = 5;
+  ZKP_VERIFIED = 6;
+  CHAIN_TRANSFERRED = 7;
+}
+
+message AuditEntry {
+  string entry_id = 1;
+  string case_id = 2;
+  string sample_id = 3;
+  AuditAction action = 4;
+  string operator_id = 5;
+  google.protobuf.Timestamp timestamp = 6;
+  string prev_entry_hash = 7;
+  string hmac_signature = 8;
+  string polygon_tx_hash = 9;
+  map<string, string> attributes = 10;
+}
+
+message AuditChainVerificationRequest {
+  string case_id = 1;
+  repeated AuditEntry entries = 2;
+}
+
+message AuditChainVerificationResponse {
+  bool is_valid = 1;
+  int32 verified_entries_count = 2;
+  string root_merkle_hash = 3;
+  string error_message = 4;
+}

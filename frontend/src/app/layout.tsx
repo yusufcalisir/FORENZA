@@ -23,7 +23,7 @@ const getSiteUrl = () => {
   if (process.env.VERCEL_URL) {
     return `https://${process.env.VERCEL_URL}`;
   }
-  return "https://forenza-xi.vercel.app";
+  return "https://forenzaos.vercel.app";
 };
 
 const SITE_URL = getSiteUrl();

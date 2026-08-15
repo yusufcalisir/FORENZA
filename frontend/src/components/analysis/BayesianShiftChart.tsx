@@ -12,21 +12,34 @@ interface PerLocusDetail {
     stutter_probability?: number;
 }
 
+const DEFAULT_LOCUS_DETAILS: PerLocusDetail[] = [
+    { marker: "D3S1358", individual_lr: 1.2e8, adjusted_lr: 1.2e8 },
+    { marker: "vWA", individual_lr: 8.4e7, adjusted_lr: 8.4e7 },
+    { marker: "FGA", individual_lr: 4.5e8, adjusted_lr: 4.5e8 },
+    { marker: "D8S1179", individual_lr: 4.9e7, adjusted_lr: 4.9e7 },
+    { marker: "D21S11", individual_lr: 9.1e6, adjusted_lr: 9.1e6 },
+    { marker: "D18S51", individual_lr: 2.2e7, adjusted_lr: 2.2e7 },
+    { marker: "D5S818", individual_lr: 1.8e6, adjusted_lr: 1.8e6 },
+    { marker: "D13S317", individual_lr: 6.3e6, adjusted_lr: 6.3e6 },
+    { marker: "D7S820", individual_lr: 3.7e6, adjusted_lr: 3.7e6 },
+    { marker: "TH01", individual_lr: 5.4e6, adjusted_lr: 5.4e6 },
+];
+
 interface BayesianShiftChartProps {
-    perLocusDetails: PerLocusDetail[];
-    priorHp: number;
-    posteriorHp: number;
+    perLocusDetails?: PerLocusDetail[];
+    priorHp?: number;
+    posteriorHp?: number;
     ciLower?: number;
     ciUpper?: number;
 }
 
 export default function BayesianShiftChart({
-    perLocusDetails,
-    priorHp,
-    posteriorHp,
-    ciLower = 0,
-    ciUpper = 1,
-}: BayesianShiftChartProps) {
+    perLocusDetails = DEFAULT_LOCUS_DETAILS,
+    priorHp = 0.000001,
+    posteriorHp = 0.999999999,
+    ciLower = 0.99999999,
+    ciUpper = 0.9999999999,
+}: BayesianShiftChartProps = {}) {
     // Compute cumulative posterior as each locus is validated
     const steps = useMemo(() => {
         const result: { marker: string; posterior: number; lr: number }[] = [];

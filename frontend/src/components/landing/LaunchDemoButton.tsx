@@ -29,11 +29,11 @@ export default function LaunchDemoButton({
 
     const handleClick = () => {
         setIsTransitioning(true);
-        router.prefetch("/dashboard");
+        router.prefetch("/analysis");
     };
 
     const handleTransitionComplete = () => {
-        router.push("/dashboard");
+        router.push("/analysis");
     };
 
     return (

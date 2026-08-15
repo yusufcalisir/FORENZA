@@ -24,12 +24,10 @@ import ForenzaLogoIcon from "@/components/common/ForenzaLogoIcon";
 import DnaProfileInspectorModal from "@/components/common/DnaProfileInspectorModal";
 
 const NAV_ITEMS = [
-    { id: "dashboard", label: "Dashboard", href: "/dashboard", icon: LayoutDashboard, color: "text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/25" },
-    { id: "analysis", label: "Analysis Hub", href: "/analysis", icon: FlaskConical, color: "text-cyan-400", bg: "bg-cyan-500/10", border: "border-cyan-500/25" },
-    { id: "nodes", label: "Federated Network", href: "/nodes", icon: Network, color: "text-purple-400", bg: "bg-purple-500/10", border: "border-purple-500/25" },
-    { id: "database", label: "DNA Database", href: "/database", icon: Database, color: "text-blue-400", bg: "bg-blue-500/10", border: "border-blue-500/25" },
-    { id: "investigation", label: "Knowledge Graph", href: "/investigation", icon: GitGraph, color: "text-indigo-400", bg: "bg-indigo-500/10", border: "border-indigo-500/25" },
-    { id: "audit", label: "ISO Audit Log", href: "/audit", icon: ShieldCheck, color: "text-amber-400", bg: "bg-amber-500/10", border: "border-amber-500/25" },
+    { id: "analysis", label: "Workstation", href: "/analysis", icon: FlaskConical, color: "text-cyan-400", bg: "bg-cyan-500/10", border: "border-cyan-500/25" },
+    { id: "investigation", label: "Investigation", href: "/investigation", icon: GitGraph, color: "text-purple-400", bg: "bg-purple-500/10", border: "border-purple-500/25" },
+    { id: "database", label: "Network & Database", href: "/database", icon: Database, color: "text-blue-400", bg: "bg-blue-500/10", border: "border-blue-500/25" },
+    { id: "audit", label: "Compliance & Audit", href: "/audit", icon: ShieldCheck, color: "text-amber-400", bg: "bg-amber-500/10", border: "border-amber-500/25" },
 ] as const;
 
 function NavItem({
@@ -72,7 +70,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-    const activeId = NAV_ITEMS.find((item) => pathname.startsWith(item.href))?.id ?? "dashboard";
+    const activeId = NAV_ITEMS.find((item) => pathname.startsWith(item.href))?.id ?? "analysis";
 
     return (
         <div className="flex min-h-screen lg:h-screen lg:overflow-hidden bg-[#080c14] text-tactical-text">

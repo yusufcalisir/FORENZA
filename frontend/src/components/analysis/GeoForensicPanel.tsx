@@ -39,9 +39,16 @@ interface GeoProbability {
     final_radius_km?: number;
 }
 
+const DEFAULT_GEO_RESULTS: GeoProbability[] = [
+    { region: "Northwestern Europe", lat: 53.5, lng: -2.0, probability: 0.684, color: "#06B6D4", initial_radius_km: 400, final_radius_km: 150 },
+    { region: "Central Europe", lat: 50.0, lng: 14.0, probability: 0.182, color: "#8B5CF6", initial_radius_km: 500, final_radius_km: 250 },
+    { region: "Southern Europe", lat: 41.9, lng: 12.5, probability: 0.091, color: "#F59E0B", initial_radius_km: 450, final_radius_km: 200 },
+    { region: "Eastern Europe", lat: 55.7, lng: 37.6, probability: 0.043, color: "#22C55E", initial_radius_km: 600, final_radius_km: 300 },
+];
+
 interface GeoForensicPanelProps {
-    geoResults: GeoProbability[] | null;
-    reliabilityScore: number;
+    geoResults?: GeoProbability[] | null;
+    reliabilityScore?: number;
     kinshipMatches?: any[];
     txHash?: string;
     isLoading?: boolean;
@@ -195,14 +202,14 @@ function EmptyState() {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export default function GeoForensicPanel({
-    geoResults,
-    reliabilityScore,
-    kinshipMatches,
-    txHash,
+    geoResults = DEFAULT_GEO_RESULTS,
+    reliabilityScore = 0.92,
+    kinshipMatches = [],
+    txHash = "0x89f2a7b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9",
     isLoading = false,
     onRegionHover,
     selectedRegion,
-}: GeoForensicPanelProps & { onRegionHover?: (region: string | null) => void }) {
+}: (GeoForensicPanelProps & { onRegionHover?: (region: string | null) => void }) = {}) {
     // ── 1. Unified Data Source & Sorting ──
     // Sort by probability descending to align Map and List
     const sortedData = geoResults

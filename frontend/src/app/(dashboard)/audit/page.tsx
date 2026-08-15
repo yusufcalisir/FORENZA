@@ -58,9 +58,9 @@ export default function AuditPage() {
                 <div>
                     <div className="flex items-center gap-2 mb-0.5">
                         <ShieldCheck className="w-4 h-4 text-amber-400 shrink-0" />
-                        <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest">FORENZA Compliance</span>
+                        <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest">FORENZA Compliance &amp; Integrity</span>
                     </div>
-                    <h1 className="text-sm sm:text-base font-extrabold text-white tracking-tight">ISO 17025 Audit Log</h1>
+                    <h1 className="text-sm sm:text-base font-extrabold text-white tracking-tight">Compliance &amp; ISO 17025 Audit Log</h1>
                     <p className="text-[9px] sm:text-[10px] text-zinc-400 mt-0.5">HMAC-SHA256 Chain of Custody • Immutable Forensic Event Ledger • ZKP Verified</p>
                 </div>
                 <div className="flex items-center gap-1.5 shrink-0">

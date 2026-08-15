@@ -21,9 +21,16 @@ interface GeoProbability {
     color: string;
 }
 
+const DEFAULT_GEO_PROBS: GeoProbability[] = [
+    { region: "Northwestern Europe", lat: 53.5, lng: -2.0, probability: 0.684, color: "#06B6D4" },
+    { region: "Central Europe", lat: 50.0, lng: 14.0, probability: 0.182, color: "#8B5CF6" },
+    { region: "Southern Europe", lat: 41.9, lng: 12.5, probability: 0.091, color: "#F59E0B" },
+    { region: "Eastern Europe", lat: 55.7, lng: 37.6, probability: 0.043, color: "#22C55E" },
+];
+
 interface AncestryDataPanelProps {
-    data: GeoProbability[];
-    reliabilityScore: number;
+    data?: GeoProbability[];
+    reliabilityScore?: number;
     txHash?: string;
     selectedRegion?: string | null;
 }
@@ -145,11 +152,11 @@ function ReliabilityGauge({ score }: { score: number }) {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export default function AncestryDataPanel({
-    data,
-    reliabilityScore,
-    txHash,
+    data = DEFAULT_GEO_PROBS,
+    reliabilityScore = 0.94,
+    txHash = "0x89f2a7b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9",
     selectedRegion,
-}: AncestryDataPanelProps) {
+}: AncestryDataPanelProps = {}) {
     const truncatedHash = txHash
         ? `${txHash.slice(0, 8)}...${txHash.slice(-6)}`
         : null;

@@ -11,7 +11,33 @@ import {
     PackageCheck, Scale, Zap, Database,
 } from "lucide-react";
 import ActiveProfileBanner from "@/components/common/ActiveProfileBanner";
-import ModuleAiBanner from "@/components/common/ModuleAiBanner";
+
+// ─── Panel Component Imports (all 30 modules) ─────────────────────────────
+import AncestryDataPanel from "@/components/analysis/AncestryDataPanel";
+import LineageDnaPanel from "@/components/analysis/LineageDnaPanel";
+import DviPanel from "@/components/analysis/DviPanel";
+import HumanIdPanel from "@/components/analysis/HumanIdPanel";
+import ProbabilisticGenotypingPanel from "@/components/analysis/ProbabilisticGenotypingPanel";
+import BayesianShiftChart from "@/components/analysis/BayesianShiftChart";
+import ValidationLabPanel from "@/components/analysis/ValidationLabPanel";
+import AgeEstimationPanel from "@/components/analysis/AgeEstimationPanel";
+import AnthropologyPanel from "@/components/analysis/AnthropologyPanel";
+import EntomologyPanel from "@/components/analysis/EntomologyPanel";
+import BotanyPanel from "@/components/analysis/BotanyPanel";
+import MicrobiologyPanel from "@/components/analysis/MicrobiologyPanel";
+import SerologyPanel from "@/components/analysis/SerologyPanel";
+import BodyFluidPanel from "@/components/analysis/BodyFluidPanel";
+import MicroscopyPanel from "@/components/analysis/MicroscopyPanel";
+import BpaImagePanel from "@/components/analysis/BpaImagePanel";
+import InstrumentIngestionPanel from "@/components/analysis/InstrumentIngestionPanel";
+import QualityAssurancePanel from "@/components/analysis/QualityAssurancePanel";
+import HumanReviewPanel from "@/components/analysis/HumanReviewPanel";
+import IsoReportGeneratorPanel from "@/components/analysis/IsoReportGeneratorPanel";
+import ExpertWitnessPanel from "@/components/analysis/ExpertWitnessPanel";
+import ComprehensiveEpigenomicsPanel from "@/components/analysis/ComprehensiveEpigenomicsPanel";
+import MultiLayerGenomicsPanel from "@/components/analysis/MultiLayerGenomicsPanel";
+import ForensicEvidenceOSPanel from "@/components/analysis/ForensicEvidenceOSPanel";
+import GeoForensicPanel from "@/components/analysis/GeoForensicPanel";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -530,61 +556,50 @@ function PanelSyntheticCase() {
     );
 }
 
-function PanelGenericPlaceholder({ tab, category }: { tab: Tab; category: Category }) {
-    const c = COLOR_CLASSES[category.color];
-    const Icon = tab.icon;
-    return (
-        <div className="space-y-5">
-            <div className={`p-6 rounded-xl border ${c.border} ${c.bg} flex flex-col items-center justify-center gap-4 text-center`}>
-                <Icon className={`w-8 h-8 ${c.text}`} />
-                <div>
-                    <p className={`text-sm font-bold ${c.text} mb-1`}>{tab.label}</p>
-                    <p className="text-[10px] text-zinc-500 max-w-sm leading-relaxed">
-                        This module provides {tab.label} capabilities as part of the FORENZA Evidence OS. 
-                        Live demo data is loaded automatically when the FORENZA backend is active.
-                    </p>
-                </div>
-                <div className="grid grid-cols-2 gap-3 w-full max-w-xs">
-                    <div className="p-3 rounded-xl bg-black/30 border border-tactical-border/40">
-                        <p className="text-[9px] text-zinc-600 uppercase mb-1">Module Status</p>
-                        <p className="text-xs font-bold text-emerald-400">OPERATIONAL</p>
-                    </div>
-                    <div className="p-3 rounded-xl bg-black/30 border border-tactical-border/40">
-                        <p className="text-[9px] text-zinc-600 uppercase mb-1">ISO 17025 Status</p>
-                        <p className="text-xs font-bold text-cyan-400">VERIFIED</p>
-                    </div>
-                </div>
-            </div>
-            <div className="p-4 rounded-xl border border-tactical-border/40 bg-black/20 space-y-2">
-                <p className="text-[9px] text-zinc-600 uppercase font-bold tracking-wider">Live metrics stream</p>
-                {[1, 2, 3].map((i) => (
-                    <div key={i} className="flex items-center gap-3">
-                        <div className={`w-1.5 h-1.5 rounded-full ${c.text.replace("text-", "bg-")} animate-pulse`} style={{ animationDelay: `${i * 200}ms` }} />
-                        <div className="flex-1 h-1.5 bg-zinc-800 rounded-full overflow-hidden">
-                            <div className={`h-full ${c.text.replace("text-", "bg-")} rounded-full`} style={{ width: `${Math.round(60 + i * 10)}%`, opacity: 0.7 }} />
-                        </div>
-                        <span className="text-[9px] text-zinc-600">{Math.round(60 + i * 10)}%</span>
-                    </div>
-                ))}
-            </div>
-        </div>
-    );
-}
+// ─── Panel Router (all 30 modules wired) ───────────────────────────────────
 
-// ─── Panel Router ──────────────────────────────────────────────────────────
-
-function renderPanel(tabId: TabId, category: Category) {
-    const tab = category.tabs.find((t) => t.id === tabId) ?? category.tabs[0];
+function renderPanel(tabId: TabId) {
     switch (tabId) {
+        // DNA & Kinship
         case "str": return <PanelSTR />;
         case "kinship": return <PanelKinship />;
+        case "ancestry": return <AncestryDataPanel />;
+        case "lineage": return <LineageDnaPanel />;
+        case "dvi": return <DviPanel />;
+        case "humanid": return <HumanIdPanel />;
+        // Probabilistic
         case "mcmc": return <PanelMCMC />;
+        case "mixture": return <ProbabilisticGenotypingPanel />;
+        case "bayesian": return <BayesianShiftChart />;
+        case "validation": return <ValidationLabPanel />;
+        // Phenotype
         case "hirisplex": return <PanelHIrisPlex />;
+        case "age": return <AgeEstimationPanel />;
+        case "anthropology": return <AnthropologyPanel />;
+        case "entomology": return <EntomologyPanel />;
+        case "botany": return <BotanyPanel />;
+        case "microbiology": return <MicrobiologyPanel />;
+        // Physical Evidence
         case "touch": return <PanelTouchDNA />;
+        case "serology": return <SerologyPanel />;
+        case "bodyfluid": return <BodyFluidPanel />;
         case "toxicology": return <PanelToxicology />;
+        case "microscopy": return <MicroscopyPanel />;
+        case "bpa": return <BpaImagePanel />;
+        // LIMS & QA/QC
         case "lims": return <PanelLIMS />;
+        case "instrument": return <InstrumentIngestionPanel />;
+        case "qc": return <QualityAssurancePanel />;
+        case "review": return <HumanReviewPanel />;
+        case "isoreport": return <IsoReportGeneratorPanel />;
+        case "court": return <ExpertWitnessPanel />;
+        // AI & Advanced
+        case "epigenetics": return <ComprehensiveEpigenomicsPanel />;
+        case "genomics": return <MultiLayerGenomicsPanel />;
         case "synthetic": return <PanelSyntheticCase />;
-        default: return <PanelGenericPlaceholder tab={tab} category={category} />;
+        case "evidenceos": return <ForensicEvidenceOSPanel />;
+        case "geo": return <GeoForensicPanel />;
+        default: return null;
     }
 }
 
@@ -614,7 +629,7 @@ export default function AnalysisPage() {
                     <div className="flex items-center gap-2 mb-0.5">
                         <FlaskConical className="w-4 h-4 text-cyan-400" />
                         <h1 className="text-sm sm:text-base font-extrabold text-white tracking-tight uppercase">
-                            FORENZA Analysis Hub
+                            FORENZA Workstation
                         </h1>
                         <span className="text-[9px] font-bold border border-cyan-500/30 rounded px-2 py-0.5 text-cyan-400 bg-cyan-500/10">
                             30 Modules • 6 Categories
@@ -631,9 +646,6 @@ export default function AnalysisPage() {
                     </span>
                 </div>
             </div>
-
-            {/* ── Live AI Control Banner ── */}
-            <ModuleAiBanner moduleName="FORENZA Multi-Omic Analysis Workstation" moduleType="full_multiomic" />
 
             {/* ── Active Case DNA Profile & GIS Map Banner ── */}
             <ActiveProfileBanner />
@@ -731,7 +743,7 @@ export default function AnalysisPage() {
                         transition={{ duration: 0.18 }}
                         className="pt-2"
                     >
-                        {renderPanel(activeTab, category)}
+                        {renderPanel(activeTab)}
                     </motion.div>
                 </AnimatePresence>
             </div>

@@ -111,7 +111,7 @@ export default function InvestigationDashboard() {
 
                 {/* Header & Panic */}
                 <TacticalPageHeader
-                    title="Forensic Knowledge Graph"
+                    title="Forensic Investigation & Knowledge Graph"
                     subtitle="Relational Case Subgraph • Pedigree Kinship Traversal • Level 4 Cryptographic Clearance"
                     badge="PROPERTY GRAPH INSPECTOR"
                     icon={GitGraph}

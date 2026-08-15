@@ -2,7 +2,7 @@
 FORENZA Multi-Layered Forensic Genomics Architecture Engine.
 
 Synthesizes genomic evidence across 5 hierarchical tiers:
-1. Autosomal STR (CODIS 24 core loci)
+1. Autosomal STR (Expanded 24-locus panel: 20 FBI CODIS core + ESS SE33, Penta D, Penta E)
 2. Forensic SNP (HIrisPlex-S phenotyping & ancestry)
 3. Lineage mtDNA (rCRS HV1/HV2/HV3 hypervariable regions)
 4. Lineage Y-Chromosome (Y-FILER 23-locus haplotype)

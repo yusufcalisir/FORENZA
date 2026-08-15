@@ -28,40 +28,40 @@ const EYE_COLORS_DATA = [
         color: "#38BDF8",
         glow: "rgba(56,189,248,0.3)",
         gene: "HERC2 rs12913832 (A/A)",
-        prob: 94.2,
-        secondary: "OCA2 rs1800407",
+        secondary: "OCA2 rs1800407 (C/T)",
+        distribution: { blue: 94.2, hazel: 4.6, brown: 1.2 },
     },
     {
         key: "hazel" as const,
         color: "#D97706",
         glow: "rgba(217,119,6,0.3)",
         gene: "HERC2 / OCA2 Compound",
-        prob: 78.4,
         secondary: "SLC45A2 rs16891982",
+        distribution: { blue: 8.7, hazel: 72.8, brown: 18.5 },
     },
     {
         key: "brown" as const,
         color: "#92400E",
         glow: "rgba(146,64,14,0.3)",
         gene: "HERC2 rs12913832 (G/G)",
-        prob: 88.9,
         secondary: "TYR rs1042602",
+        distribution: { blue: 1.8, hazel: 6.8, brown: 91.4 },
     },
 ];
 
 const SKIN_TYPES_DATA = [
-    { type: "Type I", key: "vPale" as const, color: "#FDE68A", prob: 92 },
-    { type: "Type II", key: "fair" as const, color: "#FCD34D", prob: 78 },
-    { type: "Type III", key: "medium" as const, color: "#F59E0B", prob: 55 },
-    { type: "Type IV", key: "olive" as const, color: "#D97706", prob: 36 },
-    { type: "Type V", key: "dBrown" as const, color: "#92400E", prob: 20 },
-    { type: "Type VI", key: "dBlack" as const, color: "#451A03", prob: 8 },
+    { type: "Type I", key: "vPale" as const, color: "#FDE68A", prob: 68.2 },
+    { type: "Type II", key: "fair" as const, color: "#FCD34D", prob: 24.6 },
+    { type: "Type III", key: "medium" as const, color: "#F59E0B", prob: 5.4 },
+    { type: "Type IV", key: "olive" as const, color: "#D97706", prob: 1.4 },
+    { type: "Type V", key: "dBrown" as const, color: "#92400E", prob: 0.3 },
+    { type: "Type VI", key: "dBlack" as const, color: "#451A03", prob: 0.1 },
 ];
 
 const HAIR_TYPES_DATA = [
-    { key: "straight" as const, score: "88%", gene: "EDAR rs3827072 (T/T)" },
-    { key: "wavy" as const, score: "12%", gene: "TCHH rs11803731" },
-    { key: "curly" as const, score: "2%", gene: "WNT10A rs7349332" },
+    { key: "straight" as const, score: "88.0%", gene: "EDAR rs3827072 (T/T)" },
+    { key: "wavy" as const, score: "10.0%", gene: "TCHH rs11803731" },
+    { key: "curly" as const, score: "2.0%", gene: "WNT10A rs7349332" },
 ];
 
 function PhenotypeTab() {
@@ -93,26 +93,29 @@ function PhenotypeTab() {
                     </div>
 
                     <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
-                        {EYE_COLORS_DATA.map((eye, i) => (
-                            <button
-                                key={eye.key}
-                                onClick={() => setSelectedEye(i)}
-                                className={`rounded-lg sm:rounded-xl border p-2 sm:p-2.5 font-mono text-[10px] sm:text-xs flex items-center justify-between transition-all cursor-pointer ${
-                                    selectedEye === i
-                                        ? "border-[#38BDF8] bg-[#38BDF8]/10 text-white shadow-[0_0_15px_rgba(56,189,248,0.2)]"
-                                        : "border-tactical-border bg-tactical-surface text-tactical-text-muted hover:border-tactical-border/80"
-                                }`}
-                            >
-                                <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
-                                    <span
-                                        className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full shrink-0 shadow-sm"
-                                        style={{ background: eye.color }}
-                                    />
-                                    <span className="font-bold truncate">{pTab.eyeColors[eye.key]}</span>
-                                </div>
-                                <span className="font-bold text-[#38BDF8] text-[9px] sm:text-[10px] shrink-0">{eye.prob}%</span>
-                            </button>
-                        ))}
+                        {EYE_COLORS_DATA.map((eye, i) => {
+                            const activeProb = currentEye.distribution[eye.key];
+                            return (
+                                <button
+                                    key={eye.key}
+                                    onClick={() => setSelectedEye(i)}
+                                    className={`rounded-lg sm:rounded-xl border p-2 sm:p-2.5 font-mono text-[10px] sm:text-xs flex items-center justify-between transition-all cursor-pointer ${
+                                        selectedEye === i
+                                            ? "border-[#38BDF8] bg-[#38BDF8]/10 text-white shadow-[0_0_15px_rgba(56,189,248,0.2)]"
+                                            : "border-tactical-border bg-tactical-surface text-tactical-text-muted hover:border-tactical-border/80"
+                                    }`}
+                                >
+                                    <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+                                        <span
+                                            className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full shrink-0 shadow-sm"
+                                            style={{ background: eye.color }}
+                                        />
+                                        <span className="font-bold truncate">{pTab.eyeColors[eye.key]}</span>
+                                    </div>
+                                    <span className="font-bold text-[#38BDF8] text-[9px] sm:text-[10px] shrink-0">{activeProb}%</span>
+                                </button>
+                            );
+                        })}
                     </div>
 
                     <div className="pt-2 border-t border-tactical-border/60 flex flex-wrap justify-between gap-1 text-[9px] sm:text-[10px] text-tactical-text-dim">

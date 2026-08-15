@@ -78,7 +78,7 @@ export default function ModuleAiBanner({
               hairType: "Straight",
               hairTypeProb: 91
             },
-            kinshipLR: data.analysis?.metrics?.combinedLR || activeProfile.kinshipLR || "1.84e18",
+            kinshipLR: data.analysis?.metrics?.combinedLR || activeProfile.kinshipLR || "2.51e18",
             epigeneticAge: data.analysis?.metrics?.estimatedAge || activeProfile.epigeneticAge || 34.2
           };
           setActiveProfile(updatedProfile);

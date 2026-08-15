@@ -36,7 +36,7 @@ PASS = 0
 FAIL = 0
 
 
-def test(name: str, passed: bool):
+def assert_ledger_test(name: str, passed: bool):
     global PASS, FAIL
     status = "\033[32m✓ PASS\033[0m" if passed else "\033[31m✗ FAIL\033[0m"
     print(f"  {status}  {name}")
@@ -44,6 +44,7 @@ def test(name: str, passed: bool):
         PASS += 1
     else:
         FAIL += 1
+    assert passed, f"Ledger test failed: {name}"
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -52,14 +53,14 @@ def test(name: str, passed: bool):
 
 def test_merkle_empty():
     tree = MerkleTree()
-    test("MerkleTree: empty root is genesis hash", tree.root == GENESIS_HASH)
+    assert_ledger_test("MerkleTree: empty root is genesis hash", tree.root == GENESIS_HASH)
 
 
 def test_merkle_single_leaf():
     tree = MerkleTree()
     h = _sha256("entry_0")
     root = tree.add_leaf(h)
-    test("MerkleTree: single leaf root equals the leaf hash", root == h)
+    assert_ledger_test("MerkleTree: single leaf root equals the leaf hash", root == h)
 
 
 def test_merkle_two_leaves():
@@ -69,7 +70,7 @@ def test_merkle_two_leaves():
     tree.add_leaf(h1)
     root = tree.add_leaf(h2)
     expected = _sha256(h1 + h2)
-    test("MerkleTree: two leaves produce correct root", root == expected)
+    assert_ledger_test("MerkleTree: two leaves produce correct root", root == expected)
 
 
 def test_merkle_verify():
@@ -77,8 +78,8 @@ def test_merkle_verify():
     hashes = [_sha256(f"entry_{i}") for i in range(5)]
     for h in hashes:
         tree.add_leaf(h)
-    test("MerkleTree: verify returns True for correct hashes", tree.verify(hashes))
-    test("MerkleTree: verify returns False for tampered hashes",
+    assert_ledger_test("MerkleTree: verify returns True for correct hashes", tree.verify(hashes))
+    assert_ledger_test("MerkleTree: verify returns False for tampered hashes",
          not tree.verify(hashes[:-1] + [_sha256("tampered")]))
 
 
@@ -102,12 +103,12 @@ async def test_ledger_append_and_integrity():
     # Give consumer time to process
     await asyncio.sleep(0.5)
 
-    test("Ledger: 3 entries committed", ledger.chain_length == 3)
+    assert_ledger_test("Ledger: 3 entries committed", ledger.chain_length == 3)
 
     # Verify integrity
     report = ledger.verify_integrity()
-    test("Ledger: chain integrity verified", report.is_valid)
-    test("Ledger: merkle root is non-genesis", ledger.merkle_root != GENESIS_HASH)
+    assert_ledger_test("Ledger: chain integrity verified", report.is_valid)
+    assert_ledger_test("Ledger: merkle root is non-genesis", ledger.merkle_root != GENESIS_HASH)
 
     await ledger.stop()
     ForensicLedger.reset_instance()
@@ -137,8 +138,8 @@ async def test_ledger_tamper_detection():
     ledger._chain[0] = tampered
 
     report = ledger.verify_integrity()
-    test("Ledger: tamper detection catches modified entry", not report.is_valid)
-    test("Ledger: tamper at index 0 detected", report.first_invalid_index == 0)
+    assert_ledger_test("Ledger: tamper detection catches modified entry", not report.is_valid)
+    assert_ledger_test("Ledger: tamper at index 0 detected", report.first_invalid_index == 0)
 
     await ledger.stop()
     ForensicLedger.reset_instance()
@@ -169,8 +170,8 @@ def test_compliance_authorized():
         target_country="NL",
         query_type="cross_border_str_match",
     )
-    test("Compliance: valid query authorized", result.authorized)
-    test("Compliance: all gates passed", all(result.gate_results.values()))
+    assert_ledger_test("Compliance: valid query authorized", result.authorized)
+    assert_ledger_test("Compliance: all gates passed", all(result.gate_results.values()))
 
 
 def test_compliance_reverts_missing_order():
@@ -186,9 +187,9 @@ def test_compliance_reverts_missing_order():
         )
     except ComplianceRevertError as e:
         reverted = True
-        test("Compliance: revert gate is 'court_order'", e.gate == "court_order")
+        assert_ledger_test("Compliance: revert gate is 'court_order'", e.gate == "court_order")
 
-    test("Compliance: missing court order reverts", reverted)
+    assert_ledger_test("Compliance: missing court order reverts", reverted)
 
 
 def test_compliance_reverts_unauthorized_crime():
@@ -213,9 +214,9 @@ def test_compliance_reverts_unauthorized_crime():
         )
     except ComplianceRevertError as e:
         reverted = True
-        test("Compliance: revert gate is 'agency_auth'", e.gate == "agency_auth")
+        assert_ledger_test("Compliance: revert gate is 'agency_auth'", e.gate == "agency_auth")
 
-    test("Compliance: unauthorized crime category reverts", reverted)
+    assert_ledger_test("Compliance: unauthorized crime category reverts", reverted)
 
 
 def test_compliance_reverts_no_treaty():
@@ -241,9 +242,9 @@ def test_compliance_reverts_no_treaty():
         )
     except ComplianceRevertError as e:
         reverted = True
-        test("Compliance: revert gate is 'cross_border'", e.gate == "cross_border")
+        assert_ledger_test("Compliance: revert gate is 'cross_border'", e.gate == "cross_border")
 
-    test("Compliance: no bilateral treaty reverts", reverted)
+    assert_ledger_test("Compliance: no bilateral treaty reverts", reverted)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════

@@ -193,16 +193,16 @@ Analyze this forensic dataset and return structured results containing:
     const fallbackResults: Record<string, any> = {
       str_kinship: {
         summary: isTr
-          ? "CODIS 24 lokus analizi sonucunda, şüpheli numunesi ile olay yeri izi arasında 24 lokusta tam alel uyumu tespit edilmiştir. Combined LR = 1.84 × 10¹⁸."
-          : "Full 24-locus CODIS concordancy confirmed. Combined Likelihood Ratio LR = 1.84 × 10¹⁸ (SWGDAM Conclusive Support).",
-        metrics: { combinedLR: "1.84e18", lociCount: 24, matchProbability: 0.99999999999 },
+          ? "Genişletilmiş 24-lokus STR analizi sonucunda, şüpheli numunesi ile olay yeri izi arasında 20 CODIS ve ESS lokusunda tam alel uyumu tespit edilmiştir. Combined LR = 2.51 × 10¹⁸ (10¹⁸·⁴⁰)."
+          : "Full expanded 24-locus STR concordancy confirmed (20 FBI CODIS + ESS). Combined Likelihood Ratio LR = 2.51 × 10¹⁸ (10¹⁸·⁴⁰, SWGDAM Conclusive Support).",
+        metrics: { combinedLR: "2.51e18", lociCount: 24, matchProbability: 0.99999999999 },
         recommendations: [isTr ? "SWGDAM Ek-A rapor formatına aktar." : "Export under SWGDAM Appendix A format."]
       },
       phenotype: {
         summary: isTr
-          ? "HIrisPlex-S (24-SNP) DNA Fenotipleme: %94.2 Mavi Göz (HERC2 rs12913832 AA), %88.7 Açık Ten Fototipi, %91.4 Düz Saç."
-          : "HIrisPlex-S (24-SNP) Inference: 94.2% Blue Eye, 88.7% Fair Phototype, 91.4% Straight Hair.",
-        metrics: { blueEyeProb: 0.942, fairSkinProb: 0.887, straightHairProb: 0.914 },
+          ? "HIrisPlex-S (24-SNP) DNA Fenotipleme: %94.2 Mavi Göz (HERC2 rs12913832 AA), %68.2 Açık Ten Fototipi, %88.0 Düz Saç."
+          : "HIrisPlex-S (24-SNP) Inference: 94.2% Blue Eye, 68.2% Fair Phototype (Type I), 88.0% Straight Hair.",
+        metrics: { blueEyeProb: 0.942, fairSkinProb: 0.682, straightHairProb: 0.880 },
         recommendations: [isTr ? "Fenotipik robot resmi çizimine aktar." : "Forward to composite facial sketch unit."]
       },
       epigenetics: {
@@ -214,8 +214,8 @@ Analyze this forensic dataset and return structured results containing:
       },
       full_multiomic: {
         summary: isTr
-          ? "FORENZA Çoklu-Omik Canlı Taraması Tamamlandı: 30 adli alt sistem doğrulamadan geçti. LR = 1.84e18, Fenotip %94.2 Mavi Göz, Epigenetik Yaş 34.2 yıl, ZK-SNARK ispatı mühürlendi."
-          : "FORENZA Full Multi-Omic Live Sweep Complete: All 30 subsystems validated. LR = 1.84e18, Phenotype 94.2% Blue Eye, Epigenetic Age 34.2 yrs, ZK-SNARK proof sealed.",
+          ? "FORENZA Çoklu-Omik Canlı Taraması Tamamlandı: 30 adli alt sistem doğrulamadan geçti. LR = 2.51e18 (10¹⁸·⁴⁰), Fenotip %94.2 Mavi Göz, Epigenetik Yaş 34.2 yıl, ZK-SNARK ispatı mühürlendi."
+          : "FORENZA Full Multi-Omic Live Sweep Complete: All 30 subsystems validated. LR = 2.51e18 (10¹⁸·⁴⁰), Phenotype 94.2% Blue Eye, Epigenetic Age 34.2 yrs, ZK-SNARK proof sealed.",
         metrics: { overallConfidence: 0.998, activeSubsystems: 30, chainIntegrity: "100% OK" },
         recommendations: [isTr ? "ISO/IEC 17025 mahkeme raporunu dışa aktar." : "Export ISO/IEC 17025 court testimony package."]
       }

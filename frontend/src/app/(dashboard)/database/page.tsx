@@ -195,7 +195,7 @@ export default function DatabasePage() {
                 title={activeView === "database" ? "Forensic DNA Database" : "Federated Evidence Network"}
                 subtitle={
                     activeView === "database"
-                        ? "Milvus Vector Profile Registry • 24 Core CODIS Loci & 55 AIM SNPs • HMAC Hash Sealed"
+                        ? "Milvus Vector Profile Registry • 24 Extended Forensic STR Loci & 55 AIM SNPs • HMAC Hash Sealed"
                         : "Polygon zkEVM Distributed Node Registry • Peer-to-Peer Consensus • Homomorphic Query"
                 }
                 badge={activeView === "database" ? "COLLECTION: STR_PROFILES" : "FEDERATION: ACTIVE"}

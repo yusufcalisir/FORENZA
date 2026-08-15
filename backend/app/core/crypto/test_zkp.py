@@ -20,6 +20,7 @@ import math
 import random
 import sys
 import time
+import pytest
 from typing import List
 
 # Module under test
@@ -68,6 +69,7 @@ def _generate_dissimilar_vector(dim: int = VECTOR_DIM, seed: int = None) -> List
 
 class TestResult:
     """Accumulator for test results."""
+    __test__ = False
 
     def __init__(self):
         self.passed = 0
@@ -96,6 +98,11 @@ class TestResult:
                 print(f"    • {e}")
         print(f"{'═' * 60}")
         return self.failed == 0
+
+
+@pytest.fixture
+def results():
+    return TestResult()
 
 
 # ═══════════════════════════════════════════════════════════════════════════════

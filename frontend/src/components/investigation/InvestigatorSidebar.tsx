@@ -15,16 +15,16 @@ interface ChatMessage {
 }
 
 const INITIAL_STEPS_TR = [
-  { step: 1, content: "CODIS 24 STR lokusları taranıyor (D3S1358, vWA, FGA...)", duration: "120ms" },
-  { step: 2, content: "Bayesçi Likelihood Ratio (LR = 1.84e18) hesaplandı.", duration: "450ms" },
-  { step: 3, content: "HIrisPlex-S: %94.2 Mavi Göz, %88.7 Açık Ten fototipi.", duration: "300ms" },
+  { step: 1, content: "Genişletilmiş 24-STR lokusları taranıyor (D3S1358, vWA, FGA, SE33...)", duration: "120ms" },
+  { step: 2, content: "Bayesçi Likelihood Ratio (LR = 2.51e18, 10¹⁸·⁴⁰) hesaplandı.", duration: "450ms" },
+  { step: 3, content: "HIrisPlex-S: %94.2 Mavi Göz, %68.2 Açık Ten (Tip I) fototipi.", duration: "300ms" },
   { step: 4, content: "Circom Groth16 ZK-SNARK ispatı doğrulandı (0 Veri Sızıntısı).", duration: "180ms" }
 ];
 
 const INITIAL_STEPS_EN = [
-  { step: 1, content: "Scanning CODIS 24 STR loci (D3S1358, vWA, FGA...)", duration: "120ms" },
-  { step: 2, content: "Bayesian Likelihood Ratio (LR = 1.84e18) computed.", duration: "450ms" },
-  { step: 3, content: "HIrisPlex-S: 94.2% Blue Eye, 88.7% Fair Phototype II.", duration: "300ms" },
+  { step: 1, content: "Scanning expanded 24-STR multiplex loci (D3S1358, vWA, FGA, SE33...)", duration: "120ms" },
+  { step: 2, content: "Bayesian Likelihood Ratio (LR = 2.51e18, 10¹⁸·⁴⁰) computed.", duration: "450ms" },
+  { step: 3, content: "HIrisPlex-S: 94.2% Blue Eye, 68.2% Fair Phototype (Type I).", duration: "300ms" },
   { step: 4, content: "Circom Groth16 ZK-SNARK proof verified (0 Data Leakage).", duration: "180ms" }
 ];
 

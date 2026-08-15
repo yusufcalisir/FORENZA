@@ -46,9 +46,9 @@ export default function LandingUserGuide() {
           border: "border-emerald-500/30",
           bg: "bg-emerald-500/5",
           details: [
-            "Göz Rengi (Eye Color): HERC2 (rs12913832) ve OCA2 lokuslarındaki A/A genotipi Mavi (%94.2) göz rengini işaret eder.",
+            "Göz Rengi (Eye Color): HERC2 (rs12913832) ve OCA2 lokuslarındaki genotipe göre Mavi (%94.2), Elâ (%4.6) ve Kahverengi (%1.2) çok terimli olasılık dağılımını hesaplar.",
             "Ten Tipi (Skin Phototype): SLC45A2 ve SLC24A5 delesyon analizleri ile kişinin Fitzpatrick Type I/II (Açık Ten) veya Type V/VI (Koyu Ten) olduğunu modeller.",
-            "Saç Yapısı (Hair Morphology): EDAR geni genotiplemesi ile Düz Saç (%88) veya Kıvırcık/Bukleli Saç (%94) tespiti gerçekleştirilir."
+            "Saç Yapısı (Hair Morphology): EDAR geni genotiplemesi ile Düz Saç (%88.0), Dalgalı (%10.0) veya Kıvırcık Saç (%2.0) tespiti gerçekleştirilir."
           ]
         },
         {
@@ -67,14 +67,14 @@ export default function LandingUserGuide() {
         {
           id: "step-4",
           title: "Adım 4: Likelihood Ratio (LR) & Adli Kanıt Standartları",
-          subtitle: "10¹⁸·⁴ seviyesinde astronomik olabilirlik oranları ve SWGDAM / ENFSI uyumu",
+          subtitle: "2.51 × 10¹⁸ (10¹⁸·⁴⁰) seviyesinde astronomik olabilirlik oranları ve SWGDAM / ENFSI uyumu",
           icon: Dna,
           color: "text-amber-400",
           border: "border-amber-500/30",
           bg: "bg-amber-500/5",
           details: [
-            "STR Locus Analysis Tablosu: D3S1358, vWA, FGA, TH01, TPOX vb. 24 CODIS lokusunda şüpheli ile numunenin alel uyumunu listeler.",
-            "Combined Likelihood Ratio (LR): 10¹⁸·⁴ seviyesine ulaşan adli güç sunar. SWGDAM adli standartlarına göre 10⁶ üzeri değerler 'Kesin Kimlik Tespiti' (Conclusive Support) olarak kabul edilir."
+            "Genişletilmiş 24-Lokus Adli STR Tablosu: 20 FBI CODIS çekirdek lokusu ile SE33, Penta D/E ve Amelogenin belirteçlerinde şüpheli ile numunenin alel uyumunu listeler.",
+            "Combined Likelihood Ratio (LR): 2.51 × 10¹⁸ (10¹⁸·⁴⁰) seviyesine ulaşan adli güç sunar. SWGDAM adli standartlarına göre 10⁶ üzeri değerler 'Kesin Kimlik Tespiti' (Conclusive Support) olarak kabul edilir."
           ]
         },
         {
@@ -94,16 +94,16 @@ export default function LandingUserGuide() {
     : [
         {
           id: "step-1",
-          title: "Step 1: Bio-Forensic Case Selection & Data Ingest",
-          subtitle: "Load pre-configured sample cases (EU / AA) or input CODIS 24 STR & 55 SNP markers",
-          icon: Sparkles,
+          title: "Step 1: Data Ingestion & Profile Selection",
+          subtitle: "Select sample cases or load custom 24-locus STR and 55 AIM SNP profiles",
+          icon: Dna,
           color: "text-cyan-400",
           border: "border-cyan-500/30",
           bg: "bg-cyan-500/5",
           details: [
             "Click the top-right 'Open DNA & SNP Terminal' button in the FORENZA workstation header to open the case management console.",
-            "Click 'Sample EU' (North-Western European) or 'Sample AA' (West African) to populate 24 CODIS loci and 55 AIM SNP markers with one click.",
-            "To analyze custom evidence profiles, fill in the STR Allele and SNP genotype fields and click 'Apply & Recalculate Profile Features' to run live predictions."
+            "Load pre-configured test profiles (Sample EU: Northern European profile / Sample AA: West African profile) with one click or enter custom STR alleles & SNP genotypes.",
+            "Changes immediately propagate to all 30 biocomputational modules across the workstation."
           ]
         },
         {
@@ -115,9 +115,9 @@ export default function LandingUserGuide() {
           border: "border-emerald-500/30",
           bg: "bg-emerald-500/5",
           details: [
-            "Eye Color: HERC2 (rs12913832) A/A genotype predicts Blue Eyes (94.2%) vs OCA2 dark pigmentation variants.",
+            "Eye Color: HERC2 (rs12913832) genotype predicts normalized multinomial probabilities for Blue (94.2%), Hazel (4.6%), or Brown (1.2%).",
             "Skin Phototype: SLC45A2 and SLC24A5 deletion markers calculate Fitzpatrick Skin Phototype from Type I/II (Fair Skin) to Type V/VI (Dark Phototype).",
-            "Hair Morphology: EDAR gene variants predict Straight Hair (88%) vs Curly/Coily Hair (94%)."
+            "Hair Morphology: EDAR and FGFR1 gene variants predict Straight Hair (88.0%), Wavy (10.0%), vs Curly/Coily Hair (2.0%)."
           ]
         },
         {
@@ -136,14 +136,14 @@ export default function LandingUserGuide() {
         {
           id: "step-4",
           title: "Step 4: Likelihood Ratio (LR) & Forensic Standards",
-          subtitle: "Combined LRs reaching 10¹⁸·⁴ under SWGDAM and ENFSI evidentiary verbal scales",
+          subtitle: "Combined LRs reaching 2.51 × 10¹⁸ (10¹⁸·⁴⁰) under SWGDAM and ENFSI evidentiary verbal scales",
           icon: Dna,
           color: "text-amber-400",
           border: "border-amber-500/30",
           bg: "bg-amber-500/5",
           details: [
-            "STR Locus Analysis Table: Compares suspect and crime scene profiles across 24 CODIS loci (D3S1358, vWA, FGA, TH01, TPOX, etc.).",
-            "Combined Likelihood Ratio (LR): Computes combined LRs reaching 10¹⁸·⁴. Values exceeding 10⁶ are classified under SWGDAM / ENFSI verbal scales as 'Conclusive Support for Identity'."
+            "Expanded 24-Locus Forensic Multiplex: Compares suspect and crime scene profiles across 20 FBI CODIS core loci plus SE33, Penta D, Penta E, and Amelogenin.",
+            "Combined Likelihood Ratio (LR): Computes combined LRs reaching 2.51 × 10¹⁸ (10¹⁸·⁴⁰). Values exceeding 10⁶ are classified under SWGDAM / ENFSI verbal scales as 'Conclusive Support for Identity'."
           ]
         },
         {

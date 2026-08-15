@@ -55,9 +55,9 @@ export default function UserGuideModal({
       bg: "bg-emerald-500/15",
       content: [
         "Tahmini Fenotip paneli, DNA numunesinden kişinin dış görünüşünü yüksek olasılıkla hesaplar.",
-        "Göz Rengi: HERC2 (rs12913832) ve OCA2 genlerindeki polimorfizmlere göre Mavi (%94.2), Elâ (%78.4) veya Koyu Kahverengi (%98.6) olasılıklarını verir.",
+        "Göz Rengi: HERC2 (rs12913832) ve OCA2 polimorfizmlerine göre Mavi (%94.2), Elâ (%4.6) ve Kahverengi (%1.2) çok terimli lojistik olasılık dağılımını hesaplar.",
         "Ten Tipi: SLC45A2 ve SLC24A5 delesyonları incelenerek Fitzpatrick I/II (Açık Ten) ile V/VI (Esmer/Koyu Ten) aralığında derecelendirilir.",
-        "Saç Yapısı: EDAR ve FGFR1 geni aracılığıyla Düz Saç (%88) veya Kıvırcık/Bukleli Saç (%94) tespiti yapılır."
+        "Saç Yapısı: EDAR ve FGFR1 genleri aracılığıyla Düz Saç (%88.0), Dalgalı (%10.0) veya Kıvırcık Saç (%2.0) tespiti yapılır."
       ]
     },
     {
@@ -81,8 +81,8 @@ export default function UserGuideModal({
       border: "border-amber-500/40",
       bg: "bg-amber-500/15",
       content: [
-        "STR Locus Analysis Tablosu: D3S1358, vWA, FGA, TH01, TPOX vb. 24 CODIS lokusundaki şüpheli numune ile olay yeri numunesinin alel eşleşmelerini karşılaştırır.",
-        "Likelihood Ratio (LR): 10¹⁸·⁴ seviyesinde adli güç hesaplar. SWGDAM ve ENFSI standartlarına göre 10⁶ üzeri değerler 'Kesin Kimlik Tespiti' kabul edilir."
+        "Genişletilmiş 24-Lokus Adli STR Tablosu: 20 FBI CODIS çekirdek lokusu ile SE33, Penta D/E ve Amelogenin belirteçlerinde şüpheli ve olay yeri alellerini karşılaştırır.",
+        "Likelihood Ratio (LR): 2.51 × 10¹⁸ (10¹⁸·⁴⁰) seviyesinde adli güç hesaplar. SWGDAM ve ENFSI standartlarına göre 10⁶ üzeri değerler 'Kesin Kimlik Tespiti' (Conclusive Support) kabul edilir."
       ]
     },
     {
@@ -93,8 +93,8 @@ export default function UserGuideModal({
       border: "border-rose-500/40",
       bg: "bg-rose-500/15",
       content: [
-        "Epigenetic Age Clock: Biyolojik numunenin bırakıldığı andaki kronolojik yaşını 5 CpG metilasyon lokusunda ±2.1 yıl sapma payı ile hesaplar.",
-        "Zero-Knowledge Proof (Circom/Groth16): Kriptografik ZK-SNARK ispatları üreterek ham DNA dizilimlerini laboratuvar dışına aktarmadan kimlik doğrulama yapılmasını sağlar."
+        "Epigenetik Yaş Saati: Numunenin alındığı andaki biyolojik yaşını 5 CpG metilasyon bölgesini analiz ederek ±2.1 yıl sapma payıyla tahmin eder.",
+        "Sıfır Bilgi İspatları (Groth16): Ham DNA verilerini ISO 17025 akredite laboratuvar dışına çıkarmadan profil eşleşmesini kriptografik SNARK ispatlarıyla doğrular."
       ]
     },
     {
@@ -126,16 +126,16 @@ export default function UserGuideModal({
     },
     {
       id: "phenotype",
-      title: "2. HIrisPlex-S Phenotype Engine",
+      title: "2. HIrisPlex-S Phenotype Prediction Engine",
       icon: Eye,
       color: "text-emerald-400",
       border: "border-emerald-500/40",
       bg: "bg-emerald-500/15",
       content: [
         "The Inferred Phenotype panel predicts physical appearance features directly from DNA markers with high statistical confidence.",
-        "Eye Color: HERC2 (rs12913832) and OCA2 polymorphisms calculate posterior probabilities for Blue (94.2%), Hazel (78.4%), or Dark Brown (98.6%).",
+        "Eye Color: HERC2 (rs12913832) and OCA2 polymorphisms calculate normalized multinomial probabilities for Blue (94.2%), Hazel (4.6%), or Brown (1.2%).",
         "Skin Phototype: SLC45A2 and SLC24A5 variants determine Fitzpatrick Skin Type from I/II (Fair) to V/VI (Dark).",
-        "Hair Morphology: EDAR and FGFR1 genes predict Straight Hair (88%) vs Curly/Coily Hair (94%)."
+        "Hair Morphology: EDAR and FGFR1 genes predict Straight Hair (88.0%), Wavy (10.0%), vs Curly/Coily Hair (2.0%)."
       ]
     },
     {
@@ -159,8 +159,8 @@ export default function UserGuideModal({
       border: "border-amber-500/40",
       bg: "bg-amber-500/15",
       content: [
-        "STR Locus Analysis Table: Compares suspect and crime scene profiles across 24 CODIS loci (D3S1358, vWA, FGA, TH01, TPOX, etc.).",
-        "Likelihood Ratio (LR): Computes combined LRs reaching 10¹⁸·⁴. Values exceeding 10⁶ are classified as 'Conclusive Support for Identity' under SWGDAM / ENFSI standards."
+        "Expanded 24-Locus Forensic Multiplex: Compares suspect and crime scene profiles across 20 FBI CODIS core loci plus SE33, Penta D, Penta E, and Amelogenin.",
+        "Likelihood Ratio (LR): Computes combined LRs reaching 2.51 × 10¹⁸ (10¹⁸·⁴⁰). Values exceeding 10⁶ are classified as 'Conclusive Support for Identity' under SWGDAM / ENFSI standards."
       ]
     },
     {

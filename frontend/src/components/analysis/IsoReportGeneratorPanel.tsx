@@ -71,7 +71,7 @@ export default function IsoReportGeneratorPanel() {
       chain_of_custody_status: "HMAC_INTACT_VERIFIED"
     },
     methods: {
-      amplification_kit: "CODIS 24 Core Loci Multiplex",
+      amplification_kit: "Expanded 24-Locus Forensic Multiplex (20 FBI CODIS Core + ESS)",
       biocomputational_engine: "FORENZA Probabilistic MCMC & Multi-Omic Synthesizer",
       sop_reference: "ISO-17025-SOP-DNA-v4.2"
     },

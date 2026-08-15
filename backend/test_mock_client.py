@@ -3,8 +3,10 @@ import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 import asyncio
+import pytest
 from app.infrastructure.gen_ai_client import MockGenAIClient
 
+@pytest.mark.asyncio
 async def test_mock_selection():
     client = MockGenAIClient()
     

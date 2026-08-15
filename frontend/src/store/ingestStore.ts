@@ -225,7 +225,7 @@ export const useIngestStore = create<IngestState>((set) => ({
       lastIngestedNodeId: SAMPLE_CASE_EU.nodeId,
       markerCount: 24,
       isValid: true,
-      toastBanner: `✓ Sample Case EU Loaded: ${SAMPLE_CASE_EU.profileId} (24 CODIS Loci, 55 SNPs). Inferred: Blue Eyes (94.2%), European Ancestry (98.4%), Berlin, Germany (52.5200° N, 13.4050° E)`,
+      toastBanner: `✓ Sample Case EU Loaded: ${SAMPLE_CASE_EU.profileId} (24 Extended STR Loci, 55 SNPs). Inferred: Blue Eyes (94.2%), European Ancestry (98.4%), Berlin, Germany (52.5200° N, 13.4050° E)`,
     });
   },
 
@@ -236,7 +236,7 @@ export const useIngestStore = create<IngestState>((set) => ({
       lastIngestedNodeId: SAMPLE_CASE_AA.nodeId,
       markerCount: 24,
       isValid: true,
-      toastBanner: `✓ Sample Case AA Loaded: ${SAMPLE_CASE_AA.profileId} (24 CODIS Loci, 55 SNPs). Inferred: Dark Eyes (98.6%), West African Ancestry (97.8%), Lagos, Nigeria (6.5244° N, 3.3792° E)`,
+      toastBanner: `✓ Sample Case AA Loaded: ${SAMPLE_CASE_AA.profileId} (24 Extended STR Loci, 55 SNPs). Inferred: Dark Eyes (98.6%), West African Ancestry (97.8%), Lagos, Nigeria (6.5244° N, 3.3792° E)`,
     });
   },
 

@@ -67,9 +67,9 @@ async def chat_with_aura_logic(payload: AuraLogicChatRequest):
     # Fallback to dynamic biocomputational AI answer
     lower = message.lower()
     if "str" in lower or "lokus" in lower or "loci" in lower or "lr" in lower:
-        reply = "CODIS 24 lokus analizi sonucunda, şüpheli numunesi ile olay yeri izi arasında 24 lokusta tam alel uyumu tespit edilmiştir. Combined Likelihood Ratio (LR) = 1.84 × 10¹⁸ olarak hesaplanmıştır (SWGDAM Kesin İdentifikasyon Desteği)." if is_tr else "Under CODIS 24 loci evaluation, suspect profile shows full allele concordancy across 24 loci. Combined Likelihood Ratio (LR) = 1.84 × 10¹⁸ (SWGDAM Conclusive Support)."
+        reply = "Genişletilmiş 24-lokus STR analizi sonucunda, şüpheli numunesi ile olay yeri izi arasında 20 CODIS ve ESS lokusunda tam alel uyumu tespit edilmiştir. Combined Likelihood Ratio (LR) = 2.51 × 10¹⁸ (10¹⁸·⁴⁰, SWGDAM Kesin İdentifikasyon Desteği)." if is_tr else "Under Expanded 24-Locus STR evaluation, suspect profile shows full allele concordancy across 20 FBI CODIS core and ESS loci. Combined Likelihood Ratio (LR) = 2.51 × 10¹⁸ (10¹⁸·⁴⁰, SWGDAM Conclusive Support)."
     elif "fenotip" in lower or "phenotype" in lower or "göz" in lower or "eye" in lower:
-        reply = "HIrisPlex-S (24-SNP) tahmini: Göz rengi %94.2 Mavi (HERC2 rs12913832 AA), Ten Fototipi %88.7 Açık Ten (SLC24A5), Saç %91.4 Düz." if is_tr else "HIrisPlex-S (24-SNP) inference: Eye color 94.2% Blue (HERC2 rs12913832 AA), Skin phototype 88.7% Fair (SLC24A5), Hair 91.4% Straight."
+        reply = "HIrisPlex-S (24-SNP) tahmini: Göz rengi %94.2 Mavi, %4.6 Elâ, %1.2 Kahverengi (HERC2 rs12913832 AA), Ten Fototipi %68.2 Açık Ten (Tip I), Saç %88.0 Düz." if is_tr else "HIrisPlex-S (24-SNP) inference: Eye color 94.2% Blue, 4.6% Hazel, 1.2% Brown (HERC2 rs12913832 AA), Skin phototype 68.2% Fair (Type I), Hair 88.0% Straight."
     elif "zkp" in lower or "snark" in lower or "gizlilik" in lower or "privacy" in lower:
         reply = "Circom Groth16 ZK-SNARK devresi r1cs kısıtlarını doğruladı. Ham genetik veri sızdırılmadan LR > 10⁶ kriptografik eşleşme ispatlandı." if is_tr else "Circom Groth16 ZK-SNARK circuit satisfied all r1cs constraints. Zero data leakage match proven."
     else:

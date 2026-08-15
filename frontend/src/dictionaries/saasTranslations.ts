@@ -243,7 +243,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
             "Immutable blockchain report for court admissibility",
           ],
           sampleMetric: "1.42e8 Likelihood Ratio",
-          sampleCode: "CASE_2026_COLD_09 — CODIS 20 Loci Matched",
+          sampleCode: "CASE_2026_COLD_09 — NDIS CODIS Core 20 Loci Database Hit",
           label: "Law Enforcement",
         },
         {
@@ -374,7 +374,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
           shortName: "Genotyping",
           badge: "CORE ENGINE",
           subsystems: [
-            { id: "01", name: "Autosomal STR & Kinship Engine", badge: "CODIS-24", metrics: "24 Core Loci • LR Inclusion • Kinship Index", desc: "Calculates Likelihood Ratios for inclusion/exclusion across 24 core CODIS loci and evaluates parent-child / sibling kinship indices." },
+            { id: "01", name: "Autosomal STR & Kinship Engine", badge: "STR-24", metrics: "24 Extended Loci • LR Inclusion • Kinship Index", desc: "Calculates Likelihood Ratios for inclusion/exclusion across 20 FBI CODIS core loci plus SE33, Penta D/E, and evaluates kinship indices." },
             { id: "02", name: "MCMC Probabilistic Genotyping", badge: "MCMC-MH", metrics: "Metropolis-Hastings • 2-4 Contributors • Deconvolution", desc: "Metropolis-Hastings Markov Chain Monte Carlo deconvolution for 2-to-4 person complex DNA mixtures with stochastic parameters." },
             { id: "03", name: "Dirichlet Fst Population Genetics", badge: "NRC-II", metrics: "Balding-Nichols • Fst Correction • Dirichlet Smooth", desc: "Implements NRC II Recommendations 4.1 & 4.2 with subpopulation coancestry (Fst = 0.01 / 0.03) Dirichlet smoothing." },
             { id: "04", name: "Touch DNA & Low-Template LTDNA", badge: "LTDNA-MOD", metrics: "Dropout p_d • Drop-in p_i • Smooth Substrates", desc: "Models stochastic allele dropout (p_d) and drop-in (p_i) for low-mass template touch DNA recovered from smooth & porous evidence." },
@@ -505,7 +505,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
         }
       ],
       specs: [
-        { label: "Autosomal STR Support", value: "CODIS 24 Core Loci (D3S1358, vWA, FGA, D8S1179, D21S11, D18S51, SE33, etc.)" },
+        { label: "Autosomal STR Multiplex", value: "Expanded 24-Locus Forensic Panel (20 FBI CODIS Core + ESS SE33, Penta D, Penta E, Amelogenin)" },
         { label: "Lineage Forensics", value: "Y-STR (Clopper-Pearson 95% CI), X-STR (KI_X Linkage), mtDNA rCRS Alignment" },
         { label: "Probabilistic Mixture MCMC", value: "Metropolis-Hastings 2-4 Contributor Deconvolution with Dropout (p_d) & Drop-in (p_i)" },
         { label: "Phenotype & Epigenetics", value: "HIrisPlex-S Extended (Eye/Hair/Skin/Freckles) & Horvath 5-CpG Epigenetic Age Clock" },
@@ -594,7 +594,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
             "Mahkeme delil standartlarına uygun adli raporlama",
           ],
           sampleMetric: "1.42e8 Olabilirlik Oranı (LR)",
-          sampleCode: "CASE_2026_COLD_09 — CODIS 20 Lokus Eşleşti",
+          sampleCode: "CASE_2026_COLD_09 — NDIS CODIS Çekirdek 20 Lokus Veritabanı Eşleşmesi",
           label: "Kolluk Kuvvetleri",
         },
         {
@@ -725,7 +725,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
           shortName: "Olasılıksal",
           badge: "TEMEL MOTOR",
           subsystems: [
-            { id: "01", name: "Otozomal STR ve Akrabalık Motoru", badge: "CODIS-24", metrics: "24 Çekirdek Lokus • LR Analizi • Akrabalık İndeksi", desc: "24 CODIS çekirdek lokusunda dahil etme/dışlama olabilirlik oranlarını (LR) ve akrabalık indekslerini hesaplar." },
+            { id: "01", name: "Otozomal STR ve Akrabalık Motoru", badge: "STR-24", metrics: "24 Genişletilmiş Lokus • LR Analizi • Akrabalık İndeksi", desc: "20 FBI CODIS çekirdek lokusu ve SE33, Penta D/E belirteçlerinde dahil etme/dışlama olabilirlik oranlarını (LR) ve akrabalık indekslerini hesaplar." },
             { id: "02", name: "MCMC Karışım Dekonvolüsyonu", badge: "MCMC-MH", metrics: "Metropolis-Hastings • 2-4 Katkıcı • Karışım Analizi", desc: "Stokastik parametrelerle 2 ila 4 kişilik karmaşık DNA karışımları için Metropolis-Hastings MCMC ayrıştırması yürütür." },
             { id: "03", name: "Dirichlet Fst Popülasyon Genetiği", badge: "NRC-II", metrics: "Balding-Nichols • Fst Düzeltmesi • Dirichlet Modeli", desc: "Alt popülasyon akrabalığı (Fst = 0.01 / 0.03) ile NRC II Tavsiye 4.1 ve 4.2 standartlarında Dirichlet yumuşatması uygular." },
             { id: "04", name: "Temas DNA'sı ve LTDNA Analizi", badge: "LTDNA-MOD", metrics: "Alel Kaybolması p_d • Alel Eklenmesi p_i • Yüzey Tespiti", desc: "Düşük kütleli iz DNA örneklerinde stokastik alel kaybolması (p_d) ve alel eklenmesini (p_i) modeller." },
@@ -789,7 +789,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
             { id: "27", name: "ISO 17025 Kalite Kontrol Denetim Matrisi", badge: "ISO-17025", metrics: "7 Noktalı Kalite Kontrol • Stutter Eşikleri", desc: "Heterozigot pik yüksekliği oranı (Hb), analitik eşikler ve kontroller dahil 7 noktalı kalite denetim kurallarını uygular." },
             { id: "28", name: "Sıfır Bilgi İspatlı Gizlilik Denetçisi (ZKP)", badge: "ZKP-CIRCOM", metrics: "Groth16 İspatları • Blokzincir Kaydı", desc: "Ham genetik verileri açık etmeden DNA profil eşleşme kriterlerini doğrulayan Circom ZKP ispatları üretir." },
             { id: "29", name: "Uzman Tanık Mahkeme İfade Modu", badge: "COURT-MODE", metrics: "7 Noktalı Adli Çerçeve • Savcı Kalkanı", desc: "Eksiksiz adli ifade paketleri, sözlü LR çevirisi ve Savcı Yanılgısına karşı koruma kalkanları derler." },
-            { id: "30", name: "Doğrulama ve Sentetik Vaka Motoru", badge: "VALIDATOR", metrics: "Sentetik Vaka Üretimi • ROC-AUC • 215 Test", desc: "Hattın doğruluğunu onaylamak için sentetik vakalar üzerinden otomatik doğrulama testleri yürütür." }
+            { id: "30", name: "Doğrulama ve Sentetik Vaka Motoru", badge: "VALIDATOR", metrics: "Sentetik Vaka Üretimi • ROC-AUC • 241 Test", desc: "Hattın doğruluğunu onaylamak için sentetik vakalar üzerinden 41 modülde 241 otomatik doğrulama testi yürütür." }
           ]
         }
       ],
@@ -856,7 +856,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
         }
       ],
       specs: [
-        { label: "Otozomal STR Desteği", value: "CODIS 24 Çekirdek Lokus Analizi (D3S1358, vWA, FGA, D8S1179, D21S11, D18S51, SE33 vb.)" },
+        { label: "Otozomal STR Multiplex Desteği", value: "Genişletilmiş 24-Lokus Adli Panel (20 FBI CODIS Çekirdek + ESS SE33, Penta D, Penta E, Amelogenin)" },
         { label: "Soy Analizleri", value: "Y-STR (%95 Güven Aralığı), X-STR (KI_X Akrabalık Bağlantısı), mtDNA rCRS Hizalaması" },
         { label: "Olasılıksal Karışım MCMC", value: "Metropolis-Hastings 2-4 Katkıcılı Karışım Ayrıştırması (p_d Alel Kaybolması & p_i Alel Eklenmesi)" },
         { label: "Fenotip ve Epigenetik", value: "Genişletilmiş HIrisPlex-S ve Horvath 5-CpG Epigenetik Yaş Saati" },

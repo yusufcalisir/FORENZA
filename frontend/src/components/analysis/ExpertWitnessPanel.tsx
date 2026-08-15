@@ -38,7 +38,7 @@ export default function ExpertWitnessPanel() {
       {
         title: "1. What Was Tested?",
         summary: "Accessioned evidence sample SAMPLE-DNA-101 associated with judicial case CASE-2026-COURT-01.",
-        details: "Amplified using standard CODIS 24 core STR loci multiplex panel following ISO 17025 validated SOPs."
+        details: "Amplified using expanded 24-locus forensic STR multiplex panel (20 FBI CODIS core + ESS) following ISO 17025 validated SOPs."
       },
       {
         title: "2. What Was Observed?",

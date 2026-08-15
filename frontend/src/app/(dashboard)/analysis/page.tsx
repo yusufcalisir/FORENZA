@@ -39,6 +39,12 @@ import ComprehensiveEpigenomicsPanel from "@/components/analysis/ComprehensiveEp
 import MultiLayerGenomicsPanel from "@/components/analysis/MultiLayerGenomicsPanel";
 import ForensicEvidenceOSPanel from "@/components/analysis/ForensicEvidenceOSPanel";
 import GeoForensicPanel from "@/components/analysis/GeoForensicPanel";
+import TouchDnaPanel from "@/components/analysis/TouchDnaPanel";
+import ToxicologyPanel from "@/components/analysis/ToxicologyPanel";
+import SyntheticCaseGeneratorPanel from "@/components/analysis/SyntheticCaseGeneratorPanel";
+import LimsWorkflowPanel from "@/components/analysis/LimsWorkflowPanel";
+import EvidenceManagementPanel from "@/components/analysis/EvidenceManagementPanel";
+import PedigreeTree from "@/components/analysis/PedigreeTree";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -409,243 +415,7 @@ function PanelKinship() {
     );
 }
 
-function PanelHIrisPlex() {
-    const [snpCount] = useState(41);
-    const phenotypes = [
-        { trait: "Eye Color", prediction: "Blue", confidence: 92.1, color: "text-blue-400" },
-        { trait: "Hair Color", prediction: "Brown", confidence: 87.4, color: "text-amber-400" },
-        { trait: "Skin Tone", prediction: "Fair (I-II)", confidence: 89.3, color: "text-orange-400" },
-        { trait: "Freckling", prediction: "None / Minimal", confidence: 76.2, color: "text-pink-400" },
-    ];
-    return (
-        <div className="space-y-5">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {[
-                    { label: "SNPs Analyzed", value: `${snpCount}/41`, color: "text-purple-400" },
-                    { label: "Model", value: "HIrisPlex-S", color: "text-emerald-400" },
-                    { label: "Population", value: "European", color: "text-cyan-400" },
-                    { label: "Quality Pass", value: "PASS", color: "text-amber-400" },
-                ].map((m) => (
-                    <div key={m.label} className="p-3 rounded-xl border border-tactical-border/50 bg-black/40">
-                        <p className="text-[9px] text-zinc-500 uppercase mb-1">{m.label}</p>
-                        <p className={`text-sm font-bold font-mono ${m.color}`}>{m.value}</p>
-                    </div>
-                ))}
-            </div>
-            <div className="space-y-3">
-                {phenotypes.map((p) => (
-                    <div key={p.trait} className="p-4 rounded-xl border border-tactical-border/50 bg-black/30">
-                        <div className="flex items-center justify-between mb-2">
-                            <span className="text-[10px] font-bold text-zinc-300 uppercase tracking-wider">{p.trait}</span>
-                            <span className={`text-sm font-bold ${p.color}`}>{p.prediction}</span>
-                        </div>
-                        <div className="flex items-center gap-3">
-                            <div className="flex-1 h-2 bg-zinc-800 rounded-full overflow-hidden">
-                                <div
-                                    className={`h-full rounded-full bg-gradient-to-r ${p.color.replace("text-", "from-").replace("-400", "-600")} to-${p.color.replace("text-", "").replace("-400", "-400")}`}
-                                    style={{ width: `${p.confidence}%` }}
-                                />
-                            </div>
-                            <span className={`text-[10px] font-bold ${p.color} w-12 text-right`}>{p.confidence}%</span>
-                        </div>
-                    </div>
-                ))}
-            </div>
-        </div>
-    );
-}
-
-function PanelTouchDNA() {
-    const [mass, setMass] = useState(80);
-    const [substrate, setSubstrate] = useState("TEXTURED");
-    const eff = substrate === "SMOOTH" ? 0.6 : substrate === "TEXTURED" ? 0.4 : 0.2;
-    const recMass = Math.round(mass * eff * 10) / 10;
-    const dropoutPd = Math.round(Math.exp(-0.05 * recMass) * 10000) / 100;
-    const isLT = recMass < 150;
-    return (
-        <div className="space-y-5">
-            <div className="grid grid-cols-2 gap-4">
-                <div>
-                    <label className="text-[9px] text-zinc-500 uppercase font-bold block mb-1.5">Input DNA Mass (pg)</label>
-                    <input type="range" min={10} max={500} value={mass} onChange={(e) => setMass(+e.target.value)} className="w-full accent-orange-400" />
-                    <div className="flex justify-between text-[9px] text-zinc-600 mt-1"><span>10 pg</span><span className="text-orange-400 font-bold">{mass} pg</span><span>500 pg</span></div>
-                </div>
-                <div>
-                    <label className="text-[9px] text-zinc-500 uppercase font-bold block mb-1.5">Substrate</label>
-                    <select value={substrate} onChange={(e) => setSubstrate(e.target.value)} className="w-full bg-black/40 border border-tactical-border/60 rounded-lg p-2 text-[10px] font-mono text-orange-300 font-bold">
-                        <option value="SMOOTH">Smooth Metal (60%)</option>
-                        <option value="TEXTURED">Textured / Gun Grip (40%)</option>
-                        <option value="POROUS">Porous / Fabric (20%)</option>
-                    </select>
-                </div>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {[
-                    { label: "Recovered Mass", value: `${recMass} pg`, color: "text-orange-400" },
-                    { label: "Dropout P(D)", value: `${dropoutPd}%`, color: isLT ? "text-red-400" : "text-emerald-400" },
-                    { label: "Classification", value: isLT ? "LtDNA" : "Standard", color: isLT ? "text-amber-400" : "text-emerald-400" },
-                    { label: "Log10(LR)", value: isLT ? "+4.2" : "+6.8", color: "text-cyan-400" },
-                ].map((m) => (
-                    <div key={m.label} className="p-3 rounded-xl border border-tactical-border/50 bg-black/40">
-                        <p className="text-[9px] text-zinc-500 uppercase mb-1">{m.label}</p>
-                        <p className={`text-sm font-bold font-mono ${m.color}`}>{m.value}</p>
-                    </div>
-                ))}
-            </div>
-            {isLT && (
-                <div className="p-3 rounded-xl border border-amber-500/30 bg-amber-500/5 flex items-start gap-2">
-                    <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                    <p className="text-[10px] text-zinc-300">Low-template classification triggered ({"<"}150 pg). Stochastic effects probable. MCMC deconvolution recommended. Replicate interpretation required per SWGDAM guidelines.</p>
-                </div>
-            )}
-        </div>
-    );
-}
-
-function PanelToxicology() {
-    const [conc, setConc] = useState(0.85);
-    const status = conc > 2.0 ? "FATAL" : conc > 0.5 ? "TOXIC / ELEVATED" : "THERAPEUTIC";
-    const statusColor = conc > 2.0 ? "text-red-400" : conc > 0.5 ? "text-amber-400" : "text-emerald-400";
-    return (
-        <div className="space-y-5">
-            <div>
-                <label className="text-[9px] text-zinc-500 uppercase font-bold block mb-1.5">Morphine Blood Concentration (mg/L)</label>
-                <input type="range" min={0} max={5} step={0.05} value={conc} onChange={(e) => setConc(+e.target.value)} className="w-full accent-rose-400" />
-                <div className="flex justify-between text-[9px] text-zinc-600 mt-1"><span>0</span><span className={`font-bold ${statusColor}`}>{conc.toFixed(2)} mg/L</span><span>5.0</span></div>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {[
-                    { label: "Classification", value: status, color: statusColor },
-                    { label: "Uncertainty U95", value: "±0.09 mg/L", color: "text-zinc-300" },
-                    { label: "Widmark Threshold", value: ">0.5 mg/L", color: "text-rose-400" },
-                    { label: "PMR Effect", value: conc > 1 ? "+15% cardiac" : "N/A", color: "text-orange-400" },
-                ].map((m) => (
-                    <div key={m.label} className="p-3 rounded-xl border border-tactical-border/50 bg-black/40">
-                        <p className="text-[9px] text-zinc-500 uppercase mb-1">{m.label}</p>
-                        <p className={`text-sm font-bold font-mono ${m.color}`}>{m.value}</p>
-                    </div>
-                ))}
-            </div>
-            <div className="p-4 rounded-xl border border-rose-500/30 bg-rose-500/5">
-                <p className="text-[9px] text-zinc-500 uppercase font-bold tracking-wider mb-2">ISO 17025 Measurement Uncertainty</p>
-                <p className="text-[10px] text-zinc-300 leading-relaxed">
-                    Reported value: {conc.toFixed(2)} mg/L ± 0.09 mg/L (k=2, 95% CL). 
-                    Classification: <span className={`font-bold ${statusColor}`}>{status}</span>. 
-                    Post-mortem redistribution coefficient applied (cardiac:peripheral ratio 1.15:1).
-                </p>
-            </div>
-        </div>
-    );
-}
-
-function PanelLIMS() {
-    const items = [
-        { id: "EVID-2026-901", type: "Bloodstain Swab", location: "Crime Scene A", custodian: "Det. Morrison", status: "IN ANALYSIS", color: "amber" },
-        { id: "EVID-2026-902", type: "Buccal Reference", location: "Intake Lab", custodian: "Lab Tech B", status: "COMPLETE", color: "emerald" },
-        { id: "EVID-2026-903", type: "Hair Sample", location: "Storage Bay 3", custodian: "Lab Tech C", status: "PENDING", color: "blue" },
-        { id: "EVID-2026-904", type: "Touch DNA Swab", location: "Crime Scene B", custodian: "Det. Morrison", status: "QC REVIEW", color: "purple" },
-    ];
-    return (
-        <div className="space-y-5">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {[
-                    { label: "Active Batches", value: "4", color: "text-blue-400" },
-                    { label: "QC Pass Rate", value: "97.2%", color: "text-emerald-400" },
-                    { label: "Pending Review", value: "1", color: "text-amber-400" },
-                    { label: "HMAC Verified", value: "4 / 4", color: "text-cyan-400" },
-                ].map((m) => (
-                    <div key={m.label} className="p-3 rounded-xl border border-tactical-border/50 bg-black/40">
-                        <p className="text-[9px] text-zinc-500 uppercase mb-1">{m.label}</p>
-                        <p className={`text-sm font-bold font-mono ${m.color}`}>{m.value}</p>
-                    </div>
-                ))}
-            </div>
-            <div className="rounded-xl border border-tactical-border/50 bg-black/20 overflow-hidden">
-                <div className="grid grid-cols-5 px-4 py-2 border-b border-tactical-border/40 text-[8px] font-bold text-zinc-600 uppercase">
-                    <span>Evidence ID</span><span>Type</span><span>Location</span><span>Custodian</span><span className="text-right">Status</span>
-                </div>
-                {items.map((item, i) => {
-                    const c: Record<string, string> = { emerald: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20", amber: "text-amber-400 bg-amber-500/10 border-amber-500/20", blue: "text-blue-400 bg-blue-500/10 border-blue-500/20", purple: "text-purple-400 bg-purple-500/10 border-purple-500/20" };
-                    return (
-                        <div key={i} className="grid grid-cols-5 items-center px-4 py-2 border-b border-tactical-border/20 last:border-0 hover:bg-white/2 transition-colors">
-                            <span className="text-[10px] font-bold text-white font-mono">{item.id}</span>
-                            <span className="text-[10px] text-zinc-400">{item.type}</span>
-                            <span className="text-[10px] text-zinc-500">{item.location}</span>
-                            <span className="text-[10px] text-zinc-500">{item.custodian}</span>
-                            <div className="flex justify-end"><span className={`text-[8px] font-bold border rounded px-1.5 py-0.5 ${c[item.color]}`}>{item.status}</span></div>
-                        </div>
-                    );
-                })}
-            </div>
-        </div>
-    );
-}
-
-function PanelSyntheticCase() {
-    const [generated, setGenerated] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const generate = () => {
-        setLoading(true);
-        setTimeout(() => { setLoading(false); setGenerated(true); }, 1500);
-    };
-    return (
-        <div className="space-y-5">
-            <div className="p-4 rounded-xl border border-rose-500/30 bg-rose-500/5">
-                <p className="text-xs font-bold text-rose-400 mb-1">Synthetic Forensic Case Generator</p>
-                <p className="text-[10px] text-zinc-400 leading-relaxed">
-                    Generates fully synthetic forensic cases with DNA profiles, mixture proportions, ground truth data, 
-                    and benchmark evaluation metrics. Used for FORENZA academic validation and LR engine testing.
-                </p>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {[
-                    { label: "Contributors", value: "1–5" },
-                    { label: "Loci", value: "CODIS 20" },
-                    { label: "Relatives", value: "Parent/Child" },
-                    { label: "Dropout Sim.", value: "Yes" },
-                    { label: "Stutter Sim.", value: "Yes" },
-                    { label: "Ground Truth", value: "Included" },
-                ].map((m) => (
-                    <div key={m.label} className="p-3 rounded-xl border border-tactical-border/50 bg-black/40">
-                        <p className="text-[9px] text-zinc-500 uppercase mb-1">{m.label}</p>
-                        <p className="text-xs font-bold text-rose-400 font-mono">{m.value}</p>
-                    </div>
-                ))}
-            </div>
-            <button
-                onClick={generate}
-                disabled={loading}
-                className="w-full py-3 rounded-xl border border-rose-500/40 bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 font-bold text-xs font-mono uppercase tracking-widest transition-all flex items-center justify-center gap-2"
-            >
-                {loading ? <><Sparkles className="w-4 h-4 animate-spin" />Generating Case...</> : <><Sparkles className="w-4 h-4" />Generate Synthetic Case</>}
-            </button>
-            {generated && (
-                <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
-                    <div className="p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/5">
-                        <p className="text-[9px] text-zinc-500 uppercase font-bold tracking-wider mb-2">Generated Case — SYNTH-2026-001</p>
-                        <div className="grid grid-cols-2 gap-2 text-[10px]">
-                            {[
-                                ["Contributors", "3 (A: 60%, B: 30%, C: 10%)"],
-                                ["True LR (Contributor A)", "Log10(LR) = +8.41"],
-                                ["FORENZA LR Estimate", "Log10(LR) = +8.39"],
-                                ["RMSE Error", "0.02 (Excellent)"],
-                                ["Dropout Events", "2 at D13S317"],
-                                ["Ground Truth Hash", "a7f9c2e…"],
-                            ].map(([k, v]) => (
-                                <div key={k}>
-                                    <span className="text-zinc-500 block">{k}</span>
-                                    <span className="text-emerald-300 font-bold font-mono">{v}</span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </motion.div>
-            )}
-        </div>
-    );
-}
-
-// ─── Panel Router (all 30 modules wired) ───────────────────────────────────
+// ─── Panel Router (all 30 modules wired to dedicated components) ───────────
 
 function renderPanel(tabId: TabId) {
     switch (tabId) {
@@ -653,7 +423,7 @@ function renderPanel(tabId: TabId) {
         case "str": return <PanelSTR />;
         case "mcmc": return <ProbabilisticGenotypingPanel />;
         case "population": return <BayesianShiftChart />;
-        case "touch": return <PanelTouchDNA />;
+        case "touch": return <TouchDnaPanel />;
         case "validation": return <ValidationLabPanel />;
         // Pillar 2: Lineage Forensics & Kinship
         case "lineage_y": return <LineageDnaPanel />;
@@ -664,7 +434,7 @@ function renderPanel(tabId: TabId) {
         // Pillar 3: Phenotyping & Ancestry
         case "hirisplex": return <MultiLayerGenomicsPanel />;
         case "ancestry": return <AncestryDataPanel />;
-        case "craniofacial": return <PanelSyntheticCase />;
+        case "craniofacial": return <SyntheticCaseGeneratorPanel />;
         case "hair": return <MicroscopyPanel />;
         case "freckling": return <ComprehensiveEpigenomicsPanel />;
         // Pillar 4: Epigenetics & Aging
@@ -676,15 +446,15 @@ function renderPanel(tabId: TabId) {
         // Pillar 5: Pathology & Trace Forensics
         case "bpa": return <BpaImagePanel />;
         case "microscopy": return <MicroscopyPanel />;
-        case "toxicology": return <PanelToxicology />;
+        case "toxicology": return <ToxicologyPanel />;
         case "botany": return <BotanyPanel />;
         case "serology": return <SerologyPanel />;
         // Pillar 6: ISO 17025, LIMS & ZKP
-        case "lims": return <InstrumentIngestionPanel />;
+        case "lims": return <LimsWorkflowPanel />;
         case "qc": return <QualityAssurancePanel />;
         case "zkp": return <ForensicEvidenceOSPanel />;
         case "court": return <ExpertWitnessPanel />;
-        case "evidenceos": return <ForensicEvidenceOSPanel />;
+        case "evidenceos": return <EvidenceManagementPanel />;
         default: return <PanelSTR />;
     }
 }

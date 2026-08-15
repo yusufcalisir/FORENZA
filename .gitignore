@@ -75,3 +75,8 @@ circuits/*.sym
 *.swo
 *.sublime-project
 *.sublime-workspace
+
+# Local Deep Research Notes (Uncommitted)
+research/
+*.research.md
+

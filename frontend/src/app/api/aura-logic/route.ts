@@ -35,7 +35,16 @@ Rules:
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { message, history = [], lang = "tr", userApiKeys = {} } = body;
+    const { message, history = [], lang = "tr", userApiKeys = {}, caseContext = {} } = body;
+
+    // Case context forwarded by the client from the Zustand store
+    const ctxLR: string            = caseContext.kinshipLR    ?? "N/A";
+    const ctxEyeProb: number       = caseContext.eyeColorProb ?? 0;
+    const ctxEyeColor: string      = caseContext.eyeColor     ?? "Unknown";
+    const ctxSkinType: string      = caseContext.skinType     ?? "Unknown";
+    const ctxSkinProb: number      = caseContext.skinTypeProb ?? 0;
+    const ctxAge: number           = caseContext.epigeneticAge ?? 0;
+    const ctxMarkerCount: number   = caseContext.markerCount  ?? 24;
 
     if (!message || typeof message !== "string") {
       return NextResponse.json({ error: "Message is required" }, { status: 400 });
@@ -290,20 +299,20 @@ export async function POST(req: NextRequest) {
 
     if (lower.includes("str") || lower.includes("lokus") || lower.includes("loci") || lower.includes("lr") || lower.includes("match") || lower.includes("codis")) {
       replyText = isTr
-        ? "Genişletilmiş 24-Lokus Adli STR analizi sonuçlandı: Numune ile şüpheli profili arasında 20 FBI CODIS çekirdek ve ESS lokuslarında (D3S1358, vWA, FGA, D8S1179, D21S11, D18S51, SE33 vb.) tam alel uyumu tespit edilmiştir. İki katkıcılı MCMC dekonvolüsyonu ile Birleşik Olabilirlik Oranı (Combined Likelihood Ratio) LR = 2.51 × 10¹⁸ (10¹⁸·⁴⁰) olarak hesaplanmıştır. Bu sonuç SWGDAM standartlarında 'Kesin İdentifikasyon Desteği' (Conclusive Support) kategorisindedir."
-        : "Expanded 24-Locus Forensic STR analysis complete: Suspect profile shows complete allele concordance across 20 FBI CODIS core and ESS loci (D3S1358, vWA, FGA, D8S1179, D21S11, D18S51, SE33, etc.). 2-contributor MCMC deconvolution yields Combined Likelihood Ratio LR = 2.51 × 10¹⁸ (10¹⁸·⁴⁰), establishing 'Conclusive Support for Identity' under SWGDAM / ENFSI guidelines.";
+        ? `Genişletilmiş ${ctxMarkerCount}-Lokus Adli STR analizi sonuçlandı: Numune ile şüpheli profili arasında FBI CODIS çekirdek ve ESS lokuslarında (D3S1358, vWA, FGA, D8S1179, D21S11, D18S51, SE33 vb.) tam alel uyumu tespit edilmiştir. Birleşik Olabilirlik Oranı (Combined LR) = ${ctxLR}. Bu sonuç SWGDAM standartlarında 'Kesin İdentifikasyon Desteği' (Conclusive Support) kategorisindedir.`
+        : `Expanded ${ctxMarkerCount}-Locus Forensic STR analysis complete: Suspect profile shows complete allele concordance across FBI CODIS core and ESS loci (D3S1358, vWA, FGA, D8S1179, D21S11, D18S51, SE33, etc.). Combined Likelihood Ratio LR = ${ctxLR}, establishing 'Conclusive Support for Identity' under SWGDAM / ENFSI guidelines.`;
     } else if (lower.includes("fenotip") || lower.includes("phenotype") || lower.includes("göz") || lower.includes("eye") || lower.includes("ten") || lower.includes("skin") || lower.includes("saç") || lower.includes("hair") || lower.includes("hirisplex")) {
       replyText = isTr
-        ? "HIrisPlex-S (24-SNP) Çok Terimli DNA Fenotipleme Çıkarımı:\n• Göz Rengi: %94.2 Mavi, %4.6 Elâ, %1.2 Kahverengi (HERC2 rs12913832 AA)\n• Ten Fototipi: %68.2 Tip I Açık Ten (SLC24A5/SLC45A2)\n• Saç Morfolojisi: %88.0 Düz, %10.0 Dalgalı, %2.0 Kıvırcık."
-        : "HIrisPlex-S (24-SNP) Normalized DNA Phenotyping Inference:\n• Eye Color: 94.2% Blue, 4.6% Hazel, 1.2% Brown (HERC2 rs12913832 AA)\n• Skin Phototype: 68.2% Type I Fair (SLC24A5/SLC45A2)\n• Hair Morphology: 88.0% Straight, 10.0% Wavy, 2.0% Curly.";
+        ? `HIrisPlex-S DNA Fenotipleme Çıkarımı:\n• Göz Rengi: %${ctxEyeProb} ${ctxEyeColor} (HERC2 rs12913832)\n• Ten Fototipi: %${ctxSkinProb} ${ctxSkinType}\n• Saç Morfolojisi: Fenotip veritabanından çekiliyor.`
+        : `HIrisPlex-S Normalized DNA Phenotyping Inference:\n• Eye Color: ${ctxEyeProb}% ${ctxEyeColor} (HERC2 rs12913832)\n• Skin Phototype: ${ctxSkinProb}% ${ctxSkinType}\n• Hair Morphology: Referencing phenotype database.`;
     } else if (lower.includes("zkp") || lower.includes("snark") || lower.includes("gizlilik") || lower.includes("privacy") || lower.includes("circom") || lower.includes("ispat")) {
       replyText = isTr
         ? "Circom Groth16 ZK-SNARK Sıfır Bilgi İspat Devresi (dna_match.circom):\n• R1CS Kısıtları: 20/20 lokus kısıtı doğrulandı.\n• Veri Sızıntısı: %0 (Ham DNA dizisi saklı kalır).\n• Kriptografik Eşik: LR > 10⁶ koşulu kanıtlandı.\n• Blokzincir Kaydı: Polygon testnet işlem hash'i ile mühürlendi."
         : "Circom Groth16 ZK-SNARK Proof Circuit (dna_match.circom):\n• R1CS Constraints: 20/20 loci constraints satisfied.\n• Data Leakage: 0% (Raw genomic profile remains strictly confidential).\n• Cryptographic Threshold: LR > 10⁶ match criteria proven.\n• Audit Trail: Anchored on Polygon ledger hash.";
     } else if (lower.includes("epigenetik") || lower.includes("epigenetic") || lower.includes("yaş") || lower.includes("age") || lower.includes("vücut sıvısı") || lower.includes("body fluid") || lower.includes("kan") || lower.includes("blood")) {
       replyText = isTr
-        ? "Adli Epigenetik DNA Metilasyon Analizi (CpG Adacıkları):\n• Horvath Saati Biyolojik Yaş Tahmini: 34.2 ± 2.1 yıl.\n• Vücut Sıvısı İdentifikasyonu: %98.6 Olasılıkla Venöz Kan (miR-142-3p / CpG metilasyon imzası).\n• Sigara/Yaşam Tarzı Biyo-İmzası: AHRR gene rs05575921 metilasyon düşüklüğü saptandı."
-        : "Forensic Epigenetic Methylation Analysis (CpG Sites):\n• Horvath Biological Age Clock: 34.2 ± 2.1 years.\n• Body Fluid Tissue Origin: 98.6% Venous Blood (miR-142-3p / CpG methylation marker).\n• Lifestyle Epigenetic Signature: AHRR gene rs05575921 hypomethylation detected.";
+        ? `Adli Epigenetik DNA Metilasyon Analizi (CpG Adacıkları):\n• Horvath Saati Biyolojik Yaş Tahmini: ${ctxAge} ± 2.1 yıl.\n• Vücut Sıvısı İdentifikasyonu: %98.6 Olasılıkla Venöz Kan (miR-142-3p / CpG metilasyon imzası).\n• Sigara/Yaşam Tarzı Biyo-İmzası: AHRR gene rs05575921 metilasyon düşüklüğü saptandı.`
+        : `Forensic Epigenetic Methylation Analysis (CpG Sites):\n• Horvath Biological Age Clock: ${ctxAge} ± 2.1 years.\n• Body Fluid Tissue Origin: 98.6% Venous Blood (miR-142-3p / CpG methylation marker).\n• Lifestyle Epigenetic Signature: AHRR gene rs05575921 hypomethylation detected.`;
     } else if (lower.includes("bpa") || lower.includes("kan lekesi") || lower.includes("bloodstain") || lower.includes("açı") || lower.includes("angle") || lower.includes("orjin") || lower.includes("origin")) {
       replyText = isTr
         ? "Kan Lekesi Deseni Analizi (BPA 3D Voksel Rekonstrüksiyonu):\n• Lekeler: 14 adet eliptik sıçrama lekesi incelendi.\n• Düşüş Açısı (Impact Angle): 32.4° - 48.1° sin⁻¹(W/L).\n• Çakışma Noktası (Area of Origin): (X: 1.42m, Y: 2.15m, Z: 1.68m yüksekliğinde 3D kesişim).\n• Mekanizma: Yüksek hızlı künt travma sıçraması."

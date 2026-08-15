@@ -54,7 +54,7 @@ export default function FederatedNetworkPanel() {
             {/* Summary Metrics */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                 {[
-                    { label: "Total Nodes", value: "7", icon: Server, color: "text-purple-400" },
+                    { label: "Total Nodes", value: `${LAB_NODES.length}`, icon: Server, color: "text-purple-400" },
                     { label: "Nodes Online", value: `${online}`, icon: CheckCircle, color: "text-emerald-400" },
                     { label: "Total Profiles", value: totalProfiles.toLocaleString(), icon: Database, color: "text-cyan-400" },
                     { label: "Avg Latency", value: "28ms", icon: Zap, color: "text-amber-400" },

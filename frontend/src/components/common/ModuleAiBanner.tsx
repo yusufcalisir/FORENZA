@@ -6,6 +6,7 @@ import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 import { getStoredApiKeys, hasLiveApiKeys, getActiveModeLabel } from "@/services/apiClient";
 import ApiKeySettingsModal from "./ApiKeySettingsModal";
 import { useIngestStore, ActiveProfileData } from "@/store/ingestStore";
+import { useForensicCaseStore } from "@/store/forensicCaseStore";
 
 interface ModuleAiBannerProps {
   moduleName?: string;
@@ -21,6 +22,7 @@ export default function ModuleAiBanner({
   const { lang } = useSaasLanguage();
   const isTr = lang === "tr";
   const { activeProfile, setActiveProfile } = useIngestStore();
+  const { activeCase } = useForensicCaseStore();
 
   const [isLive, setIsLive] = useState(false);
   const [modeLabel, setModeLabel] = useState("");
@@ -51,7 +53,15 @@ export default function ModuleAiBanner({
           inputData: {
             fileName: fileName || "sample_codis24.fasta",
             customData: customFileContent || null,
-            activeProfileId: activeProfile?.profileId || "CASE-2026-AI-LIVE",
+            activeProfileId: activeProfile?.profileId || activeCase.profile.profileId,
+            // Forward active-case phenotype and LR so the API can reflect the real case
+            kinshipLR: activeProfile?.kinshipLR || activeCase.profile.kinshipLR,
+            eyeColorProb: activeProfile?.phenotype?.eyeColorProb ?? activeCase.profile.phenotype.eyeColorProb,
+            eyeColor: activeProfile?.phenotype?.eyeColor ?? activeCase.profile.phenotype.eyeColor,
+            skinType: activeProfile?.phenotype?.skinType ?? activeCase.profile.phenotype.skinType,
+            skinTypeProb: activeProfile?.phenotype?.skinTypeProb ?? activeCase.profile.phenotype.skinTypeProb,
+            epigeneticAge: activeProfile?.epigeneticAge ?? activeCase.profile.epigeneticAge,
+            markerCount: activeProfile?.markerCount ?? activeCase.profile.markerCount,
             timestamp: new Date().toISOString()
           },
           userApiKeys: getStoredApiKeys(),
@@ -78,8 +88,8 @@ export default function ModuleAiBanner({
               hairType: "Straight",
               hairTypeProb: 91
             },
-            kinshipLR: data.analysis?.metrics?.combinedLR || activeProfile.kinshipLR || "2.51e18",
-            epigeneticAge: data.analysis?.metrics?.estimatedAge || activeProfile.epigeneticAge || 34.2
+            kinshipLR: data.analysis?.metrics?.combinedLR || activeProfile.kinshipLR || activeCase.profile.kinshipLR,
+            epigeneticAge: data.analysis?.metrics?.estimatedAge || activeProfile.epigeneticAge || activeCase.profile.epigeneticAge
           };
           setActiveProfile(updatedProfile);
         }

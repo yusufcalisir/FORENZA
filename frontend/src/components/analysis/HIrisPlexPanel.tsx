@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { Eye, Palette, Sparkles } from "lucide-react";
+import { useState, useMemo } from "react";
+import { Eye, Palette, Sparkles, CheckCircle2, AlertTriangle } from "lucide-react";
 import { useForensicCaseStore } from "@/store/forensicCaseStore";
+import { validateProbabilityDistribution } from "@/lib/forensicStatusUtils";
 
 // ─── Walsh et al. (2018) HIrisPlex-S Multinomial Coefficients ───────────────────
 
@@ -150,6 +151,29 @@ export default function HIrisPlexPanel() {
     const hairProbs = computeHairProbabilities(snpDosages);
     const skinTone = computeSkinToneProbabilities(snpDosages);
 
+    // ── Biostatistical Distribution Integrity Validation ────────────────────
+    // Each multinomial distribution must sum to 100% ± 1% to be forensically valid.
+    const eyeValid  = useMemo(() => validateProbabilityDistribution(
+        { blue: eyeProbs.blue, intermediate: eyeProbs.intermediate, brown: eyeProbs.brown },
+        true, // isPercentage
+        1.0   // 1% tolerance for floating-point rounding
+    ), [eyeProbs]);
+
+    const hairValid = useMemo(() => validateProbabilityDistribution(
+        { blond: hairProbs.blond, brown: hairProbs.brown, red: hairProbs.red, black: hairProbs.black },
+        true,
+        1.0
+    ), [hairProbs]);
+
+    // Skin tone uses three ordinal groups already summed from pVeryFair+pFair, pMedium, pDark
+    const skinValid = useMemo(() => validateProbabilityDistribution(
+        { fairGroup: skinTone.pVeryFair + skinTone.pFair, medium: skinTone.pMedium, dark: skinTone.pDark },
+        true,
+        1.5   // slightly wider tolerance for 4-class ordinal collapse
+    ), [skinTone]);
+
+    const allValid = eyeValid && hairValid && skinValid;
+
     const toggleDosage = (rsid: string) => {
         setSnpDosages((prev) => ({
             ...prev,
@@ -165,6 +189,19 @@ export default function HIrisPlexPanel() {
         { rsid: "rs12203592", gene: "IRF4 (intron 4)", effect: "Red Hair & Ephelides (Freckling)", ref: "T", alt: "C" },
         { rsid: "rs3827072", gene: "EDAR (Val370Ala)", effect: "Hair Fiber Thickness & Straight Morphology", ref: "T", alt: "C" },
     ];
+
+    // ── Validation badge helper ──────────────────────────────────────────────
+    const ValidationBadge = ({ valid }: { valid: boolean }) => valid ? (
+        <span className="flex items-center gap-1 text-[9px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 rounded-md">
+            <CheckCircle2 className="w-3 h-3" />
+            NORMALIZED
+        </span>
+    ) : (
+        <span className="flex items-center gap-1 text-[9px] font-bold text-rose-400 bg-rose-500/10 border border-rose-500/30 px-2 py-0.5 rounded-md">
+            <AlertTriangle className="w-3 h-3" />
+            DISTRIBUTION ERROR
+        </span>
+    );
 
     return (
         <div className="space-y-6 font-mono">
@@ -195,6 +232,33 @@ export default function HIrisPlexPanel() {
                 </div>
             </div>
 
+            {/* ── Biostatistical Integrity Banner ── */}
+            <div className={`flex flex-wrap items-center justify-between gap-3 px-4 py-2.5 rounded-xl border font-mono text-[10px] ${
+                allValid
+                    ? "bg-emerald-500/5 border-emerald-500/25 text-emerald-300"
+                    : "bg-rose-500/10 border-rose-500/30 text-rose-300"
+            }`}>
+                <div className="flex items-center gap-2">
+                    {allValid
+                        ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                        : <AlertTriangle className="w-3.5 h-3.5 text-rose-400 shrink-0" />}
+                    <span className="font-bold uppercase tracking-wider">
+                        Multinomial Distribution Integrity:
+                    </span>
+                    <span className={allValid ? "text-emerald-400" : "text-rose-400"}>
+                        {allValid ? "All 3 distributions validated (Σ = 100% ± 1%)" : "Distribution normalization error detected"}
+                    </span>
+                </div>
+                <div className="flex items-center gap-2">
+                    <span className="text-zinc-500 text-[9px]">Eye:</span>
+                    <ValidationBadge valid={eyeValid} />
+                    <span className="text-zinc-500 text-[9px]">Hair:</span>
+                    <ValidationBadge valid={hairValid} />
+                    <span className="text-zinc-500 text-[9px]">Skin:</span>
+                    <ValidationBadge valid={skinValid} />
+                </div>
+            </div>
+
             {/* ── 3 Inferred Phenotype Pillars (Dynamic Multinomial Probabilities) ── */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* 1. Eye Color */}
@@ -204,9 +268,12 @@ export default function HIrisPlexPanel() {
                             <Eye className="w-4 h-4 text-blue-400" />
                             <span className="text-xs font-bold text-white uppercase">Iris Colour (Eye)</span>
                         </div>
-                        <span className="text-[10px] font-bold text-blue-400">
-                            {eyeProbs.blue > 50 ? "Blue" : eyeProbs.brown > 50 ? "Brown" : "Intermediate / Hazel"}
-                        </span>
+                        <div className="flex items-center gap-2">
+                            <span className="text-[10px] font-bold text-blue-400">
+                                {eyeProbs.blue > 50 ? "Blue" : eyeProbs.brown > 50 ? "Brown" : "Intermediate / Hazel"}
+                            </span>
+                            <ValidationBadge valid={eyeValid} />
+                        </div>
                     </div>
 
                     <div className="space-y-2">
@@ -253,9 +320,12 @@ export default function HIrisPlexPanel() {
                             <Palette className="w-4 h-4 text-amber-400" />
                             <span className="text-xs font-bold text-white uppercase">Hair Pigmentation</span>
                         </div>
-                        <span className="text-[10px] font-bold text-amber-400">
-                            {hairProbs.blond > 40 ? "Blond" : hairProbs.brown > 40 ? "Brown" : hairProbs.black > 40 ? "Black" : "Red"}
-                        </span>
+                        <div className="flex items-center gap-2">
+                            <span className="text-[10px] font-bold text-amber-400">
+                                {hairProbs.blond > 40 ? "Blond" : hairProbs.brown > 40 ? "Brown" : hairProbs.black > 40 ? "Black" : "Red"}
+                            </span>
+                            <ValidationBadge valid={hairValid} />
+                        </div>
                     </div>
 
                     <div className="space-y-2">
@@ -312,9 +382,12 @@ export default function HIrisPlexPanel() {
                             <Sparkles className="w-4 h-4 text-emerald-400" />
                             <span className="text-xs font-bold text-white uppercase">Fitzpatrick Skin Tone</span>
                         </div>
-                        <span className={`text-[10px] font-bold ${skinTone.color}`}>
-                            {skinTone.conf}%
-                        </span>
+                        <div className="flex items-center gap-2">
+                            <span className={`text-[10px] font-bold ${skinTone.color}`}>
+                                {skinTone.conf}%
+                            </span>
+                            <ValidationBadge valid={skinValid} />
+                        </div>
                     </div>
 
                     <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/60 space-y-1.5">

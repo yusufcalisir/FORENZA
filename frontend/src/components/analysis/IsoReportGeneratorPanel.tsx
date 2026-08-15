@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { FileText, Printer, ShieldCheck, CheckCircle2, Lock, RefreshCw, Layers } from "lucide-react";
+import { useForensicCaseStore } from "@/store/forensicCaseStore";
+import { calculateCombinedLikelihoodRatio } from "@/lib/forensicStatusUtils";
 
 interface ReportData {
   certificate_title: string;
@@ -55,36 +57,59 @@ interface ReportData {
 }
 
 export default function IsoReportGeneratorPanel() {
+  const { activeCase } = useForensicCaseStore();
   const [loading, setLoading] = useState(false);
+
+  // ── Derive live case values from the Zustand store ──────────────────────────
+  const caseId     = activeCase.profile.profileId;
+  const sampleId   = `SAMPLE-${caseId}`;
+  const lociCount  = activeCase.profile.markerCount;
+  const kinshipLR  = activeCase.profile.kinshipLR;  // e.g. "2.51e18" or "1.84e17"
+
+  // Parse the stored kinshipLR string into a numeric log10LR
+  const log10LR = useMemo(() => {
+    const parsed = parseFloat(kinshipLR.replace(/×\s*10\^?/, "e").replace(/\s/g, ""));
+    if (isNaN(parsed) || parsed <= 0) return 0;
+    return Math.log10(parsed);
+  }, [kinshipLR]);
+
+  // Derive ENFSI verbal scale predicate from log10LR
+  const enfsiPredicate = useMemo(() => {
+    if (log10LR >= 18) return "ASTRONOMICALLY_STRONG_SUPPORT_FOR_INCLUSION";
+    if (log10LR >= 12) return "EXTREMELY_STRONG_SUPPORT_FOR_INCLUSION";
+    if (log10LR >= 6)  return "VERY_STRONG_SUPPORT_FOR_INCLUSION";
+    return "STRONG_SUPPORT_FOR_INCLUSION";
+  }, [log10LR]);
+
   const [report, setReport] = useState<ReportData | null>({
     certificate_title: "ISO 17025 OFFICIAL FORENSIC GENETICS EXAMINATION REPORT",
     case_summary: {
-      case_id: "CASE-2026-LIMS-01",
-      sample_id: "SAMPLE-DNA-101",
+      case_id: caseId,
+      sample_id: sampleId,
       investigator_name: "Dr. Sarah Connor",
       jurisdiction: "INTERPOL_MEMBER_STATE",
-      report_issue_date: "2026-08-12T13:55:00Z"
+      report_issue_date: new Date().toISOString()
     },
     evidence_chain: {
       evidence_type: "Capillary Electrophoresis / Blood Stain",
-      lims_accessioning_timestamp: "2026-08-12T13:40:00Z",
+      lims_accessioning_timestamp: new Date().toISOString(),
       chain_of_custody_status: "HMAC_INTACT_VERIFIED"
     },
     methods: {
-      amplification_kit: "Expanded 24-Locus Forensic Multiplex (20 FBI CODIS Core + ESS)",
+      amplification_kit: `Expanded ${lociCount}-Locus Forensic Multiplex (CODIS Core + ESS)`,
       biocomputational_engine: "FORENZA Probabilistic MCMC & Multi-Omic Synthesizer",
       sop_reference: "ISO-17025-SOP-DNA-v4.2"
     },
     empirical_results: {
-      total_loci_profiled: 24,
+      total_loci_profiled: lociCount,
       loci_list: ["D3S1358", "vWA", "FGA", "D8S1179", "D21S11", "D18S51"],
       qc_status: "QC_PASSED"
     },
     statistical_interpretation: {
-      likelihood_ratio_lr: 1.0e26,
-      log10_likelihood_ratio: 26.0,
-      random_match_probability_rmp: "1 in 1.0e26.0",
-      enfsi_verbal_scale_predicate: "EXTREMELY_STRONG_SUPPORT_FOR_INCLUSION",
+      likelihood_ratio_lr: parseFloat(kinshipLR),
+      log10_likelihood_ratio: parseFloat(log10LR.toFixed(2)),
+      random_match_probability_rmp: `1 in ${kinshipLR}`,
+      enfsi_verbal_scale_predicate: enfsiPredicate,
       mathematical_immutability_flag: "IMMUTABLE_VERIFIED"
     },
     limitations_and_uncertainty: {
@@ -114,11 +139,11 @@ export default function IsoReportGeneratorPanel() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          case_id: "CASE-2026-LIMS-01",
-          sample_id: "SAMPLE-DNA-101",
-          likelihood_ratio: 1.0e26,
-          log10_lr: 26.0,
-          enfsi_verbal_predicate: "EXTREMELY_STRONG_SUPPORT_FOR_INCLUSION",
+          case_id: caseId,
+          sample_id: sampleId,
+          likelihood_ratio: parseFloat(kinshipLR),
+          log10_lr: parseFloat(log10LR.toFixed(2)),
+          enfsi_verbal_predicate: enfsiPredicate,
           primary_analyst_id: "ANALYST-01 (Dr. Sarah Connor)",
           technical_reviewer_id: "PEER-REVIEWER-02 (Dr. James Vance)",
           human_decision: "APPROVE_AI_PREDICATE"

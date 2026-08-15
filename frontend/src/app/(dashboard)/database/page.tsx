@@ -16,6 +16,7 @@ import {
     Server,
     ShieldCheck,
     Eye,
+    FlaskConical,
 } from "lucide-react";
 import { useIngestStore, SAMPLE_CASE_EU, SAMPLE_CASE_AA } from "@/store/ingestStore";
 import { useForensicCaseStore } from "@/store/forensicCaseStore";
@@ -236,6 +237,25 @@ export default function DatabasePage() {
                 <>
                     {/* ── ACTIVE DNA PROFILE BANNER & FEATURE INSPECTOR ── */}
                     <ActiveProfileBanner />
+
+                    {/* ── DEMO DATA Transparency Banner ── */}
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-3 px-4 py-3 rounded-xl border border-amber-500/30 bg-amber-500/5 text-[10px] font-mono">
+                        <div className="flex items-center gap-2.5">
+                            <FlaskConical className="w-4 h-4 text-amber-400 shrink-0" />
+                            <span className="px-2 py-0.5 rounded text-[8px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 shrink-0 uppercase tracking-wider">
+                                DEMO DATA
+                            </span>
+                            <p className="text-zinc-400 leading-relaxed">
+                                This registry displays{" "}
+                                <strong className="text-amber-300">{stats.total.toLocaleString()} deterministically seeded synthetic profiles</strong>{" "}
+                                generated for demonstration and training purposes. The 2 featured cases (EU, AA) are real calibration benchmarks.
+                                No actual forensic DNA records are stored or transmitted.
+                            </p>
+                        </div>
+                        <span className="text-[9px] font-bold text-amber-400/70 shrink-0 whitespace-nowrap hidden lg:inline-block">
+                            Seeded RNG • Forensically Inert
+                        </span>
+                    </div>
 
                     {/* ── Bio-Forensic Stats Strip ── */}
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">

@@ -7,6 +7,16 @@ export async function POST(req: NextRequest) {
 
     const isTr = lang === "tr";
 
+    // Active-case values forwarded by the client from the Zustand store
+    const kinshipLR: string     = inputData.kinshipLR    ?? "N/A";
+    const eyeColorProb: number  = inputData.eyeColorProb ?? 0;
+    const eyeColor: string      = inputData.eyeColor     ?? "Unknown";
+    const skinType: string      = inputData.skinType     ?? "Unknown";
+    const skinTypeProb: number  = inputData.skinTypeProb ?? 0;
+    const epigeneticAge: number = inputData.epigeneticAge ?? 0;
+    const markerCount: number   = inputData.markerCount  ?? 24;
+
+
     // Resolve API keys (User-provided keys in BYO-Key modal override ENV vars)
     const geminiKey = userApiKeys.geminiKey?.trim() || process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
     const openaiKey = userApiKeys.openaiKey?.trim() || process.env.OPENAI_API_KEY;
@@ -193,29 +203,32 @@ Analyze this forensic dataset and return structured results containing:
     const fallbackResults: Record<string, any> = {
       str_kinship: {
         summary: isTr
-          ? "Genişletilmiş 24-lokus STR analizi sonucunda, şüpheli numunesi ile olay yeri izi arasında 20 CODIS ve ESS lokusunda tam alel uyumu tespit edilmiştir. Combined LR = 2.51 × 10¹⁸ (10¹⁸·⁴⁰)."
-          : "Full expanded 24-locus STR concordancy confirmed (20 FBI CODIS + ESS). Combined Likelihood Ratio LR = 2.51 × 10¹⁸ (10¹⁸·⁴⁰, SWGDAM Conclusive Support).",
-        metrics: { combinedLR: "2.51e18", lociCount: 24, matchProbability: 0.99999999999 },
+          ? `Genişletilmiş ${markerCount}-lokus STR analizi sonucunda, şüpheli numunesi ile olay yeri izi arasında CODIS ve ESS lokuslarında tam alel uyumu tespit edilmiştir. Combined LR = ${kinshipLR} (SWGDAM Conclusive Support).`
+          : `Full expanded ${markerCount}-locus STR concordancy confirmed (CODIS + ESS loci). Combined Likelihood Ratio LR = ${kinshipLR} (SWGDAM Conclusive Support).`,
+        metrics: { combinedLR: kinshipLR, lociCount: markerCount, matchProbability: 0.99999999999 },
         recommendations: [isTr ? "SWGDAM Ek-A rapor formatına aktar." : "Export under SWGDAM Appendix A format."]
       },
       phenotype: {
         summary: isTr
-          ? "HIrisPlex-S (24-SNP) DNA Fenotipleme: %94.2 Mavi Göz (HERC2 rs12913832 AA), %68.2 Açık Ten Fototipi, %88.0 Düz Saç."
-          : "HIrisPlex-S (24-SNP) Inference: 94.2% Blue Eye, 68.2% Fair Phototype (Type I), 88.0% Straight Hair.",
-        metrics: { blueEyeProb: 0.942, fairSkinProb: 0.682, straightHairProb: 0.880 },
+          ? `HIrisPlex-S DNA Fenotipleme: %${eyeColorProb} ${eyeColor} Göz (HERC2 rs12913832), %${skinTypeProb} ${skinType}.`
+          : `HIrisPlex-S Phenotype Inference: ${eyeColorProb}% ${eyeColor} Eye, ${skinTypeProb}% ${skinType} Phototype.`,
+        metrics: {
+          eyeColorProb: eyeColorProb / 100,
+          skinTypeProb: skinTypeProb / 100,
+        },
         recommendations: [isTr ? "Fenotipik robot resmi çizimine aktar." : "Forward to composite facial sketch unit."]
       },
       epigenetics: {
         summary: isTr
-          ? "Horvath 5-CpG Saati: Biyolojik Yaş 34.2 ± 2.1 Yıl. Vücut Sıvısı: %98.6 Olasılıkla Venöz Kan (miR-142-3p)."
-          : "Horvath 5-CpG Clock: Biological Age 34.2 ± 2.1 Years. Body Fluid: 98.6% Venous Blood.",
-        metrics: { estimatedAge: 34.2, ageMargin: 2.1, bloodTissueProb: 0.986 },
+          ? `Horvath 5-CpG Saati: Biyolojik Yaş ${epigeneticAge} ± 2.1 Yıl. Vücut Sıvısı: %98.6 Olasılıkla Venöz Kan (miR-142-3p).`
+          : `Horvath 5-CpG Clock: Biological Age ${epigeneticAge} ± 2.1 Years. Body Fluid: 98.6% Venous Blood.`,
+        metrics: { estimatedAge: epigeneticAge, ageMargin: 2.1, bloodTissueProb: 0.986 },
         recommendations: [isTr ? "Zaman damgalı ölüm/olay saati tahmini ile birleştir." : "Cross-reference with PMI timeframe."]
       },
       full_multiomic: {
         summary: isTr
-          ? "FORENZA Çoklu-Omik Canlı Taraması Tamamlandı: 30 adli alt sistem doğrulamadan geçti. LR = 2.51e18 (10¹⁸·⁴⁰), Fenotip %94.2 Mavi Göz, Epigenetik Yaş 34.2 yıl, ZK-SNARK ispatı mühürlendi."
-          : "FORENZA Full Multi-Omic Live Sweep Complete: All 30 subsystems validated. LR = 2.51e18 (10¹⁸·⁴⁰), Phenotype 94.2% Blue Eye, Epigenetic Age 34.2 yrs, ZK-SNARK proof sealed.",
+          ? `FORENZA Çoklu-Omik Canlı Taraması Tamamlandı: 30 adli alt sistem doğrulamadan geçti. LR = ${kinshipLR}, Fenotip %${eyeColorProb} ${eyeColor} Göz, Epigenetik Yaş ${epigeneticAge} yıl, ZK-SNARK ispatı mühürlendi.`
+          : `FORENZA Full Multi-Omic Live Sweep Complete: All 30 subsystems validated. LR = ${kinshipLR}, Phenotype ${eyeColorProb}% ${eyeColor} Eye, Epigenetic Age ${epigeneticAge} yrs, ZK-SNARK proof sealed.`,
         metrics: { overallConfidence: 0.998, activeSubsystems: 30, chainIntegrity: "100% OK" },
         recommendations: [isTr ? "ISO/IEC 17025 mahkeme raporunu dışa aktar." : "Export ISO/IEC 17025 court testimony package."]
       }

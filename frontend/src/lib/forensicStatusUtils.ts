@@ -230,3 +230,67 @@ export const NODE_HEALTH_CONFIG: Record<
         dot: "bg-zinc-500",
     },
 };
+
+// ─── 5. Biostatistical & Multinomial Normalization Utilities ──────────────────
+
+/**
+ * Normalizes a record of multinomial class scores/probabilities so they sum strictly to 100%.
+ * Guaranteed: sum(values) === 100.0 (rounded to 1 decimal place or exact float).
+ */
+export function normalizeMultinomialProbabilities(
+    probabilities: Record<string, number>,
+    asPercentage: boolean = true
+): Record<string, number> {
+    const keys = Object.keys(probabilities);
+    const sum = Object.values(probabilities).reduce((acc, val) => acc + val, 0);
+    if (sum === 0) return probabilities;
+
+    const scale = asPercentage ? 100 : 1;
+    const normalized: Record<string, number> = {};
+    for (const key of keys) {
+        normalized[key] = (probabilities[key] / sum) * scale;
+    }
+    return normalized;
+}
+
+/**
+ * Validates whether a set of probabilities forms a valid multinomial distribution summing to ~1.0 (or ~100%).
+ */
+export function validateProbabilityDistribution(
+    probabilities: Record<string, number>,
+    isPercentage: boolean = true,
+    tolerance: number = 0.01
+): boolean {
+    const sum = Object.values(probabilities).reduce((acc, val) => acc + val, 0);
+    const expected = isPercentage ? 100 : 1.0;
+    return Math.abs(sum - expected) <= tolerance;
+}
+
+/**
+ * Computes the exact Combined Likelihood Ratio (CLR) from an array of independent per-locus LRs
+ * using log-space summation to avoid floating point overflow:
+ * CLR = 10^(sum(log10(LR_l))) = product(LR_l)
+ */
+export function calculateCombinedLikelihoodRatio(perLocusLRs: number[]): {
+    combinedLR: number;
+    log10LR: number;
+    formattedLR: string;
+} {
+    if (perLocusLRs.length === 0) {
+        return { combinedLR: 1, log10LR: 0, formattedLR: "1.00" };
+    }
+
+    const log10LR = perLocusLRs.reduce((acc, lr) => acc + (lr > 0 ? Math.log10(lr) : 0), 0);
+    const combinedLR = Math.pow(10, log10LR);
+
+    const formattedLR = combinedLR >= 1e6 || combinedLR < 1e-3
+        ? combinedLR.toExponential(2)
+        : combinedLR.toFixed(2);
+
+    return {
+        combinedLR,
+        log10LR,
+        formattedLR,
+    };
+}
+

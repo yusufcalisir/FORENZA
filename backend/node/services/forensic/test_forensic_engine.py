@@ -58,6 +58,12 @@ def test_lr_engine_inclusion():
     assert result.metadata["match_status"] == "INCLUSION"
     assert result.confidence_interval[0] < result.value < result.confidence_interval[1]
 
+    # Invariant: Combined LR must mathematically equal product of locus LRs (in log-space)
+    import math
+    sum_log_locus = sum(math.log10(score) for score in result.locus_scores.values())
+    assert abs(math.log10(result.value) - sum_log_locus) < 1e-6
+    assert abs(result.value - (10.0 ** sum_log_locus)) < 1e-4
+
 
 def test_lr_engine_exclusion():
     evidence_data = {"TH01": (6.0, 9.3), "FGA": (20.0, 22.0)}

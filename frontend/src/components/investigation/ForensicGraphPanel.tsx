@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import { Network, GitBranch, ArrowRight, ShieldCheck, Database, Layers, Search, Filter } from "lucide-react";
+import { useForensicCaseStore } from "@/store/forensicCaseStore";
 
 export default function ForensicGraphPanel() {
+  const { activeCase } = useForensicCaseStore();
   const [selectedNode, setSelectedNode] = useState<string>("EVID-STAIN-101");
   const [edgeViewMode, setEdgeViewMode] = useState<"connected" | "all">("connected");
 
@@ -17,7 +19,7 @@ export default function ForensicGraphPanel() {
 
   const edges = [
     { from: "CASE-2026-001", to: "EVID-STAIN-101", relation: "ASSOCIATED_EVIDENCE", confidence: "100%" },
-    { from: "EVID-STAIN-101", to: "PERSON-SUSPECT-A", relation: "DNA_CONTRIBUTOR (LR=2.51e18)", confidence: "99.99%" },
+    { from: "EVID-STAIN-101", to: "PERSON-SUSPECT-A", relation: `DNA_CONTRIBUTOR (LR=${activeCase.profile.kinshipLR})`, confidence: "99.99%" },
     { from: "EVID-STAIN-101", to: "SCENE-LOCATION-9", relation: "COLLECTED_FROM", confidence: "100%" },
     { from: "PERSON-VICTIM-B", to: "SCENE-LOCATION-9", relation: "FOUND_AT_LOCATION", confidence: "100%" },
   ];

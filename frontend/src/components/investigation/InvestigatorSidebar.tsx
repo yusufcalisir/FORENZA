@@ -4,6 +4,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { Brain, Bot, Send, User, Sparkles, ShieldCheck, Dna, Eye, Scale, Cpu, AlertCircle } from "lucide-react";
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 import { getStoredApiKeys } from "@/services/apiClient";
+import { useForensicCaseStore } from "@/store/forensicCaseStore";
 
 interface ChatMessage {
   id: string;
@@ -14,25 +15,21 @@ interface ChatMessage {
   provider?: string;
 }
 
-const INITIAL_STEPS_TR = [
-  { step: 1, content: "Genişletilmiş 24-STR lokusları taranıyor (D3S1358, vWA, FGA, SE33...)", duration: "120ms" },
-  { step: 2, content: "Bayesçi Likelihood Ratio (LR = 2.51e18, 10¹⁸·⁴⁰) hesaplandı.", duration: "450ms" },
-  { step: 3, content: "HIrisPlex-S: %94.2 Mavi Göz, %68.2 Açık Ten (Tip I) fototipi.", duration: "300ms" },
-  { step: 4, content: "Circom Groth16 ZK-SNARK ispatı doğrulandı (0 Veri Sızıntısı).", duration: "180ms" }
-];
-
-const INITIAL_STEPS_EN = [
-  { step: 1, content: "Scanning expanded 24-STR multiplex loci (D3S1358, vWA, FGA, SE33...)", duration: "120ms" },
-  { step: 2, content: "Bayesian Likelihood Ratio (LR = 2.51e18, 10¹⁸·⁴⁰) computed.", duration: "450ms" },
-  { step: 3, content: "HIrisPlex-S: 94.2% Blue Eye, 68.2% Fair Phototype (Type I).", duration: "300ms" },
-  { step: 4, content: "Circom Groth16 ZK-SNARK proof verified (0 Data Leakage).", duration: "180ms" }
-];
+// INITIAL_STEPS are now built dynamically inside the component from the active case store.
 
 export default function InvestigatorSidebar() {
   // `mounted` from context is false on server, true after client hydration.
   // This prevents React error #418 (SSR/CSR text content mismatch).
   const { lang, mounted } = useSaasLanguage();
   const isTr = mounted && lang === "tr";
+  const { activeCase } = useForensicCaseStore();
+
+  const caseKinshipLR = activeCase.profile.kinshipLR;
+  const caseEyeColorProb = activeCase.profile.phenotype.eyeColorProb;
+  const caseEyeColor = activeCase.profile.phenotype.eyeColor;
+  const caseSkinType = activeCase.profile.phenotype.skinType;
+  const caseSkinProb = activeCase.profile.phenotype.skinTypeProb;
+  const caseMarkerCount = activeCase.profile.markerCount;
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState("");
@@ -86,7 +83,16 @@ export default function InvestigatorSidebar() {
           message: query,
           history: updatedHistory.map(m => ({ sender: m.sender, text: m.text })),
           lang: isTr ? "tr" : "en",
-          userApiKeys: getStoredApiKeys()
+          userApiKeys: getStoredApiKeys(),
+          caseContext: {
+            kinshipLR: caseKinshipLR,
+            eyeColorProb: caseEyeColorProb,
+            eyeColor: caseEyeColor,
+            skinType: caseSkinType,
+            skinTypeProb: caseSkinProb,
+            epigeneticAge: activeCase.profile.epigeneticAge,
+            markerCount: caseMarkerCount,
+          }
         })
       });
 
@@ -133,7 +139,19 @@ export default function InvestigatorSidebar() {
     }
   };
 
-  const initialSteps = isTr ? INITIAL_STEPS_TR : INITIAL_STEPS_EN;
+  const initialSteps = isTr
+    ? [
+        { step: 1, content: `Genişletilmiş ${caseMarkerCount}-STR lokusları taranıyor (D3S1358, vWA, FGA, SE33...)`, duration: "120ms" },
+        { step: 2, content: `Bayesçi Likelihood Ratio (LR = ${caseKinshipLR}) hesaplandı.`, duration: "450ms" },
+        { step: 3, content: `HIrisPlex-S: %${caseEyeColorProb} ${caseEyeColor} Göz, ${caseSkinProb}% ${caseSkinType} fototipi.`, duration: "300ms" },
+        { step: 4, content: "Circom Groth16 ZK-SNARK ispatı doğrulandı (0 Veri Sızıntısı).", duration: "180ms" },
+      ]
+    : [
+        { step: 1, content: `Scanning expanded ${caseMarkerCount}-STR multiplex loci (D3S1358, vWA, FGA, SE33...)`, duration: "120ms" },
+        { step: 2, content: `Bayesian Likelihood Ratio (LR = ${caseKinshipLR}) computed.`, duration: "450ms" },
+        { step: 3, content: `HIrisPlex-S: ${caseEyeColorProb}% ${caseEyeColor} Eye, ${caseSkinProb}% ${caseSkinType} Phototype.`, duration: "300ms" },
+        { step: 4, content: "Circom Groth16 ZK-SNARK proof verified (0 Data Leakage).", duration: "180ms" },
+      ];
 
   const quickPrompts = isTr
     ? [

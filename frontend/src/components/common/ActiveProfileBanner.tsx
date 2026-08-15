@@ -1,5 +1,6 @@
 "use client";
 
+import { useForensicCaseStore } from "@/store/forensicCaseStore";
 import { useIngestStore } from "@/store/ingestStore";
 import { Dna, Eye, Globe, MapPin, Sliders, ArrowRight } from "lucide-react";
 import dynamic from "next/dynamic";
@@ -14,8 +15,10 @@ const GeoForensicPanel = dynamic(() => import("@/components/analysis/GeoForensic
 });
 
 export default function ActiveProfileBanner() {
-    const { activeProfile, setInspectorOpen } = useIngestStore();
+    const { activeCase } = useForensicCaseStore();
+    const { setInspectorOpen } = useIngestStore();
 
+    const activeProfile = activeCase?.profile;
     if (!activeProfile) return null;
 
     const geoResults = [

@@ -21,6 +21,7 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { useIngestStore, ActiveProfileData } from "@/store/ingestStore";
+import { useForensicCaseStore } from "@/store/forensicCaseStore";
 import dynamic from "next/dynamic";
 
 const GeoForensicPanel = dynamic(() => import("@/components/analysis/GeoForensicPanel"), {
@@ -189,6 +190,18 @@ export default function DnaProfileInspectorModal() {
     };
 
     setActiveProfile(updatedProfile);
+    useForensicCaseStore.getState().updateActiveProfile({
+      profileId: updatedProfile.profileId,
+      nodeId: updatedProfile.nodeId,
+      markerCount: updatedProfile.markerCount,
+      snpCount: updatedProfile.snpCount,
+      sampleType: updatedProfile.sampleType,
+      strMarkers: updatedProfile.strMarkers,
+      snpMarkers: updatedProfile.snpMarkers,
+      phenotype: updatedProfile.phenotype,
+      ancestry: updatedProfile.ancestry,
+      geoLocation: updatedProfile.geoLocation,
+    });
     setRecalculatedBanner(true);
     setTab("inferred");
   };

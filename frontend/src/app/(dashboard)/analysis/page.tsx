@@ -45,6 +45,7 @@ import SyntheticCaseGeneratorPanel from "@/components/analysis/SyntheticCaseGene
 import LimsWorkflowPanel from "@/components/analysis/LimsWorkflowPanel";
 import EvidenceManagementPanel from "@/components/analysis/EvidenceManagementPanel";
 import PedigreeTree from "@/components/analysis/PedigreeTree";
+import HIrisPlexPanel from "@/components/analysis/HIrisPlexPanel";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -432,7 +433,7 @@ function renderPanel(tabId: TabId) {
         case "dvi": return <DviPanel />;
         case "humanid": return <HumanIdPanel />;
         // Pillar 3: Phenotyping & Ancestry
-        case "hirisplex": return <MultiLayerGenomicsPanel />;
+        case "hirisplex": return <HIrisPlexPanel />;
         case "ancestry": return <AncestryDataPanel />;
         case "craniofacial": return <SyntheticCaseGeneratorPanel />;
         case "hair": return <MicroscopyPanel />;

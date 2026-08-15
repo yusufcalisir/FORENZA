@@ -8,7 +8,7 @@ import {
     Database, Search,
 } from "lucide-react";
 
-interface LabNode {
+export interface LabNode {
     id: string;
     name: string;
     type: string;
@@ -20,7 +20,7 @@ interface LabNode {
     iso: boolean;
 }
 
-const LAB_NODES: LabNode[] = [
+export const LAB_NODES: LabNode[] = [
     { id: "node-01", name: "FORENSIC-LAB-ALPHA", type: "Central Reference Laboratory", status: "ONLINE", pingMs: 12, profilesCount: 14850, location: "Sector 1 Reference Hub", lastBlock: "0x89f2…c01a", iso: true },
     { id: "node-02", name: "DISTRICT-DNA-LAB-01", type: "Regional Pathology Node", status: "ONLINE", pingMs: 18, profilesCount: 8920, location: "District Medical Registry", lastBlock: "0x44a1…e9b2", iso: true },
     { id: "node-03", name: "CENTRAL-GENOMICS-NODE", type: "High-Throughput Sequencing", status: "ONLINE", pingMs: 9, profilesCount: 32100, location: "Genomics Intelligence Unit", lastBlock: "0xf17d…771c", iso: true },

@@ -20,7 +20,7 @@ import {
 import { useIngestStore, SAMPLE_CASE_EU, SAMPLE_CASE_AA } from "@/store/ingestStore";
 import { useForensicCaseStore } from "@/store/forensicCaseStore";
 import ActiveProfileBanner from "@/components/common/ActiveProfileBanner";
-import FederatedNetworkPanel from "@/components/analysis/FederatedNetworkPanel";
+import FederatedNetworkPanel, { LAB_NODES } from "@/components/analysis/FederatedNetworkPanel";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -34,13 +34,9 @@ interface ProfileRecord {
     sampleType?: "EU" | "AA" | "CUSTOM";
 }
 
-// ─── Mock Data Generator ─────────────────────────────────────────────────────
+// ─── Shared Federated Node Registry (Single Source of Truth) ──────────────────
 
-const NODES = [
-    "FORENSIC-LAB-ALPHA", "DISTRICT-DNA-LAB-01", "CENTRAL-GENOMICS-NODE",
-    "MOBILE-EVIDENCE-UNIT-04", "CRIME-SCENE-UNIT-07", "NATIONAL-REFERENCE-LAB",
-    "REGIONAL-GENOMICS-HUB", "PATHOLOGY-UNIT-03", "TRACE-EVIDENCE-LAB",
-];
+const NODES = LAB_NODES.map((n) => n.name);
 
 function seededRandom(seed: number): () => number {
     let s = seed;
@@ -232,7 +228,7 @@ export default function DatabasePage() {
                     <Network className="w-3.5 h-3.5" />
                     <span>Federated Lab Network</span>
                     <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">
-                        7 Nodes
+                        {stats.uniqueNodes} Nodes
                     </span>
                 </button>
             </div>

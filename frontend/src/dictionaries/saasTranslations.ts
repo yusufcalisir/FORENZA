@@ -438,7 +438,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
             { id: "27", name: "ISO 17025 QA/QC Inspection Matrix", badge: "ISO-17025", metrics: "7-Point QA Check • Stutter Thresholds", desc: "Enforces 7-point QA/QC inspection rules including heterozygote peak height ratio (Hb), analytical thresholds, and controls." },
             { id: "28", name: "Zero-Knowledge Privacy Auditor", badge: "ZKP-CIRCOM", metrics: "Groth16 Proofs • Polygon Ledger", desc: "Generates Circom zero-knowledge proofs confirming DNA profile match criteria without revealing raw genomic data." },
             { id: "29", name: "Expert Witness Court Mode Framework", badge: "COURT-MODE", metrics: "7-Point Framework • Prosecutor Shield", desc: "Compiles complete judicial testimony packages, verbal LR translation, and Prosecutor's Fallacy defense shields." },
-            { id: "30", name: "Benchmark & Ground Truth Validator", badge: "VALIDATOR", metrics: "Synthetic Case Gen • ROC-AUC • 215 Tests", desc: "Runs automated validation benchmarks against synthetic ground-truth cases to verify pipeline accuracy." }
+            { id: "30", name: "Benchmark & Ground Truth Validator", badge: "VALIDATOR", metrics: "Synthetic Case Gen • ROC-AUC • 241 Tests", desc: "Runs automated validation benchmarks against synthetic ground-truth cases to verify pipeline accuracy across 41 test modules." }
           ]
         }
       ],

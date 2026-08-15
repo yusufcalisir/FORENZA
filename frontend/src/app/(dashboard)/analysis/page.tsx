@@ -41,7 +41,7 @@ import GeoForensicPanel from "@/components/analysis/GeoForensicPanel";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-type CategoryId = "dna" | "probabilistic" | "phenotype" | "physical" | "lims" | "ai";
+type CategoryId = "genotyping" | "lineage" | "phenotyping" | "epigenetics" | "pathology" | "lims_governance";
 type TabId = string;
 
 interface Category {
@@ -59,88 +59,85 @@ interface Tab {
     badge?: string;
 }
 
-// ─── Navigation Structure ──────────────────────────────────────────────────
+// ─── Navigation Structure (Derived from Canonical 6 Pillars & 30 Subsystems) ──
 
 const CATEGORIES: Category[] = [
     {
-        id: "dna",
-        label: "DNA & Kinship",
+        id: "genotyping",
+        label: "Genotyping & Population",
+        icon: Cpu,
+        color: "cyan",
+        tabs: [
+            { id: "str", label: "01. Autosomal STR Engine", icon: Binary, badge: "STR-24" },
+            { id: "mcmc", label: "02. MCMC Mixture Deconv.", icon: Layers, badge: "MCMC-MH" },
+            { id: "population", label: "03. Dirichlet Fst Population", icon: BarChart3, badge: "NRC-II" },
+            { id: "touch", label: "04. Touch DNA & LTDNA", icon: Fingerprint, badge: "LTDNA" },
+            { id: "validation", label: "05. Tippett Calibration Lab", icon: CheckCircle, badge: "TIPPETT" },
+        ],
+    },
+    {
+        id: "lineage",
+        label: "Lineage Forensics & Kinship",
         icon: Dna,
         color: "emerald",
         tabs: [
-            { id: "str", label: "STR Locus Analysis", icon: Binary, badge: "CODIS 20" },
-            { id: "kinship", label: "Kinship & Relatedness", icon: GitBranch },
-            { id: "ancestry", label: "Ancestry Inference", icon: TrendingUp },
-            { id: "lineage", label: "Lineage DNA (Y/mt)", icon: Dna },
-            { id: "dvi", label: "DVI / Mass Disaster", icon: Database },
-            { id: "humanid", label: "Human ID Panel", icon: Fingerprint },
+            { id: "lineage_y", label: "06. Y-STR Haplotypes", icon: Dna, badge: "Y-STR" },
+            { id: "lineage_x", label: "07. X-STR Linkage & KI", icon: GitBranch, badge: "X-STR" },
+            { id: "lineage_mt", label: "08. mtDNA rCRS Alignment", icon: TrendingUp, badge: "mtDNA" },
+            { id: "dvi", label: "09. DVI Mass Disaster", icon: Database, badge: "DVI-PED" },
+            { id: "humanid", label: "10. Ancient DNA & SNP Mapper", icon: Fingerprint, badge: "aDNA-SNP" },
         ],
     },
     {
-        id: "probabilistic",
-        label: "Probabilistic",
-        icon: BarChart3,
-        color: "cyan",
-        tabs: [
-            { id: "mcmc", label: "MCMC Genotyping", icon: Cpu, badge: "50k iter" },
-            { id: "mixture", label: "Mixture Deconvolution", icon: Layers },
-            { id: "bayesian", label: "Bayesian Framework", icon: BarChart3 },
-            { id: "validation", label: "Validation Lab", icon: CheckCircle },
-        ],
-    },
-    {
-        id: "phenotype",
-        label: "Phenotype",
-        icon: Brain,
+        id: "phenotyping",
+        label: "Phenotyping & Ancestry",
+        icon: Eye,
         color: "purple",
         tabs: [
-            { id: "hirisplex", label: "HIrisPlex-S", icon: Eye, badge: "41-SNP" },
-            { id: "age", label: "Epigenetic Age Clock", icon: Clock },
-            { id: "anthropology", label: "Anthropology", icon: Bone },
-            { id: "entomology", label: "Forensic Entomology", icon: Bug },
-            { id: "botany", label: "Forensic Botany", icon: Leaf },
-            { id: "microbiology", label: "Microbiology", icon: FlaskConical },
+            { id: "hirisplex", label: "11. HIrisPlex-S Pigmentation", icon: Eye, badge: "HIRISPLEX" },
+            { id: "ancestry", label: "12. Biogeographic Ancestry (BGA)", icon: TrendingUp, badge: "BGA-55" },
+            { id: "craniofacial", label: "13. Facial & Craniofacial 3D", icon: Brain, badge: "CRANIO-3D" },
+            { id: "hair", label: "14. Hair Texture & Balding", icon: Sparkles, badge: "HAIR-TEX" },
+            { id: "freckling", label: "15. Freckling & UV Sensitivity", icon: Eye, badge: "MC1R-UV" },
         ],
     },
     {
-        id: "physical",
-        label: "Physical Evidence",
+        id: "epigenetics",
+        label: "Epigenetics & Aging",
+        icon: Clock,
+        color: "rose",
+        tabs: [
+            { id: "age", label: "16. Horvath Epigenetic Clock", icon: Clock, badge: "HORVATH" },
+            { id: "bodyfluid", label: "17. Body Fluid tDMR Origin", icon: Syringe, badge: "tDMR-FLUID" },
+            { id: "lifestyle", label: "18. Lifestyle Epigenetics AHRR", icon: Zap, badge: "AHRR" },
+            { id: "telomere", label: "19. Telomere Chronometer", icon: Activity, badge: "TELO-CHRONO" },
+            { id: "mirna", label: "20. Forensic MicroRNA Profiling", icon: FlaskConical, badge: "miRNA" },
+        ],
+    },
+    {
+        id: "pathology",
+        label: "Pathology & Trace Forensics",
         icon: Microscope,
         color: "orange",
         tabs: [
-            { id: "touch", label: "Touch DNA / LtDNA", icon: Fingerprint, badge: "MCMC" },
-            { id: "serology", label: "Serology & Blood Group", icon: Droplets },
-            { id: "bodyfluid", label: "Body Fluid ID", icon: Syringe },
-            { id: "toxicology", label: "Forensic Toxicology", icon: Pill },
-            { id: "microscopy", label: "Microscopy & Hair", icon: Microscope },
-            { id: "bpa", label: "BPA / Bloodstain Pattern", icon: Eye },
+            { id: "bpa", label: "21. Bloodstain Pattern (BPA 3D)", icon: Eye, badge: "BPA-3D" },
+            { id: "microscopy", label: "22. Digital Microscopy & Fibers", icon: Microscope, badge: "MICROSCOPY" },
+            { id: "toxicology", label: "23. Post-Mortem GC-MS Tox", icon: Pill, badge: "TOX-GCMS" },
+            { id: "botany", label: "24. Diatom & Palynology Ecology", icon: Leaf, badge: "PALYNO-ECO" },
+            { id: "serology", label: "25. ABO / Rh Blood Serology", icon: Droplets, badge: "ABO-SERO" },
         ],
     },
     {
-        id: "lims",
-        label: "LIMS & QA/QC",
-        icon: FileText,
+        id: "lims_governance",
+        label: "ISO 17025, LIMS & ZKP",
+        icon: ShieldCheck,
         color: "blue",
         tabs: [
-            { id: "lims", label: "LIMS Workflow", icon: PackageCheck },
-            { id: "instrument", label: "Instrument Gateway", icon: Activity },
-            { id: "qc", label: "QA / QC Monitor", icon: ShieldCheck },
-            { id: "review", label: "Human Review", icon: Scale },
-            { id: "isoreport", label: "ISO Report Generator", icon: FileText, badge: "17025" },
-            { id: "court", label: "Expert Witness", icon: Scale },
-        ],
-    },
-    {
-        id: "ai",
-        label: "AI & Advanced",
-        icon: Sparkles,
-        color: "rose",
-        tabs: [
-            { id: "epigenetics", label: "Forensic Epigenomics", icon: Zap, badge: "353 CpG" },
-            { id: "genomics", label: "Multi-Layer Genomics", icon: Layers },
-            { id: "synthetic", label: "Synthetic Case Generator", icon: Sparkles },
-            { id: "evidenceos", label: "Evidence OS DAG", icon: Cpu },
-            { id: "geo", label: "Geo-Forensic Intel", icon: TrendingUp },
+            { id: "lims", label: "26. LIMS Accessioning & Chain", icon: PackageCheck, badge: "LIMS-HMAC" },
+            { id: "qc", label: "27. ISO 17025 QA/QC Matrix", icon: ShieldCheck, badge: "ISO-17025" },
+            { id: "zkp", label: "28. Circom Groth16 ZKP Auditor", icon: Lock, badge: "ZKP-CIRCOM" },
+            { id: "court", label: "29. Expert Witness Court Mode", icon: Scale, badge: "COURT-MODE" },
+            { id: "evidenceos", label: "30. Validator & Evidence OS DAG", icon: Layers, badge: "VALIDATOR" },
         ],
     },
 ];
@@ -560,53 +557,50 @@ function PanelSyntheticCase() {
 
 function renderPanel(tabId: TabId) {
     switch (tabId) {
-        // DNA & Kinship
+        // Pillar 1: Genotyping & Population
         case "str": return <PanelSTR />;
-        case "kinship": return <PanelKinship />;
-        case "ancestry": return <AncestryDataPanel />;
-        case "lineage": return <LineageDnaPanel />;
+        case "mcmc": return <PanelMCMC />;
+        case "population": return <BayesianShiftChart />;
+        case "touch": return <PanelTouchDNA />;
+        case "validation": return <ValidationLabPanel />;
+        // Pillar 2: Lineage Forensics & Kinship
+        case "lineage_y": return <LineageDnaPanel />;
+        case "lineage_x": return <PanelKinship />;
+        case "lineage_mt": return <LineageDnaPanel />;
         case "dvi": return <DviPanel />;
         case "humanid": return <HumanIdPanel />;
-        // Probabilistic
-        case "mcmc": return <PanelMCMC />;
-        case "mixture": return <ProbabilisticGenotypingPanel />;
-        case "bayesian": return <BayesianShiftChart />;
-        case "validation": return <ValidationLabPanel />;
-        // Phenotype
+        // Pillar 3: Phenotyping & Ancestry
         case "hirisplex": return <PanelHIrisPlex />;
+        case "ancestry": return <AncestryDataPanel />;
+        case "craniofacial": return <PanelSyntheticCase />;
+        case "hair": return <MicroscopyPanel />;
+        case "freckling": return <ComprehensiveEpigenomicsPanel />;
+        // Pillar 4: Epigenetics & Aging
         case "age": return <AgeEstimationPanel />;
-        case "anthropology": return <AnthropologyPanel />;
-        case "entomology": return <EntomologyPanel />;
-        case "botany": return <BotanyPanel />;
-        case "microbiology": return <MicrobiologyPanel />;
-        // Physical Evidence
-        case "touch": return <PanelTouchDNA />;
-        case "serology": return <SerologyPanel />;
         case "bodyfluid": return <BodyFluidPanel />;
-        case "toxicology": return <PanelToxicology />;
-        case "microscopy": return <MicroscopyPanel />;
+        case "lifestyle": return <ComprehensiveEpigenomicsPanel />;
+        case "telomere": return <AgeEstimationPanel />;
+        case "mirna": return <BodyFluidPanel />;
+        // Pillar 5: Pathology & Trace Forensics
         case "bpa": return <BpaImagePanel />;
-        // LIMS & QA/QC
+        case "microscopy": return <MicroscopyPanel />;
+        case "toxicology": return <PanelToxicology />;
+        case "botany": return <BotanyPanel />;
+        case "serology": return <SerologyPanel />;
+        // Pillar 6: ISO 17025, LIMS & ZKP
         case "lims": return <PanelLIMS />;
-        case "instrument": return <InstrumentIngestionPanel />;
         case "qc": return <QualityAssurancePanel />;
-        case "review": return <HumanReviewPanel />;
-        case "isoreport": return <IsoReportGeneratorPanel />;
+        case "zkp": return <ForensicEvidenceOSPanel />;
         case "court": return <ExpertWitnessPanel />;
-        // AI & Advanced
-        case "epigenetics": return <ComprehensiveEpigenomicsPanel />;
-        case "genomics": return <MultiLayerGenomicsPanel />;
-        case "synthetic": return <PanelSyntheticCase />;
         case "evidenceos": return <ForensicEvidenceOSPanel />;
-        case "geo": return <GeoForensicPanel />;
-        default: return null;
+        default: return <PanelSTR />;
     }
 }
 
 // ─── Main Component ────────────────────────────────────────────────────────
 
 export default function AnalysisPage() {
-    const [activeCategory, setActiveCategory] = useState<CategoryId>("dna");
+    const [activeCategory, setActiveCategory] = useState<CategoryId>("genotyping");
     const [activeTab, setActiveTab] = useState<TabId>("str");
 
     const category = CATEGORIES.find((c) => c.id === activeCategory) ?? CATEGORIES[0];

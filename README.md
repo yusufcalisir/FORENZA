@@ -209,77 +209,77 @@ str-analysis/
 
 ## 4. 30-Subsystem Reference Catalog
 
-FORENZA structures its 30 biocomputational subsystems into 6 core operational pillars:
+FORENZA structures its 30 biocomputational subsystems into 6 canonical operational pillars derived from a centralized architecture catalog:
 
 ```
-+---------------------------------------------------------------------------------------------------+
-|                                 FORENZA 30 SUBSYSTEM MATRIX                                       |
-+-------------------+-------------------+-------------------+-------------------+-------------------+
-| Pillar 1: DNA &   | Pillar 2: Proba-  | Pillar 3: Pheno-  | Pillar 4: Physical| Pillar 5: LIMS,   |
-| Kinship Analysis  | bilistic Genotype | type & Epigenetics| Evidence & PMI    | QA/QC & Governance|
-+-------------------+-------------------+-------------------+-------------------+-------------------+
-| • Autosomal STR   | • MCMC Mixture    | • HIrisPlex-S     | • Skeletal Anthro | • LIMS Chain of   |
-| • Pedigree LR     |   Deconvoluter    |   Phenotyping     |   Morphometrics   |   Custody         |
-| • Lineage DNA     | • Stutter Model   | • 55-SNP AIM      | • Entomology ADH  | • Contamination   |
-| • DVI Interpol    |   Correction      |   Ancestry        |   PMI Engine      |   QA/QC Screening |
-| • Touch DNA LCN   | • Fst Population  | • Horvath 5-CpG   | • BPA Bloodstain  | • Double-Blind    |
-|                   |   Distances       |   Methylation Age |   Impact Angle    |   Governance      |
-|                   | • Balding-Nichols | • Tissue Fluid    | • Diatom Micro-   | • ISO 17025 Court |
-|                   |   Subpopulations  |   Identification  |   biology         |   Testimony       |
-|                   | • Batch Engine    | • Synthetic Lab   | • Microscopy      | • P2P Node        |
-|                   |   Processor       |   Simulator       |   Classifier      |   Federation      |
-+-------------------+-------------------+-------------------+-------------------+-------------------+
-| Pillar 6: AI & Cryptographic Omics (Circom Groth16 ZK Matcher, Polygon Audit Anchor)               |
-+---------------------------------------------------------------------------------------------------+
++-------------------------------------------------------------------------------------------------------------------------------+
+|                                                FORENZA 30-SUBSYSTEM MATRIX                                                    |
++-------------------+-------------------+-------------------+-------------------+-----------------------+-----------------------+
+| Pillar 1:         | Pillar 2: Lineage | Pillar 3: Pheno-  | Pillar 4:         | Pillar 5: Physical    | Pillar 6: LIMS, ISO   |
+| Genotyping &      | Forensics &       | typing & Bio-     | Epigenetics &     | Evidence, Pathology & | 17025 QA/QC &         |
+| Population        | Kinship           | geographic        | Environmental     | Trace Forensics       | Cryptographic         |
+| Genetics          | Inference         | Ancestry          | Aging             |                       | Governance            |
++-------------------+-------------------+-------------------+-------------------+-----------------------+-----------------------+
+| 01. Autosomal STR | 06. Y-STR         | 11. HIrisPlex-S   | 16. Horvath 5-CpG | 21. Bloodstain Pattern| 26. LIMS Accessioning |
+|     & Kinship     |     Haplotypes    |     Pigmentation  |     Age Clock     |     Analysis (BPA 3D) |     & HMAC Chain      |
+| 02. MCMC Mixture  | 07. X-STR Linkage | 12. 55-SNP AIM    | 17. Body Fluid    | 22. Digital Microscopy| 27. ISO 17025 QA/QC   |
+|     Deconvolution |     & Female KI   |     Ancestry & GIS|     tDMR Origin   |     & Hair Analysis   |     Matrix            |
+| 03. Dirichlet Fst | 08. mtDNA Control | 13. Craniofacial  | 18. Lifestyle     | 23. Post-Mortem       | 28. Circom Groth16    |
+|     Population    |     Region rCRS   |     3D Morphology |     AHRR Epigenome|     Toxicology GC-MS  |     ZK-SNARK Privacy  |
+| 04. Touch DNA     | 09. Interpol DVI  | 14. Hair Texture  | 19. Telomere      | 24. Forensic Botany   | 29. Expert Witness    |
+|     LTDNA Model   |     Mass Disaster |     & Curl Model  |     Length T/S    |     & Diatom Ecology  |     Court Testimony   |
+| 05. Tippett       | 10. Ancient DNA   | 15. Freckling     | 20. Forensic      | 25. ABO / Rh Blood    | 30. Ground Truth      |
+|     Calibration   |     & Human ID    |     MC1R & UV     |     microRNA Profile|   Serology Antigens |     Validator & DAG   |
++-------------------+-------------------+-------------------+-------------------+-----------------------+-----------------------+
 ```
 
-### Pillar 1: DNA & Kinship Analysis
+### Pillar 1: Probabilistic Genotyping & Population Genetics
 
-1. **Autosomal STR Locus Engine:** Evaluates the expanded 24-locus forensic multiplex (all 20 Expanded FBI CODIS core loci: D3S1358, vWA, FGA, TH01, TPOX, CSF1PO, D16S539, D7S820, D13S317, D5S818, D8S1179, D21S11, D18S51, D2S1338, D19S433, D12S391, D1S1656, D2S441, D10S1248, D22S1045, plus European ESS SE33, Penta D, Penta E, and Amelogenin) for high-discrimination identity matching.
-2. **Pedigree & Kinship Likelihood Ratio Engine:** Calculates combined Likelihood Ratios (LR) across complex genealogical trees (parent-child, full-sibs, half-sibs, avuncular, first-cousins).
-3. **Expanded Lineage DNA Engine:** Analyzes Y-STR (Y-FILER Plus 27 loci) for paternal lineages, X-STR for complex family relationships, and mtDNA hypervariable regions (HV1/HV2) for maternal lineages.
-4. **Interpol DVI Mass Disaster Engine:** Automated Victim Identification matching post-mortem (PM) skeletal profiles against ante-mortem (AM) reference families using Interpol DVI standards.
-5. **Touch DNA Low-Copy Number (LCN) Engine:** Handles low-template DNA (<100 pg) with stochastic dropout, drop-in, and allele peak height imbalance correction.
+1. **Autosomal STR & Kinship Engine (`01`):** Evaluates the expanded 24-locus forensic multiplex (all 20 Expanded FBI CODIS core loci plus European ESS SE33, Penta D, Penta E, and Amelogenin) for high-discrimination identity matching and likelihood ratio inclusion/exclusion.
+2. **MCMC Probabilistic Mixture Deconvoluter (`02`):** Uses a Metropolis-Hastings Markov Chain Monte Carlo algorithm (50,000–100,000 iterations) to deconvolute 2-person, 3-person, and 4-person DNA mixtures with peak height and stutter modeling.
+3. **Dirichlet Fst Population Genetics (`03`):** Calculates subpopulation coancestry corrections ($F_{st} = 0.01 / 0.03$) and Dirichlet smoothing under NRC II Recommendations 4.1 & 4.2 for Hardy-Weinberg and Linkage Equilibrium models.
+4. **Touch DNA & Low-Template LTDNA Engine (`04`):** Models stochastic allele dropout ($p_d$), drop-in ($p_i$), and peak height imbalance for low-template DNA (<100 pg) recovered from porous and non-porous substrates.
+5. **Tippett Calibration & Validation Lab (`05`):** Generates empirical Tippett calibration curves plotting $\log_{10}(LR)$ distributions under prosecution ($H_p$) vs defense ($H_d$) hypotheses for calibration verification.
 
-### Pillar 2: Probabilistic Genotyping & Population Genetics
+### Pillar 2: Lineage Forensics & Kinship Inference
 
-6. **MCMC Probabilistic Mixture Deconvoluter:** Uses a Metropolis-Hastings Markov Chain Monte Carlo algorithm (100,000 iterations) to deconvolute 2-person, 3-person, and 4-person DNA mixtures.
-7. **Stutter & Degradation Model Correction:** Models forward stutter ($N+1$), reverse stutter ($N-1$), and exponential DNA degradation curves.
-8. **Statistical Population Genetics Engine:** Calculates heterozygosity ($H_o, H_e$), Hardy-Weinberg Equilibrium ($p^2 + 2pq + q^2$), and polymorphic information content (PIC).
-9. **Balding-Nichols Subpopulation Engine:** Applies $F_{st}$ ($\theta$) correction factors (0.01 to 0.05) to adjust match probabilities for isolated or inbred populations.
-10. **High-Throughput Batch Processing Engine:** Asynchronous batch deconvolution queue capable of processing 10,000+ STR profiles concurrently using Python `asyncio` semaphores.
+6. **Y-STR Haplotype Forensics (`06`):** Computes Clopper-Pearson 95% binomial confidence intervals for Y-chromosome STR haplotypes (Y-FILER Plus 27 loci) with Y-HRD database matching for paternal lineage tracking.
+7. **X-STR Linkage & Kinship Index (`07`):** Evaluates X-chromosomal linked marker cluster transmission probabilities and female kinship likelihood ratios ($KI_X$) for complex genealogical pedigrees.
+8. **mtDNA Control Region Forensics (`08`):** Aligns hypervariable regions (HV1/HV2/HV3) against the revised Cambridge Reference Sequence (rCRS) and RSRS phylogenetic trees for maternal lineage identification.
+9. **DVI Mass Disaster Identification (`09`):** Interpol Disaster Victim Identification (DVI) automated matching engine comparing post-mortem (PM) skeletal profiles against ante-mortem (AM) reference families.
+10. **Ancient DNA & Forensic SNP Mapper (`10`):** Maps low-coverage forensic SNP arrays and ancient DNA $C \to T$ deamination damage patterns for degraded skeletal human identification.
 
-### Pillar 3: Phenotype, Ancestry & Epigenetics
+### Pillar 3: Phenotyping & Biogeographic Ancestry
 
-11. **HIrisPlex-S Phenotype Prediction Engine:** Evaluates 24 predictive SNPs to compute posterior probabilities for Eye Color (Blue, Hazel, Brown), Fitzpatrick Skin Type (Type I-VI), and Hair Morphology (Straight, Wavy, Curly).
-12. **55-SNP AIM Biogeographic Ancestry (BGA) Engine:** Maps 55 Ancestry Informative Markers (AIMs) to classify genetic origin into European, African, East Asian, South Asian, and Native American clusters.
-13. **Horvath 5-CpG Epigenetic Methylation Age Clock:** Estimates chronological age at sample deposition using 5 CpG site methylation levels with a mean margin of error of $\pm 2.1$ years.
-14. **Serological & Body Fluid ID Engine:** Identifies biological fluid origin (Blood, Semen, Saliva, Vaginal Secretions, Skin) via microRNA and DNA methylation profiling.
-15. **Synthetic Profile Lab Simulator:** Generates realistic synthetic STR/SNP profiles for validation testing and blind proficiency trials.
+11. **HIrisPlex-S Pigmentation Engine (`11`):** Evaluates 24 predictive SNPs to compute normalized posterior probabilities for Eye Color (Blue, Hazel, Brown), Fitzpatrick Skin Type (Type I-VI), and Hair Morphology (Straight, Wavy, Curly).
+12. **Biogeographic Ancestry & Live GIS (BGA) (`12`):** Maps 55 Ancestry Informative Markers (AIMs) to classify genetic origin into European, African, East Asian, South Asian, and Native American clusters with interactive geographic projection.
+13. **Facial Morphology & Craniofacial 3D (`13`):** Predicts craniofacial structural proportions, 3D anatomical landmarks, and morphological distances from genomic SNP markers.
+14. **Hair Texture & Balding Risk (`14`):** Predicts hair morphology (straight/wavy/curly via EDAR/TCHH) and androgenetic alopecia predisposition from polygenic SNP arrays.
+15. **Freckling & UV Sensitivity (`15`):** Evaluates MC1R gene variant combinations to score ephelides (freckling) density and sun sensitivity.
 
-### Pillar 4: Physical Evidence & Environmental Forensics
+### Pillar 4: Epigenetics & Environmental Aging
 
-16. **Forensic Anthropology Morphometrics Engine:** Calculates stature and sex estimation from skeletal measurements using Trotter-Gleser and Suchey-Brooks pubic symphysis standards.
-17. **Forensic Entomology ADH PMI Engine:** Computes Accumulated Degree Hours (ADH) to estimate Post-Mortem Interval (PMI) based on insect colonization rates and ambient weather data.
-18. **Bloodstain Pattern Analysis (BPA) Engine:** Computes Area of Origin (AO) and impact angle ($\alpha = \arcsin(W/L)$) from 3D blood droplet trajectories.
-19. **High-Resolution Diatom & Microbiome Engine:** Analyzes environmental diatom species composition for drowning identification and geographic soil origin matching.
-20. **Automated Forensic Microscopy Classifier:** Deep learning classification of microscopic hair, textile fiber, and synthetic material evidence.
+16. **Horvath 5-CpG Epigenetic Age Clock (`16`):** Quantifies DNA methylation levels at key CpG loci to estimate chronological age at sample deposition with $\pm 2.8$ year precision.
+17. **Tissue-Specific Body Fluid tDMR (`17`):** Deconvolutes tissue-specific differentially methylated regions (tDMRs) to identify body fluid origin (blood, saliva, semen, vaginal fluid, skin).
+18. **Environmental Lifestyle Epigenetics (`18`):** Analyzes AHRR gene hypomethylation to infer chronic tobacco smoke exposure and environmental lifestyle signatures.
+19. **Telomere Length Chronometer (`19`):** Measures relative telomere-to-single-copy-gene ($T/S$) length ratios for secondary biological age confirmation.
+20. **Forensic MicroRNA Profiling (`20`):** Quantifies body-fluid-specific microRNA expression profiles (miR-451a, miR-205) for forensic identification of degraded samples.
 
-### Pillar 5: LIMS, QA/QC & Regulatory Governance
+### Pillar 5: Physical Evidence, Pathology & Trace Forensics
 
-21. **LIMS Sample Tracking & Chain of Custody:** ISO 17025 compliant evidence tracking with cryptographic barcode generation and timestamp logging.
-22. **Contamination & Negative Control QA/QC Engine:** Automated screening of internal laboratory staff database and negative controls to detect cross-contamination.
-23. **Double-Blind Analyst Governance Engine:** Enforces double-blind review protocols where two analysts independently verify LR results before report release.
-24. **ISO 17025 Court Testimony Generator:** Automated compilation of technical defense/prosecution summary reports with SWGDAM verbal scale ratings.
-25. **Multi-Node Federated P2P Network:** Peer-to-peer node architecture allowing encrypted database queries across distributed forensic infrastructure without central data pooling.
+21. **Bloodstain Pattern Analysis (BPA 3D) (`21`):** Computes Area of Origin (AO), stain directionality vectors, and impact angle ($\alpha = \arcsin(W/L)$) from 3D blood droplet trajectories.
+22. **High-Resolution Digital Microscopy (`22`):** Deep learning computer vision classification of microscopic hair morphology, textile fibers, spermatozoa, and diatom counts.
+23. **Post-Mortem Toxicology & GC-MS (`23`):** Gas Chromatography-Mass Spectrometry (GC-MS) spectral peak matching and Blood Alcohol Concentration (BAC) toxicological screening.
+24. **Diatom & Forensic Palynology (`24`):** Correlates drowning site diatom assemblages and soil pollen signatures to pinpoint geographical crime scene origins.
+25. **ABO / Rh Blood Serology (`25`):** Predicts classical ABO and Rh blood group antigens from ABO gene exon 6/7 sequencing.
 
-### Pillar 6: AI & Cryptographic Omics
+### Pillar 6: LIMS, ISO 17025 QA/QC & Cryptographic Governance
 
-26. **Circom ZK-SNARK Privacy Match Engine:** Generates zero-knowledge proofs demonstrating that a suspect profile matches an evidence profile above a given threshold without revealing actual alleles.
-27. **Polygon Blockchain Ledger Anchor:** Hashes audit log entries onto the Polygon blockchain for immutable, tamper-proof chain of custody verification.
-28. **Forensic Toxicology Drug Screening Engine:** Mass spectrometry ($MS/MS$) retention index and spectrum matching for toxicological compounds.
-29. **Ballistic Striation & GSR Engine:** Gunshot Residue (GSR) particle detection and 3D bullet striation pattern correlation.
-30. **Digital Forensics Artifact Inspector:** Extracts and correlates EXIF metadata, filesystem timestamps, and mobile device location logs.
+26. **LIMS Accessioning & Chain of Custody (`26`):** ISO 17025 compliant evidence tracking with SHA-256 HMAC custody ledgers, cryogenic storage logging, and barcode tracking.
+27. **ISO 17025 QA/QC Inspection Matrix (`27`):** Enforces 7-point QA/QC inspection rules including heterozygote peak height ratio ($H_b$), analytical thresholds, and negative control screening.
+28. **Zero-Knowledge Privacy Auditor (`28`):** Generates Circom Groth16 zero-knowledge proofs confirming profile match criteria ($LR > 10^6$) without revealing raw genomic allele data.
+29. **Expert Witness Court Mode Framework (`29`):** Compiles complete judicial testimony packages, verbal LR translations, and Prosecutor's Fallacy defense shields.
+30. **Benchmark & Ground Truth Validator (`30`):** Automated benchmark validator executing 241 automated tests across all 41 test modules against synthetic ground-truth cases.
 
 ---
 

@@ -395,6 +395,45 @@ try:
 except Exception as _os_import_err:
     logger.warning(f"[boot] Evidence OS router not loaded: {_os_import_err}")
 
+# --- Tippett Calibration & ENFSI Evaluative Reporting Router (Module 05) ---
+try:
+    from app.api.tippett_routes import router as tippett_router
+    app.include_router(tippett_router, prefix="/api/v1")
+    logger.info("[boot] Tippett Calibration & ENFSI Reporting API router registered at /api/v1/forensic/validation")
+except Exception as _tippett_import_err:
+    logger.warning(f"[boot] Tippett router not loaded: {_tippett_import_err}")
+
+# --- Y-STR Haplotype Forensics Router (Module 06) ---
+try:
+    from app.api.ystr_routes import router as ystr_router
+    app.include_router(ystr_router, prefix="/api/v1")
+    logger.info("[boot] Y-STR Haplotype Forensics API router registered at /api/v1/forensic/lineage/ystr")
+except Exception as _ystr_import_err:
+    logger.warning(f"[boot] Y-STR router not loaded: {_ystr_import_err}")
+
+# --- X-STR Linkage & Female Kinship Router (Module 07) ---
+try:
+    from app.api.xstr_routes import router as xstr_router
+    app.include_router(xstr_router, prefix="/api/v1")
+    logger.info("[boot] X-STR Linkage & Female Kinship API router registered at /api/v1/forensic/lineage/xstr")
+except Exception as _xstr_import_err:
+    logger.warning(f"[boot] X-STR router not loaded: {_xstr_import_err}")
+
+# --- mtDNA Control Region Forensics Router (Module 08) ---
+try:
+    from app.api.mtdna_routes import router as mtdna_router
+    app.include_router(mtdna_router, prefix="/api/v1")
+    logger.info("[boot] mtDNA Control Region Forensics API router registered at /api/v1/forensic/lineage/mtdna")
+except Exception as _mtdna_import_err:
+    logger.warning(f"[boot] mtDNA router not loaded: {_mtdna_import_err}")
+
+
+
+
+
+
+
+
 
 
 

@@ -20,7 +20,10 @@ class KinshipRelationship(str, Enum):
     PARENT_CHILD = "parent_child"
     FULL_SIBLING = "full_sibling"
     HALF_SIBLING = "half_sibling"
-    UNRELATED = "unrelated"
+    AVUNCULAR = "avuncular"               # Uncle/Aunt – Nephew/Niece (k0=0.50, k1=0.50, k2=0)
+    GRANDPARENT = "grandparent"           # Grandparent – Grandchild  (k0=0.50, k1=0.50, k2=0)
+    FIRST_COUSIN = "first_cousin"         # First cousins             (k0=0.75, k1=0.25, k2=0)
+    UNRELATED = "unrelated"               # Unrelated individuals     (k0=1.00, k1=0.00, k2=0)
 
 
 @dataclass(frozen=True)

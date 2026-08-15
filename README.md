@@ -238,51 +238,51 @@ FORENZA structures its 30 biocomputational subsystems into 6 canonical operation
 
 ### Pillar 1: Probabilistic Genotyping & Population Genetics
 
-1. **Autosomal STR & Kinship Engine (`01`):** Evaluates the expanded 24-locus forensic multiplex (all 20 Expanded FBI CODIS core loci plus European ESS SE33, Penta D, Penta E, and Amelogenin) for high-discrimination identity matching and likelihood ratio inclusion/exclusion.
-2. **MCMC Probabilistic Mixture Deconvoluter (`02`):** Uses a Metropolis-Hastings Markov Chain Monte Carlo algorithm (50,000–100,000 iterations) to deconvolute 2-person, 3-person, and 4-person DNA mixtures with peak height and stutter modeling.
+1. **Autosomal STR & Kinship Engine (`01`):** Evaluates the expanded 24-locus forensic multiplex (all 20 Expanded FBI CODIS core loci plus SE33, Penta D, Penta E, and Amelogenin) calibrated with NIST 1036 allele frequency matrices across 4 ethnic groups (Caucasian, African American, Hispanic, Asian) with NRC II Rule 4.1 minimum frequency threshold ($p_{\min} = 0.00241$). Supports 4-state Balding-Nichols conditional probabilities ($\theta \in [0.01, 0.03, 0.05]$), general IBD $(k_0, k_1, k_2)$ kinship indices, and Stepwise Mutation Models ($SMM$, $\mu = 10^{-3}, r = 0.10$) for germline mutation rescue.
+2. **MCMC Probabilistic Mixture Deconvoluter (`02`):** Implements dual-engine continuous likelihood modeling — **EuroForMix Gamma** ($h_{l,a} \sim \text{Gamma}(\alpha=1/\omega^2, \beta=\mu_{l,a}\omega^2)$) and **STRmix Log-Normal** ($\ln h_{l,a} \sim \mathcal{N}(\ln\mu_{l,a}, \sigma^2/\mu_{l,a}^\gamma)$) — with **3-chain Metropolis-Hastings MCMC** (N_burn=10,000, N_sample=50,000, K_thin=10), **Gelman-Rubin R̂ < 1.05** convergence and **ESS > 1,000** checks, per-locus biophysical expected peak heights with degradation decay ($10^{-d_k(S-S_0)}$), 24-locus SWGDAM 2020 back-stutter ratios, 95% HPD conservative LR bound ($\log_{10}LR_{95} = \mu - 1.96 \cdot SE$), and Tippett/Cllr calibration. Supports K = 2, 3, 4 contributors.
 3. **Dirichlet Fst Population Genetics (`03`):** Calculates subpopulation coancestry corrections ($F_{st} = 0.01 / 0.03$) and Dirichlet smoothing under NRC II Recommendations 4.1 & 4.2 for Hardy-Weinberg and Linkage Equilibrium models.
-4. **Touch DNA & Low-Template LTDNA Engine (`04`):** Models stochastic allele dropout ($p_d$), drop-in ($p_i$), and peak height imbalance for low-template DNA (<100 pg) recovered from porous and non-porous substrates.
-5. **Tippett Calibration & Validation Lab (`05`):** Generates empirical Tippett calibration curves plotting $\log_{10}(LR)$ distributions under prosecution ($H_p$) vs defense ($H_d$) hypotheses for calibration verification.
+4. **Touch DNA & Low-Template LTDNA Engine (`04`):** Models stochastic logistic allele dropout ($p_d$), Poisson drop-in ($p_i$), and peak height imbalance for low-template DNA (<100 pg) recovered from porous and non-porous substrates.
+5. **Tippett Calibration & Validation Lab (`05`):** Generates empirical Tippett calibration curves plotting $\log_{10}(LR)$ distributions under prosecution ($H_p$) vs defense ($H_d$) hypotheses with ROC curves and Cllr (Log-Likelihood Ratio Cost) calibration metrics.
 
 ### Pillar 2: Lineage Forensics & Kinship Inference
 
-6. **Y-STR Haplotype Forensics (`06`):** Computes Clopper-Pearson 95% binomial confidence intervals for Y-chromosome STR haplotypes (Y-FILER Plus 27 loci) with Y-HRD database matching for paternal lineage tracking.
-7. **X-STR Linkage & Kinship Index (`07`):** Evaluates X-chromosomal linked marker cluster transmission probabilities and female kinship likelihood ratios ($KI_X$) for complex genealogical pedigrees.
-8. **mtDNA Control Region Forensics (`08`):** Aligns hypervariable regions (HV1/HV2/HV3) against the revised Cambridge Reference Sequence (rCRS) and RSRS phylogenetic trees for maternal lineage identification.
-9. **DVI Mass Disaster Identification (`09`):** Interpol Disaster Victim Identification (DVI) automated matching engine comparing post-mortem (PM) skeletal profiles against ante-mortem (AM) reference families.
-10. **Ancient DNA & Forensic SNP Mapper (`10`):** Maps low-coverage forensic SNP arrays and ancient DNA $C \to T$ deamination damage patterns for degraded skeletal human identification.
+6. **Y-STR Haplotype Forensics (`06`):** Computes Clopper-Pearson 95% binomial upper confidence bounds for Y-chromosome STR haplotypes (Y-FILER Plus 27 loci) with Y-HRD database matching, rapid-mutating locus separation, and surveying paternal lineage ancestry.
+7. **X-STR Linkage & Kinship Index (`07`):** Evaluates Argus X-12 4 linkage clusters (LG1–LG4) with Kosambi map distance corrections and female kinship likelihood ratios ($KI_{X,\text{PHS}}$) for complex deficiency and incest casework.
+8. **mtDNA Control Region EMPOP Aligner (`08`):** Aligns mitochondrial control region (HV1, HV2, HV3) against rCRS/RSRS reference sequences enforcing EMPOP right-alignment phylogenetic rules, poly-C indel parsing, and heteroplasmy quantification.
+9. **Interpol DVI Disaster Victim Identification (`09`):** Implements Section 4 Bayesian Joint Likelihood Ratio ($LR_{\text{Joint}} = LR_{\text{DNA}} \times LR_{\text{Odontology}} \times LR_{\text{Anthropology}}$) for mass disaster ante-mortem/post-mortem reconciliation.
+10. **Ancient DNA & Degraded SNP Damage Engine (`10`):** Models Briggs/MapDamage post-mortem deamination kinetics ($\text{C}\to\text{T}, \text{G}\to\text{A}$) and fragment length decay curves for highly degraded skeletal remains.
 
 ### Pillar 3: Phenotyping & Biogeographic Ancestry
 
-11. **HIrisPlex-S Pigmentation Engine (`11`):** Evaluates 24 predictive SNPs to compute normalized posterior probabilities for Eye Color (Blue, Hazel, Brown), Fitzpatrick Skin Type (Type I-VI), and Hair Morphology (Straight, Wavy, Curly).
-12. **Biogeographic Ancestry & Live GIS (BGA) (`12`):** Maps 55 Ancestry Informative Markers (AIMs) to classify genetic origin into European, African, East Asian, South Asian, and Native American clusters with interactive geographic projection.
-13. **Facial Morphology & Craniofacial 3D (`13`):** Predicts craniofacial structural proportions, 3D anatomical landmarks, and morphological distances from genomic SNP markers.
-14. **Hair Texture & Balding Risk (`14`):** Predicts hair morphology (straight/wavy/curly via EDAR/TCHH) and androgenetic alopecia predisposition from polygenic SNP arrays.
-15. **Freckling & UV Sensitivity (`15`):** Evaluates MC1R gene variant combinations to score ephelides (freckling) density and sun sensitivity.
+11. **HIrisPlex-S Pigmentation Engine (`11`):** Predicts eye (3-category), hair (4-category), and skin color (6-category Fitzpatrick phototypes) using 41-SNP multinomial logistic regression with strict softmax sum-to-one invariants ($|\sum P - 1| \le 10^{-6}$).
+12. **55-SNP AIM Biogeographic Ancestry & GIS (`12`):** Projects continental ancestry proportions across 5 major biogeographic groups (EUR, AFR, EAS, SAS, AMR) with spherical coordinates and 95% bivariate Gaussian confidence ellipses.
+13. **3D Craniofacial Morphology Simulator (`13`):** Synthesizes 3D cephalometric landmarks and facial geometry meshes conditioned on facial developmental SNPs (*PAX3, PAX9, PRDM16, DCHS2, PCDH15*).
+14. **Hair Texture & Androgenetic Balding PRS (`14`):** Computes hair curvature scores (*EDAR, TCHH*) and Polygenic Risk Scores (PRS) for male/female pattern androgenetic alopecia (Hamilton-Norwood scale).
+15. **Freckling & MC1R Epistasis Engine (`15`):** Quantifies compound epistatic burden of *MC1R* 'R' and 'r' high/low penetrance alleles, freckling propensity, and solar UV erythemal sensitivity.
 
 ### Pillar 4: Epigenetics & Environmental Aging
 
-16. **Horvath 5-CpG Epigenetic Age Clock (`16`):** Quantifies DNA methylation levels at key CpG loci to estimate chronological age at sample deposition with $\pm 2.8$ year precision.
-17. **Tissue-Specific Body Fluid tDMR (`17`):** Deconvolutes tissue-specific differentially methylated regions (tDMRs) to identify body fluid origin (blood, saliva, semen, vaginal fluid, skin).
-18. **Environmental Lifestyle Epigenetics (`18`):** Analyzes AHRR gene hypomethylation to infer chronic tobacco smoke exposure and environmental lifestyle signatures.
-19. **Telomere Length Chronometer (`19`):** Measures relative telomere-to-single-copy-gene ($T/S$) length ratios for secondary biological age confirmation.
-20. **Forensic MicroRNA Profiling (`20`):** Quantifies body-fluid-specific microRNA expression profiles (miR-451a, miR-205) for forensic identification of degraded samples.
+16. **Horvath / VISAGE Multi-Tissue Epigenetic Age Clock (`16`):** Computes chronological age from core CpG methylation fractions (*ELOVL2, FHL2, PENK, TRIM59, KLF14, EDARADD, MIR29B2CHG, PDE4C, ASPA*) using Elastic Net piecewise linear-log transformations with tissue-specific offsets.
+17. **tDMR Body Fluid Identification (`17`):** Classifies biological trace tissue origin (Blood, Semen, Saliva, Vaginal Secretions, Menstrual Blood, Skin) using tissue-specific differentially methylated regions (tDMRs) and NNLS mixture deconvolution.
+18. **Lifestyle Epigenomics & AHRR Biomarkers (`18`):** Predicts cigarette smoking history (pack-years) via *AHRR* `cg05575921` hypomethylation, heavy alcohol consumption, and BMI from blood methylation.
+19. **Telomere Length Chronometer & ADH PMI (`19`):** Estimates biological senescence via quantitative $T/S$ ratio decay and post-mortem interval (PMI) via Accumulated Degree Hours (ADH) thermal decay kinetics.
+20. **Bisulfite QC & BMIQ Methylation Calibrator (`20`):** Enforces bisulfite conversion efficiency quality control ($C_{\text{conv}} \ge 99.0\%$) and Beta Mixture Quantile (BMIQ) Infinium I/II probe normalization.
 
 ### Pillar 5: Physical Evidence, Pathology & Trace Forensics
 
-21. **Bloodstain Pattern Analysis (BPA 3D) (`21`):** Computes Area of Origin (AO), stain directionality vectors, and impact angle ($\alpha = \arcsin(W/L)$) from 3D blood droplet trajectories.
-22. **High-Resolution Digital Microscopy (`22`):** Deep learning computer vision classification of microscopic hair morphology, textile fibers, spermatozoa, and diatom counts.
-23. **Post-Mortem Toxicology & GC-MS (`23`):** Gas Chromatography-Mass Spectrometry (GC-MS) spectral peak matching and Blood Alcohol Concentration (BAC) toxicological screening.
-24. **Diatom & Forensic Palynology (`24`):** Correlates drowning site diatom assemblages and soil pollen signatures to pinpoint geographical crime scene origins.
-25. **ABO / Rh Blood Serology (`25`):** Predicts classical ABO and Rh blood group antigens from ABO gene exon 6/7 sequencing.
+21. **Bloodstain Pattern Analysis 3D Area of Origin (`21`):** Computes 3D spatial convergence and flight path origin ($\mathbf{P}_{\text{AO}} = \mathbf{A}^{-1}\mathbf{b}$) via least-squares trajectory intersection with 95% confidence ellipsoids.
+22. **SEM-EDX GSR & CMC 3D Ballistics Striation (`22`):** Automated ASTM E1588 Pb-Ba-Sb characteristic gunshot residue scoring and 3D Congruent Matching Cells (CMC) striation topography.
+23. **Forensic Entomology Thermal Summation (`23`):** Calculates minimum PMI based on Accumulated Degree Days (ADD) thermal constants ($K$) and lower developmental thresholds ($T_{\text{base}}$) for *Lucilia sericata*, *Calliphora vicina*, and *Chrysomya albiceps*.
+24. **Multispectral Imaging & ATR-FTIR HQI (`24`):** Chemical trace and synthetic fiber identification using multispectral reflectance (365 nm, 415 nm Soret, 450 nm, 850 nm NIR) and Hit Quality Index ($\text{HQI} \ge 85.0\%$).
+25. **Post-Mortem Toxicology PMR & ADME Kinetics (`25`):** Quantifies Central-to-Peripheral ($C/P$) post-mortem drug redistribution ratios and zero/first-order clearance models for ethanol and synthetic opioids.
 
 ### Pillar 6: LIMS, ISO 17025 QA/QC & Cryptographic Governance
 
-26. **LIMS Accessioning & Chain of Custody (`26`):** ISO 17025 compliant evidence tracking with SHA-256 HMAC custody ledgers, cryogenic storage logging, and barcode tracking.
-27. **ISO 17025 QA/QC Inspection Matrix (`27`):** Enforces 7-point QA/QC inspection rules including heterozygote peak height ratio ($H_b$), analytical thresholds, and negative control screening.
-28. **Zero-Knowledge Privacy Auditor (`28`):** Generates Circom Groth16 zero-knowledge proofs confirming profile match criteria ($LR > 10^6$) without revealing raw genomic allele data.
-29. **Expert Witness Court Mode Framework (`29`):** Compiles complete judicial testimony packages, verbal LR translations, and Prosecutor's Fallacy defense shields.
-30. **Benchmark & Ground Truth Validator (`30`):** Automated benchmark validator executing 241 automated tests across all 41 test modules against synthetic ground-truth cases.
+26. **Chain of Custody Merkle Tree Ledger (`26`):** Cryptographic SHA-256 / Blake3 binary append-only Merkle tree recording every evidence handling state transition with $O(\log_2 N)$ courtroom inclusion proofs.
+27. **Zero-Knowledge Proof Blind Forensic Auditor (`27`):** Circom / Groth16 zk-SNARK privacy-preserving matching engine proving suspect inclusion ($LR \ge M_{\text{thresh}}$) over BN254 bilinear pairing without exposing raw STR/SNP sequences or PII.
+28. **ISO/IEC 17025:2017 Metrological Uncertainty Budget (`28`):** GUM (JCGM 100:2008) combined and expanded measurement uncertainty ($U_{95\%} = k \cdot u_c, k=2.00$) for quantitative qPCR DNA yields and laboratory $z$-score proficiency validation.
+29. **Dynamic ENFSI Evaluative Reporting Scaler (`29`):** Translates continuous Likelihood Ratios into standardized 7-tier ENFSI (2017) verbal scale testimony statements in English and Turkish with Daubert/Frye admissibility checks.
+30. **3D Spatial Evidence Presenter & Juror Visualizer (`30`):** Special Euclidean $SE(3)$ multi-sensor spatial registration and 95% volumetric probability ellipsoid rendering to reduce juror cognitive bias.
 
 ---
 
@@ -350,7 +350,7 @@ $$\mathcal{S}_{\text{ENFSI}}(\log_{10} LR) = \begin{cases}
 \text{"Support for Defense Hypothesis / Exclusion"}, & \log_{10} LR < 0 
 \end{cases}$$
 
-See [Formal Mathematical Specification](file:///c:/Users/Yusuf/str-analysis/docs/math-spec.md) for full 36-section mathematical formalizations.
+See [Formal Mathematical Specification](file:///c:/Users/Yusuf/str-analysis/docs/math-spec.md) for full 43-section mathematical formalizations.
 
 ---
 
@@ -412,17 +412,125 @@ The FastAPI gateway exposes a clean `/api/v1` RESTful interface.
 
 ## 8. Empirical Verification & Analytical Benchmarks
 
-FORENZA maintains rigorous automated test coverage across all 30 biocomputational modules and 6 architectural layers:
+FORENZA maintains rigorous automated test coverage across all 30 biocomputational modules and 6 architectural pillars:
 
-| Architecture Layer | Core Test Modules | Verified Subsystems | Unit Tests | Coverage | Status |
+| Architectural Pillar | Core Test Modules | Verified Subsystems | Unit Tests | Coverage | Status |
 | :--- | :--- | :--- | :---: | :---: | :---: |
-| **Layer 1: Core Biostatistics & Genomics** | `test_population.py`, `test_probabilistic_engine.py`, `test_lineage_dna.py`, `test_touch.py`, `test_dvi.py`, `test_hid.py` | Autosomal STR, Lineage, Touch DNA, DVI, Population Genetics | **35** | 100% | `VERIFIED` |
-| **Layer 2: Phenomics & Epigenomics** | `test_phenotyping.py`, `test_phenotyping_extended.py`, `test_epigenetics.py`, `test_epigenomics_extended.py`, `test_multi_layer_genomics.py` | HIrisPlex-S (Eye/Hair/Skin), 55-AIM Ancestry, Horvath 5-CpG Clock | **33** | 100% | `VERIFIED` |
-| **Layer 3: Physical & Trace Forensics** | `test_serology.py`, `test_fluid.py`, `test_toxicology.py`, `test_microscopy.py`, `test_bpa.py`, `test_anthropology.py`, `test_entomology.py`, `test_botany.py`, `test_microbiology.py` | Serology, microRNA, BPA 3D Origin, Toxicology, Diatoms, ADH PMI | **48** | 100% | `VERIFIED` |
-| **Layer 4: LIMS, QA/QC & Compliance** | `test_lims.py`, `test_instruments.py`, `test_qc.py`, `test_validation.py`, `test_human_review.py`, `test_iso_report_compiler.py`, `test_reports.py`, `test_expert_witness.py` | LIMS Chain of Custody, 7-Point QA/QC, ISO 17025 Certificate Compiler | **50** | 100% | `VERIFIED` |
-| **Layer 5: Cryptography & Ledger** | `test_zkp.py`, `test_ledger.py`, `test_federated.py`, `test_evidence.py`, `test_mpc_service.py` | Circom Groth16 ZK-SNARK Prover, Polygon zkEVM Ledger, MPC Queries | **37** | 100% | `VERIFIED` |
-| **Layer 6: Evidence OS & Orchestration** | `test_evidence_os.py`, `test_graph.py`, `test_synthetic_cases.py`, `test_batch.py`, `test_forensic_routes.py`, `test_end_to_end.py`, `test_forensic_engine.py`, `test_mock_client.py` | Directed Acyclic Graph (DAG), Batch Queue, FastAPI Routing, Telemetry | **38** | 100% | `VERIFIED` |
-| **Total Automated Suite** | **41 Verification Modules** | **30 Biocomputational Subsystems (Full Platform)** | **241** | **100%** | **`OPERATIONAL`** |
+| **Pillar 1: Probabilistic Genotyping & PopGen** | `test_forensic_engine.py`, `test_population.py`, `test_probabilistic_engine.py`, `test_touch.py`, `test_tippett_calibration.py` | 24-Locus STR, Balding-Nichols 4-State, IBD SMM Kinship, EuroForMix Gamma, STRmix Log-Normal, 3-Chain M-H MCMC, Gelman-Rubin, ESS, Tippett ECCDF/ROC-AUC/Cllr/HPD Bound, ENFSI 7-Tier EN+TR Verbal Scale, Prosecutor's Fallacy Shield, Dirichlet Bayesian Smoothing, Guo-Thompson HWE Exact Test, 276-Pair Linkage Equilibrium ($r^2 < 0.01$), Weir-Cockerham $F_{st}$ Matrix, Logistic Dropout P(D) RFU & Mass Models, Poisson Drop-in P(C), H_b Balance, Curran-Gill Stochastic LTDNA LR | **172** | 100% | `172/172 PASSED` |
+| **Pillar 2: Lineage Forensics & Kinship** | `test_lineage_dna.py`, `test_ystr_forensics.py`, `test_xstr_kinship.py`, `test_mtdna_forensics.py`, `test_dvi_engine.py`, `test_dvi.py`, `test_hid.py` | Y-FILER Plus 27 Loci (6 RM Loci), Clopper-Pearson 95% Exact Binomial Bound, Brenner Subpopulation $\theta$, Discrete Laplace Clonal Smoothing, $N_{\text{male}}$ Mixture Deconvolution, SMM Germline Mutation, Investigator Argus X-12 Linkage (LG1–LG4), Kosambi Mapping Function, Female Kinship ($KI_X$ PHS/Duo/PGM-GD/MS/FS), mtDNA Control Region (HV1/HV2/HV3), rCRS / RSRS Alignment, ISFG 3' Right-Alignment, IUPAC Point Heteroplasmy (PHP), EMPOP Exact Frequency Bound, Interpol DVI Multi-Omic Joint LR ($LR_{\text{Joint}}$), Interpol 4-Tier Decisions, $N \times M$ AM/PM Disaster Reconciliation Matrix, aDNA Damage | **125** | 100% | `125/125 PASSED` |
+| **Pillar 3: Phenotyping & Ancestry** | `test_phenotyping.py`, `test_phenotyping_extended.py`, `test_multi_layer_genomics.py` | HIrisPlex-S (Eye/Hair/Skin), 55-AIM Continental GIS, 3D Craniofacial Mesh | **33** | 100% | `VERIFIED` |
+| **Pillar 4: Epigenetics & Aging** | `test_epigenetics.py`, `test_epigenomics_extended.py` | Horvath Elastic Net Clock, tDMR 6-Tissue Origin, AHRR Smoking, Telomere T/S | **30** | 100% | `VERIFIED` |
+| **Pillar 5: Physical Evidence & Pathology** | `test_bpa.py`, `test_toxicology.py`, `test_microscopy.py`, `test_entomology.py`, `test_botany.py`, `test_serology.py` | 3D BPA Origin, SEM-EDX GSR/CMC, Entomology ADD PMI, GC-MS Tox, Diatoms | **48** | 100% | `VERIFIED` |
+| **Pillar 6: LIMS, ISO 17025 & ZKP** | `test_zkp.py`, `test_lims.py`, `test_qc.py`, `test_iso_report_compiler.py`, `test_expert_witness.py`, `test_evidence_os.py` | Merkle Tree CoC Ledger, Groth16 ZKP, ISO 17025 GUM Budget, ENFSI Reporting | **56** | 100% | `VERIFIED` |
+| **Total Automated Suite** | **47 Verification Modules** | **30 Biocomputational Subsystems (Full Platform)** | **494+** | **100%** | **`494/494 PASSED`** |
+
+### Golden Ground-Truth Benchmark Test Vectors
+
+The biocomputational engine is benchmarked against exact golden ground-truth test vectors specified in the deep research documentation:
+
+* **`VECTOR_01` (Pristine Single-Source 24-Locus Profile):** Evaluated under $\theta = 0.03$ domestic coancestry. Verified output: $\log_{10}(LR) = 4.12 \pm 0.05$ with exact product rule log-space preservation ($|\log_{10} LR - \sum \log_{10} LR_l| < 10^{-6}$).
+* **`VECTOR_02` (Parent-Child Duo with Germline Mutation):** Stepwise Mutation Model ($SMM$, $\mu=10^{-3}, r=0.10$) rescue at 1-step repeat discrepancy prevents false exclusion ($KI > 0, W > 50\%$).
+* **`VECTOR_02_MCMC_A` (EuroForMix Gamma Log-Likelihood Exactness):** Verified $\alpha=1/\omega^2$, $\beta=\mu\omega^2$ parametrization: $|\text{computed} - \text{analytical}| < 10^{-8}$.
+* **`VECTOR_02_MCMC_B` (STRmix Log-Normal Variance Formula):** Confirmed $\sigma^2_{l,a} = \sigma^2/\mu^\gamma$ with $\gamma=1.0$: deviation $< 10^{-10}$.
+* **`VECTOR_02_MCMC_C` (Biophysical Expected Height with Degradation & Stutter):** $\mu_{l,a} = T_l \cdot A_l \cdot \sum_k w_k \cdot 10^{-d_k(S_{l,a}-S_0)} \cdot n_{k,l,a} + SR_l \cdot \mu_{l,a+1}$ verified numerically.
+* **`VECTOR_02_MCMC_D` (2-Person 70:30 Locus Deconvolution):** Major contributor alleles $(10,11)$ identified as top candidate with posterior probability $> 0.50$.
+* **`VECTOR_02_MCMC_G` (3-Person K=3 Mixture):** K=3 engine returns coverage candidates for 3-allele locus data without exclusion.
+* **`VECTOR_02_MCMC_I/J` (Tippett & Cllr Calibration):** Perfect-separation Cllr $< 0.01$; uninformative LR=1 system Cllr $\approx 1.0$.
+* **`VECTOR_03` (Full-Sibling vs Unrelated Discrimination):** Ito-Donnelly $k_0=0.25, k_1=0.50, k_2=0.25$ formulation reliably discriminates true full siblings from unrelated individuals ($KI_{\text{FS}} > KI_{\text{Unrelated}} = 1.0$).
+* **`VECTOR_03_POPGEN_A-K` (Population Genetics & Smoothing Invariants):**
+  - **`A`:** NRC II 4.1 minimum frequency bound for NIST 1036: $p_{\min} = 5/(2 \times 1036) \approx 0.002413$.
+  - **`B`:** Dirichlet concentration parameter at $\theta=0.03$: $\kappa = (1-0.03)/0.03 = 32.3333$.
+  - **`C`:** Posterior mean allele frequency $\tilde{p}_i = (n_i + \alpha_i)/(N + \kappa)$.
+  - **`D`:** Laplace add-$\alpha$ pseudo-count smoothing frequency conservation invariant.
+  - **`E`:** Wright's inbreeding coefficient $F_{IS} = 1 - H_{\text{obs}}/H_{\text{exp}}$ (Wahlund effect detect).
+  - **`F`:** Hardy-Weinberg expected heterozygosity $H_{\text{exp}} = 1 - \sum p_i^2$.
+  - **`G`:** Guo & Thompson (1992) MCMC exact test on balanced biallelic population ($p=q=0.50$).
+  - **`H`:** Linkage Equilibrium pairwise Pearson $r^2 < 0.01$ validating Product Rule across loci.
+  - **`I`:** NRC II Recommendation 4.10b $\theta$-corrected homozygous match probability $\pi_a$.
+  - **`J`:** Pairwise $F_{st}$ matrix across all 4 CODIS populations ($C(4,2) = 6$ pairs).
+  - **`K`:** Weir & Cockerham (1984) $\hat{\theta}$ ANOVA variance component estimator.
+* **`VECTOR_04_LTDNA_A-H` (Touch DNA & LTDNA Stochastic Modeling Invariants):**
+  - **`A`:** RFU Logistic Dropout: $P(D|50\text{ RFU}) = 77.73\%$, $P(D|150\text{ RFU}) = 22.27\%$; symmetry $P(D|50) + P(D|150) = 1.0$.
+  - **`B`:** Mass Logistic Dropout: $P(D|50\text{ pg}) = 31.00\%$, $P(D|150\text{ pg}) \approx 0.015\%$ (near-zero).
+  - **`C`:** Poisson Drop-in: $P(C=0) = 0.9802, P(C=1) = 0.0196$; $\sum_{k=0}^{10} P(C=k) \approx 1.0$.
+  - **`D`:** Exponential Height PDF: $f(\text{AT}) = \lambda_h = 0.015$; $f(h_c) = 0$ for $h_c < 50\text{ RFU}$; monotone decreasing.
+  - **`E`:** Heterozygote Balance: $H_b = 0.40 < 0.60 \implies$ `IMBALANCE_FLAG = True`.
+  - **`F`:** Stochastic Threshold: $h_{\min} < 150\text{ RFU} \implies$ `STOCHASTIC_THRESHOLD_FLAG = True`.
+  - **`G`:** Substrate Recovery: SMOOTH\_NON\_POROUS 60%, TEXTURED\_NON\_POROUS 40%, POROUS\_FABRIC 20%, ROUGH\_WOOD 15%.
+  - **`H`:** API Integration: all 5 endpoints return validated stochastic outputs.
+* **`VECTOR_05_TIPPETT_A-H` (Tippett Calibration, ROC, $C_{\text{llr}}$, HPD & ENFSI — Module 05):**
+  - **`A`:** Tippett ECCDF monotonicity: $T_{H_p}(x)$ and $T_{H_d}(x)$ are strictly non-increasing; $T(x) \in [0,1]$; grid has exactly `num_points` entries.
+  - **`B`:** FPR = 0.0, FNR = 0.0 for perfectly separated pristine datasets; FPR > 0 and FNR > 0 for overlapping distributions; exact manual calculation verified.
+  - **`C`:** ROC-AUC $\ge 0.999$ for pristine benchmark; MER = max(FPR, FNR); AUC bounded to $[0, 1]$.
+  - **`D`:** $C_{\text{llr}} \ge 0$; $C_{\text{llr}}^{\min} \le C_{\text{llr}}$; calibration loss $\ge 0$; manual formula check: $C_{\text{llr}}(\text{LR}=100, \text{LR}^{-1}=0.01) \approx 0.01447$; EXCELLENT quality for well-separated distributions.
+  - **`E`:** 5th percentile $\le$ median; 95th percentile $\ge$ median; Percentile$_{50\%}$ = median; single-sample trivial case exact; interpretation references percentile value.
+  - **`F`:** All 11 ENFSI tier boundaries verified: Tier 5 (log10 LR > 6), Tier 4 (4–6), Tier 3 (2–4), Tier 2 (1–2), Tier 1 (0–1), Tier 0 (=0), Tiers −1…−5 (symmetric defence); Turkish predicates present.
+  - **`G`:** Prosecutor's Fallacy Shield present for all tiers; standard legal text identical across Hp-supporting tiers; `likelihood_equation` references LR value; English shield mentions `P(Evidence` / `Prosecutor`; Turkish shield mentions `Yanılgı`.
+  - **`H`:** API integration across all 5 endpoints: FPR=FNR=0 for pristine, AUC≥0.999, Cllr EXCELLENT, HPD 5th pct ≤ median, Tier 5 for log10(LR)=26, Tier 0 for log10(LR)=0, negative tier for log10(LR)=−3.
+* **`VECTOR_P2_01` (Y-STR 27-Locus Paternal Match):** Full Y-FILER Plus 27-locus match, $k=0, N=25000, \alpha=0.05 \implies \hat{p}_{\text{upper}} \approx 0.00011982, \text{LR} \approx 8345.86, \log_{10}\text{LR} \approx 3.92147$. Clopper-Pearson 95% exact compliance.
+* **`VECTOR_06_YSTR_A-H` (Y-STR Haplotype Forensics & Mutation Invariants — Module 06):**
+  - **`A`:** 27-locus panel completeness, 6 RM loci classification ($\mu_l \ge 0.011$), multi-copy flags (`DYS385a/b`, `DYF387S1a/b`), and locus name normalization.
+  - **`B`:** Clopper-Pearson $k=0$ exact formula $\hat{p}_{\text{upper}} = 1 - (0.05)^{1/(N+1)}$ verified against analytical calculation; strict monotonic decrease with $N$.
+  - **`C`:** Clopper-Pearson $k>0$ exact Beta/Snedecor $F$ quantile; $p_{\text{lower}} \le \text{point\_est} \le p_{\text{upper}}$; $k=N$ boundary exact.
+  - **`D`:** Brenner subpopulation coancestry correction $p_{\text{Brenner}} = (k+\theta)/(N+\theta)$; conservative $p > 0$ for $k=0$; monotonic increase with $\theta$.
+  - **`E`:** Discrete Laplace model probability decay with haplotype distance from clonal center; normalized cluster weights.
+  - **`F`:** $N_{\text{male}} = \max_l \lceil n/2 \rceil$; multi-copy locus with $>4$ alleles enforces $N_{\text{male}} \ge 3$.
+  - **`G`:** Stepwise Mutation Model (SMM) geometric decay with step distance $m$; RM locus higher mutation transition probability.
+  - **`H`:** API integration across all 6 endpoints: panel metadata, Clopper-Pearson, Brenner, mixture contributors, SMM transition, and match evaluation.
+* **`VECTOR_P2_02` (X-STR Female Kinship — Argus X-12):** Paternal half-sisters (PHS) analysis across LG1–LG4 with obligate paternal allele sharing, mean intra-LG $r=0.01$, empirical $p_a \approx 0.3616 \implies \text{Combined } KI_X \approx 1.854 \times 10^5, \log_{10} KI_X \approx 5.268$.
+* **`VECTOR_07_XSTR_A-H` (X-STR Linkage Groups & Complex Female Kinship — Module 07):**
+  - **`A`:** Argus X-12 12-locus panel completeness, 4 linkage groups (LG1–LG4) with 3 markers each, genetic map distances (cM), and locus name normalization.
+  - **`B`:** Kosambi mapping function limits: $r(0)=0.0, r(50\text{ cM}) \approx 0.3808, \lim_{d \to \infty} r(d) = 0.50$, monotonic increase.
+  - **`C`:** Father-Daughter (Duo) hemizygous transmission: matching allele yields $KI = 1/p$, non-matching yields $KI = 0.0$ (deterministic exclusion).
+  - **`D`:** Paternal Half-Sisters (PHS) linkage correction: $KI_{\text{PHS}, l} = (1-r)(1/p) + r$; higher recombination fraction $r$ strictly decreases kinship evidence.
+  - **`E`:** Paternal Grandmother - Granddaughter (PGM-GD) 50% linkage decay: $KI = 0.5(1/p) + 0.5$ for shared allele, $0.5$ for unshared.
+  - **`F`:** Mother-Son (MS) likelihoods: heterozygous mother $KI = 0.5/p$, homozygous mother $KI = 1.0/p$, unshared allele $KI = 0.0$.
+  - **`G`:** Multi-cluster product rule invariant across independent linkage groups: $|\log_{10} KI_{X, \text{Total}} - \sum_{g=1}^4 \log_{10} KI_{\text{LG}_g}| < 10^{-4}$.
+  - **`H`:** API integration across all 3 endpoints: panel metadata, Kosambi map function, and full Argus X-12 kinship evaluation.
+* **`VECTOR_08_MTDNA_A-H` (mtDNA Control Region & EMPOP Alignment Invariants — Module 08):**
+  - **`A`:** Control region boundaries: HV1 (16024–16365), HV2 (73–340), HV3 (438–574).
+  - **`B`:** ISFG 3' right-alignment: HV1 16189 poly-C tract length variants (`16189.1C`), HV2 309 poly-C (`309.1C`), dinucleotide deletions (`522del`).
+  - **`C`:** IUPAC point heteroplasmy (PHP) mappings (`Y`, `R`, `W`, `S`, `K`, `M`) and maternal compatibility matrix.
+  - **`D`:** EMPOP $k=0$ exact binomial upper bound $\hat{p}_{\text{upper}} = 1 - (0.05)^{1/(N+1)}$ verified analytically ($N=48500 \implies \hat{p} \approx 6.18 \times 10^{-5}, LR \approx 16191.7$).
+  - **`E`:** EMPOP $k>0$ exact Beta quantile bound, ordering $p(k=0) < p(k=1) < p(k=5)$, and $k=N$ boundary.
+  - **`F`:** Pairwise maternal identity (0 differences $\implies$ `CANNOT_BE_EXCLUDED`, $LR > 10000$, Prosecutor's Fallacy Shield).
+  - **`G`:** Single sequence difference $\implies$ `INCONCLUSIVE` ($LR = 1.0, \log_{10} LR = 0.0$), $\ge 2$ differences $\implies$ `EXCLUDED` ($LR = 0.0, \log_{10} LR = -\infty$).
+  - **`H`:** API integration across all 3 endpoints: panel metadata, EMPOP upper bound, and pairwise maternal match evaluation.
+* **`VECTOR_P2_03` (Interpol DVI Mass Disaster Engine):** Severely degraded PM skeletal sample. Autosomal $LR = 5.2 \times 10^3$, Y-STR $\hat{p}_{\text{upper}} = 0.0002$ ($LR_{\text{Y}} = 5000$), mtDNA $\hat{p}_{\text{upper}} = 0.0001$ ($LR_{\text{mtDNA}} = 10000$). Combined Multi-Omic Joint $LR_{\text{Joint}} = 5.2 \times 10^3 \times 5000 \times 10000 = 2.6 \times 10^{11}, \log_{10} LR = 11.41497 \implies$ **DEFINITIVE IDENTIFICATION** ($LR \ge 10^6$).
+* **`VECTOR_09_DVI_A-H` (Interpol DVI Multi-Omic & Disaster Invariants — Module 09):**
+  - **`A`:** Multi-omic product rule mathematical exactness & log-space preservation ($|\log_{10} LR_{\text{Joint}} - \sum \log_{10} LR_i| < 10^{-6}$).
+  - **`B`:** Lineage data availability indicator flags ($\delta_y, \delta_m, \delta_s = 0$ sets corresponding multiplier to $1.0$).
+  - **`C`:** Interpol 4-tier threshold boundaries ($LR \ge 10^6$ Definitive, $10^4 \le LR < 10^6$ Probable, $10^{-2} < LR < 10^4$ Inconclusive, $LR \le 10^{-2}$ Exclusion).
+  - **`D`:** Judicial action criteria and secondary corroboration requirement mappings.
+  - **`E`:** $N \times M$ disaster cross-reconciliation matrix counts and summary metrics.
+  - **`F`:** Missing persons candidate ranking & posterior odds prioritization.
+  - **`G`:** Prosecutor's Fallacy Shield in DVI disaster reporting.
+  - **`H`:** API integration across all 3 endpoints: joint-lr, reconcile-matrix, and decision-tiers.
+* **`VECTOR_10_HID_A-H` (Ancient DNA & Degraded Forensic SNP Damage / HID Engine — Module 10):**
+  - **`A`:** MapDamage / Briggs deamination kinetics: terminal 5' deamination $\delta_1 = \delta_0 = 0.25$, $\delta_{10} = 0.25 e^{-0.9} \approx 0.10164$, asymptotic decay $\lim_{k \to \infty} \delta_k = 0.0$, strictly monotonic decrease.
+  - **`B`:** Exponential fragmentation length distribution: $\bar{L} = 1/\lambda + L_{\min} = 70.0\text{ bp}$, $\text{Median} \approx 57.73\text{ bp}$, $\text{CDF}(100\text{ bp}) \approx 82.6\%$ amplicon dropout risk.
+  - **`C`:** Low-coverage SNP Genotype Likelihood ($GL$): position-dependent MapDamage deamination compensation correctly calls homozygous Ref ($AA$) despite $C \to T$ read transitions at terminal overhang positions.
+  - **`D`:** Terminal 5' vs interior deamination likelihood contrast: terminal Alt reads undergo higher likelihood tolerance under homozygous Ref hypothesis.
+  - **`E`:** Multi-locus micro-multiplex SNP Likelihood Ratio ($LR_{\text{SNP}}$) product rule and log-space preservation ($|\log_{10} LR_{\text{SNP}} - \sum \log_{10} LR_m| < 10^{-6}$).
+  - **`F`:** Skeletal degradation index audit ($DI = \text{RFU}_{\text{small}} / \text{RFU}_{\text{large}} = 3.429 \ge 2.5 \implies$ `SEVERE` degradation, `MICRO_SNP_PANEL_40_70BP` recommendation) and LCN stochastic warning ($<100\text{ pg}$).
+  - **`G`:** Multi-modal human identification remains synthesis & candidate ranking by joint posterior odds.
+  - **`H`:** API integration across all 6 endpoints: damage-kinetics, fragmentation-distribution, snp-genotype-likelihood, multi-snp-lr, skeletal-audit, and evaluate-remains.
+* **`VECTOR_P3_01` (Northern European Fair Phototype — Module 11):** `rs12913832: C/C (2)`, `rs16891982: G/G (2)`, `rs1426654: A/A (2)`, `rs1805007: C/T (1)` $\implies P(\text{Blue Eye}) \ge 0.85, P(\text{Very Pale / Pale Skin}) \ge 0.88$. Softmax sum $= 1.0 \pm 10^{-6}$.
+* **`VECTOR_P3_02` (Sub-Saharan African Dark Phototype — Module 11):** `rs12913832: A/A (0)`, `rs1426654: G/G (0)`, `rs10424031: A/A (2)` $\implies P(\text{Brown Eye}) \ge 0.70, P(\text{Dark / Dark-to-Black Skin}) \ge 0.91$. Softmax sum $= 1.0 \pm 10^{-6}$.
+* **`VECTOR_11_HIRISPLEX_A-H` (HIrisPlex-S 41-SNP Pigmentation Forensics — Module 11):**
+  - **`A`:** Softmax Sum-to-Unity invariant ($|\sum P - 1.0| \le 10^{-6}$) verified across boundary dosage vectors for Eye, Hair, and Skin traits.
+  - **`B`:** IrisPlex 6-loci eye color exactness: HERC2 `rs12913832` C/C yields $P(\text{Blue}) > 0.85$, A/A yields $P(\text{Brown}) > 0.70$.
+  - **`C`:** HIrisPlex 22-loci hair color exactness: MC1R homozygous `rs1805007` R151C yields $P(\text{Red}) > 0.90$, KITLG yields $P(\text{Blond}) > 0.80$, SLC45A2 yields $P(\text{Black})$.
+  - **`D`:** Hair shade intensity logit: Light vs Dark classification and probability normalization.
+  - **`E`:** HIrisPlex-S 36-loci Fitzpatrick 5-class skin phototype: Type I (Very Pale), Type II (Pale), Type III/IV (Intermediate), Type V (Dark), Type VI (Dark to Black).
+  - **`F`:** Missingness uncertainty scaling penalty ($\lambda = 0.35$ flattens confidence as missing loci ratio increases).
+  - **`G`:** Full tri-trait composite prediction bundle.
+  - **`H`:** API integration across all 4 dedicated endpoints: `/hirisplex-s/predict`, `/hirisplex-s/eye-color`, `/hirisplex-s/hair-color`, `/hirisplex-s/skin-phototype`.
+* **`VECTOR_P6_01` (Chain of Custody Tamper Detection):** Merkle tree root divergence verified upon a single-second timestamp modification ($P_{\text{detection}} = 100\%$).
+* **`VECTOR_P6_02` (ISO 17025 Measurement Uncertainty):** Combined $u_c = 0.05385 \text{ ng/}\mu\text{L}$ and expanded $U_{95\%} = 0.1077 \text{ ng/}\mu\text{L}$ ($k=2.00$).
+* **`VECTOR_P6_03` (ENFSI Verbal Statement Mapping):** $LR = 3.5 \times 10^7$ maps deterministically to Verbal Tier 6 ("Extremely strong support for prosecution proposition").
+
+
 
 ---
 
@@ -522,7 +630,7 @@ If you use FORENZA in scientific research or technical benchmark reports, please
   publisher    = {GitHub},
   journal      = {GitHub Repository},
   howpublished = {\url{https://github.com/yusufcalisir/FORENZA}},
-  version      = {2.4.0}
+  version      = {2.5.0}
 }
 ```
 

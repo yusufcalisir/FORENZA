@@ -35,3 +35,49 @@ class PhenotypeResponse(BaseModel):
     snp_count_evaluated: int
     model_version: str
     limitations: List[str]
+
+
+# ── Module 11 HIrisPlex-S Schemas ─────────────────────────────────────────────
+
+class EyeColorResultSchema(BaseModel):
+    probabilities: Dict[str, float]
+    predicted_class: str
+    confidence: float
+    missing_loci_count: int
+    imputed_loci_count: int
+
+
+class HairColorResultSchema(BaseModel):
+    probabilities: Dict[str, float]
+    predicted_class: str
+    confidence: float
+    shade_probabilities: Dict[str, float]
+    predicted_shade: str
+    missing_loci_count: int
+
+
+class SkinPhototypeResultSchema(BaseModel):
+    probabilities: Dict[str, float]
+    fitzpatrick_type: str
+    predicted_class: str
+    confidence: float
+    missing_loci_count: int
+
+
+class HIrisPlexSPredictionRequest(BaseModel):
+    snp_dosages: Dict[str, float] = Field(
+        ...,
+        description="Map of rsID to dosage (0, 1, or 2).",
+        examples=[{"rs12913832": 2, "rs16891982": 2, "rs1426654": 2, "rs1805007": 1}],
+    )
+    enable_imputation: bool = Field(True, description="Impute missing panel SNPs with global population mean dosages.")
+
+
+class HIrisPlexSPredictionResponse(BaseModel):
+    eye_color: EyeColorResultSchema
+    hair_color: HairColorResultSchema
+    skin_phototype: SkinPhototypeResultSchema
+    total_snps_assayed: int
+    missingness_ratio: float
+    prosecutors_fallacy_shield: str
+

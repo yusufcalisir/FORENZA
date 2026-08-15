@@ -9,10 +9,12 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from app.api.forensic_routes import router
+from app.api.genomics_routes import router as genomics_router
 
 # Minimal test app — avoids booting full main.py with blockchain / DSPy deps
 _app = FastAPI()
 _app.include_router(router, prefix="/api/v1")
+_app.include_router(genomics_router, prefix="/api/v1")
 client = TestClient(_app)
 
 
@@ -146,3 +148,29 @@ def test_validate_n_per_type_out_of_range():
     payload = {"n_per_type": 2, "population": "Caucasian", "theta": 0.01, "seed": 0}
     resp = client.post("/api/v1/forensic/validate", json=payload)
     assert resp.status_code == 422
+
+
+# ── POST /forensic/genomics/deconvolve ────────────────────────────────────────
+
+def test_deconvolve_mixture_endpoint():
+    payload = {
+        "observed_peaks": {
+            "TH01": {"6.0": 700.0, "9.3": 300.0},
+            "CSF1PO": {"10.0": 600.0, "11.0": 600.0, "12.0": 300.0, "13.0": 300.0}
+        },
+        "num_contributors": 2,
+        "model_engine": "STRmix",
+        "n_burn": 100,
+        "n_sample": 300,
+        "n_chains": 1,
+    }
+    resp = client.post("/api/v1/forensic/genomics/deconvolve", json=payload)
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["num_contributors"] == 2
+    assert "log10_lr" in data
+    assert "posterior_mixture_weights" in data
+    assert len(data["posterior_mixture_weights"]) == 2
+    assert len(data["verbal_scale_en"]) > 0
+    assert len(data["verbal_scale_tr"]) > 0
+

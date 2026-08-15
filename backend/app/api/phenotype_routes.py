@@ -136,3 +136,144 @@ async def predict_extended_phenotype(body: PredictExtendedPhenotypeRequest) -> P
         biogeographic_ancestry_prior=res.biogeographic_ancestry_prior,
         phenotype_summary=res.phenotype_summary
     )
+
+
+# ── Module 11 HIrisPlex-S Dedicated API Endpoints ────────────────────────────
+from node.services.forensic.phenotyping.hirisplex_engine import HIrisPlexEngine
+from .phenotype_schemas import (
+    HIrisPlexSPredictionRequest, HIrisPlexSPredictionResponse,
+    EyeColorResultSchema, HairColorResultSchema, SkinPhototypeResultSchema,
+)
+
+_hirisplex_m11 = HIrisPlexEngine()
+
+
+@router.post(
+    "/hirisplex-s/predict",
+    response_model=HIrisPlexSPredictionResponse,
+    summary="HIrisPlex-S Tri-Trait Pigmentation Prediction Suite (Module 11)",
+    description="Simultaneously predicts Eye Color, Hair Color & Shade, and Fitzpatrick Skin Phototype via MLR Softmax. (Research §1)",
+    status_code=status.HTTP_200_OK,
+)
+async def predict_hirisplex_s_full(body: HIrisPlexSPredictionRequest) -> HIrisPlexSPredictionResponse:
+    try:
+        res = _hirisplex_m11.predict_full_hirisplex_s(
+            snp_dosages=body.snp_dosages,
+            enable_imputation=body.enable_imputation,
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"HIrisPlex-S prediction failed: {str(exc)}"
+        )
+
+    return HIrisPlexSPredictionResponse(
+        eye_color=EyeColorResultSchema(
+            probabilities=res.eye_color.probabilities,
+            predicted_class=res.eye_color.predicted_class,
+            confidence=res.eye_color.confidence,
+            missing_loci_count=res.eye_color.missing_loci_count,
+            imputed_loci_count=res.eye_color.imputed_loci_count,
+        ),
+        hair_color=HairColorResultSchema(
+            probabilities=res.hair_color.probabilities,
+            predicted_class=res.hair_color.predicted_class,
+            confidence=res.hair_color.confidence,
+            shade_probabilities=res.hair_color.shade_probabilities,
+            predicted_shade=res.hair_color.predicted_shade,
+            missing_loci_count=res.hair_color.missing_loci_count,
+        ),
+        skin_phototype=SkinPhototypeResultSchema(
+            probabilities=res.skin_phototype.probabilities,
+            fitzpatrick_type=res.skin_phototype.fitzpatrick_type,
+            predicted_class=res.skin_phototype.predicted_class,
+            confidence=res.skin_phototype.confidence,
+            missing_loci_count=res.skin_phototype.missing_loci_count,
+        ),
+        total_snps_assayed=res.total_snps_assayed,
+        missingness_ratio=res.missingness_ratio,
+        prosecutors_fallacy_shield=res.prosecutors_fallacy_shield,
+    )
+
+
+@router.post(
+    "/hirisplex-s/eye-color",
+    response_model=EyeColorResultSchema,
+    summary="IrisPlex 6-Loci Eye Color Prediction (Module 11)",
+    status_code=status.HTTP_200_OK,
+)
+async def predict_irisplex_eye_color(body: HIrisPlexSPredictionRequest) -> EyeColorResultSchema:
+    try:
+        eye = _hirisplex_m11.predict_eye_color(
+            snp_dosages=body.snp_dosages,
+            enable_imputation=body.enable_imputation,
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Eye color prediction failed: {str(exc)}"
+        )
+
+    return EyeColorResultSchema(
+        probabilities=eye.probabilities,
+        predicted_class=eye.predicted_class,
+        confidence=eye.confidence,
+        missing_loci_count=eye.missing_loci_count,
+        imputed_loci_count=eye.imputed_loci_count,
+    )
+
+
+@router.post(
+    "/hirisplex-s/hair-color",
+    response_model=HairColorResultSchema,
+    summary="HIrisPlex 22-Loci Hair Color & Shade Prediction (Module 11)",
+    status_code=status.HTTP_200_OK,
+)
+async def predict_hirisplex_hair_color(body: HIrisPlexSPredictionRequest) -> HairColorResultSchema:
+    try:
+        hair = _hirisplex_m11.predict_hair_color(
+            snp_dosages=body.snp_dosages,
+            enable_imputation=body.enable_imputation,
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Hair color prediction failed: {str(exc)}"
+        )
+
+    return HairColorResultSchema(
+        probabilities=hair.probabilities,
+        predicted_class=hair.predicted_class,
+        confidence=hair.confidence,
+        shade_probabilities=hair.shade_probabilities,
+        predicted_shade=hair.predicted_shade,
+        missing_loci_count=hair.missing_loci_count,
+    )
+
+
+@router.post(
+    "/hirisplex-s/skin-phototype",
+    response_model=SkinPhototypeResultSchema,
+    summary="HIrisPlex-S 36-Loci Skin Phototype Prediction (Module 11)",
+    status_code=status.HTTP_200_OK,
+)
+async def predict_hirisplex_skin_phototype(body: HIrisPlexSPredictionRequest) -> SkinPhototypeResultSchema:
+    try:
+        skin = _hirisplex_m11.predict_skin_phototype(
+            snp_dosages=body.snp_dosages,
+            enable_imputation=body.enable_imputation,
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Skin phototype prediction failed: {str(exc)}"
+        )
+
+    return SkinPhototypeResultSchema(
+        probabilities=skin.probabilities,
+        fitzpatrick_type=skin.fitzpatrick_type,
+        predicted_class=skin.predicted_class,
+        confidence=skin.confidence,
+        missing_loci_count=skin.missing_loci_count,
+    )
+

@@ -6,7 +6,7 @@ modeling, locus-specific stutter ratios, and Metropolis-Hastings MCMC inference.
 
 from .stochastic import StochasticModel, DropoutModel, DropInModel
 from .peak_model import PeakHeightModel, StutterModel
-from .mixture import MixtureDeconvolutionEngine, MixtureContributor
+from .mixture import MixtureDeconvolutionEngine, MixtureDeconvolutionResult, DeconvolutedGenotypePair
 from .mcmc import MCMCSampler, CalibrationEngine
 
 __all__ = [
@@ -16,7 +16,8 @@ __all__ = [
     "PeakHeightModel",
     "StutterModel",
     "MixtureDeconvolutionEngine",
-    "MixtureContributor",
+    "MixtureDeconvolutionResult",
+    "DeconvolutedGenotypePair",
     "MCMCSampler",
     "CalibrationEngine",
 ]

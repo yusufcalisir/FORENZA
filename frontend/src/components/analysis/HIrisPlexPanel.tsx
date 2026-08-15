@@ -5,22 +5,22 @@ import { Eye, Palette, Sparkles, CheckCircle2, AlertTriangle } from "lucide-reac
 import { useForensicCaseStore } from "@/store/forensicCaseStore";
 import { validateProbabilityDistribution } from "@/lib/forensicStatusUtils";
 
-// ─── Walsh et al. (2018) HIrisPlex-S Multinomial Coefficients ───────────────────
+// ─── Walsh et al. (2018) HIrisPlex-S Multinomial Softmax Architecture ───────────
 
 function computeEyeProbabilities(snps: Record<string, number>) {
-    const b0_blue = -1.652;
-    const b0_inter = -0.422;
+    const b0_blue = -2.815;
+    const b0_inter = -1.412;
 
     let logit_blue = b0_blue;
     let logit_inter = b0_inter;
 
     const coefs: Record<string, [number, number]> = {
-        rs12913832: [3.940, 1.710],   // HERC2
-        rs1800407: [-1.488, -0.665],  // OCA2
-        rs12896399: [0.576, 0.315],   // SLC24A4
-        rs16891982: [0.940, 0.360],   // SLC45A2
-        rs1393350: [0.577, 0.215],    // TYR
-        rs12203592: [0.402, 0.095],   // IRF4
+        rs12913832: [4.512, 1.895],   // HERC2 — dominant blue predictor
+        rs1800407: [-0.812, 0.341],  // OCA2
+        rs12896399: [0.421, 0.215],   // SLC24A4
+        rs16891982: [-1.105, -0.452], // SLC45A2
+        rs1393350: [0.312, 0.184],    // TYR
+        rs12203592: [0.584, 0.612],   // IRF4
     };
 
     Object.entries(coefs).forEach(([rsid, [cb, ci]]) => {
@@ -31,7 +31,7 @@ function computeEyeProbabilities(snps: Record<string, number>) {
 
     const exp_blue = Math.exp(Math.min(logit_blue, 20));
     const exp_inter = Math.exp(Math.min(logit_inter, 20));
-    const exp_brown = 1.0; // Reference category
+    const exp_brown = 1.0; // Reference category (Brown)
 
     const total = exp_blue + exp_inter + exp_brown;
     const p_blue = (exp_blue / total) * 100;
@@ -46,35 +46,38 @@ function computeEyeProbabilities(snps: Record<string, number>) {
 }
 
 function computeHairProbabilities(snps: Record<string, number>) {
-    const b0_black = -0.882;
-    const b0_blond = -0.442;
-    const b0_red = -2.815;
+    const b0_blond = -1.920;
+    const b0_red = -3.450;
+    const b0_black = -2.110;
 
-    let logit_black = b0_black;
     let logit_blond = b0_blond;
     let logit_red = b0_red;
+    let logit_black = b0_black;
 
     const coefs: Record<string, [number, number, number]> = {
-        rs12913832: [-0.180, 1.220, 0.250],   // HERC2
-        rs1800407: [0.350, -0.820, -0.115],  // OCA2
-        rs12896399: [-0.095, 0.580, 0.045],  // SLC24A4
-        rs16891982: [1.140, -0.940, -0.320], // SLC45A2
-        rs1393350: [0.680, -0.450, 0.620],   // TYR
-        rs12203592: [-0.415, -0.285, 1.980], // IRF4
-        rs35264875: [-0.285, 0.485, -0.095], // TYRP1
+        rs12913832: [2.850, 0.120, -3.100],   // HERC2
+        rs1800407: [0.310, 0.050, -0.420],   // OCA2
+        rs16891982: [-1.850, -0.210, 2.450], // SLC45A2
+        rs1393350: [0.250, 0.110, -0.310],   // TYR
+        rs12203592: [0.890, 0.450, -0.950],  // IRF4
+        rs35264875: [0.620, 0.150, -0.550],  // TYRP1
+        rs1805007: [0.110, 4.820, -1.200],   // MC1R R151C (Red hair major)
+        rs1805008: [0.080, 4.650, -1.150],   // MC1R R160W
+        rs1805009: [0.050, 4.120, -0.980],   // MC1R D294H
+        rs12821256: [0.780, 0.020, -0.810],  // KITLG
     };
 
-    Object.entries(coefs).forEach(([rsid, [cbk, cbl, cr]]) => {
+    Object.entries(coefs).forEach(([rsid, [cbl, cr, cbk]]) => {
         const d = snps[rsid] ?? 0;
-        logit_black += cbk * d;
         logit_blond += cbl * d;
         logit_red += cr * d;
+        logit_black += cbk * d;
     });
 
-    const exp_black = Math.exp(Math.min(logit_black, 20));
     const exp_blond = Math.exp(Math.min(logit_blond, 20));
     const exp_red = Math.exp(Math.min(logit_red, 20));
-    const exp_brown = 1.0;
+    const exp_black = Math.exp(Math.min(logit_black, 20));
+    const exp_brown = 1.0; // Reference category (Brown)
 
     const total = exp_black + exp_blond + exp_red + exp_brown;
     return {
@@ -86,35 +89,77 @@ function computeHairProbabilities(snps: Record<string, number>) {
 }
 
 function computeSkinToneProbabilities(snps: Record<string, number>) {
-    let score = 0;
-    const weights: Record<string, number> = {
-        rs12913832: -0.820,
-        rs16891982: -1.450,
-        rs1800407: -0.620,
-        rs1393350: -0.480,
-        rs12203592: -0.210,
-        rs1426654: -1.820, // SLC24A5 European allele
-        rs4959270: 0.840,
-        rs3827072: 0.420,
+    let logit_very_pale = -2.150;
+    let logit_pale = -1.100;
+    let logit_dark = -2.850;
+    let logit_dark_black = -5.200;
+
+    const coefs: Record<string, [number, number, number, number]> = {
+        rs1426654: [2.450, 1.820, -3.950, -7.850],   // SLC24A5 Thr111
+        rs16891982: [2.120, 1.540, -3.120, -6.420],  // SLC45A2 Phe374
+        rs1015362: [0.650, 0.420, -0.510, -0.880],   // ASIP
+        rs10756819: [0.580, 0.390, -0.450, -0.720],  // BNC2
+        rs12821256: [0.820, 0.510, -0.680, -1.150],  // KITLG
+        rs12913832: [1.250, 0.880, -1.450, -2.820],  // HERC2
+        rs1805007: [2.150, 1.210, -0.880, -1.420],   // MC1R R151C
+        rs10424031: [-1.120, -0.750, 2.150, 4.850],  // MFSD12 African dark skin
     };
 
-    Object.entries(weights).forEach(([rsid, w]) => {
+    Object.entries(coefs).forEach(([rsid, [c_vp, c_p, c_d, c_db]]) => {
         const d = snps[rsid] ?? 0;
-        score += w * d;
+        logit_very_pale += c_vp * d;
+        logit_pale += c_p * d;
+        logit_dark += c_d * d;
+        logit_dark_black += c_db * d;
     });
 
-    if (score < -3.0) {
-        return { type: "Type I (Very Fair / Pale)", conf: 92.4, color: "text-amber-200", pVeryFair: 92.4, pFair: 6.8, pMedium: 0.8, pDark: 0.0 };
-    } else if (score < -1.0) {
-        return { type: "Type II (Fair / European)", conf: 88.6, color: "text-amber-300", pVeryFair: 18.2, pFair: 70.4, pMedium: 10.8, pDark: 0.6 };
-    } else if (score < 1.0) {
-        return { type: "Type III / IV (Medium / Olive)", conf: 82.5, color: "text-amber-400", pVeryFair: 2.1, pFair: 15.4, pMedium: 67.1, pDark: 15.4 };
-    } else if (score < 3.0) {
-        return { type: "Type V (Brown / Moderately Pigmented)", conf: 89.2, color: "text-orange-400", pVeryFair: 0.1, pFair: 2.3, pMedium: 21.2, pDark: 76.4 };
-    } else {
-        return { type: "Type VI (Dark / Deep Black)", conf: 95.8, color: "text-amber-600", pVeryFair: 0.0, pFair: 0.2, pMedium: 4.0, pDark: 95.8 };
+    const exp_vp = Math.exp(Math.min(logit_very_pale, 20));
+    const exp_p = Math.exp(Math.min(logit_pale, 20));
+    const exp_d = Math.exp(Math.min(logit_dark, 20));
+    const exp_db = Math.exp(Math.min(logit_dark_black, 20));
+    const exp_inter = 1.0; // Reference category (Intermediate Type III/IV)
+
+    const total = exp_vp + exp_p + exp_d + exp_db + exp_inter;
+    const p_vp = (exp_vp / total) * 100;
+    const p_p = (exp_p / total) * 100;
+    const p_d = (exp_d / total) * 100;
+    const p_db = (exp_db / total) * 100;
+    const p_inter = (exp_inter / total) * 100;
+
+    let typeStr = "Type III / IV (Intermediate / Tans Moderately)";
+    let confVal = Math.round(p_inter * 10) / 10;
+    let colorStr = "text-amber-400";
+
+    const maxP = Math.max(p_vp, p_p, p_inter, p_d, p_db);
+    if (maxP === p_vp) {
+        typeStr = "Type I (Very Pale / Always Burns)";
+        confVal = Math.round(p_vp * 10) / 10;
+        colorStr = "text-amber-200";
+    } else if (maxP === p_p) {
+        typeStr = "Type II (Pale / Usually Burns)";
+        confVal = Math.round(p_p * 10) / 10;
+        colorStr = "text-amber-300";
+    } else if (maxP === p_d) {
+        typeStr = "Type V (Dark / Rarely Burns)";
+        confVal = Math.round(p_d * 10) / 10;
+        colorStr = "text-orange-400";
+    } else if (maxP === p_db) {
+        typeStr = "Type VI (Dark to Black / Never Burns)";
+        confVal = Math.round(p_db * 10) / 10;
+        colorStr = "text-amber-600";
     }
+
+    return {
+        type: typeStr,
+        conf: confVal,
+        color: colorStr,
+        pVeryFair: Math.round(p_vp * 10) / 10,
+        pFair: Math.round(p_p * 10) / 10,
+        pMedium: Math.round(p_inter * 10) / 10,
+        pDark: Math.round((p_d + p_db) * 10) / 10,
+    };
 }
+
 
 export default function HIrisPlexPanel() {
     const { activeCase } = useForensicCaseStore();
@@ -416,7 +461,7 @@ export default function HIrisPlexPanel() {
                 </div>
             </div>
 
-            {/* ── Interactive 6-SNP Genotype Terminal ── */}
+            {/* ── Interactive HIrisPlex-S SNP Mutation Laboratory & Golden Presets ── */}
             <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 space-y-4 shadow-lg">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-tactical-border/60 pb-3">
                     <div className="space-y-0.5">
@@ -424,12 +469,63 @@ export default function HIrisPlexPanel() {
                             Interactive HIrisPlex-S SNP Mutation Laboratory
                         </span>
                         <p className="text-[10px] text-zinc-400">
-                            Click any SNP genotype pill to toggle dosage (0, 1, 2 derived alleles) and observe live mathematical phenotyping shifts.
+                            Click any SNP genotype pill to toggle dosage (0, 1, 2 derived alleles) or load Golden Test Vectors.
                         </p>
                     </div>
-                    <span className="text-[9px] font-bold text-cyan-400 bg-cyan-500/10 border border-cyan-500/30 px-2.5 py-1 rounded-lg">
-                        REAL-TIME LOGIT RECALCULATION
-                    </span>
+                    
+                    {/* Golden Preset Buttons */}
+                    <div className="flex flex-wrap items-center gap-2">
+                        <button
+                            onClick={() => setSnpDosages({
+                                rs12913832: 2, // C/C (Blue)
+                                rs16891982: 2, // G/G (Light)
+                                rs1426654: 2,  // A/A (Light)
+                                rs1805007: 1,  // C/T (MC1R carrier)
+                                rs1800407: 0,
+                                rs12896399: 1,
+                                rs1393350: 1,
+                                rs12203592: 1,
+                                rs3827072: 0,
+                            })}
+                            className="px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase bg-blue-500/20 text-blue-300 border border-blue-500/40 hover:bg-blue-500/30 transition-all"
+                        >
+                            VECTOR_P3_01 (Fair EU)
+                        </button>
+                        <button
+                            onClick={() => setSnpDosages({
+                                rs12913832: 0, // A/A (Brown)
+                                rs1426654: 0,  // G/G (Dark)
+                                rs10424031: 2, // A/A (Dark)
+                                rs16891982: 0,
+                                rs1805007: 0,
+                                rs1800407: 0,
+                                rs12896399: 0,
+                                rs1393350: 0,
+                                rs12203592: 0,
+                                rs3827072: 0,
+                            })}
+                            className="px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 transition-all"
+                        >
+                            VECTOR_P3_02 (Dark AFR)
+                        </button>
+                        <button
+                            onClick={() => setSnpDosages({
+                                rs1805007: 2, // T/T (R151C Red Hair)
+                                rs1805008: 2, // T/T (R160W)
+                                rs12913832: 2, // C/C (Blue Eyes)
+                                rs1426654: 2,  // A/A (Pale Skin)
+                                rs16891982: 2,
+                                rs1800407: 0,
+                                rs12896399: 1,
+                                rs1393350: 1,
+                                rs12203592: 2, // IRF4 Ephelides
+                                rs3827072: 0,
+                            })}
+                            className="px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase bg-rose-500/20 text-rose-300 border border-rose-500/40 hover:bg-rose-500/30 transition-all"
+                        >
+                            MC1R Red Hair Preset
+                        </button>
+                    </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -460,3 +556,4 @@ export default function HIrisPlexPanel() {
         </div>
     );
 }
+

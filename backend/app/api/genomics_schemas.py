@@ -31,3 +31,48 @@ class MultiLayerGenomicsResponse(BaseModel):
     active_layer_count: int
     genomic_layers: List[GenomicLayerDetail]
     architecture_provenance: str
+
+
+class LocusDeconvolutionDetail(BaseModel):
+    locus: str
+    major_genotype: List[float]
+    minor_genotype: List[float]
+    posterior_probability: float
+    log_likelihood: float
+
+
+class DeconvolveMixtureRequest(BaseModel):
+    observed_peaks: Dict[str, Dict[str, float]] = Field(
+        ...,
+        examples=[{"TH01": {"6.0": 700.0, "9.3": 300.0}}],
+        description="Observed EPG peaks {locus: {allele_str: rfu_height}}"
+    )
+    num_contributors: int = Field(default=2, ge=2, le=4, description="Number of mixture contributors (2, 3, or 4)")
+    model_engine: str = Field(default="STRmix", description="Continuous likelihood engine: STRmix | EuroForMix")
+    n_burn: int = Field(default=1000, ge=100, le=50000, description="MCMC burn-in iterations")
+    n_sample: int = Field(default=3000, ge=200, le=100000, description="MCMC retained sampling iterations")
+    n_chains: int = Field(default=3, ge=1, le=8, description="Number of parallel MCMC chains")
+    suspect_profile: Optional[List[List[float]]] = Field(
+        default=None,
+        description="Optional suspect genotype list [(a1, a2)] per locus for H_p numerator calculation"
+    )
+
+
+class DeconvolveMixtureResponse(BaseModel):
+    num_contributors: int
+    model_engine: str
+    log10_lr: float
+    lr_value: float
+    hpd95_lower: float
+    hpd95_upper: float
+    posterior_mixture_weights: List[float]
+    posterior_degradation_slopes: List[float]
+    r_hat_max: float
+    ess_min: float
+    mcmc_converged: bool
+    major_contributor_identified: bool
+    locus_deconvolutions: List[LocusDeconvolutionDetail]
+    verbal_scale_en: str
+    verbal_scale_tr: str
+    assumptions: List[str]
+

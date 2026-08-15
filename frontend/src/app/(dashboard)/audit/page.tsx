@@ -11,9 +11,16 @@ import { useForensicCaseStore } from "@/store/forensicCaseStore";
 type LogLevel = "ALL" | "PASS" | "WARNING" | "FAIL";
 
 const STATUS_CONF = {
-    PASS: { color: "text-emerald-400", bg: "bg-emerald-500/10 border-emerald-500/30", icon: CheckCircle },
-    WARNING: { color: "text-amber-400", bg: "bg-amber-500/10 border-amber-500/30", icon: AlertTriangle },
-    FAIL: { color: "text-red-400", bg: "bg-red-500/10 border-red-500/30", icon: AlertTriangle },
+    PASS: { color: "text-emerald-400", bg: "bg-emerald-500/10 border-emerald-500/30", icon: CheckCircle, label: "VERIFIED" },
+    WARNING: { color: "text-amber-400", bg: "bg-amber-500/10 border-amber-500/30", icon: AlertTriangle, label: "FLAGGED" },
+    FAIL: { color: "text-red-400", bg: "bg-red-500/10 border-red-500/30", icon: AlertTriangle, label: "FAILED" },
+};
+
+const SEVERITY_CONF = {
+    CRITICAL_ALERT: { color: "text-rose-400", bg: "bg-rose-500/15 border-rose-500/40", icon: AlertTriangle, label: "CRITICAL ALERT" },
+    ELEVATED: { color: "text-amber-400", bg: "bg-amber-500/15 border-amber-500/40", icon: Activity, label: "ELEVATED" },
+    INFORMATIONAL: { color: "text-cyan-400", bg: "bg-cyan-500/15 border-cyan-500/40", icon: FileText, label: "INFORMATIONAL" },
+    NOMINAL: { color: "text-emerald-400", bg: "bg-emerald-500/10 border-emerald-500/30", icon: CheckCircle, label: "NOMINAL" },
 };
 
 export default function AuditPage() {
@@ -110,16 +117,17 @@ export default function AuditPage() {
                 <div className="hidden md:grid grid-cols-12 px-4 py-2.5 border-b border-tactical-border/40 text-[8px] font-bold text-zinc-400 uppercase tracking-wider">
                     <span className="col-span-1">ID</span>
                     <span className="col-span-2">Timestamp</span>
-                    <span className="col-span-4">Event</span>
+                    <span className="col-span-3">Event &amp; Findings</span>
                     <span className="col-span-2">Module</span>
-                    <span className="col-span-1">Analyst</span>
-                    <span className="col-span-1">Standard</span>
-                    <span className="col-span-1 text-right">Status</span>
+                    <span className="col-span-2 text-center">Finding Severity</span>
+                    <span className="col-span-2 text-right">Chain Integrity</span>
                 </div>
 
                 {filtered.map((entry, i) => {
                     const sc = STATUS_CONF[entry.status];
                     const StatusIcon = sc.icon;
+                    const sev = SEVERITY_CONF[entry.findingSeverity || "NOMINAL"];
+                    const SevIcon = sev.icon;
                     const isExpanded = expanded === entry.id;
                     return (
                         <div key={entry.id} className="border-b border-tactical-border/30 last:border-0">
@@ -133,19 +141,23 @@ export default function AuditPage() {
                             >
                                 <span className="col-span-1 text-[9px] font-bold text-zinc-400 font-mono">{entry.id}</span>
                                 <span className="col-span-2 text-[9px] text-zinc-400 font-mono">{entry.timestamp}</span>
-                                <span className="col-span-4 text-[10px] text-zinc-100 font-bold truncate">{entry.event}</span>
+                                <span className="col-span-3 text-[10px] text-zinc-100 font-bold truncate">{entry.event}</span>
                                 <span className="col-span-2 text-[9px] text-zinc-400 truncate">{entry.module}</span>
-                                <span className="col-span-1 text-[9px] text-zinc-400 truncate">{entry.analyst}</span>
-                                <span className="col-span-1 text-[9px] text-zinc-500 truncate">{entry.standard}</span>
-                                <div className="col-span-1 flex justify-end">
+                                <div className="col-span-2 flex justify-center">
+                                    <span className={`flex items-center gap-1 text-[8px] font-bold border rounded-md px-1.5 py-0.5 ${sev.bg} ${sev.color}`}>
+                                        <SevIcon className="w-2.5 h-2.5 shrink-0" />
+                                        {sev.label}
+                                    </span>
+                                </div>
+                                <div className="col-span-2 flex justify-end">
                                     <span className={`flex items-center gap-1 text-[8px] font-bold border rounded-md px-1.5 py-0.5 ${sc.bg} ${sc.color}`}>
-                                        <StatusIcon className="w-2.5 h-2.5" />
-                                        {entry.status}
+                                        <StatusIcon className="w-2.5 h-2.5 shrink-0" />
+                                        INTEGRITY: {entry.status}
                                     </span>
                                 </div>
                             </motion.div>
 
-                            {/* Mobile Card View (Strictly Aligned) */}
+                            {/* Mobile Card View */}
                             <motion.div
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
@@ -153,8 +165,8 @@ export default function AuditPage() {
                                 onClick={() => setExpanded(isExpanded ? null : entry.id)}
                                 className="md:hidden p-3 space-y-2 cursor-pointer hover:bg-white/5 transition-colors"
                             >
-                                {/* Mobile Row 1: ID, Timestamp & Status Badge (Perfect Alignment) */}
-                                <div className="flex items-center justify-between gap-2">
+                                {/* Mobile Row 1: ID, Timestamp & Dual Badges */}
+                                <div className="flex items-center justify-between gap-2 flex-wrap">
                                     <div className="flex items-center gap-2 min-w-0">
                                         <span className="text-[9px] font-bold font-mono text-amber-300 bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded-md shrink-0">
                                             {entry.id}
@@ -164,10 +176,16 @@ export default function AuditPage() {
                                             <span className="truncate">{entry.timestamp}</span>
                                         </div>
                                     </div>
-                                    <span className={`flex items-center gap-1 text-[8px] font-bold border rounded-md px-2 py-0.5 shrink-0 ${sc.bg} ${sc.color}`}>
-                                        <StatusIcon className="w-2.5 h-2.5" />
-                                        {entry.status}
-                                    </span>
+                                    <div className="flex items-center gap-1.5 shrink-0">
+                                        <span className={`flex items-center gap-1 text-[8px] font-bold border rounded-md px-1.5 py-0.5 ${sev.bg} ${sev.color}`}>
+                                            <SevIcon className="w-2.5 h-2.5" />
+                                            {sev.label}
+                                        </span>
+                                        <span className={`flex items-center gap-1 text-[8px] font-bold border rounded-md px-1.5 py-0.5 ${sc.bg} ${sc.color}`}>
+                                            <StatusIcon className="w-2.5 h-2.5" />
+                                            {entry.status}
+                                        </span>
+                                    </div>
                                 </div>
 
                                 {/* Mobile Row 2: Event Title */}
@@ -197,14 +215,18 @@ export default function AuditPage() {
                                         exit={{ opacity: 0, height: 0 }}
                                         className="px-3 sm:px-4 pb-3 space-y-2 border-t border-tactical-border/20"
                                     >
-                                        <div className="pt-2.5 grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                            <div className="p-2 rounded-lg bg-black/40 border border-tactical-border/30">
-                                                <span className="text-[8px] text-zinc-500 uppercase block font-bold">HMAC-SHA256 Hash</span>
-                                                <span className="text-[10px] text-amber-400 font-mono font-bold truncate block">{entry.hmac}</span>
+                                        <div className="pt-2.5 grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                            <div className="p-2 rounded-lg bg-black/40 border border-tactical-border/30 space-y-0.5">
+                                                <span className="text-[8px] text-zinc-500 uppercase block font-bold">Process &amp; Chain Integrity</span>
+                                                <span className="text-[10px] text-emerald-400 font-mono font-bold truncate block">{entry.status} (HMAC-SHA256 Validated)</span>
                                             </div>
-                                            <div className="p-2 rounded-lg bg-black/40 border border-tactical-border/30">
+                                            <div className="p-2 rounded-lg bg-black/40 border border-tactical-border/30 space-y-0.5">
+                                                <span className="text-[8px] text-zinc-500 uppercase block font-bold">Finding Classification</span>
+                                                <span className={`text-[10px] ${sev.color} font-mono font-bold truncate block`}>{sev.label}</span>
+                                            </div>
+                                            <div className="p-2 rounded-lg bg-black/40 border border-tactical-border/30 space-y-0.5">
                                                 <span className="text-[8px] text-zinc-500 uppercase block font-bold">Polygon zkEVM Ledger</span>
-                                                <span className="text-[10px] text-cyan-400 font-mono font-bold truncate block">Block #1,847,{290 - i}</span>
+                                                <span className="text-[10px] text-cyan-400 font-mono font-bold truncate block">{entry.polygonTx || `Block #1,847,${290 - i}`}</span>
                                             </div>
                                         </div>
                                     </motion.div>

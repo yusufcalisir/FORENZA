@@ -22,6 +22,13 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
+import {
+    calculateLociQuality,
+    COMPLETE_LOCI_THRESHOLD,
+    PARTIAL_LOCI_THRESHOLD,
+    ProfileQualityTier,
+} from "@/lib/forensicStatusUtils";
+
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 interface ZKPMetadata {
@@ -41,7 +48,7 @@ interface MatchResultData {
     activeLoci: number;
     totalLoci: number;
     completenessRatio: number;
-    qualityTier: "complete" | "partial" | "degraded";
+    qualityTier: ProfileQualityTier;
     missingLociQuery: string[];
     missingLociTarget: string[];
     zkpStatus?: ZKPStatus;
@@ -59,7 +66,7 @@ const TIER_CONFIG = {
         border: "border-emerald-500/20",
         barColor: "bg-emerald-500",
         icon: CheckCircle,
-        description: "≥18 markers compared",
+        description: `Full ${COMPLETE_LOCI_THRESHOLD}/24 markers compared`,
     },
     partial: {
         label: "Partial Profile",
@@ -69,7 +76,7 @@ const TIER_CONFIG = {
         border: "border-amber-500/20",
         barColor: "bg-amber-500",
         icon: AlertTriangle,
-        description: "10–17 markers compared",
+        description: `${PARTIAL_LOCI_THRESHOLD}–${COMPLETE_LOCI_THRESHOLD - 1} markers compared`,
     },
     degraded: {
         label: "Critically Degraded",
@@ -79,7 +86,7 @@ const TIER_CONFIG = {
         border: "border-red-500/20",
         barColor: "bg-red-500",
         icon: AlertTriangle,
-        description: "<10 markers compared",
+        description: `<${PARTIAL_LOCI_THRESHOLD} markers compared`,
     },
 } as const;
 

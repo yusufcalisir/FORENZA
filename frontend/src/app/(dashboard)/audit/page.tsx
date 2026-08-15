@@ -7,20 +7,27 @@ import {
     FileText, Clock, Filter, ChevronDown, Activity, ChevronRight, Hash
 } from "lucide-react";
 import { useForensicCaseStore } from "@/store/forensicCaseStore";
+import {
+    PROCESS_INTEGRITY_CONFIG,
+    FINDING_SEVERITY_CONFIG,
+    ProcessIntegrityStatus,
+    FindingSeverity,
+} from "@/lib/forensicStatusUtils";
 
 type LogLevel = "ALL" | "PASS" | "WARNING" | "FAIL";
 
-const STATUS_CONF = {
-    PASS: { color: "text-emerald-400", bg: "bg-emerald-500/10 border-emerald-500/30", icon: CheckCircle, label: "VERIFIED" },
-    WARNING: { color: "text-amber-400", bg: "bg-amber-500/10 border-amber-500/30", icon: AlertTriangle, label: "FLAGGED" },
-    FAIL: { color: "text-red-400", bg: "bg-red-500/10 border-red-500/30", icon: AlertTriangle, label: "FAILED" },
+const STATUS_ICONS: Record<ProcessIntegrityStatus, typeof CheckCircle> = {
+    PASS: CheckCircle,
+    WARNING: AlertTriangle,
+    FAIL: AlertTriangle,
+    PENDING: Clock,
 };
 
-const SEVERITY_CONF = {
-    CRITICAL_ALERT: { color: "text-rose-400", bg: "bg-rose-500/15 border-rose-500/40", icon: AlertTriangle, label: "CRITICAL ALERT" },
-    ELEVATED: { color: "text-amber-400", bg: "bg-amber-500/15 border-amber-500/40", icon: Activity, label: "ELEVATED" },
-    INFORMATIONAL: { color: "text-cyan-400", bg: "bg-cyan-500/15 border-cyan-500/40", icon: FileText, label: "INFORMATIONAL" },
-    NOMINAL: { color: "text-emerald-400", bg: "bg-emerald-500/10 border-emerald-500/30", icon: CheckCircle, label: "NOMINAL" },
+const SEVERITY_ICONS: Record<FindingSeverity, typeof CheckCircle> = {
+    CRITICAL_ALERT: AlertTriangle,
+    ELEVATED: Activity,
+    INFORMATIONAL: FileText,
+    NOMINAL: CheckCircle,
 };
 
 export default function AuditPage() {
@@ -124,10 +131,10 @@ export default function AuditPage() {
                 </div>
 
                 {filtered.map((entry, i) => {
-                    const sc = STATUS_CONF[entry.status];
-                    const StatusIcon = sc.icon;
-                    const sev = SEVERITY_CONF[entry.findingSeverity || "NOMINAL"];
-                    const SevIcon = sev.icon;
+                    const sc = PROCESS_INTEGRITY_CONFIG[entry.status];
+                    const StatusIcon = STATUS_ICONS[entry.status];
+                    const sev = FINDING_SEVERITY_CONFIG[entry.findingSeverity || "NOMINAL"];
+                    const SevIcon = SEVERITY_ICONS[entry.findingSeverity || "NOMINAL"];
                     const isExpanded = expanded === entry.id;
                     return (
                         <div key={entry.id} className="border-b border-tactical-border/30 last:border-0">
@@ -144,13 +151,13 @@ export default function AuditPage() {
                                 <span className="col-span-3 text-[10px] text-zinc-100 font-bold truncate">{entry.event}</span>
                                 <span className="col-span-2 text-[9px] text-zinc-400 truncate">{entry.module}</span>
                                 <div className="col-span-2 flex justify-center">
-                                    <span className={`flex items-center gap-1 text-[8px] font-bold border rounded-md px-1.5 py-0.5 ${sev.bg} ${sev.color}`}>
+                                    <span className={`flex items-center gap-1 text-[8px] font-bold border rounded-md px-1.5 py-0.5 ${sev.bg} ${sev.border} ${sev.color}`}>
                                         <SevIcon className="w-2.5 h-2.5 shrink-0" />
                                         {sev.label}
                                     </span>
                                 </div>
                                 <div className="col-span-2 flex justify-end">
-                                    <span className={`flex items-center gap-1 text-[8px] font-bold border rounded-md px-1.5 py-0.5 ${sc.bg} ${sc.color}`}>
+                                    <span className={`flex items-center gap-1 text-[8px] font-bold border rounded-md px-1.5 py-0.5 ${sc.bg} ${sc.border} ${sc.color}`}>
                                         <StatusIcon className="w-2.5 h-2.5 shrink-0" />
                                         INTEGRITY: {entry.status}
                                     </span>
@@ -177,11 +184,11 @@ export default function AuditPage() {
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-1.5 shrink-0">
-                                        <span className={`flex items-center gap-1 text-[8px] font-bold border rounded-md px-1.5 py-0.5 ${sev.bg} ${sev.color}`}>
+                                        <span className={`flex items-center gap-1 text-[8px] font-bold border rounded-md px-1.5 py-0.5 ${sev.bg} ${sev.border} ${sev.color}`}>
                                             <SevIcon className="w-2.5 h-2.5" />
                                             {sev.label}
                                         </span>
-                                        <span className={`flex items-center gap-1 text-[8px] font-bold border rounded-md px-1.5 py-0.5 ${sc.bg} ${sc.color}`}>
+                                        <span className={`flex items-center gap-1 text-[8px] font-bold border rounded-md px-1.5 py-0.5 ${sc.bg} ${sc.border} ${sc.color}`}>
                                             <StatusIcon className="w-2.5 h-2.5" />
                                             {entry.status}
                                         </span>

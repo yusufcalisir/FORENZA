@@ -21,6 +21,12 @@ import { useIngestStore, SAMPLE_CASE_EU, SAMPLE_CASE_AA } from "@/store/ingestSt
 import { useForensicCaseStore } from "@/store/forensicCaseStore";
 import ActiveProfileBanner from "@/components/common/ActiveProfileBanner";
 import FederatedNetworkPanel, { LAB_NODES } from "@/components/analysis/FederatedNetworkPanel";
+import {
+    calculateLociQuality,
+    getLociQualityBadgeLabel,
+    PROFILE_QUALITY_CONFIG,
+    ProfileQualityTier,
+} from "@/lib/forensicStatusUtils";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -29,7 +35,7 @@ interface ProfileRecord {
     originNode: string;
     lociCount: number;
     insertedAt: string;
-    quality: "complete" | "partial" | "degraded";
+    quality: ProfileQualityTier;
     vectorId: number;
     sampleType?: "EU" | "AA" | "CUSTOM";
 }
@@ -56,7 +62,7 @@ function generateProfiles(count: number): ProfileRecord[] {
         originNode: SAMPLE_CASE_EU.nodeId,
         lociCount: SAMPLE_CASE_EU.markerCount,
         insertedAt: "2026-08-12 18:30",
-        quality: "complete",
+        quality: calculateLociQuality(SAMPLE_CASE_EU.markerCount),
         vectorId: 100001,
         sampleType: "EU",
     });
@@ -66,15 +72,14 @@ function generateProfiles(count: number): ProfileRecord[] {
         originNode: SAMPLE_CASE_AA.nodeId,
         lociCount: SAMPLE_CASE_AA.markerCount,
         insertedAt: "2026-08-12 18:32",
-        quality: "complete",
+        quality: calculateLociQuality(SAMPLE_CASE_AA.markerCount),
         vectorId: 100002,
         sampleType: "AA",
     });
 
     for (let i = 2; i < count; i++) {
         const loci = Math.floor(rand() * 15) + 10;
-        const quality: ProfileRecord["quality"] =
-            loci === 24 ? "complete" : loci >= 14 ? "partial" : "degraded";
+        const quality = calculateLociQuality(loci);
         const month = String(Math.floor(rand() * 12) + 1).padStart(2, "0");
         const day = String(Math.floor(rand() * 28) + 1).padStart(2, "0");
         const hour = String(Math.floor(rand() * 24)).padStart(2, "0");
@@ -93,14 +98,6 @@ function generateProfiles(count: number): ProfileRecord[] {
 }
 
 const ALL_PROFILES = generateProfiles(24_847);
-
-// ─── Quality Badge Config ────────────────────────────────────────────────────
-
-const QUALITY_CONFIG = {
-    complete: { label: "COMPLETE (24 LOCI)", color: "#22C55E", bg: "rgba(34,197,94,0.12)", border: "rgba(34,197,94,0.3)" },
-    partial: { label: "PARTIAL (14-23 LOCI)", color: "#06B6D4", bg: "rgba(6,182,212,0.12)", border: "rgba(6,182,212,0.3)" },
-    degraded: { label: "DEGRADED (<14 LOCI)", color: "#EF4444", bg: "rgba(239,68,68,0.12)", border: "rgba(239,68,68,0.3)" },
-} as const;
 
 // ─── Sort Types ──────────────────────────────────────────────────────────────
 
@@ -354,7 +351,7 @@ export default function DatabasePage() {
                                         </tr>
                                     ) : (
                                         pageData.map((p) => {
-                                            const q = QUALITY_CONFIG[p.quality];
+                                            const q = PROFILE_QUALITY_CONFIG[p.quality];
                                             const isActive = activeProfile?.profileId === p.id;
                                             return (
                                                 <tr
@@ -394,11 +391,7 @@ export default function DatabasePage() {
                                                             className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-bold tracking-wider uppercase border"
                                                             style={{ color: q.color, background: q.bg, borderColor: q.border }}
                                                         >
-                                                            {p.quality === "complete"
-                                                                ? "COMPLETE (24/24 LOCI)"
-                                                                : p.quality === "partial"
-                                                                    ? `PARTIAL (${p.lociCount}/24 LOCI)`
-                                                                    : `DEGRADED (${p.lociCount}/24 LOCI)`}
+                                                            {getLociQualityBadgeLabel(p.lociCount, 24)}
                                                         </span>
                                                     </td>
                                                     <td className="py-3 px-4 text-tactical-text-dim text-[11px]">

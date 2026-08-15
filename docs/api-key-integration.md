@@ -50,8 +50,35 @@ POLYGON_RPC_URL="https://rpc-amoy.polygon.technology"
 
 ---
 
-## 3. Security & Zero-Data-Leakage Guarantee
+## 3. Automatic Multi-Model Routing & Failover Architecture
+
+FORENZA routes AI requests through an intelligent, zero-downtime tier priority pipeline (`/api/aura-logic` and `/api/analyze-module`):
+
+```mermaid
+flowchart TD
+    Req["👤 User Action / Analysis Request"] --> Check["🔍 Key Detection Pipeline"]
+    Check -->|Gemini Key Present| G["1️⃣ Google Gemini 2.0 Flash (Fastest Multi-Omic & Structured JSON)"]
+    Check -->|OpenAI Key Present| O["2️⃣ OpenAI GPT-4o / GPT-4o-mini (Deep Forensic Reasoning)"]
+    Check -->|Claude Key Present| C["3️⃣ Anthropic Claude 3.5 Sonnet (Scientific Report Synthesis)"]
+    Check -->|DeepSeek Key Present| D["4️⃣ DeepSeek V3 / R1 (Biostatistical Math Verification)"]
+    Check -->|Groq Key Present| Gr["5️⃣ Groq LLaMA 3.3 70B (High-Speed Inference)"]
+    Check -->|No Live Keys Set| Sim["6️⃣ Local Algorithmic Biocomputational Engine (Deterministic Fallback)"]
+
+    G -->|Execution Success| Out["✅ Return Verified Forensic Analysis Payload"]
+    O -->|Execution Success| Out
+    C -->|Execution Success| Out
+    D -->|Execution Success| Out
+    Gr -->|Execution Success| Out
+    Sim -->|Execution Success| Out
+```
+
+If a rate limit (HTTP 429) or connection error occurs on an upstream provider, the engine automatically attempts the next available provider in order, guaranteeing uninterrupted workflow execution for critical casework.
+
+---
+
+## 4. Security & Zero-Data-Leakage Guarantee
 
 - **Client-Side Encryption & Local Storage:** User-entered keys in the UI modal are stored exclusively in the user's browser `localStorage` under the key `forenza_api_keys_v1`.
 - **No Third-Party Key Persistence:** Keys are never transmitted to external analytics, logging frameworks, or persistent databases.
+- **Header-Based Dynamic Injection:** The frontend injects decrypted keys via custom `x-gemini-key`, `x-openai-key`, `x-groq-key`, `x-anthropic-key`, `x-deepseek-key` headers per-request, ensuring stateless server-side routing.
 - **ISO/IEC 17025 Compliance:** All genomic payloads and raw STR allele counts remain strictly within the local environment or encrypted serverless proxy routes.

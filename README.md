@@ -310,13 +310,17 @@ The MCMC probabilistic deconvolution engine samples parameters $\Theta = \{w, d,
 $$\alpha = \min\left(1, \; \frac{P(E \mid \Theta^*) \cdot P(\Theta^*) \cdot q(\Theta^{(t)} \mid \Theta^*)}{P(E \mid \Theta^{(t)}) \cdot P(\Theta^{(t)}) \cdot q(\Theta^* \mid \Theta^{(t)})}\right)$$
 ```
 
-### 3. HIrisPlex-S Multinomial Logistic Regression
+### 3. HIrisPlex-S Multinomial Logistic Regression & Normalization Invariant
 
 HIrisPlex-S computes posterior phenotype probabilities $P(Y = k)$ using multinomial logistic regression across $M$ predictor SNPs:
 
 $$\ln\left(\frac{P(Y = k)}{P(Y = K)}\right) = \beta_{k0} + \sum_{i=1}^{M} \beta_{ki} X_i$$
 
 $$P(Y = k) = \frac{\exp\left(\beta_{k0} + \sum_{i=1}^M \beta_{ki} X_i\right)}{1 + \sum_{j=1}^{K-1} \exp\left(\beta_{j0} + \sum_{i=1}^M \beta_{ji} X_i\right)}$$
+
+**Sum-to-Unity Normalization Invariant:** The platform enforces strict sum-to-one validation across all categorical probability spaces with bounded floating-point tolerance $\epsilon \in [1.0\%, 1.5\%]$:
+
+$$\left| \sum_{k=1}^K P(Y=k)\% - 100.0\% \right| \le \epsilon \quad \implies \quad \text{Status: NORMALIZED}$$
 
 ### 4. Horvath Epigenetic Methylation Age Clock
 
@@ -329,6 +333,24 @@ $$\text{Age} = f\left( b_0 + \sum_{i=1}^{N} w_i \cdot \beta_i \right)$$
 The impact angle $\alpha$ of a blood droplet striking a surface is computed from the minor axis width ($W$) and major axis length ($L$):
 
 $$\alpha = \arcsin\left(\frac{W}{L}\right)$$
+
+### 6. Dynamic ENFSI 2017 Evaluative Verbal Scale Mapping
+
+The formal expert witness certificate compiler dynamically maps calculated $\log_{10}(LR)$ to standardized ENFSI verbal predicates:
+
+$$\mathcal{S}_{\text{ENFSI}}(\log_{10} LR) = \begin{cases} 
+\text{"Extremely / Astronomically Strong Support for Prosecution"}, & \log_{10} LR \ge 18 \\
+\text{"Extremely Strong Support for Prosecution"}, & 6 \le \log_{10} LR < 18 \\
+\text{"Very Strong Support for Prosecution"}, & 4 \le \log_{10} LR < 6 \\
+\text{"Strong Support for Prosecution"}, & 3 \le \log_{10} LR < 4 \\
+\text{"Moderately Strong Support for Prosecution"}, & 2 \le \log_{10} LR < 3 \\
+\text{"Moderate Support for Prosecution"}, & 1 \le \log_{10} LR < 2 \\
+\text{"Limited / Weak Support for Prosecution"}, & 0 < \log_{10} LR < 1 \\
+\text{"Inconclusive / Neutral Evidence ($LR = 1$)"}, & \log_{10} LR = 0 \\
+\text{"Support for Defense Hypothesis / Exclusion"}, & \log_{10} LR < 0 
+\end{cases}$$
+
+See [Formal Mathematical Specification](file:///c:/Users/Yusuf/str-analysis/docs/math-spec.md) for full 36-section mathematical formalizations.
 
 ---
 

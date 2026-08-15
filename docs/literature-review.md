@@ -102,12 +102,19 @@ The President's Council of Advisors on Science and Technology (PCAST) evaluated 
 * **SWGDAM (2020):** Mandates internal validation of probabilistic genotyping software across minimum sample sizes, mixture ratios, and degradation levels.
 * **OSAC (2023):** Defines standards for reporting likelihood ratios, requiring clear statements of assumptions, proposition pairs, and population database choices.
 
+### 6.3 ENFSI Evaluative Reporting & ISO/IEC 17025:2017 Framework
+* **ENFSI (2017):** *Guideline for Evaluative Reporting in Forensic Science*. Establishes standard continuous verbal predicate categories for translating $\log_{10}(LR)$ metrics into non-overstating judicial expert witness statements.
+* **ISO/IEC 17025:2017:** Section 7.8 requirements for reporting results, demanding unambiguous sample tracking, statement of conformity limits, and unalterable chain-of-custody audit logs.
+
 ---
 
 ## 7. Implications for FORENZA Engine Architecture
 
-Based on this review, the FORENZA platform will adhere to the following principles:
-1. **Continuous LR Engine:** Implement probabilistic genotyping using quantitative peak-height modeling and MCMC sampling.
-2. **Balding-Nichols Integration:** Apply NRC II $\theta$-correction dynamically across all kinship and match calculations.
-3. **Transparent Uncertainty:** Report LR values alongside 95% Bayesian highest posterior density (HPD) intervals and explicit assumption logs.
-4. **Court-Admissible AI Summaries:** Enforce a strict boundary where LLM modules only explain and format calculated results without performing statistical inference.
+Based on this review, the FORENZA platform adheres to the following core architectural invariants:
+1. **Continuous LR Engine:** Implement probabilistic genotyping using quantitative peak-height modeling and MCMC sampling across 24 core autosomal STR loci.
+2. **Balding-Nichols Integration:** Apply NRC II $\theta$-correction ($F_{st} = 0.01 / 0.03$) dynamically across all kinship and match calculations.
+3. **Multinomial Distribution Validation:** Enforce strict sum-to-unity ($\sum P_i = 100\% \pm 1\%$) biostatistical validation across all HIrisPlex-S phenotyping and ancestry categorical vectors.
+4. **Transparent Uncertainty:** Report LR values alongside 95% Bayesian highest posterior density (HPD) intervals and explicit assumption logs.
+5. **Court-Admissible ISO 17025 Reports:** Dynamically generate ENFSI 2017 compliant Certificates of Analysis bound to live calculated $\log_{10}(LR)$ values with zero clerical drift.
+6. **Zero-Knowledge Privacy Ledger:** Couple Circom Groth16 ZK-SNARK provers with HMAC-SHA256 audit chaining to ensure zero raw allele leakage during inter-agency verification.
+7. **Explainable Multi-Provider AI (BYO-Key):** Enforce strict boundary conditions where LLM reasoning engines (Gemini 2.0 Flash, OpenAI GPT-4o, Claude 3.5 Sonnet, DeepSeek V3/R1, Groq LLaMA 3.3) synthesize and contextualize computed statistics without altering underlying mathematical invariants.

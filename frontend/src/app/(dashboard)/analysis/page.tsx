@@ -52,6 +52,17 @@ import HIrisPlexPanel from "@/components/analysis/HIrisPlexPanel";
 type CategoryId = "genotyping" | "lineage" | "phenotyping" | "epigenetics" | "pathology" | "lims_governance";
 type TabId = string;
 
+export type ModuleMaturity = "ACTIVE" | "DEMO" | "PLACEHOLDER";
+
+export interface Tab {
+    id: TabId;
+    label: string;
+    icon: typeof Dna;
+    badge?: string;
+    maturity: ModuleMaturity;
+    maturityNote: string;
+}
+
 interface Category {
     id: CategoryId;
     label: string;
@@ -60,14 +71,57 @@ interface Category {
     tabs: Tab[];
 }
 
-interface Tab {
-    id: TabId;
+export const MATURITY_CONFIG: Record<ModuleMaturity, {
     label: string;
-    icon: typeof Dna;
-    badge?: string;
-}
+    shortLabel: string;
+    color: string;
+    bg: string;
+    border: string;
+    dot: string;
+    tagBg: string;
+    tagText: string;
+    tagBorder: string;
+    desc: string;
+}> = {
+    ACTIVE: {
+        label: "ACTIVE ENGINE",
+        shortLabel: "ACTIVE",
+        color: "text-emerald-400",
+        bg: "bg-emerald-500/10",
+        border: "border-emerald-500/30",
+        dot: "bg-emerald-400 animate-pulse",
+        tagBg: "bg-emerald-500/20",
+        tagText: "text-emerald-300",
+        tagBorder: "border-emerald-500/40",
+        desc: "Validated mathematical engine with live biocomputational parameters & ISO-compliant algorithms."
+    },
+    DEMO: {
+        label: "DEMO SIMULATOR",
+        shortLabel: "DEMO",
+        color: "text-cyan-400",
+        bg: "bg-cyan-500/10",
+        border: "border-cyan-500/30",
+        dot: "bg-cyan-400",
+        tagBg: "bg-cyan-500/20",
+        tagText: "text-cyan-300",
+        tagBorder: "border-cyan-500/40",
+        desc: "Interactive scientific simulation and calibrated training benchmark model."
+    },
+    PLACEHOLDER: {
+        label: "RESEARCH PROTOTYPE",
+        shortLabel: "PROTOTYPE",
+        color: "text-amber-400",
+        bg: "bg-amber-500/10",
+        border: "border-amber-500/30",
+        dot: "bg-amber-400",
+        tagBg: "bg-amber-500/20",
+        tagText: "text-amber-300",
+        tagBorder: "border-amber-500/40",
+        desc: "Experimental laboratory module under active development and research roadmap."
+    },
+};
 
-// ─── Navigation Structure (Derived from Canonical 6 Pillars & 30 Subsystems) ──
+// ─── Navigation Structure (Canonical 6 Pillars & 30 Subsystems with Maturity) ──
 
 const CATEGORIES: Category[] = [
     {
@@ -76,11 +130,11 @@ const CATEGORIES: Category[] = [
         icon: Cpu,
         color: "cyan",
         tabs: [
-            { id: "str", label: "01. Autosomal STR Engine", icon: Binary, badge: "STR-24" },
-            { id: "mcmc", label: "02. MCMC Mixture Deconv.", icon: Layers, badge: "MCMC-MH" },
-            { id: "population", label: "03. Dirichlet Fst Population", icon: BarChart3, badge: "NRC-II" },
-            { id: "touch", label: "04. Touch DNA & LTDNA", icon: Fingerprint, badge: "LTDNA" },
-            { id: "validation", label: "05. Tippett Calibration Lab", icon: CheckCircle, badge: "TIPPETT" },
+            { id: "str", label: "01. Autosomal STR Engine", icon: Binary, badge: "STR-24", maturity: "ACTIVE", maturityNote: "Live 24-locus Autosomal STR LR computation with Balding-Nichols / NRC-II formulas." },
+            { id: "mcmc", label: "02. MCMC Mixture Deconv.", icon: Layers, badge: "MCMC-MH", maturity: "ACTIVE", maturityNote: "Live Metropolis-Hastings 3-contributor MCMC mixture deconvolution iteration engine." },
+            { id: "population", label: "03. Dirichlet Fst Population", icon: BarChart3, badge: "NRC-II", maturity: "ACTIVE", maturityNote: "Live Bayesian theta coancestry shift calculator across subpopulation priors." },
+            { id: "touch", label: "04. Touch DNA & LTDNA", icon: Fingerprint, badge: "LTDNA", maturity: "DEMO", maturityNote: "Interactive low-template drop-out & stochastic stutter simulation model." },
+            { id: "validation", label: "05. Tippett Calibration Lab", icon: CheckCircle, badge: "TIPPETT", maturity: "DEMO", maturityNote: "Empirical Tippett and ROC validation curve simulator for laboratory accreditation." },
         ],
     },
     {
@@ -89,11 +143,11 @@ const CATEGORIES: Category[] = [
         icon: Dna,
         color: "emerald",
         tabs: [
-            { id: "lineage_y", label: "06. Y-STR Haplotypes", icon: Dna, badge: "Y-STR" },
-            { id: "lineage_x", label: "07. X-STR Linkage & KI", icon: GitBranch, badge: "X-STR" },
-            { id: "lineage_mt", label: "08. mtDNA rCRS Alignment", icon: TrendingUp, badge: "mtDNA" },
-            { id: "dvi", label: "09. DVI Mass Disaster", icon: Database, badge: "DVI-PED" },
-            { id: "humanid", label: "10. Ancient DNA & SNP Mapper", icon: Fingerprint, badge: "aDNA-SNP" },
+            { id: "lineage_y", label: "06. Y-STR Haplotypes", icon: Dna, badge: "Y-STR", maturity: "ACTIVE", maturityNote: "Live Y-chromosomal paternal haplotype matching & discrete allele counter." },
+            { id: "lineage_x", label: "07. X-STR Linkage & KI", icon: GitBranch, badge: "X-STR", maturity: "DEMO", maturityNote: "Interactive X-chromosomal kinship index & pedigree relationship traversal." },
+            { id: "lineage_mt", label: "08. mtDNA rCRS Alignment", icon: TrendingUp, badge: "mtDNA", maturity: "ACTIVE", maturityNote: "Live mitochondrial rCRS variant aligner & haplogroup mapper." },
+            { id: "dvi", label: "09. DVI Mass Disaster", icon: Database, badge: "DVI-PED", maturity: "DEMO", maturityNote: "Disaster Victim Identification ante/post-mortem reconciliation simulator." },
+            { id: "humanid", label: "10. Ancient DNA & SNP Mapper", icon: Fingerprint, badge: "aDNA-SNP", maturity: "PLACEHOLDER", maturityNote: "Research prototype for ancient DNA post-mortem damage pattern modeling." },
         ],
     },
     {
@@ -102,11 +156,11 @@ const CATEGORIES: Category[] = [
         icon: Eye,
         color: "purple",
         tabs: [
-            { id: "hirisplex", label: "11. HIrisPlex-S Pigmentation", icon: Eye, badge: "HIRISPLEX" },
-            { id: "ancestry", label: "12. Biogeographic Ancestry (BGA)", icon: TrendingUp, badge: "BGA-55" },
-            { id: "craniofacial", label: "13. Facial & Craniofacial 3D", icon: Brain, badge: "CRANIO-3D" },
-            { id: "hair", label: "14. Hair Texture & Balding", icon: Sparkles, badge: "HAIR-TEX" },
-            { id: "freckling", label: "15. Freckling & UV Sensitivity", icon: Eye, badge: "MC1R-UV" },
+            { id: "hirisplex", label: "11. HIrisPlex-S Pigmentation", icon: Eye, badge: "HIRISPLEX", maturity: "ACTIVE", maturityNote: "Live Walsh et al. (2018) multinomial logistic regression engine with 6-SNP mutation lab." },
+            { id: "ancestry", label: "12. Biogeographic Ancestry (BGA)", icon: TrendingUp, badge: "BGA-55", maturity: "ACTIVE", maturityNote: "Live 55-SNP AIM continental centroid projection & population admixture estimator." },
+            { id: "craniofacial", label: "13. Facial & Craniofacial 3D", icon: Brain, badge: "CRANIO-3D", maturity: "DEMO", maturityNote: "Interactive 3D facial morphology phenotype reconstruction simulator." },
+            { id: "hair", label: "14. Hair Texture & Balding", icon: Sparkles, badge: "HAIR-TEX", maturity: "PLACEHOLDER", maturityNote: "Research prototype for hair fiber morphology and androgenetic alopecia mapping." },
+            { id: "freckling", label: "15. Freckling & UV Sensitivity", icon: Eye, badge: "MC1R-UV", maturity: "PLACEHOLDER", maturityNote: "Research prototype for MC1R epistatic variant UV sensitivity modeling." },
         ],
     },
     {
@@ -115,11 +169,11 @@ const CATEGORIES: Category[] = [
         icon: Clock,
         color: "rose",
         tabs: [
-            { id: "age", label: "16. Horvath Epigenetic Clock", icon: Clock, badge: "HORVATH" },
-            { id: "bodyfluid", label: "17. Body Fluid tDMR Origin", icon: Syringe, badge: "tDMR-FLUID" },
-            { id: "lifestyle", label: "18. Lifestyle Epigenetics AHRR", icon: Zap, badge: "AHRR" },
-            { id: "telomere", label: "19. Telomere Chronometer", icon: Activity, badge: "TELO-CHRONO" },
-            { id: "mirna", label: "20. Forensic MicroRNA Profiling", icon: FlaskConical, badge: "miRNA" },
+            { id: "age", label: "16. Horvath Epigenetic Clock", icon: Clock, badge: "HORVATH", maturity: "ACTIVE", maturityNote: "Live Horvath 5-CpG methylation age estimation engine with live delta." },
+            { id: "bodyfluid", label: "17. Body Fluid tDMR Origin", icon: Syringe, badge: "tDMR-FLUID", maturity: "DEMO", maturityNote: "Tissue-specific differential methylation body fluid classification simulator." },
+            { id: "lifestyle", label: "18. Lifestyle Epigenetics AHRR", icon: Zap, badge: "AHRR", maturity: "DEMO", maturityNote: "AHRR environmental smoking & lifestyle epigenetic biomarker analyzer." },
+            { id: "telomere", label: "19. Telomere Chronometer", icon: Activity, badge: "TELO-CHRONO", maturity: "DEMO", maturityNote: "Telomere length biological chronometer decay simulator." },
+            { id: "mirna", label: "20. Forensic MicroRNA Profiling", icon: FlaskConical, badge: "miRNA", maturity: "PLACEHOLDER", maturityNote: "Research prototype for organ-specific microRNA differential expression." },
         ],
     },
     {
@@ -128,11 +182,11 @@ const CATEGORIES: Category[] = [
         icon: Microscope,
         color: "orange",
         tabs: [
-            { id: "bpa", label: "21. Bloodstain Pattern (BPA 3D)", icon: Eye, badge: "BPA-3D" },
-            { id: "microscopy", label: "22. Digital Microscopy & Fibers", icon: Microscope, badge: "MICROSCOPY" },
-            { id: "toxicology", label: "23. Post-Mortem GC-MS Tox", icon: Pill, badge: "TOX-GCMS" },
-            { id: "botany", label: "24. Diatom & Palynology Ecology", icon: Leaf, badge: "PALYNO-ECO" },
-            { id: "serology", label: "25. ABO / Rh Blood Serology", icon: Droplets, badge: "ABO-SERO" },
+            { id: "bpa", label: "21. Bloodstain Pattern (BPA 3D)", icon: Eye, badge: "BPA-3D", maturity: "ACTIVE", maturityNote: "Live 3D trigonometric area of origin & impact angle calculator." },
+            { id: "microscopy", label: "22. Digital Microscopy & Fibers", icon: Microscope, badge: "MICROSCOPY", maturity: "PLACEHOLDER", maturityNote: "Research prototype for digital polarized light microscopy & fiber comparison." },
+            { id: "toxicology", label: "23. Post-Mortem GC-MS Tox", icon: Pill, badge: "TOX-GCMS", maturity: "DEMO", maturityNote: "Quantitative drug screening with ISO 17025 expanded uncertainty and Widmark BAC." },
+            { id: "botany", label: "24. Diatom & Palynology Ecology", icon: Leaf, badge: "PALYNO-ECO", maturity: "PLACEHOLDER", maturityNote: "Research prototype for diatom drowning & forensic palynology ecology." },
+            { id: "serology", label: "25. ABO / Rh Blood Serology", icon: Droplets, badge: "ABO-SERO", maturity: "DEMO", maturityNote: "ABO/Rh blood grouping & absorption-elution serology simulator." },
         ],
     },
     {
@@ -141,11 +195,11 @@ const CATEGORIES: Category[] = [
         icon: ShieldCheck,
         color: "blue",
         tabs: [
-            { id: "lims", label: "26. LIMS Accessioning & Chain", icon: PackageCheck, badge: "LIMS-HMAC" },
-            { id: "qc", label: "27. ISO 17025 QA/QC Matrix", icon: ShieldCheck, badge: "ISO-17025" },
-            { id: "zkp", label: "28. Circom Groth16 ZKP Auditor", icon: Lock, badge: "ZKP-CIRCOM" },
-            { id: "court", label: "29. Expert Witness Court Mode", icon: Scale, badge: "COURT-MODE" },
-            { id: "evidenceos", label: "30. Validator & Evidence OS DAG", icon: Layers, badge: "VALIDATOR" },
+            { id: "lims", label: "26. LIMS Accessioning & Chain", icon: PackageCheck, badge: "LIMS-HMAC", maturity: "DEMO", maturityNote: "LIMS sample accessioning & chain of custody tracker with HMAC hashes." },
+            { id: "qc", label: "27. ISO 17025 QA/QC Matrix", icon: ShieldCheck, badge: "ISO-17025", maturity: "ACTIVE", maturityNote: "Live ISO 17025 validation checklist & standard operating procedure validator." },
+            { id: "zkp", label: "28. Circom Groth16 ZKP Auditor", icon: Lock, badge: "ZKP-CIRCOM", maturity: "ACTIVE", maturityNote: "Live Circom BN254 Groth16 zero-knowledge proof generation & verification." },
+            { id: "court", label: "29. Expert Witness Court Mode", icon: Scale, badge: "COURT-MODE", maturity: "DEMO", maturityNote: "Interactive expert witness courtroom reporting & ENFSI verbal predicate synthesizer." },
+            { id: "evidenceos", label: "30. Validator & Evidence OS DAG", icon: Layers, badge: "VALIDATOR", maturity: "ACTIVE", maturityNote: "Live 5-tier multi-omic forensic consensus DAG engine." },
         ],
     },
 ];
@@ -466,16 +520,36 @@ export default function AnalysisPage() {
     const { activeCase } = useForensicCaseStore();
     const [activeCategory, setActiveCategory] = useState<CategoryId>("genotyping");
     const [activeTab, setActiveTab] = useState<TabId>("str");
+    const [maturityFilter, setMaturityFilter] = useState<"ALL" | ModuleMaturity>("ALL");
 
     const category = CATEGORIES.find((c) => c.id === activeCategory) ?? CATEGORIES[0];
     const c = COLOR_CLASSES[category.color];
     const CatIcon = category.icon;
 
+    const allTabs = CATEGORIES.flatMap((cat) => cat.tabs);
+    const activeCount = allTabs.filter((t) => t.maturity === "ACTIVE").length;
+    const demoCount = allTabs.filter((t) => t.maturity === "DEMO").length;
+    const protoCount = allTabs.filter((t) => t.maturity === "PLACEHOLDER").length;
+
+    const catActiveCount = category.tabs.filter((t) => t.maturity === "ACTIVE").length;
+    const catDemoCount = category.tabs.filter((t) => t.maturity === "DEMO").length;
+    const catProtoCount = category.tabs.filter((t) => t.maturity === "PLACEHOLDER").length;
+
+    const filteredTabs = maturityFilter === "ALL"
+        ? category.tabs
+        : category.tabs.filter((t) => t.maturity === maturityFilter);
+
+    const currentTab = allTabs.find((t) => t.id === activeTab) || category.tabs[0];
+    const currentMat = MATURITY_CONFIG[currentTab?.maturity || "ACTIVE"];
+
     const handleCategoryClick = (catId: CategoryId) => {
         const cat = CATEGORIES.find((c) => c.id === catId);
         if (cat) {
             setActiveCategory(catId);
-            setActiveTab(cat.tabs[0].id);
+            const validTab = maturityFilter === "ALL"
+                ? cat.tabs[0]
+                : cat.tabs.find((t) => t.maturity === maturityFilter) || cat.tabs[0];
+            setActiveTab(validTab.id);
         }
     };
 
@@ -502,6 +576,63 @@ export default function AnalysisPage() {
                         <Radio className="w-3 h-3 animate-pulse" />
                         SIMULATION • {activeCase.metadata.caseId}
                     </span>
+                </div>
+            </div>
+
+            {/* ── Subsystem Operational Maturity & Readiness Filter Strip ── */}
+            <div className="p-3 rounded-2xl border border-tactical-border/70 bg-tactical-surface/70 space-y-2">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <span className="text-[10px] font-bold text-zinc-300 uppercase tracking-widest">
+                        Subsystem Readiness &amp; Operational Verification Filter:
+                    </span>
+                    <span className="text-[9px] text-zinc-500 font-mono">
+                        {activeCount} Active • {demoCount} Demo • {protoCount} Prototype
+                    </span>
+                </div>
+                <div className="flex items-center gap-2 flex-wrap">
+                    <button
+                        onClick={() => setMaturityFilter("ALL")}
+                        className={`px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase transition-all cursor-pointer border ${
+                            maturityFilter === "ALL"
+                                ? "bg-zinc-800 border-zinc-500 text-white shadow-sm"
+                                : "bg-black/40 text-zinc-400 border-tactical-border/50 hover:text-zinc-200"
+                        }`}
+                    >
+                        ALL SUBSYSTEMS (30)
+                    </button>
+                    <button
+                        onClick={() => setMaturityFilter("ACTIVE")}
+                        className={`px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase transition-all cursor-pointer border flex items-center gap-1.5 ${
+                            maturityFilter === "ACTIVE"
+                                ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/50 shadow-sm"
+                                : "bg-black/40 text-emerald-400/70 border-emerald-500/20 hover:text-emerald-300"
+                        }`}
+                    >
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                        ACTIVE ENGINES ({activeCount})
+                    </button>
+                    <button
+                        onClick={() => setMaturityFilter("DEMO")}
+                        className={`px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase transition-all cursor-pointer border flex items-center gap-1.5 ${
+                            maturityFilter === "DEMO"
+                                ? "bg-cyan-500/20 text-cyan-300 border-cyan-500/50 shadow-sm"
+                                : "bg-black/40 text-cyan-400/70 border-cyan-500/20 hover:text-cyan-300"
+                        }`}
+                    >
+                        <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                        DEMO SIMULATORS ({demoCount})
+                    </button>
+                    <button
+                        onClick={() => setMaturityFilter("PLACEHOLDER")}
+                        className={`px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase transition-all cursor-pointer border flex items-center gap-1.5 ${
+                            maturityFilter === "PLACEHOLDER"
+                                ? "bg-amber-500/20 text-amber-300 border-amber-500/50 shadow-sm"
+                                : "bg-black/40 text-amber-400/70 border-amber-500/20 hover:text-amber-300"
+                        }`}
+                    >
+                        <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                        RESEARCH PROTOTYPES ({protoCount})
+                    </button>
                 </div>
             </div>
 
@@ -552,26 +683,35 @@ export default function AnalysisPage() {
                                 {category.label}
                             </h2>
                             <p className="text-[10px] text-zinc-400">
-                                {category.tabs.length} Specialized Sub-Modules • ISO/IEC 17025 Compliant
+                                {category.tabs.length} Sub-Modules • {catActiveCount} Active • {catDemoCount} Demo • {catProtoCount} Prototype
                             </p>
                         </div>
                     </div>
 
-                    <span className="text-[9px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-lg shrink-0 w-fit">
-                        ALL MODULES OPERATIONAL
-                    </span>
+                    <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-[9px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-md shrink-0">
+                            {catActiveCount} ACTIVE
+                        </span>
+                        <span className="text-[9px] font-bold text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 px-2 py-0.5 rounded-md shrink-0">
+                            {catDemoCount} DEMO
+                        </span>
+                        <span className="text-[9px] font-bold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-md shrink-0">
+                            {catProtoCount} PROTOTYPE
+                        </span>
+                    </div>
                 </div>
 
                 {/* Sub-Module Tabs Bar (Responsive Grid on Mobile, Flex on Desktop) */}
                 <div className="grid grid-cols-1 min-[420px]:grid-cols-2 md:flex md:flex-wrap items-center gap-1.5 pb-1">
-                    {category.tabs.map((tab) => {
+                    {filteredTabs.map((tab) => {
                         const TabIcon = tab.icon;
                         const isActive = activeTab === tab.id;
+                        const tMat = MATURITY_CONFIG[tab.maturity];
                         return (
                             <button
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id)}
-                                className={`flex items-center justify-between sm:justify-start gap-1.5 px-3 py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                                className={`flex items-center justify-between sm:justify-start gap-2 px-3 py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer ${
                                     isActive
                                         ? `${c.activeBg} border ${c.border} ${c.text} shadow-sm`
                                         : "bg-black/40 text-zinc-400 border border-tactical-border/50 hover:text-zinc-200 hover:border-zinc-700"
@@ -581,15 +721,31 @@ export default function AnalysisPage() {
                                     <TabIcon className="w-3.5 h-3.5 shrink-0" />
                                     <span className="truncate">{tab.label}</span>
                                 </div>
-                                {tab.badge && (
-                                    <span className="px-1.5 py-0.5 rounded text-[8px] bg-amber-500/20 text-amber-300 border border-amber-500/30 shrink-0">
-                                        {tab.badge}
-                                    </span>
-                                )}
+                                <span className={`px-1.5 py-0.5 rounded text-[8px] font-bold border ${tMat.tagBg} ${tMat.tagText} ${tMat.tagBorder} shrink-0`}>
+                                    {tMat.shortLabel}
+                                </span>
                             </button>
                         );
                     })}
                 </div>
+
+                {/* Subsystem Operational Status & Scientific Boundary Banner */}
+                {currentTab && (
+                    <div className={`p-3 rounded-xl border ${currentMat.bg} ${currentMat.border} flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 font-mono text-xs shadow-md`}>
+                        <div className="flex items-center gap-2.5 min-w-0">
+                            <span className={`flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[9px] font-bold border ${currentMat.tagBg} ${currentMat.tagText} ${currentMat.tagBorder} shrink-0 uppercase`}>
+                                <span className={`w-1.5 h-1.5 rounded-full ${currentMat.dot}`} />
+                                {currentMat.label}
+                            </span>
+                            <p className="text-[10px] text-zinc-300 min-w-0 break-words">
+                                <strong className="text-white">{currentTab.label}:</strong> {currentTab.maturityNote}
+                            </p>
+                        </div>
+                        <span className="text-[9px] text-zinc-400 shrink-0 font-bold hidden lg:inline-block">
+                            {currentMat.desc}
+                        </span>
+                    </div>
+                )}
 
                 {/* Panel Content */}
                 <AnimatePresence mode="wait">
@@ -598,8 +754,8 @@ export default function AnalysisPage() {
                         initial={{ opacity: 0, y: 6 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -6 }}
-                        transition={{ duration: 0.18 }}
-                        className="pt-2"
+                        transition={{ duration: 0.15 }}
+                        className="w-full"
                     >
                         {renderPanel(activeTab)}
                     </motion.div>

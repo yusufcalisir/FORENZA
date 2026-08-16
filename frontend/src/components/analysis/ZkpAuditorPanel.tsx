@@ -116,41 +116,41 @@ export default function ZkpAuditorPanel() {
   return (
     <div className="space-y-6 font-mono text-tactical-text">
       {/* ── Subsystem Header ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl border border-indigo-500/30 bg-indigo-500/10 shadow-lg">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl border border-indigo-500/30 bg-indigo-500/10 shadow-lg overflow-hidden">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-500/20 border border-indigo-500/40 text-indigo-300">
             <Lock className="w-5 h-5" />
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-sm font-bold tracking-widest text-tactical-text uppercase">
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="text-xs sm:text-sm font-bold tracking-widest text-tactical-text uppercase">
                 ZKP Blind Forensic Auditor (Pillar 6 §2)
               </h2>
-              <span className="px-2 py-0.5 rounded text-[8px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+              <span className="px-2.5 py-0.5 rounded-lg text-[8px] sm:text-[9px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 whitespace-nowrap shrink-0">
                 Groth16 • BN254 • GDPR Art. 9
               </span>
             </div>
-            <p className="text-[10px] text-zinc-400 mt-0.5">
+            <p className="text-[9px] sm:text-[10px] text-zinc-400 mt-0.5 truncate">
               Zero-Knowledge Privacy-Preserving STR Verification Circuit • Poseidon Commitment • Bilinear Multi-Pairings
             </p>
           </div>
         </div>
 
         {/* Tab Controls */}
-        <div className="flex flex-wrap items-center gap-2 shrink-0">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full lg:w-auto shrink-0">
           <button
             onClick={() => setHidePrivateWitness(!hidePrivateWitness)}
-            className="px-2.5 sm:px-3 py-1.5 rounded-xl border border-tactical-border/60 bg-black/60 text-[10px] sm:text-xs font-bold text-zinc-300 hover:text-white flex items-center gap-1.5 cursor-pointer transition-all whitespace-nowrap shrink-0"
+            className="px-3 py-1.5 rounded-xl border border-tactical-border/60 bg-black/60 text-[10px] sm:text-xs font-bold text-zinc-300 hover:text-white flex items-center justify-center gap-1.5 cursor-pointer transition-all whitespace-nowrap"
           >
             {hidePrivateWitness ? <EyeOff className="w-3.5 h-3.5 text-amber-400 shrink-0" /> : <Eye className="w-3.5 h-3.5 text-emerald-400 shrink-0" />}
-            {hidePrivateWitness ? "Private Witness (Masked)" : "Witness Revealed"}
+            <span>{hidePrivateWitness ? "Private Witness (Masked)" : "Witness Revealed"}</span>
           </button>
 
-          <div className="flex items-center gap-1 p-1 rounded-xl bg-black/60 border border-tactical-border/60 overflow-x-auto max-w-full shrink-0">
+          <div className="flex items-center justify-center gap-1 p-1 rounded-xl bg-black/60 border border-tactical-border/60">
             <button
               onClick={() => setActiveTab("comparator")}
-              className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-                activeTab === "comparator" ? "bg-indigo-500 text-white shadow-md" : "text-zinc-400 hover:text-zinc-200"
+              className={`flex-1 sm:flex-initial text-center px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                activeTab === "comparator" ? "bg-indigo-500 text-white shadow-md font-extrabold" : "text-zinc-400 hover:text-zinc-200"
               }`}
             >
               STR Circuit
@@ -160,8 +160,8 @@ export default function ZkpAuditorPanel() {
                 setActiveTab("pairing");
                 if (!proofData) handleSynthesizeProof();
               }}
-              className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-                activeTab === "pairing" ? "bg-indigo-500 text-white shadow-md" : "text-zinc-400 hover:text-zinc-200"
+              className={`flex-1 sm:flex-initial text-center px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                activeTab === "pairing" ? "bg-indigo-500 text-white shadow-md font-extrabold" : "text-zinc-400 hover:text-zinc-200"
               }`}
             >
               Pairing Verifier
@@ -236,19 +236,19 @@ export default function ZkpAuditorPanel() {
           {/* Right: R1CS Locus Gadget Evaluation & Output */}
           <div className="lg:col-span-2 space-y-4">
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-              <div className="rounded-2xl border border-indigo-500/40 bg-gradient-to-br from-indigo-500/10 via-tactical-surface/60 to-black/80 p-5 space-y-4 shadow-2xl">
-                <div className="flex items-center justify-between border-b border-indigo-500/20 pb-3">
+              <div className="rounded-2xl border border-indigo-500/40 bg-gradient-to-br from-indigo-500/10 via-tactical-surface/60 to-black/80 p-4 sm:p-5 space-y-4 shadow-2xl overflow-hidden">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-indigo-500/20 pb-3.5">
                   <div>
                     <span className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest block">
-                      R1CS EQUALITY GADGET & POSEIDON COMMITMENTS
+                      R1CS EQUALITY GADGET &amp; POSEIDON COMMITMENTS
                     </span>
-                    <span className="text-base font-black text-indigo-300 font-mono">
+                    <span className="text-sm sm:text-base font-black text-indigo-300 font-mono">
                       (a_lm - e_lm) · b_lm = 1 - m_lm (mod p)
                     </span>
                   </div>
-                  <div className="text-right">
+                  <div className="flex flex-col items-start sm:items-end gap-1">
                     <span className="text-[10px] text-zinc-400 block uppercase font-bold">Circuit Verdict</span>
-                    <span className="text-xs font-bold px-2.5 py-1 rounded border font-mono bg-emerald-500/20 text-emerald-300 border-emerald-500/40">
+                    <span className="text-[10px] sm:text-xs font-bold px-2.5 py-1 rounded-lg border font-mono bg-emerald-500/20 text-emerald-300 border-emerald-500/40 whitespace-nowrap">
                       R1CS SATISFIED (48/48 Matches)
                     </span>
                   </div>
@@ -258,13 +258,13 @@ export default function ZkpAuditorPanel() {
                 {proofData && (
                   <div className="space-y-2">
                     <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40 text-[10px] font-mono space-y-1.5">
-                      <div className="flex justify-between">
-                        <span className="text-zinc-500">Public Evidence Commitment H(G_E):</span>
-                        <span className="text-indigo-300 truncate max-w-[280px] sm:max-w-md">{proofData.evidence_commitment}</span>
+                      <div className="flex flex-col sm:flex-row sm:justify-between gap-1">
+                        <span className="text-zinc-500 whitespace-nowrap">Public Evidence Commitment H(G_E):</span>
+                        <span className="text-indigo-300 break-all sm:truncate sm:max-w-md">{proofData.evidence_commitment}</span>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-zinc-500">Suspect Poseidon Commitment H(G_S):</span>
-                        <span className="text-amber-300 truncate max-w-[280px] sm:max-w-md">{proofData.suspect_commitment}</span>
+                      <div className="flex flex-col sm:flex-row sm:justify-between gap-1">
+                        <span className="text-zinc-500 whitespace-nowrap">Suspect Poseidon Commitment H(G_S):</span>
+                        <span className="text-amber-300 break-all sm:truncate sm:max-w-md">{proofData.suspect_commitment}</span>
                       </div>
                     </div>
                   </div>
@@ -272,8 +272,8 @@ export default function ZkpAuditorPanel() {
 
                 <div className="p-3 rounded-xl bg-black/30 border border-tactical-border/30 text-[10px] text-zinc-400 font-mono">
                   <div className="flex items-center gap-1.5 text-indigo-400 font-bold mb-1">
-                    <ShieldCheck className="w-3.5 h-3.5" />
-                    GDPR Article 9 & FRE 702 Genomic Privacy Safeguard
+                    <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
+                    GDPR Article 9 &amp; FRE 702 Genomic Privacy Safeguard
                   </div>
                   Zero-Knowledge Proofs allow public court verification of DNA matches while completely suppressing suspect STR alleles.
                   Raw genotype sequences are never transmitted, serialized, or stored in public courtroom dockets.
@@ -319,19 +319,19 @@ export default function ZkpAuditorPanel() {
           <div className="lg:col-span-2 space-y-4">
             {verifyResult && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-                <div className="rounded-2xl border border-indigo-500/40 bg-gradient-to-br from-indigo-500/10 via-tactical-surface/60 to-black/80 p-5 space-y-4 shadow-2xl">
-                  <div className="flex items-center justify-between border-b border-indigo-500/20 pb-3">
+                <div className="rounded-2xl border border-indigo-500/40 bg-gradient-to-br from-indigo-500/10 via-tactical-surface/60 to-black/80 p-4 sm:p-5 space-y-4 shadow-2xl overflow-hidden">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-indigo-500/20 pb-3.5">
                     <div>
                       <span className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest block">
                         BN254 BILINEAR MULTI-PAIRING EQUATION
                       </span>
-                      <span className="text-sm font-black text-indigo-300 font-mono">
+                      <span className="text-xs sm:text-sm font-black text-indigo-300 font-mono break-all">
                         e(A, B) · e(-α, β) · e(-∑ xᵢ Kᵢ, γ) · e(-C, δ) = 1_GT
                       </span>
                     </div>
-                    <div className="text-right">
+                    <div className="flex flex-col items-start sm:items-end gap-1">
                       <span className="text-[10px] text-zinc-400 block uppercase font-bold">Pairing Status</span>
-                      <span className="text-xs font-bold px-2.5 py-1 rounded border font-mono bg-emerald-500/20 text-emerald-300 border-emerald-500/40">
+                      <span className="text-[10px] sm:text-xs font-bold px-2.5 py-1 rounded-lg border font-mono bg-emerald-500/20 text-emerald-300 border-emerald-500/40 whitespace-nowrap">
                         {verifyResult.verdict}
                       </span>
                     </div>

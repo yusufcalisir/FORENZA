@@ -291,7 +291,7 @@ export default function SuspectVisualizer({
     hideIfEmpty = false
 }: ForensicIdentityCardProps) {
     const containerRef = useRef<HTMLDivElement>(null);
-    const [activeView, setActiveView] = useState<"overview" | "morphometrics" | "hair_balding">("overview");
+    const [activeView, setActiveView] = useState<"overview" | "morphometrics" | "hair_balding" | "freckles_uv">("overview");
     const [morphoSnps, setMorphoSnps] = useState<Record<string, number>>({
         rs974448: 2,
         rs12882923: 1,
@@ -307,6 +307,15 @@ export default function SuspectVisualizer({
         rs2180439: 1,
         rs1160312: 0,
         rs756853: 1,
+    });
+    const [mc1rSnps, setMc1rSnps] = useState<Record<string, number>>({
+        rs1805007: 2,
+        rs1805008: 0,
+        rs1805009: 0,
+        rs1805005: 0,
+        rs885479: 0,
+        rs1015362: 1,
+        rs10756819: 1,
     });
 
     const data = phenotypeReport;
@@ -479,10 +488,10 @@ export default function SuspectVisualizer({
                         </div>
 
                         {/* Tab Selector */}
-                        <div className="flex items-center gap-1 p-1 bg-black/40 rounded border border-tactical-border/50">
+                        <div className="flex items-center gap-0.5 p-1 bg-black/40 rounded border border-tactical-border/50">
                             <button
                                 onClick={() => setActiveView("overview")}
-                                className={`flex-1 py-1 px-1.5 rounded text-[7.5px] font-mono font-bold uppercase transition-all ${
+                                className={`flex-1 py-1 px-1 rounded text-[7px] font-mono font-bold uppercase transition-all ${
                                     activeView === "overview"
                                         ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
                                         : "text-zinc-500 hover:text-zinc-300"
@@ -492,23 +501,33 @@ export default function SuspectVisualizer({
                             </button>
                             <button
                                 onClick={() => setActiveView("morphometrics")}
-                                className={`flex-1 py-1 px-1.5 rounded text-[7.5px] font-mono font-bold uppercase transition-all ${
+                                className={`flex-1 py-1 px-1 rounded text-[7px] font-mono font-bold uppercase transition-all ${
                                     activeView === "morphometrics"
                                         ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40"
                                         : "text-zinc-500 hover:text-zinc-300"
                                 }`}
                             >
-                                3D Ceph (P3 §3)
+                                3D Ceph
                             </button>
                             <button
                                 onClick={() => setActiveView("hair_balding")}
-                                className={`flex-1 py-1 px-1.5 rounded text-[7.5px] font-mono font-bold uppercase transition-all ${
+                                className={`flex-1 py-1 px-1 rounded text-[7px] font-mono font-bold uppercase transition-all ${
                                     activeView === "hair_balding"
                                         ? "bg-amber-500/20 text-amber-300 border border-amber-500/40"
                                         : "text-zinc-500 hover:text-zinc-300"
                                 }`}
                             >
-                                Hair &amp; Balding (P3 §4)
+                                Hair / Bald
+                            </button>
+                            <button
+                                onClick={() => setActiveView("freckles_uv")}
+                                className={`flex-1 py-1 px-1 rounded text-[7px] font-mono font-bold uppercase transition-all ${
+                                    activeView === "freckles_uv"
+                                        ? "bg-rose-500/20 text-rose-300 border border-rose-500/40"
+                                        : "text-zinc-500 hover:text-zinc-300"
+                                }`}
+                            >
+                                Ephelides (P3 §5)
                             </button>
                         </div>
 
@@ -633,7 +652,7 @@ export default function SuspectVisualizer({
                                     </div>
                                 </div>
                             </div>
-                        ) : (
+                        ) : activeView === "hair_balding" ? (
                             /* Hair Dynamics & Balding PRS Tab (Module 14) */
                             <div className="space-y-3">
                                 {/* Fiber Cross-Section & Curl Index Summary */}
@@ -704,6 +723,95 @@ export default function SuspectVisualizer({
                                                 >
                                                     <span className="text-zinc-300 font-bold">{gene}</span>
                                                     <span className="px-1 py-0.2 rounded bg-amber-500/20 text-amber-300 font-bold">d={d}</span>
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            </div>
+                        ) : (
+                            /* Ephelides & UV Sensitivity Tab (Module 15) */
+                            <div className="space-y-3">
+                                {/* Freckling Score & Diplotype Summary */}
+                                <div className="grid grid-cols-2 gap-2">
+                                    {(() => {
+                                        const wTotal = (2.85 * (mc1rSnps.rs1805007 || 0)) + (2.75 * (mc1rSnps.rs1805008 || 0)) + (2.60 * (mc1rSnps.rs1805009 || 0)) + (1.10 * (mc1rSnps.rs1805005 || 0)) + (0.75 * (mc1rSnps.rs885479 || 0));
+                                        const nR = (mc1rSnps.rs1805007 || 0) + (mc1rSnps.rs1805008 || 0) + (mc1rSnps.rs1805009 || 0);
+                                        const nr = (mc1rSnps.rs1805005 || 0) + (mc1rSnps.rs885479 || 0);
+                                        const dip = nR >= 2 ? "R/R" : (nR >= 1 && nr >= 1 ? "R/r" : (nR === 1 ? "R/wt" : (nr >= 2 ? "r/r" : (nr === 1 ? "r/wt" : "wt/wt"))));
+                                        const logit = -2.50 + 1.35 * wTotal + 0.85 * (mc1rSnps.rs1015362 || 0) + 0.65 * (mc1rSnps.rs10756819 || 0);
+                                        const fScore = Math.min(100, 100 / (1 + Math.exp(-logit)));
+
+                                        return (
+                                            <>
+                                                <div className="p-2 rounded bg-rose-500/10 border border-rose-500/30">
+                                                    <div className="font-mono text-[7px] text-zinc-400 uppercase">MC1R Diplotype</div>
+                                                    <div className="font-mono text-xs font-bold text-rose-300">{dip}</div>
+                                                    <div className="font-mono text-[7px] text-zinc-400">
+                                                        Loss Weight: {wTotal.toFixed(2)}
+                                                    </div>
+                                                </div>
+                                                <div className="p-2 rounded bg-amber-500/10 border border-amber-500/30">
+                                                    <div className="font-mono text-[7px] text-zinc-400 uppercase">Freckling Score (F_score)</div>
+                                                    <div className="font-mono text-xs font-bold text-amber-300">{fScore.toFixed(1)}%</div>
+                                                    <div className="font-mono text-[7px] text-zinc-400">
+                                                        {fScore >= 75 ? "DENSE" : fScore >= 45 ? "MODERATE" : fScore >= 20 ? "MILD" : "MINIMAL"}
+                                                    </div>
+                                                </div>
+                                            </>
+                                        );
+                                    })()}
+                                </div>
+
+                                {/* Minimal Erythema Dose (MED) & Sun Sensitivity */}
+                                <div className="p-2.5 rounded bg-black/40 border border-tactical-border/60 space-y-1.5">
+                                    {(() => {
+                                        const nR = (mc1rSnps.rs1805007 || 0) + (mc1rSnps.rs1805008 || 0) + (mc1rSnps.rs1805009 || 0);
+                                        const nr = (mc1rSnps.rs1805005 || 0) + (mc1rSnps.rs885479 || 0);
+                                        const medCat = nR >= 2 ? "< 20 mJ/cm² (Extremely Low MED)" : (nR >= 1 ? "20 - 35 mJ/cm² (Low MED)" : (nr >= 1 ? "35 - 50 mJ/cm² (Moderate MED)" : "> 50 mJ/cm² (High MED)"));
+                                        const tanCap = nR >= 2 ? "NEVER TANS, ALWAYS BURNS" : (nR >= 1 ? "RARE TAN, FREQUENT BURNS" : (nr >= 1 ? "MILD TAN, OCCASIONAL BURNS" : "NORMAL TANNING CAPACITY"));
+
+                                        return (
+                                            <>
+                                                <div className="flex justify-between items-center text-[8px] font-mono">
+                                                    <span className="text-zinc-400">Minimal Erythema Dose:</span>
+                                                    <span className="text-rose-400 font-bold">{medCat}</span>
+                                                </div>
+                                                <div className="flex justify-between items-center text-[8px] font-mono">
+                                                    <span className="text-zinc-400">Tanning Capacity:</span>
+                                                    <span className="px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40 font-bold text-[7px]">
+                                                        {tanCap}
+                                                    </span>
+                                                </div>
+                                            </>
+                                        );
+                                    })()}
+                                </div>
+
+                                {/* MC1R & Modifiers SNP Toggles */}
+                                <div className="space-y-1.5 pt-1">
+                                    <div className="font-mono text-[8px] text-zinc-400 uppercase tracking-wider">
+                                        MC1R &amp; Modifier Loci (Click to toggle dosage)
+                                    </div>
+                                    <div className="grid grid-cols-4 gap-1">
+                                        {[
+                                            { rs: "rs1805007", gene: "R151C (R)" },
+                                            { rs: "rs1805008", gene: "R160W (R)" },
+                                            { rs: "rs1805009", gene: "D294H (R)" },
+                                            { rs: "rs1805005", gene: "V60L (r)" },
+                                            { rs: "rs885479", gene: "R163Q (r)" },
+                                            { rs: "rs1015362", gene: "ASIP" },
+                                            { rs: "rs10756819", gene: "BNC2" },
+                                        ].map(({ rs, gene }) => {
+                                            const d = mc1rSnps[rs] || 0;
+                                            return (
+                                                <button
+                                                    key={rs}
+                                                    onClick={() => setMc1rSnps(p => ({ ...p, [rs]: ((p[rs] || 0) + 1) % 3 }))}
+                                                    className="p-1 rounded bg-black/50 border border-zinc-800 hover:border-rose-500/50 flex justify-between items-center text-[7px] font-mono"
+                                                >
+                                                    <span className="text-zinc-300 font-bold">{gene}</span>
+                                                    <span className="px-1 py-0.2 rounded bg-rose-500/20 text-rose-300 font-bold">d={d}</span>
                                                 </button>
                                             );
                                         })}

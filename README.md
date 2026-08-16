@@ -552,11 +552,19 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`D`:** Intermediate curl density threshold transitions (`WAVY` and `CURLY` classification).
   - **`E`:** Androgenetic alopecia polygenic risk score exact additive weights (AR `rs6152`, 20p11 `rs2180439`, `rs1160312`, HDAC9 `rs756853`).
   - **`F`:** Hamilton-Norwood clinical 4-tier risk grade mapping (`GRADE_I_II`, `GRADE_III`, `GRADE_IV_V`, `GRADE_VI_VII`).
-  - **`G`:** Mathematical bounds: $C_{\text{curl}}$ clamped in $[0.0, 10.0]$ and $\text{PRS}_{\text{balding}} \in [0.00, 4.740]$.
-  - **`H`:** API integration testing across `/phenotyping/hair/morphology-and-balding`, `/texture-index`, and `/balding-prs`.
+* **`VECTOR_15_FRECKLE_A-H` (Ephelides, MC1R Epistasis & UV Sensitivity Index — Module 15):**
+  - **`A`:** Baseline Wild-Type State ($X_i = 0$) verified with wild-type diplotype ($wt/wt$), minimal freckling ($F_{\text{score}} = 7.59\%$), and high Minimal Erythema Dose ($\text{MED} > 50\text{ mJ/cm}^2$).
+  - **`B`:** Homozygous 'R' allele (R151C `rs1805007: 2`) verified with severe loss-of-function ($R/R, W_{\text{MC1R}} = 5.70$), dense ephelides ($F_{\text{score}} \ge 99.0\%$), and extreme erythema risk ($\text{MED} < 20\text{ mJ/cm}^2$).
+  - **`C`:** Compound Heterozygosity ($R/r$) verified with one 'R' variant and one 'r' variant (R151C + V60L, $W_{\text{MC1R}} = 3.95, F_{\text{score}} = 94.44\%$, $\text{MED} \in [20, 35]\text{ mJ/cm}^2$).
+  - **`D`:** Partial Loss ($r/r$) verified with homozygous 'r' variants (V60L `rs1805005: 2`, $W_{\text{MC1R}} = 2.20, F_{\text{score}} = 61.54\%$, $\text{MED} \in [35, 50]\text{ mJ/cm}^2$).
+  - **`E`:** Single 'r' Carrier ($r/wt$) verified with low penetrance ($F_{\text{score}} = 18.43\%$, minimal freckling).
+  - **`F`:** ASIP (`rs1015362`) and BNC2 (`rs10756819`) epistatic boosting on basal pigmentation ($F_{\text{score}}$ increases from $7.59\%$ to $62.25\%$).
+  - **`G`:** Sigmoidal $F_{\text{score}}$ boundary invariance strictly clamped in $[0.0, 100.0]\%$.
+  - **`H`:** API integration testing across `/phenotyping/ephelides/freckling-and-uv` and `/mc1r-genotype`.
 * **`VECTOR_P6_01` (Chain of Custody Tamper Detection):** Merkle tree root divergence verified upon a single-second timestamp modification ($P_{\text{detection}} = 100\%$).
 * **`VECTOR_P6_02` (ISO 17025 Measurement Uncertainty):** Combined $u_c = 0.05385 \text{ ng/}\mu\text{L}$ and expanded $U_{95\%} = 0.1077 \text{ ng/}\mu\text{L}$ ($k=2.00$).
 * **`VECTOR_P6_03` (ENFSI Verbal Statement Mapping):** $LR = 3.5 \times 10^7$ maps deterministically to Verbal Tier 6 ("Extremely strong support for prosecution proposition").
+
 
 
 

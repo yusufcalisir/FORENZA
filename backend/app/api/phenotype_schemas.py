@@ -194,5 +194,45 @@ class HairMorphologyCombinedResponse(BaseModel):
     prosecutors_fallacy_shield: str
 
 
+# ── Module 15 Ephelides (Freckling), MC1R & UV Sensitivity Schemas ────────────
+
+class MC1RDiplotypeResponse(BaseModel):
+    diplotype: str
+    functional_classification: str
+    total_mc1r_loss_weight: float
+    r_high_risk_alleles_count: int
+    r_low_risk_alleles_count: int
+    detected_variants: List[str]
+
+
+class FrecklingScoreResponse(BaseModel):
+    freckling_score_pct: float
+    freckling_intensity: str
+    epistatic_modifiers_applied: Dict[str, float]
+
+
+class UVSensitivityResponse(BaseModel):
+    minimal_erythema_dose_category: str
+    tanning_capacity: str
+    photoprotection_guidance: str
+
+
+class FrecklingAnalysisRequest(BaseModel):
+    snp_dosages: Dict[str, float] = Field(
+        ...,
+        description="Map of rsID to dosage (0, 1, or 2) for MC1R variants (rs1805006, rs75570604, rs1805007, rs1805008, rs1805009, rs1805005, rs2228479, rs885479) and modifiers ASIP rs1015362, BNC2 rs10756819.",
+        examples=[{"rs1805007": 2, "rs1015362": 1, "rs10756819": 1}],
+    )
+
+
+class FrecklingAndUVResponse(BaseModel):
+    mc1r: MC1RDiplotypeResponse
+    freckling: FrecklingScoreResponse
+    uv_sensitivity: UVSensitivityResponse
+    assayed_snps_count: int
+    prosecutors_fallacy_shield: str
+
+
+
 
 

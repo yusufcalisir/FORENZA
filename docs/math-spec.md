@@ -1313,9 +1313,44 @@ $$\text{PRS}_{\text{balding}} = 0.982 X_{\text{rs6152}} + 0.541 X_{\text{rs21804
   - $\text{PRS} < 0.50 \implies$ **Grade I / II** (Minimal or No Hair Loss, Low Risk)
   - $0.50 \le \text{PRS} < 1.20 \implies$ **Grade III** (Slight Temporal / Vertex Recess, Moderate Risk)
   - $1.20 \le \text{PRS} < 2.10 \implies$ **Grade IV / V** (Moderate Vertex Loss, Elevated Risk)
-  - $\text{PRS} \ge 2.10 \implies$ **Grade VI / VII** (Severe / Extensive Balding, High Risk)
-
 - **Domain Boundaries:** $0.00 \le \text{PRS}_{\text{balding}} \le 4.740$.
+
+---
+
+## 49. Ephelides (Freckling), MC1R Epistasis & UV Sensitivity Index Engine (Module 15)
+
+The Ephelides & UV Sensitivity Engine predicts quantitative freckling score ($F_{\text{score}}$), MC1R compound heterozygous loss-of-function load ($W_{\text{MC1R}}$), and Minimal Erythema Dose ($\text{MED}$) photosensitivity.
+
+### 49.1 MC1R Functional Loss-of-Function Matrix
+
+| Variant Name | SNP ID (rsID) | Amino Acid Change | Functional Class | Loss-of-Function Weight ($w_{\text{MC1R}}$) |
+| :--- | :--- | :--- | :--- | :--- |
+| **D84E** | `rs1805006` | Asp84Glu | 'R' High Risk | $+2.50$ |
+| **R142H** | `rs75570604` | Arg142His | 'R' High Risk | $+2.40$ |
+| **R151C** | `rs1805007` | Arg151Cys | 'R' High Risk | $+2.85$ |
+| **R160W** | `rs1805008` | Arg160Trp | 'R' High Risk | $+2.75$ |
+| **D294H** | `rs1805009` | Asp294His | 'R' High Risk | $+2.60$ |
+| **V60L** | `rs1805005` | Val60Leu | 'r' Low Risk | $+1.10$ |
+| **V92M** | `rs2228479` | Val92Met | 'r' Low Risk | $+0.85$ |
+| **R163Q** | `rs885479` | Arg163Gln | 'r' Low Risk | $+0.75$ |
+| **Wild Type (wt)**| — | Consensus | Wild Type Baseline | $0.00$ |
+
+### 49.2 Compound Heterozygosity and Quantitative Freckling Score ($F_{\text{score}}$)
+
+$$W_{\text{MC1R}} = \sum_{i} w_i \cdot X_i$$
+
+$$F_{\text{score}} = \min \left( 100.0, \; \frac{100.0}{1 + \exp\left( - \left( -2.50 + 1.35 W_{\text{MC1R}} + 0.85 X_{\text{ASIP}} + 0.65 X_{\text{BNC2}} \right) \right)} \right)$$
+
+- `ASIP rs1015362`: Epistatic enhancer ($+0.85$)
+- `BNC2 rs10756819`: Epistatic enhancer ($+0.65$)
+
+### 49.3 Minimal Erythema Dose (MED) & UV Sensitivity Tiers
+
+- **$R/R$ (Severe Loss, $n_R \ge 2$):** $\text{MED} < 20\text{ mJ/cm}^2$. Never tans, always burns severely. Dense ephelides.
+- **$R/r$ or $R/wt$ (Moderate Loss, $n_R \ge 1$):** $\text{MED} \in [20, 35]\text{ mJ/cm}^2$. Rare tanning, frequent burns. Moderate ephelides.
+- **$r/r$ or $r/wt$ (Mild Loss, $n_R = 0, n_r \ge 1$):** $\text{MED} \in [35, 50]\text{ mJ/cm}^2$. Mild tanning, occasional burns.
+- **$wt/wt$ (Wild-Type Consensus):** $\text{MED} > 50\text{ mJ/cm}^2$. Normal tanning, rare burns. Minimal ephelides.
+
 
 
 

@@ -539,5 +539,81 @@ async def get_balding_prs(body: HairAnalysisRequest) -> BaldingPRSResponse:
     )
 
 
+# ── Module 15 Ephelides, MC1R Epistasis & UV Sensitivity Endpoints ───────────
+from node.services.forensic.phenotyping.freckling_mc1r_engine import FrecklingMC1REngine
+from .phenotype_schemas import (
+    FrecklingAnalysisRequest, FrecklingAndUVResponse,
+    MC1RDiplotypeResponse, FrecklingScoreResponse, UVSensitivityResponse,
+)
+
+_freckle_engine = FrecklingMC1REngine()
+
+
+@router.post(
+    "/phenotyping/ephelides/freckling-and-uv",
+    response_model=FrecklingAndUVResponse,
+    summary="Composite MC1R Epistasis, Ephelides (Freckling) & UV Sensitivity (Module 15)",
+    description="Calculates compound heterozygous MC1R loss-of-function, quantitative freckling score (F_score), and Minimal Erythema Dose (MED). (Research §5)",
+    status_code=status.HTTP_200_OK,
+)
+async def analyze_freckling_and_uv(body: FrecklingAnalysisRequest) -> FrecklingAndUVResponse:
+    try:
+        res = _freckle_engine.analyze_ephelides_profile(body.snp_dosages)
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Ephelides and UV analysis failed: {str(exc)}"
+        )
+
+    return FrecklingAndUVResponse(
+        mc1r=MC1RDiplotypeResponse(
+            diplotype=res.mc1r.diplotype,
+            functional_classification=res.mc1r.functional_classification,
+            total_mc1r_loss_weight=res.mc1r.total_mc1r_loss_weight,
+            r_high_risk_alleles_count=res.mc1r.r_high_risk_alleles_count,
+            r_low_risk_alleles_count=res.mc1r.r_low_risk_alleles_count,
+            detected_variants=res.mc1r.detected_variants,
+        ),
+        freckling=FrecklingScoreResponse(
+            freckling_score_pct=res.freckling.freckling_score_pct,
+            freckling_intensity=res.freckling.freckling_intensity,
+            epistatic_modifiers_applied=res.freckling.epistatic_modifiers_applied,
+        ),
+        uv_sensitivity=UVSensitivityResponse(
+            minimal_erythema_dose_category=res.uv_sensitivity.minimal_erythema_dose_category,
+            tanning_capacity=res.uv_sensitivity.tanning_capacity,
+            photoprotection_guidance=res.uv_sensitivity.photoprotection_guidance,
+        ),
+        assayed_snps_count=res.assayed_snps_count,
+        prosecutors_fallacy_shield=res.prosecutors_fallacy_shield,
+    )
+
+
+@router.post(
+    "/phenotyping/ephelides/mc1r-genotype",
+    response_model=MC1RDiplotypeResponse,
+    summary="Extract MC1R Diplotype & Loss-of-Function Weight (Module 15)",
+    status_code=status.HTTP_200_OK,
+)
+async def get_mc1r_diplotype(body: FrecklingAnalysisRequest) -> MC1RDiplotypeResponse:
+    try:
+        res = _freckle_engine.determine_mc1r_diplotype(body.snp_dosages)
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"MC1R diplotype extraction failed: {str(exc)}"
+        )
+
+    return MC1RDiplotypeResponse(
+        diplotype=res.diplotype,
+        functional_classification=res.functional_classification,
+        total_mc1r_loss_weight=res.total_mc1r_loss_weight,
+        r_high_risk_alleles_count=res.r_high_risk_alleles_count,
+        r_low_risk_alleles_count=res.r_low_risk_alleles_count,
+        detected_variants=res.detected_variants,
+    )
+
+
+
 
 

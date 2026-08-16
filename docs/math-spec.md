@@ -1798,6 +1798,74 @@ $$\epsilon \le \frac{d}{p} \approx 10^{-75}$$
 | `VECTOR_27_ZKP_G` | Domain validation (empty loci, $M_{\text{thresh}} \le 0$) | $\texttt{ValueError}$ raised | ✅ Verified |
 | `VECTOR_27_ZKP_H` | FastAPI REST pipeline (`/witness-commitment` $\to$ `/synthesize-proof` $\to$ `/verify-pairing`) | 200 OK end-to-end; $100\%$ pairing verification | ✅ Verified |
 
+---
+
+## 62. ISO/IEC 17025:2017 Measurement Uncertainty & Calibration Budget Engine (Module 28)
+
+**Research Reference:** Pillar 6 Research §3 & §6 (ISO/IEC 17025:2017 Clause 7.6 • JCGM 100:2008 GUM • SWGDAM QAS 2020)
+
+### 62.1 Combined Standard Uncertainty ($u_c(y)$) (§3.1)
+
+For quantitative DNA concentration estimation ($y = f(x_1, \dots, x_N)$ in $\text{ng/}\mu\text{L}$), the combined standard uncertainty $u_c(y)$ propagates individual input standard uncertainties $u(x_i)$ and sensitivity coefficients $c_i = \frac{\partial f}{\partial x_i}$:
+
+$$u_c^2(y) = \sum_{i=1}^N (c_i \cdot u_i)^2 + 2 \sum_{i=1}^{N-1} \sum_{j=i+1}^N c_i c_j r_{ij} u_i u_j$$
+
+where $r_{ij} \in [-1, 1]$ is the correlation coefficient between quantities $x_i$ and $x_j$.
+
+**Variance Percentage Contribution:**
+$$\text{Pct}_i = \frac{(c_i \cdot u_i)^2}{u_c^2(y)} \times 100\%$$
+
+---
+
+### 62.2 Expanded Uncertainty Budget at 95.45% Confidence ($U_{95\%}$) (§3.1 & §3.2)
+
+Under normal Gaussian distribution, coverage factor $k = 2.00$ defines the courtroom reported uncertainty interval:
+
+$$U_{95\%} = k \cdot u_c(y) = 2.00 \cdot u_c(y)$$
+
+$$\text{Reported Interval} = y \pm U_{95\%} \quad (\text{ng/}\mu\text{L}) \implies \left[ y - U_{95\%}, \; y + U_{95\%} \right]$$
+
+---
+
+### 62.3 Canonical Forensic DNA Calibration Budget (`VECTOR_P6_02` Ground Truth) (§3.2)
+
+| Quantity ($x_i$) | Standard Value ($u_i$) | Distribution | Sensitivity ($c_i$) | Variance Contribution $(c_i u_i)^2$ | % Variance |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Micro-Pipette Volume ($x_1$)** | $0.01323 \text{ ng/}\mu\text{L}$ | Rectangular ($\sqrt{3}$) | $1.00$ | $0.000175$ | $6.03\%$ |
+| **Thermal Gradient ($x_2$)** | $0.01500 \text{ ng/}\mu\text{L}$ | Normal Gaussian ($k=1$) | $1.00$ | $0.000225$ | $7.76\%$ |
+| **qPCR Standard Curve ($x_3$)** | $0.03000 \text{ ng/}\mu\text{L}$ | Normal Gaussian ($k=1$) | $1.00$ | $0.000900$ | $31.03\%$ |
+| **Master Mix Amplification ($x_4$)** | $0.04000 \text{ ng/}\mu\text{L}$ | Normal Gaussian ($k=1$) | $1.00$ | $0.001600$ | $55.17\%$ |
+| **Combined Standard ($u_c$)** | **$0.05385 \text{ ng/}\mu\text{L}$** | Normal Gaussian | N/A | **$\sum = 0.002900$** | **$100.00\%$** |
+| **Expanded Budget ($U_{95\%}$)** | **$0.10770 \text{ ng/}\mu\text{L}$** | Expanded ($k=2.00$) | N/A | **Reported: $\pm 0.10770$** | N/A |
+
+---
+
+### 62.4 Proficiency Testing Consensus $z$-Score (§3.2)
+
+Evaluates inter-laboratory proficiency rounds relative to consensus statistics:
+
+$$z = \frac{x_{\text{lab}} - \mu_{\text{consensus}}}{\sigma_{\text{consensus}}}$$
+
+* $|z| \le 2.0 \implies$ **`SATISFACTORY`** (Fully Calibrated, ISO/IEC 17025 Compliant).
+* $2.0 < |z| < 3.0 \implies$ **`QUESTIONABLE`** (Warning State, Internal Review Required).
+* $|z| \ge 3.0 \implies$ **`UNSATISFACTORY`** (Non-Compliant Alert, Corrective Action Required).
+
+---
+
+### 62.5 Golden Benchmark Test Vectors (Module 28)
+
+| Vector | Test Scenario | Verified Invariant | Status |
+| :--- | :--- | :--- | :---: |
+| `VECTOR_P6_02` | Canonical 4-component calibration budget | $u_c = 0.05385\,\text{ng/}\mu\text{L}, U_{95\%} = 0.10770\,\text{ng/}\mu\text{L}$ ($k=2.00$) | ✅ Verified |
+| `VECTOR_28_UNCERT_A` | Custom sensitivity coefficients ($c_i \neq 1.0$) | Weighted variance sum $(c_1 u_1)^2 + (c_2 u_2)^2$ | ✅ Verified |
+| `VECTOR_28_UNCERT_B` | Correlated components ($r_{ij} > 0$) | Positive covariance expansion $2 c_i c_j r_{ij} u_i u_j$ | ✅ Verified |
+| `VECTOR_28_UNCERT_C` | Satisfactory proficiency round ($|z| \le 2.0$) | $z = +1.000 \implies \text{SATISFACTORY}$, compliant | ✅ Verified |
+| `VECTOR_28_UNCERT_D` | Questionable warning round ($2.0 < |z| < 3.0$) | $z = +2.400 \implies \text{QUESTIONABLE}$, non-compliant | ✅ Verified |
+| `VECTOR_28_UNCERT_E` | Unsatisfactory breach round ($|z| \ge 3.0$) | $z = +4.000 \implies \text{UNSATISFACTORY}$, corrective action | ✅ Verified |
+| `VECTOR_28_UNCERT_F` | Domain validation ($y < 0, \sigma \le 0, u_i < 0$) | $\texttt{ValueError}$ raised | ✅ Verified |
+| `VECTOR_28_UNCERT_G` | FastAPI REST pipeline (`/calculate-budget`, `/proficiency-z-score`) | 200 OK end-to-end | ✅ Verified |
+
+
 
 
 

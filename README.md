@@ -674,7 +674,16 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** Poseidon commitment determinism, field range $[0, p)$, and salt entropy verified.
   - **`G`:** Domain validation for empty loci and non-positive thresholds verified.
   - **`H`:** API integration testing across `/forensic/zkp/witness-commitment`, `/synthesize-proof`, and `/verify-pairing`.
-* **`VECTOR_P6_02` (ISO 17025 Measurement Uncertainty):** Combined $u_c = 0.05385 \text{ ng/}\mu\text{L}$ and expanded $U_{95\%} = 0.1077 \text{ ng/}\mu\text{L}$ ($k=2.00$).
+* **`VECTOR_P6_02` (ISO 17025 DNA Quantification Calibration Budget Ground Truth — Module 28):** Combined $u_c = 0.05385 \text{ ng/}\mu\text{L}$ and expanded $U_{95\%} = 0.10770 \text{ ng/}\mu\text{L}$ ($k=2.00$, $\text{CI: } [1.3423, 1.5577]\,\text{ng/}\mu\text{L}$).
+* **`VECTOR_28_UNCERT_A-G` (ISO 17025 Measurement Uncertainty & Calibration — Module 28):**
+  - **`A`:** Custom sensitivity coefficients ($c_i \neq 1.0$) variance propagation verified.
+  - **`B`:** Positively correlated components ($r_{ij} > 0$) positive covariance expansion verified.
+  - **`C`:** Satisfactory proficiency test result verified ($|z| = 1.000 \le 2.0 \implies \text{SATISFACTORY}$).
+  - **`D`:** Questionable proficiency warning verified ($|z| = 2.400 \implies \text{QUESTIONABLE}$).
+  - **`E`:** Unsatisfactory non-compliant proficiency breach verified ($|z| = 4.000 \implies \text{UNSATISFACTORY}$).
+  - **`F`:** Domain validation for negative concentrations, non-positive std, and negative uncertainty inputs verified.
+  - **`G`:** API integration testing across `/forensic/qc/uncertainty/calculate-budget` and `/proficiency-z-score`.
+
 
 
 * **`VECTOR_P6_03` (ENFSI Verbal Statement Mapping):** $LR = 3.5 \times 10^7$ maps deterministically to Verbal Tier 6 ("Extremely strong support for prosecution proposition").

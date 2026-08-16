@@ -51,11 +51,11 @@ import MultiLayerGenomicsPanel from "@/components/analysis/MultiLayerGenomicsPan
 import ForensicEvidenceOSPanel from "@/components/analysis/ForensicEvidenceOSPanel";
 import TouchDnaPanel from "@/components/analysis/TouchDnaPanel";
 import SyntheticCaseGeneratorPanel from "@/components/analysis/SyntheticCaseGeneratorPanel";
-import LimsWorkflowPanel from "@/components/analysis/LimsWorkflowPanel";
 import MerkleLedgerPanel from "@/components/analysis/MerkleLedgerPanel";
 import ZkpAuditorPanel from "@/components/analysis/ZkpAuditorPanel";
-
+import MeasurementUncertaintyPanel from "@/components/analysis/MeasurementUncertaintyPanel";
 import EvidenceManagementPanel from "@/components/analysis/EvidenceManagementPanel";
+
 
 
 
@@ -529,9 +529,10 @@ function renderPanel(tabId: TabId) {
         // Pillar 6: ISO 17025, LIMS & ZKP
         case "lims": return <MerkleLedgerPanel />;
         case "zkp": return <ZkpAuditorPanel />;
-        case "qc": return <QualityAssurancePanel />;
+        case "qc": return <MeasurementUncertaintyPanel />;
         case "court": return <ExpertWitnessPanel />;
         case "evidenceos": return <EvidenceManagementPanel />;
+
 
         default: return <PanelSTR />;
     }

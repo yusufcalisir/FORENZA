@@ -41,3 +41,81 @@ class EvaluateQcResponse(BaseModel):
     imbalanced_loci_count: int
     stochastic_warning_count: int
     iso_17025_provenance: str
+
+
+# ── ISO/IEC 17025:2017 Measurement Uncertainty Schemas (Pillar 6 §3) ─────────
+
+class UncertaintyComponentInput(BaseModel):
+    name: str = Field(..., description="Name of uncertainty component (e.g. Micro-Pipette Volume).")
+    standard_uncertainty: float = Field(..., ge=0.0, description="Standard uncertainty u_i in ng/uL.")
+    probability_distribution: str = Field(default="NORMAL", description="Probability distribution: NORMAL, RECTANGULAR, TRIANGULAR.")
+    sensitivity_coefficient: float = Field(default=1.00, description="Sensitivity coefficient c_i = df/dx_i.")
+    description: Optional[str] = Field(default=None, description="Metrological description of the uncertainty contributor.")
+
+
+class CalculateUncertaintyBudgetRequest(BaseModel):
+    nominal_concentration: float = Field(
+        ...,
+        ge=0.0,
+        description="Measured quantitative DNA concentration in ng/uL."
+    )
+    components: Optional[List[UncertaintyComponentInput]] = Field(
+        default=None,
+        description="Optional custom uncertainty components. If omitted, canonical 4-component budget is used."
+    )
+    correlations: Optional[Dict[str, float]] = Field(
+        default=None,
+        description="Optional correlation coefficients r_ij between component pairs (key format 'compA:compB')."
+    )
+    coverage_factor: float = Field(
+        default=2.00,
+        gt=0.0,
+        description="Coverage factor k for expanded uncertainty (k=2.00 for 95.45% confidence)."
+    )
+
+
+class ComponentDetailOutput(BaseModel):
+    component_name: str
+    standard_uncertainty: float
+    sensitivity_coefficient: float
+    probability_distribution: str
+    variance_contribution: float
+    percentage_contribution: float
+    description: Optional[str] = None
+
+
+class ReportedIntervalOutput(BaseModel):
+    lower_bound: float
+    upper_bound: float
+    formatted_interval: str
+
+
+class CalculateUncertaintyBudgetResponse(BaseModel):
+    nominal_concentration: float
+    combined_standard_uncertainty: float
+    expanded_uncertainty: float
+    coverage_factor: float
+    confidence_level: str
+    reported_interval: ReportedIntervalOutput
+    total_variance: float
+    component_count: int
+    components: List[ComponentDetailOutput]
+    prosecutors_fallacy_shield: str
+
+
+class ProficiencyZScoreRequest(BaseModel):
+    lab_measured_value: float = Field(..., description="Laboratory measured DNA concentration (x_lab in ng/uL).")
+    consensus_mean: float = Field(..., description="Proficiency testing consensus mean (mu_consensus in ng/uL).")
+    consensus_std: float = Field(..., gt=0.0, description="Proficiency testing consensus standard deviation (sigma_consensus in ng/uL).")
+
+
+class ProficiencyZScoreResponse(BaseModel):
+    lab_measured_value: float
+    consensus_mean: float
+    consensus_std: float
+    z_score: float
+    absolute_z_score: float
+    performance_tier: str
+    verdict: str
+    is_compliant: bool
+

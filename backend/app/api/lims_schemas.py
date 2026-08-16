@@ -79,3 +79,75 @@ class ChainOfCustodyResponse(BaseModel):
     total_steps_completed: int
     chain_intact: bool
     audit_trail: List[StepEntryDetail]
+
+
+# ── Cryptographic Merkle Tree Ledger Schemas (Pillar 6 §1) ───────────────────
+
+class CustodyEventInput(BaseModel):
+    event_id: str = Field(..., description="Unique event identifier (e.g. EVT-001).")
+    timestamp_iso: str = Field(..., description="RFC 3161 / ISO 8601 UTC timestamp string.")
+    officer_id: str = Field(..., description="Forensic officer / technician identifier.")
+    sample_barcode: str = Field(..., description="Evidence sample barcode.")
+    location_id: str = Field(..., description="Physical or laboratory custody location.")
+    action_type: str = Field(default="TRANSFER", description="Custodial action type (COLLECTION, TRANSFER, EXTRACTION, COURT_PRESENTATION).")
+    notes: Optional[str] = Field(default=None, description="Optional custodial observation notes.")
+
+
+class MerkleBuildTreeRequest(BaseModel):
+    events: List[CustodyEventInput] = Field(
+        ...,
+        min_length=1,
+        description="Sequential list of custody transfer events."
+    )
+
+
+class MerkleBuildTreeResponse(BaseModel):
+    merkle_root: str
+    total_events: int
+    tree_depth: int
+    leaf_hashes: List[str]
+    layers: List[List[str]]
+
+
+class MerkleGenerateProofRequest(BaseModel):
+    events: List[CustodyEventInput] = Field(
+        ...,
+        min_length=1,
+        description="Sequential list of custody events."
+    )
+    target_event_index: int = Field(
+        ...,
+        ge=0,
+        description="0-indexed position of target event in sequence."
+    )
+
+
+class MerkleProofStep(BaseModel):
+    sibling_hash: str
+    direction: str
+
+
+class MerkleGenerateProofResponse(BaseModel):
+    target_event_id: str
+    target_event_index: int
+    target_leaf_hash: str
+    merkle_root: str
+    proof_path: List[MerkleProofStep]
+    path_length: int
+
+
+class MerkleVerifyProofRequest(BaseModel):
+    leaf_hash: str = Field(..., description="Target leaf hash computed from questioned custody event.")
+    proof_path: List[MerkleProofStep] = Field(..., description="O(log2 N) Merkle sibling proof path.")
+    expected_root: str = Field(..., description="Expected immutable Merkle root commitment.")
+
+
+class MerkleVerifyProofResponse(BaseModel):
+    is_valid: bool
+    computed_root: str
+    expected_root: str
+    verdict: str
+    steps_evaluated: int
+    step_trace: List[str]
+    prosecutors_fallacy_shield: str
+

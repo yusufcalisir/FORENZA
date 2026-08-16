@@ -656,11 +656,17 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** Non-positive concentration and negative elapsed time validation verified.
   - **`G`:** Uncataloged xenobiotic conservative fallback handling verified.
   - **`H`:** API integration testing across `/forensic/physical/toxicology-pmr-evaluation` and `/toxicology-antemortem-extrapolation`.
-* **`VECTOR_P6_01` (Chain of Custody Tamper Detection):** Merkle tree root divergence verified upon a single-second timestamp modification ($P_{\text{detection}} = 100\%$).
-
-
-
+* **`VECTOR_P6_01` (Chain of Custody Tamper Detection Ground Truth — Module 26):** Merkle tree root divergence verified upon a single-second timestamp modification ($P_{\text{detection}} = 100\%$).
+* **`VECTOR_26_MERKLE_A-G` (Cryptographic Merkle Custody Ledger — Module 26):**
+  - **`A`:** Single-event tree edge case verified ($\mathbf{R}_{\text{Merkle}} = H_1$, proof length $= 0$).
+  - **`B`:** Power-of-two balanced trees ($N=4, N=8$) verified with logarithmic depth ($\text{depth} = \log_2 N$).
+  - **`C`:** Odd-leaf counts ($N=3, 5, 7$) duplication balancing invariance verified ($H_{N+1} = H_N$, all inclusion proofs VALID).
+  - **`D`:** Proof audit path length complexity verified ($\lceil \log_2 N \rceil$).
+  - **`E`:** Custodial event order sensitivity verified (swapping $E_1 \leftrightarrow E_2$ alters root).
+  - **`F`:** Empty event lists and out-of-range index exception handling verified.
+  - **`G`:** API integration testing across `/forensic/lims/merkle/build-tree`, `/generate-proof`, and `/verify-proof`.
 * **`VECTOR_P6_02` (ISO 17025 Measurement Uncertainty):** Combined $u_c = 0.05385 \text{ ng/}\mu\text{L}$ and expanded $U_{95\%} = 0.1077 \text{ ng/}\mu\text{L}$ ($k=2.00$).
+
 * **`VECTOR_P6_03` (ENFSI Verbal Statement Mapping):** $LR = 3.5 \times 10^7$ maps deterministically to Verbal Tier 6 ("Extremely strong support for prosecution proposition").
 
 

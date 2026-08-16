@@ -1674,6 +1674,72 @@ $$\text{If } \frac{C_{\text{heart}}}{C_{\text{femoral}}} > 2.0 \quad \text{and} 
 - **First-Order Elimination:**
   $$k_e = \frac{\ln(2)}{t_{1/2}} \implies C_{\text{antemortem}}(t - \Delta t) = C_{\text{femoral}} \cdot e^{k_e \cdot \Delta t}$$
 
+---
+
+## 60. Cryptographic Forensic Chain of Custody (CoC) Immutable Merkle Tree Ledger Engine (Module 26)
+
+**Research Reference:** Pillar 6 Research §1 (ISO/IEC 17025:2017 Clause 7.6 • FRE 702 / Daubert • NIST SP 800-106)
+
+### 60.1 Chained SHA-256 Leaf Node Hashing (§1.1)
+
+Each custody event $E_i$ in the ordered sequence $\mathbf{E} = \{E_1, E_2, \dots, E_N\}$ produces a chained leaf hash over canonicalized metadata fields concatenated with the preceding leaf hash:
+
+$$H_i = \text{SHA256}\Big( \text{EventID}_i \parallel \text{Timestamp}_i \parallel \text{OfficerID}_i \parallel \text{SampleBarcode}_i \parallel \text{LocationID}_i \parallel H_{i-1} \Big)$$
+
+where $\parallel$ denotes byte concatenation, $\text{Timestamp}_i$ is RFC 3161-certified UTC, and the genesis prior hash is:
+
+$$H_{i-1}\big|_{i=1} = \underbrace{00\ldots0}_{64 \text{ hex chars}} \quad (\text{genesis})$$
+
+---
+
+### 60.2 Balanced Binary Merkle Tree Construction (§1.1)
+
+| Merkle Layer Level | Node Type | Hash Input Signature | Complexity |
+| :--- | :--- | :--- | :--- |
+| **Layer 0 (Leaf)** | Custody Event $E_i$ | $\text{SHA256}(\text{EventID} \parallel \text{Timestamp} \parallel \text{OfficerID} \parallel \text{Barcode} \parallel H_{i-1})$ | $O(N)$ |
+| **Layer $1 \dots \lceil\log_2 N\rceil$** | Interior Parent | $H_{\text{parent}} = \text{SHA256}(H_{\text{left}} \parallel H_{\text{right}})$ | $O(N)$ pairwise reductions |
+| **Root Layer** | Cryptographic Anchor | $\mathbf{R}_{\text{Merkle}} = H_{\text{root}} \in \{0,1\}^{256}$ | $O(1)$ storage |
+
+**Odd-Leaf Balance Rule:** If the count of nodes at any layer is odd, the trailing leaf is duplicated to maintain binary balance:
+
+$$H_{N+1} = H_N \quad (\text{if } N \text{ is odd at any reduction level})$$
+
+**Security Guarantee:** Any single-character alteration to any field in any event $E_k$ cascades upward, yielding $\mathbf{R}'_{\text{Merkle}} \neq \mathbf{R}_{\text{Merkle}}$ with probability $1 - 2^{-256}$.
+
+---
+
+### 60.3 $O(\log_2 N)$ Merkle Inclusion Proof (Audit Path) (§1.2)
+
+To prove event $E_k$ is part of the case file without disclosing other events, the engine generates a minimal audit path:
+
+$$\boldsymbol{\pi}_k = \Big\{ (S_1, \text{dir}_1), (S_2, \text{dir}_2), \dots, (S_{\lceil \log_2 N \rceil}, \text{dir}_{\lceil \log_2 N \rceil}) \Big\}$$
+
+where $S_j \in \{0,1\}^{256}$ is the sibling hash at depth $j$ and $\text{dir}_j \in \{\text{LEFT}, \text{RIGHT}\}$.
+
+**Verification Algorithm:**
+
+1. Initialize: $v_0 = H_k$ (target leaf hash).
+2. For $j = 1$ to $d = \lceil \log_2 N \rceil$:
+$$v_j = \begin{cases} \text{SHA256}(v_{j-1} \parallel S_j) & \text{if } \text{dir}_j = \text{RIGHT} \\ \text{SHA256}(S_j \parallel v_{j-1}) & \text{if } \text{dir}_j = \text{LEFT} \end{cases}$$
+3. Final admissibility verdict:
+$$\text{VERDICT} = \begin{cases} \texttt{VALID (Admissible)} & \text{if } v_d = \mathbf{R}_{\text{Merkle}} \\ \texttt{INVALID (Tampered)} & \text{if } v_d \neq \mathbf{R}_{\text{Merkle}} \end{cases}$$
+
+---
+
+### 60.4 Golden Benchmark Test Vectors (Module 26)
+
+| Vector | Test Condition | Expected Outcome |
+| :--- | :--- | :--- |
+| `VECTOR_P6_01` | 1-second timestamp alteration in $E_k$ | $\mathbf{R}'_{\text{Merkle}} \neq \mathbf{R}_{\text{Merkle}}$; proof $\implies$ INVALID |
+| `VECTOR_26_MERKLE_A` | Single-event tree ($N=1$) | $\mathbf{R}_{\text{Merkle}} = H_1$; proof path length $= 0$ |
+| `VECTOR_26_MERKLE_B` | Balanced trees ($N=4, N=8$) | Tree depth $= \log_2 N$; all proofs VALID |
+| `VECTOR_26_MERKLE_C` | Odd-leaf counts ($N=3,5,7$) | Duplication applied; all $N$ events have VALID proofs |
+| `VECTOR_26_MERKLE_D` | Proof path lengths ($N=2,4,8,16$) | Path length $= \lceil \log_2 N \rceil$ |
+| `VECTOR_26_MERKLE_E` | Event order permutation ($E_1 \leftrightarrow E_2$) | Swapped root $\neq$ original root |
+| `VECTOR_26_MERKLE_F` | Empty event list \| out-of-range index | `ValueError` raised |
+| `VECTOR_26_MERKLE_G` | API endpoints (`/build-tree`, `/generate-proof`, `/verify-proof`) | 200 OK; proof reconstructs original root |
+
+
 
 
 

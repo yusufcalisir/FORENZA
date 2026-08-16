@@ -49,12 +49,13 @@ import ExpertWitnessPanel from "@/components/analysis/ExpertWitnessPanel";
 import ComprehensiveEpigenomicsPanel from "@/components/analysis/ComprehensiveEpigenomicsPanel";
 import MultiLayerGenomicsPanel from "@/components/analysis/MultiLayerGenomicsPanel";
 import ForensicEvidenceOSPanel from "@/components/analysis/ForensicEvidenceOSPanel";
-import GeoForensicPanel from "@/components/analysis/GeoForensicPanel";
 import TouchDnaPanel from "@/components/analysis/TouchDnaPanel";
-import ToxicologyPanel from "@/components/analysis/ToxicologyPanel";
 import SyntheticCaseGeneratorPanel from "@/components/analysis/SyntheticCaseGeneratorPanel";
 import LimsWorkflowPanel from "@/components/analysis/LimsWorkflowPanel";
+import MerkleLedgerPanel from "@/components/analysis/MerkleLedgerPanel";
 import EvidenceManagementPanel from "@/components/analysis/EvidenceManagementPanel";
+
+
 import PedigreeTree from "@/components/analysis/PedigreeTree";
 import HIrisPlexPanel from "@/components/analysis/HIrisPlexPanel";
 
@@ -209,8 +210,9 @@ const CATEGORIES: Category[] = [
         icon: ShieldCheck,
         color: "blue",
         tabs: [
-            { id: "lims", label: "26. LIMS Accessioning & Chain", icon: PackageCheck, badge: "LIMS-HMAC", maturity: "DEMO", maturityNote: "LIMS sample accessioning & chain of custody tracker with HMAC hashes." },
+            { id: "lims", label: "26. Merkle Custody Ledger", icon: PackageCheck, badge: "MERKLE-COC", maturity: "ACTIVE", maturityNote: "Live cryptographic binary Merkle tree chain of custody & O(log2 N) proof generator." },
             { id: "qc", label: "27. ISO 17025 QA/QC Matrix", icon: ShieldCheck, badge: "ISO-17025", maturity: "ACTIVE", maturityNote: "Live ISO 17025 validation checklist & standard operating procedure validator." },
+
             { id: "zkp", label: "28. Circom Groth16 ZKP Auditor", icon: Lock, badge: "ZKP-CIRCOM", maturity: "ACTIVE", maturityNote: "Live Circom BN254 Groth16 zero-knowledge proof generation & verification." },
             { id: "court", label: "29. Expert Witness Court Mode", icon: Scale, badge: "COURT-MODE", maturity: "DEMO", maturityNote: "Interactive expert witness courtroom reporting & ENFSI verbal predicate synthesizer." },
             { id: "evidenceos", label: "30. Validator & Evidence OS DAG", icon: Layers, badge: "VALIDATOR", maturity: "ACTIVE", maturityNote: "Live 5-tier multi-omic forensic consensus DAG engine." },
@@ -522,8 +524,9 @@ function renderPanel(tabId: TabId) {
 
 
         // Pillar 6: ISO 17025, LIMS & ZKP
-        case "lims": return <LimsWorkflowPanel />;
+        case "lims": return <MerkleLedgerPanel />;
         case "qc": return <QualityAssurancePanel />;
+
         case "zkp": return <ForensicEvidenceOSPanel />;
         case "court": return <ExpertWitnessPanel />;
         case "evidenceos": return <EvidenceManagementPanel />;

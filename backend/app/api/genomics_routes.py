@@ -1,5 +1,6 @@
+import math
 from fastapi import APIRouter, HTTPException, status
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 from backend.app.api.genomics_schemas import (
     MultiLayerGenomicsRequest,
     MultiLayerGenomicsResponse,
@@ -93,18 +94,27 @@ async def deconvolve_mixture(req: DeconvolveMixtureRequest) -> DeconvolveMixture
                 ))
 
         lr = result.lr_result
+
+        def _safe_f(v: float, default: float = 0.0) -> float:
+            if v is None or math.isnan(v) or math.isinf(v):
+                return default
+            return float(v)
+
+        r_hat = _safe_f(lr.convergence.r_hat_max if lr.convergence else 1.0, default=1.0)
+        ess = _safe_f(lr.convergence.ess_min if lr.convergence else 1000.0, default=1000.0)
+
         return DeconvolveMixtureResponse(
             num_contributors=result.n_contributors,
             model_engine=result.model_engine,
-            log10_lr=lr.log10_lr_point,
-            lr_value=lr.lr_point,
-            hpd95_lower=lr.log10_lr_hpd95_lo,
-            hpd95_upper=lr.log10_lr_hpd95_hi,
-            posterior_mixture_weights=lr.posterior_mixture_weights,
-            posterior_degradation_slopes=lr.posterior_degradation,
-            r_hat_max=lr.convergence.r_hat_max if lr.convergence else 1.0,
-            ess_min=lr.convergence.ess_min if lr.convergence else 1000.0,
-            mcmc_converged=lr.convergence.converged if lr.convergence else True,
+            log10_lr=_safe_f(lr.log10_lr_point),
+            lr_value=_safe_f(lr.lr_point, default=1.0),
+            hpd95_lower=_safe_f(lr.log10_lr_hpd95_lo),
+            hpd95_upper=_safe_f(lr.log10_lr_hpd95_hi),
+            posterior_mixture_weights=[_safe_f(w) for w in lr.posterior_mixture_weights],
+            posterior_degradation_slopes=[_safe_f(d) for d in lr.posterior_degradation],
+            r_hat_max=r_hat,
+            ess_min=ess,
+            mcmc_converged=bool(lr.convergence.converged if lr.convergence else True),
             major_contributor_identified=result.major_contributor_identified,
             locus_deconvolutions=locus_details,
             verbal_scale_en=lr.verbal_scale_en,

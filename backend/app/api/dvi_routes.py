@@ -7,6 +7,8 @@ Exposes endpoints for Mass Disaster Matching & Interpol Reconciliation (Pillar 2
   GET  /forensic/dvi/decision-tiers     — Interpol DVI 4-tier standards & judicial action criteria
 """
 
+import math
+from typing import Optional
 from fastapi import APIRouter, HTTPException, status
 
 from node.services.forensic.dvi.dvi_engine import (
@@ -169,13 +171,18 @@ async def reconcile_matrix(body: DviReconciliationMatrixRequest) -> DviReconcili
     status_code=status.HTTP_200_OK,
 )
 async def get_interpol_decision_tiers() -> InterpolTiersResponse:
+    def _clean_float(val: float) -> Optional[float]:
+        if val is None or math.isinf(val) or math.isnan(val):
+            return None
+        return val
+
     tiers_list = [
         InterpolDecisionTierMetadataSchema(
             tier_name=meta.tier.value,
-            min_lr=meta.min_lr,
-            max_lr=meta.max_lr,
-            min_log10=meta.min_log10,
-            max_log10=meta.max_log10,
+            min_lr=_clean_float(meta.min_lr),
+            max_lr=_clean_float(meta.max_lr),
+            min_log10=_clean_float(meta.min_log10),
+            max_log10=_clean_float(meta.max_log10),
             judicial_action_criterion=meta.judicial_action_criterion,
             requires_secondary_corroboration=meta.requires_secondary_corroboration,
             is_court_admissible_standalone=meta.is_court_admissible_standalone,

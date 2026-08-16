@@ -102,10 +102,10 @@ class DviReconciliationMatrixResponse(BaseModel):
 
 class InterpolDecisionTierMetadataSchema(BaseModel):
     tier_name: str
-    min_lr: float
-    max_lr: float
-    min_log10: float
-    max_log10: float
+    min_lr: Optional[float] = None
+    max_lr: Optional[float] = None
+    min_log10: Optional[float] = None
+    max_log10: Optional[float] = None
     judicial_action_criterion: str
     requires_secondary_corroboration: bool
     is_court_admissible_standalone: bool

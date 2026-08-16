@@ -239,7 +239,7 @@ FORENZA structures its 30 biocomputational subsystems into 6 canonical operation
 ### Pillar 1: Probabilistic Genotyping & Population Genetics
 
 1. **Autosomal STR & Kinship Engine (`01`):** Evaluates the expanded 24-locus forensic multiplex (all 20 Expanded FBI CODIS core loci plus SE33, Penta D, Penta E, and Amelogenin) calibrated with NIST 1036 allele frequency matrices across 4 ethnic groups (Caucasian, African American, Hispanic, Asian) with NRC II Rule 4.1 minimum frequency threshold ($p_{\min} = 0.00241$). Supports 4-state Balding-Nichols conditional probabilities ($\theta \in [0.01, 0.03, 0.05]$), general IBD $(k_0, k_1, k_2)$ kinship indices, and Stepwise Mutation Models ($SMM$, $\mu = 10^{-3}, r = 0.10$) for germline mutation rescue.
-2. **MCMC Probabilistic Mixture Deconvoluter (`02`):** Implements dual-engine continuous likelihood modeling — **EuroForMix Gamma** ($h_{l,a} \sim \text{Gamma}(\alpha=1/\omega^2, \beta=\mu_{l,a}\omega^2)$) and **STRmix Log-Normal** ($\ln h_{l,a} \sim \mathcal{N}(\ln\mu_{l,a}, \sigma^2/\mu_{l,a}^\gamma)$) — with **3-chain Metropolis-Hastings MCMC** (N_burn=10,000, N_sample=50,000, K_thin=10), **Gelman-Rubin R̂ < 1.05** convergence and **ESS > 1,000** checks, per-locus biophysical expected peak heights with degradation decay ($10^{-d_k(S-S_0)}$), 24-locus SWGDAM 2020 back-stutter ratios, 95% HPD conservative LR bound ($\log_{10}LR_{95} = \mu - 1.96 \cdot SE$), and Tippett/Cllr calibration. Supports K = 2, 3, 4 contributors.
+2. **MCMC Probabilistic Mixture Deconvoluter (`02`):** Implements dual-engine continuous likelihood modeling - **EuroForMix Gamma** ($h_{l,a} \sim \text{Gamma}(\alpha=1/\omega^2, \beta=\mu_{l,a}\omega^2)$) and **STRmix Log-Normal** ($\ln h_{l,a} \sim \mathcal{N}(\ln\mu_{l,a}, \; \sigma^2/\mu_{l,a}^\gamma)$) - with **3-chain Metropolis-Hastings MCMC** (N_burn=10,000, N_sample=50,000, K_thin=10), **Gelman-Rubin R̂ < 1.05** convergence and **ESS > 1,000** checks, per-locus biophysical expected peak heights with degradation decay ($10^{-d_k(S-S_0)}$), 24-locus SWGDAM 2020 back-stutter ratios, 95% HPD conservative LR bound ($\log_{10}LR_{95} = \mu - 1.96 \cdot SE$), and Tippett/Cllr calibration. Supports K = 2, 3, 4 contributors.
 3. **Dirichlet Fst Population Genetics (`03`):** Calculates subpopulation coancestry corrections ($F_{st} = 0.01 / 0.03$) and Dirichlet smoothing under NRC II Recommendations 4.1 & 4.2 for Hardy-Weinberg and Linkage Equilibrium models.
 4. **Touch DNA & Low-Template LTDNA Engine (`04`):** Models stochastic logistic allele dropout ($p_d$), Poisson drop-in ($p_i$), and peak height imbalance for low-template DNA (<100 pg) recovered from porous and non-porous substrates.
 5. **Tippett Calibration & Validation Lab (`05`):** Generates empirical Tippett calibration curves plotting $\log_{10}(LR)$ distributions under prosecution ($H_p$) vs defense ($H_d$) hypotheses with ROC curves and Cllr (Log-Likelihood Ratio Cost) calibration metrics.
@@ -306,9 +306,7 @@ $$P(A_i A_j \mid A_i A_j) = 2 \cdot \frac{\theta + (1-\theta)p_i}{1+\theta} \cdo
 
 The MCMC probabilistic deconvolution engine samples parameters $\Theta = \{w, d, A\}$ (mixture proportions, degradation, allele heights) using the acceptance ratio:
 
-```latex
 $$\alpha = \min\left(1, \; \frac{P(E \mid \Theta^*) \cdot P(\Theta^*) \cdot q(\Theta^{(t)} \mid \Theta^*)}{P(E \mid \Theta^{(t)}) \cdot P(\Theta^{(t)}) \cdot q(\Theta^* \mid \Theta^{(t)})}\right)$$
-```
 
 ### 3. HIrisPlex-S Multinomial Logistic Regression & Normalization Invariant
 
@@ -458,7 +456,7 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** Stochastic Threshold: $h_{\min} < 150\text{ RFU} \implies$ `STOCHASTIC_THRESHOLD_FLAG = True`.
   - **`G`:** Substrate Recovery: SMOOTH\_NON\_POROUS 60%, TEXTURED\_NON\_POROUS 40%, POROUS\_FABRIC 20%, ROUGH\_WOOD 15%.
   - **`H`:** API Integration: all 5 endpoints return validated stochastic outputs.
-* **`VECTOR_05_TIPPETT_A-H` (Tippett Calibration, ROC, $C_{\text{llr}}$, HPD & ENFSI — Module 05):**
+* **`VECTOR_05_TIPPETT_A-H` (Tippett Calibration, ROC, $C_{\text{llr}}$, HPD & ENFSI - Module 05):**
   - **`A`:** Tippett ECCDF monotonicity: $T_{H_p}(x)$ and $T_{H_d}(x)$ are strictly non-increasing; $T(x) \in [0,1]$; grid has exactly `num_points` entries.
   - **`B`:** FPR = 0.0, FNR = 0.0 for perfectly separated pristine datasets; FPR > 0 and FNR > 0 for overlapping distributions; exact manual calculation verified.
   - **`C`:** ROC-AUC $\ge 0.999$ for pristine benchmark; MER = max(FPR, FNR); AUC bounded to $[0, 1]$.
@@ -468,7 +466,7 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`G`:** Prosecutor's Fallacy Shield present for all tiers; standard legal text identical across Hp-supporting tiers; `likelihood_equation` references LR value; English shield mentions `P(Evidence` / `Prosecutor`; Turkish shield mentions `Yanılgı`.
   - **`H`:** API integration across all 5 endpoints: FPR=FNR=0 for pristine, AUC≥0.999, Cllr EXCELLENT, HPD 5th pct ≤ median, Tier 5 for log10(LR)=26, Tier 0 for log10(LR)=0, negative tier for log10(LR)=−3.
 * **`VECTOR_P2_01` (Y-STR 27-Locus Paternal Match):** Full Y-FILER Plus 27-locus match, $k=0, N=25000, \alpha=0.05 \implies \hat{p}_{\text{upper}} \approx 0.00011982, \text{LR} \approx 8345.86, \log_{10}\text{LR} \approx 3.92147$. Clopper-Pearson 95% exact compliance.
-* **`VECTOR_06_YSTR_A-H` (Y-STR Haplotype Forensics & Mutation Invariants — Module 06):**
+* **`VECTOR_06_YSTR_A-H` (Y-STR Haplotype Forensics & Mutation Invariants - Module 06):**
   - **`A`:** 27-locus panel completeness, 6 RM loci classification ($\mu_l \ge 0.011$), multi-copy flags (`DYS385a/b`, `DYF387S1a/b`), and locus name normalization.
   - **`B`:** Clopper-Pearson $k=0$ exact formula $\hat{p}_{\text{upper}} = 1 - (0.05)^{1/(N+1)}$ verified against analytical calculation; strict monotonic decrease with $N$.
   - **`C`:** Clopper-Pearson $k>0$ exact Beta/Snedecor $F$ quantile; $p_{\text{lower}} \le \text{point\_est} \le p_{\text{upper}}$; $k=N$ boundary exact.
@@ -477,8 +475,8 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** $N_{\text{male}} = \max_l \lceil n/2 \rceil$; multi-copy locus with $>4$ alleles enforces $N_{\text{male}} \ge 3$.
   - **`G`:** Stepwise Mutation Model (SMM) geometric decay with step distance $m$; RM locus higher mutation transition probability.
   - **`H`:** API integration across all 6 endpoints: panel metadata, Clopper-Pearson, Brenner, mixture contributors, SMM transition, and match evaluation.
-* **`VECTOR_P2_02` (X-STR Female Kinship — Argus X-12):** Paternal half-sisters (PHS) analysis across LG1–LG4 with obligate paternal allele sharing, mean intra-LG $r=0.01$, empirical $p_a \approx 0.3616 \implies \text{Combined } KI_X \approx 1.854 \times 10^5, \log_{10} KI_X \approx 5.268$.
-* **`VECTOR_07_XSTR_A-H` (X-STR Linkage Groups & Complex Female Kinship — Module 07):**
+* **`VECTOR_P2_02` (X-STR Female Kinship - Argus X-12):** Paternal half-sisters (PHS) analysis across LG1–LG4 with obligate paternal allele sharing, mean intra-LG $r=0.01$, empirical $p_a \approx 0.3616 \implies \text{Combined } KI_X \approx 1.854 \times 10^5, \log_{10} KI_X \approx 5.268$.
+* **`VECTOR_07_XSTR_A-H` (X-STR Linkage Groups & Complex Female Kinship - Module 07):**
   - **`A`:** Argus X-12 12-locus panel completeness, 4 linkage groups (LG1–LG4) with 3 markers each, genetic map distances (cM), and locus name normalization.
   - **`B`:** Kosambi mapping function limits: $r(0)=0.0, r(50\text{ cM}) \approx 0.3808, \lim_{d \to \infty} r(d) = 0.50$, monotonic increase.
   - **`C`:** Father-Daughter (Duo) hemizygous transmission: matching allele yields $KI = 1/p$, non-matching yields $KI = 0.0$ (deterministic exclusion).
@@ -487,7 +485,7 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** Mother-Son (MS) likelihoods: heterozygous mother $KI = 0.5/p$, homozygous mother $KI = 1.0/p$, unshared allele $KI = 0.0$.
   - **`G`:** Multi-cluster product rule invariant across independent linkage groups: $|\log_{10} KI_{X, \text{Total}} - \sum_{g=1}^4 \log_{10} KI_{\text{LG}_g}| < 10^{-4}$.
   - **`H`:** API integration across all 3 endpoints: panel metadata, Kosambi map function, and full Argus X-12 kinship evaluation.
-* **`VECTOR_08_MTDNA_A-H` (mtDNA Control Region & EMPOP Alignment Invariants — Module 08):**
+* **`VECTOR_08_MTDNA_A-H` (mtDNA Control Region & EMPOP Alignment Invariants - Module 08):**
   - **`A`:** Control region boundaries: HV1 (16024–16365), HV2 (73–340), HV3 (438–574).
   - **`B`:** ISFG 3' right-alignment: HV1 16189 poly-C tract length variants (`16189.1C`), HV2 309 poly-C (`309.1C`), dinucleotide deletions (`522del`).
   - **`C`:** IUPAC point heteroplasmy (PHP) mappings (`Y`, `R`, `W`, `S`, `K`, `M`) and maternal compatibility matrix.
@@ -497,7 +495,7 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`G`:** Single sequence difference $\implies$ `INCONCLUSIVE` ($LR = 1.0, \log_{10} LR = 0.0$), $\ge 2$ differences $\implies$ `EXCLUDED` ($LR = 0.0, \log_{10} LR = -\infty$).
   - **`H`:** API integration across all 3 endpoints: panel metadata, EMPOP upper bound, and pairwise maternal match evaluation.
 * **`VECTOR_P2_03` (Interpol DVI Mass Disaster Engine):** Severely degraded PM skeletal sample. Autosomal $LR = 5.2 \times 10^3$, Y-STR $\hat{p}_{\text{upper}} = 0.0002$ ($LR_{\text{Y}} = 5000$), mtDNA $\hat{p}_{\text{upper}} = 0.0001$ ($LR_{\text{mtDNA}} = 10000$). Combined Multi-Omic Joint $LR_{\text{Joint}} = 5.2 \times 10^3 \times 5000 \times 10000 = 2.6 \times 10^{11}, \log_{10} LR = 11.41497 \implies$ **DEFINITIVE IDENTIFICATION** ($LR \ge 10^6$).
-* **`VECTOR_09_DVI_A-H` (Interpol DVI Multi-Omic & Disaster Invariants — Module 09):**
+* **`VECTOR_09_DVI_A-H` (Interpol DVI Multi-Omic & Disaster Invariants - Module 09):**
   - **`A`:** Multi-omic product rule mathematical exactness & log-space preservation ($|\log_{10} LR_{\text{Joint}} - \sum \log_{10} LR_i| < 10^{-6}$).
   - **`B`:** Lineage data availability indicator flags ($\delta_y, \delta_m, \delta_s = 0$ sets corresponding multiplier to $1.0$).
   - **`C`:** Interpol 4-tier threshold boundaries ($LR \ge 10^6$ Definitive, $10^4 \le LR < 10^6$ Probable, $10^{-2} < LR < 10^4$ Inconclusive, $LR \le 10^{-2}$ Exclusion).
@@ -506,7 +504,7 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** Missing persons candidate ranking & posterior odds prioritization.
   - **`G`:** Prosecutor's Fallacy Shield in DVI disaster reporting.
   - **`H`:** API integration across all 3 endpoints: joint-lr, reconcile-matrix, and decision-tiers.
-* **`VECTOR_10_HID_A-H` (Ancient DNA & Degraded Forensic SNP Damage / HID Engine — Module 10):**
+* **`VECTOR_10_HID_A-H` (Ancient DNA & Degraded Forensic SNP Damage / HID Engine - Module 10):**
   - **`A`:** MapDamage / Briggs deamination kinetics: terminal 5' deamination $\delta_1 = \delta_0 = 0.25$, $\delta_{10} = 0.25 e^{-0.9} \approx 0.10164$, asymptotic decay $\lim_{k \to \infty} \delta_k = 0.0$, strictly monotonic decrease.
   - **`B`:** Exponential fragmentation length distribution: $\bar{L} = 1/\lambda + L_{\min} = 70.0\text{ bp}$, $\text{Median} \approx 57.73\text{ bp}$, $\text{CDF}(100\text{ bp}) \approx 82.6\%$ amplicon dropout risk.
   - **`C`:** Low-coverage SNP Genotype Likelihood ($GL$): position-dependent MapDamage deamination compensation correctly calls homozygous Ref ($AA$) despite $C \to T$ read transitions at terminal overhang positions.
@@ -515,9 +513,9 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** Skeletal degradation index audit ($DI = \text{RFU}_{\text{small}} / \text{RFU}_{\text{large}} = 3.429 \ge 2.5 \implies$ `SEVERE` degradation, `MICRO_SNP_PANEL_40_70BP` recommendation) and LCN stochastic warning ($<100\text{ pg}$).
   - **`G`:** Multi-modal human identification remains synthesis & candidate ranking by joint posterior odds.
   - **`H`:** API integration across all 6 endpoints: damage-kinetics, fragmentation-distribution, snp-genotype-likelihood, multi-snp-lr, skeletal-audit, and evaluate-remains.
-* **`VECTOR_P3_01` (Northern European Fair Phototype — Module 11):** `rs12913832: C/C (2)`, `rs16891982: G/G (2)`, `rs1426654: A/A (2)`, `rs1805007: C/T (1)` $\implies P(\text{Blue Eye}) \ge 0.85, P(\text{Very Pale / Pale Skin}) \ge 0.88$. Softmax sum $= 1.0 \pm 10^{-6}$.
-* **`VECTOR_P3_02` (Sub-Saharan African Dark Phototype — Module 11):** `rs12913832: A/A (0)`, `rs1426654: G/G (0)`, `rs10424031: A/A (2)` $\implies P(\text{Brown Eye}) \ge 0.70, P(\text{Dark / Dark-to-Black Skin}) \ge 0.91$. Softmax sum $= 1.0 \pm 10^{-6}$.
-* **`VECTOR_11_HIRISPLEX_A-H` (HIrisPlex-S 41-SNP Pigmentation Forensics — Module 11):**
+* **`VECTOR_P3_01` (Northern European Fair Phototype - Module 11):** `rs12913832: C/C (2)`, `rs16891982: G/G (2)`, `rs1426654: A/A (2)`, `rs1805007: C/T (1)` $\implies P(\text{Blue Eye}) \ge 0.85, P(\text{Very Pale / Pale Skin}) \ge 0.88$. Softmax sum $= 1.0 \pm 10^{-6}$.
+* **`VECTOR_P3_02` (Sub-Saharan African Dark Phototype - Module 11):** `rs12913832: A/A (0)`, `rs1426654: G/G (0)`, `rs10424031: A/A (2)` $\implies P(\text{Brown Eye}) \ge 0.70, P(\text{Dark / Dark-to-Black Skin}) \ge 0.91$. Softmax sum $= 1.0 \pm 10^{-6}$.
+* **`VECTOR_11_HIRISPLEX_A-H` (HIrisPlex-S 41-SNP Pigmentation Forensics - Module 11):**
   - **`A`:** Softmax Sum-to-Unity invariant ($|\sum P - 1.0| \le 10^{-6}$) verified across boundary dosage vectors for Eye, Hair, and Skin traits.
   - **`B`:** IrisPlex 6-loci eye color exactness: HERC2 `rs12913832` C/C yields $P(\text{Blue}) > 0.85$, A/A yields $P(\text{Brown}) > 0.70$.
   - **`C`:** HIrisPlex 22-loci hair color exactness: MC1R homozygous `rs1805007` R151C yields $P(\text{Red}) > 0.90$, KITLG yields $P(\text{Blond}) > 0.80$, SLC45A2 yields $P(\text{Black})$.
@@ -526,8 +524,8 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** Missingness uncertainty scaling penalty ($\lambda = 0.35$ flattens confidence as missing loci ratio increases).
   - **`G`:** Full tri-trait composite prediction bundle.
   - **`H`:** API integration across all 4 dedicated endpoints: `/hirisplex-s/predict`, `/hirisplex-s/eye-color`, `/hirisplex-s/hair-color`, `/hirisplex-s/skin-phototype`.
-* **`VECTOR_P3_03` (East Asian Coarse Hair & Ancestry — Module 12):** `rs3827072: C/C (2)`, `rs1800414: C/C (2)`, `rs885479: G/G (2)` $\implies q_{\text{EAS}} \ge 0.95$, Nearest Centroid: East Asian $(+35.00^\circ\text{N}, +105.00^\circ\text{E})$.
-* **`VECTOR_12_AIM_A-H` (55-SNP AIM BGA & Live GIS Geolocation — Module 12):**
+* **`VECTOR_P3_03` (East Asian Coarse Hair & Ancestry - Module 12):** `rs3827072: C/C (2)`, `rs1800414: C/C (2)`, `rs885479: G/G (2)` $\implies q_{\text{EAS}} \ge 0.95$, Nearest Centroid: East Asian $(+35.00^\circ\text{N}, +105.00^\circ\text{E})$.
+* **`VECTOR_12_AIM_A-H` (55-SNP AIM BGA & Live GIS Geolocation - Module 12):**
   - **`A`:** Admixture Sum-to-Unity Invariant ($|\sum q_j - 1.0| \le 10^{-6}$) verified across single, mixed, and boundary genotypes under uniform Dirichlet prior.
   - **`B`:** DARC Duffy Null (`rs2814778: C/C`) African population fixation ($p_{\text{AFR}} = 0.992 \implies q_{\text{AFR}} > 0.85$).
   - **`C`:** SLC24A5 Thr111Ala (`rs1426654`) & SLC45A2 (`rs16891982`) European ($q_{\text{EUR}} > 0.85$) vs South Asian differentiation.
@@ -536,7 +534,7 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** Bivariate 95% Confidence Ellipse geometry ($a, b, \theta_{\text{tilt}}$) calculated via covariance matrix eigenvalues ($\chi^2_2 = 5.991$).
   - **`G`:** Shannon Entropy $H(\mathbf{q})$ and Simpson Diversity $D$ for 3-tier admixture complexity classification (`HOMOGENEOUS`, `BI_ADMIXED`, `MULTI_ADMIXED`).
   - **`H`:** API integration testing across `/ancestry/55-aim/predict` and `/ancestry/55-aim/gis-coordinates`.
-* **`VECTOR_13_MORPHO_A-H` (Craniofacial Morphometrics & 3D Shape Space Reconstruction — Module 13):**
+* **`VECTOR_13_MORPHO_A-H` (Craniofacial Morphometrics & 3D Shape Space Reconstruction - Module 13):**
   - **`A`:** Baseline Reference 3D Landmark Geometry ($X_i = 0$) verified against canonical Claes et al. coordinates ($N=(0, 12.4, 45.2), Me=(0, 18.2, -68.5)$ mm).
   - **`B`:** Bilateral Midline Symmetry Invariant ($x_N = x_{Prn} = x_{Sn} = x_{Ls} = x_{Me} = 0.00$ and $x_{Al_L} = -x_{Al_R}$) strictly preserved across all dosage configurations.
   - **`C`:** PRDM16 (`rs11130635`) and DCHS2 (`rs13289`) nasal bridge elevation and nasal apex projection ($y_{Prn} = 52.70\text{ mm}, z_{Prn} = 14.40\text{ mm}$).
@@ -545,14 +543,14 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** Morphological facial height ($h_{\text{face}}$), nasal height ($h_{\text{nasal}}$), and clinical Facial Index ($I_F$) typology classification (`EURYPROSOPIC`, `MESOPROSOPIC`, `LEPTOPROSOPIC`).
   - **`G`:** Anatomical Vertical Z-Monotonicity ($z_N > z_{Prn} > z_{Sn} > z_{Ls} > z_{Me}$) invariant maintained across all parameter extremes.
   - **`H`:** API integration testing across `/morphometrics/craniofacial/reconstruct-3d` and `/morphometrics/craniofacial/landmarks`.
-* **`VECTOR_14_HAIR_A-H` (Hair Texture Dynamics & Balding Risk PRS — Module 14):**
+* **`VECTOR_14_HAIR_A-H` (Hair Texture Dynamics & Balding Risk PRS - Module 14):**
   - **`A`:** Baseline Reference State ($X_i = 0$) verified with baseline fiber area ($3850.0\ \mu\text{m}^2$), baseline curl index ($C_{\text{curl}} = 1.20$, `STRAIGHT`), and $\text{PRS} = 0.00$ (`GRADE_I_II`).
   - **`B`:** EDAR (`rs3827072`) linear additive fiber area expansion ($\text{Area} = 3850.0 + 1420.0 \cdot X_{\text{EDAR}}\ \mu\text{m}^2$).
   - **`C`:** TCHH (`rs11803731`) and WNT10A (`rs7349332`) curl induction ($C_{\text{curl}} = 7.74$, `KINKY_WOOLLY`).
   - **`D`:** Intermediate curl density threshold transitions (`WAVY` and `CURLY` classification).
   - **`E`:** Androgenetic alopecia polygenic risk score exact additive weights (AR `rs6152`, 20p11 `rs2180439`, `rs1160312`, HDAC9 `rs756853`).
   - **`F`:** Hamilton-Norwood clinical 4-tier risk grade mapping (`GRADE_I_II`, `GRADE_III`, `GRADE_IV_V`, `GRADE_VI_VII`).
-* **`VECTOR_15_FRECKLE_A-H` (Ephelides, MC1R Epistasis & UV Sensitivity Index — Module 15):**
+* **`VECTOR_15_FRECKLE_A-H` (Ephelides, MC1R Epistasis & UV Sensitivity Index - Module 15):**
   - **`A`:** Baseline Wild-Type State ($X_i = 0$) verified with wild-type diplotype ($wt/wt$), minimal freckling ($F_{\text{score}} = 7.59\%$), and high Minimal Erythema Dose ($\text{MED} > 50\text{ mJ/cm}^2$).
   - **`B`:** Homozygous 'R' allele (R151C `rs1805007: 2`) verified with severe loss-of-function ($R/R, W_{\text{MC1R}} = 5.70$), dense ephelides ($F_{\text{score}} \ge 99.0\%$), and extreme erythema risk ($\text{MED} < 20\text{ mJ/cm}^2$).
   - **`C`:** Compound Heterozygosity ($R/r$) verified with one 'R' variant and one 'r' variant (R151C + V60L, $W_{\text{MC1R}} = 3.95, F_{\text{score}} = 94.44\%$, $\text{MED} \in [20, 35]\text{ mJ/cm}^2$).
@@ -561,9 +559,9 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** ASIP (`rs1015362`) and BNC2 (`rs10756819`) epistatic boosting on basal pigmentation ($F_{\text{score}}$ increases from $7.59\%$ to $62.25\%$).
   - **`G`:** Sigmoidal $F_{\text{score}}$ boundary invariance strictly clamped in $[0.0, 100.0]\%$.
   - **`H`:** API integration testing across `/phenotyping/ephelides/freckling-and-uv` and `/mc1r-genotype`.
-* **`VECTOR_P4_01` (Epigenetic Age Estimation — Young Adult Blood Donor):** Chronological age 25.0 in blood verified with $\text{DNAmAge} = 25.2 \pm 3.5$ years ($21.7 - 28.7$ years) and blood posterior $> 98\%$.
-* **`VECTOR_P4_02` (Epigenetic Age Estimation — Elderly Active Smoker):** Chronological age 68.0 in blood verified with $\text{DNAmAge} = 75.3$ years, biological age acceleration ($\Delta\text{Age} > +5.0$), and high pack-years ($> 40.0$).
-* **`VECTOR_16_AGE_A-H` (Multi-Tissue Epigenetic Age Clock — Module 16):**
+* **`VECTOR_P4_01` (Epigenetic Age Estimation - Young Adult Blood Donor):** Chronological age 25.0 in blood verified with $\text{DNAmAge} = 25.2 \pm 3.5$ years ($21.7 - 28.7$ years) and blood posterior $> 98\%$.
+* **`VECTOR_P4_02` (Epigenetic Age Estimation - Elderly Active Smoker):** Chronological age 68.0 in blood verified with $\text{DNAmAge} = 75.3$ years, biological age acceleration ($\Delta\text{Age} > +5.0$), and high pack-years ($> 40.0$).
+* **`VECTOR_16_AGE_A-H` (Multi-Tissue Epigenetic Age Clock - Module 16):**
   - **`A`:** Pediatric non-linear piecewise exponential link function ($x < 0 \implies \text{Age} < 20$).
   - **`B`:** Adult linear link function ($x \ge 0 \implies \text{Age} \ge 20$).
   - **`C`:** ELOVL2 (`cg16867657`, `cg21572722`) and FHL2 (`cg06639320`) positive age driver scaling.
@@ -572,8 +570,8 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** Biological Age Acceleration classification ($\Delta\text{Age} > +5.0$ accelerated, $\Delta\text{Age} < -5.0$ decelerated).
   - **`G`:** ISO 17025 95% prediction interval bounds ($k=1.96 \cdot \text{SE}$).
   - **`H`:** API integration testing across `/forensic/epigenetics/predict-age`.
-* **`VECTOR_P4_03` (tDMR Body Fluid Identification — Semen Stain Confirmation):** Pure germ cell fraction calling verified with Semen Posterior $> 99.5\%$, Blood Posterior $< 0.1\%$, and $\text{LR}_{\text{tissue}} > 100.0$.
-* **`VECTOR_17_TISSUE_A-H` (tDMR Body Fluid & Tissue Provenance — Module 17):**
+* **`VECTOR_P4_03` (tDMR Body Fluid Identification - Semen Stain Confirmation):** Pure germ cell fraction calling verified with Semen Posterior $> 99.5\%$, Blood Posterior $< 0.1\%$, and $\text{LR}_{\text{tissue}} > 100.0$.
+* **`VECTOR_17_TISSUE_A-H` (tDMR Body Fluid & Tissue Provenance - Module 17):**
   - **`A`:** Peripheral Venous Blood calling verified ($P_{\text{blood}} \ge 98.0\%$).
   - **`B`:** Saliva calling verified ($P_{\text{saliva}} \ge 98.0\%$).
   - **`C`:** Menstrual Blood (Endometrial `cg00854446`, `cg18063373`) vs Vaginal Secretions (`cg04382942`, `cg11624633`) differentiation ($P > 80\%$).
@@ -582,7 +580,7 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** Likelihood Ratio ($\text{LR}_{\text{tissue}}$) and $\log_{10}\text{LR}$ metric consistency verified.
   - **`G`:** Input validation boundaries and empty profile exception handling.
   - **`H`:** API integration testing across `/forensic/epigenetics/deconvolve-tissue`.
-* **`VECTOR_18_LIFE_A-H` (Environmental Epigenetics & Lifestyle Biomarkers — Module 18):**
+* **`VECTOR_18_LIFE_A-H` (Environmental Epigenetics & Lifestyle Biomarkers - Module 18):**
   - **`A`:** Baseline Never Smoker profile verified ($\beta_{\text{AHRR}}=0.88 \implies \text{Score} < 1.50, 0.0\text{ Pack-Years}$).
   - **`B`:** Active Heavy Smoker profile verified ($\beta_{\text{AHRR}}=0.32 \implies \text{Score} > 6.00, \text{Pack-Years} \ge 40.0$).
   - **`C`:** Former / Light Smoker profile verified ($1.50 \le \text{Score} \le 4.50, 1.0 \le \text{Pack-Years} \le 20.0$).
@@ -591,7 +589,7 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** Alcohol Exposure Index tiers verified ($SLC6A3$).
   - **`G`:** Circadian Time-of-Deposition windows verified (Nocturnal, Diurnal, Matutinal).
   - **`H`:** Biological Age Acceleration delta ($\Delta\text{Age}$) and API integration testing across `/forensic/epigenetics/lifestyle-profile`.
-* **`VECTOR_19_PMI_A-H` (Somatic Mosaicism, Telomere Length Decay & Post-Mortem Interval — Module 19):**
+* **`VECTOR_19_PMI_A-H` (Somatic Mosaicism, Telomere Length Decay & Post-Mortem Interval - Module 19):**
   - **`A`:** Baseline telomere length at birth / young donor verified ($T/S=1.420 \implies \text{Age}=0.0, T/S=1.2075 \implies \text{Age}=25.0$).
   - **`B`:** Elderly telomere shortening verified ($T/S=0.7825 \implies \text{Age}=75.0$).
   - **`C`:** Delta-Delta Ct ($2^{-\Delta\Delta C_t}$) conversion to relative $T/S$ verified.
@@ -600,7 +598,7 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** Somatic mosaicism clonal homogeneity verified ($\mathcal{M} < 0.05$).
   - **`G`:** High somatic mosaicism drift verified ($\mathcal{M} > 0.15$).
   - **`H`:** API integration testing across `/forensic/epigenetics/telomere-and-pmi`.
-* **`VECTOR_20_QC_A-H` (Bisulfite QC & Probe Calibration — Module 20):**
+* **`VECTOR_20_QC_A-H` (Bisulfite QC & Probe Calibration - Module 20):**
   - **`A`:** High-efficiency bisulfite conversion verified ($C_{\text{conv}} \ge 99.0\% \implies \text{PASSED_QC}$).
   - **`B`:** Incomplete bisulfite conversion failure alert verified ($C_{\text{conv}} < 99.0\% \implies \text{FAILED_INSUFFICIENT_CONVERSION}$).
   - **`C`:** Beta to M-value logarithmic logit transformation verified ($M = \log_2(\beta/(1-\beta))$).
@@ -609,9 +607,9 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** Detection $P$-value thresholding verified ($P_{\text{det}} \le 0.01$).
   - **`G`:** BMIQ Type II probe bias quantile calibration verified.
   - **`H`:** API integration testing across `/forensic/epigenetics/bisulfite-qc-and-calibrate`.
-* **`VECTOR_P5_01` (3D BPA Impact Spatter Origin Ground Truth — Module 21):**
+* **`VECTOR_P5_01` (3D BPA Impact Spatter Origin Ground Truth - Module 21):**
   - **`P5_01`:** 5-stain closed-form least-squares 3D point of convergence verified ($x_0 = 125.4\text{ cm}, y_0 = -45.2\text{ cm}, z_0 = 142.8\text{ cm}$, $r_{\text{err}} \le 3.0\text{ cm}$).
-* **`VECTOR_21_BPA_A-H` (3D Bloodstain Pattern Analysis & Flight Ballistics — Module 21):**
+* **`VECTOR_21_BPA_A-H` (3D Bloodstain Pattern Analysis & Flight Ballistics - Module 21):**
   - **`A`:** Minimal 2-stain geometric intersection verified.
   - **`B`:** Perpendicular droplet circular impact angle verified ($\alpha = 90^\circ, W/L = 1.0$).
   - **`C`:** Glancing acute impact angle verified ($\alpha \approx 11.5^\circ, W/L = 0.20$).
@@ -620,7 +618,7 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** Aerodynamic drag and gravity upward correction verified ($\Delta z > 0$).
   - **`G`:** Dimension domain validation verified ($W > 0, L > 0$).
   - **`H`:** API integration testing across `/forensic/physical/bpa-area-of-origin`.
-* **`VECTOR_22_GSR_A-H` (Forensic Ballistics, SEM-EDX GSR & 3D CMC — Module 22):**
+* **`VECTOR_22_GSR_A-H` (Forensic Ballistics, SEM-EDX GSR & 3D CMC - Module 22):**
   - **`A`:** Characteristic Pb-Ba-Sb triad verified ($N \ge 3 \implies LR = 10,000.0$, Extremely Strong Support).
   - **`B`:** Consistent 2-component elemental pairs verified ($N \ge 5 \implies LR = 500.0$, Strong Support).
   - **`C`:** Irregular morphology aspect ratio $> 1.3$ downgrade verified.
@@ -629,7 +627,7 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** Spatial translation threshold rejection verified ($|\Delta x| > 15\,\mu\text{m}$).
   - **`G`:** Angular rotation threshold rejection verified ($|\Delta\theta| > 1.0^\circ$).
   - **`H`:** API integration testing across `/forensic/physical/gsr-sem-edx-analysis` and `/cmc-striation-matching`.
-* **`VECTOR_23_ENTO_A-H` (Forensic Entomology & Minimum PMI — Module 23):**
+* **`VECTOR_23_ENTO_A-H` (Forensic Entomology & Minimum PMI - Module 23):**
   - **`A`:** *Lucilia sericata* 3rd Instar Feeding stage ADH threshold verified ($1254.5\text{ ADH}$).
   - **`B`:** *Calliphora vicina* cold-adaptation baseline verified ($T_{\text{base}} = 3.0^\circ\text{C}$).
   - **`C`:** Sub-threshold temperature dormancy verified ($T \le T_{\text{base}} \implies \text{ADH} = 0.0$).
@@ -638,7 +636,7 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** Unsupported species and invalid stage domain error handling verified.
   - **`G`:** Insufficient temperature history warning handling verified.
   - **`H`:** API integration testing across `/forensic/physical/entomology-pmi-estimation`.
-* **`VECTOR_24_SPEC_A-H` (Trace Micro-Spectroscopy & MSI — Module 24):**
+* **`VECTOR_24_SPEC_A-H` (Trace Micro-Spectroscopy & MSI - Module 24):**
   - **`A`:** Polyester (PET) characteristic $1715\,\text{cm}^{-1}$ and $1240\,\text{cm}^{-1}$ HQI match verified ($\text{HQI} \ge 95.0\%$).
   - **`B`:** Nylon-6,6 Amide I ($1635\,\text{cm}^{-1}$) and Amide II ($1538\,\text{cm}^{-1}$) HQI match verified ($\text{HQI} \ge 95.0\%$).
   - **`C`:** Acrylic PAN Nitrile peak ($2240\,\text{cm}^{-1}$) HQI match verified ($\text{HQI} \ge 95.0\%$).
@@ -647,7 +645,7 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** Zero-energy spectrum and dimension mismatch error handling verified.
   - **`G`:** 4-band MSI contrast simulation verified (365nm UV-A, 415nm Soret, 450nm Blue, 850nm NIR).
   - **`H`:** API integration testing across `/forensic/physical/msi-optical-analysis` and `/ftir-raman-hqi-match`.
-* **`VECTOR_25_TOX_A-H` (Post-Mortem Toxicokinetics & PMR — Module 25):**
+* **`VECTOR_25_TOX_A-H` (Post-Mortem Toxicokinetics & PMR - Module 25):**
   - **`A`:** Ethanol zero-order Widmark elimination verified ($C_{\text{antemortem}} = C_{\text{femoral}} + \beta_{60} \cdot \Delta t$).
   - **`B`:** Fentanyl first-order exponential elimination verified ($C_{\text{antemortem}} = C_{\text{femoral}} \cdot e^{k_e \cdot \Delta t}$).
   - **`C`:** Amitriptyline massive PMR cardiac overestimation alert verified ($V_d = 20.0\,\text{L/kg}, \text{C/P} \ge 4.5$).
@@ -656,8 +654,8 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** Non-positive concentration and negative elapsed time validation verified.
   - **`G`:** Uncataloged xenobiotic conservative fallback handling verified.
   - **`H`:** API integration testing across `/forensic/physical/toxicology-pmr-evaluation` and `/toxicology-antemortem-extrapolation`.
-* **`VECTOR_P6_01` (Chain of Custody Tamper Detection Ground Truth — Module 26):** Merkle tree root divergence verified upon a single-second timestamp modification ($P_{\text{detection}} = 100\%$).
-* **`VECTOR_26_MERKLE_A-G` (Cryptographic Merkle Custody Ledger — Module 26):**
+* **`VECTOR_P6_01` (Chain of Custody Tamper Detection Ground Truth - Module 26):** Merkle tree root divergence verified upon a single-second timestamp modification ($P_{\text{detection}} = 100\%$).
+* **`VECTOR_26_MERKLE_A-G` (Cryptographic Merkle Custody Ledger - Module 26):**
   - **`A`:** Single-event tree edge case verified ($\mathbf{R}_{\text{Merkle}} = H_1$, proof length $= 0$).
   - **`B`:** Power-of-two balanced trees ($N=4, N=8$) verified with logarithmic depth ($\text{depth} = \log_2 N$).
   - **`C`:** Odd-leaf counts ($N=3, 5, 7$) duplication balancing invariance verified ($H_{N+1} = H_N$, all inclusion proofs VALID).
@@ -665,7 +663,7 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`E`:** Custodial event order sensitivity verified (swapping $E_1 \leftrightarrow E_2$ alters root).
   - **`F`:** Empty event lists and out-of-range index exception handling verified.
   - **`G`:** API integration testing across `/forensic/lims/merkle/build-tree`, `/generate-proof`, and `/verify-proof`.
-* **`VECTOR_27_ZKP_A-H` (Zero-Knowledge Proof Blind Forensic Auditor — Module 27):**
+* **`VECTOR_27_ZKP_A-H` (Zero-Knowledge Proof Blind Forensic Auditor - Module 27):**
   - **`A`:** Full 24-locus 48-allele exact match verified ($M_{\text{match}} = 48 \ge 40$, Groth16 BN254 pairing verified).
   - **`B`:** Partial profile match exceeding threshold verified ($M_{\text{match}} = 42 \ge 40$, $\Delta = +2$).
   - **`C`:** Below threshold match rejection verified ($M_{\text{match}} = 32 < 40$, proof synthesis rejected).
@@ -674,8 +672,8 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** Poseidon commitment determinism, field range $[0, p)$, and salt entropy verified.
   - **`G`:** Domain validation for empty loci and non-positive thresholds verified.
   - **`H`:** API integration testing across `/forensic/zkp/witness-commitment`, `/synthesize-proof`, and `/verify-pairing`.
-* **`VECTOR_P6_02` (ISO 17025 DNA Quantification Calibration Budget Ground Truth — Module 28):** Combined $u_c = 0.05385 \text{ ng/}\mu\text{L}$ and expanded $U_{95\%} = 0.10770 \text{ ng/}\mu\text{L}$ ($k=2.00$, $\text{CI: } [1.3423, 1.5577]\,\text{ng/}\mu\text{L}$).
-* **`VECTOR_28_UNCERT_A-G` (ISO 17025 Measurement Uncertainty & Calibration — Module 28):**
+* **`VECTOR_P6_02` (ISO 17025 DNA Quantification Calibration Budget Ground Truth - Module 28):** Combined $u_c = 0.05385 \text{ ng/}\mu\text{L}$ and expanded $U_{95\%} = 0.10770 \text{ ng/}\mu\text{L}$ ($k=2.00$, $\text{CI: } [1.3423, 1.5577]\,\text{ng/}\mu\text{L}$).
+* **`VECTOR_28_UNCERT_A-G` (ISO 17025 Measurement Uncertainty & Calibration - Module 28):**
   - **`A`:** Custom sensitivity coefficients ($c_i \neq 1.0$) variance propagation verified.
   - **`B`:** Positively correlated components ($r_{ij} > 0$) positive covariance expansion verified.
   - **`C`:** Satisfactory proficiency test result verified ($|z| = 1.000 \le 2.0 \implies \text{SATISFACTORY}$).
@@ -686,8 +684,8 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
 
 
 
-* **`VECTOR_P6_03` (ENFSI Verbal Statement Mapping Ground Truth — Module 29):** $LR = 3.5 \times 10^7$ maps deterministically to Verbal Tier 6 ("Extremely strong support for prosecution proposition" / "Bulgular, iddia hipotezi (H_p) lehine aşırı güçlü destek sağlamaktadır.").
-* **`VECTOR_29_ENFSI_A-G` (Dynamic ENFSI Evaluative Reporting & Verbal Scale Engine — Module 29):**
+* **`VECTOR_P6_03` (ENFSI Verbal Statement Mapping Ground Truth - Module 29):** $LR = 3.5 \times 10^7$ maps deterministically to Verbal Tier 6 ("Extremely strong support for prosecution proposition" / "Bulgular, iddia hipotezi (H_p) lehine aşırı güçlü destek sağlamaktadır.").
+* **`VECTOR_29_ENFSI_A-G` (Dynamic ENFSI Evaluative Reporting & Verbal Scale Engine - Module 29):**
   - **`A`:** Neutral / Inconclusive baseline ($LR = 1.0 \implies \text{Tier 0}$, $\log_{10} LR = 0.0$, "nötr / neutral" statement).
   - **`B`:** Step-function boundary transitions across all Tiers 1–6 (12 parametrized points strictly partitioned).
   - **`C`:** Symmetric defense inversion ($LR = 0.0001 \implies LR_{\text{def}} = 10{,}000$, $\log_{10} LR = -4.0$, Tier 4 support for $H_d$).
@@ -695,7 +693,7 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`E`:** Daubert FRE 702 4-pillar & Frye audit (Pillar 1 unit tests, Pillar 2 error rate $\le 10^{-6}$, Pillar 3 peer review, Pillar 4 SWGDAM/ISO 17025 standards).
   - **`F`:** Domain validation for non-positive Likelihood Ratios ($LR \le 0 \implies \texttt{ValueError}$).
   - **`G`:** API integration testing across `/forensic/court/evaluative-report` and `/daubert-compliance`.
-* **`VECTOR_30_SPATIAL_A-G` (3D Spatial Crime Scene Reconstruction & Juror Visualizer — Module 30):**
+* **`VECTOR_30_SPATIAL_A-G` (3D Spatial Crime Scene Reconstruction & Juror Visualizer - Module 30):**
   - **`A`:** $SE(3)$ identity transform invariance ($\mathbf{R}=\mathbf{I}, \mathbf{T}=\mathbf{0} \implies \mathbf{X}_{\text{scene}} = \mathbf{X}_{\text{local}}$, residual $< 10^{-10}$).
   - **`B`:** Euler ZYX rotation matrix invariants ($\mathbf{R} = \mathbf{R}_z(\psi)\mathbf{R}_y(\theta)\mathbf{R}_x(\phi)$, $\|\mathbf{R}\mathbf{R}^T - \mathbf{I}\|_F < 10^{-10}, |\det(\mathbf{R}) - 1| < 10^{-10}$).
   - **`C`:** Pure spatial translation additivity ($\mathbf{X}_{\text{scene}} = \mathbf{X}_{\text{local}} + \mathbf{T}$).

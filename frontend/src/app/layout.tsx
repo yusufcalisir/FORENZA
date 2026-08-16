@@ -6,12 +6,13 @@ import { Providers } from "./providers";
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+  display: "swap",
 });
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-jetbrains-mono",
-  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
 });
 
 // Resolve base URL: custom domain > Vercel auto URL > default production Vercel deployment

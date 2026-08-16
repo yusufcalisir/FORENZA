@@ -13,12 +13,17 @@ from backend.app.api.physical_schemas import (
     MsiAnalysisResponse,
     TraceSpectroscopyRequest,
     TraceSpectroscopyResponse,
+    PmrEvaluationRequest,
+    PmrEvaluationResponse,
+    AntemortemExtrapolationRequest,
+    AntemortemExtrapolationResponse,
 )
 from backend.node.services.forensic.physical import (
     BpaAreaOfOriginEngine,
     BallisticsGsrEngine,
     ForensicEntomologyEngine,
     TraceSpectroscopyMsiEngine,
+    ForensicToxicologyPmrEngine,
 )
 
 router = APIRouter(prefix="/forensic/physical", tags=["Forensic Physical Evidence & Ballistics"])
@@ -26,6 +31,8 @@ _BPA_ENGINE = BpaAreaOfOriginEngine()
 _BALLISTICS_ENGINE = BallisticsGsrEngine()
 _ENTO_ENGINE = ForensicEntomologyEngine()
 _SPEC_ENGINE = TraceSpectroscopyMsiEngine()
+_TOX_ENGINE = ForensicToxicologyPmrEngine()
+
 
 
 
@@ -185,6 +192,65 @@ async def match_trace_spectroscopy(req: TraceSpectroscopyRequest) -> TraceSpectr
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Trace micro-spectroscopy matching error: {str(e)}"
         )
+
+
+@router.post(
+    "/toxicology-pmr-evaluation",
+    response_model=PmrEvaluationResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Post-Mortem Drug Redistribution (PMR) C_heart / C_femoral Evaluation",
+    description="Evaluates central-to-peripheral ratio against empirical Vd and literature benchmarks to detect systemic toxicity overestimation."
+)
+async def evaluate_pmr(req: PmrEvaluationRequest) -> PmrEvaluationResponse:
+    try:
+        result = _TOX_ENGINE.evaluate_pmr_ratio(
+            compound_name=req.compound_name,
+            c_heart=req.c_heart,
+            c_femoral=req.c_femoral,
+            unit=req.unit,
+        )
+        return PmrEvaluationResponse(**result)
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"PMR evaluation error: {str(e)}"
+        )
+
+
+@router.post(
+    "/toxicology-antemortem-extrapolation",
+    response_model=AntemortemExtrapolationResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Antemortem Toxicokinetic Back-Extrapolation",
+    description="Back-extrapolates antemortem concentration using zero-order (Ethanol Widmark) or first-order elimination kinetics."
+)
+async def extrapolate_antemortem_toxicology(req: AntemortemExtrapolationRequest) -> AntemortemExtrapolationResponse:
+    try:
+        result = _TOX_ENGINE.extrapolate_antemortem_concentration(
+            compound_name=req.compound_name,
+            c_femoral=req.c_femoral,
+            elapsed_hours=req.elapsed_hours,
+            unit=req.unit,
+            custom_half_life_hours=req.custom_half_life_hours,
+            custom_beta_60=req.custom_beta_60,
+        )
+        return AntemortemExtrapolationResponse(**result)
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Antemortem toxicokinetic extrapolation error: {str(e)}"
+        )
+
 
 
 

@@ -1647,6 +1647,34 @@ $$\text{HQI} = \frac{\left( \mathbf{S}_{\text{sample}} \cdot \mathbf{S}_{\text{r
 - **Cotton (Cellulose):** $3330 \text{ cm}^{-1}$ ($\text{O-H}$ stretch), $1030 \text{ cm}^{-1}$ ($\text{C-O}$ stretch).
 - **Wool (Keratin):** $1650 \text{ cm}^{-1}$ (Amide I), $1520 \text{ cm}^{-1}$ (Amide II).
 
+---
+
+## 59. Forensic Toxicology, Pharmacokinetics & Post-Mortem Drug Redistribution (PMR) Engine (Module 25)
+
+### 59.1 Physicochemical Determinants of PMR and Central-to-Peripheral ($C_{\text{heart}} / C_{\text{femoral}}$) Ratios
+
+| Compound | Apparent $V_d$ | $\log P$ | $\text{p}K_a$ | Mean C/P Ratio ($C_{\text{heart}}/C_{\text{femoral}}$) | PMR Risk Tier | Elimination Model |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Ethanol** | $0.6 \text{ L/kg}$ | $-0.31$ | — | $1.00 \pm 0.10$ | Low / Minimal | Zero-Order ($\beta_{60} = 0.15 \text{ g/L/h}$) |
+| **Acetaminophen** | $0.9 \text{ L/kg}$ | $0.46$ | $9.5$ | $1.05 \pm 0.12$ | Low | First-Order ($t_{1/2} = 2.5 \text{ h}$) |
+| **Morphine** | $3.5 \text{ L/kg}$ | $0.89$ | $8.0$ | $1.80 \pm 0.40$ | Moderate | First-Order ($t_{1/2} = 3.0 \text{ h}$) |
+| **Methamphetamine** | $4.0 \text{ L/kg}$ | $2.07$ | $9.9$ | $2.10 \pm 0.50$ | High | First-Order ($t_{1/2} = 10.0 \text{ h}$) |
+| **Fentanyl** | $5.0 \text{ L/kg}$ | $4.05$ | $8.4$ | $2.80 \pm 0.70$ | High / Severe | First-Order ($t_{1/2} = 7.0 \text{ h}$) |
+| **Amitriptyline** | $20.0 \text{ L/kg}$ | $4.92$ | $9.4$ | $4.50 \pm 1.20$ | Very High | First-Order ($t_{1/2} = 21.0 \text{ h}$) |
+
+### 59.2 Post-Mortem Cardiac Overestimation Alert Rule
+
+$$\text{If } \frac{C_{\text{heart}}}{C_{\text{femoral}}} > 2.0 \quad \text{and} \quad V_d > 3.0 \text{ L/kg} \implies \text{PMR Overestimation Alert (Use } C_{\text{femoral}} \text{ Gold Standard)}$$
+
+### 59.3 Antemortem Toxicokinetic Back-Extrapolation Models
+
+- **Zero-Order Elimination (Ethanol Widmark Model):**
+  $$C_{\text{antemortem}} = C_{\text{femoral}} + \beta_{60} \cdot \Delta t \quad (\beta_{60} = 0.15 \text{ g/L/h})$$
+
+- **First-Order Elimination:**
+  $$k_e = \frac{\ln(2)}{t_{1/2}} \implies C_{\text{antemortem}}(t - \Delta t) = C_{\text{femoral}} \cdot e^{k_e \cdot \Delta t}$$
+
+
 
 
 

@@ -36,7 +36,9 @@ import BpaImagePanel from "@/components/analysis/BpaImagePanel";
 import BpaAreaOfOriginPanel from "@/components/analysis/BpaAreaOfOriginPanel";
 import BallisticsGsrPanel from "@/components/analysis/BallisticsGsrPanel";
 import TraceSpectroscopyPanel from "@/components/analysis/TraceSpectroscopyPanel";
+import ToxicologyPmrPanel from "@/components/analysis/ToxicologyPmrPanel";
 import InstrumentIngestionPanel from "@/components/analysis/InstrumentIngestionPanel";
+
 
 
 
@@ -195,7 +197,8 @@ const CATEGORIES: Category[] = [
             { id: "microscopy", label: "22. Ballistics & SEM-EDX GSR", icon: Target, badge: "GSR-CMC", maturity: "ACTIVE", maturityNote: "Live ASTM E1588-20 SEM-EDX GSR analysis & 3D CMC firearm striation matching." },
             { id: "botany", label: "23. Forensic Entomology & PMI", icon: Bug, badge: "ENTO-PMI", maturity: "ACTIVE", maturityNote: "Live Calliphoridae thermal summation (ADD/ADH) & minimum PMI solver." },
             { id: "toxicology", label: "24. Trace Spectroscopy & MSI", icon: Sparkles, badge: "MSI-FTIR", maturity: "ACTIVE", maturityNote: "Live multispectral imaging (365-850nm) & ATR-FTIR / Raman Hit Quality Index matching." },
-            { id: "serology", label: "25. Post-Mortem Toxicokinetics", icon: Pill, badge: "TOX-PMR", maturity: "DEMO", maturityNote: "Post-mortem drug redistribution (PMR C/P ratios) & Widmark kinetics." },
+            { id: "serology", label: "25. Post-Mortem Toxicokinetics", icon: Pill, badge: "TOX-PMR", maturity: "ACTIVE", maturityNote: "Live post-mortem drug redistribution (PMR C/P ratios) & Widmark back-extrapolation." },
+
 
         ],
 
@@ -514,7 +517,8 @@ function renderPanel(tabId: TabId) {
         case "microscopy": return <BallisticsGsrPanel />;
         case "botany": return <EntomologyPmiPanel />;
         case "toxicology": return <TraceSpectroscopyPanel />;
-        case "serology": return <SerologyPanel />;
+        case "serology": return <ToxicologyPmrPanel />;
+
 
 
         // Pillar 6: ISO 17025, LIMS & ZKP

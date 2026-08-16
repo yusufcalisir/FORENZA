@@ -647,7 +647,17 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** Zero-energy spectrum and dimension mismatch error handling verified.
   - **`G`:** 4-band MSI contrast simulation verified (365nm UV-A, 415nm Soret, 450nm Blue, 850nm NIR).
   - **`H`:** API integration testing across `/forensic/physical/msi-optical-analysis` and `/ftir-raman-hqi-match`.
+* **`VECTOR_25_TOX_A-H` (Post-Mortem Toxicokinetics & PMR — Module 25):**
+  - **`A`:** Ethanol zero-order Widmark elimination verified ($C_{\text{antemortem}} = C_{\text{femoral}} + \beta_{60} \cdot \Delta t$).
+  - **`B`:** Fentanyl first-order exponential elimination verified ($C_{\text{antemortem}} = C_{\text{femoral}} \cdot e^{k_e \cdot \Delta t}$).
+  - **`C`:** Amitriptyline massive PMR cardiac overestimation alert verified ($V_d = 20.0\,\text{L/kg}, \text{C/P} \ge 4.5$).
+  - **`D`:** Acetaminophen minimal redistribution baseline verified ($V_d = 0.9\,\text{L/kg}, \text{C/P} \approx 1.05$).
+  - **`E`:** Elimination rate constant invariant verified ($k_e = \ln(2)/t_{1/2}$).
+  - **`F`:** Non-positive concentration and negative elapsed time validation verified.
+  - **`G`:** Uncataloged xenobiotic conservative fallback handling verified.
+  - **`H`:** API integration testing across `/forensic/physical/toxicology-pmr-evaluation` and `/toxicology-antemortem-extrapolation`.
 * **`VECTOR_P6_01` (Chain of Custody Tamper Detection):** Merkle tree root divergence verified upon a single-second timestamp modification ($P_{\text{detection}} = 100\%$).
+
 
 
 * **`VECTOR_P6_02` (ISO 17025 Measurement Uncertainty):** Combined $u_c = 0.05385 \text{ ng/}\mu\text{L}$ and expanded $U_{95\%} = 0.1077 \text{ ng/}\mu\text{L}$ ($k=2.00$).

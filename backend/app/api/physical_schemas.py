@@ -187,4 +187,89 @@ class TraceSpectroscopyResponse(BaseModel):
     prosecutors_fallacy_shield: str
 
 
+# ── Post-Mortem Toxicokinetics & PMR Schemas (Research §5) ───────────────────
+
+class PmrEvaluationRequest(BaseModel):
+    compound_name: str = Field(
+        default="Fentanyl",
+        description="Name of xenobiotic compound (Ethanol, Fentanyl, Morphine, Methamphetamine, Amitriptyline, Acetaminophen)."
+    )
+    c_heart: float = Field(
+        ...,
+        ge=0.0,
+        description="Measured heart/central blood drug concentration."
+    )
+    c_femoral: float = Field(
+        ...,
+        gt=0.0,
+        description="Measured peripheral femoral venous blood drug concentration."
+    )
+    unit: str = Field(
+        default="mg/L",
+        description="Measurement concentration unit (e.g. mg/L, ug/L, g/L)."
+    )
+
+
+class PmrEvaluationResponse(BaseModel):
+    compound_name: str
+    c_heart: float
+    c_femoral: float
+    unit: str
+    cp_observed: float
+    cp_literature_mean: float
+    vd_l_kg: float
+    pmr_risk_tier: str
+    is_cardiac_overestimated: bool
+    overestimation_percentage: float
+    clinical_guideline: str
+    alert_message: str
+    prosecutors_fallacy_shield: str
+
+
+class AntemortemExtrapolationRequest(BaseModel):
+    compound_name: str = Field(
+        default="Ethanol",
+        description="Name of xenobiotic compound."
+    )
+    c_femoral: float = Field(
+        ...,
+        gt=0.0,
+        description="Measured post-mortem peripheral femoral blood concentration."
+    )
+    elapsed_hours: float = Field(
+        ...,
+        ge=0.0,
+        description="Elapsed hours between putative incident / somatic death and post-mortem state."
+    )
+    unit: str = Field(
+        default="g/L",
+        description="Measurement concentration unit."
+    )
+    custom_half_life_hours: Optional[float] = Field(
+        default=None,
+        gt=0.0,
+        description="Optional custom elimination half-life for first-order xenobiotics."
+    )
+    custom_beta_60: Optional[float] = Field(
+        default=None,
+        gt=0.0,
+        description="Optional custom Widmark hourly elimination rate for zero-order kinetics."
+    )
+
+
+class AntemortemExtrapolationResponse(BaseModel):
+    compound_name: str
+    c_femoral_postmortem: float
+    elapsed_hours: float
+    c_antemortem_extrapolated: float
+    unit: str
+    elimination_type: str
+    elimination_rate_constant_ke_h: Optional[float] = None
+    half_life_hours: Optional[float] = None
+    beta_60_g_l_h: Optional[float] = None
+    kinetic_formula: str
+    prosecutors_fallacy_shield: str
+
+
+
 

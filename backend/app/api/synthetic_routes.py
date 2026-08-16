@@ -1,9 +1,16 @@
 from fastapi import APIRouter, HTTPException, status
-from backend.app.api.synthetic_schemas import (
-    GenerateSyntheticCaseRequest, GenerateSyntheticCaseResponse,
-    EvaluateBenchmarkRequest, EvaluateBenchmarkResponse
-)
-from backend.node.services.forensic.synthetic.synthetic_case_engine import SyntheticCaseEngine
+try:
+    from app.api.synthetic_schemas import (
+        GenerateSyntheticCaseRequest, GenerateSyntheticCaseResponse,
+        EvaluateBenchmarkRequest, EvaluateBenchmarkResponse
+    )
+    from node.services.forensic.synthetic.synthetic_case_engine import SyntheticCaseEngine
+except ImportError:
+    from backend.app.api.synthetic_schemas import (
+        GenerateSyntheticCaseRequest, GenerateSyntheticCaseResponse,
+        EvaluateBenchmarkRequest, EvaluateBenchmarkResponse
+    )
+    from backend.node.services.forensic.synthetic.synthetic_case_engine import SyntheticCaseEngine
 
 router = APIRouter(prefix="/forensic/synthetic", tags=["Synthetic Forensic Case Generator"])
 _ENGINE = SyntheticCaseEngine()

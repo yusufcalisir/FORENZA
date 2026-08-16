@@ -465,7 +465,7 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** All 11 ENFSI tier boundaries verified: Tier 5 (log10 LR > 6), Tier 4 (4–6), Tier 3 (2–4), Tier 2 (1–2), Tier 1 (0–1), Tier 0 (=0), Tiers −1…−5 (symmetric defence); Turkish predicates present.
   - **`G`:** Prosecutor's Fallacy Shield present for all tiers; standard legal text identical across Hp-supporting tiers; `likelihood_equation` references LR value; English shield mentions `P(Evidence` / `Prosecutor`; Turkish shield mentions `Yanılgı`.
   - **`H`:** API integration across all 5 endpoints: FPR=FNR=0 for pristine, AUC≥0.999, Cllr EXCELLENT, HPD 5th pct ≤ median, Tier 5 for log10(LR)=26, Tier 0 for log10(LR)=0, negative tier for log10(LR)=−3.
-* **`VECTOR_P2_01` (Y-STR 27-Locus Paternal Match):** Full Y-FILER Plus 27-locus match: $k=0$, $N=25000$, $\alpha=0.05 \implies \hat{p}_u \approx 0.00011982$ (upper bound), $LR \approx 8345.86$, $\log_{10} LR \approx 3.92147$. Clopper-Pearson 95% exact compliance.
+* **`VECTOR_P2_01` (Y-STR 27-Locus Paternal Match):** Full Y-FILER Plus 27-locus match: $k = 0, \; N = 25000, \; \alpha = 0.05 \implies \hat{p}_u \approx 0.00011982 \text{ (upper bound)}, \; LR \approx 8345.86, \; \log_{10} LR \approx 3.92147$. Clopper-Pearson 95% exact compliance.
 * **`VECTOR_06_YSTR_A-H` (Y-STR Haplotype Forensics & Mutation Invariants - Module 06):**
   - **`A`:** 27-locus panel completeness, 6 RM loci classification ($\mu_l \ge 0.011$), multi-copy flags (`DYS385a/b`, `DYF387S1a/b`), and locus name normalization.
   - **`B`:** Clopper-Pearson $k=0$ exact formula $\hat{p}_u = 1 - (0.05)^{1/(N+1)}$ (u=upper) verified against analytical calculation; strict monotonic decrease with $N$.
@@ -492,9 +492,9 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`D`:** EMPOP $k=0$ exact binomial upper bound $\hat{p}_u = 1 - (0.05)^{1/(N+1)}$ verified analytically ($N=48500 \implies \hat{p} \approx 6.18 \times 10^{-5}$, $LR \approx 16191.7$).
   - **`E`:** EMPOP $k>0$ exact Beta quantile bound, ordering $p(k=0) < p(k=1) < p(k=5)$, and $k=N$ boundary.
   - **`F`:** Pairwise maternal identity (0 differences $\implies$ `CANNOT_BE_EXCLUDED`, $LR > 10000$, Prosecutor's Fallacy Shield).
-  - **`G`:** Single sequence difference $\implies$ `INCONCLUSIVE` ($LR = 1.0$, $\log_{10} LR = 0.0$), $\ge 2$ differences $\implies$ `EXCLUDED` ($LR = 0.0$, $\log_{10} LR = -\infty$).
+  - **`G`:** Single sequence difference $\implies$ `INCONCLUSIVE` ($LR = 1.0, \; \log_{10} LR = 0.0$), $\ge 2$ differences $\implies$ `EXCLUDED` ($LR = 0.0, \; \log_{10} LR = -\infty$).
   - **`H`:** API integration across all 3 endpoints: panel metadata, EMPOP upper bound, and pairwise maternal match evaluation.
-* **`VECTOR_P2_03` (Interpol DVI Mass Disaster Engine):** Severely degraded PM skeletal sample. Autosomal $LR = 5.2 \times 10^3$, Y-STR $\hat{p} = 0.0002$ ($LR_Y = 5000$), mtDNA $\hat{p} = 0.0001$ ($LR_M = 10000$). Combined Multi-Omic Joint $LR_J = 5.2 \times 10^3 \times 5000 \times 10000 = 2.6 \times 10^{11}$ (J=Joint), $\log_{10} LR = 11.41497 \implies$ **DEFINITIVE IDENTIFICATION** ($LR \ge 10^6$).
+* **`VECTOR_P2_03` (Interpol DVI Mass Disaster Engine):** Severely degraded PM skeletal sample. Autosomal $LR = 5.2 \times 10^3$, Y-STR $\hat{p} = 0.0002$ ($LR_Y = 5000$), mtDNA $\hat{p} = 0.0001$ ($LR_M = 10000$). Combined Multi-Omic Joint $LR_J = 5.2 \times 10^3 \times 5000 \times 10000 = 2.6 \times 10^{11} \text{ (J=Joint)}, \; \log_{10} LR = 11.41497 \implies$ **DEFINITIVE IDENTIFICATION** ($LR \ge 10^6$).
 * **`VECTOR_09_DVI_A-H` (Interpol DVI Multi-Omic & Disaster Invariants - Module 09):**
   - **`A`:** Multi-omic product rule mathematical exactness & log-space preservation: $|\log_{10} LR_J - \sum \log_{10} LR_i| < 10^{-6}$ (J=Joint).
   - **`B`:** Lineage data availability indicator flags ($\delta_y, \delta_m, \delta_s = 0$ sets corresponding multiplier to $1.0$).

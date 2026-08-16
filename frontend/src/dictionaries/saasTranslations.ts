@@ -331,7 +331,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       },
       strTab: {
         electropherogramTitle: "Fluorescent Electropherogram",
-        codisPanel: "CODIS Core 20 Panel",
+        codisPanel: "Expanded 24-Locus Forensic Panel",
         alleleLabel: "Allele",
         rfuLabel: "RFU",
         alleleCall: "Allele Call",
@@ -352,7 +352,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
         consoleTitle: "ZKP Execution Console",
         initInfo: "[INFO] Initializing Circom constraints...",
         readingInfo: "[INFO] Reading setup parameter file: powersOfTau28_ezkl.ptau",
-        witnessInfo: "[INFO] Witness signals generated (20 loci constraints satisfied)",
+        witnessInfo: "[INFO] Witness signals generated (24 loci constraints satisfied)",
         successCreated: "[SUCCESS] Proof proof.json created cleanly.",
         testnetReady: "Polygon Testnet Ready",
         zeroLeakage: "Zero Data Leakage Guaranteed",
@@ -492,7 +492,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       title: "Cryptographic Evidence Custody & ISO 17025 Compliance",
       subtitle: "Tamper-evident audit logging, zero-knowledge evidence verification, and strict chain of custody.",
       matrixTitle: "Technical Platform Specifications & Standards Matrix",
-      passedBadge: "99.99% PRECISION",
+      passedBadge: "796 TESTS VERIFIED",
       pillars: [
         {
           title: "Zero-Knowledge Privacy Auditor",
@@ -689,7 +689,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       },
       strTab: {
         electropherogramTitle: "Flüoresan Elektroferogram",
-        codisPanel: "CODIS Çekirdek 20 Paneli",
+        codisPanel: "Genişletilmiş 24-Lokus Adli Panel",
         alleleLabel: "Alel",
         rfuLabel: "RFU",
         alleleCall: "Alel Tespiti",
@@ -710,7 +710,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
         consoleTitle: "ZKP Konsolu",
         initInfo: "[BİLGİ] Circom sınırları başlatılıyor...",
         readingInfo: "[BİLGİ] Kurulum parametreleri okunuyor: powersOfTau28_ezkl.ptau",
-        witnessInfo: "[BİLGİ] Girdi sinyalleri üretildi (20 lokus doğrulandı)",
+        witnessInfo: "[BİLGİ] Girdi sinyalleri üretildi (24 lokus doğrulandı)",
         successCreated: "[BAŞARI] proof.json ispat dosyası üretildi.",
         testnetReady: "Polygon Testnet Hazır",
         zeroLeakage: "Sıfır Veri Sızıntısı Garantili",
@@ -850,7 +850,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       title: "Kriptografik Delil Zinciri ve ISO 17025 Akreditasyonu",
       subtitle: "Müdahaleye karşı korumalı denetim izi, sıfır bilgi kanıtlı delil doğrulaması ve katı delil zinciri takibi.",
       matrixTitle: "Teknik Platform Özellikleri ve Standartlar Matrisi",
-      passedBadge: "%99.99 DOĞRULUK",
+      passedBadge: "%100 DOĞRULANMIŞ (796 TEST)",
       pillars: [
         {
           title: "Sıfır Bilgi İspatlı Gizlilik Denetçisi (ZKP)",

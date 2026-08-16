@@ -280,7 +280,7 @@ FORENZA structures its 30 biocomputational subsystems into 6 canonical operation
 
 26. **Chain of Custody Merkle Tree Ledger (`26`):** Cryptographic SHA-256 / Blake3 binary append-only Merkle tree recording every evidence handling state transition with $O(\log_2 N)$ courtroom inclusion proofs.
 27. **Zero-Knowledge Proof Blind Forensic Auditor (`27`):** Circom / Groth16 zk-SNARK privacy-preserving matching engine proving suspect inclusion ($LR \ge M_t$, t=threshold) over BN254 bilinear pairing without exposing raw STR/SNP sequences or PII.
-28. **ISO/IEC 17025:2017 Metrological Uncertainty Budget (`28`):** GUM (JCGM 100:2008) combined and expanded measurement uncertainty ($U_{95\%} = k \cdot u_c, \; k=2.00$) for quantitative qPCR DNA yields and laboratory $z$-score proficiency validation.
+28. **ISO/IEC 17025:2017 Metrological Uncertainty Budget (`28`):** GUM (JCGM 100:2008) combined and expanded measurement uncertainty ($U_{95\%} = k \cdot u_c, k=2.00$) for quantitative qPCR DNA yields and laboratory $z$-score proficiency validation.
 29. **Dynamic ENFSI Evaluative Reporting Scaler (`29`):** Translates continuous Likelihood Ratios into standardized 7-tier ENFSI (2017) verbal scale testimony statements in English and Turkish with Daubert/Frye admissibility checks.
 30. **3D Spatial Evidence Presenter & Juror Visualizer (`30`):** Special Euclidean $SE(3)$ multi-sensor spatial registration and 95% volumetric probability ellipsoid rendering to reduce juror cognitive bias.
 
@@ -306,7 +306,7 @@ $$P(A_i A_j \mid A_i A_j) = 2 \cdot \frac{\theta + (1-\theta)p_i}{1+\theta} \cdo
 
 The MCMC probabilistic deconvolution engine samples parameters $\Theta = \{w, d, A\}$ (mixture proportions, degradation, allele heights) using the acceptance ratio:
 
-$$\alpha = \min\left(1, \; \frac{P(E \mid \Theta^{\ast}) \cdot P(\Theta^{\ast}) \cdot q(\Theta^{(t)} \mid \Theta^{\ast})}{P(E \mid \Theta^{(t)}) \cdot P(\Theta^{(t)}) \cdot q(\Theta^{\ast} \mid \Theta^{(t)})}\right)$$
+$$\alpha = \min\left(1, \frac{P(E \mid \Theta^*) \cdot P(\Theta^*) \cdot q(\Theta^{(t)} \mid \Theta^*)}{P(E \mid \Theta^{(t)}) \cdot P(\Theta^{(t)}) \cdot q(\Theta^* \mid \Theta^{(t)})}\right)$$
 
 ### 3. HIrisPlex-S Multinomial Logistic Regression & Normalization Invariant
 
@@ -465,7 +465,7 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** All 11 ENFSI tier boundaries verified: Tier 5 (log10 LR > 6), Tier 4 (4–6), Tier 3 (2–4), Tier 2 (1–2), Tier 1 (0–1), Tier 0 (=0), Tiers −1…−5 (symmetric defence); Turkish predicates present.
   - **`G`:** Prosecutor's Fallacy Shield present for all tiers; standard legal text identical across Hp-supporting tiers; `likelihood_equation` references LR value; English shield mentions `P(Evidence` / `Prosecutor`; Turkish shield mentions `Yanılgı`.
   - **`H`:** API integration across all 5 endpoints: FPR=FNR=0 for pristine, AUC≥0.999, Cllr EXCELLENT, HPD 5th pct ≤ median, Tier 5 for log10(LR)=26, Tier 0 for log10(LR)=0, negative tier for log10(LR)=−3.
-* **`VECTOR_P2_01` (Y-STR 27-Locus Paternal Match):** Full Y-FILER Plus 27-locus match: $k = 0, \; N = 25000, \; \alpha = 0.05 \implies \hat{p}_u \approx 0.00011982 \text{ (upper bound)}, \; LR \approx 8345.86, \; \log_{10} LR \approx 3.92147$. Clopper-Pearson 95% exact compliance.
+* **`VECTOR_P2_01` (Y-STR 27-Locus Paternal Match):** Full Y-FILER Plus 27-locus match: $k=0, N=25000, \alpha=0.05 \implies \hat{p}_u \approx 0.00011982, LR \approx 8345.86, \log_{10}(LR) \approx 3.92147$ (upper bound). Clopper-Pearson 95% exact compliance.
 * **`VECTOR_06_YSTR_A-H` (Y-STR Haplotype Forensics & Mutation Invariants - Module 06):**
   - **`A`:** 27-locus panel completeness, 6 RM loci classification ($\mu_l \ge 0.011$), multi-copy flags (`DYS385a/b`, `DYF387S1a/b`), and locus name normalization.
   - **`B`:** Clopper-Pearson $k=0$ exact formula $\hat{p}_u = 1 - (0.05)^{1/(N+1)}$ (u=upper) verified against analytical calculation; strict monotonic decrease with $N$.
@@ -475,7 +475,7 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** $N_m = \max_l \lceil n/2 \rceil$ (m=male); multi-copy locus with $>4$ alleles enforces $N_m \ge 3$.
   - **`G`:** Stepwise Mutation Model (SMM) geometric decay with step distance $m$; RM locus higher mutation transition probability.
   - **`H`:** API integration across all 6 endpoints: panel metadata, Clopper-Pearson, Brenner, mixture contributors, SMM transition, and match evaluation.
-* **`VECTOR_P2_02` (X-STR Female Kinship - Argus X-12):** Paternal half-sisters (PHS) analysis across LG1–LG4 with obligate paternal allele sharing, mean intra-LG $r=0.01$, empirical $p_a \approx 0.3616 \implies \text{Combined } KI_X \approx 1.854 \times 10^5, \; \log_{10}(KI_X) \approx 5.268$.
+* **`VECTOR_P2_02` (X-STR Female Kinship - Argus X-12):** Paternal half-sisters (PHS) analysis across LG1–LG4 with obligate paternal allele sharing, mean intra-LG $r=0.01$, empirical $p_a \approx 0.3616 \implies \text{Combined } KI_X \approx 1.854 \times 10^5, \log_{10}(KI_X) \approx 5.268$.
 * **`VECTOR_07_XSTR_A-H` (X-STR Linkage Groups & Complex Female Kinship - Module 07):**
   - **`A`:** Argus X-12 12-locus panel completeness, 4 linkage groups (LG1–LG4) with 3 markers each, genetic map distances (cM), and locus name normalization.
   - **`B`:** Kosambi mapping function limits: $r(0)=0.0, r(50\text{ cM}) \approx 0.3808, \lim_{d \to \infty} r(d) = 0.50$, monotonic increase.
@@ -492,9 +492,9 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`D`:** EMPOP $k=0$ exact binomial upper bound $\hat{p}_u = 1 - (0.05)^{1/(N+1)}$ verified analytically ($N=48500 \implies \hat{p} \approx 6.18 \times 10^{-5}$, $LR \approx 16191.7$).
   - **`E`:** EMPOP $k>0$ exact Beta quantile bound, ordering $p(k=0) < p(k=1) < p(k=5)$, and $k=N$ boundary.
   - **`F`:** Pairwise maternal identity (0 differences $\implies$ `CANNOT_BE_EXCLUDED`, $LR > 10000$, Prosecutor's Fallacy Shield).
-  - **`G`:** Single sequence difference $\implies$ `INCONCLUSIVE` ($LR = 1.0, \; \log_{10} LR = 0.0$), $\ge 2$ differences $\implies$ `EXCLUDED` ($LR = 0.0, \; \log_{10} LR = -\infty$).
+  - **`G`:** Single sequence difference $\implies$ `INCONCLUSIVE` ($LR = 1.0, \log_{10}(LR) = 0.0$), $\ge 2$ differences $\implies$ `EXCLUDED` ($LR = 0.0, \log_{10}(LR) = -\infty$).
   - **`H`:** API integration across all 3 endpoints: panel metadata, EMPOP upper bound, and pairwise maternal match evaluation.
-* **`VECTOR_P2_03` (Interpol DVI Mass Disaster Engine):** Severely degraded PM skeletal sample. Autosomal $LR = 5.2 \times 10^3$, Y-STR $\hat{p} = 0.0002$ ($LR_Y = 5000$), mtDNA $\hat{p} = 0.0001$ ($LR_M = 10000$). Combined Multi-Omic Joint $LR_J = 5.2 \times 10^3 \times 5000 \times 10000 = 2.6 \times 10^{11} \text{ (J=Joint)}, \; \log_{10} LR = 11.41497 \implies$ **DEFINITIVE IDENTIFICATION** ($LR \ge 10^6$).
+* **`VECTOR_P2_03` (Interpol DVI Mass Disaster Engine):** Severely degraded PM skeletal sample. Autosomal $LR = 5.2 \times 10^3$, Y-STR $\hat{p} = 0.0002$ ($LR_Y = 5000$), mtDNA $\hat{p} = 0.0001$ ($LR_M = 10000$). Combined Multi-Omic Joint $LR_J = 5.2 \times 10^3 \times 5000 \times 10000 = 2.6 \times 10^{11}$ (J=Joint), $\log_{10}(LR) = 11.41497 \implies$ **DEFINITIVE IDENTIFICATION** ($LR \ge 10^6$).
 * **`VECTOR_09_DVI_A-H` (Interpol DVI Multi-Omic & Disaster Invariants - Module 09):**
   - **`A`:** Multi-omic product rule mathematical exactness & log-space preservation: $|\log_{10} LR_J - \sum \log_{10} LR_i| < 10^{-6}$ (J=Joint).
   - **`B`:** Lineage data availability indicator flags ($\delta_y, \delta_m, \delta_s = 0$ sets corresponding multiplier to $1.0$).
@@ -577,7 +577,7 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`C`:** Menstrual Blood (Endometrial `cg00854446`, `cg18063373`) vs Vaginal Secretions (`cg04382942`, `cg11624633`) differentiation ($P > 80\text{\%}$).
   - **`D`:** Touch DNA epidermal skin calling verified (`cg07823520: 0.11`, $P_e \ge 98.0\text{\%}$, e=epidermal).
   - **`E`:** Sum-to-One posterior probability invariant verified ($|\sum P - 1.0| < 10^{-6}$).
-  - **`F`:** Likelihood Ratio and logarithmic scale consistency verified ($LR_t, \; \log_{10} LR$).
+  - **`F`:** Likelihood Ratio and logarithmic scale consistency verified ($LR_t, \log_{10}(LR)$).
   - **`G`:** Input validation boundaries and empty profile exception handling.
   - **`H`:** API integration testing across `/forensic/epigenetics/deconvolve-tissue`.
 * **`VECTOR_18_LIFE_A-H` (Environmental Epigenetics & Lifestyle Biomarkers - Module 18):**

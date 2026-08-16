@@ -510,7 +510,7 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`C`:** Low-coverage SNP Genotype Likelihood ($GL$): position-dependent MapDamage deamination compensation correctly calls homozygous Ref ($AA$) despite $C \to T$ read transitions at terminal overhang positions.
   - **`D`:** Terminal 5' vs interior deamination likelihood contrast: terminal Alt reads undergo higher likelihood tolerance under homozygous Ref hypothesis.
   - **`E`:** Multi-locus micro-multiplex SNP Likelihood Ratio ($LR_{\text{SNP}}$) product rule and log-space preservation ($|\log_{10} LR_{\text{SNP}} - \sum \log_{10} LR_m| < 10^{-6}$).
-  - **`F`:** Skeletal degradation index audit ($DI = \text{RFU}_{\text{small}} / \text{RFU}_{\text{large}} = 3.429 \ge 2.5 \implies$ `SEVERE` degradation, `MICRO_SNP_PANEL_40_70BP` recommendation) and LCN stochastic warning ($<100\text{ pg}$).
+  - **`F`:** Skeletal degradation index audit ($DI = \frac{\text{RFU}_{\text{small}}}{\text{RFU}_{\text{large}}} = 3.429 \ge 2.5 \implies$ `SEVERE` degradation, `MICRO_SNP_PANEL_40_70BP` recommendation) and LCN stochastic warning ($<100\text{ pg}$).
   - **`G`:** Multi-modal human identification remains synthesis & candidate ranking by joint posterior odds.
   - **`H`:** API integration across all 6 endpoints: damage-kinetics, fragmentation-distribution, snp-genotype-likelihood, multi-snp-lr, skeletal-audit, and evaluate-remains.
 * **`VECTOR_P3_01` (Northern European Fair Phototype - Module 11):** `rs12913832: C/C (2)`, `rs16891982: G/G (2)`, `rs1426654: A/A (2)`, `rs1805007: C/T (1)` $\implies P(\text{Blue Eye}) \ge 0.85, P(\text{Very Pale / Pale Skin}) \ge 0.88$. Softmax sum $= 1.0 \pm 10^{-6}$.

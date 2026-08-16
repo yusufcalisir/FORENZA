@@ -253,19 +253,19 @@ export default function MerkleLedgerPanel() {
           {/* Right: Merkle Tree Cryptographic Anchor */}
           <div className="lg:col-span-2 space-y-4">
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-              <div className="rounded-2xl border border-indigo-500/40 bg-gradient-to-br from-indigo-500/10 via-tactical-surface/60 to-black/80 p-5 space-y-4 shadow-2xl">
-                <div className="flex items-center justify-between border-b border-indigo-500/20 pb-3">
-                  <div>
+              <div className="rounded-2xl border border-indigo-500/40 bg-gradient-to-br from-indigo-500/10 via-tactical-surface/60 to-black/80 p-4 sm:p-5 space-y-4 shadow-2xl overflow-hidden">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-indigo-500/20 pb-3.5">
+                  <div className="min-w-0">
                     <span className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest block">
                       IMMUTABLE MERKLE ROOT COMMITMENT (R_MERKLE)
                     </span>
-                    <span className="text-sm sm:text-base font-black text-indigo-300 font-mono break-all">
+                    <span className="text-xs sm:text-sm md:text-base font-black text-indigo-300 font-mono break-all block mt-0.5">
                       {merkleRoot}
                     </span>
                   </div>
-                  <div className="text-right shrink-0">
+                  <div className="flex flex-col items-start sm:items-end gap-1 shrink-0">
                     <span className="text-[10px] text-zinc-400 block uppercase font-bold">Tree Status</span>
-                    <span className={`text-xs font-bold px-2.5 py-1 rounded border font-mono ${
+                    <span className={`text-[10px] sm:text-xs font-bold px-2.5 py-1 rounded-lg border font-mono whitespace-nowrap ${
                       isTampered
                         ? "bg-rose-500/20 text-rose-300 border-rose-500/40"
                         : "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
@@ -282,9 +282,18 @@ export default function MerkleLedgerPanel() {
                   </span>
                   <div className="space-y-1.5">
                     {leafHashes.map((lh, idx) => (
-                      <div key={idx} className="flex items-center justify-between p-2 rounded-lg bg-black/40 border border-tactical-border/40 text-[10px] font-mono">
-                        <span className="text-indigo-400 font-bold">H_{idx + 1} (EVT-{idx + 1}):</span>
-                        <span className="text-zinc-300 truncate max-w-[280px] sm:max-w-md">{lh}</span>
+                      <div
+                        key={idx}
+                        className="flex flex-col sm:flex-row sm:items-center justify-between p-2.5 rounded-lg bg-black/40 border border-tactical-border/40 text-[10px] font-mono gap-1.5 sm:gap-3 hover:border-indigo-500/40 transition-colors"
+                      >
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <span className="text-indigo-400 font-bold whitespace-nowrap bg-indigo-500/10 px-1.5 py-0.5 rounded border border-indigo-500/20">
+                            H_{idx + 1} (EVT-{idx + 1}):
+                          </span>
+                        </div>
+                        <span className="text-zinc-300 font-mono break-all sm:truncate sm:max-w-md text-[9px] sm:text-[10px]">
+                          {lh}
+                        </span>
                       </div>
                     ))}
                   </div>
@@ -292,8 +301,8 @@ export default function MerkleLedgerPanel() {
 
                 <div className="p-3 rounded-xl bg-black/30 border border-tactical-border/30 text-[10px] text-zinc-400 font-mono">
                   <div className="flex items-center gap-1.5 text-indigo-400 font-bold mb-1">
-                    <ShieldCheck className="w-3.5 h-3.5" />
-                    ISO/IEC 17025:2017 & FRE 702 Legal Evaluative Shield
+                    <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
+                    ISO/IEC 17025:2017 &amp; FRE 702 Legal Evaluative Shield
                   </div>
                   Cryptographic Merkle tree structures guarantee temporal non-repudiation in LIMS case files. 
                   Any single-character alteration to event timestamps, handlers, or locations yields an entirely divergent root with probability 1 - 2⁻²⁵⁶.
@@ -340,19 +349,19 @@ export default function MerkleLedgerPanel() {
           <div className="lg:col-span-2 space-y-4">
             {proofData && verifyResult && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-                <div className="rounded-2xl border border-indigo-500/40 bg-gradient-to-br from-indigo-500/10 via-tactical-surface/60 to-black/80 p-5 space-y-4 shadow-2xl">
-                  <div className="flex items-center justify-between border-b border-indigo-500/20 pb-3">
+                <div className="rounded-2xl border border-indigo-500/40 bg-gradient-to-br from-indigo-500/10 via-tactical-surface/60 to-black/80 p-4 sm:p-5 space-y-4 shadow-2xl overflow-hidden">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-indigo-500/20 pb-3.5">
                     <div>
                       <span className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest block">
                         MERKLE INCLUSION PROOF (AUDIT PATH π_{proofData.target_event_index + 1})
                       </span>
-                      <span className="text-xl font-black text-indigo-300 font-mono">
+                      <span className="text-sm sm:text-base md:text-xl font-black text-indigo-300 font-mono">
                         {proofData.target_event_id} (Path Length: {proofData.path_length} Sibling Hashes)
                       </span>
                     </div>
-                    <div className="text-right">
+                    <div className="flex flex-col items-start sm:items-end gap-1">
                       <span className="text-[10px] text-zinc-400 block uppercase font-bold">Courtroom Admissibility</span>
-                      <span className={`text-xs font-bold px-2.5 py-1 rounded border font-mono ${
+                      <span className={`text-[10px] sm:text-xs font-bold px-2.5 py-1 rounded-lg border font-mono whitespace-nowrap ${
                         verifyResult.is_valid
                           ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
                           : "bg-rose-500/20 text-rose-300 border-rose-500/40"
@@ -368,21 +377,21 @@ export default function MerkleLedgerPanel() {
                       O(log₂ N) Sibling Hash Traversal:
                     </span>
                     {proofData.proof_path.map((step, idx) => (
-                      <div key={idx} className="p-2.5 rounded-xl bg-black/40 border border-tactical-border/40 text-xs font-mono flex items-center justify-between">
-                        <span className="text-zinc-400 font-bold">Step {idx + 1} ({step.direction}):</span>
-                        <span className="text-indigo-300 text-[10px] truncate max-w-[280px]">{step.sibling_hash}</span>
+                      <div key={idx} className="p-2.5 rounded-xl bg-black/40 border border-tactical-border/40 text-xs font-mono flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+                        <span className="text-zinc-400 font-bold whitespace-nowrap text-[10px]">Step {idx + 1} ({step.direction}):</span>
+                        <span className="text-indigo-300 text-[9px] sm:text-[10px] break-all sm:truncate sm:max-w-[280px]">{step.sibling_hash}</span>
                       </div>
                     ))}
                   </div>
 
                   <div className="p-3.5 rounded-xl bg-black/40 border border-tactical-border/40 text-xs font-mono space-y-1.5">
-                    <div className="flex justify-between text-[10px]">
-                      <span className="text-zinc-500">Target Leaf Hash:</span>
-                      <span className="text-zinc-300 truncate max-w-[260px]">{proofData.target_leaf_hash}</span>
+                    <div className="flex flex-col sm:flex-row sm:justify-between text-[10px] gap-0.5">
+                      <span className="text-zinc-500 whitespace-nowrap">Target Leaf Hash:</span>
+                      <span className="text-zinc-300 break-all sm:truncate sm:max-w-[260px]">{proofData.target_leaf_hash}</span>
                     </div>
-                    <div className="flex justify-between text-[10px]">
-                      <span className="text-zinc-500">Reconstructed Root:</span>
-                      <span className="text-emerald-400 truncate max-w-[260px]">{verifyResult.computed_root}</span>
+                    <div className="flex flex-col sm:flex-row sm:justify-between text-[10px] gap-0.5">
+                      <span className="text-zinc-500 whitespace-nowrap">Reconstructed Root:</span>
+                      <span className="text-emerald-400 break-all sm:truncate sm:max-w-[260px]">{verifyResult.computed_root}</span>
                     </div>
                   </div>
 

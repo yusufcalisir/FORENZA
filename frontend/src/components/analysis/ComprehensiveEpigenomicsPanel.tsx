@@ -30,32 +30,55 @@ interface LifestyleResult {
 export default function ComprehensiveEpigenomicsPanel() {
   const [activeResearchTab, setActiveResearchTab] = useState<"clock" | "tissue" | "lifestyle">("clock");
 
-  // Tissue Deconvolution State
+  // Tissue Deconvolution State (12 Diagnostic tDMR CpG Markers)
   const [tdmrBetas, setTdmrBetas] = useState<Record<string, number>>({
-    tDMR_BLOOD_01: 0.88,
-    tDMR_BUCCAL_01: 0.12,
-    tDMR_SALIVA_01: 0.15,
-    tDMR_SEMEN_01: 0.05,
-    tDMR_EPITHELIAL_01: 0.10,
-    tDMR_BONE_01: 0.08
+    cg09652652: 0.12,
+    cg19406367: 0.15,
+    cg17610929: 0.91,
+    cg23521140: 0.85,
+    cg26763284: 0.89,
+    cg23576855: 0.84,
+    cg00399818: 0.82,
+    cg04382942: 0.88,
+    cg11624633: 0.86,
+    cg00854446: 0.82,
+    cg18063373: 0.80,
+    cg07823520: 0.90,
   });
+
+  const tdmrLabels: Record<string, string> = {
+    cg09652652: "Endothelial (cg09652652)",
+    cg19406367: "Hematopoietic (cg19406367)",
+    cg17610929: "Germ Cell (cg17610929)",
+    cg23521140: "DACT1 (cg23521140)",
+    cg26763284: "PRMT12 (cg26763284)",
+    cg23576855: "Oral Epithelial (cg23576855)",
+    cg00399818: "Salivary Gland (cg00399818)",
+    cg04382942: "Cervicovaginal (cg04382942)",
+    cg11624633: "MYO1G (cg11624633)",
+    cg00854446: "Endometrial (cg00854446)",
+    cg18063373: "Endometrial Stroma (cg18063373)",
+    cg07823520: "Epidermis (cg07823520)",
+  };
+
   const [deconvLoading, setDeconvLoading] = useState(false);
   const [deconvResult, setDeconvResult] = useState<TissueDeconvResult | null>({
     top_predicted_tissue: "BLOOD",
-    top_tissue_probability: 0.842,
+    top_tissue_probability: 0.9998,
     tissue_probabilities: {
-      BLOOD: 0.842,
-      BUCCAL: 0.045,
-      SALIVA: 0.051,
-      SEMEN: 0.012,
-      EPITHELIAL: 0.032,
-      BONE: 0.018
+      BLOOD: 0.9998,
+      MENSTRUAL: 0.0002,
+      SALIVA: 0.0000,
+      VAGINAL: 0.0000,
+      SKIN: 0.0000,
+      SEMEN: 0.0000,
     },
-    lr_tissue: 16.51,
-    log10_lr_tissue: 1.22,
-    tdmr_loci_evaluated: 6,
-    deconvolution_method: "tDMR Dirichlet Gaussian Distance Optimization"
+    lr_tissue: 4999.0,
+    log10_lr_tissue: 3.70,
+    tdmr_loci_evaluated: 12,
+    deconvolution_method: "Bayesian Quadratic Discriminant Analysis (QDA 12-tDMR Gaussian Mixture)"
   });
+
 
   // Lifestyle State
   const [ahrrBeta, setAhrrBeta] = useState<number>(0.42);
@@ -199,12 +222,12 @@ export default function ComprehensiveEpigenomicsPanel() {
               </button>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-3 max-h-[380px] overflow-y-auto pr-1">
               {Object.entries(tdmrBetas).map(([locus, val]) => (
                 <div key={locus} className="space-y-1">
-                  <div className="flex items-center justify-between text-[11px]">
-                    <span className="font-bold text-zinc-300">{locus}</span>
-                    <span className="font-mono text-purple-400 font-bold">Beta = {val.toFixed(2)}</span>
+                  <div className="flex items-center justify-between text-[10px]">
+                    <span className="font-bold text-zinc-300 truncate max-w-[170px]">{tdmrLabels[locus] || locus}</span>
+                    <span className="font-mono text-purple-400 font-bold">β = {val.toFixed(2)}</span>
                   </div>
                   <input
                     type="range"
@@ -213,12 +236,13 @@ export default function ComprehensiveEpigenomicsPanel() {
                     step="0.01"
                     value={val}
                     onChange={(e) => setTdmrBetas((prev) => ({ ...prev, [locus]: parseFloat(e.target.value) }))}
-                    className="w-full accent-purple-500 cursor-pointer"
+                    className="w-full accent-purple-500 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
                   />
                 </div>
               ))}
             </div>
           </div>
+
 
           {/* Results Display */}
           <div className="lg:col-span-2 space-y-6">

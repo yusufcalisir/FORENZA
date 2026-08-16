@@ -572,9 +572,20 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** Biological Age Acceleration classification ($\Delta\text{Age} > +5.0$ accelerated, $\Delta\text{Age} < -5.0$ decelerated).
   - **`G`:** ISO 17025 95% prediction interval bounds ($k=1.96 \cdot \text{SE}$).
   - **`H`:** API integration testing across `/forensic/epigenetics/predict-age`.
+* **`VECTOR_P4_03` (tDMR Body Fluid Identification — Semen Stain Confirmation):** Pure germ cell fraction calling verified with Semen Posterior $> 99.5\%$, Blood Posterior $< 0.1\%$, and $\text{LR}_{\text{tissue}} > 100.0$.
+* **`VECTOR_17_TISSUE_A-H` (tDMR Body Fluid & Tissue Provenance — Module 17):**
+  - **`A`:** Peripheral Venous Blood calling verified ($P_{\text{blood}} \ge 98.0\%$).
+  - **`B`:** Saliva calling verified ($P_{\text{saliva}} \ge 98.0\%$).
+  - **`C`:** Menstrual Blood (Endometrial `cg00854446`, `cg18063373`) vs Vaginal Secretions (`cg04382942`, `cg11624633`) differentiation ($P > 80\%$).
+  - **`D`:** Touch DNA epidermal skin calling verified (`cg07823520: 0.11`, $P_{\text{skin}} \ge 98.0\%$).
+  - **`E`:** Sum-to-One posterior probability invariant verified ($|\sum P - 1.0| < 10^{-6}$).
+  - **`F`:** Likelihood Ratio ($\text{LR}_{\text{tissue}}$) and $\log_{10}\text{LR}$ metric consistency verified.
+  - **`G`:** Input validation boundaries and empty profile exception handling.
+  - **`H`:** API integration testing across `/forensic/epigenetics/deconvolve-tissue`.
 * **`VECTOR_P6_01` (Chain of Custody Tamper Detection):** Merkle tree root divergence verified upon a single-second timestamp modification ($P_{\text{detection}} = 100\%$).
 * **`VECTOR_P6_02` (ISO 17025 Measurement Uncertainty):** Combined $u_c = 0.05385 \text{ ng/}\mu\text{L}$ and expanded $U_{95\%} = 0.1077 \text{ ng/}\mu\text{L}$ ($k=2.00$).
 * **`VECTOR_P6_03` (ENFSI Verbal Statement Mapping):** $LR = 3.5 \times 10^7$ maps deterministically to Verbal Tier 6 ("Extremely strong support for prosecution proposition").
+
 
 
 

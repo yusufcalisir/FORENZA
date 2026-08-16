@@ -9,16 +9,22 @@ from backend.node.services.forensic.epigenetics import (
 def test_tissue_deconvolution_pure_blood_sample():
     engine = TissueDeconvolutionEngine()
     blood_tdmr = {
-        "tDMR_BLOOD_01": 0.90,
-        "tDMR_BUCCAL_01": 0.10,
-        "tDMR_SALIVA_01": 0.12,
-        "tDMR_SEMEN_01": 0.05,
-        "tDMR_EPITHELIAL_01": 0.08,
-        "tDMR_BONE_01": 0.06,
+        "cg09652652": 0.12,
+        "cg19406367": 0.15,
+        "cg17610929": 0.91,
+        "cg23521140": 0.85,
+        "cg26763284": 0.89,
+        "cg23576855": 0.84,
+        "cg00399818": 0.82,
+        "cg04382942": 0.88,
+        "cg11624633": 0.86,
+        "cg00854446": 0.82,
+        "cg18063373": 0.80,
+        "cg07823520": 0.90,
     }
     result = engine.deconvolve_sample(blood_tdmr)
     assert result["top_predicted_tissue"] == "BLOOD"
-    assert result["top_tissue_probability"] > 0.50
+    assert result["top_tissue_probability"] > 0.80
     assert result["lr_tissue"] > 1.0
     assert "BLOOD" in result["tissue_probabilities"]
 
@@ -26,16 +32,23 @@ def test_tissue_deconvolution_pure_blood_sample():
 def test_tissue_deconvolution_pure_semen_sample():
     engine = TissueDeconvolutionEngine()
     semen_tdmr = {
-        "tDMR_BLOOD_01": 0.05,
-        "tDMR_BUCCAL_01": 0.05,
-        "tDMR_SALIVA_01": 0.04,
-        "tDMR_SEMEN_01": 0.95,
-        "tDMR_EPITHELIAL_01": 0.06,
-        "tDMR_BONE_01": 0.05,
+        "cg09652652": 0.88,
+        "cg19406367": 0.92,
+        "cg17610929": 0.04,
+        "cg23521140": 0.08,
+        "cg26763284": 0.05,
+        "cg23576855": 0.89,
+        "cg00399818": 0.86,
+        "cg04382942": 0.91,
+        "cg11624633": 0.89,
+        "cg00854446": 0.94,
+        "cg18063373": 0.92,
+        "cg07823520": 0.95,
     }
     result = engine.deconvolve_sample(semen_tdmr)
     assert result["top_predicted_tissue"] == "SEMEN"
     assert result["top_tissue_probability"] > 0.80
+
 
 
 def test_lifestyle_smoking_heavy_smoker():

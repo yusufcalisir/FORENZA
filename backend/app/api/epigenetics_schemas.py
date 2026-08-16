@@ -68,10 +68,13 @@ class DeconvolveTissueResponse(BaseModel):
     top_predicted_tissue: str
     top_tissue_probability: float
     tissue_probabilities: Dict[str, float]
+    log_likelihoods: Optional[Dict[str, float]] = None
     lr_tissue: float
     log10_lr_tissue: float
     tdmr_loci_evaluated: int
     deconvolution_method: str
+    prosecutors_fallacy_shield: Optional[str] = None
+
 
 
 class LifestyleProfileRequest(BaseModel):

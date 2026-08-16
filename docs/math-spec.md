@@ -1389,6 +1389,40 @@ $$\text{DNAmAge}_{\text{final}} = \max\left(0.0, \; \text{DNAmAge}_{\text{model}
 | **Seminal Fluid (Sperm DNA)**| $-0.8541$ | $-4.20 \text{ yrs}$ | $3.5 \text{ yrs}$ | $4.2 \text{ yrs}$ | $\pm 8.23 \text{ yrs}$ |
 | **Post-Mortem Bone / Teeth** | $-0.6018$ | $+1.10 \text{ yrs}$ | $3.4 \text{ yrs}$ | $4.1 \text{ yrs}$ | $\pm 8.04 \text{ yrs}$ |
 
+---
+
+## 51. tDMR-Based Body Fluid Identification Engine (Module 17)
+
+The Body Fluid Identification Engine classifies cellular origins of forensic biological stains across 6 core body fluid classes using Bayesian Quadratic Discriminant Analysis (QDA) over 12 diagnostic Tissue-Specific Differentially Methylated Regions (tDMRs).
+
+### 51.1 12 Diagnostic tDMR CpG Loci Reference Matrix ($\mu \pm \sigma$)
+
+| Locus ID | Functional Gene / Region | Blood ($\mu \pm \sigma$) | Semen ($\mu \pm \sigma$) | Saliva ($\mu \pm \sigma$) | Vaginal ($\mu \pm \sigma$) | Menstrual ($\mu \pm \sigma$) | Skin ($\mu \pm \sigma$) |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **cg09652652** | Endothelial tDMR | $0.12 \pm 0.03$ | $0.88 \pm 0.04$ | $0.85 \pm 0.05$ | $0.82 \pm 0.06$ | $0.22 \pm 0.05$ | $0.91 \pm 0.03$ |
+| **cg19406367** | Hematopoietic Locus | $0.15 \pm 0.04$ | $0.92 \pm 0.03$ | $0.89 \pm 0.04$ | $0.86 \pm 0.05$ | $0.31 \pm 0.06$ | $0.88 \pm 0.04$ |
+| **cg17610929** | Germ Cell tDMR | $0.91 \pm 0.03$ | $0.04 \pm 0.01$ | $0.88 \pm 0.04$ | $0.90 \pm 0.03$ | $0.89 \pm 0.04$ | $0.94 \pm 0.02$ |
+| **cg23521140** | DACT1 | $0.85 \pm 0.04$ | $0.08 \pm 0.02$ | $0.82 \pm 0.05$ | $0.84 \pm 0.04$ | $0.83 \pm 0.05$ | $0.89 \pm 0.03$ |
+| **cg26763284** | PRMT12 | $0.89 \pm 0.03$ | $0.05 \pm 0.02$ | $0.86 \pm 0.04$ | $0.88 \pm 0.04$ | $0.87 \pm 0.04$ | $0.92 \pm 0.03$ |
+| **cg23576855** | Oral Epithelial | $0.84 \pm 0.04$ | $0.89 \pm 0.03$ | $0.10 \pm 0.03$ | $0.78 \pm 0.06$ | $0.81 \pm 0.05$ | $0.82 \pm 0.05$ |
+| **cg00399818** | Salivary Gland | $0.82 \pm 0.05$ | $0.86 \pm 0.04$ | $0.12 \pm 0.03$ | $0.75 \pm 0.07$ | $0.79 \pm 0.06$ | $0.85 \pm 0.04$ |
+| **cg04382942** | Cervicovaginal | $0.88 \pm 0.03$ | $0.91 \pm 0.03$ | $0.72 \pm 0.06$ | $0.15 \pm 0.04$ | $0.35 \pm 0.08$ | $0.86 \pm 0.04$ |
+| **cg11624633** | MYO1G | $0.86 \pm 0.04$ | $0.89 \pm 0.03$ | $0.70 \pm 0.05$ | $0.18 \pm 0.05$ | $0.38 \pm 0.07$ | $0.84 \pm 0.04$ |
+| **cg00854446** | Endometrial | $0.82 \pm 0.05$ | $0.94 \pm 0.02$ | $0.85 \pm 0.04$ | $0.52 \pm 0.09$ | $0.14 \pm 0.04$ | $0.90 \pm 0.03$ |
+| **cg18063373** | Endometrial Stroma | $0.80 \pm 0.05$ | $0.92 \pm 0.03$ | $0.83 \pm 0.05$ | $0.55 \pm 0.08$ | $0.16 \pm 0.04$ | $0.88 \pm 0.04$ |
+| **cg07823520** | Epidermis | $0.90 \pm 0.03$ | $0.95 \pm 0.02$ | $0.81 \pm 0.05$ | $0.85 \pm 0.04$ | $0.86 \pm 0.04$ | $0.11 \pm 0.03$ |
+
+### 51.2 Bayesian QDA Log-Likelihood & Posterior Probabilities
+
+For observed sample profile $\boldsymbol{\beta}^* = (\beta_1, \dots, \beta_M)^T$, the Gaussian log-likelihood for tissue class $T_k$ is:
+
+$$\text{LL}_k(\boldsymbol{\beta}^*) = \sum_{m=1}^{12} \left[ -\frac{1}{2} \ln(2\pi \sigma_{k,m}^2) - \frac{(\beta_m^* - \mu_{k,m})^2}{2\sigma_{k,m}^2} \right]$$
+
+$$P(T_k \mid \boldsymbol{\beta}^*) = \frac{\exp\left(\text{LL}_k(\boldsymbol{\beta}^*) - \max_j \text{LL}_j(\boldsymbol{\beta}^*)\right)}{\sum_{l=1}^{6} \exp\left(\text{LL}_l(\boldsymbol{\beta}^*) - \max_j \text{LL}_j(\boldsymbol{\beta}^*)\right)}$$
+
+$$\text{LR}_{\text{tissue}} = \frac{P(T_{\text{top}} \mid \boldsymbol{\beta}^*)}{P(T_{\text{second}} \mid \boldsymbol{\beta}^*)}, \quad \log_{10} \text{LR} = \log_{10}(P_{\text{top}}) - \log_{10}(\max(10^{-6}, P_{\text{second}}))$$
+
+
 
 
 

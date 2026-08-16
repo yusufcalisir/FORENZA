@@ -275,22 +275,22 @@ export default function ToxicologyPmrPanel() {
           <div className="lg:col-span-2 space-y-4">
             {pmrResult && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-                <div className="rounded-2xl border border-rose-500/40 bg-gradient-to-br from-rose-500/10 via-tactical-surface/60 to-black/80 p-5 space-y-4 shadow-2xl">
-                  <div className="flex items-center justify-between border-b border-rose-500/20 pb-3">
+                <div className="rounded-2xl border border-rose-500/40 bg-gradient-to-br from-rose-500/10 via-tactical-surface/60 to-black/80 p-4 sm:p-5 space-y-4 shadow-2xl overflow-hidden">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-rose-500/20 pb-3.5">
                     <div>
                       <span className="text-[10px] font-bold text-rose-300 uppercase tracking-widest block">
                         OBSERVED C_HEART / C_FEMORAL (C/P) RATIO
                       </span>
-                      <span className="text-3xl font-black text-rose-300 font-mono">
+                      <span className="text-2xl sm:text-3xl font-black text-rose-300 font-mono">
                         {pmrResult.cp_observed.toFixed(2)}x
                       </span>
-                      <span className="text-[10px] text-zinc-400 block mt-0.5">
+                      <span className="text-[9px] sm:text-[10px] text-zinc-400 block mt-0.5">
                         Literature Expected: {pmrResult.cp_literature_mean.toFixed(2)}x (Vd = {pmrResult.vd_l_kg} L/kg)
                       </span>
                     </div>
-                    <div className="text-right">
+                    <div className="flex flex-col items-start sm:items-end gap-1">
                       <span className="text-[10px] text-zinc-400 block uppercase font-bold">PMR Risk Tier</span>
-                      <span className={`text-xs font-bold px-2.5 py-1 rounded border font-mono ${
+                      <span className={`text-[10px] sm:text-xs font-bold px-2.5 py-1 rounded-lg border font-mono whitespace-nowrap ${
                         pmrResult.pmr_risk_tier.includes("High")
                           ? "bg-rose-500/20 text-rose-300 border-rose-500/40"
                           : pmrResult.pmr_risk_tier.includes("Moderate")
@@ -305,7 +305,7 @@ export default function ToxicologyPmrPanel() {
                   {pmrResult.is_cardiac_overestimated ? (
                     <div className="p-3.5 rounded-xl bg-rose-500/20 border border-rose-500/40 text-xs font-mono space-y-1">
                       <div className="flex items-center gap-1.5 text-rose-300 font-bold">
-                        <AlertTriangle className="w-4 h-4" />
+                        <AlertTriangle className="w-4 h-4 shrink-0" />
                         CARDIAC BLOOD OVERESTIMATION ALERT
                       </div>
                       <p className="text-zinc-300 leading-relaxed">{pmrResult.alert_message}</p>
@@ -313,7 +313,7 @@ export default function ToxicologyPmrPanel() {
                   ) : (
                     <div className="p-3.5 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-xs font-mono space-y-1">
                       <div className="flex items-center gap-1.5 text-emerald-300 font-bold">
-                        <CheckCircle2 className="w-4 h-4" />
+                        <CheckCircle2 className="w-4 h-4 shrink-0" />
                         UNIFORM / MINIMAL REDISTRIBUTION
                       </div>
                       <p className="text-zinc-300 leading-relaxed">{pmrResult.alert_message}</p>
@@ -327,7 +327,7 @@ export default function ToxicologyPmrPanel() {
 
                   <div className="p-3 rounded-xl bg-black/30 border border-tactical-border/30 text-[10px] text-zinc-400 font-mono">
                     <div className="flex items-center gap-1.5 text-rose-400 font-bold mb-1">
-                      <ShieldCheck className="w-3.5 h-3.5" />
+                      <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
                       SOFT / TIAFT Legal Evaluative Shield
                     </div>
                     {pmrResult.prosecutors_fallacy_shield}
@@ -358,25 +358,60 @@ export default function ToxicologyPmrPanel() {
               </button>
             </div>
 
-            <div className="space-y-3">
-              <div>
-                <label className="text-[10px] text-zinc-400 uppercase font-bold block mb-1">
-                  Elapsed Hours Prior to Death (Δt):
+            <div className="space-y-3 text-xs">
+              {/* Drug Selection */}
+              <div className="space-y-1">
+                <label className="text-[10px] text-zinc-400 block font-bold uppercase">Target Xenobiotic</label>
+                <select
+                  value={selectedDrug}
+                  onChange={(e) => {
+                    setSelectedDrug(e.target.value);
+                    const preset = DRUG_PRESETS.find((d) => d.name === e.target.value);
+                    if (preset) {
+                      setCFemoral(preset.cFem);
+                      setUnit(preset.unit);
+                    }
+                  }}
+                  className="w-full bg-black/50 border border-tactical-border/70 rounded-xl p-2 font-mono text-xs text-rose-300 font-bold focus:outline-none focus:border-rose-500"
+                >
+                  {DRUG_PRESETS.map((d) => (
+                    <option key={d.name} value={d.name}>
+                      {d.name} ({d.risk})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Concentration Input */}
+              <div className="space-y-1">
+                <label className="text-[10px] text-zinc-400 block font-bold uppercase">
+                  Post-Mortem Femoral Blood (C_femoral) [{unit}]
                 </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={cFemoral}
+                  onChange={(e) => setCFemoral(parseFloat(e.target.value) || 0)}
+                  className="w-full bg-black/50 border border-tactical-border/70 rounded-xl p-2 font-mono text-xs text-tactical-text focus:outline-none focus:border-rose-500"
+                />
+              </div>
+
+              {/* Time Slider */}
+              <div className="space-y-1">
+                <div className="flex justify-between text-[10px]">
+                  <span className="text-zinc-400 uppercase font-bold">Elapsed PM Interval:</span>
+                  <span className="text-rose-300 font-mono font-bold">{elapsedHours.toFixed(1)} h</span>
+                </div>
                 <input
                   type="range"
                   min="0.5"
                   max="48.0"
                   step="0.5"
                   value={elapsedHours}
-                  onChange={(e) => {
-                    const v = parseFloat(e.target.value);
-                    setElapsedHours(v);
-                    runExtrapolation(selectedDrug, cFemoral, v, unit);
-                  }}
+                  onChange={(e) => setElapsedHours(parseFloat(e.target.value))}
                   className="w-full accent-rose-500"
                 />
-                <div className="flex justify-between text-[10px] text-zinc-400 font-mono mt-1">
+                <div className="flex justify-between text-[9px] text-zinc-500">
                   <span>0.5 h</span>
                   <span className="text-rose-400 font-bold">{elapsedHours.toFixed(1)} Hours Elapsed</span>
                   <span>48.0 h</span>
@@ -406,22 +441,22 @@ export default function ToxicologyPmrPanel() {
           <div className="lg:col-span-2 space-y-4">
             {extrapResult && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-                <div className="rounded-2xl border border-rose-500/40 bg-gradient-to-br from-rose-500/10 via-tactical-surface/60 to-black/80 p-5 space-y-4 shadow-2xl">
-                  <div className="flex items-center justify-between border-b border-rose-500/20 pb-3">
+                <div className="rounded-2xl border border-rose-500/40 bg-gradient-to-br from-rose-500/10 via-tactical-surface/60 to-black/80 p-4 sm:p-5 space-y-4 shadow-2xl overflow-hidden">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-rose-500/20 pb-3.5">
                     <div>
                       <span className="text-[10px] font-bold text-rose-300 uppercase tracking-widest block">
                         ANTEMORTEM EXTRAPOLATED CONCENTRATION (t - {extrapResult.elapsed_hours}h)
                       </span>
-                      <span className="text-3xl font-black text-rose-300 font-mono">
+                      <span className="text-2xl sm:text-3xl font-black text-rose-300 font-mono">
                         {extrapResult.c_antemortem_extrapolated} {extrapResult.unit}
                       </span>
-                      <span className="text-[10px] text-zinc-400 block mt-0.5">
+                      <span className="text-[9px] sm:text-[10px] text-zinc-400 block mt-0.5">
                         Post-Mortem Femoral Baseline: {extrapResult.c_femoral_postmortem} {extrapResult.unit}
                       </span>
                     </div>
-                    <div className="text-right">
+                    <div className="flex flex-col items-start sm:items-end gap-1">
                       <span className="text-[10px] text-zinc-400 block uppercase font-bold">Kinetic Formula</span>
-                      <span className="text-xs font-bold px-2 py-1 rounded bg-black/60 border border-tactical-border/60 text-zinc-300 font-mono">
+                      <span className="text-[10px] sm:text-xs font-bold px-2.5 py-1 rounded-lg bg-black/60 border border-tactical-border/60 text-zinc-300 font-mono whitespace-nowrap">
                         {extrapResult.elimination_type}
                       </span>
                     </div>

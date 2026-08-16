@@ -1739,6 +1739,66 @@ $$\text{VERDICT} = \begin{cases} \texttt{VALID (Admissible)} & \text{if } v_d = 
 | `VECTOR_26_MERKLE_F` | Empty event list \| out-of-range index | `ValueError` raised |
 | `VECTOR_26_MERKLE_G` | API endpoints (`/build-tree`, `/generate-proof`, `/verify-proof`) | 200 OK; proof reconstructs original root |
 
+---
+
+## 61. Zero-Knowledge Proof (ZKP) Blind Forensic Auditor Engine (Module 27)
+
+**Research Reference:** Pillar 6 Research §2 (GDPR Article 9 • FRE 702 / Daubert • W3C Verifiable Credentials • Circom / SnarkJS Groth16)
+
+### 61.1 Poseidon Cryptographic Commitment (§2.1)
+
+To prevent Personally Identifiable Information (PII) or raw STR profiles from exposure in public court records, the private witness $\mathbf{G}_S = (a_{1,1}, a_{1,2}, \dots, a_{L,2})$ is committed into prime field $\mathbb{F}_p$ ($p = 21888242871839275222246405745257275088548364400416034343698204186575808495617$):
+
+$$H(\mathbf{G}_S) = \text{Poseidon}(\mathbf{G}_S \parallel \text{Salt}_S) \pmod p$$
+
+$$H(\mathbf{G}_E) = \text{Poseidon}(\mathbf{G}_E \parallel \text{Salt}_E) \pmod p$$
+
+---
+
+### 61.2 R1CS Locus-Level Arithmetic Equality Gadget (§2.1)
+
+For each allele position $(l,m) \in [1..L] \times [1..2]$, equality indicator $m_{l,m} \in \{0, 1\}$ and auxiliary witness $b_{l,m} \in \mathbb{F}_p$:
+
+$$(a_{l,m} - e_{l,m}) \cdot b_{l,m} = 1 - m_{l,m} \pmod p$$
+
+$$m_{l,m} \cdot (a_{l,m} - e_{l,m}) = 0 \pmod p$$
+
+**Threshold Score Constraint:**
+$$M_{\text{match}} = \sum_{l=1}^L \sum_{m=1}^2 m_{l,m} \ge M_{\text{thresh}} \implies M_{\text{match}} - M_{\text{thresh}} - \Delta = 0 \quad (\Delta \ge 0)$$
+
+---
+
+### 61.3 Groth16 BN254 Bilinear Pairing Verification (§2.2)
+
+Public signals vector: $\mathbf{x} = \big(H(\mathbf{G}_E), M_{\text{thresh}}, H(\mathbf{G}_S)\big)$.
+
+Given proof $\boldsymbol{\pi}_{\text{ZKP}} = (A \in \mathbb{G}_1, B \in \mathbb{G}_2, C \in \mathbb{G}_1)$ and verification key $VK = (\alpha, \beta, \gamma, \delta, \{K_i\}_{i=0}^l)$:
+
+$$e(A, B) = e(\alpha, \beta) \cdot e\left( \sum_{i=0}^l x_i K_i, \gamma \right) \cdot e(C, \delta)$$
+
+Evaluated as a single multi-pairing product in target field $\mathbb{G}_T$:
+
+$$e(A, B) \cdot e(-\alpha, \beta) \cdot e\left( -\sum_{i=0}^l x_i K_i, \gamma \right) \cdot e(-C, \delta) = 1_{\mathbb{G}_T}$$
+
+**Cryptographic Soundness Bound:**
+$$\epsilon \le \frac{d}{p} \approx 10^{-75}$$
+
+---
+
+### 61.4 Golden Benchmark Test Vectors (Module 27)
+
+| Vector | Test Scenario | Verified Mathematical Invariant | Status |
+| :--- | :--- | :--- | :---: |
+| `VECTOR_27_ZKP_A` | Full 24-locus diploid profile ($48/48$ alleles) | $M_{\text{match}} = 48 \ge 40 \implies \text{VALID}$; pairing passes | ✅ Verified |
+| `VECTOR_27_ZKP_B` | Partial profile match ($42/48$ alleles) | $M_{\text{match}} = 42 \ge 40 \implies \text{VALID}$; $\Delta = +2$ | ✅ Verified |
+| `VECTOR_27_ZKP_C` | Below threshold match ($32/48$ alleles) | $M_{\text{match}} = 32 < 40 \implies \texttt{ValueError}$ proof rejected | ✅ Verified |
+| `VECTOR_27_ZKP_D` | Tampered witness commitment | Public signal discrepancy detection | ✅ Verified |
+| `VECTOR_27_ZKP_E` | Corrupted Groth16 proof element ($A' \in \mathbb{G}_1$) | Pairing evaluation rejects malformed coordinates | ✅ Verified |
+| `VECTOR_27_ZKP_F` | Poseidon commitment determinism & entropy | Deterministic for same salt; strictly in $[0, p)$ | ✅ Verified |
+| `VECTOR_27_ZKP_G` | Domain validation (empty loci, $M_{\text{thresh}} \le 0$) | $\texttt{ValueError}$ raised | ✅ Verified |
+| `VECTOR_27_ZKP_H` | FastAPI REST pipeline (`/witness-commitment` $\to$ `/synthesize-proof` $\to$ `/verify-pairing`) | 200 OK end-to-end; $100\%$ pairing verification | ✅ Verified |
+
+
 
 
 

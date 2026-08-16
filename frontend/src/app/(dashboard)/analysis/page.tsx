@@ -53,7 +53,10 @@ import TouchDnaPanel from "@/components/analysis/TouchDnaPanel";
 import SyntheticCaseGeneratorPanel from "@/components/analysis/SyntheticCaseGeneratorPanel";
 import LimsWorkflowPanel from "@/components/analysis/LimsWorkflowPanel";
 import MerkleLedgerPanel from "@/components/analysis/MerkleLedgerPanel";
+import ZkpAuditorPanel from "@/components/analysis/ZkpAuditorPanel";
+
 import EvidenceManagementPanel from "@/components/analysis/EvidenceManagementPanel";
+
 
 
 import PedigreeTree from "@/components/analysis/PedigreeTree";
@@ -211,12 +214,12 @@ const CATEGORIES: Category[] = [
         color: "blue",
         tabs: [
             { id: "lims", label: "26. Merkle Custody Ledger", icon: PackageCheck, badge: "MERKLE-COC", maturity: "ACTIVE", maturityNote: "Live cryptographic binary Merkle tree chain of custody & O(log2 N) proof generator." },
-            { id: "qc", label: "27. ISO 17025 QA/QC Matrix", icon: ShieldCheck, badge: "ISO-17025", maturity: "ACTIVE", maturityNote: "Live ISO 17025 validation checklist & standard operating procedure validator." },
-
-            { id: "zkp", label: "28. Circom Groth16 ZKP Auditor", icon: Lock, badge: "ZKP-CIRCOM", maturity: "ACTIVE", maturityNote: "Live Circom BN254 Groth16 zero-knowledge proof generation & verification." },
+            { id: "zkp", label: "27. ZKP Blind Forensic Auditor", icon: Lock, badge: "ZKP-BN254", maturity: "ACTIVE", maturityNote: "Live Circom BN254 Groth16 zero-knowledge proof generation & bilinear multi-pairing verification." },
+            { id: "qc", label: "28. ISO 17025 QA/QC Matrix", icon: ShieldCheck, badge: "ISO-17025", maturity: "ACTIVE", maturityNote: "Live ISO 17025 validation checklist & standard operating procedure validator." },
             { id: "court", label: "29. Expert Witness Court Mode", icon: Scale, badge: "COURT-MODE", maturity: "DEMO", maturityNote: "Interactive expert witness courtroom reporting & ENFSI verbal predicate synthesizer." },
-            { id: "evidenceos", label: "30. Validator & Evidence OS DAG", icon: Layers, badge: "VALIDATOR", maturity: "ACTIVE", maturityNote: "Live 5-tier multi-omic forensic consensus DAG engine." },
+            { id: "evidenceos", label: "30. 3D Spatial Juror Visualizer", icon: Layers, badge: "JUROR-3D", maturity: "DEMO", maturityNote: "3D spatial crime scene reconstruction & interactive juror visualizer engine." },
         ],
+
     },
 ];
 
@@ -525,11 +528,11 @@ function renderPanel(tabId: TabId) {
 
         // Pillar 6: ISO 17025, LIMS & ZKP
         case "lims": return <MerkleLedgerPanel />;
+        case "zkp": return <ZkpAuditorPanel />;
         case "qc": return <QualityAssurancePanel />;
-
-        case "zkp": return <ForensicEvidenceOSPanel />;
         case "court": return <ExpertWitnessPanel />;
         case "evidenceos": return <EvidenceManagementPanel />;
+
         default: return <PanelSTR />;
     }
 }

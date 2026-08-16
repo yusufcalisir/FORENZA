@@ -348,6 +348,15 @@ try:
 except Exception as _lims_import_err:
     logger.warning(f"[boot] LIMS router not loaded: {_lims_import_err}")
 
+# --- ZKP Blind Forensic Auditor Router (Pillar 6 §2) ---
+try:
+    from app.api.zkp_routes import router as zkp_audit_router
+    app.include_router(zkp_audit_router, prefix="/api/v1")
+    logger.info("[boot] ZKP Blind Forensic Auditor API router registered at /api/v1/forensic/zkp")
+except Exception as _zkp_import_err:
+    logger.warning(f"[boot] ZKP Auditor router not loaded: {_zkp_import_err}")
+
+
 # --- Automated Analytical Instrument Gateway Router ---
 try:
     from app.api.instrument_routes import router as instrument_router

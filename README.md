@@ -665,7 +665,17 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`E`:** Custodial event order sensitivity verified (swapping $E_1 \leftrightarrow E_2$ alters root).
   - **`F`:** Empty event lists and out-of-range index exception handling verified.
   - **`G`:** API integration testing across `/forensic/lims/merkle/build-tree`, `/generate-proof`, and `/verify-proof`.
+* **`VECTOR_27_ZKP_A-H` (Zero-Knowledge Proof Blind Forensic Auditor — Module 27):**
+  - **`A`:** Full 24-locus 48-allele exact match verified ($M_{\text{match}} = 48 \ge 40$, Groth16 BN254 pairing verified).
+  - **`B`:** Partial profile match exceeding threshold verified ($M_{\text{match}} = 42 \ge 40$, $\Delta = +2$).
+  - **`C`:** Below threshold match rejection verified ($M_{\text{match}} = 32 < 40$, proof synthesis rejected).
+  - **`D`:** Tampered witness commitment discrepancy detection verified.
+  - **`E`:** Malformed/corrupted Groth16 proof element rejection verified.
+  - **`F`:** Poseidon commitment determinism, field range $[0, p)$, and salt entropy verified.
+  - **`G`:** Domain validation for empty loci and non-positive thresholds verified.
+  - **`H`:** API integration testing across `/forensic/zkp/witness-commitment`, `/synthesize-proof`, and `/verify-pairing`.
 * **`VECTOR_P6_02` (ISO 17025 Measurement Uncertainty):** Combined $u_c = 0.05385 \text{ ng/}\mu\text{L}$ and expanded $U_{95\%} = 0.1077 \text{ ng/}\mu\text{L}$ ($k=2.00$).
+
 
 * **`VECTOR_P6_03` (ENFSI Verbal Statement Mapping):** $LR = 3.5 \times 10^7$ maps deterministically to Verbal Tier 6 ("Extremely strong support for prosecution proposition").
 

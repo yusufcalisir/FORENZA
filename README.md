@@ -617,10 +617,19 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`E`:** Single bloodstain rejection verified ($N \ge 2$).
   - **`F`:** Aerodynamic drag and gravity upward correction verified ($\Delta z > 0$).
   - **`G`:** Dimension domain validation verified ($W > 0, L > 0$).
-  - **`H`:** API integration testing across `/forensic/physical/bpa-area-of-origin`.
+* **`VECTOR_22_GSR_A-H` (Forensic Ballistics, SEM-EDX GSR & 3D CMC — Module 22):**
+  - **`A`:** Characteristic Pb-Ba-Sb triad verified ($N \ge 3 \implies LR = 10,000.0$, Extremely Strong Support).
+  - **`B`:** Consistent 2-component elemental pairs verified ($N \ge 5 \implies LR = 500.0$, Strong Support).
+  - **`C`:** Irregular morphology aspect ratio $> 1.3$ downgrade verified.
+  - **`D`:** Environmental background particle filtering verified ($LR = 1.0$).
+  - **`E`:** Positive 3D CMC striation identification verified ($K \ge 6 \implies P_{\text{false}} < 10^{-6}$).
+  - **`F`:** Spatial translation threshold rejection verified ($|\Delta x| > 15\,\mu\text{m}$).
+  - **`G`:** Angular rotation threshold rejection verified ($|\Delta\theta| > 1.0^\circ$).
+  - **`H`:** API integration testing across `/forensic/physical/gsr-sem-edx-analysis` and `/cmc-striation-matching`.
 * **`VECTOR_P6_01` (Chain of Custody Tamper Detection):** Merkle tree root divergence verified upon a single-second timestamp modification ($P_{\text{detection}} = 100\%$).
 * **`VECTOR_P6_02` (ISO 17025 Measurement Uncertainty):** Combined $u_c = 0.05385 \text{ ng/}\mu\text{L}$ and expanded $U_{95\%} = 0.1077 \text{ ng/}\mu\text{L}$ ($k=2.00$).
 * **`VECTOR_P6_03` (ENFSI Verbal Statement Mapping):** $LR = 3.5 \times 10^7$ maps deterministically to Verbal Tier 6 ("Extremely strong support for prosecution proposition").
+
 
 
 

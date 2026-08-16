@@ -1565,6 +1565,32 @@ $$\frac{d\vec{v}}{dt} = \vec{g} - \frac{3 \rho_{\text{air}} C_d(Re)}{4 \rho_{\te
 
 $$C_d(Re) = \begin{cases} \frac{24}{Re} (1 + 0.15 Re^{0.687}) & \text{if } Re \le 1000 \quad (\text{Schiller-Naumann}) \\ 0.44 & \text{if } Re > 1000 \end{cases}$$
 
+---
+
+## 56. Forensic Ballistics, SEM-EDX GSR & 3D CMC Striation Engine (Module 22)
+
+### 56.1 Quantitative SEM-EDX GSR Classification (ASTM E1588-20)
+
+| Classification Tier | Elemental Composition Criteria | Aspect Ratio | Evidentiary Interpretation |
+| :--- | :--- | :--- | :--- |
+| **Characteristic GSR** | $\text{Pb} \ge 10\%, \text{Ba} \ge 10\%, \text{Sb} \ge 10\%$ | $\le 1.3$ | Unique to firearm discharge events |
+| **Consistent with GSR** | $\text{Pb-Ba}, \text{Pb-Sb}, \text{Ba-Sb} \ge 10\%$ | $\le 1.5$ | Indicative of firearm discharge |
+| **Commonly Associated** | $\text{Pb} \ge 10\% \lor \text{Ba} \ge 10\% \lor (\text{Ba} \ge 10\% \land \text{Al} \ge 10\%)$ | Any | Environmental / industrial sources |
+
+Evidentiary Likelihood Ratio ($LR_{\text{GSR}}$):
+
+$$LR_{\text{GSR}} = \begin{cases} 10,000.0 & \text{if } N_{\text{char}} \ge 3 \quad (\text{Extremely Strong Support}) \\ 500.0 & \text{if } N_{\text{char}} \ge 1 \lor N_{\text{cons}} \ge 5 \quad (\text{Strong Support}) \\ 25.0 & \text{if } N_{\text{cons}} \ge 1 \quad (\text{Moderate Support}) \\ 1.0 & \text{otherwise} \quad (\text{Inconclusive / Neutral}) \end{cases}$$
+
+### 56.2 3D Congruent Matching Cells (CMC) Algorithm for Toolmarks
+
+Land engraved areas (LEA) are partitioned into $100 \ \mu\text{m} \times 100 \ \mu\text{m}$ grid cells evaluated across tri-threshold convergence:
+1. Peak cross-correlation: $CCF_{\max, k} \ge 0.55$
+2. Spatial translation tolerance: $|\Delta x_k - \bar{\Delta x}| \le 15.0 \ \mu\text{m}, \quad |\Delta y_k - \bar{\Delta y}| \le 15.0 \ \mu\text{m}$
+3. Angular rotation tolerance: $|\Delta \theta_k - \bar{\Delta \theta}| \le 1.0^\circ$
+
+$$K \ge 6 \text{ CMC} \implies P_{\text{false}} < 10^{-6} \implies \text{POSITIVE_IDENTIFICATION}$$
+
+
 
 
 

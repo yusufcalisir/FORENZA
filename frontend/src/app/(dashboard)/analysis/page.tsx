@@ -8,8 +8,9 @@ import {
     FlaskConical, Layers, Cpu, Lock, Radio, AlertTriangle,
     CheckCircle, Clock, TrendingUp, GitBranch, Binary,
     Droplets, Pill, Eye, Bug, Leaf, Bone, Syringe,
-    PackageCheck, Scale, Zap, Database,
+    PackageCheck, Scale, Zap, Database, Target,
 } from "lucide-react";
+
 import ActiveProfileBanner from "@/components/common/ActiveProfileBanner";
 import { useForensicCaseStore } from "@/store/forensicCaseStore";
 
@@ -31,7 +32,9 @@ import BodyFluidPanel from "@/components/analysis/BodyFluidPanel";
 import MicroscopyPanel from "@/components/analysis/MicroscopyPanel";
 import BpaImagePanel from "@/components/analysis/BpaImagePanel";
 import BpaAreaOfOriginPanel from "@/components/analysis/BpaAreaOfOriginPanel";
+import BallisticsGsrPanel from "@/components/analysis/BallisticsGsrPanel";
 import InstrumentIngestionPanel from "@/components/analysis/InstrumentIngestionPanel";
+
 
 import QualityAssurancePanel from "@/components/analysis/QualityAssurancePanel";
 import HumanReviewPanel from "@/components/analysis/HumanReviewPanel";
@@ -185,8 +188,9 @@ const CATEGORIES: Category[] = [
         color: "orange",
         tabs: [
             { id: "bpa", label: "21. Bloodstain Pattern (BPA 3D)", icon: Eye, badge: "BPA-3D", maturity: "ACTIVE", maturityNote: "Live 3D trigonometric area of origin & impact angle calculator." },
-            { id: "microscopy", label: "22. Digital Microscopy & Fibers", icon: Microscope, badge: "MICROSCOPY", maturity: "PLACEHOLDER", maturityNote: "Research prototype for digital polarized light microscopy & fiber comparison." },
+            { id: "microscopy", label: "22. Ballistics & SEM-EDX GSR", icon: Target, badge: "GSR-CMC", maturity: "ACTIVE", maturityNote: "Live ASTM E1588-20 SEM-EDX GSR analysis & 3D CMC firearm striation matching." },
             { id: "toxicology", label: "23. Post-Mortem GC-MS Tox", icon: Pill, badge: "TOX-GCMS", maturity: "DEMO", maturityNote: "Quantitative drug screening with ISO 17025 expanded uncertainty and Widmark BAC." },
+
             { id: "botany", label: "24. Diatom & Palynology Ecology", icon: Leaf, badge: "PALYNO-ECO", maturity: "PLACEHOLDER", maturityNote: "Research prototype for diatom drowning & forensic palynology ecology." },
             { id: "serology", label: "25. ABO / Rh Blood Serology", icon: Droplets, badge: "ABO-SERO", maturity: "DEMO", maturityNote: "ABO/Rh blood grouping & absorption-elution serology simulator." },
         ],
@@ -502,9 +506,9 @@ function renderPanel(tabId: TabId) {
         case "mirna": return <BodyFluidPanel />;
         // Pillar 5: Pathology & Trace Forensics
         case "bpa": return <BpaAreaOfOriginPanel />;
-        case "microscopy": return <MicroscopyPanel />;
-
+        case "microscopy": return <BallisticsGsrPanel />;
         case "toxicology": return <ToxicologyPanel />;
+
         case "botany": return <BotanyPanel />;
         case "serology": return <SerologyPanel />;
         // Pillar 6: ISO 17025, LIMS & ZKP

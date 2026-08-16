@@ -631,6 +631,12 @@ _STR_STORE["CASE-2026-8891"] = _STR_STORE["test-profile-eu"]
 
 @app.get("/health", tags=["System"])
 @app.head("/health", include_in_schema=False)
+@app.get("/healthz", tags=["System"], include_in_schema=False)
+@app.head("/healthz", include_in_schema=False)
+@app.get("/livez", tags=["System"], include_in_schema=False)
+@app.head("/livez", include_in_schema=False)
+@app.get("/readyz", tags=["System"], include_in_schema=False)
+@app.head("/readyz", include_in_schema=False)
 @app.get("/api/health", tags=["System"], include_in_schema=False)
 @app.head("/api/health", include_in_schema=False)
 def health_check() -> dict:

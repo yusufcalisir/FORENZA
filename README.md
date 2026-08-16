@@ -280,7 +280,7 @@ FORENZA structures its 30 biocomputational subsystems into 6 canonical operation
 
 26. **Chain of Custody Merkle Tree Ledger (`26`):** Cryptographic SHA-256 / Blake3 binary append-only Merkle tree recording every evidence handling state transition with $O(\log_2 N)$ courtroom inclusion proofs.
 27. **Zero-Knowledge Proof Blind Forensic Auditor (`27`):** Circom / Groth16 zk-SNARK privacy-preserving matching engine proving suspect inclusion ($LR \ge M_{\text{thresh}}$) over BN254 bilinear pairing without exposing raw STR/SNP sequences or PII.
-28. **ISO/IEC 17025:2017 Metrological Uncertainty Budget (`28`):** GUM (JCGM 100:2008) combined and expanded measurement uncertainty ($U_{95\%} = k \cdot u_c, k=2.00$) for quantitative qPCR DNA yields and laboratory $z$-score proficiency validation.
+28. **ISO/IEC 17025:2017 Metrological Uncertainty Budget (`28`):** GUM (JCGM 100:2008) combined and expanded measurement uncertainty ($U_{\text{95\%}} = k \cdot u_c, \; k=2.00$) for quantitative qPCR DNA yields and laboratory $z$-score proficiency validation.
 29. **Dynamic ENFSI Evaluative Reporting Scaler (`29`):** Translates continuous Likelihood Ratios into standardized 7-tier ENFSI (2017) verbal scale testimony statements in English and Turkish with Daubert/Frye admissibility checks.
 30. **3D Spatial Evidence Presenter & Juror Visualizer (`30`):** Special Euclidean $SE(3)$ multi-sensor spatial registration and 95% volumetric probability ellipsoid rendering to reduce juror cognitive bias.
 
@@ -672,7 +672,7 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** Poseidon commitment determinism, field range $[0, p)$, and salt entropy verified.
   - **`G`:** Domain validation for empty loci and non-positive thresholds verified.
   - **`H`:** API integration testing across `/forensic/zkp/witness-commitment`, `/synthesize-proof`, and `/verify-pairing`.
-* **`VECTOR_P6_02` (ISO 17025 DNA Quantification Calibration Budget Ground Truth - Module 28):** Combined $u_c = 0.05385 \text{ ng/}\mu\text{L}$ and expanded $U_{95\%} = 0.10770 \text{ ng/}\mu\text{L}$ ($k=2.00$, $\text{CI: } [1.3423, 1.5577]\,\text{ng/}\mu\text{L}$).
+* **`VECTOR_P6_02` (ISO 17025 DNA Quantification Calibration Budget Ground Truth - Module 28):** Combined $u_c = 0.05385 \text{ ng/}\mu\text{L}$ and expanded $U_{\text{95\%}} = 0.10770 \text{ ng/}\mu\text{L}$ ($k=2.00$, $\text{CI: } [1.3423, 1.5577]\,\text{ng/}\mu\text{L}$).
 * **`VECTOR_28_UNCERT_A-G` (ISO 17025 Measurement Uncertainty & Calibration - Module 28):**
   - **`A`:** Custom sensitivity coefficients ($c_i \neq 1.0$) variance propagation verified.
   - **`B`:** Positively correlated components ($r_{ij} > 0$) positive covariance expansion verified.

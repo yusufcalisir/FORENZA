@@ -577,7 +577,7 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`C`:** Menstrual Blood (Endometrial `cg00854446`, `cg18063373`) vs Vaginal Secretions (`cg04382942`, `cg11624633`) differentiation ($P > 80\text{\%}$).
   - **`D`:** Touch DNA epidermal skin calling verified (`cg07823520: 0.11`, $P_{\text{skin}} \ge 98.0\text{\%}$).
   - **`E`:** Sum-to-One posterior probability invariant verified ($|\sum P - 1.0| < 10^{-6}$).
-  - **`F`:** Likelihood Ratio ($\text{LR}_{\text{tissue}}$) and $\log_{10}\text{LR}$ metric consistency verified.
+  - **`F`:** Likelihood Ratio and logarithmic scale consistency verified ($LR_{\text{tissue}}, \; \log_{10} LR$).
   - **`G`:** Input validation boundaries and empty profile exception handling.
   - **`H`:** API integration testing across `/forensic/epigenetics/deconvolve-tissue`.
 * **`VECTOR_18_LIFE_A-H` (Environmental Epigenetics & Lifestyle Biomarkers - Module 18):**

@@ -306,7 +306,7 @@ $$P(A_i A_j \mid A_i A_j) = 2 \cdot \frac{\theta + (1-\theta)p_i}{1+\theta} \cdo
 
 The MCMC probabilistic deconvolution engine samples parameters $\Theta = \{w, d, A\}$ (mixture proportions, degradation, allele heights) using the acceptance ratio:
 
-$$\alpha = \min\left(1, \frac{P(E \mid \Theta^*) \cdot P(\Theta^*) \cdot q(\Theta^{(t)} \mid \Theta^*)}{P(E \mid \Theta^{(t)}) \cdot P(\Theta^{(t)}) \cdot q(\Theta^* \mid \Theta^{(t)})}\right)$$
+$$\alpha = \min\left(1, \; \frac{P(E \mid \Theta^{\ast}) \cdot P(\Theta^{\ast}) \cdot q(\Theta^{(t)} \mid \Theta^{\ast})}{P(E \mid \Theta^{(t)}) \cdot P(\Theta^{(t)}) \cdot q(\Theta^{\ast} \mid \Theta^{(t)})}\right)$$
 
 ### 3. HIrisPlex-S Multinomial Logistic Regression & Normalization Invariant
 
@@ -316,9 +316,9 @@ $$\ln\left(\frac{P(Y = k)}{P(Y = K)}\right) = \beta_{k0} + \sum_{i=1}^{M} \beta_
 
 $$P(Y = k) = \frac{\exp\left(\beta_{k0} + \sum_{i=1}^M \beta_{ki} X_i\right)}{1 + \sum_{j=1}^{K-1} \exp\left(\beta_{j0} + \sum_{i=1}^M \beta_{ji} X_i\right)}$$
 
-**Sum-to-Unity Normalization Invariant:** The platform enforces strict sum-to-one validation across all categorical probability spaces with bounded floating-point tolerance $\epsilon \in [1.0\text{\%}, 1.5\text{\%}]$:
+**Sum-to-Unity Normalization Invariant:** The platform enforces strict sum-to-one validation across all categorical probability spaces with bounded floating-point tolerance $\epsilon \le 0.015$ (1.5%):
 
-$$\left| \sum_{k=1}^K P(Y=k)\text{\%} - 100.0\text{\%} \right| \le \epsilon \quad \implies \quad \text{Status: NORMALIZED}$$
+$$\left| \sum_{k=1}^K P(Y=k) - 1.0 \right| \le \epsilon \quad \implies \quad \text{Status: NORMALIZED}$$
 
 ### 4. Horvath Epigenetic Methylation Age Clock
 

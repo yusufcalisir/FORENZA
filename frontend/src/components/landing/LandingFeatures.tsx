@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 import { 
     Binary, Dna, Activity, Bone, Bug, Leaf, Droplet, Pill, Syringe, 
-    PackageCheck, Eye, Microscope, Fingerprint, Clock, Cpu, FileText, Scale, Sparkles, Layers, CheckCircle2, ShieldCheck, Zap
+    PackageCheck, Eye, Microscope, Fingerprint, Clock, Cpu, FileText, Scale, Sparkles, Layers, CheckCircle2, ShieldCheck, Zap, Globe
 } from "lucide-react";
 
 const PILLAR_STYLES = [
@@ -15,6 +15,7 @@ const PILLAR_STYLES = [
     { icon: Clock, color: "amber", accentBorder: "border-amber-500/50", accentBg: "bg-amber-500/10", accentText: "text-amber-400", accentGlow: "shadow-amber-500/20" },
     { icon: Microscope, color: "rose", accentBorder: "border-rose-500/50", accentBg: "bg-rose-500/10", accentText: "text-rose-400", accentGlow: "shadow-rose-500/20" },
     { icon: Scale, color: "cyan", accentBorder: "border-cyan-500/50", accentBg: "bg-cyan-500/10", accentText: "text-cyan-400", accentGlow: "shadow-cyan-500/20" },
+    { icon: Globe, color: "emerald", accentBorder: "border-emerald-500/50", accentBg: "bg-emerald-500/10", accentText: "text-emerald-400", accentGlow: "shadow-emerald-500/20" },
 ];
 
 export default function LandingFeatures() {
@@ -50,8 +51,8 @@ export default function LandingFeatures() {
                     </p>
                 </div>
 
-                {/* 6 Category Selection Tabs */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3">
+                {/* 7 Category Selection Tabs */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 sm:gap-3">
                     {pillars.map((p, idx) => {
                         const isSelected = selectedPillar === idx;
                         return (

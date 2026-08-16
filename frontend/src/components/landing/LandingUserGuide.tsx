@@ -103,7 +103,7 @@ export default function LandingUserGuide() {
           details: [
             "Click the top-right 'Open DNA & SNP Terminal' button in the FORENZA workstation header to open the case management console.",
             "Load pre-configured test profiles (Sample EU: Northern European profile / Sample AA: West African profile) with one click or enter custom STR alleles & SNP genotypes.",
-            "Changes immediately propagate to all 30 biocomputational modules across the workstation."
+            "Changes immediately propagate to all 35 biocomputational modules across the workstation."
           ]
         },
         {

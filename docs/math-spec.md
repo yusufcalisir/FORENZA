@@ -2011,6 +2011,134 @@ $$a = b = c = \sqrt{1.0 \times 7.815} = 2.7955\,\text{m}, \qquad V = \frac{4}{3}
 | `VECTOR_30_SPATIAL_F` | Domain validation (singular/indefinite covariance; empty scene; mismatched lengths) | `ValueError` raised for all invalid inputs | ✅ Verified |
 | `VECTOR_30_SPATIAL_G` | FastAPI REST integration (`/transform-se3`, `/confidence-ellipsoid`, `/reconstruct-scene`) | 200 OK end-to-end; 400 on invalid inputs; $\chi^2=7.815$ in all responses | ✅ Verified |
 
+---
+
+## 65. Multi-Isotope Spatial Isoscape Provenance Engine (Module 31)
+
+### 65.1 Global Meteoric Water Line (GMWL) & Precipitation Isoscapes
+Precipitation isotopic fractionation follows the Harmon Craig Global Meteoric Water Line:
+
+$$\delta^2\text{H} = 8.0 \cdot \delta^{18}\text{O} + 10.0, \qquad d = \delta^2\text{H} - 8.0 \cdot \delta^{18}\text{O} \quad (\text{Deuterium Excess})$$
+
+Precipitation $\delta^{18}\text{O}_{\text{precip}}$ is modeled via the Terzer-Wassenaar global spatial equation:
+
+$$\delta^{18}\text{O}_{\text{precip}}(\theta, \lambda, h) = \beta_0 + \beta_1 |\theta| + \beta_2 \theta^2 + \beta_3 h + \beta_4 \text{dist}_{\text{coast}}(\theta, \lambda)$$
+
+### 65.2 Biological Tissue Fractionation & Biomineral Calibration
+Tooth enamel bioapatite $(\delta^{18}\text{O}_{\text{carbonate}} \to \delta^{18}\text{O}_{\text{water}})$ conversion (Chenery / Daux):
+
+$$\delta^{18}\text{O}_{\text{water}} = 1.590 \cdot \delta^{18}\text{O}_{\text{carbonate}} - 48.634$$
+
+Scalp hair keratin $(\delta^2\text{H}_{\text{hair}} \to \delta^2\text{H}_{\text{water}})$ conversion (Ehleringer):
+
+$$\delta^2\text{H}_{\text{water}} = \frac{\delta^2\text{H}_{\text{hair}} + 26.0}{0.910}$$
+
+### 65.3 Bataille High-Resolution Strontium ($^{87}\text{Sr}/^{86}\text{Sr}$) Model
+Bioavailable strontium integrates bedrock lithology, weathering rates, and atmospheric deposition:
+
+$$\left(\frac{^{87}\text{Sr}}{^{86}\text{Sr}}\right)_{\text{bio}} = f_{\text{bedrock}} \cdot \left(\frac{^{87}\text{Sr}}{^{86}\text{Sr}}\right)_{\text{rock}} + (1 - f_{\text{bedrock}}) \cdot \left(\frac{^{87}\text{Sr}}{^{86}\text{Sr}}\right)_{\text{precip}}$$
+
+### 65.4 Continuous Multivariate Gaussian Spatial Likelihood & Golden Benchmark
+At geographic coordinate $(\theta_i, \lambda_j)$, the $K$-dimensional isotopic vector likelihood is:
+
+$$\mathcal{L}(\mathbf{z}_{\text{obs}} \mid \theta_i, \lambda_j) = \frac{1}{(2\pi)^{K/2} |\boldsymbol{\Sigma}_{ij}|^{1/2}} \exp\left( -\frac{1}{2} (\mathbf{z}_{\text{obs}} - \boldsymbol{\mu}_{ij})^T \boldsymbol{\Sigma}_{ij}^{-1} (\mathbf{z}_{\text{obs}} - \boldsymbol{\mu}_{ij}) \right)$$
+
+* **`VECTOR_GEO_01` (Swiss Prealps):** Tooth $\delta^{18}\text{O}_{\text{carb}} = 25.40‰ \to \delta^{18}\text{O}_{\text{water}} = -8.25‰$, $^{87}\text{Sr}/^{86}\text{Sr} = 0.70882$, Hair $\delta^2\text{H} = -78.4‰ \to \delta^2\text{H}_{\text{water}} = -57.58‰$. Centroid: $\text{Lat} = 46.91^\circ\text{N}, \text{Lon} = 8.39^\circ\text{E}$, $R_{95\%} = 48.50\text{ km}, LR = 3.25 \times 10^4$.
+
+---
+
+## 66. Forensic Soil Pedology, QXRD Rietveld & CoDa Engine (Module 32)
+
+### 66.1 Aitchison Centered Log-Ratio ($\text{CLR}$) Transform (ASTM E3272-21)
+For a compositional mineral vector $\mathbf{x} = (x_1, \dots, x_D)^T$ on the simplex $\mathcal{S}^D$:
+
+$$g(\mathbf{x}) = \left(\prod_{i=1}^D x_i\right)^{1/D}, \qquad \text{clr}(\mathbf{x}) = \left( \ln\frac{x_1}{g(\mathbf{x})}, \dots, \ln\frac{x_D}{g(\mathbf{x})} \right)^T, \qquad \sum_{i=1}^D \text{clr}_i(\mathbf{x}) = 0$$
+
+### 66.2 Zircon-Tourmaline-Rutile (ZTR) Heavy Mineral Maturity Index
+
+$$\text{ZTR} = \frac{\text{Zircon} + \text{Tourmaline} + \text{Rutile}}{\sum \text{Non-Micaceous Transparent Heavy Minerals}} \times 100\%$$
+
+### 66.3 Minimum Covariance Determinant (MCD) Robust Mahalanobis Distance & Hotelling $T^2$
+
+$$D_M^2(\mathbf{x}_Q, \bar{\mathbf{x}}_C) = (\text{clr}(\mathbf{x}_Q) - \bar{\mathbf{x}}_C)^T \mathbf{S}_{\text{MCD}}^{-1} (\text{clr}(\mathbf{x}_Q) - \bar{\mathbf{x}}_C)$$
+
+$$T^2 = \frac{n_Q \cdot n_C}{n_Q + n_C} D_M^2 \implies F = \frac{n_Q + n_C - p - 1}{(n_Q + n_C - 2)p} T^2 \sim F(p, n_Q + n_C - p - 1)$$
+
+### 66.4 Munsell $\to$ CIEDE2000 ($\Delta E_{00}^*$) Soil Colorimetric Difference
+
+$$\Delta E_{00}^* = \sqrt{\left(\frac{\Delta L'}{k_L S_L}\right)^2 + \left(\frac{\Delta C'}{k_C S_C}\right)^2 + \left(\frac{\Delta H'}{k_H S_H}\right)^2 + R_T \left(\frac{\Delta C'}{k_C S_C}\right)\left(\frac{\Delta H'}{k_H S_H}\right)}$$
+
+* **`VECTOR_GEO_02`:** Questioned boot trace vs crime scene control: $D_M = 1.4200, F = 0.0560, p = 0.999, \Delta E_{00}^* = 0.00, \text{ZTR} = 9.50\%, LR = 4.50 \times 10^3$, ASTM E3272 `DEFINITIVE_INCLUSION`.
+
+---
+
+## 67. Forensic Palynology & Environmental eDNA Metagenomics Engine (Module 33)
+
+### 67.1 Relative Pollen Frequency ($\text{RPF}$) & Tauber Distance
+
+$$\text{RPF}_i = \frac{n_i}{\sum_{j=1}^M n_j} \times 100\%, \qquad \sum_{i=1}^M \text{RPF}_i = 100.0\% \quad (N_{\text{total}} \ge 300)$$
+
+Multivariate dissimilarities across palynomorph taxa profiles $\mathbf{p}$ and $\mathbf{q}$:
+- **Bray-Curtis:** $d_{\text{BC}}(\mathbf{p}, \mathbf{q}) = \frac{\sum |p_i - q_i|}{\sum (p_i + q_i)}$
+- **Cosine Similarity:** $S_{\text{cos}}(\mathbf{p}, \mathbf{q}) = \frac{\mathbf{p} \cdot \mathbf{q}}{\|\mathbf{p}\| \|\mathbf{q}\|}$
+- **Canberra Distance:** $d_{\text{Can}}(\mathbf{p}, \mathbf{q}) = \sum \frac{|p_i - q_i|}{|p_i| + |q_i|}$
+
+### 67.2 6-Biome Ecological Classifier & 16S/ITS Spatial Regression
+Classifies questioned trace into 6 reference biomes:
+1. `DECIDUOUS_FOREST` (*Quercus*, *Fagus*, *Carpinus*)
+2. `CONIFEROUS_FOREST` (*Pinus*, *Picea*, *Abies*)
+3. `STEPPE_GRASSLAND` (*Poaceae*, *Artemisia*, *Chenopodiaceae*)
+4. `RUDERAL_URBAN` (*Plantago*, *Urtica*, *Taraxacum*)
+5. `AGRICULTURAL_CEREAL` (*Cerealia*, *Secale*, *Brassica*)
+6. `COASTAL_HALOPHYTE` (*Salicornia*, *Tamarix*)
+
+16S rRNA V4 and ITS fungal ASV spatial regression predicts provenance centroid coordinates $(\hat{\theta}, \hat{\lambda})$.
+
+---
+
+## 68. Bayesian Rossmo Geographic Profiling Engine (Module 34)
+
+### 68.1 Rossmo Targeted Hunting Formula
+For $C$ serial crime scenes $(x_c, y_c)$ on a discrete grid, the operational hunting probability $P(x_i, y_j)$ is:
+
+$$P(x_i, y_j) = k \sum_{c=1}^C \left[ \frac{\phi_{ijc}}{( |x_i - x_c| + |y_j - y_c| )^f} + \frac{(1 - \phi_{ijc}) B^{g - f}}{( 2B - (|x_i - x_c| + |y_j - y_c|) )^g} \right]$$
+
+where:
+- $\phi_{ijc} = 1$ if $(|x_i - x_c| + |y_j - y_c|) > B$, else $0$.
+- Buffer zone: $B = 1.50\text{ km}$, decay exponent: $f = 1.60$, buffer exponent: $g = 0.80$.
+
+### 68.2 WGS84 Vincenty Ellipsoidal Geodesic Algorithm
+Computes exact geodesic distance $s$ on the WGS84 reference ellipsoid ($a=6378137.0\text{ m}, f=1/298.257223563, b=6356752.314245\text{ m}$) via iterative spherical reduction:
+
+$$\tan\sigma = \frac{\sqrt{(\cos U_2 \sin\Delta\lambda)^2 + (\cos U_1 \sin U_2 - \sin U_1 \cos U_2 \cos\Delta\lambda)^2}}{\sin U_1 \sin U_2 + \cos U_1 \cos U_2 \cos\Delta\lambda}$$
+
+### 68.3 Canter Circle Hypothesis & Search Efficiency Index ($\text{SEI}$)
+
+$$D_{\max} = \max_{j > k} d(C_j, C_k), \qquad R_{\text{canter}} = \frac{D_{\max}}{2}$$
+
+- If $(x_0, y_0) \in \mathcal{C}(R_{\text{canter}}) \implies$ `MARAUDER` (Anchor inside crime cluster).
+- If $(x_0, y_0) \notin \mathcal{C}(R_{\text{canter}}) \implies$ `COMMUTER` (Offender travels into buffer zone).
+- Search Efficiency Index: $\text{SEI} = \left( 1 - \frac{S_{p\%}}{S_{\text{total}}} \right) \times 100\% \ge 90\%$.
+
+* **`VECTOR_GEO_03`:** Peak Anchor $(x_0, y_0) = (6.80\text{ km}, 11.40\text{ km}), S_{5\%} = 14.20\text{ km}^2, \text{SEI} = 96.45\%, D_{\max} = 9.42\text{ km}$, `MARAUDER`.
+
+---
+
+## 69. Multi-Criteria Bayesian Evidence Fusion Engine (Module 35)
+
+### 69.1 Joint Posterior Spatial Probability Raster Multiplier
+
+$$P(\theta_i, \lambda_j \mid \mathbf{E}) = \frac{P_0(\theta_i, \lambda_j) \prod_{k=1}^M \left[ \mathcal{L}_k(\mathbf{e}_k \mid \theta_i, \lambda_j) \right]^{w_k}}{\sum_{u} \sum_{v} P_0(\theta_u, \lambda_v) \prod_{k=1}^M \left[ \mathcal{L}_k(\mathbf{e}_k \mid \theta_u, \lambda_v) \right]^{w_k}}$$
+
+### 69.2 2D Adaptive Gaussian Kernel Density Estimation (KDE)
+Bivariate Gaussian kernel with Silverman's rule of thumb bandwidths $h_x = \hat{\sigma}_x n^{-1/6}, h_y = \hat{\sigma}_y n^{-1/6}$:
+
+$$\hat{f}(x, y) = \frac{1}{2\pi n h_x h_y} \sum_{i=1}^n \exp\left( -\frac{1}{2} \left[ \left(\frac{x - x_i}{h_x}\right)^2 + \left(\frac{y - y_i}{h_y}\right)^2 \right] \right)$$
+
+### 69.3 ISO/IEC 17025 & ENFSI 2017 7-Tier Bilingual Evaluative Reporting
+Translates composite fused likelihood ratio ($LR_{\text{fused}} \ge 10^8$) into standard ENFSI Tier 6 (`EXTREMELY_STRONG_SUPPORT`) statements with active Prosecutor's Fallacy shields.
+
+
 
 
 

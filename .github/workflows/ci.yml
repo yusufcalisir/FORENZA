@@ -63,9 +63,9 @@ jobs:
       - name: Run Frontend NPM Audit Security Check
         run: npm --prefix frontend audit --audit-level=high || echo "NPM Security Audit Completed"
 
-  # ── Job 3: Python 30-Subsystem Biocomputational Test Suite (pytest) ──
+  # ── Job 3: Python 35-Subsystem Biocomputational Test Suite (pytest) ──
   biocomputational-test-suite:
-    name: 3. Python 30-Subsystem Biocomputational Test Suite (796 Tests)
+    name: 3. Python 35-Subsystem Biocomputational Test Suite (Pillars 1–7)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -83,7 +83,7 @@ jobs:
           pip install -r backend/requirements.txt
           pip install pytest pytest-asyncio pytest-cov hypothesis
 
-      - name: Execute Full 30-Subsystem Test Suite (Pillars 1–6)
+      - name: Execute Full 35-Subsystem Test Suite (Pillars 1–7)
         env:
           PYTHONPATH: ".:backend:backend/app"
         run: |

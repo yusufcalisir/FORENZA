@@ -61,10 +61,12 @@ import EvidenceManagementPanel from "@/components/analysis/EvidenceManagementPan
 
 import PedigreeTree from "@/components/analysis/PedigreeTree";
 import HIrisPlexPanel from "@/components/analysis/HIrisPlexPanel";
+import GeoForensicIntelligencePanel from "@/components/analysis/GeoForensicIntelligencePanel";
+import { Globe, Mountain, TreePine, Crosshair as CrosshairIcon } from "lucide-react";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-type CategoryId = "genotyping" | "lineage" | "phenotyping" | "epigenetics" | "pathology" | "lims_governance";
+type CategoryId = "genotyping" | "lineage" | "phenotyping" | "epigenetics" | "pathology" | "lims_governance" | "geoint";
 type TabId = string;
 
 export type ModuleMaturity = "ACTIVE" | "DEMO" | "PLACEHOLDER";
@@ -219,7 +221,19 @@ const CATEGORIES: Category[] = [
             { id: "court", label: "29. Expert Witness Court Mode", icon: Scale, badge: "COURT-MODE", maturity: "DEMO", maturityNote: "Interactive expert witness courtroom reporting & ENFSI verbal predicate synthesizer." },
             { id: "evidenceos", label: "30. 3D Spatial Juror Visualizer", icon: Layers, badge: "JUROR-3D", maturity: "DEMO", maturityNote: "3D spatial crime scene reconstruction & interactive juror visualizer engine." },
         ],
-
+    },
+    {
+        id: "geoint",
+        label: "Geo-Forensic Intelligence",
+        icon: Globe,
+        color: "cyan",
+        tabs: [
+            { id: "geo_isoscape", label: "31. Multi-Isotope Isoscape Engine", icon: Globe, badge: "ISOTOPE", maturity: "ACTIVE", maturityNote: "Live multi-isotope spatial isoscape mapping (H/O/Sr) & Bayesian centroid resolution." },
+            { id: "geo_soil", label: "32. Forensic Soil Pedology & CoDa", icon: Mountain, badge: "SOIL-CODA", maturity: "ACTIVE", maturityNote: "Live QXRD Rietveld mineralogy, ZTR index & ASTM E3272-21 Hotelling T2 comparison." },
+            { id: "geo_palynology", label: "33. Palynology & eDNA Metagenomics", icon: TreePine, badge: "PALYNO", maturity: "ACTIVE", maturityNote: "Live Relative Pollen Frequency (RPF), 6-biome classifier & 16S/ITS spatial regression." },
+            { id: "geo_rossmo", label: "34. Rossmo Geographic Profiling", icon: CrosshairIcon, badge: "ROSSMO", maturity: "ACTIVE", maturityNote: "Live Rossmo targeted hunting probability surface & Canter circle Marauder classification." },
+            { id: "geo_fusion", label: "35. Multi-Criteria Bayesian GIS Fusion", icon: Layers, badge: "FUSION", maturity: "ACTIVE", maturityNote: "Live multi-criteria Bayesian raster integration, 2D adaptive KDE & ENFSI report generator." },
+        ],
     },
 ];
 
@@ -533,6 +547,12 @@ function renderPanel(tabId: TabId) {
         case "court": return <ExpertWitnessPanel />;
         case "evidenceos": return <EvidenceManagementPanel />;
 
+        // Pillar 7: Geo-Forensics & Spatial Intelligence
+        case "geo_isoscape": return <GeoForensicIntelligencePanel initialMode="ISOSCAPES" />;
+        case "geo_soil": return <GeoForensicIntelligencePanel initialMode="SOIL_CODA" />;
+        case "geo_palynology": return <GeoForensicIntelligencePanel initialMode="PALYNOLOGY_EDNA" />;
+        case "geo_rossmo": return <GeoForensicIntelligencePanel initialMode="ROSSMO_GEO" />;
+        case "geo_fusion": return <GeoForensicIntelligencePanel initialMode="BAYESIAN_FUSION" />;
 
         default: return <PanelSTR />;
     }

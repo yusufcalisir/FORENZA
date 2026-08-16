@@ -369,6 +369,17 @@ try:
 except Exception as _zkp_import_err:
     logger.warning(f"[boot] ZKP Auditor router not loaded: {_zkp_import_err}")
 
+# --- Geo-Forensic Intelligence & Spatial Biogeochemistry Router (Pillar 7 §1) ---
+try:
+    try:
+        from app.api.geoint_routes import router as geoint_router
+    except ImportError:
+        from backend.app.api.geoint_routes import router as geoint_router
+    app.include_router(geoint_router, prefix="/api/v1")
+    logger.info("[boot] Geo-Forensic Intelligence API router registered at /api/v1/forensic/geoint")
+except Exception as _geoint_import_err:
+    logger.warning(f"[boot] Geo-Forensic Intelligence router not loaded: {_geoint_import_err}")
+
 
 # --- Automated Analytical Instrument Gateway Router ---
 try:

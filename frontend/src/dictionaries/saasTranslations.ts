@@ -209,7 +209,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
   en: {
     header: {
       bioSimulator: "Bio-Simulator",
-      subsystems: "30 Subsystems",
+      subsystems: "35 Subsystems",
       architecture: "Evidence DAG",
       security: "Security & ISO",
       launchDemo: "Launch FORENZA OS",
@@ -218,9 +218,9 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       badge: "Multi-Omic Forensic Evidence OS",
       titleMain: "Integrated Biocomputational",
       titleHighlight: "Forensic Evidence OS",
-      subtitle: "Enterprise multi-omic biocomputational platform integrating Autosomal & Lineage STRs, MCMC Probabilistic Genotyping, HIrisPlex-S Phenotyping, Horvath Epigenetic Aging, LIMS Workflow, QA/QC Gatekeeping, Analyst Governance, and ISO 17025 Court Reporting.",
+      subtitle: "Enterprise multi-omic biocomputational platform integrating Autosomal & Lineage STRs, MCMC Probabilistic Genotyping, HIrisPlex-S Phenotyping, Horvath Epigenetics, Physical Ballistics & BPA, Geo-Forensic GIS Intelligence, LIMS Workflow, and ISO 17025 Court Reporting.",
       launchDemo: "Launch FORENZA OS",
-      exploreSubsystems: "Explore 30 Modules",
+      exploreSubsystems: "Explore 35 Modules",
       subsystemsStat: "Forensic Subsystems",
       invariantsStat: "Verified Invariants",
       courtStat: "Court Admissible",
@@ -361,17 +361,17 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
     },
     subsystems: {
       badge: "Subsystem Registry",
-      title: "30 Specialized Forensic Subsystems",
-      subtitle: "Organized into 6 core architectural pillars covering every domain of forensic biology, probabilistic genotyping, epigenetics, physical traces, LIMS Merkle custody, and court visualizers.",
+      title: "35 Specialized Forensic Subsystems",
+      subtitle: "Organized into 7 core architectural pillars covering every domain of forensic biology, probabilistic genotyping, epigenetics, physical traces, geo-forensic spatial intelligence, LIMS Merkle custody, and court visualizers.",
       searchPlaceholder: "Filter subsystems...",
       activeCount: "5 Active Biocomputational Subsystems",
       operationalStatus: "Operational Status",
       totalSubsystemsLabel: "Total Subsystems",
-      totalSubsystemsValue: "30 / 30 Active",
+      totalSubsystemsValue: "35 / 35 Active",
       archLayersLabel: "Architectural Layers",
-      archLayersValue: "6-Layer DAG",
+      archLayersValue: "7-Layer DAG",
       pytestInvariantsLabel: "Automated Test Suite",
-      pytestInvariantsValue: "796 / 796 Verified",
+      pytestInvariantsValue: "787 / 787 Verified",
       standardComplianceLabel: "Standard Compliance",
       standardComplianceValue: "ISO/IEC 17025",
       pillars: [
@@ -446,6 +446,18 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
             { id: "29", name: "Dynamic ENFSI Evaluative Reporting Scaler", badge: "ENFSI-2017", metrics: "7-Tier Verbal Scale • Daubert FRE 702 • Frye Audit", desc: "Translates continuous Likelihood Ratios into standardized 7-tier ENFSI verbal scale statements with Daubert FRE 702 and Frye statutory admissibility audits." },
             { id: "30", name: "3D Spatial Evidence Presenter & Juror Visualizer", badge: "SPATIAL-3D", metrics: "SE(3) Registration • 95% Ellipsoids • Multi-Sensor", desc: "Special Euclidean SE(3) multi-sensor spatial registration (LiDAR, BPA, Ballistics, DNA) and 95% volumetric probability ellipsoid rendering (χ²₃ = 7.815)." }
           ]
+        },
+        {
+          name: "Geo-Forensic Intelligence & Spatial Biogeochemistry",
+          shortName: "Geo-Forensics",
+          badge: "GEOINT",
+          subsystems: [
+            { id: "31", name: "Multi-Isotope Isoscape Provenance", badge: "ISOSCAPES", metrics: "Harmon Craig GMWL • Terzer-Wassenaar • Bataille Sr", desc: "Resolves geographic origin centroids and 95% spatial confidence radii via continuous multivariate Gaussian isoscape matching (H, O, Sr) with bioapatite and keratin calibration." },
+            { id: "32", name: "Soil Pedology & Geochemical CoDa", badge: "SOIL-CODA", metrics: "QXRD Rietveld • ZTR Index • CLR • ASTM E3272-21", desc: "Compares questioned and known control soils using Centered Log-Ratio (CLR) compositional transformations, MCD Robust Mahalanobis Distance, and Hotelling F-tests." },
+            { id: "33", name: "Forensic Palynology & Environmental eDNA", badge: "PALYNOLOGY", metrics: "RPF Normalizer • 6-Biome Classifier • 16S/ITS eDNA", desc: "Quantifies Relative Pollen Frequencies (RPF), computes multivariate Bray-Curtis dissimilarities, classifies terrestrial biomes, and predicts origin coordinates via microbial eDNA spatial regression." },
+            { id: "34", name: "Rossmo Bayesian Geographic Profiling", badge: "ROSSMO-GEO", metrics: "Targeted Hunting B=1.5km • SEI ≥ 90% • Canter Circle", desc: "Evaluates Rossmo's targeted hunting formula over serial crime locations to determine peak anchor coordinates, prioritize search areas (S_5%), and classify offender mobility (Marauder vs Commuter)." },
+            { id: "35", name: "Multi-Criteria Bayesian GIS Evidence Fusion", badge: "GIS-FUSION", metrics: "Joint Raster Multiplier • 2D Adaptive KDE • ISO 17025", desc: "Fuses independent isoscape, soil, palynological, and behavioral layers into a unified spatial posterior probability surface with 2D adaptive KDE smoothing and ENFSI evaluative reporting." }
+          ]
         }
       ],
     },
@@ -458,32 +470,37 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
         {
           layer: "Layer 1: Multi-Omic Evidence Ingestion",
           badge: "INGESTION",
-          nodes: ["Autosomal STR", "Forensic SNP", "mtDNA rCRS", "Y-STR", "ABO/Rh Serology", "mRNA Body Fluid", "16S Microbiology"]
+          nodes: ["Autosomal STR", "Forensic SNP", "mtDNA rCRS", "Y-STR", "ABO/Rh Serology", "mRNA Body Fluid", "16S Microbiology", "Stable Isotopes", "Soil QXRD"]
         },
         {
           layer: "Layer 2: Biocomputational Inference Engine",
           badge: "INFERENCE",
-          nodes: ["MCMC Mixture Deconvolution", "Kinship Index", "HIrisPlex-S Phenotype", "Dirichlet Fst Population"]
+          nodes: ["MCMC Mixture Deconvolution", "Kinship Index", "HIrisPlex-S Phenotype", "Dirichlet Fst Population", "Horvath Clock", "BPA 3D"]
         },
         {
-          layer: "Layer 3: Directed Case Graph & Ledger",
+          layer: "Layer 3: Geo-Forensic & Spatial Intelligence",
+          badge: "GEOINT",
+          nodes: ["Multi-Isotope Isoscapes", "Soil CoDa CLR", "Palynology 6-Biome", "Rossmo Targeted Hunting", "2D Adaptive KDE Fusion"]
+        },
+        {
+          layer: "Layer 4: Directed Case Graph & Ledger",
           badge: "LEDGER",
-          nodes: ["Case Graph Engine", "LIMS Accessioning", "HMAC Chain of Custody"]
+          nodes: ["Case Graph Engine", "LIMS Accessioning", "HMAC Chain of Custody", "Merkle Tree Inclusion Proofs"]
         },
         {
-          layer: "Layer 4: ISO 17025 QA/QC Gatekeeper",
+          layer: "Layer 5: ISO 17025 QA/QC Gatekeeper",
           badge: "QA/QC",
-          nodes: ["ISO 17025 Inspection", "Heterozygote Balance Hb", "Stochastic ST", "Control Verification"]
+          nodes: ["ISO 17025 Inspection", "Heterozygote Balance Hb", "Stochastic ST", "GUM Uncertainty Budget", "Control Verification"]
         },
         {
-          layer: "Layer 5: Human Analyst Governance",
+          layer: "Layer 6: Human Analyst Governance",
           badge: "GOVERNANCE",
-          nodes: ["Dual Sign-Off Review", "Override Rationale Logger", "Prosecutor Fallacy Shield"]
+          nodes: ["Dual Sign-Off Review", "Override Rationale Logger", "Prosecutor Fallacy Shield", "Circom ZKP Privacy Auditor"]
         },
         {
-          layer: "Layer 6: Court-Admissible Reporting",
+          layer: "Layer 7: Court-Admissible Reporting",
           badge: "REPORTING",
-          nodes: ["ISO 17025 Certificate Compiler", "PDF Exporter", "Expert Witness Court Mode"]
+          nodes: ["ISO 17025 Certificate Compiler", "PDF Exporter", "Expert Witness Court Mode", "3D Juror Spatial Visualizer"]
         }
       ]
     },
@@ -492,7 +509,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       title: "Cryptographic Evidence Custody & ISO 17025 Compliance",
       subtitle: "Tamper-evident audit logging, zero-knowledge evidence verification, and strict chain of custody.",
       matrixTitle: "Technical Platform Specifications & Standards Matrix",
-      passedBadge: "796 TESTS VERIFIED",
+      passedBadge: "787 TESTS VERIFIED",
       pillars: [
         {
           title: "Zero-Knowledge Privacy Auditor",
@@ -517,10 +534,11 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
         { label: "Probabilistic Mixture MCMC", value: "EuroForMix Gamma & STRmix Log-Normal 2-4 Contributors (Dropout p_d & Drop-in p_i)" },
         { label: "Phenotype & Epigenetics", value: "HIrisPlex-S 41-SNP (Eye/Hair/Skin), 55-SNP AIM GIS & Horvath 5-CpG Epigenetic Age Clock" },
         { label: "Physical & Trace Evidence", value: "3D BPA Least-Squares Origin, SEM-EDX GSR (Pb-Ba-Sb), CMC Ballistics & Entomology ADD/ADH" },
+        { label: "Geo-Forensic Intelligence", value: "Multi-Isotope Isoscapes (H/O/Sr), Soil QXRD CoDa, Palynology eDNA & Rossmo Profiling" },
         { label: "Population Models", value: "NRC II Recommendations 4.1 & 4.2 Balding-Nichols Dirichlet Subpopulation Fst Correction" },
         { label: "Instrument Ingestion", value: "Automated Gateway for CE GeneMapper CSV, qPCR Quantifiler Trio Cq/DI & NGS MiSeq VCF" },
         { label: "ISO 17025 Compliance", value: "8-Section Formal Certificate Compiler, GUM Uncertainty (k=2.00) & 7-Tier ENFSI Scaler" },
-        { label: "Automated Test Suite", value: "796 / 796 Automated Tests Passed (100% Invariant Validation)" },
+        { label: "Automated Test Suite", value: "787 / 787 Automated Tests Passed (100% Invariant Validation)" },
         { label: "Frontend Stack", value: "Next.js 16 Turbopack App Router, React 19, Tailwind CSS, Framer Motion" },
         { label: "Backend Stack", value: "FastAPI (Python 3.12), NumPy, SciPy, Scikit-learn, MCMC Metropolis-Hastings Engine" },
         { label: "Privacy & Ledger", value: "Circom zk-SNARK Groth16 (BN254 Pairings) + Binary Merkle Tree O(log₂ N) Custody Ledger" }
@@ -547,12 +565,12 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       rights: "FORENZA Forensic Systems. All rights reserved.",
       tagline: "Enterprise Biocomputational Forensic Intelligence & Evidence Operating System.",
       brandSubtitle: "FORENSIC EVIDENCE OPERATING SYSTEM",
-      status: "30 Active Subsystems",
+      status: "35 Active Subsystems",
       columns: {
         col1Title: "Platform Subsystems",
-        col1Links: ["30 Subsystems Matrix", "Evidence OS DAG", "Multi-Omic Bio-Simulator", "ISO 17025 Court Mode"],
+        col1Links: ["35 Subsystems Matrix", "Evidence OS DAG", "Multi-Omic Bio-Simulator", "ISO 17025 Court Mode"],
         col2Title: "Core Capabilities",
-        col2Links: ["MCMC Probabilistic Genotyping", "HIrisPlex-S Phenotyping", "Horvath Epigenetic Clock", "LIMS & Instrument Gateway"],
+        col2Links: ["MCMC Probabilistic Genotyping", "HIrisPlex-S Phenotyping", "Horvath Epigenetic Clock", "Geo-Forensic Intelligence", "LIMS & Instrument Gateway"],
         col3Title: "Admissibility & Standards",
         col3Links: ["ISO/IEC 17025:2017 Format", "SWGDAM & ENFSI Rules", "Circom ZKP Privacy Auditor", "HMAC Chain of Custody"],
       },
@@ -567,7 +585,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
   tr: {
     header: {
       bioSimulator: "Bio-Simülatör",
-      subsystems: "30 Alt Sistem",
+      subsystems: "35 Alt Sistem",
       architecture: "DAG Mimarisi",
       security: "Güvenlik & ISO",
       launchDemo: "Demoyu Başlat",
@@ -576,9 +594,9 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       badge: "Çoklu-Omik Adli Delil İşletim Sistemi",
       titleMain: "Entegre Biyobilişimsel",
       titleHighlight: "Adli Delil İşletim Sistemi",
-      subtitle: "Otozomal ve soy STR analizleri, MCMC olasılıksal genotipleme, HIrisPlex-S fenotip tahmini, Horvath epigenetik yaş saati, LIMS veri zinciri ve ISO/IEC 17025 adli rapor standartlarını tek bir işlem hattında birleştiren çoklu-omik adli biyoloji platformu.",
+      subtitle: "Otozomal ve soy STR analizleri, MCMC olasılıksal genotipleme, HIrisPlex-S fenotip tahmini, Horvath epigenetik yaş saati, fiziksel balistik ve BPA, Jeo-Adli CBS istihbaratı, LIMS veri zinciri ve ISO/IEC 17025 adli rapor standartlarını tek bir işlem hattında birleştiren çoklu-omik adli biyoloji platformu.",
       launchDemo: "Demoyu Başlat",
-      exploreSubsystems: "30 Modülü İncele",
+      exploreSubsystems: "35 Modülü İncele",
       subsystemsStat: "Adli Alt Sistem",
       invariantsStat: "Doğrulanmış İnvaryant",
       courtStat: "Mahkeme Uyumlu",
@@ -719,17 +737,17 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
     },
     subsystems: {
       badge: "Modüler Analiz Dizini",
-      title: "30 Adli Biyobilgisayar ve Kanıt Modülü",
-      subtitle: "Adli biyoloji, olasılıksal genotipleme, epigenetik, fiziksel izler, LIMS Merkle delil zinciri ve jüri görselleştiricilerini kapsayan 6 temel mimari sütunda sunulmaktadır.",
+      title: "35 Adli Biyobilgisayar ve Kanıt Modülü",
+      subtitle: "Adli biyoloji, olasılıksal genotipleme, epigenetik, fiziksel izler, jeo-adli CBS istihbaratı, LIMS Merkle delil zinciri ve jüri görselleştiricilerini kapsayan 7 temel mimari sütunda sunulmaktadır.",
       searchPlaceholder: "Modülleri filtreleyin...",
       activeCount: "5 Aktif Adli Analiz Modülü",
       operationalStatus: "Operasyonel Durum",
       totalSubsystemsLabel: "Toplam Alt Sistem",
-      totalSubsystemsValue: "30 / 30 Aktif",
+      totalSubsystemsValue: "35 / 35 Aktif",
       archLayersLabel: "Mimari Katmanlar",
-      archLayersValue: "6 Katmanlı DAG",
+      archLayersValue: "7 Katmanlı DAG",
       pytestInvariantsLabel: "Doğrulanmış Test Paketi",
-      pytestInvariantsValue: "796 / 796 Doğrulandı",
+      pytestInvariantsValue: "787 / 787 Doğrulandı",
       standardComplianceLabel: "Standart Uyumluluk",
       standardComplianceValue: "ISO/IEC 17025",
       pillars: [
@@ -804,6 +822,18 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
             { id: "29", name: "Dinamik ENFSI Değerlendirici Raporlama ve Sözlü Ölçek", badge: "ENFSI-2017", metrics: "7 Kademeli Sözlü Ölçek • Daubert FRE 702 • Frye Denetimi", desc: "Sürekli Likelihood Ratio (LR) değerlerini ENFSI (2017) 7 kademeli adli sözlü ifadelere çevirir; Daubert FRE 702 ve Frye kabul edilebilirlik denetimi uygular." },
             { id: "30", name: "3D Uzamsal Olay Yeri Rekonstrüksiyonu ve Jüri Görselleştirici", badge: "SPATIAL-3D", metrics: "SE(3) Dönüşümü • %95 Güven Elipsoidi • Çoklu-Sensör", desc: "Çoklu-sensör (LiDAR, BPA, Balistik, DNA) verilerini SE(3) katı cisim dönüşümü ve %95 hacimsel güven elipsoitleriyle (χ²₃ = 7.815) 3D olarak görselleştirir." }
           ]
+        },
+        {
+          name: "Jeo-Adli İstihbarat & Uzamsal Biyojeokimya",
+          shortName: "Jeo-Adli",
+          badge: "GEOINT",
+          subsystems: [
+            { id: "31", name: "Çoklu İzotop İzoskap Köken Motoru", badge: "İZOSKAP", metrics: "Harmon Craig GMWL • Terzer-Wassenaar • Bataille Sr", desc: "Biyopatit ve keratin kalibrasyonlu çok değişkenli Gauss izoskap eşleştirmesi (H, O, Sr) ile coğrafi köken centroidi ve %95 güven yarıçapını belirler." },
+            { id: "32", name: "Adli Toprak Pedolojisi & Jeokimyasal CoDa", badge: "TOPRAK-CODA", metrics: "QXRD Rietveld • ZTR İndeksi • CLR • ASTM E3272-21", desc: "Merkezlenmiş Log-Oran (CLR) dönüşümü, MCD Robust Mahalanobis Mesafesi ve Hotelling F-testi ile şüpheli ve kontrol topraklarını ASTM E3272 standartlarında karşılaştırır." },
+            { id: "33", name: "Adli Palinoloji & Çevresel eDNA", badge: "PALİNOLOJİ", metrics: "RPF Normalizasyonu • 6-Biyom • 16S/ITS eDNA", desc: "Bağıl Polen Frekansını (RPF) hesaplar, Bray-Curtis ayrışmasını ölçer, 6 karasal biyomu sınıflandırır ve mikrobiyal eDNA uzamsal regresyonu ile koordinat kestirir." },
+            { id: "34", name: "Rossmo Bayesian Coğrafi Profil Çıkarma", badge: "ROSSMO-GEO", metrics: "Hedefli Avlanma B=1.5km • SEI ≥ %90 • Canter Çemberi", desc: "Seri suç mahallerinde Rossmo avlanma formülüyle tepe çapa noktasını hesaplar, arama alanını (%5) daraltır ve fail hareketliliğini (Marauder vs Commuter) sınıflandırır." },
+            { id: "35", name: "Çok Kriterli Bayesian CBS Delil Füzyonu", badge: "CBS-FÜZYON", metrics: "Ortak Raster Çarpımı • 2B Adaptif KDE • ISO 17025", desc: "İzotop, toprak, palinoloji ve suç profili katmanlarını 2B adaptif Gaussian KDE ile birleşik uzamsal sonsal yüzeyde birleştirerek ENFSI adli raporu üretir." }
+          ]
         }
       ],
     },
@@ -816,32 +846,37 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
         {
           layer: "Katman 1: Biyolojik Örnek ve Veri Girişi",
           badge: "KABUL",
-          nodes: ["Otozomal STR", "Adli SNP", "mtDNA rCRS", "Y-STR", "ABO/Rh Seroloji", "mRNA Sıvı Analizi", "16S Mikrobiyom"]
+          nodes: ["Otozomal STR", "Adli SNP", "mtDNA rCRS", "Y-STR", "ABO/Rh Seroloji", "mRNA Sıvı Analizi", "16S Mikrobiyom", "Kararlı İzotoplar", "Toprak QXRD"]
         },
         {
           layer: "Katman 2: Biyobilişimsel Çıkarım ve İstatistiksel Analiz",
           badge: "ÇIKARIM",
-          nodes: ["MCMC Karışım Dekonvolüsyonu", "Akrabalık İndeksi", "HIrisPlex-S Fenotipleme", "Dirichlet Popülasyon Modeli"]
+          nodes: ["MCMC Karışım Dekonvolüsyonu", "Akrabalık İndeksi", "HIrisPlex-S Fenotipleme", "Dirichlet Popülasyon Modeli", "Horvath Yaş Saati", "BPA 3D"]
         },
         {
-          layer: "Katman 3: Yönlü Vaka Çizgesi ve Delil Defteri",
+          layer: "Katman 3: Jeo-Adli & Uzamsal İstihbarat",
+          badge: "GEOINT",
+          nodes: ["Çoklu İzotop İzoskapları", "Toprak CoDa CLR", "Palinoloji 6-Biyom", "Rossmo Hedefli Avlanma", "2B Adaptif KDE Füzyonu"]
+        },
+        {
+          layer: "Katman 4: Yönlü Vaka Çizgesi ve Delil Defteri",
           badge: "DEFTER",
-          nodes: ["Vaka Çizge Motoru", "LIMS Numune Kaydı", "HMAC Delil Zinciri"]
+          nodes: ["Vaka Çizge Motoru", "LIMS Numune Kaydı", "HMAC Delil Zinciri", "Merkle Ağacı İspatları"]
         },
         {
-          layer: "Katman 4: ISO 17025 Kalite Kontrol Denetimi",
+          layer: "Katman 5: ISO 17025 Kalite Kontrol Denetimi",
           badge: "KALİTE KONTROL",
-          nodes: ["ISO 17025 Denetimi", "Heterozigot Dengesi Hb", "Stokastik Eşik ST", "Kontrol Numuneleri"]
+          nodes: ["ISO 17025 Denetimi", "Heterozigot Dengesi Hb", "Stokastik Eşik ST", "GUM Belirsizlik Bütçesi", "Kontrol Numuneleri"]
         },
         {
-          layer: "Katman 5: Uzman Analist İnceleme ve Yönetişimi",
+          layer: "Katman 6: Uzman Analist İnceleme ve Yönetişimi",
           badge: "YÖNETİŞİM",
-          nodes: ["Çift Analist Onay Süreci", "Gerekçeli Müdahale Kaydı", "Savcı Yanılgısı Kalkanı"]
+          nodes: ["Çift Analist Onay Süreci", "Gerekçeli Müdahale Kaydı", "Savcı Yanılgısı Kalkanı", "Circom ZKP Gizlilik Denetçisi"]
         },
         {
-          layer: "Katman 6: Mahkeme Onaylı Adli Raporlama",
+          layer: "Katman 7: Mahkeme Onaylı Adli Raporlama",
           badge: "RAPORLAMA",
-          nodes: ["ISO 17025 Sertifika Derleyicisi", "PDF Rapor Aktarımı", "Uzman Tanık İfade Modu"]
+          nodes: ["ISO 17025 Sertifika Derleyicisi", "PDF Rapor Aktarımı", "Uzman Tanık İfade Modu", "3D Jüri Görselleştirici"]
         }
       ]
     },
@@ -850,7 +885,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       title: "Kriptografik Delil Zinciri ve ISO 17025 Akreditasyonu",
       subtitle: "Müdahaleye karşı korumalı denetim izi, sıfır bilgi kanıtlı delil doğrulaması ve katı delil zinciri takibi.",
       matrixTitle: "Teknik Platform Özellikleri ve Standartlar Matrisi",
-      passedBadge: "%100 DOĞRULANMIŞ (796 TEST)",
+      passedBadge: "%100 DOĞRULANMIŞ (787 TEST)",
       pillars: [
         {
           title: "Sıfır Bilgi İspatlı Gizlilik Denetçisi (ZKP)",
@@ -875,10 +910,11 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
         { label: "Olasılıksal Karışım MCMC", value: "EuroForMix Gamma & STRmix Log-Normal 2-4 Katkıcı (Alel Kaybolması p_d & Eklenmesi p_i)" },
         { label: "Fenotip ve Epigenetik", value: "HIrisPlex-S 41-SNP (Göz/Saç/Ten), 55-SNP AIM GIS ve Horvath 5-CpG Epigenetik Yaş Saati" },
         { label: "Fiziksel ve İz İnceleme", value: "3D BPA En Küçük Kareler Çıkış Noktası, SEM-EDX GSR (Pb-Ba-Sb), CMC Balistik & Entomoloji ADD/ADH" },
+        { label: "Jeo-Adli İstihbarat", value: "Çoklu İzotop İzoskapları (H/O/Sr), Toprak QXRD CoDa, Palinoloji eDNA & Rossmo Profilleme" },
         { label: "Popülasyon Modelleri", value: "NRC II Tavsiye 4.1 & 4.2 Balding-Nichols Dirichlet Alt Popülasyon Fst Düzeltmesi" },
         { label: "Cihaz Veri Kabulü", value: "CE GeneMapper CSV, qPCR Quantifiler Trio Cq/DI ve NGS MiSeq VCF Otomatik Geçidi" },
         { label: "ISO 17025 Uyumluluğu", value: "8 Bölümlü Adli Sertifika Derleyicisi, GUM Ölçüm Belirsizliği (k=2.00) ve 7 Kademeli ENFSI Ölçeği" },
-        { label: "Doğrulanmış Test Paketi", value: "796 / 796 Otomatik Test Başarılı (%100 İnvaryant Doğrulaması)" },
+        { label: "Doğrulanmış Test Paketi", value: "787 / 787 Otomatik Test Başarılı (%100 İnvaryant Doğrulaması)" },
         { label: "Ön Yüz Teknolojisi", value: "Next.js 16 Turbopack App Router, React 19, Tailwind CSS, Framer Motion" },
         { label: "Arka Yüz Teknolojisi", value: "FastAPI (Python 3.12), NumPy, SciPy, Scikit-learn, MCMC Metropolis-Hastings Motoru" },
         { label: "Gizlilik ve Delil Kütüğü", value: "Circom zk-SNARK Groth16 (BN254 Eşlemeleri) + İkili Merkle Ağacı O(log₂ N) Delil Kütüğü" }
@@ -905,12 +941,12 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       rights: "FORENZA Forensic Systems. Tüm hakları saklıdır.",
       tagline: "Kurumsal Biyobilişimsel Adli İstihbarat ve Delil İşletim Sistemi.",
       brandSubtitle: "ADLİ DELİL İŞLETİM SİSTEMİ",
-      status: "30 Modül Aktif",
+      status: "35 Modül Aktif",
       columns: {
         col1Title: "Platform Modülleri",
-        col1Links: ["30 Alt Sistem Matrisi", "Delil İşleme Mimarisi (DAG)", "Bio-Simülatör", "ISO 17025 İfade Modu"],
+        col1Links: ["35 Alt Sistem Matrisi", "Delil İşleme Mimarisi (DAG)", "Bio-Simülatör", "ISO 17025 İfade Modu"],
         col2Title: "Temel Yetenekler",
-        col2Links: ["MCMC Olasılıksal Genotipleme", "HIrisPlex-S Fenotipleme", "Horvath Epigenetik Yaş Saati", "LIMS ve Cihaz Geçidi"],
+        col2Links: ["MCMC Olasılıksal Genotipleme", "HIrisPlex-S Fenotipleme", "Horvath Epigenetik Yaş Saati", "Jeo-Adli İstihbarat", "LIMS ve Cihaz Geçidi"],
         col3Title: "Adli Standartlar ve Uyumluluk",
         col3Links: ["ISO/IEC 17025:2017 Formatı", "SWGDAM ve ENFSI Kuralları", "Circom ZKP Gizlilik Denetçisi", "HMAC Delil Zinciri"],
       },

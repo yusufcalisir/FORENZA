@@ -80,6 +80,7 @@ circuits/*.zkey
 circuits/*.sym
 
 # AI Agents & IDE Settings
+AGENTS.md
 .agents/
 .gemini/
 .claude/

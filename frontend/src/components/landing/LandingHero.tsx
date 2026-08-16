@@ -90,12 +90,12 @@ export default function LandingHero() {
                         className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4 pt-8 sm:pt-10 border-t border-tactical-border/50 font-mono"
                     >
                         <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-black/40 border border-tactical-border/60 backdrop-blur-md">
-                            <div className="text-xl sm:text-2xl font-black text-tactical-accent">30</div>
+                            <div className="text-xl sm:text-2xl font-black text-tactical-accent">35</div>
                             <div className="text-[9px] sm:text-[10px] text-zinc-400 uppercase tracking-wider mt-1 font-bold">{t.hero.subsystemsStat}</div>
                         </div>
 
                         <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-black/40 border border-tactical-border/60 backdrop-blur-md">
-                            <div className="text-xl sm:text-2xl font-black text-emerald-400">796 / 796</div>
+                            <div className="text-xl sm:text-2xl font-black text-emerald-400">787 / 787</div>
                             <div className="text-[9px] sm:text-[10px] text-zinc-400 uppercase tracking-wider mt-1 font-bold">{t.hero.invariantsStat}</div>
                         </div>
 

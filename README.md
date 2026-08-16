@@ -686,7 +686,15 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
 
 
 
-* **`VECTOR_P6_03` (ENFSI Verbal Statement Mapping):** $LR = 3.5 \times 10^7$ maps deterministically to Verbal Tier 6 ("Extremely strong support for prosecution proposition").
+* **`VECTOR_P6_03` (ENFSI Verbal Statement Mapping Ground Truth — Module 29):** $LR = 3.5 \times 10^7$ maps deterministically to Verbal Tier 6 ("Extremely strong support for prosecution proposition" / "Bulgular, iddia hipotezi (H_p) lehine aşırı güçlü destek sağlamaktadır.").
+* **`VECTOR_29_ENFSI_A-G` (Dynamic ENFSI Evaluative Reporting & Verbal Scale Engine — Module 29):**
+  - **`A`:** Neutral / Inconclusive baseline ($LR = 1.0 \implies \text{Tier 0}$, $\log_{10} LR = 0.0$, "nötr / neutral" statement).
+  - **`B`:** Step-function boundary transitions across all Tiers 1–6 (12 parametrized points strictly partitioned).
+  - **`C`:** Symmetric defense inversion ($LR = 0.0001 \implies LR_{\text{def}} = 10{,}000$, $\log_{10} LR = -4.0$, Tier 4 support for $H_d$).
+  - **`D`:** Bilingual concordance (identical tier mapping and mutually exclusive English and Turkish outputs).
+  - **`E`:** Daubert FRE 702 4-pillar & Frye audit (Pillar 1 unit tests, Pillar 2 error rate $\le 10^{-6}$, Pillar 3 peer review, Pillar 4 SWGDAM/ISO 17025 standards).
+  - **`F`:** Domain validation for non-positive Likelihood Ratios ($LR \le 0 \implies \texttt{ValueError}$).
+  - **`G`:** API integration testing across `/forensic/court/evaluative-report` and `/daubert-compliance`.
 
 
 

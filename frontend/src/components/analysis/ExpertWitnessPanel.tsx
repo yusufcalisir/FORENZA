@@ -1,230 +1,549 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { Scale, ShieldAlert, CheckCircle2, FileText, Lock, RefreshCw, Cpu, Layers } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Scale,
+  ShieldCheck,
+  AlertTriangle,
+  Globe,
+  Gavel,
+  CheckCircle2,
+  XCircle,
+  BarChart3,
+  RefreshCw,
+  ChevronRight,
+} from "lucide-react";
 
-interface Pillar {
-  title: string;
-  summary: string;
-  details: string;
-  fallacy_protection_active?: boolean;
-}
+// ── Types ──────────────────────────────────────────────────────────────────────
 
-interface TestimonyData {
-  testimony_title: string;
-  case_id: string;
-  sample_id: string;
-  expert_witness_id: string;
-  timestamp: string;
-  operating_mode: string;
-  testimony_pillars: Pillar[];
+interface EvaluativeReportResponse {
+  likelihood_ratio: number;
+  log10_likelihood_ratio: number;
+  effective_lr: number;
+  is_prosecution_supported: boolean;
+  supported_proposition: string;
+  opposed_proposition: string;
+  verbal_tier: number;
+  log10_tier_min: number;
+  log10_tier_max: number | null;
+  phrase_en: string;
+  phrase_tr: string;
+  evaluative_statement: string;
+  language: string;
+  hp_proposition: string;
+  hd_proposition: string;
   prosecutors_fallacy_shield: string;
-  testimony_hmac_hash: string;
-  court_admissible: boolean;
+  reporting_standard: string;
 }
+
+interface DaubertResponse {
+  pillar_1_falsifiability: boolean;
+  pillar_2_error_rate: boolean;
+  pillar_3_peer_review: boolean;
+  pillar_4_standards: boolean;
+  frye_general_acceptance: boolean;
+  overall_admissible: boolean;
+  error_rate_bound: number;
+  prosecutor_fallacy_shield: string;
+}
+
+// ── ENFSI tier metadata for visualization ─────────────────────────────────────
+
+const TIER_CONFIG = [
+  {
+    tier: 0,
+    label: "Neutral / Inconclusive",
+    labelTr: "Nötr / Sonuçsuz",
+    color: "text-zinc-400",
+    bg: "bg-zinc-500/20",
+    border: "border-zinc-500/40",
+    dot: "bg-zinc-400",
+    logRange: "log₁₀ LR = 0",
+  },
+  {
+    tier: 1,
+    label: "Weak Support",
+    labelTr: "Zayıf Destek",
+    color: "text-sky-400",
+    bg: "bg-sky-500/20",
+    border: "border-sky-500/40",
+    dot: "bg-sky-400",
+    logRange: "0 < log₁₀ LR ≤ 1",
+  },
+  {
+    tier: 2,
+    label: "Moderate Support",
+    labelTr: "Orta Düzeyde Destek",
+    color: "text-blue-400",
+    bg: "bg-blue-500/20",
+    border: "border-blue-500/40",
+    dot: "bg-blue-400",
+    logRange: "1 < log₁₀ LR ≤ 2",
+  },
+  {
+    tier: 3,
+    label: "Moderately Strong",
+    labelTr: "Orta-Güçlü Destek",
+    color: "text-violet-400",
+    bg: "bg-violet-500/20",
+    border: "border-violet-500/40",
+    dot: "bg-violet-400",
+    logRange: "2 < log₁₀ LR ≤ 3",
+  },
+  {
+    tier: 4,
+    label: "Strong Support",
+    labelTr: "Güçlü Destek",
+    color: "text-amber-400",
+    bg: "bg-amber-500/20",
+    border: "border-amber-500/40",
+    dot: "bg-amber-400",
+    logRange: "3 < log₁₀ LR ≤ 4",
+  },
+  {
+    tier: 5,
+    label: "Very Strong Support",
+    labelTr: "Çok Güçlü Destek",
+    color: "text-orange-400",
+    bg: "bg-orange-500/20",
+    border: "border-orange-500/40",
+    dot: "bg-orange-400",
+    logRange: "4 < log₁₀ LR ≤ 6",
+  },
+  {
+    tier: 6,
+    label: "Extremely Strong",
+    labelTr: "Aşırı Güçlü Destek",
+    color: "text-emerald-400",
+    bg: "bg-emerald-500/20",
+    border: "border-emerald-500/40",
+    dot: "bg-emerald-400",
+    logRange: "log₁₀ LR > 6",
+  },
+];
+
+// ── Presets (log10 LR values) ─────────────────────────────────────────────────
+const PRESETS = [
+  { label: "1.0 (Neutral)", log10: 0 },
+  { label: "10 (Weak)", log10: 1 },
+  { label: "500 (Mod. Strong)", log10: 2.699 },
+  { label: "5,000 (Strong)", log10: 3.699 },
+  { label: "3.5×10⁷ (P6_03)", log10: 7.5441 },
+];
 
 export default function ExpertWitnessPanel() {
-  const [activeMode, setActiveMode] = useState<"RESEARCH" | "COURT">("COURT");
+  const [activeTab, setActiveTab] = useState<"enfsi" | "daubert">("enfsi");
+  const [language, setLanguage] = useState<"tr" | "en">("tr");
+  const [log10LR, setLog10LR] = useState<number>(7.5441); // VECTOR_P6_03 default
+  const [hp, setHp] = useState("The DNA evidence originates from the named suspect.");
+  const [hd, setHd] = useState("The DNA evidence originates from an unknown unrelated person.");
   const [loading, setLoading] = useState(false);
-  const [testimony, setTestimony] = useState<TestimonyData | null>({
-    testimony_title: "EXPERT WITNESS JUDICIAL EXAMINATION BRIEF",
-    case_id: "CASE-2026-COURT-01",
-    sample_id: "SAMPLE-DNA-101",
-    expert_witness_id: "EXPERT-01 (Dr. Sarah Connor)",
-    timestamp: "2026-08-12T13:59:00Z",
-    operating_mode: "COURT_EXPERT_WITNESS_MODE",
-    testimony_pillars: [
-      {
-        title: "1. What Was Tested?",
-        summary: "Accessioned evidence sample SAMPLE-DNA-101 associated with judicial case CASE-2026-COURT-01.",
-        details: "Amplified using expanded 24-locus forensic STR multiplex panel (20 FBI CODIS core + ESS) following ISO 17025 validated SOPs."
-      },
-      {
-        title: "2. What Was Observed?",
-        summary: "Clean single-source / deconvolution autosomal STR profile resolved across 24 loci.",
-        details: "All loci exhibited peak height intensities above analytical threshold AT (50 RFU), with minimum peak height > 150 RFU."
-      },
-      {
-        title: "3. What Was Calculated?",
-        summary: "Likelihood Ratio (LR) = 10^26.0 (log10 LR = 26.0).",
-        details: "Random Match Probability (RMP) is 1 in 10^26.0 in reference population databases."
-      },
-      {
-        title: "4. What Assumptions Were Made?",
-        summary: "Hardy-Weinberg Equilibrium (HWE) & Linkage Equilibrium across core autosomal loci.",
-        details: "NRC II Recommendation 4.1 population sub-structure correction applied with Fst = 0.010."
-      },
-      {
-        title: "5. What Does the Likelihood Ratio Mean?",
-        summary: "Scientific verbal predicate: EXTREMELY STRONG SUPPORT FOR INCLUSION.",
-        details: "The physical DNA evidence is 10^26.0 times more probable under the Prosecution Hypothesis (Hp) than under the Defense Hypothesis (Hd)."
-      },
-      {
-        title: "6. What Does the Likelihood Ratio NOT Mean? (Legal Shield)",
-        summary: "IMPORTANT: The LR measures evidence probability P(E|Hp), NOT defendant guilt P(Hp|E).",
-        details: "Conflating evidence likelihood with defendant guilt is the 'Prosecutor's Fallacy' (Transposed Conditional Fallacy). Guilt or innocence requires evaluation of all non-scientific case evidence by the trier of fact.",
-        fallacy_protection_active: true
-      },
-      {
-        title: "7. What Are the Scientific Limitations?",
-        summary: "Analysis bounded by stochastic threshold (150 RFU) and expanded measurement uncertainty U95%.",
-        details: "DNA evidence evaluates source attribution only, NOT manner, activity, or time of deposition (PMI)."
-      }
-    ],
-    prosecutors_fallacy_shield: "PROTECTED_TRANSPOSED_CONDITIONAL_SHIELD",
-    testimony_hmac_hash: "b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2",
-    court_admissible: true
-  });
+
+  // Daubert inputs
+  const [errorRate, setErrorRate] = useState<number>(1e-9);
+  const [peerReviewed, setPeerReviewed] = useState(true);
+  const [swgdam, setSwgdam] = useState(true);
+  const [iso17025, setIso17025] = useState(true);
+
+  const [reportData, setReportData] = useState<EvaluativeReportResponse | null>(null);
+  const [daubertData, setDaubertData] = useState<DaubertResponse | null>(null);
 
   const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 
-  const handleGenerateBrief = async () => {
+  const computedLR = Math.pow(10, log10LR);
+
+  const fetchReport = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/api/v1/forensic/court/generate-testimony-brief`, {
+      const res = await fetch(`${API_BASE}/api/v1/forensic/court/evaluative-report`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          case_id: "CASE-2026-COURT-01",
-          sample_id: "SAMPLE-DNA-101",
-          log10_lr: 26.0,
-          enfsi_verbal_predicate: "EXTREMELY_STRONG_SUPPORT_FOR_INCLUSION"
-        })
+          likelihood_ratio: computedLR,
+          hp_proposition: hp,
+          hd_proposition: hd,
+          language,
+        }),
       });
-      if (res.ok) {
-        const data = await res.json();
-        setTestimony(data);
-      }
+      if (res.ok) setReportData(await res.json());
     } catch (e) {
-      console.error("Court testimony generation failed:", e);
+      console.error("Evaluative report error:", e);
     } finally {
       setLoading(false);
     }
-  };
+  }, [computedLR, hp, hd, language, API_BASE]);
+
+  const fetchDaubert = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_BASE}/api/v1/forensic/court/daubert-compliance`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          error_rate: errorRate,
+          has_peer_reviewed_algorithms: peerReviewed,
+          swgdam_compliant: swgdam,
+          iso17025_compliant: iso17025,
+        }),
+      });
+      if (res.ok) setDaubertData(await res.json());
+    } catch (e) {
+      console.error("Daubert audit error:", e);
+    } finally {
+      setLoading(false);
+    }
+  }, [errorRate, peerReviewed, swgdam, iso17025, API_BASE]);
+
+  // Auto-fetch on mount
+  useEffect(() => {
+    fetchReport();
+  }, []);
+
+  const activeTier = reportData ? TIER_CONFIG[reportData.verbal_tier] : null;
 
   return (
     <div className="space-y-6 font-mono text-tactical-text">
-      {/* ── Header with Mode Toggle ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl border border-sky-500/30 bg-sky-500/10 shadow-lg">
+      {/* ── Header ── */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl border border-amber-500/30 bg-amber-500/10 shadow-lg">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sky-500/20 border border-sky-500/40 text-sky-300">
-            <Scale className="w-5 h-5" />
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300">
+            <Gavel className="w-5 h-5" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <h2 className="text-sm font-bold tracking-widest text-tactical-text uppercase">
-                Expert Witness & Judicial Examination Subsystem
+                Dynamic ENFSI Evaluative Reporting & Verbal Scale Engine (Pillar 6 §4)
               </h2>
-              <span className="px-2 py-0.5 rounded text-[8px] font-bold bg-sky-500/20 text-sky-300 border border-sky-500/30">
-                7-POINT TESTIMONY
+              <span className="px-2 py-0.5 rounded text-[8px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                ENFSI 2017 • Daubert FRE 702 • Frye • Prosecutor's Fallacy Shield
               </span>
             </div>
             <p className="text-[10px] text-zinc-400 mt-0.5">
-              Dual Operating Perspectives: Research Analyst Mode vs Expert Witness Court Mode
+              Bayesian LR → 7-Tier ENFSI 2017 Verbal Scale • Bilingual EN/TR • Statutory Legal Admissibility Audit
             </p>
           </div>
         </div>
 
-        {/* Dual Mode Selector */}
-        <div className="flex items-center gap-2 p-1 rounded-xl bg-black/60 border border-tactical-border/60">
+        {/* Tab Controls */}
+        <div className="flex items-center gap-1 p-1 rounded-xl bg-black/60 border border-tactical-border/60">
           <button
-            onClick={() => setActiveMode("RESEARCH")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-              activeMode === "RESEARCH"
-                ? "bg-zinc-800 text-zinc-200 shadow"
-                : "text-zinc-500 hover:text-zinc-300"
+            onClick={() => { setActiveTab("enfsi"); if (!reportData) fetchReport(); }}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              activeTab === "enfsi" ? "bg-amber-500 text-black shadow-md" : "text-zinc-400 hover:text-zinc-200"
             }`}
           >
-            Research Mode
+            ENFSI Verbal Scale
           </button>
           <button
-            onClick={() => setActiveMode("COURT")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-              activeMode === "COURT"
-                ? "bg-sky-500 text-black shadow"
-                : "text-zinc-500 hover:text-zinc-300"
+            onClick={() => { setActiveTab("daubert"); if (!daubertData) fetchDaubert(); }}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              activeTab === "daubert" ? "bg-amber-500 text-black shadow-md" : "text-zinc-400 hover:text-zinc-200"
             }`}
           >
-            Court Mode (Witness)
+            Daubert / Frye
           </button>
         </div>
       </div>
 
-      {/* ── Mode Content Rendering ── */}
-      {activeMode === "RESEARCH" ? (
-        <div className="p-6 rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 space-y-4 text-xs">
-          <span className="text-xs font-bold uppercase tracking-wider text-sky-300 block border-b border-tactical-border/40 pb-3">
-            Research & Laboratory Analyst Mode (Raw Bioinformatics)
-          </span>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 font-mono">
-            <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40 space-y-1">
-              <span className="text-[9px] text-zinc-500 block">Raw RFU Peak Intensities</span>
-              <span className="font-bold text-zinc-200">D3S1358: 1400 / 1520 RFU</span>
+      {/* ── Tab 1: ENFSI Verbal Scale ── */}
+      {activeTab === "enfsi" && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left: Inputs */}
+          <div className="space-y-4 rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 shadow-xl">
+            <div className="border-b border-tactical-border/40 pb-3 flex items-center justify-between">
+              <span className="text-xs font-bold uppercase tracking-wider text-tactical-text">
+                Evaluative Parameters
+              </span>
+              {/* Language Toggle */}
+              <button
+                onClick={() => setLanguage(l => l === "tr" ? "en" : "tr")}
+                className="flex items-center gap-1 px-2 py-1 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300 text-[10px] font-bold cursor-pointer hover:bg-amber-500/20 transition-all"
+              >
+                <Globe className="w-3 h-3" />
+                {language === "tr" ? "🇹🇷 TR" : "🇬🇧 EN"}
+              </button>
             </div>
-            <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40 space-y-1">
-              <span className="text-[9px] text-zinc-500 block">MCMC Metropolis-Hastings</span>
-              <span className="font-bold text-zinc-200">100,000 Iterations (p_d = 0.02)</span>
-            </div>
-            <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40 space-y-1">
-              <span className="text-[9px] text-zinc-500 block">Dirichlet Population Parameters</span>
-              <span className="font-bold text-zinc-200">Theta Fst = 0.010 (NRC II 4.1)</span>
-            </div>
-          </div>
-        </div>
-      ) : (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="space-y-4"
-        >
-          {/* Prosecutor Fallacy Shield Warning */}
-          <div className="p-4 rounded-2xl border border-amber-500/40 bg-amber-500/10 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <ShieldAlert className="w-5 h-5 text-amber-400 shrink-0" />
+
+            <div className="space-y-3 text-xs">
               <div>
-                <span className="text-xs font-bold text-amber-300 uppercase block">
-                  Transposed Conditional Fallacy Shield Active
-                </span>
-                <span className="text-[10px] text-zinc-400">
-                  Prevents legal misinterpretation of evidence probability P(E|Hp) as defendant guilt P(Hp|E).
-                </span>
+                <label className="text-zinc-400 block mb-1">
+                  log₁₀(LR) = <span className="text-amber-300 font-bold">{log10LR.toFixed(4)}</span>
+                  <span className="text-zinc-500 ml-2">(LR ≈ {computedLR >= 1e6 ? computedLR.toExponential(2) : computedLR.toLocaleString()})</span>
+                </label>
+                <input
+                  type="range"
+                  min={-6}
+                  max={10}
+                  step={0.1}
+                  value={log10LR}
+                  onChange={e => setLog10LR(parseFloat(e.target.value))}
+                  className="w-full accent-amber-400"
+                />
+                <div className="flex justify-between text-[9px] text-zinc-600 mt-0.5">
+                  <span>10⁻⁶</span>
+                  <span>1 (Neutral)</span>
+                  <span>10¹⁰</span>
+                </div>
+              </div>
+
+              {/* Presets */}
+              <div>
+                <label className="text-zinc-400 block mb-1.5">Quick Presets:</label>
+                <div className="flex flex-wrap gap-1">
+                  {PRESETS.map(p => (
+                    <button
+                      key={p.label}
+                      onClick={() => setLog10LR(p.log10)}
+                      className={`px-2 py-1 rounded-lg text-[10px] font-bold cursor-pointer transition-all border ${
+                        Math.abs(log10LR - p.log10) < 0.001
+                          ? "bg-amber-500 text-black border-amber-500"
+                          : "bg-black/40 text-zinc-400 border-tactical-border/40 hover:border-amber-500/40 hover:text-amber-300"
+                      }`}
+                    >
+                      {p.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="text-zinc-400 block mb-1">H_p (Prosecution Proposition):</label>
+                <textarea
+                  rows={2}
+                  value={hp}
+                  onChange={e => setHp(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl bg-black/50 border border-tactical-border/60 text-tactical-text font-mono text-[11px] resize-none"
+                />
+              </div>
+              <div>
+                <label className="text-zinc-400 block mb-1">H_d (Defense Proposition):</label>
+                <textarea
+                  rows={2}
+                  value={hd}
+                  onChange={e => setHd(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl bg-black/50 border border-tactical-border/60 text-tactical-text font-mono text-[11px] resize-none"
+                />
               </div>
             </div>
+
             <button
-              onClick={handleGenerateBrief}
+              onClick={fetchReport}
               disabled={loading}
-              className="px-3.5 py-1.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-black font-bold text-xs uppercase flex items-center gap-2 cursor-pointer transition-all shrink-0"
+              className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
             >
-              <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
-              Refresh Testimony Brief
+              <Scale className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
+              Generate Evaluative Report
             </button>
           </div>
 
-          {/* 7-Point Judicial Testimony Pillars Grid */}
-          {testimony && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {testimony.testimony_pillars.map((pillar, idx) => (
-                <div
-                  key={idx}
-                  className={`p-4 rounded-2xl border ${
-                    pillar.fallacy_protection_active
-                      ? "border-amber-500/40 bg-amber-500/10 md:col-span-2"
-                      : "border-tactical-border/80 bg-tactical-surface/50"
-                  } space-y-2 text-xs font-mono shadow-lg`}
-                >
-                  <span className={`text-[10px] font-bold uppercase tracking-wider block ${
-                    pillar.fallacy_protection_active ? "text-amber-300" : "text-sky-300"
-                  }`}>
-                    {pillar.title}
-                  </span>
-                  <div className="font-bold text-zinc-100">{pillar.summary}</div>
-                  <div className="text-[10px] text-zinc-400 leading-relaxed">{pillar.details}</div>
+          {/* Right: ENFSI Output */}
+          <div className="lg:col-span-2 space-y-4">
+            {reportData && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+                {/* Active Tier Banner */}
+                <div className={`rounded-2xl border p-5 space-y-3 shadow-2xl bg-gradient-to-br from-black/80 to-tactical-surface/50 ${activeTier?.border}`}>
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <span className={`text-[10px] font-bold uppercase tracking-widest block mb-1 ${activeTier?.color}`}>
+                        ENFSI 2017 — TIER {reportData.verbal_tier} OF 6 • {reportData.reporting_standard}
+                      </span>
+                      <span className={`text-2xl font-black font-mono ${activeTier?.color}`}>
+                        {language === "tr" ? activeTier?.labelTr : activeTier?.label}
+                      </span>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-xs text-zinc-400">
+                          {reportData.is_prosecution_supported ? "→ Prosecution H_p" : "→ Defense H_d"} supported
+                        </span>
+                        <span className={`px-2 py-0.5 rounded text-[9px] font-bold border ${reportData.is_prosecution_supported ? "bg-emerald-500/10 text-emerald-300 border-emerald-500/30" : "bg-sky-500/10 text-sky-300 border-sky-500/30"}`}>
+                          {reportData.supported_proposition}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <span className="text-[10px] text-zinc-500 block">log₁₀(LR)</span>
+                      <span className={`text-lg font-black font-mono ${activeTier?.color}`}>
+                        {reportData.log10_likelihood_ratio >= 0 ? "+" : ""}{reportData.log10_likelihood_ratio.toFixed(4)}
+                      </span>
+                      <span className="text-[9px] text-zinc-500 block">{activeTier?.logRange}</span>
+                    </div>
+                  </div>
+
+                  {/* Evaluative Statement */}
+                  <div className="p-4 rounded-xl bg-black/50 border border-tactical-border/40">
+                    <div className="text-[10px] text-zinc-500 uppercase font-bold mb-2 flex items-center gap-1">
+                      <Gavel className="w-3 h-3" />
+                      Standardized Courtroom Evaluative Statement ({language === "tr" ? "Türkçe" : "English"})
+                    </div>
+                    <p className="text-sm text-zinc-100 font-mono leading-relaxed italic">
+                      "{reportData.evaluative_statement}"
+                    </p>
+                  </div>
+
+                  {/* Dual Language Side-by-Side */}
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="p-2.5 rounded-xl bg-black/40 border border-tactical-border/30">
+                      <div className="text-[9px] text-zinc-500 uppercase font-bold mb-1">🇬🇧 English</div>
+                      <p className="text-[11px] text-zinc-300 leading-relaxed">{reportData.phrase_en}</p>
+                    </div>
+                    <div className="p-2.5 rounded-xl bg-black/40 border border-tactical-border/30">
+                      <div className="text-[9px] text-zinc-500 uppercase font-bold mb-1">🇹🇷 Türkçe</div>
+                      <p className="text-[11px] text-zinc-300 leading-relaxed">{reportData.phrase_tr}</p>
+                    </div>
+                  </div>
                 </div>
+
+                {/* 7-Tier Stepladder Visual */}
+                <div className="rounded-2xl border border-tactical-border/60 bg-black/40 p-4 space-y-2">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block mb-3">
+                    ENFSI 2017 Seven-Tier Verbal Strength Scale
+                  </span>
+                  <div className="space-y-1.5">
+                    {[...TIER_CONFIG].reverse().map(tc => (
+                      <div
+                        key={tc.tier}
+                        className={`flex items-center gap-3 px-3 py-2 rounded-xl border transition-all ${
+                          tc.tier === reportData.verbal_tier
+                            ? `${tc.bg} ${tc.border} ring-1 ${tc.border}`
+                            : "border-transparent bg-black/20 opacity-40"
+                        }`}
+                      >
+                        {tc.tier === reportData.verbal_tier && (
+                          <ChevronRight className={`w-3.5 h-3.5 shrink-0 ${tc.color}`} />
+                        )}
+                        {tc.tier !== reportData.verbal_tier && (
+                          <div className={`w-3.5 h-3.5 shrink-0 rounded-full ${tc.dot} opacity-40`} />
+                        )}
+                        <span className={`text-[11px] font-bold w-6 ${tc.color}`}>{tc.tier}</span>
+                        <span className={`text-[11px] font-bold flex-1 ${tc.tier === reportData.verbal_tier ? tc.color : "text-zinc-500"}`}>
+                          {tc.label}
+                        </span>
+                        <span className="text-[9px] text-zinc-600 font-mono">{tc.logRange}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Fallacy Shield */}
+                <div className="p-3 rounded-xl bg-rose-500/5 border border-rose-500/20 text-[10px] font-mono text-zinc-400">
+                  <div className="flex items-center gap-1.5 text-rose-400 font-bold mb-1">
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                    Prosecutor's Fallacy Shield
+                  </div>
+                  <p className="leading-relaxed">{reportData.prosecutors_fallacy_shield.substring(0, 320)}…</p>
+                </div>
+              </motion.div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ── Tab 2: Daubert / Frye ── */}
+      {activeTab === "daubert" && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left: Daubert Inputs */}
+          <div className="space-y-4 rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 shadow-xl">
+            <div className="border-b border-tactical-border/40 pb-3">
+              <span className="text-xs font-bold uppercase tracking-wider text-tactical-text block">
+                Daubert FRE 702 Audit Parameters
+              </span>
+            </div>
+
+            <div className="space-y-3 text-xs">
+              <div>
+                <label className="text-zinc-400 block mb-1">Observed System Error Rate (P_error):</label>
+                <select
+                  value={errorRate}
+                  onChange={e => setErrorRate(parseFloat(e.target.value))}
+                  className="w-full px-3 py-2 rounded-xl bg-black/50 border border-tactical-border/60 text-tactical-text font-mono"
+                >
+                  <option value={1e-9}>1×10⁻⁹ (Pass: ≤ 1×10⁻⁶)</option>
+                  <option value={1e-6}>1×10⁻⁶ (Boundary)</option>
+                  <option value={5e-5}>5×10⁻⁵ (Fail: &gt; 1×10⁻⁶)</option>
+                </select>
+              </div>
+
+              {[
+                { label: "Peer-Reviewed Algorithms (Pillar 3)", value: peerReviewed, setter: setPeerReviewed },
+                { label: "SWGDAM (2020) QAS Compliant (Pillar 4)", value: swgdam, setter: setSwgdam },
+                { label: "ISO/IEC 17025:2017 Accreditation (Pillar 4)", value: iso17025, setter: setIso17025 },
+              ].map(({ label, value, setter }) => (
+                <label key={label} className="flex items-center justify-between gap-2 cursor-pointer">
+                  <span className="text-zinc-400">{label}:</span>
+                  <button
+                    onClick={() => setter(v => !v)}
+                    className={`px-3 py-1 rounded-lg text-[10px] font-bold border transition-all cursor-pointer ${
+                      value
+                        ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
+                        : "bg-rose-500/20 text-rose-300 border-rose-500/40"
+                    }`}
+                  >
+                    {value ? "✓ YES" : "✗ NO"}
+                  </button>
+                </label>
               ))}
             </div>
-          )}
-        </motion.div>
+
+            <button
+              onClick={fetchDaubert}
+              disabled={loading}
+              className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <Gavel className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
+              Run Daubert Audit
+            </button>
+          </div>
+
+          {/* Right: Daubert Output */}
+          <div className="lg:col-span-2 space-y-4">
+            {daubertData && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+                {/* Overall Verdict */}
+                <div className={`rounded-2xl border p-5 shadow-2xl ${daubertData.overall_admissible ? "border-emerald-500/40 bg-emerald-500/5" : "border-rose-500/40 bg-rose-500/5"}`}>
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <span className={`text-[10px] font-bold uppercase tracking-widest block ${daubertData.overall_admissible ? "text-emerald-300" : "text-rose-300"}`}>
+                        STATUTORY LEGAL ADMISSIBILITY VERDICT
+                      </span>
+                      <span className={`text-2xl font-black font-mono ${daubertData.overall_admissible ? "text-emerald-300" : "text-rose-300"}`}>
+                        {daubertData.overall_admissible ? "COURT ADMISSIBLE" : "INADMISSIBLE"}
+                      </span>
+                    </div>
+                    {daubertData.overall_admissible
+                      ? <CheckCircle2 className="w-12 h-12 text-emerald-400 shrink-0" />
+                      : <XCircle className="w-12 h-12 text-rose-400 shrink-0" />
+                    }
+                  </div>
+
+                  {/* Pillar Grid */}
+                  <div className="grid grid-cols-2 gap-3">
+                    {[
+                      { label: "Pillar 1: Falsifiability & Testability", sub: "Automated deterministic unit test suites", pass: daubertData.pillar_1_falsifiability },
+                      { label: "Pillar 2: Error Rate", sub: `P_error ≤ ${daubertData.error_rate_bound.toExponential(0)} (Daubert FRE 702)`, pass: daubertData.pillar_2_error_rate },
+                      { label: "Pillar 3: Peer-Reviewed Literature", sub: "Published algorithms & peer-reviewed validation", pass: daubertData.pillar_3_peer_review },
+                      { label: "Pillar 4: Standards Control", sub: "SWGDAM (2020) & ISO/IEC 17025:2017", pass: daubertData.pillar_4_standards },
+                    ].map(({ label, sub, pass }) => (
+                      <div key={label} className={`p-3 rounded-xl border ${pass ? "border-emerald-500/30 bg-emerald-500/10" : "border-rose-500/30 bg-rose-500/10"}`}>
+                        <div className="flex items-center gap-2 mb-1">
+                          {pass
+                            ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                            : <XCircle className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+                          }
+                          <span className={`text-[11px] font-bold ${pass ? "text-emerald-300" : "text-rose-300"}`}>{label}</span>
+                        </div>
+                        <p className="text-[10px] text-zinc-500 leading-relaxed">{sub}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className={`mt-3 p-2.5 rounded-xl border text-center text-xs font-bold ${daubertData.frye_general_acceptance ? "border-sky-500/30 bg-sky-500/10 text-sky-300" : "border-rose-500/30 bg-rose-500/10 text-rose-300"}`}>
+                    Frye Standard — General Scientific Acceptance: {daubertData.frye_general_acceptance ? "✓ ESTABLISHED" : "✗ NOT ESTABLISHED"}
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </div>
+        </div>
       )}
     </div>
   );

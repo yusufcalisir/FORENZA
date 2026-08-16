@@ -465,7 +465,15 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** All 11 ENFSI tier boundaries verified: Tier 5 (log10 LR > 6), Tier 4 (4–6), Tier 3 (2–4), Tier 2 (1–2), Tier 1 (0–1), Tier 0 (=0), Tiers −1…−5 (symmetric defence); Turkish predicates present.
   - **`G`:** Prosecutor's Fallacy Shield present for all tiers; standard legal text identical across Hp-supporting tiers; `likelihood_equation` references LR value; English shield mentions `P(Evidence` / `Prosecutor`; Turkish shield mentions `Yanılgı`.
   - **`H`:** API integration across all 5 endpoints: FPR=FNR=0 for pristine, AUC≥0.999, Cllr EXCELLENT, HPD 5th pct ≤ median, Tier 5 for log10(LR)=26, Tier 0 for log10(LR)=0, negative tier for log10(LR)=−3.
-* **`VECTOR_P2_01` (Y-STR 27-Locus Paternal Match):** Full Y-FILER Plus 27-locus match: $k=0, N=25000, \alpha=0.05 \implies \hat{p}_u \approx 0.00011982, LR \approx 8345.86, \log_{10}(LR) \approx 3.92147$ (upper bound). Clopper-Pearson 95% exact compliance.
+* **`VECTOR_P2_01` (Y-STR 27-Locus Paternal Match):** Full Y-FILER Plus 27-locus match.
+  - **Observed matches (`k`):** 0
+  - **Reference database size (`N`):** 25,000
+  - **Significance level (`α`):** 0.05
+  - **Estimated upper-bound frequency (`pᵤ`):** ≈ 0.00011982
+  - **Likelihood ratio (`LR`):** ≈ 8345.86
+  - **Log₁₀ likelihood ratio:** ≈ 3.92147
+
+  **Method:** Clopper-Pearson 95% exact confidence bound.
 * **`VECTOR_06_YSTR_A-H` (Y-STR Haplotype Forensics & Mutation Invariants - Module 06):**
   - **`A`:** 27-locus panel completeness, 6 RM loci classification ($\mu_l \ge 0.011$), multi-copy flags (`DYS385a/b`, `DYF387S1a/b`), and locus name normalization.
   - **`B`:** Clopper-Pearson $k=0$ exact formula $\hat{p}_u = 1 - (0.05)^{1/(N+1)}$ (u=upper) verified against analytical calculation; strict monotonic decrease with $N$.

@@ -494,7 +494,7 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** Pairwise maternal identity (0 differences $\implies$ `CANNOT_BE_EXCLUDED`, $LR > 10000$, Prosecutor's Fallacy Shield).
   - **`G`:** Single sequence difference $\implies$ `INCONCLUSIVE` ($LR = 1.0, \log_{10} LR = 0.0$), $\ge 2$ differences $\implies$ `EXCLUDED` ($LR = 0.0, \log_{10} LR = -\infty$).
   - **`H`:** API integration across all 3 endpoints: panel metadata, EMPOP upper bound, and pairwise maternal match evaluation.
-* **`VECTOR_P2_03` (Interpol DVI Mass Disaster Engine):** Severely degraded PM skeletal sample. Autosomal $LR = 5.2 \times 10^3$, Y-STR $\hat{p}_{\text{upper}} = 0.0002$ ($LR_{\text{Y}} = 5000$), mtDNA $\hat{p}_{\text{upper}} = 0.0001$ ($LR_{\text{mtDNA}} = 10000$). Combined Multi-Omic Joint $LR_{\text{Joint}} = 5.2 \times 10^3 \times 5000 \times 10000 = 2.6 \times 10^{11}, \log_{10} LR = 11.41497 \implies$ **DEFINITIVE IDENTIFICATION** ($LR \ge 10^6$).
+* **`VECTOR_P2_03` (Interpol DVI Mass Disaster Engine):** Severely degraded PM skeletal sample. Autosomal $LR = 5.2 \times 10^3$, Y-STR $\hat{p} = 0.0002$ ($LR_{\text{Y}} = 5000$), mtDNA $\hat{p} = 0.0001$ ($LR_{\text{mtDNA}} = 10000$). Combined Multi-Omic Joint $LR_{\text{Joint}} = 5.2 \times 10^3 \times 5000 \times 10000 = 2.6 \times 10^{11}$, $\log_{10}(\text{LR}) = 11.41497 \implies$ **DEFINITIVE IDENTIFICATION** ($LR \ge 10^6$).
 * **`VECTOR_09_DVI_A-H` (Interpol DVI Multi-Omic & Disaster Invariants - Module 09):**
   - **`A`:** Multi-omic product rule mathematical exactness & log-space preservation ($|\log_{10} LR_{\text{Joint}} - \sum \log_{10} LR_i| < 10^{-6}$).
   - **`B`:** Lineage data availability indicator flags ($\delta_y, \delta_m, \delta_s = 0$ sets corresponding multiplier to $1.0$).
@@ -536,7 +536,7 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`H`:** API integration testing across `/ancestry/55-aim/predict` and `/ancestry/55-aim/gis-coordinates`.
 * **`VECTOR_13_MORPHO_A-H` (Craniofacial Morphometrics & 3D Shape Space Reconstruction - Module 13):**
   - **`A`:** Baseline Reference 3D Landmark Geometry ($X_i = 0$) verified against canonical Claes et al. coordinates ($N=(0, 12.4, 45.2), Me=(0, 18.2, -68.5)$ mm).
-  - **`B`:** Bilateral Midline Symmetry Invariant ($x_N = x_{Prn} = x_{Sn} = x_{Ls} = x_{Me} = 0.00$ and $x_{Al_L} = -x_{Al_R}$) strictly preserved across all dosage configurations.
+  - **`B`:** Bilateral Midline Symmetry Invariant ($x_N = x_{Prn} = x_{Sn} = x_{Ls} = x_{Me} = 0.00$ and $x_{Al,L} = -x_{Al,R}$) strictly preserved across all dosage configurations.
   - **`C`:** PRDM16 (`rs11130635`) and DCHS2 (`rs13289`) nasal bridge elevation and nasal apex projection ($y_{Prn} = 52.70\text{ mm}, z_{Prn} = 14.40\text{ mm}$).
   - **`D`:** PAX9 (`rs12882923`) bizygomatic / alar breadth expansion ($w_{\text{alar}} = 40.80\text{ mm}$).
   - **`E`:** PCDH15 (`rs7559252`) chin prominence and mandibular convexity ($y_{Me} = 21.90\text{ mm}, z_{Me} = -70.90\text{ mm}$).

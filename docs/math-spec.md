@@ -2138,6 +2138,90 @@ $$\hat{f}(x, y) = \frac{1}{2\pi n h_x h_y} \sum_{i=1}^n \exp\left( -\frac{1}{2} 
 ### 69.3 ISO/IEC 17025 & ENFSI 2017 7-Tier Bilingual Evaluative Reporting
 Translates composite fused likelihood ratio ($LR_{\text{fused}} \ge 10^8$) into standard ENFSI Tier 6 (`EXTREMELY_STRONG_SUPPORT`) statements with active Prosecutor's Fallacy shields.
 
+---
+
+## 70. Multi-Format Forensic DNA & SNP Terminal Ingestion Engine
+
+### 70.1 Expanded 24-Locus STR Multiplex & NRC II Allele Frequency Bounding
+Under National Research Council (NRC II) Recommendation 4.1 for the NIST 1036 dataset ($N = 1036$):
+
+$$p_{\min} = \frac{5}{2N} = \frac{5}{2 \times 1036} = \frac{5}{2072} \approx 0.00241313$$
+
+Dirichlet-Laplace Bayesian smoothing across $K$ observed allelic classes:
+
+$$\hat{p}_i = \frac{k_i + \alpha}{2N + K\alpha}, \qquad \alpha = 1.0$$
+
+Balding-Nichols coancestry match probability ($\theta \in \{0.01, 0.03\}$):
+- **Homozygous ($A_i A_i$):**
+  $$P(A_i A_i \mid A_i A_i) = \frac{2\theta + (1-\theta)p_i}{1+\theta} \cdot \frac{3\theta + (1-\theta)p_i}{1+2\theta}$$
+- **Heterozygous ($A_i A_j$):**
+  $$P(A_i A_j \mid A_i A_j) = 2 \cdot \frac{\theta + (1-\theta)p_i}{1+\theta} \cdot \frac{\theta + (1-\theta)p_j}{1+2\theta}$$
+
+### 70.2 Amelogenin Y-Null Deletion & Sex Aneuploidy Model
+Interstitial deletion on Yp11.2 priors:
+
+$$P(Y_{\text{null}} \mid \text{SAS}) = 0.0180 \quad (1.80\%), \qquad P(Y_{\text{null}} \mid \text{EUR}) = 0.0002 \quad (0.02\%)$$
+
+- Amelogenin `X` + *DYS391* ($\ge 10$) $\to$ `Male with AMELY Deletion (Yp11.2 Interstitial Deletion)`.
+- Amelogenin `X, Y` + $h_X > 2.0 \cdot h_Y \to$ `Male Aneuploidy (47,XXY Klinefelter Syndrome)`.
+- Amelogenin `X, Y` + SRY Negative $\to$ `46,XY Female / Swyer Syndrome`.
+
+### 70.3 Capillary Electropherogram (EPG) Quality Gates & Degradation Index ($DI$)
+- **Analytical Threshold:** $AT = 50.0\text{ RFU}$ (Baseline noise filter).
+- **Stochastic Threshold:** $ST = 200.0\text{ RFU}$ (Sister allele dropout boundary).
+- **Heterozygote Balance Ratio:**
+  $$H_b = \frac{h_{\text{smaller}}}{h_{\text{larger}}} \ge 0.60 \quad (60\% \text{ intra-locus balance})$$
+- **Degradation Index:**
+  $$DI = \frac{h(\text{D8S1179}, 125\text{ bp})}{h(\text{FGA}, 320\text{ bp})} \implies DI > 5.0 \implies \text{SEVERE_DEGRADATION}$$
+
+### 70.4 Golden Benchmark Casework Test Vectors
+- `VECTOR_TERM_01` (Sample EU): 24 STRs, $P(\text{EUR}) > 98.5\%$, Centroid $52.52^\circ\text{N}, 13.40^\circ\text{E}$.
+- `VECTOR_TERM_02` (Sample AA): $P(\text{AFR}) > 97.8\%$, Centroid $6.52^\circ\text{N}, 3.38^\circ\text{E}$.
+- `VECTOR_TERM_03` (Sample EAS): *EDAR* `G/G`, $P(\text{EAS}) > 99.1\%$, Centroid $31.23^\circ\text{N}, 121.47^\circ\text{E}$.
+- `VECTOR_TERM_04` (Sample SAS): Amelogenin single `X` + *DYS391* $= 11 \to$ Male with $AMELY$ Deletion, $P(\text{SAS}) > 96.4\%$.
+- `VECTOR_TERM_05` (Sample DVI_DEGRADED): $10/24$ locus dropouts, $DI = 8.42 > 5.0$.
+- `VECTOR_TERM_06` (Sample TOUCH_LTDNA): $H_b = 0.45 < 0.60$, $P(D) = 0.35$.
+
+---
+
+## 71. 55-SNP AIM Biogeographic Ancestry (BGA) & 41-SNP HIrisPlex-S Engine
+
+### 71.1 7-Continental Population Bayesian Posterior Formulation
+For a 55-SNP multi-locus genotype vector $\mathbf{G} = (g_1, \dots, g_{55})$ ($g_i \in \{0, 1, 2\}$) across 7 reference clusters (`AFR`, `EUR`, `EAS`, `SAS`, `AMR`, `OCE`, `MID`) with uniform prior $P_0(\text{Pop}_k) = 1/7$:
+
+$$P(\text{Pop}_k \mid \mathbf{G}) = \frac{P_0(\text{Pop}_k) \prod_{i=1}^{55} P(g_i \mid \text{Pop}_k)}{\sum_{j=1}^7 P_0(\text{Pop}_j) \prod_{i=1}^{55} P(g_i \mid \text{Pop}_j)}$$
+
+Dirichlet-Laplace smoothing prior ($\alpha = 0.001$) prevents zero-probability artifacts under HWE:
+
+$$P(g_i = 0 \mid \text{Pop}_k) = (1 - p_{k,i}^*)^2, \quad P(g_i = 1 \mid \text{Pop}_k) = 2 p_{k,i}^* (1 - p_{k,i}^*), \quad P(g_i = 2 \mid \text{Pop}_k) = (p_{k,i}^*)^2$$
+
+$$\left| \left( \sum_{k=1}^7 P(\text{Pop}_k \mid \mathbf{G}) \right) - 1.0 \right| \le 1.0 \times 10^{-6}$$
+
+### 71.2 WGS84 Barycentric Geographic Centroid & $R_{95\%}$ Dispersion Ellipse
+Continental geographic reference anchor points $\mathbf{C}_k = (\theta_k, \lambda_k)$:
+- `AFR` ($0.00^\circ\text{N}, 25.00^\circ\text{E}$), `EUR` ($48.50^\circ\text{N}, 15.00^\circ\text{E}$), `EAS` ($35.00^\circ\text{N}, 105.00^\circ\text{E}$)
+- `SAS` ($22.00^\circ\text{N}, 78.00^\circ\text{E}$), `AMR` ($-10.00^\circ\text{S}, -60.00^\circ\text{W}$), `OCE` ($-20.00^\circ\text{S}, 140.00^\circ\text{E}$), `MID` ($28.00^\circ\text{N}, 38.00^\circ\text{E}$)
+
+Barycentric geographic coordinates:
+
+$$\hat{\theta}_{\text{lat}} = \sum_{k=1}^7 P(\text{Pop}_k \mid \mathbf{G}) \cdot \theta_k, \qquad \hat{\lambda}_{\text{lon}} = \sum_{k=1}^7 P(\text{Pop}_k \mid \mathbf{G}) \cdot \lambda_k$$
+
+Spatial covariance matrix and 95% confidence dispersion radius ($\chi^2_{2, 0.95} = 5.991$):
+
+$$\boldsymbol{\Sigma}_{\text{geo}} = \sum_{k=1}^7 P_k \begin{bmatrix} (\theta_k - \hat{\theta})^2 & (\theta_k - \hat{\theta})(\lambda_k - \hat{\lambda}) \\ (\theta_k - \hat{\theta})(\lambda_k - \hat{\lambda}) & (\lambda_k - \hat{\lambda})^2 \end{bmatrix}$$
+
+$$\lambda_{\max} = \frac{\sigma_{\theta}^2 + \sigma_{\lambda}^2}{2} + \sqrt{\left( \frac{\sigma_{\theta}^2 - \sigma_{\lambda}^2}{2} \right)^2 + \sigma_{\theta \lambda}^2}, \qquad R_{95\%} = \sqrt{5.991 \cdot \lambda_{\max}(\boldsymbol{\Sigma}_{\text{geo}})} \times 111.0\text{ km}$$
+
+### 71.3 HIrisPlex-S Softmax Multinomial Logistic Regression (MLR)
+For phenotype category $k \in \{1, \dots, K-1\}$ relative to reference category $K$:
+
+$$P(Y = k \mid \mathbf{X}) = \frac{\exp \left( \beta_{k0} + \sum_{j=1}^p \beta_{kj} X_j \right)}{1 + \sum_{l=1}^{K-1} \exp \left( \beta_{l0} + \sum_{j=1}^p \beta_{lj} X_j \right)}, \qquad P(Y = K \mid \mathbf{X}) = \frac{1}{1 + \sum_{l=1}^{K-1} \exp \left( \beta_{l0} + \sum_{j=1}^p \beta_{lj} X_j \right)}$$
+
+- **Eye Color (3-Class, Ref $K=3$ Brown):** Blue ($\beta_0 = -1.3412$), Intermediate ($\beta_0 = -1.7821$) governed by *HERC2* `rs12913832` ($\beta = +3.4105$).
+- **Hair Color (4-Class, Ref $K=4$ Brown):** Blond ($\beta_0 = -0.8521$), Red ($\beta_0 = -3.1204$), Black ($\beta_0 = -1.1142$) with epistatic *MC1R* loss-of-function variants (`rs1805007`, `rs1805008`, `rs1805009`, `rs1805006`).
+- **Skin Phototype (5-Class, Ref $K=5$ Intermediate):** Type I Very Pale ($\beta_0 = -2.1024$), Type II Pale ($\beta_0 = -0.9124$), Type V Dark ($\beta_0 = -1.8412$), Type VI Dark-to-Black ($\beta_0 = -3.5120$) governed by *SLC24A5* `rs1426654` ($\beta_{1} = +2.9102, \beta_{4} = -6.1204$) and *SLC45A2* `rs16891982` ($\beta_{1} = +2.4102, \beta_{4} = -5.4120$).
+
+
 
 
 

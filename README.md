@@ -152,7 +152,9 @@ str-analysis/
 │   │   │   ├── toxicology_schemas.py      # Schemas for Forensic Toxicology
 │   │   │   ├── physical_routes.py         # Routes for Ballistics, BPA, Entomology & Tox
 │   │   │   ├── geoint_schemas.py          # Schemas for Isoscapes, Soil, Palynology & Rossmo
-│   │   │   └── geoint_routes.py           # REST Gateway for Pillar 7 Geo-Forensics
+│   │   │   ├── geoint_routes.py           # REST Gateway for Pillar 7 Geo-Forensics
+│   │   │   ├── terminal_schemas.py        # Schemas for DNA & SNP Ingestion, BGA & HIrisPlex
+│   │   │   └── terminal_routes.py         # REST Gateway for DNA Terminal Ingestion Engine
 │   │   ├── core/                          # Security, JWT, Config & HMAC Utilities
 │   │   ├── db/                            # Database Connection & Engine Setup
 │   │   ├── models/                        # Database Models
@@ -194,7 +196,13 @@ str-analysis/
 │           │   ├── palynology_edna_engine.py     # Forensic Palynology & 16S/ITS eDNA Metagenomics
 │           │   ├── geographic_profiling_engine.py# Rossmo Targeted Hunting & Canter Circle
 │           │   └── geo_fusion_engine.py          # Multi-Criteria Bayesian Raster GIS Fusion
-│           └── tests/                     # Automated Test Suite (787 Tests)
+│           ├── terminal/                  # 29. Multi-Format Forensic Ingestion & Quality Engine
+│           │   ├── dna_terminal_parser.py # GeneMapper CSV, CODIS CMF XML, NGS VCF, LIMS JSON
+│           │   ├── snp_phenotype_bga_engine.py # 55-SNP AIM BGA & 41-SNP HIrisPlex-S Softmax MLR
+│           │   ├── test_dna_terminal_parser.py # Benchmark Tests (VECTOR_TERM_01-06)
+│           │   ├── test_snp_phenotype_bga_engine.py # BGA & HIrisPlex-S Unit Tests
+│           │   └── test_terminal_routes.py # REST API Integration Tests (/api/v1/forensic/terminal)
+│           └── tests/                     # Automated Test Suite (808 Tests)
 │
 ├── frontend/                              # Next.js 16 Workstation Dashboard
 │   ├── public/                            # Static Assets, Icons, Favicons
@@ -207,7 +215,9 @@ str-analysis/
 │       │       └── GeoForensicIntelligencePanel.tsx # Multi-Modal Geo-Forensic Platform
 │       ├── context/                       # React Context Providers
 │       ├── dictionaries/                  # Bilingual Translations (TR / EN)
-│       └── lib/                           # Utility Functions & API Clients
+│       ├── lib/                           # Utility Functions & API Clients
+│       └── utils/                         # Client-Side Biocomputational Simulation Engines
+│           └── snpPhenotypeBgaEngine.ts   # 55-SNP AIM BGA & 41-SNP HIrisPlex-S TS Engine
 │
 ├── circuits/                              # Zero-Knowledge Proof Circuits
 │   └── dna_match.circom                   # Circom ZK-SNARK Genotype Circuit

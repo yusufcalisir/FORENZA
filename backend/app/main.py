@@ -380,6 +380,17 @@ try:
 except Exception as _geoint_import_err:
     logger.warning(f"[boot] Geo-Forensic Intelligence router not loaded: {_geoint_import_err}")
 
+# --- Forensic DNA & SNP Terminal Ingestion & Quality Router ---
+try:
+    try:
+        from app.api.terminal_routes import router as terminal_router
+    except ImportError:
+        from backend.app.api.terminal_routes import router as terminal_router
+    app.include_router(terminal_router, prefix="/api/v1")
+    logger.info("[boot] Forensic DNA & SNP Terminal API router registered at /api/v1/forensic/terminal")
+except Exception as _terminal_import_err:
+    logger.warning(f"[boot] Terminal router not loaded: {_terminal_import_err}")
+
 
 # --- Automated Analytical Instrument Gateway Router ---
 try:

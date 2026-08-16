@@ -95,7 +95,7 @@ export default function LandingHero() {
                         </div>
 
                         <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-black/40 border border-tactical-border/60 backdrop-blur-md">
-                            <div className="text-xl sm:text-2xl font-black text-emerald-400">787 / 787</div>
+                            <div className="text-xl sm:text-2xl font-black text-emerald-400">808 / 808</div>
                             <div className="text-[9px] sm:text-[10px] text-zinc-400 uppercase tracking-wider mt-1 font-bold">{t.hero.invariantsStat}</div>
                         </div>
 

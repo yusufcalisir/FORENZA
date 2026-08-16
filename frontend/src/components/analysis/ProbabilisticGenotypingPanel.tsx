@@ -181,52 +181,67 @@ export default function ProbabilisticGenotypingPanel() {
         </div>
 
         {/* Tippett Plot Calibration Curve Simulation */}
-        <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 space-y-4 shadow-lg">
-          <div className="flex items-center justify-between border-b border-tactical-border/40 pb-3">
-            <div className="flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-amber-400" />
-              <span className="text-xs font-bold text-tactical-text uppercase tracking-wider">
+        <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-4 sm:p-5 space-y-3 sm:space-y-4 shadow-lg overflow-hidden">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-tactical-border/40 pb-3">
+            <div className="flex items-center gap-2 min-w-0">
+              <TrendingUp className="w-4 h-4 text-amber-400 shrink-0" />
+              <span className="text-xs font-bold text-tactical-text uppercase tracking-wider truncate">
                 Tippett Plot (Empirical Calibration Curve)
               </span>
             </div>
-            <span className="text-[9px] text-amber-400 font-bold bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded">
+            <span className="text-[9px] text-amber-400 font-bold bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded shrink-0">
               Hp vs Hd Distributions
             </span>
           </div>
 
-          <div className="h-48 relative flex items-center justify-center border border-dashed border-tactical-border/40 rounded-xl p-4 bg-black/20">
-            {/* Donor Curve (Hp) */}
-            <svg className="w-full h-full overflow-visible">
+          {/* Legend Badges */}
+          <div className="flex flex-wrap items-center justify-between gap-2 text-[9px] sm:text-[10px] font-mono">
+            <div className="text-emerald-400 font-bold flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded">
+              <span className="w-2.5 h-0.5 bg-emerald-400 inline-block" /> True Donors P(log₁₀ LR &gt; x | Hp)
+            </div>
+            <div className="text-red-400 font-bold flex items-center gap-1.5 bg-red-500/10 border border-red-500/20 px-2 py-0.5 rounded">
+              <span className="w-2.5 h-0.5 bg-red-400 inline-block" /> Non-Donors P(log₁₀ LR &gt; x | Hd)
+            </div>
+          </div>
+
+          <div className="h-44 sm:h-48 relative flex items-center justify-center border border-dashed border-tactical-border/40 rounded-xl p-2 sm:p-4 bg-black/40 overflow-hidden">
+            <svg viewBox="0 0 400 180" preserveAspectRatio="none" className="w-full h-full">
+              {/* Grid Lines */}
+              <line x1="20" y1="20" x2="380" y2="20" stroke="#27272A" strokeWidth="0.8" strokeDasharray="3 3" />
+              <line x1="20" y1="90" x2="380" y2="90" stroke="#27272A" strokeWidth="0.8" strokeDasharray="3 3" />
+              <line x1="20" y1="160" x2="380" y2="160" stroke="#27272A" strokeWidth="0.8" strokeDasharray="3 3" />
+              
+              <line x1="20" y1="20" x2="20" y2="160" stroke="#27272A" strokeWidth="0.8" strokeDasharray="3 3" />
+              <line x1="140" y1="20" x2="140" y2="160" stroke="#27272A" strokeWidth="0.8" strokeDasharray="3 3" />
+              <line x1="260" y1="20" x2="260" y2="160" stroke="#27272A" strokeWidth="0.8" strokeDasharray="3 3" />
+              <line x1="380" y1="20" x2="380" y2="160" stroke="#27272A" strokeWidth="0.8" strokeDasharray="3 3" />
+
+              {/* Threshold Invariant Indicator at LR=0 */}
+              <line x1="140" y1="20" x2="140" y2="160" stroke="#F59E0B" strokeWidth="1" strokeDasharray="4 2" opacity="0.6" />
+
+              {/* Donor Curve (Hp) - Green Dashed */}
               <path
-                d="M 10 160 Q 100 150 180 90 T 380 10"
+                d="M 20 155 Q 100 145 180 85 T 380 20"
                 fill="none"
                 stroke="#10B981"
                 strokeWidth="2.5"
-                strokeDasharray="4 2"
+                strokeDasharray="5 3"
               />
-              {/* Non-Donor Curve (Hd) */}
+              {/* Non-Donor Curve (Hd) - Red Solid */}
               <path
-                d="M 10 10 Q 150 140 280 160 T 380 165"
+                d="M 20 20 Q 140 135 260 152 T 380 158"
                 fill="none"
                 stroke="#EF4444"
                 strokeWidth="2.5"
               />
             </svg>
-
-            {/* Labels */}
-            <div className="absolute top-4 right-6 text-[9px] text-emerald-400 font-bold flex items-center gap-1.5">
-              <span className="w-2.5 h-0.5 bg-emerald-400 inline-block" /> True Donors P(log10 LR &gt; x | Hp)
-            </div>
-            <div className="absolute bottom-4 left-6 text-[9px] text-red-400 font-bold flex items-center gap-1.5">
-              <span className="w-2.5 h-0.5 bg-red-400 inline-block" /> Non-Donors P(log10 LR &gt; x | Hd)
-            </div>
           </div>
 
-          <div className="flex justify-between text-[9px] text-zinc-500">
-            <span>log10(LR) = -6.0</span>
-            <span>log10(LR) = 0.0</span>
-            <span className="text-emerald-400 font-bold">log10(LR) = +6.0</span>
-            <span>log10(LR) = +12.0</span>
+          <div className="flex justify-between text-[8px] sm:text-[9px] text-zinc-500 font-mono px-1">
+            <span>log₁₀(LR) = -6.0</span>
+            <span>log₁₀(LR) = 0.0</span>
+            <span className="text-emerald-400 font-bold">log₁₀(LR) = +6.0</span>
+            <span>log₁₀(LR) = +12.0</span>
           </div>
         </div>
       </div>

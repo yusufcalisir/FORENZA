@@ -133,38 +133,53 @@ export default function ValidationLabPanel() {
       {/* ── Simulated ROC Curve & Category Table ── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* ROC Curve */}
-        <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 space-y-4 shadow-lg">
-          <div className="flex items-center justify-between border-b border-tactical-border/40 pb-3">
-            <div className="flex items-center gap-2">
-              <Target className="w-4 h-4 text-cyan-400" />
-              <span className="text-xs font-bold text-tactical-text uppercase tracking-wider">
+        <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-4 sm:p-5 space-y-3 sm:space-y-4 shadow-lg overflow-hidden">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-tactical-border/40 pb-3">
+            <div className="flex items-center gap-2 min-w-0">
+              <Target className="w-4 h-4 text-cyan-400 shrink-0" />
+              <span className="text-xs font-bold text-tactical-text uppercase tracking-wider truncate">
                 ROC Curve (Receiver Operating Characteristic)
               </span>
             </div>
-            <span className="text-[9px] text-cyan-400 font-bold bg-cyan-500/10 border border-cyan-500/20 px-2 py-0.5 rounded">
+            <span className="text-[9px] text-cyan-400 font-bold bg-cyan-500/10 border border-cyan-500/20 px-2 py-0.5 rounded shrink-0">
               AUC = 0.9998
             </span>
           </div>
 
-          <div className="h-44 relative flex items-center justify-center border border-dashed border-tactical-border/40 rounded-xl p-4 bg-black/20">
-            <svg className="w-full h-full overflow-visible">
+          {/* Legend Badge */}
+          <div className="flex items-center justify-between text-[9px] sm:text-[10px] font-mono">
+            <div className="text-cyan-400 font-bold flex items-center gap-1.5 bg-cyan-500/10 border border-cyan-500/20 px-2 py-0.5 rounded truncate">
+              <span className="w-2.5 h-0.5 bg-cyan-400 inline-block shrink-0" />
+              <span className="truncate">Perfect Classification Corner (FPR=0, TPR=1)</span>
+            </div>
+          </div>
+
+          <div className="h-44 sm:h-48 relative flex items-center justify-center border border-dashed border-tactical-border/40 rounded-xl p-2 sm:p-4 bg-black/40 overflow-hidden">
+            <svg viewBox="0 0 400 180" preserveAspectRatio="none" className="w-full h-full">
+              {/* Grid Lines */}
+              <line x1="20" y1="20" x2="380" y2="20" stroke="#27272A" strokeWidth="0.8" strokeDasharray="3 3" />
+              <line x1="20" y1="90" x2="380" y2="90" stroke="#27272A" strokeWidth="0.8" strokeDasharray="3 3" />
+              <line x1="20" y1="160" x2="380" y2="160" stroke="#27272A" strokeWidth="0.8" strokeDasharray="3 3" />
+
               {/* Diagonal random guess */}
-              <line x1="10" y1="160" x2="380" y2="10" stroke="#3F3F46" strokeWidth="1" strokeDasharray="3 3" />
+              <line x1="20" y1="160" x2="380" y2="20" stroke="#3F3F46" strokeWidth="1.2" strokeDasharray="4 4" />
+              
               {/* High performance ROC curve */}
               <path
-                d="M 10 160 L 12 12 L 380 10"
+                d="M 20 160 L 22 22 L 380 20"
                 fill="none"
                 stroke="#06B6D4"
                 strokeWidth="2.5"
               />
+              
+              {/* Corner Point Highlight */}
+              <circle cx="22" cy="22" r="4" fill="#06B6D4" className="animate-pulse" />
             </svg>
-            <div className="absolute top-4 left-6 text-[9px] text-cyan-400 font-bold">
-              Perfect Classification Corner (FPR=0, TPR=1)
-            </div>
           </div>
-          <div className="flex justify-between text-[9px] text-zinc-500">
-            <span>False Positive Rate (1 - Specificity)</span>
-            <span className="text-cyan-400 font-bold">True Positive Rate (Sensitivity)</span>
+          
+          <div className="flex justify-between text-[8px] sm:text-[9px] text-zinc-500 font-mono px-1">
+            <span>FPR (1 - Specificity)</span>
+            <span className="text-cyan-400 font-bold text-right">TPR (Sensitivity)</span>
           </div>
         </div>
 

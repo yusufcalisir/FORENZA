@@ -6,17 +6,22 @@ from backend.app.api.epigenetics_schemas import (
     DeconvolveTissueResponse,
     LifestyleProfileRequest,
     LifestyleProfileResponse,
+    TelomerePmiRequest,
+    TelomerePmiResponse,
 )
 from backend.node.services.forensic.epigenetics import (
     EpigeneticClockEngine,
     TissueDeconvolutionEngine,
     LifestyleEpigeneticEngine,
+    TelomerePmiEngine,
 )
 
 router = APIRouter(prefix="/forensic/epigenetics", tags=["Forensic Epigenetics & Research"])
 _AGE_ENGINE = EpigeneticClockEngine()
 _TISSUE_ENGINE = TissueDeconvolutionEngine()
 _LIFESTYLE_ENGINE = LifestyleEpigeneticEngine()
+_TELOMERE_PMI_ENGINE = TelomerePmiEngine()
+
 
 
 @router.post(
@@ -103,3 +108,33 @@ async def lifestyle_profile(req: LifestyleProfileRequest) -> LifestyleProfileRes
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Lifestyle epigenetics error: {str(e)}"
         )
+
+
+@router.post(
+    "/telomere-and-pmi",
+    response_model=TelomerePmiResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Estimate Telomere age, Post-Mortem Epigenetic Interval (PMI), and Somatic Mosaicism",
+    description="Estimates biological age from relative telomere length (T/S = 1.420 - 0.0085 * Age), Post-Mortem Interval from de-methylation ADH kinetics, and Somatic Mosaicism index across tissue profiles."
+)
+async def telomere_and_pmi(req: TelomerePmiRequest) -> TelomerePmiResponse:
+    try:
+        result = _TELOMERE_PMI_ENGINE.analyze_comprehensive_profile(
+            ts_ratio=req.ts_ratio,
+            observed_pmi_beta=req.observed_pmi_beta,
+            ambient_temperature_celsius=req.ambient_temperature_celsius,
+            tissue1_betas=req.tissue1_betas,
+            tissue2_betas=req.tissue2_betas,
+        )
+        return TelomerePmiResponse(**result)
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Telomere and PMI epigenetics error: {str(e)}"
+        )
+

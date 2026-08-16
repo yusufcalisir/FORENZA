@@ -1468,6 +1468,46 @@ $$\Delta\text{Age} = \text{DNAmAge} - \text{ChronologicalAge}$$
 - $\Delta\text{Age} < -5.0 \text{ years} \implies$ **Decelerated Biological Aging**
 - $-5.0 \le \Delta\text{Age} \le +5.0 \text{ years} \implies$ **Normal Biological Aging**
 
+---
+
+## 53. Somatic Mosaicism, Telomere Length Decay ($T/S$) & Post-Mortem Epigenetic Interval (PMI) Engine (Module 19)
+
+### 53.1 Relative Telomere Length ($T/S$) Kinetics
+
+$$T/S = 2^{-\Delta\Delta C_t} = 1.420 - 0.0085 \cdot \text{Age}$$
+
+$$\widehat{\text{Age}}_{\text{telomere}} = \max\left(0.0, \; \frac{1.420 - T/S}{0.0085}\right)$$
+
+| Relative $T/S$ Ratio Range | Biological Age Group | Typical Age Range |
+| :--- | :--- | :--- |
+| $T/S \ge 1.35$ | **Newborn / Infant** | $0 - 8 \text{ Years}$ |
+| $1.15 \le T/S < 1.35$ | **Young Adult** | $8 - 32 \text{ Years}$ |
+| $0.90 \le T/S < 1.15$ | **Middle-Aged** | $32 - 61 \text{ Years}$ |
+| $T/S < 0.90$ | **Elderly** | $\ge 61 \text{ Years}$ |
+
+### 53.2 Post-Mortem Epigenetic Decay Kinetics (PMI / ADH)
+
+Post-mortem de-methylation follows Accumulated Degree-Hours (ADH) thermal summation kinetics:
+
+$$\text{ADH} = \max(0.0, \; T_{\text{ambient}} - T_{\text{base}}) \times t_{\text{hours}}$$
+
+$$\beta_m(\text{ADH}) = \beta_{0,m} \cdot \exp(-\lambda_m \cdot \text{ADH}) + \beta_{\text{floor}}$$
+
+$$\widehat{\text{ADH}} = \frac{1}{\lambda_m} \cdot \ln\left( \frac{\beta_{0,m}}{\max(10^{-4}, \; \beta_m - \beta_{\text{floor}})} \right)$$
+
+$$\widehat{\text{PMI}}_{\text{hours}} = \frac{\widehat{\text{ADH}}}{\max(0.1, \; T_{\text{ambient}} - T_{\text{base}})}$$
+
+- Default kinetic constants: $\lambda = 0.00045\ \text{ADH}^{-1}, \beta_0 = 0.85, \beta_{\text{floor}} = 0.05, T_{\text{base}} = 0.0^\circ\text{C}$.
+
+### 53.3 Somatic Mosaicism & Epigenetic Drift Index ($\mathcal{M}$)
+
+$$\mathcal{M} = \sqrt{\frac{1}{M} \sum_{m=1}^M (\beta_{m,\text{tissue1}} - \beta_{m,\text{tissue2}})^2}$$
+
+- $\mathcal{M} < 0.05 \implies$ **CLONAL_HOMOGENEITY**
+- $0.05 \le \mathcal{M} \le 0.15 \implies$ **LOW_SOMATIC_DRIFT**
+- $\mathcal{M} > 0.15 \implies$ **HIGH_SOMATIC_MOSAICISM**
+
+
 
 
 

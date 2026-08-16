@@ -591,9 +591,19 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** Alcohol Exposure Index tiers verified ($SLC6A3$).
   - **`G`:** Circadian Time-of-Deposition windows verified (Nocturnal, Diurnal, Matutinal).
   - **`H`:** Biological Age Acceleration delta ($\Delta\text{Age}$) and API integration testing across `/forensic/epigenetics/lifestyle-profile`.
+* **`VECTOR_19_PMI_A-H` (Somatic Mosaicism, Telomere Length Decay & Post-Mortem Interval — Module 19):**
+  - **`A`:** Baseline telomere length at birth / young donor verified ($T/S=1.420 \implies \text{Age}=0.0, T/S=1.2075 \implies \text{Age}=25.0$).
+  - **`B`:** Elderly telomere shortening verified ($T/S=0.7825 \implies \text{Age}=75.0$).
+  - **`C`:** Delta-Delta Ct ($2^{-\Delta\Delta C_t}$) conversion to relative $T/S$ verified.
+  - **`D`:** Inverse Post-Mortem Epigenetic Interval ($\widehat{\text{PMI}}_{\text{hours}}$) under ADH thermal summation verified.
+  - **`E`:** Ambient temperature cooling effect verified ($20^\circ\text{C}$ vs $10^\circ\text{C}$).
+  - **`F`:** Somatic mosaicism clonal homogeneity verified ($\mathcal{M} < 0.05$).
+  - **`G`:** High somatic mosaicism drift verified ($\mathcal{M} > 0.15$).
+  - **`H`:** API integration testing across `/forensic/epigenetics/telomere-and-pmi`.
 * **`VECTOR_P6_01` (Chain of Custody Tamper Detection):** Merkle tree root divergence verified upon a single-second timestamp modification ($P_{\text{detection}} = 100\%$).
 * **`VECTOR_P6_02` (ISO 17025 Measurement Uncertainty):** Combined $u_c = 0.05385 \text{ ng/}\mu\text{L}$ and expanded $U_{95\%} = 0.1077 \text{ ng/}\mu\text{L}$ ($k=2.00$).
 * **`VECTOR_P6_03` (ENFSI Verbal Statement Mapping):** $LR = 3.5 \times 10^7$ maps deterministically to Verbal Tier 6 ("Extremely strong support for prosecution proposition").
+
 
 
 

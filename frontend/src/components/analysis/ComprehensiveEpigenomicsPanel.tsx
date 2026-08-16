@@ -35,8 +35,34 @@ interface LifestyleResult {
   biomarker_panel: string;
 }
 
+interface TelomerePmiApiResult {
+  telomere?: {
+    relative_ts_ratio: number;
+    estimated_telomere_age_years: number;
+    telomere_age_group: string;
+    annual_shortening_rate: number;
+  };
+  pmi?: {
+    observed_cpg_beta: number;
+    baseline_beta_0: number;
+    decay_constant_lambda: number;
+    accumulated_degree_hours: number;
+    ambient_temperature_celsius: number;
+    estimated_pmi_hours: number;
+    estimated_pmi_days: number;
+    pmi_confidence_interval_hours: [number, number];
+  };
+  mosaicism?: {
+    mosaicism_index_m: number;
+    mosaicism_classification: string;
+    loci_evaluated: number;
+    locus_deltas: Record<string, number>;
+  };
+  prosecutors_fallacy_shield: string;
+}
+
 export default function ComprehensiveEpigenomicsPanel() {
-  const [activeResearchTab, setActiveResearchTab] = useState<"clock" | "tissue" | "lifestyle">("clock");
+  const [activeResearchTab, setActiveResearchTab] = useState<"clock" | "tissue" | "lifestyle" | "telomere_pmi">("clock");
 
   // Tissue Deconvolution State (12 Diagnostic tDMR CpG Markers)
   const [tdmrBetas, setTdmrBetas] = useState<Record<string, number>>({
@@ -119,6 +145,37 @@ export default function ComprehensiveEpigenomicsPanel() {
     biomarker_panel: "AHRR + F2RL3 + ALPPL2 + ABCG1 + CPT1A + SREBF1 + SLC6A3 + PER2/BMAL1"
   });
 
+  // Telomere & Post-Mortem Epigenetic Decay State (Module 19)
+  const [tsRatio, setTsRatio] = useState<number>(1.10);
+  const [observedPmiBeta, setObservedPmiBeta] = useState<number>(0.50);
+  const [ambientTemp, setAmbientTemp] = useState<number>(20.0);
+  const [telomereLoading, setTelomereLoading] = useState(false);
+  const [telomereResult, setTelomereResult] = useState<TelomerePmiApiResult | null>({
+    telomere: {
+      relative_ts_ratio: 1.10,
+      estimated_telomere_age_years: 37.6,
+      telomere_age_group: "MIDDLE_AGED",
+      annual_shortening_rate: 0.0085
+    },
+    pmi: {
+      observed_cpg_beta: 0.50,
+      baseline_beta_0: 0.85,
+      decay_constant_lambda: 0.00045,
+      accumulated_degree_hours: 1412.3,
+      ambient_temperature_celsius: 20.0,
+      estimated_pmi_hours: 70.6,
+      estimated_pmi_days: 2.9,
+      pmi_confidence_interval_hours: [60.0, 81.2]
+    },
+    mosaicism: {
+      mosaicism_index_m: 0.0141,
+      mosaicism_classification: "CLONAL_HOMOGENEITY",
+      loci_evaluated: 2,
+      locus_deltas: { cg16867657: 0.01, cg21572722: -0.01 }
+    },
+    prosecutors_fallacy_shield: "Telomere and PMI estimates quantify physiological aging and post-mortem thermal exposure (ADH)."
+  });
+
   const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 
   const runDeconvolution = async () => {
@@ -168,6 +225,32 @@ export default function ComprehensiveEpigenomicsPanel() {
       setLifestyleLoading(false);
     }
   };
+
+  const runTelomerePmiAnalysis = async () => {
+    setTelomereLoading(true);
+    try {
+      const res = await fetch(`${API_BASE}/api/v1/forensic/epigenetics/telomere-and-pmi`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ts_ratio: tsRatio,
+          observed_pmi_beta: observedPmiBeta,
+          ambient_temperature_celsius: ambientTemp,
+          tissue1_betas: { cg16867657: 0.22, cg21572722: 0.20 },
+          tissue2_betas: { cg16867657: 0.23, cg21572722: 0.21 },
+        })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setTelomereResult(data);
+      }
+    } catch (e) {
+      console.error("Telomere & PMI analysis failed:", e);
+    } finally {
+      setTelomereLoading(false);
+    }
+  };
+
 
 
   return (
@@ -225,8 +308,19 @@ export default function ComprehensiveEpigenomicsPanel() {
           >
             Lifestyle & Environment
           </button>
+          <button
+            onClick={() => setActiveResearchTab("telomere_pmi")}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              activeResearchTab === "telomere_pmi"
+                ? "bg-purple-500 text-black shadow-md"
+                : "text-zinc-400 hover:text-zinc-200"
+            }`}
+          >
+            Telomere & PMI Decay
+          </button>
         </div>
       </div>
+
 
       {/* ── Tab Content ── */}
       {activeResearchTab === "clock" && <AgeEstimationPanel />}
@@ -507,7 +601,138 @@ export default function ComprehensiveEpigenomicsPanel() {
           </div>
         </div>
       )}
+
+      {activeResearchTab === "telomere_pmi" && (
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Controls */}
+          <div className="space-y-4 rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 shadow-xl">
+            <div className="flex items-center justify-between border-b border-tactical-border/40 pb-3">
+              <div className="flex items-center gap-2">
+                <Clock className="w-4 h-4 text-cyan-400" />
+                <span className="text-xs font-bold uppercase tracking-wider text-tactical-text">
+                  Telomere & PMI Kinetics
+                </span>
+              </div>
+              <button
+                onClick={runTelomerePmiAnalysis}
+                disabled={telomereLoading}
+                className="px-3 py-1 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 font-bold text-[10px] uppercase transition-all flex items-center gap-1 cursor-pointer"
+              >
+                <RefreshCw className={`w-3 h-3 ${telomereLoading ? "animate-spin" : ""}`} />
+                Analyze
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {/* Telomere Section */}
+              <div className="space-y-1">
+                <div className="flex items-center justify-between text-[10px]">
+                  <span className="font-bold text-zinc-300">Relative Telomere Length (T/S)</span>
+                  <span className="font-mono text-cyan-400 font-bold">{tsRatio.toFixed(2)}</span>
+                </div>
+                <input
+                  type="range"
+                  min="0.40"
+                  max="1.60"
+                  step="0.01"
+                  value={tsRatio}
+                  onChange={(e) => setTsRatio(parseFloat(e.target.value))}
+                  className="w-full accent-cyan-500 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
+                />
+                <span className="text-[9px] text-zinc-500 block">
+                  T/S = 1.420 - 0.0085 • Age (Birth: ~1.42, 50 Yrs: ~1.00)
+                </span>
+              </div>
+
+              {/* PMI Section */}
+              <div className="space-y-1 pt-2 border-t border-tactical-border/30">
+                <div className="flex items-center justify-between text-[10px]">
+                  <span className="font-bold text-zinc-300">Residual CpG Methylation (β)</span>
+                  <span className="font-mono text-cyan-400 font-bold">{observedPmiBeta.toFixed(2)}</span>
+                </div>
+                <input
+                  type="range"
+                  min="0.10"
+                  max="0.85"
+                  step="0.01"
+                  value={observedPmiBeta}
+                  onChange={(e) => setObservedPmiBeta(parseFloat(e.target.value))}
+                  className="w-full accent-cyan-500 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <div className="flex items-center justify-between text-[10px]">
+                  <span className="font-bold text-zinc-300">Ambient Temperature</span>
+                  <span className="font-mono text-cyan-400 font-bold">{ambientTemp.toFixed(1)} °C</span>
+                </div>
+                <input
+                  type="range"
+                  min="4.0"
+                  max="35.0"
+                  step="0.5"
+                  value={ambientTemp}
+                  onChange={(e) => setAmbientTemp(parseFloat(e.target.value))}
+                  className="w-full accent-cyan-500 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Results Display */}
+          <div className="lg:col-span-2 space-y-6">
+            {telomereResult && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+                <div className="rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-cyan-500/10 via-tactical-surface/60 to-black/80 p-6 space-y-4 shadow-2xl">
+                  <div className="flex items-center justify-between border-b border-cyan-500/20 pb-4">
+                    <div>
+                      <span className="text-[10px] font-bold text-cyan-300 uppercase tracking-widest block">
+                        ESTIMATED TELOMERE BIOLOGICAL AGE
+                      </span>
+                      <span className="text-2xl font-black text-cyan-300 font-mono">
+                        {telomereResult.telomere?.estimated_telomere_age_years.toFixed(1)} Years
+                      </span>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-[10px] text-zinc-400 block uppercase font-bold">Age Group</span>
+                      <span className="text-sm font-bold text-emerald-400 font-mono">
+                        {telomereResult.telomere?.telomere_age_group}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* PMI Card */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs pt-2">
+                    <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40">
+                      <span className="text-[10px] text-zinc-500 block">Est. PMI</span>
+                      <span className="font-bold text-cyan-300 font-mono">{telomereResult.pmi?.estimated_pmi_hours} Hrs</span>
+                    </div>
+                    <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40">
+                      <span className="text-[10px] text-zinc-500 block">PMI (Days)</span>
+                      <span className="font-bold text-cyan-300 font-mono">{telomereResult.pmi?.estimated_pmi_days} Days</span>
+                    </div>
+                    <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40">
+                      <span className="text-[10px] text-zinc-500 block">Accumulated ADH</span>
+                      <span className="font-bold text-amber-300 font-mono">{telomereResult.pmi?.accumulated_degree_hours} ADH</span>
+                    </div>
+                    <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40">
+                      <span className="text-[10px] text-zinc-500 block">Somatic Mosaicism</span>
+                      <span className="font-bold text-purple-300 font-mono">{telomereResult.mosaicism?.mosaicism_classification}</span>
+                    </div>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-black/30 border border-tactical-border/30 text-[10px] text-zinc-400 font-mono">
+                    {telomereResult.prosecutors_fallacy_shield}
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
+
 
 }

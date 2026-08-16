@@ -143,6 +143,40 @@ class LifestyleProfileResponse(BaseModel):
     estimated_tod_window: str
     age_acceleration_delta: Optional[float] = None
     aging_status: Optional[str] = None
-    biomarker_panel: str
     prosecutors_fallacy_shield: Optional[str] = None
+
+
+class TelomerePmiRequest(BaseModel):
+    ts_ratio: Optional[float] = Field(
+        default=None,
+        description="Relative Telomere Length (T/S ratio = 2^-ddCt)."
+    )
+    delta_delta_ct: Optional[float] = Field(
+        default=None,
+        description="Optional Delta Delta Ct value for telomere estimation."
+    )
+    observed_pmi_beta: Optional[float] = Field(
+        default=None,
+        description="Residual CpG methylation beta value for Post-Mortem Interval calculation."
+    )
+    ambient_temperature_celsius: float = Field(
+        default=20.0,
+        description="Ambient environmental temperature in Celsius for ADH thermal summation."
+    )
+    tissue1_betas: Optional[Dict[str, float]] = Field(
+        default=None,
+        description="CpG beta profile for tissue 1 (for somatic mosaicism comparison)."
+    )
+    tissue2_betas: Optional[Dict[str, float]] = Field(
+        default=None,
+        description="CpG beta profile for tissue 2 (for somatic mosaicism comparison)."
+    )
+
+
+class TelomerePmiResponse(BaseModel):
+    telomere: Optional[Dict[str, Any]] = None
+    pmi: Optional[Dict[str, Any]] = None
+    mosaicism: Optional[Dict[str, Any]] = None
+    prosecutors_fallacy_shield: str
+
 

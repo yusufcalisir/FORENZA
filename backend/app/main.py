@@ -40,7 +40,7 @@ except ImportError:
     # web3 not installed — blockchain audit disabled
     def get_service(): return None
     ForenzaWeb3Service = None
-from app.middleware.vantage_auth import ForenzaAuthMiddleware, VantageAuthMiddleware
+from app.middleware.forenza_auth import ForenzaAuthMiddleware, VantageAuthMiddleware
 from app.schemas.zkp import ZKPayload
 from app.infrastructure.zkp.zkp_service import zkp_service
 import secrets
@@ -150,7 +150,7 @@ app.add_middleware(
 )
 
 # --- Security Middleware ---
-app.add_middleware(VantageAuthMiddleware)
+app.add_middleware(ForenzaAuthMiddleware)
 
 # --- Forensic Engine API Router ---
 try:

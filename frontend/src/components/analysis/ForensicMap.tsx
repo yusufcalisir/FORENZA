@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, useEffect, useRef, useCallback } from "react";
-import { MapContainer, TileLayer, Circle, CircleMarker, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Circle, CircleMarker, Tooltip, Pane, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -43,7 +43,7 @@ function MapInitializer({ lat, lng, zoom }: { lat: number; lng: number; zoom: nu
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// HEATMAP LAYER
+// HEATMAP LAYER (Modern Translucent Luminescent Density Gradient)
 // ═══════════════════════════════════════════════════════════════════════════════
 
 function HeatmapLayer({ data }: { data: GeoProbability[] }) {
@@ -90,18 +90,18 @@ function HeatmapLayer({ data }: { data: GeoProbability[] }) {
 
             // @ts-ignore
             const layer = L.heatLayer(points, {
-                radius: 45,
-                blur: 30,
-                maxZoom: 6,
+                radius: 40,
+                blur: 28,
+                maxZoom: 7,
                 max: 1.0,
-                minOpacity: 0.15,
+                minOpacity: 0.05,
                 gradient: {
-                    0.0: "rgba(0,0,0,0)",
-                    0.2: "#1a1a4e",
-                    0.4: "#3B82F6",
-                    0.6: "#22C55E",
-                    0.8: "#F59E0B",
-                    1.0: "#EF4444",
+                    0.0: "rgba(0, 0, 0, 0)",
+                    0.25: "rgba(6, 182, 212, 0.18)",   // Electric Cyan
+                    0.50: "rgba(59, 130, 246, 0.32)",  // Deep Cobalt
+                    0.75: "rgba(139, 92, 246, 0.45)",  // Ultraviolet
+                    0.90: "rgba(236, 72, 153, 0.55)",  // Neon Magenta
+                    1.00: "rgba(244, 63, 94, 0.65)",   // Soft Rose Core
                 },
             });
 
@@ -218,8 +218,12 @@ function ConfidenceRing({
     const isLocked = phase === "locked";
     const isActive = phase === "scanning" || phase === "calculating";
 
+    // Clean region display name (e.g. "East Asian" or "Sub-Saharan African")
+    const cleanRegionName = region.region.replace(/\s*\(.*?\)\s*/g, "").trim() || region.region;
+
     return (
         <>
+            {/* Outer 95% Confidence Spatial Zone */}
             <Circle
                 center={[region.lat, region.lng]}
                 radius={currentRadius}
@@ -230,24 +234,53 @@ function ConfidenceRing({
                 }}
                 pathOptions={{
                     fillColor: "#22C55E",
-                    fillOpacity: isLocked ? 0.15 : 0.08,
+                    fillOpacity: isLocked ? 0.08 : 0.04,
                     color: "#22C55E",
-                    weight: isActive ? 2 : 1.5,
-                    opacity: isActive ? 0.8 : 0.6,
+                    weight: isActive ? 2 : 1.4,
+                    opacity: isActive ? 0.9 : 0.65,
                     dashArray: isActive ? "8 4" : undefined,
                 }}
             />
+
+            {/* Inner 50% High-Density Core Contour */}
+            <Circle
+                center={[region.lat, region.lng]}
+                radius={Math.max(currentRadius * 0.45, 20000)}
+                pathOptions={{
+                    fillColor: "#06B6D4",
+                    fillOpacity: isLocked ? 0.05 : 0.02,
+                    color: "#06B6D4",
+                    weight: 1,
+                    opacity: 0.5,
+                    dashArray: "4 4",
+                }}
+            />
+
+            {/* Centroid Precision Reticle Marker */}
             <CircleMarker
                 center={[region.lat, region.lng]}
                 radius={isLocked ? 7 : 5}
                 pathOptions={{
                     fillColor: region.color || "#06b6d4",
-                    fillOpacity: 1,
+                    fillOpacity: 0.95,
                     color: "#ffffff",
-                    weight: isLocked ? 2 : 1,
+                    weight: isLocked ? 2 : 1.5,
                     opacity: 1,
                 }}
-            />
+            >
+                <Tooltip
+                    permanent={isLocked}
+                    direction="top"
+                    offset={[0, -10]}
+                    className="tactical-centroid-tooltip"
+                >
+                    <div className="bg-[#080d14]/90 backdrop-blur-md border border-cyan-500/60 text-cyan-300 font-mono text-[9px] px-2 py-0.5 rounded shadow-[0_0_15px_rgba(6,182,212,0.4)] whitespace-nowrap flex items-center gap-1.5 pointer-events-none">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                        <span className="font-bold text-white tracking-wide">{cleanRegionName}</span>
+                        <span className="text-cyan-400 font-bold">{(region.probability * 100).toFixed(0)}%</span>
+                    </div>
+                </Tooltip>
+            </CircleMarker>
         </>
     );
 }
@@ -301,13 +334,25 @@ export default function ForensicMap({
         >
             <MapInitializer lat={center[0]} lng={center[1]} zoom={5} />
 
+            {/* 1. Dark Base Map (Terrain & Geometry without text labels) */}
             <TileLayer
-                url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+                url="https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png"
                 maxZoom={19}
             />
 
+            {/* 2. Middle Layer: Luminescent Tactical Heatmap */}
             <HeatmapLayer data={data} />
 
+            {/* 3. Top Layer: High-Contrast Crisp Map Labels (Rendered ABOVE heatmap via zIndex: 650) */}
+            <Pane name="labels" style={{ zIndex: 650, pointerEvents: "none" }}>
+                <TileLayer
+                    url="https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png"
+                    maxZoom={19}
+                    opacity={0.92}
+                />
+            </Pane>
+
+            {/* 4. Scanning Controller */}
             {topRegion && (
                 <ScanController
                     target={topRegion}
@@ -315,6 +360,7 @@ export default function ForensicMap({
                 />
             )}
 
+            {/* 5. Precision Confidence Ring & Reticle */}
             {topRegion && (
                 <ConfidenceRing
                     region={topRegion}
@@ -323,11 +369,12 @@ export default function ForensicMap({
                 />
             )}
 
-            {data.slice(1, 3).map((region) => (
+            {/* 6. Secondary Continental Reference Anchors */}
+            {data.slice(1, 4).map((region) => (
                 <CircleMarker
                     key={region.region}
                     center={[region.lat, region.lng]}
-                    radius={6}
+                    radius={5}
                     eventHandlers={{
                         mouseover: () => onRegionHover?.(region.region),
                         mouseout: () => onRegionHover?.(null),
@@ -335,12 +382,18 @@ export default function ForensicMap({
                     }}
                     pathOptions={{
                         fillColor: region.color,
-                        fillOpacity: 0.6,
-                        color: region.color,
-                        weight: 1.5,
-                        opacity: 0.8,
+                        fillOpacity: 0.7,
+                        color: "#ffffff",
+                        weight: 1,
+                        opacity: 0.85,
                     }}
-                />
+                >
+                    <Tooltip direction="bottom" offset={[0, 8]} className="tactical-centroid-tooltip">
+                        <div className="bg-[#080d14]/90 backdrop-blur-md border border-zinc-700/80 text-zinc-300 font-mono text-[8px] px-1.5 py-0.5 rounded whitespace-nowrap">
+                            {region.region.split("(")[0].trim()} ({(region.probability * 100).toFixed(0)}%)
+                        </div>
+                    </Tooltip>
+                </CircleMarker>
             ))}
         </MapContainer>
     );

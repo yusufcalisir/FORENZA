@@ -102,7 +102,7 @@
 
 @layer base {
   * {
-    @apply border-border;
+    border-color: hsl(var(--border));
   }
 
   html, body {
@@ -114,7 +114,8 @@
   }
 
   body {
-    @apply bg-tactical-bg text-tactical-text;
+    background-color: var(--color-tactical-bg, #0A0A0B);
+    color: var(--color-tactical-text, #FAFAFA);
     font-feature-settings: "rlig" 1, "calt" 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -255,4 +256,22 @@
 
 .centroid-locked-blink {
   animation: centroid-blink 1.5s infinite ease-in-out;
+}
+
+/* ── Tactical Centroid Tooltip & Labels Enhancement ── */
+.leaflet-tooltip.tactical-centroid-tooltip {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.leaflet-tooltip.tactical-centroid-tooltip::before {
+  display: none !important;
+}
+
+.leaflet-pane.leaflet-labels-pane,
+.leaflet-pane-labels {
+  pointer-events: none !important;
+  filter: drop-shadow(0px 1px 3px rgba(0, 0, 0, 0.95)) contrast(1.2) brightness(1.15);
 }

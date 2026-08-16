@@ -13,9 +13,12 @@ class ForenzaAuthMiddleware(BaseHTTPMiddleware):
     FORENZA High-Security Authentication & On-Chain Session Verification Middleware.
     """
     async def dispatch(self, request: Request, call_next):
+        # 0. Allow CORS preflight requests without auth processing
+        if request.method == "OPTIONS":
+            return await call_next(request)
+
         # 1. Filter for protected routes
         if request.url.path.startswith("/profile"):
-            
             # 2. Check if blockchain service is even available
             service = get_service()
             blockchain_available = service is not None and service.is_connected()
@@ -33,8 +36,8 @@ class ForenzaAuthMiddleware(BaseHTTPMiddleware):
                 if not is_authorized:
                     return await self._deny_access("Blockchain Audit: Access Denied or Suspended.")
             else:
-                # Safety Mode: blockchain unavailable — allow with warning
-                logger.warning("[AUTH] Blockchain unavailable — Safety Mode active, allowing request.")
+                # Safety Mode: blockchain offline/unconfigured — allow with graceful fallback
+                logger.info("[AUTH] Blockchain RPC offline — Safety Mode active (Allowing request in dev/local mode).")
                 investigator = investigator or "SAFETY-MODE-DEV"
                 session_token = session_token or "SAFETY-MODE-TOKEN"
 

@@ -228,8 +228,13 @@ str-analysis/
 ├── circuits/                              # Zero-Knowledge Proof Circuits
 │   └── dna_match.circom                   # Circom ZK-SNARK Genotype Circuit
 │
-├── contracts/                             # Blockchain Audit Anchoring
-│   └── ForensicLedger.sol                 # Solidity Smart Contract
+├── contracts/                             # Blockchain Cryptographic & Audit Anchoring
+│   ├── src/
+│   │   ├── ForenzaAuditRegistry.sol       # ISO 17025 RBAC & Query Audit Trail
+│   │   ├── ForensicMerkleLedger.sol       # Module 26 Merkle Chain of Custody
+│   │   └── Groth16ZkpVerifier.sol         # Module 27 BN254 Pairings Verifier
+│   ├── test/                              # Automated Unit Test Suite (20/20 Passing)
+│   └── scripts/deploy.js                  # Multi-Network Deployment Pipeline
 │
 ├── packages/                              # Shared Core Packages
 ├── infra/                                 # Infrastructure Configuration
@@ -878,4 +883,4 @@ If you use FORENZA in scientific research or technical benchmark reports, please
 
 - **Author & Lead Architect:** Yusuf Çalışır ([@yusufcalisir](https://github.com/yusufcalisir))
 - **Repository:** [yusufcalisir/FORENZA](https://github.com/yusufcalisir/FORENZA)
-- **License:** [MIT License](LICENSE)
+- **License & Regulatory Framework:** [FORENZA Dual Open-Core & Forensic Compliance Terms](LICENSE)

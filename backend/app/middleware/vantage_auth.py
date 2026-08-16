@@ -8,7 +8,10 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
-class VantageAuthMiddleware(BaseHTTPMiddleware):
+class ForenzaAuthMiddleware(BaseHTTPMiddleware):
+    """
+    FORENZA High-Security Authentication & On-Chain Session Verification Middleware.
+    """
     async def dispatch(self, request: Request, call_next):
         # 1. Filter for protected routes
         if request.url.path.startswith("/profile"):
@@ -48,3 +51,6 @@ class VantageAuthMiddleware(BaseHTTPMiddleware):
             status_code=status.HTTP_403_FORBIDDEN,
             content={"detail": detail}
         )
+
+# Backward-compatible alias
+VantageAuthMiddleware = ForenzaAuthMiddleware

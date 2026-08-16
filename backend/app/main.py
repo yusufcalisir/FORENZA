@@ -35,12 +35,12 @@ from pydantic import BaseModel, Field, ConfigDict
 from app.core.config import settings
 from app.schemas.genomic import GenomicProfileIngest, GenomicProfileOut, PhenotypeReport
 try:
-    from app.infrastructure.blockchain.web3_service import get_service, VantageAuditService
+    from app.infrastructure.blockchain.web3_service import get_service, ForenzaWeb3Service
 except ImportError:
     # web3 not installed — blockchain audit disabled
     def get_service(): return None
-    VantageAuditService = None
-from app.middleware.vantage_auth import VantageAuthMiddleware
+    ForenzaWeb3Service = None
+from app.middleware.vantage_auth import ForenzaAuthMiddleware, VantageAuthMiddleware
 from app.schemas.zkp import ZKPayload
 from app.infrastructure.zkp.zkp_service import zkp_service
 import secrets
@@ -747,7 +747,7 @@ def request_access(req: AuthRequest):
     
     1. Checks if wallet is authorized (whitelist).
     2. Generates a cryptographic session token.
-    3. Writes the session to the VantageAudit smart contract (Admin/Relayer action).
+    3. Writes the session to the ForenzaAuditRegistry smart contract (Admin/Relayer action).
     4. Returns the token to the client.
     """
     service = get_service()

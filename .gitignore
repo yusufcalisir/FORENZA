@@ -73,7 +73,10 @@ infra/docker-compose.global.yml
 # Hardhat, Solidity & ZKP Artifacts
 artifacts/
 cache/
+contracts/artifacts/
+contracts/cache/
 typechain-types/
+contracts/typechain-types/
 contracts/deployments/localhost/
 circuits/*.r1cs
 circuits/*.zkey

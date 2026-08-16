@@ -29,7 +29,7 @@ export default function EmbeddedAuditLog() {
         onLogs(logs) {
             const newLogs = logs.map(l => ({
                 id: l.transactionHash,
-                action: (l.args as any).query_type || "UNKNOWN_QUERY",
+                action: (l.args as any).queryType || (l.args as any).query_type || "STR_24_MATCH",
                 time: new Date(),
                 status: "verified"
             }));

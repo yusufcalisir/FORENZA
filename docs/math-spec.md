@@ -2313,6 +2313,36 @@ Updates from `DnaProfileInspectorModal` propagate through `useIngestStore` and `
 - Mobile ($\le 640\text{px}$): Minimum $\ge 44\text{px}$ touch targets, single-column flex layouts, non-overlapping tabs, sticky table headers.
 - Desktop ($\ge 1024\text{px}$): Multi-column tactical HUD grid, high-resolution SVG waveforms, split-pane GIS visualizers.
 
+---
+
+## 75. On-Chain Cryptographic Merkle Custody, EVM BN254 Groth16 Pairings & ISO 17025 RBAC Governance
+
+### 75.1 Mathematical Formulation of On-Chain Binary Merkle Tree (`ForensicMerkleLedger.sol`)
+For an ordered sequence of custody events $\{E_0, E_1, \dots, E_{N-1}\}$, leaf hashes are computed via:
+$$H_i = \text{keccak256}(\text{abi.encodePacked}(E_i.\text{eventId}, E_i.\text{timestamp}, E_i.\text{officerId}, E_i.\text{sampleBarcode}, E_i.\text{locationId}, E_i.\text{priorHash}))$$
+
+Pairwise parent reductions at tree level $k$ satisfy:
+$$P_{j}^{(k)} = \text{keccak256}(\text{abi.encodePacked}(P_{2j}^{(k-1)}, P_{2j+1}^{(k-1)}))$$
+
+Given an audit proof path $\mathcal{P} = \{S_0, S_1, \dots, S_{d-1}\}$ with bitmask $\mathbf{b} \in \{0, 1\}^d$, on-chain verification executes in $O(\log_2 N)$ gas complexity:
+$$C_{i+1} = \begin{cases} \text{keccak256}(S_i \parallel C_i), & \text{if } \mathbf{b}_i = 1 \\ \text{keccak256}(C_i \parallel S_i), & \text{if } \mathbf{b}_i = 0 \end{cases}$$
+Verification succeeds iff $C_d = \mathbf{Root}_{\text{committed}}$.
+
+### 75.2 Bilinear Multi-Pairing Verification on BN254 (`Groth16ZkpVerifier.sol`)
+To verify a blind DNA match proof $\pi = (A \in \mathbb{G}_1, B \in \mathbb{G}_2, C \in \mathbb{G}_1)$ against public inputs $\mathbf{x} = [H(\mathbf{G}_E), M_{\text{thresh}}, H(\mathbf{G}_S)]$ without exposing suspect STR genotypes, the contract evaluates the 4-pairing equation using EVM precompiles (`0x06` ecAdd, `0x07` ecMul, `0x08` ecPairing):
+$$e(-A, B) \cdot e(\alpha, \beta) \cdot e\left( \mathbf{IC}_0 + \sum_{i=1}^l x_i \mathbf{IC}_i, \gamma \right) \cdot e(C, \delta) = 1_{\mathbb{G}_T}$$
+where field arithmetic operates over base field $\mathbb{F}_q$ ($q = 21888242871839275222246405745257275088696311157297823662689037894645226208583$) and scalar field $\mathbb{F}_r$ ($r = 21888242871839275222246405745257275088548364400416034343698204186575808495617$).
+
+### 75.3 ISO/IEC 17025 RBAC Governance & Rate-Limiting (`ForenzaAuditRegistry.sol`)
+Role-Based Access Control assigns atomic permissions:
+- `DEFAULT_ADMIN_ROLE`: Contract upgrades, key rotations, investigator status management, emergency global lockdown.
+- `LAB_ANALYST_ROLE`: DNA profile query logging, casework state transitions.
+- `LEGAL_AUDITOR_ROLE`: Chain of custody inspection, verification proof retrieval.
+- `COURT_OFFICER_ROLE`: Certified evidence admissibility verification.
+
+Sliding-window rate-limiting enforces a maximum of 5 queries per 60-second window, automatically suspending abusive accounts (`InvestigatorStatus.SUSPENDED`) and preventing denial-of-service on the forensic ledger.
+
+
 
 
 

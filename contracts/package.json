@@ -1,18 +1,37 @@
 {
-    "name": "vantage-str-contracts",
-    "version": "1.0.0",
-    "description": "ForensicAudit smart contract — VANTAGE-STR access control layer",
-    "scripts": {
-        "compile": "hardhat compile",
-        "deploy:local": "hardhat run scripts/deploy.js --network localhost",
-        "deploy:sepolia": "hardhat run scripts/deploy.js --network sepolia",
-        "node": "hardhat node"
-    },
-    "devDependencies": {
-        "@nomicfoundation/hardhat-toolbox": "^5.0.0",
-        "hardhat": "^2.22.0"
-    },
-    "dependencies": {
-        "@openzeppelin/contracts": "^5.4.0"
-    }
+  "name": "forenza-contracts",
+  "version": "2.0.0",
+  "description": "FORENZA Forensic Evidence Operating System — Cryptographic Merkle Custody Ledger, Groth16 zk-SNARK BN254 Verifier, and ISO/IEC 17025 RBAC Audit Registry",
+  "main": "index.js",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "test:verbose": "hardhat test --verbose",
+    "deploy:local": "hardhat run scripts/deploy.js --network localhost",
+    "deploy:amoy": "hardhat run scripts/deploy.js --network polygonAmoy",
+    "deploy:polygon": "hardhat run scripts/deploy.js --network polygon",
+    "deploy:sepolia": "hardhat run scripts/deploy.js --network sepolia",
+    "node": "hardhat node"
+  },
+  "keywords": [
+    "forenza",
+    "forensic",
+    "merkle-tree",
+    "zkp",
+    "groth16",
+    "bn254",
+    "iso17025",
+    "chain-of-custody",
+    "ethereum",
+    "polygon"
+  ],
+  "author": "FORENZA Core Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "hardhat": "^2.22.0"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.4.0"
+  }
 }

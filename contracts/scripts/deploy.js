@@ -1,23 +1,56 @@
 const hre = require("hardhat");
+const fs = require("fs");
+const path = require("path");
 
 async function main() {
     const [deployer] = await hre.ethers.getSigners();
-    console.log("Deploying contracts with the account:", deployer.address);
+    console.log("==================================================================");
+    console.log("FORENZA Forensic Evidence Operating System — Contract Deployment");
+    console.log("Deployer account:", deployer.address);
+    console.log("Network:", hre.network.name);
+    console.log("==================================================================");
 
-    const VantageAudit = await hre.ethers.getContractFactory("VantageAudit");
-    const audit = await VantageAudit.deploy();
+    // 1. Deploy ForenzaAuditRegistry
+    console.log("\n[1/3] Deploying ForenzaAuditRegistry (ISO 17025 RBAC & Audit Trail)...");
+    const ForenzaAuditRegistry = await hre.ethers.getContractFactory("ForenzaAuditRegistry");
+    const auditRegistry = await ForenzaAuditRegistry.deploy(deployer.address);
+    await auditRegistry.waitForDeployment();
+    const auditRegistryAddress = await auditRegistry.getAddress();
+    console.log("-> ForenzaAuditRegistry deployed to:", auditRegistryAddress);
 
-    await audit.waitForDeployment();
+    // 2. Deploy ForensicMerkleLedger (Module 26)
+    console.log("\n[2/3] Deploying ForensicMerkleLedger (Module 26 Merkle Chain of Custody)...");
+    const ForensicMerkleLedger = await hre.ethers.getContractFactory("ForensicMerkleLedger");
+    const merkleLedger = await ForensicMerkleLedger.deploy();
+    await merkleLedger.waitForDeployment();
+    const merkleLedgerAddress = await merkleLedger.getAddress();
+    console.log("-> ForensicMerkleLedger deployed to:", merkleLedgerAddress);
 
-    const address = await audit.getAddress();
-    console.log("VantageAudit deployed to:", address);
+    // 3. Deploy Groth16ZkpVerifier (Module 27)
+    console.log("\n[3/3] Deploying Groth16ZkpVerifier (Module 27 BN254 Pairings Verifier)...");
+    const Groth16ZkpVerifier = await hre.ethers.getContractFactory("Groth16ZkpVerifier");
+    const zkpVerifier = await Groth16ZkpVerifier.deploy();
+    await zkpVerifier.waitForDeployment();
+    const zkpVerifierAddress = await zkpVerifier.getAddress();
+    console.log("-> Groth16ZkpVerifier deployed to:", zkpVerifierAddress);
 
-    // Whitelist the deployer as the first investigator for testing
-    // (In production, you'd separate Admin and Investigator)
-    console.log("Authorizing deployer...");
-    const tx = await audit.authorizeInvestigator(deployer.address, "Admin/Relayer", "System Root");
-    await tx.wait();
-    console.log("Deployer authorized.");
+    // Save deployed contract addresses to file
+    const deploymentRecord = {
+        network: hre.network.name,
+        timestamp: new Date().toISOString(),
+        deployer: deployer.address,
+        contracts: {
+            ForenzaAuditRegistry: auditRegistryAddress,
+            ForensicMerkleLedger: merkleLedgerAddress,
+            Groth16ZkpVerifier: zkpVerifierAddress
+        }
+    };
+
+    const outPath = path.join(__dirname, "../deployed_addresses.json");
+    fs.writeFileSync(outPath, JSON.stringify(deploymentRecord, null, 2));
+    console.log("\nDeployment addresses saved to:", outPath);
+    console.log("==================================================================");
+    console.log("Deployment completed successfully.");
 }
 
 main().catch((error) => {

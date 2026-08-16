@@ -110,6 +110,9 @@ jobs:
       - name: Compile Solidity Smart Contracts (Hardhat)
         run: npm --prefix contracts run compile
 
+      - name: Run Hardhat Smart Contract Unit Tests (20 Tests)
+        run: npm --prefix contracts test
+
       - name: Verify Circom ZK-SNARK Circuit Definitions
         run: |
           test -f circuits/dna_match.circom && echo "Circom DNA Match Circuit Template Verified"

@@ -53,6 +53,8 @@ import {
   DyeChannelType,
   ClientEpgSynthesisResult,
 } from "@/utils/epgSynthesisEngine";
+import { getApiBaseUrl } from "@/lib/api";
+import { getStoredApiKeys } from "@/services/apiClient";
 import dynamic from "next/dynamic";
 
 const GeoForensicPanel = dynamic(() => import("@/components/analysis/GeoForensicPanel"), {
@@ -371,43 +373,58 @@ export default function DnaProfileInspectorModal() {
     let combinedLRStr = "1.42e8";
     let cocProofHash = "0x" + Array.from(crypto.getRandomValues(new Uint8Array(16))).map(b => b.toString(16).padStart(2, '0')).join('');
 
-    try {
-      setCalcProgress(35);
-      setCalcStage("Stage 2/6: Executing Dirichlet PopGen & Sex Determination on Backend...");
+    const storedKeys = getStoredApiKeys();
+    const resolvedApiBase = (storedKeys.backendUrl?.trim() || getApiBaseUrl() || "").replace(/\/+$/, "");
 
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
-      const payload = {
-        sample_id: profileId || "CASE-CUSTOM-01",
-        str_profile: Object.fromEntries(
-          Object.entries(newStrMarkers).map(([k, v]) => [
-            k,
-            { allele1: String(v.allele1), allele2: String(v.allele2), rfu1: v.rfu1, rfu2: v.rfu2 }
-          ])
-        ),
-        snp_dosages: snpDosages,
-        population: "GLOBAL_AVERAGE",
-        theta: 0.03,
-      };
+    const endpointCandidates = [
+      `${resolvedApiBase}/api/v1/forensic/terminal/comprehensive`,
+      "http://127.0.0.1:8000/api/v1/forensic/terminal/comprehensive",
+      "http://localhost:8000/api/v1/forensic/terminal/comprehensive",
+      "/api/forensic/terminal/comprehensive",
+    ];
 
-      // Trigger FastAPI Comprehensive Terminal Pipeline
-      const resp = await fetch(`${backendUrl}/api/v1/forensic/terminal/comprehensive`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+    const payload = {
+      sample_id: profileId || "CASE-CUSTOM-01",
+      str_profile: Object.fromEntries(
+        Object.entries(newStrMarkers).map(([k, v]) => [
+          k,
+          { allele1: String(v.allele1), allele2: String(v.allele2), rfu1: v.rfu1, rfu2: v.rfu2 }
+        ])
+      ),
+      snp_dosages: snpDosages,
+      population: "GLOBAL_AVERAGE",
+      theta: 0.03,
+    };
 
-      if (resp.ok) {
-        const backendRes = await resp.json();
-        executedProvider = "FastAPI Forensic Terminal Engine";
-        if (backendRes.popgen?.combined_lr) {
-          combinedLRStr = Number(backendRes.popgen.combined_lr).toExponential(2);
+    setCalcProgress(35);
+    setCalcStage("Stage 2/6: Executing Dirichlet PopGen & Sex Determination on Backend...");
+
+    let backendRes: any = null;
+
+    for (const url of endpointCandidates) {
+      try {
+        console.log(`[FORENZA] Dispatching 35-Module DAG recalculation to: ${url}`);
+        const resp = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        if (resp.ok) {
+          backendRes = await resp.json();
+          executedProvider = url.startsWith("http") ? `FastAPI Terminal Engine (${new URL(url).host})` : "Next.js Forensic DAG Gateway";
+          if (backendRes.popgen?.combined_lr) {
+            combinedLRStr = Number(backendRes.popgen.combined_lr).toExponential(2);
+          }
+          if (backendRes.chain_of_custody_hash) {
+            cocProofHash = backendRes.chain_of_custody_hash;
+          }
+          console.log(`[FORENZA] ✓ Successfully executed 35-Module DAG on: ${url}`, backendRes);
+          break;
         }
-        if (backendRes.chain_of_custody_hash) {
-          cocProofHash = backendRes.chain_of_custody_hash;
-        }
+      } catch (backendError) {
+        console.warn(`[FORENZA] Endpoint ${url} unreachable:`, backendError);
       }
-    } catch (backendError) {
-      console.warn("Direct FastAPI backend connection attempted; falling back to local multi-omic API gateway.", backendError);
     }
 
     try {

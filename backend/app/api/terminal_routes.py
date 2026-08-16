@@ -453,6 +453,20 @@ def run_comprehensive_terminal_analysis(req: TerminalComprehensiveRequest) -> Te
         genotype_dosages=snp_dosages,
     ))
 
+    # Real-Time Forensic Console Telemetry
+    print(f"\n" + "=" * 80)
+    print(f"🧬 [FORENZA-TERMINAL] 35-Module Unified Recalculation Triggered")
+    print(f"   ├─ Sample ID: {sample_id}")
+    print(f"   ├─ STR Loci Profiled: {len(str_dict)} loci")
+    print(f"   ├─ SNP Markers Evaluated: {len(snp_dosages)} SNPs")
+    print(f"   ├─ PopGen Population: {req.population}, Theta Fst: {req.theta}")
+    print(f"   ├─ PopGen Combined LR: {popgen_res.combined_lr:.4e} (Log10 LR: {popgen_res.log10_lr:.2f})")
+    print(f"   ├─ Inferred Sex: {sex_res.inferred_sex} ({sex_res.confidence_tier})")
+    print(f"   ├─ BGA Centroid: {bga_res.centroid_latitude:.4f}°N, {bga_res.centroid_longitude:.4f}°E ({bga_res.dominant_ancestry})")
+    print(f"   ├─ HIrisPlex-S: Eye={hiris_res.predicted_eye_color}, Hair={hiris_res.predicted_hair_color}, Skin={hiris_res.predicted_skin_phototype}")
+    print(f"   └─ QA/QC Gate: {'PASSED (ISO 17025)' if qc_res.overall_passed_qc else 'WARNING'}")
+    print("=" * 80 + "\n", flush=True)
+
     return TerminalComprehensiveResponse(
         sample_id=sample_id,
         chain_of_custody_hash=coc_hash or "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",

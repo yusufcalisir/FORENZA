@@ -181,7 +181,7 @@ export default function EvidenceManagementPanel() {
     }
 
     // Evidence points & ellipsoids
-    ITEMS.forEach((item) => {
+    ITEMS.forEach((item, index) => {
       const [wx, wy] = applyTransformOffset(item.x, item.y);
       const [px, py] = worldToCanvas(wx, wy, viewMode, scale, ox, oy);
       const cfg = SENSOR_CONFIG[item.type] ?? SENSOR_CONFIG["DNA"];
@@ -203,7 +203,7 @@ export default function EvidenceManagementPanel() {
       }
 
       // Evidence marker dot
-      const radius = isSelected ? 8 : 5;
+      const radius = isSelected ? 7 : 4.5;
       ctx.beginPath(); ctx.arc(px, py, radius, 0, 2 * Math.PI);
       const colorMap: Record<string, string> = {
         LIDAR: "#22d3ee", BPA: "#fb7185", BALLISTICS: "#fb923c", DNA: "#34d399", BONE: "#a78bfa"
@@ -212,16 +212,28 @@ export default function EvidenceManagementPanel() {
       ctx.fill();
 
       if (isSelected) {
-        ctx.beginPath(); ctx.arc(px, py, radius + 4, 0, 2 * Math.PI);
+        ctx.beginPath(); ctx.arc(px, py, radius + 3, 0, 2 * Math.PI);
         ctx.strokeStyle = colorMap[item.type] ?? "#94a3b8";
         ctx.lineWidth = 1.5;
         ctx.stroke();
       }
 
-      // Label
-      ctx.fillStyle = isSelected ? "#f8fafc" : "#94a3b8";
+      // Smart staggered label with high contrast background pill to avoid collision
+      const labelText = item.id.replace("EVID-", "");
       ctx.font = `${isSelected ? "bold " : ""}9px monospace`;
-      ctx.fillText(item.id.replace("EVID-", ""), px + 9, py - 4);
+      const textWidth = ctx.measureText(labelText).width;
+      
+      const labelYOffset = (index % 2 === 0) ? -7 : 13;
+      const labelXOffset = (index % 3 === 2) ? -textWidth - 8 : 8;
+
+      ctx.fillStyle = isSelected ? "rgba(30, 27, 75, 0.9)" : "rgba(5, 10, 20, 0.85)";
+      ctx.fillRect(px + labelXOffset - 2, py + labelYOffset - 8, textWidth + 4, 11);
+      ctx.strokeStyle = isSelected ? colorMap[item.type] : "rgba(255,255,255,0.15)";
+      ctx.lineWidth = isSelected ? 1 : 0.5;
+      ctx.strokeRect(px + labelXOffset - 2, py + labelYOffset - 8, textWidth + 4, 11);
+
+      ctx.fillStyle = isSelected ? "#ffffff" : "#cbd5e1";
+      ctx.fillText(labelText, px + labelXOffset, py + labelYOffset);
     });
 
     // Scene bounding box
@@ -235,9 +247,9 @@ export default function EvidenceManagementPanel() {
     ctx.setLineDash([]);
 
     // View label
-    ctx.fillStyle = "rgba(148,163,184,0.4)";
-    ctx.font = "10px monospace";
-    ctx.fillText(`${viewMode.toUpperCase()} VIEW • SE(3) ψ=${yawDeg}° φ=${rollDeg}° θ=${pitchDeg}°`, 10, H - 10);
+    ctx.fillStyle = "rgba(148,163,184,0.5)";
+    ctx.font = "9px monospace";
+    ctx.fillText(`${viewMode.toUpperCase()} VIEW • SE(3) ψ=${yawDeg}° φ=${rollDeg}° θ=${pitchDeg}°`, 8, H - 8);
 
   }, [selectedId, viewMode, showEllipsoids, showBpaTrajectory, showBallisticVector, rollDeg, pitchDeg, yawDeg, txM, tyM, tzM]);
 
@@ -249,23 +261,25 @@ export default function EvidenceManagementPanel() {
   return (
     <div className="space-y-6 font-mono">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-tactical-border/60 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-tactical-border/60 pb-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 shadow-[0_0_15px_rgba(99,102,241,0.15)]">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 shadow-[0_0_15px_rgba(99,102,241,0.15)]">
             <Layers className="w-5 h-5" />
           </div>
-          <div>
-            <h2 className="text-sm sm:text-base font-bold tracking-widest text-tactical-text uppercase">
-              3D Spatial Crime Scene Reconstruction
-            </h2>
-            <p className="text-[10px] text-tactical-text-muted mt-0.5">
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="text-xs sm:text-sm font-bold tracking-widest text-tactical-text uppercase">
+                3D Spatial Crime Scene Reconstruction
+              </h2>
+              <span className="text-[8px] sm:text-[9px] font-bold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-2.5 py-0.5 rounded-lg whitespace-nowrap shrink-0">
+                §5.1–5.2 Compliant
+              </span>
+            </div>
+            <p className="text-[9px] sm:text-[10px] text-tactical-text-muted mt-0.5">
               SE(3) Coordinate Registration • 95% CI Ellipsoid (χ²₃ = 7.815) • Multi-Sensor Fusion • Juror Visualizer
             </p>
           </div>
         </div>
-        <span className="text-xs font-bold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-3 py-1 rounded-lg">
-          §5.1–5.2 Compliant
-        </span>
       </div>
 
       {/* Main grid */}
@@ -273,64 +287,91 @@ export default function EvidenceManagementPanel() {
 
         {/* ── Left: 3D Canvas ─────────────────────────────────── */}
         <div className="xl:col-span-3 space-y-3">
-          {/* Vantage Point / View Controls */}
-          <div className="flex items-center justify-between">
-            <div className="flex gap-1">
+          {/* Vantage Point & Layer Toggles Bar */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 p-1.5 rounded-xl bg-black/40 border border-tactical-border/50">
+            {/* View Modes */}
+            <div className="flex items-center gap-1 overflow-x-auto max-w-full">
               {(["isometric", "top", "side"] as const).map((v) => (
                 <button
                   key={v}
                   id={`view-${v}`}
                   onClick={() => setViewMode(v)}
-                  className={`px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all ${
+                  className={`flex-1 sm:flex-initial px-2.5 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
                     viewMode === v
-                      ? "bg-indigo-500/20 border border-indigo-500/40 text-indigo-300"
-                      : "bg-black/20 border border-tactical-border/30 text-zinc-500 hover:text-zinc-300"
+                      ? "bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 shadow-sm"
+                      : "bg-black/30 border border-tactical-border/30 text-zinc-400 hover:text-zinc-200"
                   }`}
                 >
-                  <Eye className="w-3 h-3 inline mr-1 mb-0.5" />
+                  <Eye className="w-3 h-3 inline mr-1 mb-0.5 shrink-0" />
                   {v === "isometric" ? "Isometric" : v === "top" ? "Jury Top" : "Witness Side"}
                 </button>
               ))}
             </div>
-            <div className="flex gap-2 text-[9px]">
-              <button id="toggle-ellipsoids" onClick={() => setShowEllipsoids(!showEllipsoids)}
-                className={`px-2 py-1 rounded border transition-all ${showEllipsoids ? "border-cyan-500/40 text-cyan-400 bg-cyan-500/10" : "border-tactical-border/30 text-zinc-600"}`}>
+
+            {/* Layer Toggles */}
+            <div className="flex items-center justify-end gap-1.5 text-[9px] shrink-0 border-t sm:border-t-0 pt-1 sm:pt-0 border-tactical-border/20">
+              <button
+                id="toggle-ellipsoids"
+                onClick={() => setShowEllipsoids(!showEllipsoids)}
+                className={`px-2.5 py-1 rounded-md border font-bold transition-all whitespace-nowrap cursor-pointer ${
+                  showEllipsoids
+                    ? "border-cyan-500/40 text-cyan-300 bg-cyan-500/20"
+                    : "border-tactical-border/30 text-zinc-500 bg-black/30"
+                }`}
+              >
                 95% CI
               </button>
-              <button id="toggle-bpa" onClick={() => setShowBpaTrajectory(!showBpaTrajectory)}
-                className={`px-2 py-1 rounded border transition-all ${showBpaTrajectory ? "border-rose-500/40 text-rose-400 bg-rose-500/10" : "border-tactical-border/30 text-zinc-600"}`}>
+              <button
+                id="toggle-bpa"
+                onClick={() => setShowBpaTrajectory(!showBpaTrajectory)}
+                className={`px-2.5 py-1 rounded-md border font-bold transition-all whitespace-nowrap cursor-pointer ${
+                  showBpaTrajectory
+                    ? "border-rose-500/40 text-rose-300 bg-rose-500/20"
+                    : "border-tactical-border/30 text-zinc-500 bg-black/30"
+                }`}
+              >
                 BPA
               </button>
-              <button id="toggle-ballistic" onClick={() => setShowBallisticVector(!showBallisticVector)}
-                className={`px-2 py-1 rounded border transition-all ${showBallisticVector ? "border-orange-500/40 text-orange-400 bg-orange-500/10" : "border-tactical-border/30 text-zinc-600"}`}>
+              <button
+                id="toggle-ballistic"
+                onClick={() => setShowBallisticVector(!showBallisticVector)}
+                className={`px-2.5 py-1 rounded-md border font-bold transition-all whitespace-nowrap cursor-pointer ${
+                  showBallisticVector
+                    ? "border-orange-500/40 text-orange-300 bg-orange-500/20"
+                    : "border-tactical-border/30 text-zinc-500 bg-black/30"
+                }`}
+              >
                 Ballistic
               </button>
             </div>
           </div>
 
-          {/* Canvas */}
+          {/* Canvas Viewport */}
           <div className="rounded-2xl border border-tactical-border/70 bg-[#050a14] overflow-hidden shadow-xl relative">
-            <canvas ref={canvasRef} width={560} height={360} className="w-full" />
-            {/* Legend */}
-            <div className="absolute top-3 right-3 space-y-1">
-              {Object.entries(SENSOR_CONFIG).map(([type, cfg]) => (
-                <div key={type} className="flex items-center gap-1.5">
-                  <Circle className={`w-2 h-2 fill-current ${cfg.color}`} />
-                  <span className={`text-[9px] ${cfg.color}`}>{cfg.label} (±{cfg.precision * 1000}mm)</span>
-                </div>
-              ))}
-            </div>
+            <canvas ref={canvasRef} width={560} height={360} className="w-full h-auto block" />
+          </div>
+
+          {/* Precision Legend Bar below Canvas */}
+          <div className="flex flex-wrap items-center justify-between gap-2 p-2.5 rounded-xl bg-black/40 border border-tactical-border/40 text-[9px] font-mono">
+            {Object.entries(SENSOR_CONFIG).map(([type, cfg]) => (
+              <div key={type} className="flex items-center gap-1.5">
+                <Circle className={`w-2 h-2 fill-current ${cfg.color} shrink-0`} />
+                <span className={`${cfg.color} whitespace-nowrap`}>
+                  {cfg.label} (±{cfg.precision * 1000}mm)
+                </span>
+              </div>
+            ))}
           </div>
 
           {/* SE(3) Transform Controls */}
           <div className="rounded-2xl border border-tactical-border/60 bg-tactical-surface/50 p-4 space-y-3">
             <div className="flex items-center gap-2 border-b border-tactical-border/30 pb-2">
-              <RotateCw className="w-3.5 h-3.5 text-indigo-400" />
+              <RotateCw className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
               <span className="text-[10px] font-bold text-tactical-text uppercase tracking-wider">
                 SE(3) Transform — R = R_z(ψ)·R_y(θ)·R_x(φ)
               </span>
             </div>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {[
                 { label: "Roll φ", val: rollDeg, set: setRollDeg, color: "text-rose-400" },
                 { label: "Pitch θ", val: pitchDeg, set: setPitchDeg, color: "text-amber-400" },
@@ -347,7 +388,7 @@ export default function EvidenceManagementPanel() {
                 </div>
               ))}
             </div>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {[
                 { label: "ΔX (m)", val: txM, set: setTxM, color: "text-emerald-400" },
                 { label: "ΔY (m)", val: tyM, set: setTyM, color: "text-emerald-400" },

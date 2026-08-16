@@ -38,9 +38,9 @@ export default function MicroscopyPanel() {
       {/* Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Left 2 Cols: Sample Inventory */}
-        <div className="md:col-span-2 rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 space-y-4 shadow-lg">
-          <span className="text-xs font-bold text-tactical-text uppercase tracking-wider block border-b border-tactical-border/40 pb-2">
-            Microscopic Morphometry & Hair Evidence Inventory
+        <div className="md:col-span-2 rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-4 sm:p-5 space-y-4 shadow-lg overflow-hidden">
+          <span className="text-xs sm:text-sm font-bold text-tactical-text uppercase tracking-wider block border-b border-tactical-border/40 pb-2.5 leading-snug">
+            Microscopic Morphometry &amp; Hair Evidence Inventory
           </span>
 
           <div className="space-y-3">
@@ -48,30 +48,45 @@ export default function MicroscopyPanel() {
               <div
                 key={s.id}
                 onClick={() => setSelectedSample(s.id)}
-                className={`p-4 rounded-xl border transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
+                className={`p-3.5 sm:p-4 rounded-xl border transition-all cursor-pointer space-y-2.5 ${
                   selectedSample === s.id
                     ? "bg-purple-500/15 border-purple-500/60 shadow-[0_0_15px_rgba(168,85,247,0.15)]"
-                    : "bg-black/20 border-tactical-border/40 hover:border-tactical-border/80"
+                    : "bg-black/30 border-tactical-border/40 hover:border-purple-500/40"
                 }`}
               >
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-tactical-text">{s.id}</span>
-                    <span className="text-[9px] text-purple-300 font-bold bg-purple-500/10 border border-purple-500/20 px-2 py-0.5 rounded">
-                      {s.origin}
-                    </span>
-                  </div>
-                  <p className="text-[10px] text-zinc-400">
-                    Hair Diam: {s.diameter} • Medulla Diam: {s.medulla} • Root: {s.root}
-                  </p>
+                {/* Header: Sample ID & Origin Badge */}
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <span className="text-xs font-bold text-tactical-text font-mono tracking-wide">
+                    {s.id}
+                  </span>
+                  <span className="text-[9px] text-purple-300 font-bold bg-purple-500/15 border border-purple-500/30 px-2 py-0.5 rounded whitespace-nowrap">
+                    {s.origin}
+                  </span>
                 </div>
 
-                <div className="flex items-center gap-3 text-xs font-mono">
-                  <div className="text-right">
-                    <p className="text-[9px] text-zinc-500">Medullary Index (I)</p>
-                    <p className="text-purple-300 font-bold text-xs">{s.index}</p>
+                {/* Measurements Grid */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-[10px] font-mono">
+                  <div className="bg-black/40 p-2 rounded-lg border border-tactical-border/30">
+                    <span className="text-zinc-500 text-[9px] block">Hair Diameter</span>
+                    <span className="text-zinc-200 font-bold">{s.diameter}</span>
                   </div>
-                  <span className="px-2.5 py-1 rounded text-[9px] font-bold bg-purple-500/20 border border-purple-500/40 text-purple-300 uppercase">
+                  <div className="bg-black/40 p-2 rounded-lg border border-tactical-border/30">
+                    <span className="text-zinc-500 text-[9px] block">Medulla Diameter</span>
+                    <span className="text-zinc-200 font-bold">{s.medulla}</span>
+                  </div>
+                  <div className="col-span-2 sm:col-span-1 bg-black/40 p-2 rounded-lg border border-tactical-border/30">
+                    <span className="text-zinc-500 text-[9px] block">Root Morphology</span>
+                    <span className="text-zinc-200 font-bold truncate block">{s.root}</span>
+                  </div>
+                </div>
+
+                {/* Footer: Medullary Index & Routing Badge */}
+                <div className="flex items-center justify-between pt-2 border-t border-tactical-border/20 text-xs font-mono">
+                  <div className="flex items-center gap-2">
+                    <span className="text-zinc-400 text-[10px]">Medullary Index (I):</span>
+                    <span className="text-purple-300 font-bold">{s.index}</span>
+                  </div>
+                  <span className="px-2.5 py-0.5 rounded text-[9px] font-bold bg-purple-500/20 border border-purple-500/40 text-purple-300 uppercase whitespace-nowrap">
                     {s.badge}
                   </span>
                 </div>

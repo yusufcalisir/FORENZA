@@ -34,6 +34,9 @@ try:
         SynthesizeEpgResponse,
         FilterArtifactsRequest,
         FilterArtifactsResponse,
+        CaseworkPresetDto,
+        ExportProfileRequest,
+        ExportProfileResponse,
     )
     from backend.node.services.forensic.terminal.dna_terminal_parser import (
         DnaTerminalParser,
@@ -50,6 +53,11 @@ try:
         EpgSynthesisEngine,
         DyeChannelEnum,
         EpgPeakAnnotation,
+    )
+    from backend.node.services.forensic.terminal.casework_presets import (
+        CaseworkPresetsEngine,
+        CaseworkPresetItem,
+        GOLDEN_CASEWORK_PRESETS,
     )
 except ImportError:
     from app.api.terminal_schemas import (
@@ -77,6 +85,9 @@ except ImportError:
         SynthesizeEpgResponse,
         FilterArtifactsRequest,
         FilterArtifactsResponse,
+        CaseworkPresetDto,
+        ExportProfileRequest,
+        ExportProfileResponse,
     )
     from node.services.forensic.terminal.dna_terminal_parser import (
         DnaTerminalParser,
@@ -93,6 +104,11 @@ except ImportError:
         EpgSynthesisEngine,
         DyeChannelEnum,
         EpgPeakAnnotation,
+    )
+    from node.services.forensic.terminal.casework_presets import (
+        CaseworkPresetsEngine,
+        CaseworkPresetItem,
+        GOLDEN_CASEWORK_PRESETS,
     )
 
 router = APIRouter(prefix="/forensic/terminal", tags=["Forensic DNA & SNP Terminal"])
@@ -583,6 +599,123 @@ def filter_epg_artifacts(req: FilterArtifactsRequest) -> FilterArtifactsResponse
         filtered_artifacts_count=len(req.peaks) - len(cleaned_dto),
         cleaned_peaks=cleaned_dto,
     )
+
+
+@router.get("/presets", response_model=List[CaseworkPresetDto], summary="Retrieve All 6 Golden Benchmark Casework Vectors")
+def get_casework_presets() -> List[CaseworkPresetDto]:
+    """
+    Returns the 6 Golden Benchmark Casework Vectors (VECTOR_TERM_01 to VECTOR_TERM_06)
+    for reference casework verification and validation testing.
+    """
+    presets = CaseworkPresetsEngine.get_all_presets()
+    return [
+        CaseworkPresetDto(
+            preset_id=p.preset_id,
+            sample_name=p.sample_name,
+            case_type=p.case_type,
+            target_population=p.target_population,
+            physical_condition=p.physical_condition,
+            description=p.description,
+            expected_ancestry=p.expected_ancestry,
+            expected_phenotype=p.expected_phenotype,
+            expected_centroid=p.expected_centroid,
+            degradation_index=p.degradation_index,
+            stochastic_dropout_prob=p.stochastic_dropout_prob,
+            heterozygote_balance=p.heterozygote_balance,
+            str_profile=p.str_profile,
+            snp_dosages=p.snp_dosages,
+            supplementary_markers=p.supplementary_markers,
+            chain_of_custody_hash=p.chain_of_custody_hash,
+        )
+        for p in presets
+    ]
+
+
+@router.get("/presets/{preset_id}", response_model=CaseworkPresetDto, summary="Retrieve a Specific Casework Preset")
+def get_casework_preset_by_id(preset_id: str) -> CaseworkPresetDto:
+    """
+    Retrieves a specific casework preset by its vector identifier (e.g. VECTOR_TERM_01).
+    """
+    p = CaseworkPresetsEngine.get_preset_by_id(preset_id)
+    if not p:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Casework preset '{preset_id}' not found. Available presets: VECTOR_TERM_01 to VECTOR_TERM_06."
+        )
+
+    return CaseworkPresetDto(
+        preset_id=p.preset_id,
+        sample_name=p.sample_name,
+        case_type=p.case_type,
+        target_population=p.target_population,
+        physical_condition=p.physical_condition,
+        description=p.description,
+        expected_ancestry=p.expected_ancestry,
+        expected_phenotype=p.expected_phenotype,
+        expected_centroid=p.expected_centroid,
+        degradation_index=p.degradation_index,
+        stochastic_dropout_prob=p.stochastic_dropout_prob,
+        heterozygote_balance=p.heterozygote_balance,
+        str_profile=p.str_profile,
+        snp_dosages=p.snp_dosages,
+        supplementary_markers=p.supplementary_markers,
+        chain_of_custody_hash=p.chain_of_custody_hash,
+    )
+
+
+@router.post("/export", response_model=ExportProfileResponse, summary="Export Profile to CODIS XML, LIMS JSON, or GeneMapper CSV")
+def export_forensic_profile(req: ExportProfileRequest) -> ExportProfileResponse:
+    """
+    Exports STR and SNP profile into standard formats:
+    - CODIS_XML: FBI CODIS Common Message Format (CMF) 3.2 XML
+    - LIMS_JSON: Schema-compliant ISO/IEC 17025 LIMS JSON with SHA-256 integrity hash
+    - GENEMAPPER_CSV: 10-column GeneMapper ID-X CE table
+    """
+    fmt_norm = req.format.upper().replace(" ", "_").replace("-", "_")
+
+    if fmt_norm in ("CODIS_XML", "XML", "CODIS"):
+        exported_text = CaseworkPresetsEngine.export_to_codis_xml(
+            sample_id=req.sample_id,
+            str_profile=req.str_profile,
+            source_lab=req.source_lab or "VA122015Y",
+            operator_id=req.operator_id or "FORENZA_ANALYST",
+        )
+        mime = "application/xml"
+        filename = f"{req.sample_id}_CODIS_CMF3.2.xml"
+    elif fmt_norm in ("LIMS_JSON", "JSON", "LIMS"):
+        exported_text = CaseworkPresetsEngine.export_to_lims_json(
+            sample_id=req.sample_id,
+            str_profile=req.str_profile,
+            snp_dosages=req.snp_dosages,
+            operator_id=req.operator_id or "FORENZA_ANALYST",
+        )
+        mime = "application/json"
+        filename = f"{req.sample_id}_ISO17025_LIMS.json"
+    elif fmt_norm in ("GENEMAPPER_CSV", "CSV", "GENEMAPPER"):
+        exported_text = CaseworkPresetsEngine.export_to_genemapper_csv(
+            sample_id=req.sample_id,
+            str_profile=req.str_profile,
+        )
+        mime = "text/csv"
+        filename = f"{req.sample_id}_GeneMapper_Table.csv"
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Unsupported export format '{req.format}'. Supported formats: 'CODIS_XML', 'LIMS_JSON', 'GENEMAPPER_CSV'."
+        )
+
+    import hashlib
+    sha256_hash = hashlib.sha256(exported_text.encode("utf-8")).hexdigest()
+
+    return ExportProfileResponse(
+        sample_id=req.sample_id,
+        format=fmt_norm,
+        exported_content=exported_text,
+        mime_type=mime,
+        filename_suggestion=filename,
+        sha256_checksum=sha256_hash,
+    )
+
 
 
 

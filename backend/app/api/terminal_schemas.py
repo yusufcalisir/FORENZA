@@ -267,3 +267,44 @@ class FilterArtifactsResponse(BaseModel):
     cleaned_peaks: List[EpgPeakAnnotationDto]
 
 
+class CaseworkPresetDto(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    preset_id: str
+    sample_name: str
+    case_type: str
+    target_population: str
+    physical_condition: str
+    description: str
+    expected_ancestry: str
+    expected_phenotype: str
+    expected_centroid: str
+    degradation_index: float
+    stochastic_dropout_prob: float
+    heterozygote_balance: float
+    str_profile: Dict[str, Dict[str, Any]]
+    snp_dosages: Dict[str, int]
+    supplementary_markers: Dict[str, str] = Field(default_factory=dict)
+    chain_of_custody_hash: str = ""
+
+
+class ExportProfileRequest(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    sample_id: str = Field(default="FORENZA_SAMPLE_EXPORT")
+    format: str = Field(default="CODIS_XML", description="Target format: 'CODIS_XML', 'LIMS_JSON', or 'GENEMAPPER_CSV'")
+    str_profile: Dict[str, Dict[str, Any]] = Field(..., description="STR allele calls mapping")
+    snp_dosages: Optional[Dict[str, int]] = Field(default=None, description="Optional SNP dosages for LIMS JSON")
+    source_lab: Optional[str] = Field(default="VA122015Y")
+    operator_id: Optional[str] = Field(default="FORENZA_ANALYST")
+
+
+class ExportProfileResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    sample_id: str
+    format: str
+    exported_content: str
+    mime_type: str
+    filename_suggestion: str
+    sha256_checksum: str
+
+
+

@@ -2262,6 +2262,31 @@ where $\sigma = 0.75\text{ bp}$ (capillary resolution bandwidth), $\eta = 0.85$ 
 - **Reverse Stutter Ratio:** $SR = h_{\text{stutter}} / h_{\text{true\_allele}} \le SR_{\max, l}$ ($N-4$ repeat artifact).
 - **Pull-Up Compensation Filter:** Peaks co-migrating within $\pm 0.3\text{ bp}$ in adjacent dye channels with $h_{\text{secondary}} / h_{\text{major}} \le 0.06$ (6%) are filtered as spectral cross-talk bleedthrough.
 
+---
+
+## 73. Casework Reference Library & Biocomputational Data Exchange
+
+### 73.1 Golden Benchmark Casework Vectors (`VECTOR_TERM_01` – `VECTOR_TERM_06`)
+Standard validation references across continental biogeographic ancestries and biophysical degradation states:
+1. **`VECTOR_TERM_01` (Sample EU — Northern European):** 24 STR loci, *HERC2* `rs12913832: A/A`, *SLC45A2* `rs16891982: C/C`, *SLC24A5* `rs1426654: A/A` $\implies P(\text{EUR}) > 98.5\%$, Blue Eyes ($0.982$), Blond Hair ($0.891$), Very Pale Skin ($0.912$), Centroid $52.52^\circ\text{N}, 13.40^\circ\text{E}$.
+2. **`VECTOR_TERM_02` (Sample AA — West African):** 24 STR loci, *HERC2* `rs12913832: G/G`, *SLC45A2* `rs16891982: G/G`, *DARC* `rs2814778: C/C` $\implies P(\text{AFR}) > 97.8\%$, Dark Brown Eyes ($0.994$), Black Hair ($0.982$), Dark Skin ($0.965$), Centroid $6.52^\circ\text{N}, 3.38^\circ\text{E}$.
+3. **`VECTOR_TERM_03` (Sample EAS — East Asian):** 24 STR loci, *EDAR* `rs3827760: G/G`, *OCA2* `rs1800414: C/C` $\implies P(\text{EAS}) > 99.1\%$, Thick Straight Black Hair ($0.991$), Centroid $31.23^\circ\text{N}, 121.47^\circ\text{E}$.
+4. **`VECTOR_TERM_04` (Sample SAS — South Asian with Y-Null Deletion):** Amelogenin single X ($106\text{ bp}, 1850\text{ RFU}$), Y absent ($0\text{ RFU}$), *DYS391* allele 11 ($820\text{ RFU}$) $\implies$ Male with Yp11.2 Interstitial Deletion ($P(\text{SAS}) > 96.4\%$), Centroid $28.61^\circ\text{N}, 77.20^\circ\text{E}$.
+5. **`VECTOR_TERM_05` (Sample DVI_DEGRADED — Severe Skeletal Degradation):** $10/24$ loci dropped out ($FGA, D21S11, D18S51, SE33, \text{Penta E}$), $DI = \frac{h(\text{D8S1179}, 125\text{ bp})}{h(\text{FGA}, 320\text{ bp})} = \frac{842}{100} = 8.42 > 5.0$.
+6. **`VECTOR_TERM_06` (Sample TOUCH_LTDNA — Low-Template Touch DNA Trace):** Template $< 62.5\text{ pg}$, $P(D) = 0.35$, $H_b = \frac{450}{1000} = 0.45 < 0.60$, triggering stochastic mixture alert.
+
+### 73.2 FBI CODIS CMF 3.2 / 4.0 XML Specification
+Grammar encapsulates `<CODISImportFile>` with `<HEADER>` (SourceLab, DestinationLab, BatchID, Timestamp) and hierarchical `<SPECIMEN>` $\implies$ `<BATCH>` $\implies$ `<READING>` $\implies$ `<LOCUS>` $\implies$ `<ALLELE>` tuples.
+
+### 73.3 ISO/IEC 17025 LIMS JSON Schema & Cryptographic Integrity
+Validates typed JSON schemas containing `sampleMetadata`, `strGenotypes`, `aimGenotypes`, and `hirisplexGenotypes`. Verifies SHA-256 chain-of-custody checksum:
+
+$$H_{\text{CoC}} = \text{SHA-256}(\text{Canonical JSON}(\mathbf{M}_{\text{sample}}, \mathbf{G}_{\text{STR}}, \mathbf{G}_{\text{SNP}}))$$
+
+### 73.4 GeneMapper ID-X 10-Column Format Translation
+Bidirectional parsing and serialization supporting standard capillary electrophoresis columns: `Sample Name`, `Marker`, `Allele 1`, `Allele 2`, `Height 1`, `Height 2`, `Size 1`, `Size 2`, `Data Point 1`, `Data Point 2`.
+
+
 
 
 

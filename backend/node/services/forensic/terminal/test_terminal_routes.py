@@ -182,3 +182,68 @@ def test_api_terminal_epg_filter_artifacts():
     assert data["filtered_artifacts_count"] == 3
     assert data["cleaned_peaks"][0]["allele_call"] == "15"
 
+
+def test_api_terminal_presets_list():
+    res = client.get("/api/v1/forensic/terminal/presets")
+    assert res.status_code == 200
+    data = res.json()
+    assert len(data) == 6
+    ids = {p["preset_id"] for p in data}
+    assert "VECTOR_TERM_01" in ids
+    assert "VECTOR_TERM_04" in ids
+
+
+def test_api_terminal_preset_get_by_id():
+    res = client.get("/api/v1/forensic/terminal/presets/VECTOR_TERM_04")
+    assert res.status_code == 200
+    data = res.json()
+    assert data["preset_id"] == "VECTOR_TERM_04"
+    assert data["str_profile"]["Amelogenin"]["allele1"] == "X"
+    assert data["supplementary_markers"]["DYS391"] == "11"
+
+    # Test 404 for invalid ID
+    res_404 = client.get("/api/v1/forensic/terminal/presets/NON_EXISTENT_ID")
+    assert res_404.status_code == 404
+
+
+def test_api_terminal_export():
+    profile = {
+        "D3S1358": {"allele1": "15", "allele2": "16", "rfu1": 1500, "rfu2": 1450},
+        "TH01": {"allele1": "9.3", "allele2": "9.3", "rfu1": 2200, "rfu2": 2200},
+    }
+    # 1. CODIS XML
+    req_xml = {
+        "sample_id": "EXP_SAMPLE_01",
+        "format": "CODIS_XML",
+        "str_profile": profile,
+    }
+    res_xml = client.post("/api/v1/forensic/terminal/export", json=req_xml)
+    assert res_xml.status_code == 200
+    data_xml = res_xml.json()
+    assert "<CODISImportFile" in data_xml["exported_content"]
+    assert len(data_xml["sha256_checksum"]) == 64
+
+    # 2. LIMS JSON
+    req_json = {
+        "sample_id": "EXP_SAMPLE_01",
+        "format": "LIMS_JSON",
+        "str_profile": profile,
+        "snp_dosages": {"rs12913832": 2},
+    }
+    res_json = client.post("/api/v1/forensic/terminal/export", json=req_json)
+    assert res_json.status_code == 200
+    data_json = res_json.json()
+    assert "ISO17025_ForensicTerminalSchema" in data_json["exported_content"]
+
+    # 3. GeneMapper CSV
+    req_csv = {
+        "sample_id": "EXP_SAMPLE_01",
+        "format": "GENEMAPPER_CSV",
+        "str_profile": profile,
+    }
+    res_csv = client.post("/api/v1/forensic/terminal/export", json=req_csv)
+    assert res_csv.status_code == 200
+    data_csv = res_csv.json()
+    assert "Sample Name,Marker,Allele 1,Allele 2" in data_csv["exported_content"]
+
+

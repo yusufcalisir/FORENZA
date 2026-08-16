@@ -39,6 +39,12 @@ from .epg_synthesis_engine import (
     LIZ_600_STANDARD_SIZES,
 )
 
+from .casework_presets import (
+    CaseworkPresetsEngine,
+    CaseworkPresetItem,
+    GOLDEN_CASEWORK_PRESETS,
+)
+
 __all__ = [
     "DnaTerminalParser",
     "ParsedForensicProfile",
@@ -67,5 +73,9 @@ __all__ = [
     "EpgSynthesisResult",
     "PANEL_24_LOCUS_MAPPING",
     "LIZ_600_STANDARD_SIZES",
+    "CaseworkPresetsEngine",
+    "CaseworkPresetItem",
+    "GOLDEN_CASEWORK_PRESETS",
 ]
+
 

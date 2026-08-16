@@ -30,24 +30,25 @@ export default function ForensicGraphPanel() {
   return (
     <div className="space-y-4 font-mono max-w-full overflow-hidden">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-tactical-border/60 pb-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-tactical-border/60 pb-3">
         <div className="flex items-center gap-2.5 min-w-0">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 shrink-0">
             <Network className="w-4 h-4" />
           </div>
           <div className="min-w-0">
-            <h2 className="text-xs sm:text-base font-bold tracking-wider text-white uppercase truncate">
-              Forensic Knowledge Graph Engine
-            </h2>
-            <p className="text-[9px] sm:text-[10px] text-zinc-400 mt-0.5 truncate">
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="text-xs sm:text-sm md:text-base font-bold tracking-wider text-white uppercase">
+                Forensic Knowledge Graph Engine
+              </h2>
+              <span className="text-[8px] sm:text-[9px] font-bold text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded-md shrink-0 whitespace-nowrap">
+                {nodes.length} Nodes • {edges.length} Directed Edges
+              </span>
+            </div>
+            <p className="text-[9px] sm:text-[10px] text-zinc-400 mt-0.5 leading-relaxed">
               Multi-Relational Property Graph • Case-Person-Evidence Intelligence Network
             </p>
           </div>
         </div>
-
-        <span className="text-[9px] sm:text-xs font-bold text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 px-2.5 py-1 rounded-lg shrink-0 w-fit">
-          {nodes.length} Nodes • {edges.length} Directed Edges
-        </span>
       </div>
 
       {/* Graph Visualizer Area */}

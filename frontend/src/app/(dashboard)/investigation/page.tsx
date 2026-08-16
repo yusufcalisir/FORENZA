@@ -173,15 +173,17 @@ export default function InvestigationDashboard() {
                                         <Search className="w-8 h-8 text-purple-400" />
                                     </div>
 
-                                    <div className="space-y-2">
+                                    <div className="space-y-3">
                                         <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">Forensic Vault Search</h2>
-                                        <p className="text-zinc-400 text-xs leading-relaxed">
+                                        <p className="text-zinc-400 text-xs leading-relaxed max-w-md mx-auto">
                                             Upload raw `.fsa` files or enter STR profile manually.
-                                            <span className="text-emerald-400 block mt-2 font-mono text-[10px] font-bold border border-emerald-500/30 bg-emerald-500/10 py-1 px-2.5 rounded-lg inline-block">
-                                                <Lock className="w-3 h-3 inline mr-1 mb-0.5" />
+                                        </p>
+                                        <div className="flex justify-center pt-0.5">
+                                            <span className="text-emerald-400 font-mono text-[10px] font-bold border border-emerald-500/30 bg-emerald-500/10 py-1 px-3 rounded-lg flex items-center gap-1.5 shadow-sm">
+                                                <Lock className="w-3 h-3 text-emerald-400 shrink-0" />
                                                 Zero-Knowledge Proof Enabled
                                             </span>
-                                        </p>
+                                        </div>
                                     </div>
 
                                     <div className="flex gap-4 justify-center">

@@ -138,8 +138,8 @@ export default function ProbabilisticGenotypingPanel() {
         },
         num_contributors: 2,
         model_engine: modelEngine,
-        n_burn: Math.floor(mcmcSteps * 0.25),
-        n_sample: mcmcSteps,
+        n_burn: 250,
+        n_sample: Math.min(1000, mcmcSteps),
         n_chains: 3,
         suspect_profile: [[6.0, 9.3], [16.0, 17.0], [12.0, 16.0], [13.0, 14.0]]
       };
@@ -147,7 +147,8 @@ export default function ProbabilisticGenotypingPanel() {
       const res = await fetch(`${API_BASE}/api/v1/forensic/genomics/deconvolve`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
+        signal: AbortSignal.timeout(5000),
       });
 
       if (res.ok) {

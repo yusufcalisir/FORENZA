@@ -12,6 +12,17 @@ Ingestion Pipeline:
     4. If validity_score < 0.85  → QUARANTINED → flagged for review
 """
 
+import sys
+import os
+from pathlib import Path
+
+# Ensure both backend/ and repository root are on sys.path regardless of execution working directory
+_BACKEND_DIR = Path(__file__).resolve().parent.parent
+_REPO_ROOT = _BACKEND_DIR.parent
+for _p in [str(_BACKEND_DIR), str(_REPO_ROOT)]:
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
 import logging
 import time
 from datetime import datetime, timezone

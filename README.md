@@ -695,6 +695,14 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`E`:** Daubert FRE 702 4-pillar & Frye audit (Pillar 1 unit tests, Pillar 2 error rate $\le 10^{-6}$, Pillar 3 peer review, Pillar 4 SWGDAM/ISO 17025 standards).
   - **`F`:** Domain validation for non-positive Likelihood Ratios ($LR \le 0 \implies \texttt{ValueError}$).
   - **`G`:** API integration testing across `/forensic/court/evaluative-report` and `/daubert-compliance`.
+* **`VECTOR_30_SPATIAL_A-G` (3D Spatial Crime Scene Reconstruction & Juror Visualizer — Module 30):**
+  - **`A`:** $SE(3)$ identity transform invariance ($\mathbf{R}=\mathbf{I}, \mathbf{T}=\mathbf{0} \implies \mathbf{X}_{\text{scene}} = \mathbf{X}_{\text{local}}$, residual $< 10^{-10}$).
+  - **`B`:** Euler ZYX rotation matrix invariants ($\mathbf{R} = \mathbf{R}_z(\psi)\mathbf{R}_y(\theta)\mathbf{R}_x(\phi)$, $\|\mathbf{R}\mathbf{R}^T - \mathbf{I}\|_F < 10^{-10}, |\det(\mathbf{R}) - 1| < 10^{-10}$).
+  - **`C`:** Pure spatial translation additivity ($\mathbf{X}_{\text{scene}} = \mathbf{X}_{\text{local}} + \mathbf{T}$).
+  - **`D`:** Probabilistic 95% confidence ellipsoid geometry ($(\mathbf{X}-\boldsymbol{\mu})^T\boldsymbol{\Sigma}^{-1}(\mathbf{X}-\boldsymbol{\mu}) \le \chi^2_{3,0.95} \approx 7.815$, $a = \sqrt{\lambda_1 \cdot 7.815}$, $V = \frac{4}{3}\pi abc$).
+  - **`E`:** Multi-sensor spatial fusion precision calibration ($\sigma_{\text{LiDAR}} = \pm 0.002\,\text{m}$, $\sigma_{\text{BPA}} = \pm 0.012\,\text{m}$, $\sigma_{\text{Ballistics}} = \pm 0.005\,\text{m}$, $\sigma_{\text{DNA}} = \pm 0.008\,\text{m}$).
+  - **`F`:** Domain validation for non-positive definite covariance matrices, dimension mismatch, and empty point sets.
+  - **`G`:** API integration testing across `/forensic/court/spatial/transform-se3`, `/spatial/confidence-ellipsoid`, and `/spatial/reconstruct-scene`.
 
 
 

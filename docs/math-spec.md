@@ -1931,8 +1931,85 @@ $$V(LR_{\text{eff}}) = \begin{cases} \text{Tier 0: Inconclusive / Neutral}, & LR
 | `VECTOR_29_ENFSI_F` | Domain validation ($LR \le 0$) | $\texttt{ValueError}$ raised | ✅ Verified |
 | `VECTOR_29_ENFSI_G` | FastAPI REST pipeline (`/evaluative-report`, `/daubert-compliance`) | 200 OK end-to-end; 400 on invalid LR | ✅ Verified |
 
+---
 
+## 64. Module 30: 3D Spatial Crime Scene Reconstruction & Interactive Juror Visualizer Engine
 
+**Research Reference:** Pillar 6 §5.1–§5.2  
+**Engine:** `backend/node/services/forensic/court/spatial_reconstruction_engine.py`  
+**API Endpoints:** `POST /forensic/court/spatial/transform-se3`, `/spatial/confidence-ellipsoid`, `/spatial/reconstruct-scene`  
+**UI Component:** `frontend/src/components/analysis/EvidenceManagementPanel.tsx` (Interactive 3D Juror Visualizer)
+
+---
+
+### 64.1 Spatial Transformation & Scene Coordinate Registration (§5.1)
+
+Local sensor coordinates $\mathbf{X}_{\text{local}}$ are mapped to the global scene datum $\mathbf{X}_{\text{scene}} \in \mathbb{R}^3$ via the **Special Euclidean Group** $SE(3)$:
+
+$$\mathbf{X}_{\text{scene}} = \mathbf{R} \cdot \mathbf{X}_{\text{local}} + \mathbf{T}$$
+
+where $\mathbf{R} = \mathbf{R}_z(\psi)\,\mathbf{R}_y(\theta)\,\mathbf{R}_x(\phi)$ is the **Euler ZYX** composition:
+
+$$\mathbf{R}_x(\phi) = \begin{pmatrix} 1 & 0 & 0 \\ 0 & \cos\phi & -\sin\phi \\ 0 & \sin\phi & \cos\phi \end{pmatrix}, \quad
+\mathbf{R}_y(\theta) = \begin{pmatrix} \cos\theta & 0 & \sin\theta \\ 0 & 1 & 0 \\ -\sin\theta & 0 & \cos\theta \end{pmatrix}, \quad
+\mathbf{R}_z(\psi) = \begin{pmatrix} \cos\psi & -\sin\psi & 0 \\ \sin\psi & \cos\psi & 0 \\ 0 & 0 & 1 \end{pmatrix}$$
+
+**Rotation Matrix Invariants** (verified by unit tests):
+- **Orthogonality:** $\|\mathbf{R}\mathbf{R}^T - \mathbf{I}\|_F < 10^{-10}$
+- **Determinant:** $|\det(\mathbf{R}) - 1| < 10^{-10}$
+
+---
+
+### 64.2 Multi-Sensor Point-to-Plane Registration Residual (§5.1)
+
+The multi-sensor registration objective minimizes the **point-to-plane residual error**:
+
+$$\min_{\mathbf{R},\,\mathbf{T}} \sum_{k=1}^{K} \left\| \mathbf{n}_k^T \cdot \left( \mathbf{R} \cdot \mathbf{p}_k + \mathbf{T} - \mathbf{q}_k \right) \right\|^2$$
+
+where $\mathbf{p}_k$ are source sensor points, $\mathbf{q}_k$ are target reference points, and $\mathbf{n}_k$ are unit surface normals at the target.
+
+**Sensor Calibration Precision Table (§5.1):**
+
+| Spatial Sensor Input | Raw Resolution | Registration Target | Global Precision $(\sigma_x, \sigma_y, \sigma_z)$ |
+| :--- | :--- | :--- | :--- |
+| **Terrestrial LiDAR Scanning** | $\pm 1.5\,\text{mm}$ at $10\,\text{m}$ | Absolute Scene Geometric Shell | $\pm 0.002\,\text{m}$ |
+| **BPA Trajectory Flight Origin** | $\pm 15.0\,\text{mm}$ ellipsoid radius | Bloodstain Convergence Point | $\pm 0.012\,\text{m}$ |
+| **Ballistics Terminal Trajectory** | $\pm 0.5°$ directional deviation | Bullet Impact Vector Line | $\pm 0.005\,\text{m}$ |
+| **Suspect Landmark Coordinates** | $\pm 5.0\,\text{mm}$ anatomical drift | Biological Sample Collection Point | $\pm 0.008\,\text{m}$ |
+
+---
+
+### 64.3 Probabilistic 95% Volumetric Confidence Ellipsoid (§5.2)
+
+Positional uncertainty is rendered as a **95% confidence ellipsoid** defined by the spatial covariance $\boldsymbol{\Sigma}$:
+
+$$(\mathbf{X} - \boldsymbol{\mu})^T \boldsymbol{\Sigma}^{-1} (\mathbf{X} - \boldsymbol{\mu}) \;\le\; \chi^2_{3,\,0.95} \approx 7.815$$
+
+Via eigendecomposition $\boldsymbol{\Sigma} = \mathbf{V}\boldsymbol{\Lambda}\mathbf{V}^T$ with $\lambda_1 \ge \lambda_2 \ge \lambda_3 > 0$, the semi-axis lengths $(a, b, c)$ are:
+
+$$a = \sqrt{\lambda_1 \cdot 7.815}, \qquad b = \sqrt{\lambda_2 \cdot 7.815}, \qquad c = \sqrt{\lambda_3 \cdot 7.815}$$
+
+**Ellipsoid Volume:**
+
+$$V = \frac{4}{3}\,\pi\,a\,b\,c$$
+
+**Ground-Truth Benchmark (Isotropic $\boldsymbol{\Sigma} = \mathbf{I}_3$, $\sigma = 1.0\,\text{m}$):**
+
+$$a = b = c = \sqrt{1.0 \times 7.815} = 2.7955\,\text{m}, \qquad V = \frac{4}{3}\,\pi\,(2.7955)^3 \approx 91.588\,\text{m}^3$$
+
+---
+
+### 64.4 Golden Benchmark Test Vectors (Module 30)
+
+| Vector | Test Scenario | Verified Invariant | Status |
+| :--- | :--- | :--- | :---: |
+| `VECTOR_30_SPATIAL_A` | $SE(3)$ identity transform ($\mathbf{R}=\mathbf{I}$, $\mathbf{T}=\mathbf{0}$) | $\mathbf{X}_{\text{scene}} = \mathbf{X}_{\text{local}}$ exact to $<10^{-10}$; orthogonality residual $<10^{-10}$ | ✅ Verified |
+| `VECTOR_30_SPATIAL_B` | Euler rotation invariants (roll, pitch, yaw $\in \{90°, 45°, 30°, 180°\}$) | $\|\mathbf{R}\mathbf{R}^T - \mathbf{I}\|_F < 10^{-10}$; $\|\det(\mathbf{R}) - 1\| < 10^{-10}$; pure-axis mappings exact | ✅ Verified |
+| `VECTOR_30_SPATIAL_C` | Pure translation ($\mathbf{R}=\mathbf{I}$, $\mathbf{T}=[t_x, t_y, t_z]$) | $\mathbf{X}_{\text{scene}} = \mathbf{X}_{\text{local}} + \mathbf{T}$; origin maps exactly to $\mathbf{T}$ under any rotation | ✅ Verified |
+| `VECTOR_30_SPATIAL_D` | 95% CI ellipsoid (isotropic $\boldsymbol{\Sigma}=\mathbf{I}_3$ and anisotropic $\text{diag}(4,2,1)$) | $a=b=c=\sqrt{7.815}\approx2.7955$; $\chi^2=7.815$ exact; axes descending; volume formula $V=\frac{4}{3}\pi abc$ | ✅ Verified |
+| `VECTOR_30_SPATIAL_E` | Multi-sensor fusion (LiDAR, BPA, Ballistics, DNA) precision conformance | $\sigma_{\text{LiDAR}}=0.002$, $\sigma_{\text{BPA}}=0.012$, $\sigma_{\text{Ball}}=0.005$, $\sigma_{\text{DNA}}=0.008$; centroid, bounding box correct | ✅ Verified |
+| `VECTOR_30_SPATIAL_F` | Domain validation (singular/indefinite covariance; empty scene; mismatched lengths) | `ValueError` raised for all invalid inputs | ✅ Verified |
+| `VECTOR_30_SPATIAL_G` | FastAPI REST integration (`/transform-se3`, `/confidence-ellipsoid`, `/reconstruct-scene`) | 200 OK end-to-end; 400 on invalid inputs; $\chi^2=7.815$ in all responses | ✅ Verified |
 
 
 

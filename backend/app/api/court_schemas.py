@@ -104,3 +104,109 @@ class DaubertComplianceResponse(BaseModel):
     overall_admissible: bool
     error_rate_bound: float
     prosecutor_fallacy_shield: str
+
+
+# ── Module 30: 3D Spatial Crime Scene Reconstruction ──────────────────────────
+
+class SE3TransformRequest(BaseModel):
+    """SE(3) Special Euclidean 3D coordinate transformation request."""
+    x_local: List[float] = Field(
+        default=[1.0, 0.0, 0.0],
+        description="Input point in local sensor coordinates [x, y, z] (m).",
+        min_length=3, max_length=3,
+    )
+    roll_phi_deg: float = Field(
+        default=0.0,
+        description="Roll angle φ around X-axis [degrees].",
+    )
+    pitch_theta_deg: float = Field(
+        default=0.0,
+        description="Pitch angle θ around Y-axis [degrees].",
+    )
+    yaw_psi_deg: float = Field(
+        default=0.0,
+        description="Yaw angle ψ around Z-axis [degrees].",
+    )
+    translation: List[float] = Field(
+        default=[0.0, 0.0, 0.0],
+        description="Translation vector T = [tx, ty, tz] (m).",
+        min_length=3, max_length=3,
+    )
+
+
+class SE3TransformResponse(BaseModel):
+    x_local: List[float]
+    x_scene: List[float]
+    rotation_matrix: List[List[float]]
+    translation_vector: List[float]
+    roll_phi_rad: float
+    pitch_theta_rad: float
+    yaw_psi_rad: float
+    orthogonality_residual: float
+    det_residual: float
+
+
+class ConfidenceEllipsoidRequest(BaseModel):
+    """95% volumetric confidence ellipsoid request (§5.2)."""
+    centroid_mu: List[float] = Field(
+        default=[0.0, 0.0, 0.0],
+        description="Scene centroid (x, y, z) [m].",
+        min_length=3, max_length=3,
+    )
+    covariance_matrix: List[List[float]] = Field(
+        default=[[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]],
+        description="3×3 symmetric positive-definite spatial covariance Sigma [m^2].",
+    )
+
+
+class ConfidenceEllipsoidResponse(BaseModel):
+    centroid_mu: List[float]
+    semi_axis_a: float
+    semi_axis_b: float
+    semi_axis_c: float
+    volume_m3: float
+    eigenvectors: List[List[float]]
+    eigenvalues: List[float]
+    chi2_threshold: float
+
+
+class LidarPoint(BaseModel):
+    label: str = Field(default="LIDAR-PT")
+    coords: List[float] = Field(default=[0.0, 0.0, 0.0], min_length=3, max_length=3)
+
+
+class BallisticsVector(BaseModel):
+    origin: List[float] = Field(default=[0.0, 0.0, 0.0], min_length=3, max_length=3)
+    direction: List[float] = Field(default=[1.0, 0.0, 0.0], min_length=3, max_length=3)
+
+
+class ReconstructSceneRequest(BaseModel):
+    """Full multi-modal crime scene 3D reconstruction request."""
+    scene_id: str = Field(default="SCENE-2026-001")
+    lidar_points: List[LidarPoint] = Field(default=[])
+    bpa_origins: List[List[float]] = Field(
+        default=[],
+        description="List of 3D BPA area-of-origin points [m].",
+    )
+    ballistics_vectors: List[BallisticsVector] = Field(default=[])
+    dna_landmarks: List[List[float]] = Field(
+        default=[],
+        description="List of (x, y, z) biological landmark positions [m].",
+    )
+
+
+class SensorPointOut(BaseModel):
+    sensor_type: str
+    label: str
+    x_scene: List[float]
+    precision_m: float
+
+
+class ReconstructSceneResponse(BaseModel):
+    scene_id: str
+    sensor_points: List[SensorPointOut]
+    bpa_origins: List[List[float]]
+    scene_centroid: List[float]
+    scene_bounding_box: Dict[str, List[float]]
+    point_to_plane_residual: float
+    n_sensors: int

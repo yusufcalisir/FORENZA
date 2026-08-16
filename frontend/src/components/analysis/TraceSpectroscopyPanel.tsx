@@ -272,19 +272,19 @@ export default function TraceSpectroscopyPanel() {
           <div className="lg:col-span-2 space-y-4">
             {spectroResult && spectroResult.top_match && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-                <div className="rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-cyan-500/10 via-tactical-surface/60 to-black/80 p-5 space-y-4 shadow-2xl">
-                  <div className="flex items-center justify-between border-b border-cyan-500/20 pb-3">
+                <div className="rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-cyan-500/10 via-tactical-surface/60 to-black/80 p-4 sm:p-5 space-y-4 shadow-2xl overflow-hidden">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-cyan-500/20 pb-3">
                     <div>
                       <span className="text-[10px] font-bold text-cyan-300 uppercase tracking-widest block">
                         HIT QUALITY INDEX (HQI) TOP MATCH
                       </span>
-                      <span className="text-2xl font-black text-cyan-300 font-mono">
+                      <span className="text-xl sm:text-2xl font-black text-cyan-300 font-mono">
                         {spectroResult.top_match.material_name} ({spectroResult.top_match.hqi_score_percent}%)
                       </span>
                     </div>
-                    <div className="text-right">
+                    <div className="flex flex-col items-start sm:items-end gap-1">
                       <span className="text-[10px] text-zinc-400 block uppercase font-bold">Classification</span>
-                      <span className={`text-xs font-bold px-2.5 py-1 rounded border font-mono ${
+                      <span className={`text-[10px] sm:text-xs font-bold px-2.5 py-1 rounded border font-mono whitespace-nowrap ${
                         spectroResult.top_match.classification === "POSITIVE_SPECTRAL_MATCH"
                           ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
                           : "bg-amber-500/20 text-amber-300 border-amber-500/40"
@@ -294,18 +294,18 @@ export default function TraceSpectroscopyPanel() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-3 text-xs">
-                    <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 text-xs">
+                    <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40 space-y-0.5">
                       <span className="text-[10px] text-zinc-500 block">Polymer Name</span>
                       <span className="font-bold text-zinc-200">{spectroResult.top_match.polymer_name}</span>
                     </div>
-                    <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40">
+                    <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40 space-y-0.5">
                       <span className="text-[10px] text-zinc-500 block">Fiber Class</span>
                       <span className="font-bold text-zinc-200">{spectroResult.top_match.fiber_type}</span>
                     </div>
-                    <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40">
+                    <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40 space-y-0.5">
                       <span className="text-[10px] text-zinc-500 block">Diagnostic Wavenumbers</span>
-                      <span className="font-bold text-cyan-400 font-mono text-[10px]">
+                      <span className="font-bold text-cyan-400 font-mono text-[10px] block">
                         {spectroResult.top_match.diagnostic_peaks_cm_1?.join(", ")} cm⁻¹
                       </span>
                     </div>
@@ -317,21 +317,24 @@ export default function TraceSpectroscopyPanel() {
                       Forensic Polymer Library Ranking:
                     </span>
                     {spectroResult.library_matches.map((lm) => (
-                      <div key={lm.material_name} className="flex items-center justify-between p-2.5 rounded-lg bg-black/40 border border-tactical-border/40 text-xs font-mono">
-                        <div className="flex items-center gap-2">
-                          <span className="font-bold text-zinc-200">{lm.material_name}</span>
-                          <span className="text-[10px] text-zinc-500">({lm.polymer_name})</span>
+                      <div
+                        key={lm.material_name}
+                        className="flex flex-col sm:flex-row sm:items-center justify-between p-2.5 sm:p-3 rounded-lg bg-black/40 border border-tactical-border/40 text-xs font-mono gap-2 hover:border-cyan-500/30 transition-colors"
+                      >
+                        <div className="flex flex-wrap items-baseline gap-1.5 min-w-0">
+                          <span className="font-bold text-zinc-200 text-xs">{lm.material_name}</span>
+                          <span className="text-[10px] text-zinc-400">({lm.polymer_name})</span>
                         </div>
-                        <div className="flex items-center gap-3">
-                          <span className={`font-bold ${
-                            lm.hqi_score_percent >= 90.0 ? "text-emerald-400" : lm.hqi_score_percent >= 75.0 ? "text-amber-400" : "text-zinc-500"
+                        <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-tactical-border/20">
+                          <span className={`text-xs font-bold font-mono ${
+                            lm.hqi_score_percent >= 90.0 ? "text-emerald-400" : lm.hqi_score_percent >= 75.0 ? "text-amber-400" : "text-zinc-400"
                           }`}>
                             HQI = {lm.hqi_score_percent.toFixed(1)}%
                           </span>
-                          <span className={`text-[9px] px-1.5 py-0.5 rounded border ${
+                          <span className={`text-[9px] font-bold px-2 py-0.5 rounded border whitespace-nowrap ${
                             lm.classification === "POSITIVE_SPECTRAL_MATCH"
                               ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/30"
-                              : "bg-zinc-800 text-zinc-400 border-zinc-700"
+                              : "bg-zinc-800/80 text-zinc-400 border-zinc-700/60"
                           }`}>
                             {lm.classification === "POSITIVE_SPECTRAL_MATCH" ? "MATCH" : "EXCLUDED"}
                           </span>
@@ -342,7 +345,7 @@ export default function TraceSpectroscopyPanel() {
 
                   <div className="p-3 rounded-xl bg-black/30 border border-tactical-border/30 text-[10px] text-zinc-400 font-mono">
                     <div className="flex items-center gap-1.5 text-cyan-400 font-bold mb-1">
-                      <ShieldCheck className="w-3.5 h-3.5" />
+                      <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
                       SWGMAT / ASTM E2228 Legal Evaluative Shield
                     </div>
                     {spectroResult.prosecutors_fallacy_shield}
@@ -395,30 +398,30 @@ export default function TraceSpectroscopyPanel() {
           <div className="lg:col-span-2 space-y-4">
             {msiResult && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-                <div className="rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-cyan-500/10 via-tactical-surface/60 to-black/80 p-5 space-y-4 shadow-2xl">
-                  <div className="flex items-center justify-between border-b border-cyan-500/20 pb-3">
+                <div className="rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-cyan-500/10 via-tactical-surface/60 to-black/80 p-4 sm:p-5 space-y-4 shadow-2xl overflow-hidden">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-cyan-500/20 pb-3">
                     <div>
                       <span className="text-[10px] font-bold text-cyan-300 uppercase tracking-widest block">
                         OPTICAL CONTRAST SIMULATION
                       </span>
-                      <span className="text-2xl font-black text-cyan-300 font-mono">
+                      <span className="text-xl sm:text-2xl font-black text-cyan-300 font-mono">
                         {msiResult.band_info.band_name}
                       </span>
                     </div>
-                    <div className="text-right">
+                    <div className="flex flex-col items-start sm:items-end">
                       <span className="text-[10px] text-zinc-400 block uppercase font-bold">Predicted Contrast</span>
-                      <span className="text-2xl font-black text-emerald-400 font-mono">
+                      <span className="text-xl sm:text-2xl font-black text-emerald-400 font-mono">
                         {(msiResult.predicted_contrast_index * 100).toFixed(0)}%
                       </span>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3 text-xs">
-                    <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 text-xs">
+                    <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40 space-y-0.5">
                       <span className="text-[10px] text-zinc-500 block">Optical Phenomenon</span>
                       <span className="font-bold text-zinc-200">{msiResult.band_info.phenomenon}</span>
                     </div>
-                    <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40">
+                    <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40 space-y-0.5">
                       <span className="text-[10px] text-zinc-500 block">Recommended Barrier Filter</span>
                       <span className="font-bold text-amber-300 font-mono text-xs">
                         {msiResult.band_info.optimal_barrier_filter}

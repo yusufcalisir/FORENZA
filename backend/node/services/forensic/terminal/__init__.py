@@ -27,6 +27,18 @@ from .snp_phenotype_bga_engine import (
     AIM_55_ALLELE_FREQUENCIES,
 )
 
+from .epg_synthesis_engine import (
+    EpgSynthesisEngine,
+    DyeChannelEnum,
+    LocusDyeMapping,
+    EpgPeakAnnotation,
+    EpgTracePoint,
+    EpgSynthesizedTrace,
+    EpgSynthesisResult,
+    PANEL_24_LOCUS_MAPPING,
+    LIZ_600_STANDARD_SIZES,
+)
+
 __all__ = [
     "DnaTerminalParser",
     "ParsedForensicProfile",
@@ -46,4 +58,14 @@ __all__ = [
     "HIrisPlexPhenotypeResult",
     "CONTINENTAL_COORDINATES",
     "AIM_55_ALLELE_FREQUENCIES",
+    "EpgSynthesisEngine",
+    "DyeChannelEnum",
+    "LocusDyeMapping",
+    "EpgPeakAnnotation",
+    "EpgTracePoint",
+    "EpgSynthesizedTrace",
+    "EpgSynthesisResult",
+    "PANEL_24_LOCUS_MAPPING",
+    "LIZ_600_STANDARD_SIZES",
 ]
+

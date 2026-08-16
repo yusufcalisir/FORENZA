@@ -2221,6 +2221,48 @@ $$P(Y = k \mid \mathbf{X}) = \frac{\exp \left( \beta_{k0} + \sum_{j=1}^p \beta_{
 - **Hair Color (4-Class, Ref $K=4$ Brown):** Blond ($\beta_0 = -0.8521$), Red ($\beta_0 = -3.1204$), Black ($\beta_0 = -1.1142$) with epistatic *MC1R* loss-of-function variants (`rs1805007`, `rs1805008`, `rs1805009`, `rs1805006`).
 - **Skin Phototype (5-Class, Ref $K=5$ Intermediate):** Type I Very Pale ($\beta_0 = -2.1024$), Type II Pale ($\beta_0 = -0.9124$), Type V Dark ($\beta_0 = -1.8412$), Type VI Dark-to-Black ($\beta_0 = -3.5120$) governed by *SLC24A5* `rs1426654` ($\beta_{1} = +2.9102, \beta_{4} = -6.1204$) and *SLC45A2* `rs16891982` ($\beta_{1} = +2.4102, \beta_{4} = -5.4120$).
 
+---
+
+## 72. Capillary Electropherogram (EPG) Synthesis & Spectral Quality Engine
+
+### 72.1 5/6-Dye Spectral Channel Allocation & Fluorophore Allocation
+Fluorescence emission channels decompose 24-locus multiplex signals:
+1. **Blue Channel (6-FAM, $\lambda_{\text{em}} = 522\text{ nm}$):** `D3S1358`, `D21S11`, `D10S1248`, `D1S1656`
+2. **Green Channel (VIC / JOE, $\lambda_{\text{em}} = 553\text{ nm}$):** `vWA`, `D16S539`, `D2S441`, `D2S1338`
+3. **Yellow Channel (NED / TAMRA, $\lambda_{\text{em}} = 575\text{ nm}$):** `D8S1179`, `D18S51`, `TH01`, `DYS391`
+4. **Red Channel (TAZ / PET, $\lambda_{\text{em}} = 635\text{ nm}$):** `FGA`, `D5S818`, `D13S317`, `D7S820`, `SE33`
+5. **Purple Channel (SID / LIZ, $\lambda_{\text{em}} = 655\text{ nm}$):** `CSF1PO`, `TPOX`, `D12S391`, `D19S433`, `D22S1045`, `Penta D`, `Penta E`, `Amelogenin`
+6. **Orange Channel (LIZ 600 ILS, $\lambda_{\text{em}} = 680\text{ nm}$):** 30 Internal Lane Standard calibration fragments ($60\text{ bp} - 600\text{ bp}$)
+
+### 72.2 Peak Height Synthesis & DNA Degradation Kinetics ($DI$)
+Expected RFU peak height $\mu_{l,a}$ as a function of locus amplification efficiency $A_l$, degradation coefficient $d$, amplicon size $S_{l,a}$, and reference anchor $S_0 = 100\text{ bp}$:
+
+$$\mu_{l,a} = A_l \cdot 10^{-d \cdot (S_{l,a} - S_0)}$$
+
+Degradation Index ($DI$):
+
+$$DI = \frac{h(\text{D8S1179}, 125\text{ bp})}{h(\text{FGA}, 320\text{ bp})}$$
+
+- $DI \le 1.5$: Pristine DNA
+- $1.5 < DI \le 5.0$: Moderate Degradation
+- $DI > 5.0$: Severe Degradation (triggers LTDNA low-template consensus protocol)
+
+### 72.3 Modified Asymmetric Gaussian-Lorentzian Peak Function
+Continuous waveform intensity at base-pair position $t$ for peak $(t_0, h)$:
+
+$$y(t) = h \cdot \left[ \eta \exp\left( -\frac{(t - t_0)^2}{2\sigma^2 (1 + \alpha \operatorname{sgn}(t - t_0))} \right) + (1 - \eta) \frac{1}{1 + \left(\frac{t - t_0}{\sigma}\right)^2} \right]$$
+
+where $\sigma = 0.75\text{ bp}$ (capillary resolution bandwidth), $\eta = 0.85$ (Gaussian fraction), and $\alpha = 0.05$ (tailing asymmetry factor).
+
+### 72.4 Quality Assurance Gates & Artifact Filters
+- **Analytical Threshold:** $AT = 50.0\text{ RFU}$ (Baseline noise cutoff).
+- **Stochastic Threshold:** $ST = 200.0\text{ RFU}$ (Allelic dropout risk boundary).
+- **Saturation Threshold:** $SAT = 8000.0\text{ RFU}$ (CCD sensor saturation / flat-top flag).
+- **Heterozygote Balance Ratio:** $H_b = h_{\text{smaller}} / h_{\text{larger}} \ge 0.60$ (60% intra-locus symmetry).
+- **Reverse Stutter Ratio:** $SR = h_{\text{stutter}} / h_{\text{true\_allele}} \le SR_{\max, l}$ ($N-4$ repeat artifact).
+- **Pull-Up Compensation Filter:** Peaks co-migrating within $\pm 0.3\text{ bp}$ in adjacent dye channels with $h_{\text{secondary}} / h_{\text{major}} \le 0.06$ (6%) are filtered as spectral cross-talk bleedthrough.
+
+
 
 
 

@@ -189,3 +189,81 @@ class TerminalComprehensiveResponse(BaseModel):
     bga: TerminalBgaResponse
     hirisplex: TerminalHIrisPlexResponse
 
+
+# --- EPG Synthesis & Spectral Artifact Schemas ---
+
+class SynthesizeEpgRequest(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    sample_id: str = Field(default="EPG_SAMPLE")
+    str_profile: Dict[str, Dict[str, Any]] = Field(..., description="Locus STR calls with alleles and optional RFU heights")
+    template_ng: float = Field(default=1.0, ge=0.01, le=50.0, description="DNA template mass in ng")
+    degradation_rate: float = Field(default=0.0, ge=0.0, le=0.05, description="Degradation kinetic parameter d")
+    include_stutter: bool = Field(default=True, description="Synthesize N-4 reverse stutter peaks")
+    include_pullup: bool = Field(default=False, description="Synthesize spectral cross-talk bleedthrough pull-up peaks")
+    start_bp: float = Field(default=50.0, ge=40.0)
+    end_bp: float = Field(default=520.0, le=620.0)
+    step_bp: float = Field(default=0.25, ge=0.1, le=1.0)
+    baseline_noise_rfu: float = Field(default=8.0, ge=0.0, le=50.0)
+
+
+class EpgPeakAnnotationDto(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    locus_name: str
+    allele_call: str
+    dye_channel: str
+    size_bp: float
+    rfu_height: float
+    area: float
+    is_stutter: bool = False
+    is_pullup: bool = False
+    is_saturated: bool = False
+    is_below_at: bool = False
+    is_stochastic_warning: bool = False
+    stutter_ratio: Optional[float] = None
+    heterozygote_balance: Optional[float] = None
+
+
+class EpgTracePointDto(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    size_bp: float
+    rfu: float
+
+
+class EpgDyeTraceDto(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    dye_channel: str
+    color_hex: str
+    data_points: List[EpgTracePointDto]
+    peaks: List[EpgPeakAnnotationDto]
+
+
+class SynthesizeEpgResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    sample_id: str
+    degradation_index: float
+    degradation_severity: str
+    overall_passed_qc: bool
+    traces: Dict[str, EpgDyeTraceDto]
+    all_peaks: List[EpgPeakAnnotationDto]
+    analytical_threshold_rfu: float
+    stochastic_threshold_rfu: float
+    saturation_threshold_rfu: float
+    min_heterozygote_balance: float
+    stutter_artifacts_filtered: int
+    pullup_artifacts_filtered: int
+
+
+class FilterArtifactsRequest(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    peaks: List[EpgPeakAnnotationDto]
+    analytical_threshold_rfu: float = Field(default=50.0)
+
+
+class FilterArtifactsResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    total_input_peaks: int
+    retained_true_alleles_count: int
+    filtered_artifacts_count: int
+    cleaned_peaks: List[EpgPeakAnnotationDto]
+
+

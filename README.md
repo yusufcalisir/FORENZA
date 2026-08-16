@@ -199,10 +199,12 @@ str-analysis/
 │           ├── terminal/                  # 29. Multi-Format Forensic Ingestion & Quality Engine
 │           │   ├── dna_terminal_parser.py # GeneMapper CSV, CODIS CMF XML, NGS VCF, LIMS JSON
 │           │   ├── snp_phenotype_bga_engine.py # 55-SNP AIM BGA & 41-SNP HIrisPlex-S Softmax MLR
+│           │   ├── epg_synthesis_engine.py# 5/6-Dye EPG Waveform Synthesis & Spectral QC Engine
 │           │   ├── test_dna_terminal_parser.py # Benchmark Tests (VECTOR_TERM_01-06)
 │           │   ├── test_snp_phenotype_bga_engine.py # BGA & HIrisPlex-S Unit Tests
+│           │   ├── test_epg_synthesis_engine.py # EPG Waveform & QC Unit Tests
 │           │   └── test_terminal_routes.py # REST API Integration Tests (/api/v1/forensic/terminal)
-│           └── tests/                     # Automated Test Suite (808 Tests)
+│           └── tests/                     # Automated Test Suite (816 Tests)
 │
 ├── frontend/                              # Next.js 16 Workstation Dashboard
 │   ├── public/                            # Static Assets, Icons, Favicons
@@ -217,7 +219,8 @@ str-analysis/
 │       ├── dictionaries/                  # Bilingual Translations (TR / EN)
 │       ├── lib/                           # Utility Functions & API Clients
 │       └── utils/                         # Client-Side Biocomputational Simulation Engines
-│           └── snpPhenotypeBgaEngine.ts   # 55-SNP AIM BGA & 41-SNP HIrisPlex-S TS Engine
+│           ├── snpPhenotypeBgaEngine.ts   # 55-SNP AIM BGA & 41-SNP HIrisPlex-S TS Engine
+│           └── epgSynthesisEngine.ts      # 5/6-Dye EPG Waveform & Spectral Filter TS Engine
 │
 ├── circuits/                              # Zero-Knowledge Proof Circuits
 │   └── dna_match.circom                   # Circom ZK-SNARK Genotype Circuit

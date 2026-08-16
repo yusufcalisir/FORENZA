@@ -135,3 +135,50 @@ COMP_01,Amelogenin,X,Y,1500,1450
     assert data["qc"]["passed_qc"] is True
     assert data["bga"]["dominant_ancestry"] == "EUR"
     assert data["hirisplex"]["predicted_eye_color"] == "Blue"
+
+
+def test_api_terminal_epg_synthesis():
+    req = {
+        "sample_id": "API_EPG_01",
+        "str_profile": {
+            "D3S1358": {"allele1": "15", "allele2": "16", "rfu1": 1500, "rfu2": 1450},
+            "TH01": {"allele1": "9.3", "allele2": "9.3", "rfu1": 2000, "rfu2": 2000},
+            "D8S1179": {"allele1": "13", "allele2": "14", "rfu1": 1800, "rfu2": 1750},
+            "FGA": {"allele1": "22", "allele2": "24", "rfu1": 1600, "rfu2": 1550},
+            "Amelogenin": {"allele1": "X", "allele2": "Y", "rfu1": 1900, "rfu2": 1850},
+        },
+        "template_ng": 1.0,
+        "degradation_rate": 0.0,
+        "include_stutter": True,
+        "include_pullup": False,
+    }
+    res = client.post("/api/v1/forensic/terminal/epg/synthesize", json=req)
+    assert res.status_code == 200
+    data = res.json()
+    assert data["sample_id"] == "API_EPG_01"
+    assert data["degradation_severity"] == "PRISTINE"
+    assert data["overall_passed_qc"] is True
+    assert "BLUE" in data["traces"]
+    assert "ORANGE" in data["traces"]
+    assert len(data["all_peaks"]) >= 6
+
+
+def test_api_terminal_epg_filter_artifacts():
+    peaks = [
+        {"locus_name": "D3S1358", "allele_call": "15", "dye_channel": "BLUE", "size_bp": 127.0, "rfu_height": 1500.0, "area": 15750.0, "is_stutter": False, "is_pullup": False},
+        {"locus_name": "D3S1358", "allele_call": "stutter(15-1)", "dye_channel": "BLUE", "size_bp": 123.0, "rfu_height": 115.0, "area": 1035.0, "is_stutter": True, "is_pullup": False},
+        {"locus_name": "PullUp_TH01", "allele_call": "pullup(9.3)", "dye_channel": "RED", "size_bp": 178.1, "rfu_height": 85.0, "area": 680.0, "is_stutter": False, "is_pullup": True},
+        {"locus_name": "NOISE", "allele_call": "noise", "dye_channel": "GREEN", "size_bp": 90.0, "rfu_height": 25.0, "area": 100.0, "is_stutter": False, "is_pullup": False},
+    ]
+    req = {
+        "peaks": peaks,
+        "analytical_threshold_rfu": 50.0,
+    }
+    res = client.post("/api/v1/forensic/terminal/epg/filter-artifacts", json=req)
+    assert res.status_code == 200
+    data = res.json()
+    assert data["total_input_peaks"] == 4
+    assert data["retained_true_alleles_count"] == 1
+    assert data["filtered_artifacts_count"] == 3
+    assert data["cleaned_peaks"][0]["allele_call"] == "15"
+

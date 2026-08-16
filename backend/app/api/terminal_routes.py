@@ -27,6 +27,13 @@ try:
         TerminalHIrisPlexResponse,
         TerminalComprehensiveRequest,
         TerminalComprehensiveResponse,
+        SynthesizeEpgRequest,
+        EpgPeakAnnotationDto,
+        EpgTracePointDto,
+        EpgDyeTraceDto,
+        SynthesizeEpgResponse,
+        FilterArtifactsRequest,
+        FilterArtifactsResponse,
     )
     from backend.node.services.forensic.terminal.dna_terminal_parser import (
         DnaTerminalParser,
@@ -38,6 +45,11 @@ try:
         SnpPhenotypeBgaEngine,
         ContinentalCluster,
         CONTINENTAL_COORDINATES,
+    )
+    from backend.node.services.forensic.terminal.epg_synthesis_engine import (
+        EpgSynthesisEngine,
+        DyeChannelEnum,
+        EpgPeakAnnotation,
     )
 except ImportError:
     from app.api.terminal_schemas import (
@@ -58,6 +70,13 @@ except ImportError:
         TerminalHIrisPlexResponse,
         TerminalComprehensiveRequest,
         TerminalComprehensiveResponse,
+        SynthesizeEpgRequest,
+        EpgPeakAnnotationDto,
+        EpgTracePointDto,
+        EpgDyeTraceDto,
+        SynthesizeEpgResponse,
+        FilterArtifactsRequest,
+        FilterArtifactsResponse,
     )
     from node.services.forensic.terminal.dna_terminal_parser import (
         DnaTerminalParser,
@@ -69,6 +88,11 @@ except ImportError:
         SnpPhenotypeBgaEngine,
         ContinentalCluster,
         CONTINENTAL_COORDINATES,
+    )
+    from node.services.forensic.terminal.epg_synthesis_engine import (
+        EpgSynthesisEngine,
+        DyeChannelEnum,
+        EpgPeakAnnotation,
     )
 
 router = APIRouter(prefix="/forensic/terminal", tags=["Forensic DNA & SNP Terminal"])
@@ -422,5 +446,143 @@ def run_comprehensive_terminal_analysis(req: TerminalComprehensiveRequest) -> Te
         bga=bga_res,
         hirisplex=hiris_res,
     )
+
+
+@router.post("/epg/synthesize", response_model=SynthesizeEpgResponse, summary="Synthesize 5/6-Dye EPG Continuous Waveforms & Quality Gates")
+def synthesize_electropherogram(req: SynthesizeEpgRequest) -> SynthesizeEpgResponse:
+    """
+    Synthesizes multi-dye RFU waveforms across 6-FAM, VIC, NED, TAZ, SID, and LIZ 600 ILS.
+    Computes Degradation Index (DI = D8S1179 / FGA), Heterozygote Balance (Hb), reverse stutter, and pull-up artifacts.
+    """
+    res = EpgSynthesisEngine.synthesize_epg_from_profile(
+        sample_id=req.sample_id,
+        str_profile=req.str_profile,
+        template_ng=req.template_ng,
+        degradation_rate=req.degradation_rate,
+        include_stutter=req.include_stutter,
+        include_pullup=req.include_pullup,
+        start_bp=req.start_bp,
+        end_bp=req.end_bp,
+        step_bp=req.step_bp,
+        baseline_noise_rfu=req.baseline_noise_rfu,
+    )
+
+    traces_dto: Dict[str, EpgDyeTraceDto] = {}
+    for dye_enum, trace_obj in res.traces.items():
+        points_dto = [
+            EpgTracePointDto(size_bp=pt.size_bp, rfu=pt.rfu)
+            for pt in trace_obj.data_points
+        ]
+        peaks_dto = [
+            EpgPeakAnnotationDto(
+                locus_name=p.locus_name,
+                allele_call=p.allele_call,
+                dye_channel=p.dye_channel.value,
+                size_bp=p.size_bp,
+                rfu_height=p.rfu_height,
+                area=p.area,
+                is_stutter=p.is_stutter,
+                is_pullup=p.is_pullup,
+                is_saturated=p.is_saturated,
+                is_below_at=p.is_below_at,
+                is_stochastic_warning=p.is_stochastic_warning,
+                stutter_ratio=p.stutter_ratio,
+                heterozygote_balance=p.heterozygote_balance,
+            )
+            for p in trace_obj.peaks
+        ]
+        traces_dto[dye_enum.value] = EpgDyeTraceDto(
+            dye_channel=dye_enum.value,
+            color_hex=trace_obj.color_hex,
+            data_points=points_dto,
+            peaks=peaks_dto,
+        )
+
+    all_peaks_dto = [
+        EpgPeakAnnotationDto(
+            locus_name=p.locus_name,
+            allele_call=p.allele_call,
+            dye_channel=p.dye_channel.value,
+            size_bp=p.size_bp,
+            rfu_height=p.rfu_height,
+            area=p.area,
+            is_stutter=p.is_stutter,
+            is_pullup=p.is_pullup,
+            is_saturated=p.is_saturated,
+            is_below_at=p.is_below_at,
+            is_stochastic_warning=p.is_stochastic_warning,
+            stutter_ratio=p.stutter_ratio,
+            heterozygote_balance=p.heterozygote_balance,
+        )
+        for p in res.all_peaks
+    ]
+
+    return SynthesizeEpgResponse(
+        sample_id=res.sample_id,
+        degradation_index=res.degradation_index,
+        degradation_severity=res.degradation_severity,
+        overall_passed_qc=res.overall_passed_qc,
+        traces=traces_dto,
+        all_peaks=all_peaks_dto,
+        analytical_threshold_rfu=res.analytical_threshold_rfu,
+        stochastic_threshold_rfu=res.stochastic_threshold_rfu,
+        saturation_threshold_rfu=res.saturation_threshold_rfu,
+        min_heterozygote_balance=res.min_heterozygote_balance,
+        stutter_artifacts_filtered=res.stutter_artifacts_filtered,
+        pullup_artifacts_filtered=res.pullup_artifacts_filtered,
+    )
+
+
+@router.post("/epg/filter-artifacts", response_model=FilterArtifactsResponse, summary="Filter Stutter, Pull-Up and Baseline Noise Artifacts")
+def filter_epg_artifacts(req: FilterArtifactsRequest) -> FilterArtifactsResponse:
+    """
+    Filters out reverse stutter, pull-up, and below-AT noise peaks according to SWGDAM standards.
+    """
+    domain_peaks = [
+        EpgPeakAnnotation(
+            locus_name=p.locus_name,
+            allele_call=p.allele_call,
+            dye_channel=DyeChannelEnum(p.dye_channel),
+            size_bp=p.size_bp,
+            rfu_height=p.rfu_height,
+            area=p.area,
+            is_stutter=p.is_stutter,
+            is_pullup=p.is_pullup,
+            is_saturated=p.is_saturated,
+            is_below_at=p.is_below_at,
+            is_stochastic_warning=p.is_stochastic_warning,
+            stutter_ratio=p.stutter_ratio,
+            heterozygote_balance=p.heterozygote_balance,
+        )
+        for p in req.peaks
+    ]
+
+    cleaned = EpgSynthesisEngine.filter_epg_artifacts(domain_peaks)
+    cleaned_dto = [
+        EpgPeakAnnotationDto(
+            locus_name=p.locus_name,
+            allele_call=p.allele_call,
+            dye_channel=p.dye_channel.value,
+            size_bp=p.size_bp,
+            rfu_height=p.rfu_height,
+            area=p.area,
+            is_stutter=p.is_stutter,
+            is_pullup=p.is_pullup,
+            is_saturated=p.is_saturated,
+            is_below_at=p.is_below_at,
+            is_stochastic_warning=p.is_stochastic_warning,
+            stutter_ratio=p.stutter_ratio,
+            heterozygote_balance=p.heterozygote_balance,
+        )
+        for p in cleaned
+    ]
+
+    return FilterArtifactsResponse(
+        total_input_peaks=len(req.peaks),
+        retained_true_alleles_count=len(cleaned_dto),
+        filtered_artifacts_count=len(req.peaks) - len(cleaned_dto),
+        cleaned_peaks=cleaned_dto,
+    )
+
 
 

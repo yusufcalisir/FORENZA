@@ -41,7 +41,7 @@ export interface GeoLocationData {
 export interface ForensicProfile {
   profileId: string;
   nodeId: string;
-  sampleType: "EU" | "AA" | "MIX" | "CUSTOM";
+  sampleType: "EU" | "AA" | "EAS" | "SAS" | "DVI" | "TOUCH" | "MIX" | "CUSTOM";
   markerCount: number;
   snpCount: number;
   timestamp: string;

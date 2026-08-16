@@ -308,3 +308,51 @@ export function computeClientHIrisPlex(
     numSnpsEvaluated: usedSnps,
   };
 }
+
+export const calculateClientBgaPosterior = (genotypeDosages: Record<string, number>, sampleId = "SAMPLE") =>
+  computeClientBgaPosteriors(sampleId, genotypeDosages);
+
+export const calculateClientHIrisPlex = (genotypeDosages: Record<string, number>, sampleId = "SAMPLE") =>
+  computeClientHIrisPlex(sampleId, genotypeDosages);
+
+export const AIM_55_SNPS_CATALOG: { rsid: string; gene: string }[] = [
+  { rsid: "rs12913832", gene: "HERC2" },
+  { rsid: "rs1426654", gene: "SLC24A5" },
+  { rsid: "rs16891982", gene: "SLC45A2" },
+  { rsid: "rs3827760", gene: "EDAR" },
+  { rsid: "rs1800414", gene: "OCA2" },
+  { rsid: "rs2814778", gene: "DARC" },
+  { rsid: "rs1042602", gene: "TYR" },
+  { rsid: "rs1800407", gene: "OCA2" },
+  { rsid: "rs12896399", gene: "SLC24A4" },
+  { rsid: "rs12203592", gene: "IRF4" },
+  { rsid: "rs1393350", gene: "TYR" },
+  { rsid: "rs2470102", gene: "SLC24A5" },
+  { rsid: "rs1015362", gene: "ASIP" },
+  { rsid: "rs6119471", gene: "ASIP" },
+  { rsid: "rs885479", gene: "MC1R" },
+  { rsid: "rs1110400", gene: "MC1R" },
+  { rsid: "rs2078586", gene: "TPCN2" },
+  { rsid: "rs721118", gene: "TYRP1" },
+  { rsid: "rs1876482", gene: "KITLG" },
+  { rsid: "rs1474920", gene: "BNC2" },
+  { rsid: "rs2695", gene: "MC1R" },
+];
+
+export const HIRISPLEX_41_SNPS_CATALOG: { rsid: string; gene: string; trait: string }[] = [
+  { rsid: "rs12913832", gene: "HERC2", trait: "Blue / Dark Iris Pigmentation" },
+  { rsid: "rs1800407", gene: "OCA2", trait: "Intermediate / Brown Iris Modifier" },
+  { rsid: "rs12896399", gene: "SLC24A4", trait: "Blond / Dark Hair Pigmentation" },
+  { rsid: "rs16891982", gene: "SLC45A2", trait: "Light / Dark Skin & Hair Modifier" },
+  { rsid: "rs1393350", gene: "TYR", trait: "Freckling & Eye Color" },
+  { rsid: "rs12203592", gene: "IRF4", trait: "Freckles, Hair & Eye Color" },
+  { rsid: "rs1805007", gene: "MC1R", trait: "Red Hair & Fair Skin Epistasis (R151C)" },
+  { rsid: "rs1805008", gene: "MC1R", trait: "Red Hair & Fair Skin Epistasis (R160W)" },
+  { rsid: "rs1805009", gene: "MC1R", trait: "Red Hair & Fair Skin Epistasis (D294H)" },
+  { rsid: "rs1805006", gene: "MC1R", trait: "Red Hair & Fair Skin Epistasis (V60L)" },
+  { rsid: "rs1426654", gene: "SLC24A5", trait: "European Pale vs Deep Skin Phototype" },
+  { rsid: "rs2470102", gene: "SLC24A5", trait: "Skin Melanin Content" },
+  { rsid: "rs1042602", gene: "TYR", trait: "Freckling & Melanin Synthesis" },
+  { rsid: "rs3827760", gene: "EDAR", trait: "Hair Thickness & Beard Density" },
+];
+

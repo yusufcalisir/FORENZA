@@ -1,15 +1,18 @@
 import { create } from "zustand";
+import { GOLDEN_CASEWORK_PRESETS } from "@/utils/caseworkPresets";
+import { calculateClientBgaPosterior, calculateClientHIrisPlex } from "@/utils/snpPhenotypeBgaEngine";
 
 export interface StrLocusData {
   marker: string;
-  allele1: number;
-  allele2: number;
+  allele1: number | string;
+  allele2: number | string;
 }
 
 export interface SnpMarkerData {
   rsid: string;
   genotype: string;
   trait?: string;
+  dosage?: number;
 }
 
 export interface ActiveProfileData {
@@ -17,10 +20,10 @@ export interface ActiveProfileData {
   nodeId: string;
   markerCount: number;
   snpCount: number;
-  sampleType: "EU" | "AA" | "CUSTOM";
+  sampleType: "EU" | "AA" | "EAS" | "SAS" | "DVI" | "TOUCH" | "CUSTOM";
   timestamp: string;
-  strMarkers: Record<string, { allele1: number; allele2: number }>;
-  snpMarkers: Record<string, { rsid: string; genotype: string; trait?: string }>;
+  strMarkers: Record<string, { allele1: number | string; allele2: number | string; rfu1?: number; rfu2?: number }>;
+  snpMarkers: Record<string, { rsid: string; genotype: string; trait?: string; dosage?: number }>;
   phenotype: {
     eyeColor: string;
     eyeColorProb: number;
@@ -46,140 +49,93 @@ export interface ActiveProfileData {
   };
   kinshipLR: string;
   epigeneticAge: number;
+  degradationIndex?: number;
 }
 
-export const SAMPLE_CASE_EU: ActiveProfileData = {
-  profileId: "CASE-2026-EU-GERMANIC-01",
-  nodeId: "FORENSIC-LAB-ALPHA",
-  markerCount: 24,
-  snpCount: 55,
-  sampleType: "EU",
-  timestamp: "2026-08-12 18:30",
-  strMarkers: {
-    D3S1358: { allele1: 15, allele2: 17 },
-    vWA: { allele1: 14, allele2: 17 },
-    FGA: { allele1: 21, allele2: 23 },
-    TH01: { allele1: 6, allele2: 9.3 },
-    TPOX: { allele1: 8, allele2: 11 },
-    CSF1PO: { allele1: 10, allele2: 12 },
-    D5S818: { allele1: 11, allele2: 13 },
-    D13S317: { allele1: 11, allele2: 14 },
-    D7S820: { allele1: 8, allele2: 10 },
-    D8S1179: { allele1: 13, allele2: 14 },
-    D21S11: { allele1: 29, allele2: 31 },
-    D18S51: { allele1: 14, allele2: 18 },
-    D16S539: { allele1: 9, allele2: 12 },
-    D2S1338: { allele1: 19, allele2: 23 },
-    D19S433: { allele1: 13, allele2: 14 },
-    SE33: { allele1: 24.2, allele2: 27.2 },
-    AMEL: { allele1: 1, allele2: 2 }, // X, Y
-    D1S1656: { allele1: 12, allele2: 15.3 },
-    D12S391: { allele1: 17, allele2: 19 },
-    D2S441: { allele1: 10, allele2: 14 },
-    D10S1248: { allele1: 12, allele2: 15 },
-    D22S1045: { allele1: 15, allele2: 16 },
-    Penta_E: { allele1: 7, allele2: 12 },
-    Penta_D: { allele1: 9, allele2: 13 },
-  },
-  snpMarkers: {
-    rs12913832: { rsid: "rs12913832", genotype: "A/A", trait: "HERC2 - Blue Eyes" },
-    rs1800407: { rsid: "rs1800407", genotype: "C/T", trait: "OCA2 Secondary Modifier" },
-    rs16891982: { rsid: "rs16891982", genotype: "C/C", trait: "SLC45A2 Light Pigment" },
-    rs3827072: { rsid: "rs3827072", genotype: "T/T", trait: "EDAR Straight Hair" },
-    rs1426654: { rsid: "rs1426654", genotype: "A/A", trait: "SLC24A5 European Phototype" },
-  },
-  phenotype: {
-    eyeColor: "Blue",
-    eyeColorProb: 94.2,
-    skinType: "Type I / II (Fair Skin)",
-    skinTypeProb: 92.0,
-    hairType: "Straight",
-    hairTypeProb: 88.0,
-    freckling: "Low / Moderate Ephelides",
-  },
-  ancestry: {
-    primary: "European (North-Western)",
-    primaryPct: 98.4,
-    secondary: "Slavic / Baltic",
-    secondaryPct: 1.6,
-    populationCluster: "Germanic / Scandinavian Reference",
-  },
-  geoLocation: {
-    lat: 52.5200,
-    lng: 13.4050,
-    cityRegion: "Berlin, Brandenburg",
-    country: "Germany (EU)",
-    confidencePct: 96.8,
-  },
-  kinshipLR: "1.42e8",
-  epigeneticAge: 34.2,
-};
+function presetToActiveProfile(presetId: string): ActiveProfileData {
+  const p = GOLDEN_CASEWORK_PRESETS.find(x => x.presetId === presetId) || GOLDEN_CASEWORK_PRESETS[0];
 
-export const SAMPLE_CASE_AA: ActiveProfileData = {
-  profileId: "CASE-2026-AA-WESTAFR-02",
-  nodeId: "DISTRICT-DNA-LAB-01",
-  markerCount: 24,
-  snpCount: 55,
-  sampleType: "AA",
-  timestamp: "2026-08-12 18:32",
-  strMarkers: {
-    D3S1358: { allele1: 16, allele2: 18 },
-    vWA: { allele1: 15, allele2: 19 },
-    FGA: { allele1: 22, allele2: 25 },
-    TH01: { allele1: 7, allele2: 9 },
-    TPOX: { allele1: 6, allele2: 8 },
-    CSF1PO: { allele1: 11, allele2: 13 },
-    D5S818: { allele1: 12, allele2: 14 },
-    D13S317: { allele1: 10, allele2: 12 },
-    D7S820: { allele1: 9, allele2: 11 },
-    D8S1179: { allele1: 14, allele2: 15 },
-    D21S11: { allele1: 28, allele2: 30 },
-    D18S51: { allele1: 13, allele2: 17 },
-    D16S539: { allele1: 11, allele2: 13 },
-    D2S1338: { allele1: 17, allele2: 20 },
-    D19S433: { allele1: 14, allele2: 15.2 },
-    SE33: { allele1: 22, allele2: 26 },
-    AMEL: { allele1: 1, allele2: 2 },
-    D1S1656: { allele1: 14, allele2: 16 },
-    D12S391: { allele1: 18, allele2: 20 },
-    D2S441: { allele1: 11, allele2: 13 },
-    D10S1248: { allele1: 13, allele2: 14 },
-    D22S1045: { allele1: 11, allele2: 15 },
-    Penta_E: { allele1: 11, allele2: 14 },
-    Penta_D: { allele1: 10, allele2: 12 },
-  },
-  snpMarkers: {
-    rs12913832: { rsid: "rs12913832", genotype: "G/G", trait: "HERC2 - Dark Iris" },
-    rs1426654: { rsid: "rs1426654", genotype: "G/G", trait: "SLC24A5 Deep Skin Phototype" },
-    rs3827072: { rsid: "rs3827072", genotype: "C/C", trait: "EDAR Non-Asian Variant" },
-    rs7349332: { rsid: "rs7349332", genotype: "T/T", trait: "WNT10A Curly Hair" },
-  },
-  phenotype: {
-    eyeColor: "Dark Brown / Black",
-    eyeColorProb: 98.6,
-    skinType: "Type V / VI (Deep Skin)",
-    skinTypeProb: 96.0,
-    hairType: "Curly / Coily",
-    hairTypeProb: 94.0,
-    freckling: "Absent",
-  },
-  ancestry: {
-    primary: "West / Sub-Saharan African",
-    primaryPct: 97.8,
-    secondary: "Bantu / Central African",
-    secondaryPct: 2.2,
-    populationCluster: "Yoruba / West African Reference",
-  },
-  geoLocation: {
-    lat: 6.5244,
-    lng: 3.3792,
-    cityRegion: "Lagos, West Coast",
-    country: "Nigeria (AA)",
-    confidencePct: 97.4,
-  },
-  kinshipLR: "9.84e7",
-  epigeneticAge: 29.5,
-};
+  const bga = calculateClientBgaPosterior(p.snpDosages);
+  const hiris = calculateClientHIrisPlex(p.snpDosages);
+
+  const snpMarkers: Record<string, { rsid: string; genotype: string; trait?: string; dosage?: number }> = {};
+  for (const [rsid, dosage] of Object.entries(p.snpDosages)) {
+    const gt = dosage === 2 ? "A/A" : dosage === 1 ? "A/G" : "G/G";
+    snpMarkers[rsid] = { rsid, genotype: gt, trait: "Diagnostic AIM / Phenotype Marker", dosage };
+  }
+
+  const strMarkers: Record<string, { allele1: string | number; allele2: string | number; rfu1?: number; rfu2?: number }> = {};
+  for (const [marker, call] of Object.entries(p.strProfile)) {
+    strMarkers[marker] = {
+      allele1: call.allele1,
+      allele2: call.allele2 ?? call.allele1,
+      rfu1: call.rfu1,
+      rfu2: call.rfu2,
+    };
+  }
+
+  const sampleTypeMap: Record<string, "EU" | "AA" | "EAS" | "SAS" | "DVI" | "TOUCH" | "CUSTOM"> = {
+    VECTOR_TERM_01: "EU",
+    VECTOR_TERM_02: "AA",
+    VECTOR_TERM_03: "EAS",
+    VECTOR_TERM_04: "SAS",
+    VECTOR_TERM_05: "DVI",
+    VECTOR_TERM_06: "TOUCH",
+  };
+
+  const sampleType = sampleTypeMap[p.presetId] || "CUSTOM";
+
+  const sortedBreakdown = Object.entries(bga.continentalPosteriors)
+    .map(([cluster, prob]) => ({
+      cluster,
+      label: cluster === 'EUR' ? 'European' : cluster === 'AFR' ? 'African' : cluster === 'EAS' ? 'East Asian' : cluster === 'SAS' ? 'South Asian' : cluster === 'AMR' ? 'Indigenous American' : cluster === 'OCE' ? 'Oceanian' : 'Middle Eastern',
+      probability: prob,
+    }))
+    .sort((a, b) => b.probability - a.probability);
+
+  const top1 = sortedBreakdown[0] || { label: "European", cluster: "EUR", probability: 0.95 };
+  const top2 = sortedBreakdown[1] || { label: "Secondary", cluster: "MID", probability: 0.01 };
+
+  return {
+    profileId: p.presetId,
+    nodeId: "FORENSIC-LAB-ALPHA",
+    markerCount: Object.keys(p.strProfile).length,
+    snpCount: Object.keys(p.snpDosages).length,
+    sampleType,
+    timestamp: "2026-08-16 19:30",
+    strMarkers,
+    snpMarkers,
+    phenotype: {
+      eyeColor: hiris.predictedEyeColor,
+      eyeColorProb: Math.round(hiris.eyeColorProbabilities[hiris.predictedEyeColor as keyof typeof hiris.eyeColorProbabilities] * 1000) / 10,
+      skinType: hiris.predictedSkinPhototype.replace(/_/g, " "),
+      skinTypeProb: Math.round(hiris.skinPhototypeProbabilities[hiris.predictedSkinPhototype as keyof typeof hiris.skinPhototypeProbabilities] * 1000) / 10,
+      hairType: hiris.predictedHairColor,
+      hairTypeProb: Math.round(hiris.hairColorProbabilities[hiris.predictedHairColor as keyof typeof hiris.hairColorProbabilities] * 1000) / 10,
+      freckling: hiris.mc1rRedHairEpistasisFlag ? "High Ephelides (MC1R High Risk)" : "Low / Moderate Ephelides",
+    },
+    ancestry: {
+      primary: `${top1.label} (${top1.cluster})`,
+      primaryPct: Math.round(top1.probability * 1000) / 10,
+      secondary: `${top2.label} (${top2.cluster})`,
+      secondaryPct: Math.round(top2.probability * 1000) / 10,
+      populationCluster: `${top1.label} Continental Reference Cluster`,
+    },
+    geoLocation: {
+      lat: bga.centroidLatitude,
+      lng: bga.centroidLongitude,
+      cityRegion: p.expectedCentroid,
+      country: bga.dominantAncestryLabel,
+      confidencePct: Math.round(bga.dominantProbability * 1000) / 10,
+    },
+    kinshipLR: "1.42e8",
+    epigeneticAge: 32.4,
+    degradationIndex: p.degradationIndex,
+  };
+}
+
+export const SAMPLE_CASE_EU: ActiveProfileData = presetToActiveProfile("VECTOR_TERM_01");
+export const SAMPLE_CASE_AA: ActiveProfileData = presetToActiveProfile("VECTOR_TERM_02");
 
 interface IngestState {
   lastIngestedProfileId: string | null;
@@ -195,6 +151,7 @@ interface IngestState {
   setLastIngested: (profileId: string, nodeId: string, markerCount: number) => void;
   loadSampleCaseEU: () => void;
   loadSampleCaseAA: () => void;
+  loadCaseworkPreset: (presetId: string) => void;
   setActiveProfile: (profile: ActiveProfileData) => void;
   setToastBanner: (msg: string | null) => void;
   setInspectorOpen: (open: boolean) => void;
@@ -202,7 +159,7 @@ interface IngestState {
 }
 
 export const useIngestStore = create<IngestState>((set) => ({
-  lastIngestedProfileId: "CASE-2026-EU-GERMANIC-01",
+  lastIngestedProfileId: "VECTOR_TERM_01",
   lastIngestedNodeId: "FORENSIC-LAB-ALPHA",
   markerCount: 24,
   isValid: true,
@@ -219,24 +176,38 @@ export const useIngestStore = create<IngestState>((set) => ({
     }),
 
   loadSampleCaseEU: () => {
+    const prof = presetToActiveProfile("VECTOR_TERM_01");
     set({
-      activeProfile: SAMPLE_CASE_EU,
-      lastIngestedProfileId: SAMPLE_CASE_EU.profileId,
-      lastIngestedNodeId: SAMPLE_CASE_EU.nodeId,
-      markerCount: 24,
+      activeProfile: prof,
+      lastIngestedProfileId: prof.profileId,
+      lastIngestedNodeId: prof.nodeId,
+      markerCount: prof.markerCount,
       isValid: true,
-      toastBanner: `✓ Sample Case EU Loaded: ${SAMPLE_CASE_EU.profileId} (24 Extended STR Loci, 55 SNPs). Inferred: Blue Eyes (94.2%), European Ancestry (98.4%), Berlin, Germany (52.5200° N, 13.4050° E)`,
+      toastBanner: `✓ Sample EU Loaded: ${prof.profileId} (24 STR Loci, 55 SNPs). Inferred: ${prof.phenotype.eyeColor} (${prof.phenotype.eyeColorProb}%), ${prof.ancestry.primary}, ${prof.geoLocation.lat.toFixed(2)}°N, ${prof.geoLocation.lng.toFixed(2)}°E`,
     });
   },
 
   loadSampleCaseAA: () => {
+    const prof = presetToActiveProfile("VECTOR_TERM_02");
     set({
-      activeProfile: SAMPLE_CASE_AA,
-      lastIngestedProfileId: SAMPLE_CASE_AA.profileId,
-      lastIngestedNodeId: SAMPLE_CASE_AA.nodeId,
-      markerCount: 24,
+      activeProfile: prof,
+      lastIngestedProfileId: prof.profileId,
+      lastIngestedNodeId: prof.nodeId,
+      markerCount: prof.markerCount,
       isValid: true,
-      toastBanner: `✓ Sample Case AA Loaded: ${SAMPLE_CASE_AA.profileId} (24 Extended STR Loci, 55 SNPs). Inferred: Dark Eyes (98.6%), West African Ancestry (97.8%), Lagos, Nigeria (6.5244° N, 3.3792° E)`,
+      toastBanner: `✓ Sample AA Loaded: ${prof.profileId} (24 STR Loci, 55 SNPs). Inferred: ${prof.phenotype.eyeColor} (${prof.phenotype.eyeColorProb}%), ${prof.ancestry.primary}, ${prof.geoLocation.lat.toFixed(2)}°N, ${prof.geoLocation.lng.toFixed(2)}°E`,
+    });
+  },
+
+  loadCaseworkPreset: (presetId: string) => {
+    const prof = presetToActiveProfile(presetId);
+    set({
+      activeProfile: prof,
+      lastIngestedProfileId: prof.profileId,
+      lastIngestedNodeId: prof.nodeId,
+      markerCount: prof.markerCount,
+      isValid: true,
+      toastBanner: `✓ Casework Preset Loaded: ${prof.profileId} (${prof.markerCount} STRs, ${prof.snpCount} SNPs) • ${prof.phenotype.eyeColor} Eye • ${prof.ancestry.primary}`,
     });
   },
 

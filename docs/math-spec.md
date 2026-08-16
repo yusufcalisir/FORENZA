@@ -2286,6 +2286,34 @@ $$H_{\text{CoC}} = \text{SHA-256}(\text{Canonical JSON}(\mathbf{M}_{\text{sample
 ### 73.4 GeneMapper ID-X 10-Column Format Translation
 Bidirectional parsing and serialization supporting standard capillary electrophoresis columns: `Sample Name`, `Marker`, `Allele 1`, `Allele 2`, `Height 1`, `Height 2`, `Size 1`, `Size 2`, `Data Point 1`, `Data Point 2`.
 
+---
+
+## 74. Tactical Forensic Workstation UI & 4-Tab Reactive State Topology
+
+### 74.1 Four-Tab Workstation Layout
+1. **Tab 1: Inferred Telemetry & Live GIS Mapping (`inferred`):**
+   - 7 Continental Ancestry (BGA) Bayesian Posterior Breakdown ($\text{AFR}, \text{EUR}, \text{EAS}, \text{SAS}, \text{AMR}, \text{OCE}, \text{MID}$).
+   - HIrisPlex-S Softmax MLR Pigmentation Predictions (Eye, Hair, Skin Phototype) with epistasis flags.
+   - WGS84 Centroid $(\hat{\theta}_{\text{lat}}, \hat{\lambda}_{\text{lon}})$ and $R_{95\%}$ spatial dispersion radius in km.
+   - Live interactive `GeoForensicPanel` raster map visualization.
+2. **Tab 2: 24-STR Forensic Multiplex Grid (`str`):**
+   - Expanded 24-locus STR profile table with Allele 1, Allele 2, Peak Heights (RFU 1, RFU 2), Heterozygote Balance ($H_b$), Homozygous/Heterozygous flags, and Dropout alerts ($[0]$).
+   - Instant search, custom locus addition, live editing, and locus deletion.
+3. **Tab 3: 55-SNP AIM & 41-SNP HIrisPlex Matrix (`snp`):**
+   - 55 AIM + 41 HIrisPlex catalog with quick $0, 1, 2$ genotype dosage selectors and instant client-side reactive recalculation.
+4. **Tab 4: Interactive EPG Spectrum Visualizer (`epg`):**
+   - Continuous multi-channel SVG electropherogram waveform across 5 dye channels (6-FAM Blue, VIC Green, NED Yellow, TAZ Red, SID Purple) + LIZ 600 Orange ILS size standard.
+   - Channel toggles, degradation rate slider ($d \in [0.0, 0.012]$), template DNA mass slider ($0.03\text{ ng} - 2.0\text{ ng}$), and stutter toggle.
+   - Analytical ($AT=50\text{ RFU}$), Stochastic ($ST=200\text{ RFU}$), and Saturation ($SAT=8000\text{ RFU}$) threshold lines.
+
+### 74.2 Bidirectional Reactive State Propagation
+Updates from `DnaProfileInspectorModal` propagate through `useIngestStore` and `useForensicCaseStore` to all 35 forensic biocomputational modules across the 7 architecture layers, guaranteeing full data integrity and instant UI synchrony.
+
+### 74.3 Human-Computer Interaction & Responsive Parity
+- Mobile ($\le 640\text{px}$): Minimum $\ge 44\text{px}$ touch targets, single-column flex layouts, non-overlapping tabs, sticky table headers.
+- Desktop ($\ge 1024\text{px}$): Multi-column tactical HUD grid, high-resolution SVG waveforms, split-pane GIS visualizers.
+
+
 
 
 

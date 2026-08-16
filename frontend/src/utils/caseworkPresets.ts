@@ -432,3 +432,194 @@ export function exportToGeneMapperCsv(
   }
   return lines.join('\n');
 }
+
+export interface ParsedDroppedResult {
+  sampleId: string;
+  formatDetected: string;
+  strProfile: Record<string, { allele1: string; allele2?: string; rfu1?: number; rfu2?: number }>;
+  snpDosages: Record<string, number>;
+  supplementaryMarkers?: Record<string, string>;
+}
+
+/**
+ * Client-side multi-format parser for drag-and-dropped forensic profile files.
+ */
+export function parseDroppedFileContent(fileName: string, rawContent: string): ParsedDroppedResult {
+  const content = rawContent.trim();
+  const lowerName = fileName.toLowerCase();
+
+  // 1. JSON
+  if (lowerName.endsWith('.json') || content.startsWith('{')) {
+    try {
+      const data = JSON.parse(content);
+      const sampleId = data.sampleMetadata?.sampleID || data.sample_id || 'DROPPED_JSON_SAMPLE';
+      const strProfile: Record<string, { allele1: string; allele2?: string; rfu1?: number; rfu2?: number }> = {};
+      const snpDosages: Record<string, number> = {};
+
+      if (Array.isArray(data.strGenotypes)) {
+        for (const item of data.strGenotypes) {
+          if (item.locusName && item.allele1) {
+            strProfile[item.locusName] = {
+              allele1: String(item.allele1),
+              allele2: item.allele2 ? String(item.allele2) : String(item.allele1),
+              rfu1: item.rfu1 ? Number(item.rfu1) : 1500,
+              rfu2: item.rfu2 ? Number(item.rfu2) : 1500,
+            };
+          }
+        }
+      }
+
+      if (Array.isArray(data.hirisplexGenotypes)) {
+        for (const snp of data.hirisplexGenotypes) {
+          if (snp.rsID && snp.dosageValue !== undefined) {
+            snpDosages[snp.rsID] = Number(snp.dosageValue);
+          }
+        }
+      }
+
+      return {
+        sampleId,
+        formatDetected: 'ISO/IEC 17025 LIMS JSON',
+        strProfile,
+        snpDosages,
+      };
+    } catch {
+      // Fall through to other checks
+    }
+  }
+
+  // 2. XML (CODIS CMF)
+  if (lowerName.endsWith('.xml') || content.startsWith('<?xml') || content.includes('<CODISImportFile') || content.includes('<SPECIMEN>')) {
+    const strProfile: Record<string, { allele1: string; allele2?: string; rfu1?: number; rfu2?: number }> = {};
+    let sampleId = 'DROPPED_CODIS_XML';
+
+    const specMatch = content.match(/<SPECIMENID>([^<]+)<\/SPECIMENID>/i);
+    if (specMatch) sampleId = specMatch[1].trim();
+
+    const locusRegex = /<LOCUS>([\s\S]*?)<\/LOCUS>/gi;
+    let match: RegExpExecArray | null;
+    while ((match = locusRegex.exec(content)) !== null) {
+      const locusBlock = match[1];
+      const nameMatch = locusBlock.match(/<LOCUSNAME>([^<]+)<\/LOCUSNAME>/i);
+      if (!nameMatch) continue;
+      const locusName = nameMatch[1].trim();
+
+      const alleleRegex = /<ALLELEVALUE>([^<]+)<\/ALLELEVALUE>/gi;
+      const alleles: string[] = [];
+      let aMatch: RegExpExecArray | null;
+      while ((aMatch = alleleRegex.exec(locusBlock)) !== null) {
+        alleles.push(aMatch[1].trim());
+      }
+
+      if (alleles.length >= 1) {
+        strProfile[locusName] = {
+          allele1: alleles[0],
+          allele2: alleles[1] || alleles[0],
+          rfu1: 1500,
+          rfu2: 1500,
+        };
+      }
+    }
+
+    return {
+      sampleId,
+      formatDetected: 'FBI CODIS CMF 3.2 XML',
+      strProfile,
+      snpDosages: {},
+    };
+  }
+
+  // 3. VCF (NGS)
+  if (lowerName.endsWith('.vcf') || content.startsWith('##fileformat=VCF')) {
+    const strProfile: Record<string, { allele1: string; allele2?: string; rfu1?: number; rfu2?: number }> = {};
+    const snpDosages: Record<string, number> = {};
+    const lines = content.split('\n');
+
+    for (const line of lines) {
+      if (line.startsWith('#') || !line.trim()) continue;
+      const parts = line.split('\t');
+      if (parts.length < 8) continue;
+      const marker = parts[2] || parts[0];
+      const info = parts[7];
+
+      if (info.includes('STR=')) {
+        const strMatch = info.match(/STR=([^;]+)/);
+        if (strMatch) {
+          const alleles = strMatch[1].split(',');
+          strProfile[marker] = {
+            allele1: alleles[0],
+            allele2: alleles[1] || alleles[0],
+            rfu1: 1500,
+            rfu2: 1500,
+          };
+        }
+      } else if (marker.startsWith('rs')) {
+        const format = parts[8] || '';
+        const sampleCol = parts[9] || '';
+        if (format.startsWith('GT') && sampleCol) {
+          const gt = sampleCol.split(':')[0];
+          if (gt === '1/1') snpDosages[marker] = 2;
+          else if (gt === '0/1' || gt === '1/0') snpDosages[marker] = 1;
+          else snpDosages[marker] = 0;
+        }
+      }
+    }
+
+    return {
+      sampleId: fileName.replace(/\.[^/.]+$/, ''),
+      formatDetected: 'Forensic NGS VCF 4.2',
+      strProfile,
+      snpDosages,
+    };
+  }
+
+  // 4. Default: CSV / TSV (GeneMapper)
+  const delimiter = content.includes('\t') ? '\t' : ',';
+  const rows = content.split('\n').map(r => r.split(delimiter));
+  const strProfile: Record<string, { allele1: string; allele2?: string; rfu1?: number; rfu2?: number }> = {};
+  let sampleId = fileName.replace(/\.[^/.]+$/, '');
+
+  if (rows.length > 1) {
+    const headers = rows[0].map(h => h.trim().toLowerCase().replace(/[\s_]/g, ''));
+    const colSample = headers.findIndex(h => h.includes('sample') || h.includes('specimen'));
+    const colMarker = headers.findIndex(h => h.includes('marker') || h.includes('locus'));
+    const colA1 = headers.findIndex(h => h === 'allele1' || h === 'a1' || h === 'allele');
+    const colA2 = headers.findIndex(h => h === 'allele2' || h === 'a2');
+    const colH1 = headers.findIndex(h => h.includes('height1') || h === 'h1' || h.includes('rfu1') || h === 'height');
+    const colH2 = headers.findIndex(h => h.includes('height2') || h === 'h2' || h.includes('rfu2'));
+
+    for (let i = 1; i < rows.length; i++) {
+      const row = rows[i];
+      if (!row || row.length < 2) continue;
+
+      if (colSample >= 0 && row[colSample]?.trim()) {
+        sampleId = row[colSample].trim();
+      }
+
+      const marker = colMarker >= 0 ? row[colMarker]?.trim() : '';
+      if (!marker) continue;
+
+      const a1 = colA1 >= 0 ? row[colA1]?.trim() : '';
+      const a2 = colA2 >= 0 ? row[colA2]?.trim() : '';
+      const h1 = colH1 >= 0 ? parseFloat(row[colH1]) || 1500 : 1500;
+      const h2 = colH2 >= 0 ? parseFloat(row[colH2]) || h1 : h1;
+
+      if (a1) {
+        strProfile[marker] = {
+          allele1: a1,
+          allele2: a2 || a1,
+          rfu1: h1,
+          rfu2: h2,
+        };
+      }
+    }
+  }
+
+  return {
+    sampleId,
+    formatDetected: delimiter === '\t' ? 'GeneMapper ID-X TSV' : 'GeneMapper ID-X CSV',
+    strProfile,
+    snpDosages: {},
+  };
+}
+

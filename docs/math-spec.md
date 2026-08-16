@@ -1422,6 +1422,53 @@ $$P(T_k \mid \boldsymbol{\beta}^*) = \frac{\exp\left(\text{LL}_k(\boldsymbol{\be
 
 $$\text{LR}_{\text{tissue}} = \frac{P(T_{\text{top}} \mid \boldsymbol{\beta}^*)}{P(T_{\text{second}} \mid \boldsymbol{\beta}^*)}, \quad \log_{10} \text{LR} = \log_{10}(P_{\text{top}}) - \log_{10}(\max(10^{-6}, P_{\text{second}}))$$
 
+---
+
+## 52. Environmental Epigenetics & Lifestyle Biomarkers Engine (Module 18)
+
+The Lifestyle Epigenetics Engine decodes chronic environmental exposures and physiological characteristics from DNA methylation profiles across target gene promoters:
+
+### 52.1 Quantitative Cigarette Smoking Biomarker Model
+
+$$\text{Score}_{\text{smoke}} = 10.50 - 9.80 \cdot \beta_{\text{cg05575921 (AHRR)}} - 2.50 \cdot \beta_{\text{cg03636183 (F2RL3)}} - 1.80 \cdot \beta_{\text{cg01940273 (ALPPL2)}}$$
+
+$$\text{Pack-Years} = \max\left(0.0, \; \frac{0.85 - \beta_{\text{cg05575921}}}{0.012}\right)$$
+
+| AHRR Locus ($\beta$) | Smoking Score | Classification | Estimated Exposure (Pack-Years) |
+| :--- | :--- | :--- | :--- |
+| $\beta \ge 0.80$ | $\text{Score} < 1.50$ | **Never Smoker** | $0.0 \text{ Pack-Years}$ |
+| $0.55 \le \beta < 0.80$ | $1.50 \le \text{Score} \le 4.50$ | **Former / Light Smoker** | $1.0 - 10.0 \text{ Pack-Years}$ |
+| $\beta < 0.55$ | $\text{Score} > 4.50$ | **Active Heavy Smoker** | $> 10.0 \text{ Pack-Years}$ |
+
+### 52.2 Epigenetic Body Mass Index (BMI) Model
+
+$$\widehat{\text{BMI}} \, (\text{kg/m}^2) = 24.50 + 18.20 \cdot \beta_{\text{cg06500161 (ABCG1)}} - 22.40 \cdot \beta_{\text{cg00574958 (CPT1A)}} + 12.10 \cdot \beta_{\text{cg11024682 (SREBF1)}}$$
+
+| Estimated BMI Range ($\text{kg/m}^2$) | Weight Classification Category |
+| :--- | :--- |
+| $\widehat{\text{BMI}} < 18.5$ | **Underweight** |
+| $18.5 \le \widehat{\text{BMI}} < 25.0$ | **Normal Weight** |
+| $25.0 \le \widehat{\text{BMI}} < 30.0$ | **Overweight** |
+| $30.0 \le \widehat{\text{BMI}} < 35.0$ | **Obesity Class I** |
+| $\widehat{\text{BMI}} \ge 35.0$ | **Obesity Class II+** |
+
+### 52.3 Circadian Diurnal Phase Time-of-Deposition (TOD)
+
+$$\text{Ratio}_{\text{circ}} = \frac{\beta_{\text{PER2}}}{\max(0.01, \beta_{\text{BMAL1}})}$$
+
+- $\text{Ratio}_{\text{circ}} > 1.20 \implies$ **NOCTURNAL_PEAK_NIGHT** (22:00 - 04:00 UTC)
+- $\text{Ratio}_{\text{circ}} < 0.80 \implies$ **MATUTINAL_PEAK_MORNING** (04:00 - 10:00 UTC)
+- $0.80 \le \text{Ratio}_{\text{circ}} \le 1.20 \implies$ **DIURNAL_PEAK_DAYTIME** (10:00 - 16:00 UTC)
+
+### 52.4 Epigenetic Age Acceleration ($\Delta\text{Age}$)
+
+$$\Delta\text{Age} = \text{DNAmAge} - \text{ChronologicalAge}$$
+
+- $\Delta\text{Age} > +5.0 \text{ years} \implies$ **Accelerated Biological Aging**
+- $\Delta\text{Age} < -5.0 \text{ years} \implies$ **Decelerated Biological Aging**
+- $-5.0 \le \Delta\text{Age} \le +5.0 \text{ years} \implies$ **Normal Biological Aging**
+
+
 
 
 

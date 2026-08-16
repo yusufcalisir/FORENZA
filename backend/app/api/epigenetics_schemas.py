@@ -82,6 +82,26 @@ class LifestyleProfileRequest(BaseModel):
         default=0.85,
         description="Methylation beta value at AHRR locus cg05575921 [0.0, 1.0]."
     )
+    f2rl3_beta: Optional[float] = Field(
+        default=None,
+        description="Optional methylation beta value at F2RL3 locus cg03636183 [0.0, 1.0]."
+    )
+    alppl2_beta: Optional[float] = Field(
+        default=None,
+        description="Optional methylation beta value at ALPPL2 locus cg01940273 [0.0, 1.0]."
+    )
+    abcg1_beta: Optional[float] = Field(
+        default=None,
+        description="Optional methylation beta value at ABCG1 locus cg06500161 [0.0, 1.0]."
+    )
+    cpt1a_beta: Optional[float] = Field(
+        default=None,
+        description="Optional methylation beta value at CPT1A locus cg00574958 [0.0, 1.0]."
+    )
+    srebf1_beta: Optional[float] = Field(
+        default=None,
+        description="Optional methylation beta value at SREBF1 locus cg11024682 [0.0, 1.0]."
+    )
     slc6a3_beta: Optional[float] = Field(
         default=0.50,
         description="Optional methylation beta value at SLC6A3 [0.0, 1.0]."
@@ -94,15 +114,35 @@ class LifestyleProfileRequest(BaseModel):
         default=0.60,
         description="Optional methylation beta value at BMAL1 [0.0, 1.0]."
     )
+    chronological_age: Optional[float] = Field(
+        default=None,
+        description="Optional known chronological age of target subject for acceleration delta calculation."
+    )
+    estimated_dnam_age: Optional[float] = Field(
+        default=None,
+        description="Optional estimated DNA methylation age for acceleration delta calculation."
+    )
 
 
 class LifestyleProfileResponse(BaseModel):
     ahrr_methylation_beta: float
+    f2rl3_methylation_beta: Optional[float] = None
+    alppl2_methylation_beta: Optional[float] = None
+    smoking_score: Optional[float] = None
     smoking_status: str
     smoking_probability: float
     estimated_pack_years: float
+    abcg1_methylation_beta: Optional[float] = None
+    cpt1a_methylation_beta: Optional[float] = None
+    srebf1_methylation_beta: Optional[float] = None
+    estimated_bmi: Optional[float] = None
+    bmi_category: Optional[str] = None
     alcohol_index_score: float
     alcohol_exposure_level: str
     circadian_phase: str
     estimated_tod_window: str
+    age_acceleration_delta: Optional[float] = None
+    aging_status: Optional[str] = None
     biomarker_panel: str
+    prosecutors_fallacy_shield: Optional[str] = None
+

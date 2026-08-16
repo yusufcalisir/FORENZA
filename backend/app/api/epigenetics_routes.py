@@ -80,10 +80,18 @@ async def lifestyle_profile(req: LifestyleProfileRequest) -> LifestyleProfileRes
     try:
         result = _LIFESTYLE_ENGINE.analyze_lifestyle_profile(
             ahrr_cg05575921_beta=req.ahrr_cg05575921_beta,
+            f2rl3_beta=req.f2rl3_beta,
+            alppl2_beta=req.alppl2_beta,
+            abcg1_beta=req.abcg1_beta,
+            cpt1a_beta=req.cpt1a_beta,
+            srebf1_beta=req.srebf1_beta,
             slc6a3_beta=req.slc6a3_beta,
             per2_beta=req.per2_beta,
-            bmal1_beta=req.bmal1_beta
+            bmal1_beta=req.bmal1_beta,
+            chronological_age=req.chronological_age,
+            estimated_dnam_age=req.estimated_dnam_age,
         )
+
         return LifestyleProfileResponse(**result)
     except ValueError as e:
         raise HTTPException(

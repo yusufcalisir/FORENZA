@@ -17,9 +17,17 @@ interface TissueDeconvResult {
 
 interface LifestyleResult {
   ahrr_methylation_beta: number;
+  f2rl3_methylation_beta?: number;
+  alppl2_methylation_beta?: number;
+  smoking_score?: number;
   smoking_status: string;
   smoking_probability: number;
   estimated_pack_years: number;
+  abcg1_methylation_beta?: number;
+  cpt1a_methylation_beta?: number;
+  srebf1_methylation_beta?: number;
+  estimated_bmi?: number;
+  bmi_category?: string;
   alcohol_index_score: number;
   alcohol_exposure_level: string;
   circadian_phase: string;
@@ -79,20 +87,36 @@ export default function ComprehensiveEpigenomicsPanel() {
     deconvolution_method: "Bayesian Quadratic Discriminant Analysis (QDA 12-tDMR Gaussian Mixture)"
   });
 
+  // Lifestyle & Epigenetic Biomarkers State
+  const [ahrrBeta, setAhrrBeta] = useState<number>(0.32);
+  const [f2rl3Beta, setF2rl3Beta] = useState<number>(0.28);
+  const [alppl2Beta, setAlppl2Beta] = useState<number>(0.30);
+  const [abcg1Beta, setAbcg1Beta] = useState<number>(0.35);
+  const [cpt1aBeta, setCpt1aBeta] = useState<number>(0.45);
+  const [srebf1Beta, setSrebf1Beta] = useState<number>(0.30);
+  const [slc6a3Beta, setSlc6a3Beta] = useState<number>(0.50);
+  const [per2Beta, setPer2Beta] = useState<number>(0.40);
+  const [bmal1Beta, setBmal1Beta] = useState<number>(0.60);
 
-  // Lifestyle State
-  const [ahrrBeta, setAhrrBeta] = useState<number>(0.42);
   const [lifestyleLoading, setLifestyleLoading] = useState(false);
   const [lifestyleResult, setLifestyleResult] = useState<LifestyleResult | null>({
-    ahrr_methylation_beta: 0.42,
+    ahrr_methylation_beta: 0.32,
+    f2rl3_methylation_beta: 0.28,
+    alppl2_methylation_beta: 0.30,
+    smoking_score: 6.12,
     smoking_status: "CURRENT_HEAVY_SMOKER",
     smoking_probability: 0.95,
-    estimated_pack_years: 16.8,
-    alcohol_index_score: 15.2,
+    estimated_pack_years: 44.2,
+    abcg1_methylation_beta: 0.35,
+    cpt1a_methylation_beta: 0.45,
+    srebf1_methylation_beta: 0.30,
+    estimated_bmi: 24.4,
+    bmi_category: "NORMAL_WEIGHT",
+    alcohol_index_score: 0.0,
     alcohol_exposure_level: "LOW_OR_ABSTAINER",
-    circadian_phase: "DIURNAL_PEAK_DAYTIME",
-    estimated_tod_window: "10:00 - 16:00 UTC",
-    biomarker_panel: "AHRR (cg05575921) + SLC6A3 + PER2/BMAL1"
+    circadian_phase: "MATUTINAL_PEAK_MORNING",
+    estimated_tod_window: "04:00 - 10:00 UTC",
+    biomarker_panel: "AHRR + F2RL3 + ALPPL2 + ABCG1 + CPT1A + SREBF1 + SLC6A3 + PER2/BMAL1"
   });
 
   const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
@@ -124,9 +148,14 @@ export default function ComprehensiveEpigenomicsPanel() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ahrr_cg05575921_beta: ahrrBeta,
-          slc6a3_beta: 0.50,
-          per2_beta: 0.40,
-          bmal1_beta: 0.60
+          f2rl3_beta: f2rl3Beta,
+          alppl2_beta: alppl2Beta,
+          abcg1_beta: abcg1Beta,
+          cpt1a_beta: cpt1aBeta,
+          srebf1_beta: srebf1Beta,
+          slc6a3_beta: slc6a3Beta,
+          per2_beta: per2Beta,
+          bmal1_beta: bmal1Beta,
         })
       });
       if (res.ok) {
@@ -139,6 +168,7 @@ export default function ComprehensiveEpigenomicsPanel() {
       setLifestyleLoading(false);
     }
   };
+
 
   return (
     <div className="space-y-6 font-mono text-tactical-text">
@@ -304,7 +334,7 @@ export default function ComprehensiveEpigenomicsPanel() {
               <div className="flex items-center gap-2">
                 <Flame className="w-4 h-4 text-amber-400" />
                 <span className="text-xs font-bold uppercase tracking-wider text-tactical-text">
-                  AHRR (cg05575921) Biomarker
+                  Lifestyle & BMI Biomarkers
                 </span>
               </div>
               <button
@@ -317,11 +347,15 @@ export default function ComprehensiveEpigenomicsPanel() {
               </button>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-3 max-h-[380px] overflow-y-auto pr-1">
+              {/* Smoking Section */}
+              <div className="text-[10px] font-bold text-amber-400 uppercase border-b border-tactical-border/30 pb-1">
+                Smoking Markers (AHRR / F2RL3 / ALPPL2)
+              </div>
               <div className="space-y-1">
-                <div className="flex items-center justify-between text-[11px]">
-                  <span className="font-bold text-zinc-300">AHRR cg05575921 Methylation</span>
-                  <span className="font-mono text-amber-400 font-bold">Beta = {ahrrBeta.toFixed(2)}</span>
+                <div className="flex items-center justify-between text-[10px]">
+                  <span className="font-bold text-zinc-300">AHRR (cg05575921)</span>
+                  <span className="font-mono text-amber-400 font-bold">β = {ahrrBeta.toFixed(2)}</span>
                 </div>
                 <input
                   type="range"
@@ -330,11 +364,88 @@ export default function ComprehensiveEpigenomicsPanel() {
                   step="0.01"
                   value={ahrrBeta}
                   onChange={(e) => setAhrrBeta(parseFloat(e.target.value))}
-                  className="w-full accent-amber-500 cursor-pointer"
+                  className="w-full accent-amber-500 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
                 />
-                <span className="text-[9px] text-zinc-500 block">
-                  Beta &lt; 0.55: Heavy Smoker • 0.55 - 0.80: Light/Former • &gt; 0.80: Non-Smoker
-                </span>
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center justify-between text-[10px]">
+                  <span className="font-bold text-zinc-300">F2RL3 (cg03636183)</span>
+                  <span className="font-mono text-amber-400 font-bold">β = {f2rl3Beta.toFixed(2)}</span>
+                </div>
+                <input
+                  type="range"
+                  min="0.0"
+                  max="1.0"
+                  step="0.01"
+                  value={f2rl3Beta}
+                  onChange={(e) => setF2rl3Beta(parseFloat(e.target.value))}
+                  className="w-full accent-amber-500 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
+                />
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center justify-between text-[10px]">
+                  <span className="font-bold text-zinc-300">ALPPL2 (cg01940273)</span>
+                  <span className="font-mono text-amber-400 font-bold">β = {alppl2Beta.toFixed(2)}</span>
+                </div>
+                <input
+                  type="range"
+                  min="0.0"
+                  max="1.0"
+                  step="0.01"
+                  value={alppl2Beta}
+                  onChange={(e) => setAlppl2Beta(parseFloat(e.target.value))}
+                  className="w-full accent-amber-500 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
+                />
+              </div>
+
+              {/* BMI Section */}
+              <div className="text-[10px] font-bold text-teal-400 uppercase border-b border-tactical-border/30 pb-1 pt-2">
+                Epigenetic BMI (ABCG1 / CPT1A / SREBF1)
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center justify-between text-[10px]">
+                  <span className="font-bold text-zinc-300">ABCG1 (cg06500161)</span>
+                  <span className="font-mono text-teal-400 font-bold">β = {abcg1Beta.toFixed(2)}</span>
+                </div>
+                <input
+                  type="range"
+                  min="0.0"
+                  max="1.0"
+                  step="0.01"
+                  value={abcg1Beta}
+                  onChange={(e) => setAbcg1Beta(parseFloat(e.target.value))}
+                  className="w-full accent-teal-500 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
+                />
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center justify-between text-[10px]">
+                  <span className="font-bold text-zinc-300">CPT1A (cg00574958)</span>
+                  <span className="font-mono text-teal-400 font-bold">β = {cpt1aBeta.toFixed(2)}</span>
+                </div>
+                <input
+                  type="range"
+                  min="0.0"
+                  max="1.0"
+                  step="0.01"
+                  value={cpt1aBeta}
+                  onChange={(e) => setCpt1aBeta(parseFloat(e.target.value))}
+                  className="w-full accent-teal-500 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
+                />
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center justify-between text-[10px]">
+                  <span className="font-bold text-zinc-300">SREBF1 (cg11024682)</span>
+                  <span className="font-mono text-teal-400 font-bold">β = {srebf1Beta.toFixed(2)}</span>
+                </div>
+                <input
+                  type="range"
+                  min="0.0"
+                  max="1.0"
+                  step="0.01"
+                  value={srebf1Beta}
+                  onChange={(e) => setSrebf1Beta(parseFloat(e.target.value))}
+                  className="w-full accent-teal-500 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
+                />
               </div>
             </div>
           </div>
@@ -361,16 +472,31 @@ export default function ComprehensiveEpigenomicsPanel() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs pt-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs pt-2">
+                    <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40">
+                      <span className="text-[10px] text-zinc-500 block">Smoking Score</span>
+                      <span className="font-bold text-amber-300 font-mono">{lifestyleResult.smoking_score ?? "N/A"}</span>
+                    </div>
                     <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40">
                       <span className="text-[10px] text-zinc-500 block">Est. Pack Years</span>
                       <span className="font-bold text-amber-300 font-mono">{lifestyleResult.estimated_pack_years} Yrs</span>
                     </div>
                     <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40">
-                      <span className="text-[10px] text-zinc-500 block">Alcohol Exposure</span>
+                      <span className="text-[10px] text-zinc-500 block">Epigenetic BMI</span>
+                      <span className="font-bold text-teal-300 font-mono">{lifestyleResult.estimated_bmi ?? 24.4} kg/m²</span>
+                    </div>
+                    <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40">
+                      <span className="text-[10px] text-zinc-500 block">BMI Category</span>
+                      <span className="font-bold text-teal-300 font-mono">{lifestyleResult.bmi_category ?? "NORMAL"}</span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs pt-2">
+                    <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40">
+                      <span className="text-[10px] text-zinc-500 block">Alcohol Exposure Level</span>
                       <span className="font-bold text-cyan-300 font-mono">{lifestyleResult.alcohol_exposure_level}</span>
                     </div>
-                    <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40 col-span-2 sm:col-span-1">
+                    <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40">
                       <span className="text-[10px] text-zinc-500 block">Circadian TOD Window</span>
                       <span className="font-bold text-purple-300 font-mono">{lifestyleResult.estimated_tod_window}</span>
                     </div>
@@ -383,4 +509,5 @@ export default function ComprehensiveEpigenomicsPanel() {
       )}
     </div>
   );
+
 }

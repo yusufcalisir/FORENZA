@@ -582,9 +582,19 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** Likelihood Ratio ($\text{LR}_{\text{tissue}}$) and $\log_{10}\text{LR}$ metric consistency verified.
   - **`G`:** Input validation boundaries and empty profile exception handling.
   - **`H`:** API integration testing across `/forensic/epigenetics/deconvolve-tissue`.
+* **`VECTOR_18_LIFE_A-H` (Environmental Epigenetics & Lifestyle Biomarkers — Module 18):**
+  - **`A`:** Baseline Never Smoker profile verified ($\beta_{\text{AHRR}}=0.88 \implies \text{Score} < 1.50, 0.0\text{ Pack-Years}$).
+  - **`B`:** Active Heavy Smoker profile verified ($\beta_{\text{AHRR}}=0.32 \implies \text{Score} > 6.00, \text{Pack-Years} \ge 40.0$).
+  - **`C`:** Former / Light Smoker profile verified ($1.50 \le \text{Score} \le 4.50, 1.0 \le \text{Pack-Years} \le 20.0$).
+  - **`D`:** Epigenetic BMI normal weight calculation verified ($\widehat{\text{BMI}} \approx 24.4\text{ kg/m}^2$).
+  - **`E`:** Epigenetic BMI obesity calculation verified ($\widehat{\text{BMI}} \ge 35.0\text{ kg/m}^2$, `OBESITY_CLASS_2_PLUS`).
+  - **`F`:** Alcohol Exposure Index tiers verified ($SLC6A3$).
+  - **`G`:** Circadian Time-of-Deposition windows verified (Nocturnal, Diurnal, Matutinal).
+  - **`H`:** Biological Age Acceleration delta ($\Delta\text{Age}$) and API integration testing across `/forensic/epigenetics/lifestyle-profile`.
 * **`VECTOR_P6_01` (Chain of Custody Tamper Detection):** Merkle tree root divergence verified upon a single-second timestamp modification ($P_{\text{detection}} = 100\%$).
 * **`VECTOR_P6_02` (ISO 17025 Measurement Uncertainty):** Combined $u_c = 0.05385 \text{ ng/}\mu\text{L}$ and expanded $U_{95\%} = 0.1077 \text{ ng/}\mu\text{L}$ ($k=2.00$).
 * **`VECTOR_P6_03` (ENFSI Verbal Statement Mapping):** $LR = 3.5 \times 10^7$ maps deterministically to Verbal Tier 6 ("Extremely strong support for prosecution proposition").
+
 
 
 

@@ -461,15 +461,15 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`B`:** FPR = 0.0, FNR = 0.0 for perfectly separated pristine datasets; FPR > 0 and FNR > 0 for overlapping distributions; exact manual calculation verified.
   - **`C`:** ROC-AUC $\ge 0.999$ for pristine benchmark; MER = max(FPR, FNR); AUC bounded to $[0, 1]$.
   - **`D`:** $C_{\text{llr}} \ge 0$; $C_{\text{llr}}^{\min} \le C_{\text{llr}}$; calibration loss $\ge 0$; manual formula check: $C_{\text{llr}}(\text{LR}=100, \text{LR}^{-1}=0.01) \approx 0.01447$; EXCELLENT quality for well-separated distributions.
-  - **`E`:** 5th percentile $\le$ median; 95th percentile $\ge$ median; Percentile$_{50\text{\%}}$ = median; single-sample trivial case exact; interpretation references percentile value.
+  - **`E`:** 5th percentile $\le$ median; 95th percentile $\ge$ median; $\text{Percentile}_{50\text{\%}} = \text{median}$; single-sample trivial case exact; interpretation references percentile value.
   - **`F`:** All 11 ENFSI tier boundaries verified: Tier 5 (log10 LR > 6), Tier 4 (4–6), Tier 3 (2–4), Tier 2 (1–2), Tier 1 (0–1), Tier 0 (=0), Tiers −1…−5 (symmetric defence); Turkish predicates present.
   - **`G`:** Prosecutor's Fallacy Shield present for all tiers; standard legal text identical across Hp-supporting tiers; `likelihood_equation` references LR value; English shield mentions `P(Evidence` / `Prosecutor`; Turkish shield mentions `Yanılgı`.
   - **`H`:** API integration across all 5 endpoints: FPR=FNR=0 for pristine, AUC≥0.999, Cllr EXCELLENT, HPD 5th pct ≤ median, Tier 5 for log10(LR)=26, Tier 0 for log10(LR)=0, negative tier for log10(LR)=−3.
-* **`VECTOR_P2_01` (Y-STR 27-Locus Paternal Match):** Full Y-FILER Plus 27-locus match, $k=0, N=25000, \alpha=0.05 \implies \hat{p}_{\text{upper}} \approx 0.00011982, \text{LR} \approx 8345.86, \log_{10}\text{LR} \approx 3.92147$. Clopper-Pearson 95% exact compliance.
+* **`VECTOR_P2_01` (Y-STR 27-Locus Paternal Match):** Full Y-FILER Plus 27-locus match, $k=0, \; N=25000, \; \alpha=0.05 \implies \hat{p}_{\text{upper}} \approx 0.00011982, \; \text{LR} \approx 8345.86, \; \log_{10}(\text{LR}) \approx 3.92147$. Clopper-Pearson 95% exact compliance.
 * **`VECTOR_06_YSTR_A-H` (Y-STR Haplotype Forensics & Mutation Invariants - Module 06):**
   - **`A`:** 27-locus panel completeness, 6 RM loci classification ($\mu_l \ge 0.011$), multi-copy flags (`DYS385a/b`, `DYF387S1a/b`), and locus name normalization.
   - **`B`:** Clopper-Pearson $k=0$ exact formula $\hat{p}_{\text{upper}} = 1 - (0.05)^{1/(N+1)}$ verified against analytical calculation; strict monotonic decrease with $N$.
-  - **`C`:** Clopper-Pearson $k>0$ exact Beta/Snedecor $F$ quantile; $p_{\text{lower}} \le \text{point\_est} \le p_{\text{upper}}$; $k=N$ boundary exact.
+  - **`C`:** Clopper-Pearson $k>0$ exact Beta/Snedecor $F$ quantile; $p_{\text{lower}} \le \hat{p} \le p_{\text{upper}}$; $k=N$ boundary exact.
   - **`D`:** Brenner subpopulation coancestry correction $p_{\text{Brenner}} = (k+\theta)/(N+\theta)$; conservative $p > 0$ for $k=0$; monotonic increase with $\theta$.
   - **`E`:** Discrete Laplace model probability decay with haplotype distance from clonal center; normalized cluster weights.
   - **`F`:** $N_{\text{male}} = \max_l \lceil n/2 \rceil$; multi-copy locus with $>4$ alleles enforces $N_{\text{male}} \ge 3$.
@@ -599,8 +599,8 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`G`:** High somatic mosaicism drift verified ($\mathcal{M} > 0.15$).
   - **`H`:** API integration testing across `/forensic/epigenetics/telomere-and-pmi`.
 * **`VECTOR_20_QC_A-H` (Bisulfite QC & Probe Calibration - Module 20):**
-  - **`A`:** High-efficiency bisulfite conversion verified ($C_{\text{conv}} \ge 99.0\text{\%} \implies \text{PASSED_QC}$).
-  - **`B`:** Incomplete bisulfite conversion failure alert verified ($C_{\text{conv}} < 99.0\text{\%} \implies \text{FAILED_INSUFFICIENT_CONVERSION}$).
+  - **`A`:** High-efficiency bisulfite conversion verified ($C_{\text{conv}} \ge 99.0\text{\%} \implies PASSED_QC$).
+  - **`B`:** Incomplete bisulfite conversion failure alert verified ($C_{\text{conv}} < 99.0\text{\%} \implies FAILED_INSUFFICIENT_CONVERSION$).
   - **`C`:** Beta to M-value logarithmic logit transformation verified ($M = \log_2(\beta/(1-\beta))$).
   - **`D`:** M-value to Beta inverse transformation bijection verified ($|\beta - \text{inv}(M)| < 10^{-6}$).
   - **`E`:** Boundary conditions handling verified ($\beta = 0.0, 1.0$).
@@ -640,7 +640,7 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`A`:** Polyester (PET) characteristic $1715\,\text{cm}^{-1}$ and $1240\,\text{cm}^{-1}$ HQI match verified ($\text{HQI} \ge 95.0\text{\%}$).
   - **`B`:** Nylon-6,6 Amide I ($1635\,\text{cm}^{-1}$) and Amide II ($1538\,\text{cm}^{-1}$) HQI match verified ($\text{HQI} \ge 95.0\text{\%}$).
   - **`C`:** Acrylic PAN Nitrile peak ($2240\,\text{cm}^{-1}$) HQI match verified ($\text{HQI} \ge 95.0\text{\%}$).
-  - **`D`:** Weathered/contaminated spectrum classification verified ($75.0\text{\%} \le \text{HQI} < 90.0\text{\%} \implies \text{PROBABLE_MATCH_DEGRADED}$).
+  - **`D`:** Weathered/contaminated spectrum classification verified ($75.0\text{\%} \le \text{HQI} < 90.0\text{\%} \implies PROBABLE_MATCH_DEGRADED$).
   - **`E`:** Dissimilar polymer chemical exclusion verified ($\text{HQI} < 50.0\text{\%}$).
   - **`F`:** Zero-energy spectrum and dimension mismatch error handling verified.
   - **`G`:** 4-band MSI contrast simulation verified (365nm UV-A, 415nm Soret, 450nm Blue, 850nm NIR).

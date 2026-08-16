@@ -108,10 +108,10 @@ export default function DviPanel() {
       {/* ── Sub-tab 1: Missing Persons Candidate Ranking ── */}
       {activeSubTab === "missing" && (
         <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             <div className="rounded-xl border border-tactical-border/60 bg-tactical-surface/40 p-4 space-y-1">
               <span className="text-[10px] text-zinc-500 font-bold uppercase">Query Profile ID</span>
-              <p className="text-base font-bold text-amber-400 font-mono">MP-QUERY-TURKEY-2026</p>
+              <p className="text-base font-bold text-amber-400 font-mono truncate">MP-QUERY-TURKEY-2026</p>
               <p className="text-[9px] text-zinc-400">Target missing person reference</p>
             </div>
             <div className="rounded-xl border border-tactical-border/60 bg-tactical-surface/40 p-4 space-y-1">
@@ -126,39 +126,39 @@ export default function DviPanel() {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 space-y-4 shadow-lg">
-            <div className="flex items-center justify-between border-b border-tactical-border/40 pb-3">
-              <span className="text-xs font-bold text-tactical-text uppercase tracking-wider">
+          <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-4 sm:p-5 space-y-4 shadow-lg overflow-hidden">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-tactical-border/40 pb-3">
+              <span className="text-xs font-bold text-tactical-text uppercase tracking-wider leading-snug">
                 Ranked Missing Person Kinship Candidate Matches
               </span>
-              <span className="text-[9px] text-amber-400 font-bold bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded">
+              <span className="text-[9px] text-amber-400 font-bold bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded shrink-0 self-start sm:self-auto">
                 Prior P(Hp) = 0.50
               </span>
             </div>
 
             <div className="space-y-3">
               {missingCandidates.map((c, i) => (
-                <div key={c.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl bg-black/20 border border-tactical-border/40 gap-3">
-                  <div className="flex items-center gap-3">
-                    <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-amber-500/20 text-amber-400 font-bold text-xs font-mono">
+                <div key={c.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 sm:p-4 rounded-xl bg-black/30 border border-tactical-border/40 gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-amber-500/20 text-amber-400 font-bold text-xs font-mono">
                       #{i + 1}
                     </span>
-                    <div>
-                      <p className="text-xs font-bold text-tactical-text font-mono">{c.id}</p>
-                      <p className="text-[9px] text-zinc-400">Hypothesis: <span className="text-indigo-400 font-bold">{c.rel}</span></p>
+                    <div className="min-w-0">
+                      <p className="text-xs font-bold text-tactical-text font-mono truncate">{c.id}</p>
+                      <p className="text-[9px] text-zinc-400 truncate">Hypothesis: <span className="text-indigo-400 font-bold">{c.rel}</span></p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-6 text-xs font-mono">
-                    <div className="text-right">
+                  <div className="flex flex-wrap items-center justify-between sm:justify-end gap-3 sm:gap-6 text-xs font-mono pt-2 sm:pt-0 border-t sm:border-t-0 border-tactical-border/20">
+                    <div>
                       <p className="text-[9px] text-zinc-500">Likelihood Ratio</p>
                       <p className="font-bold text-emerald-400">{c.lr}</p>
                     </div>
-                    <div className="text-right">
+                    <div>
                       <p className="text-[9px] text-zinc-500">Posterior Prob.</p>
                       <p className="font-bold text-amber-300">{c.prob}</p>
                     </div>
-                    <span className={`px-2.5 py-1 rounded text-[9px] font-bold uppercase ${
+                    <span className={`px-2.5 py-1 rounded text-[9px] font-bold uppercase whitespace-nowrap ${
                       c.tier === "CONFIRMED_MATCH" ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30" : "bg-indigo-500/20 text-indigo-300 border border-indigo-500/30"
                     }`}>
                       {c.tier}
@@ -190,31 +190,38 @@ export default function DviPanel() {
             ))}
           </div>
 
-          <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 space-y-4 shadow-lg">
-            <div className="flex items-center justify-between border-b border-tactical-border/40 pb-3">
-              <span className="text-xs font-bold text-tactical-text uppercase tracking-wider">
+          <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-4 sm:p-5 space-y-4 shadow-lg overflow-hidden">
+            {/* Header Block */}
+            <div className="flex flex-col gap-2.5 sm:gap-3 border-b border-tactical-border/40 pb-3.5">
+              <span className="text-xs sm:text-sm font-bold text-tactical-text uppercase tracking-wider leading-snug">
                 Multi-Omic Disaster Victim Cross-Reconciliation Matrix (LR_Joint)
               </span>
-              <div className="flex items-center gap-2">
-                <span className="text-[9px] text-amber-400 font-bold bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-[9px] sm:text-[10px] text-amber-400 font-bold bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-lg whitespace-nowrap">
                   Interpol DVI Sec. 4
                 </span>
-                <span className="text-[9px] text-emerald-400 font-bold bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded">
+                <span className="text-[9px] sm:text-[10px] text-emerald-400 font-bold bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-lg whitespace-nowrap">
                   Event: DVI-EVENT-TURKEY-2026
                 </span>
               </div>
             </div>
 
+            {/* Reconciliation Match Cards */}
             <div className="space-y-3">
               {dviMatrix.map((row) => (
-                <div key={`${row.am}-${row.pm}`} className="flex flex-col p-4 rounded-xl bg-black/20 border border-tactical-border/40 space-y-3">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                    <div className="flex items-center gap-2 text-xs font-bold font-mono">
-                      <span className="text-indigo-400">{row.am}</span>
-                      <ChevronRight className="w-3.5 h-3.5 text-zinc-600" />
-                      <span className="text-amber-400">{row.pm}</span>
+                <div key={`${row.am}-${row.pm}`} className="flex flex-col p-3.5 sm:p-4 rounded-xl bg-black/30 border border-tactical-border/40 space-y-3 hover:border-amber-500/30 transition-all">
+                  {/* Pair Header & Status Badge */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                    <div className="flex flex-wrap items-center gap-2 text-xs font-bold font-mono">
+                      <span className="text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-2.5 py-1 rounded-lg">
+                        {row.am}
+                      </span>
+                      <ChevronRight className="w-3.5 h-3.5 text-zinc-500 shrink-0" />
+                      <span className="text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-lg">
+                        {row.pm}
+                      </span>
                     </div>
-                    <span className={`px-3 py-1 rounded text-[9px] font-bold uppercase font-mono w-fit ${
+                    <span className={`px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase font-mono w-fit shrink-0 whitespace-nowrap ${
                       row.status === "DEFINITIVE_IDENTIFICATION"
                         ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
                         : row.status === "PROBABLE_MATCH"
@@ -223,31 +230,35 @@ export default function DviPanel() {
                         ? "bg-amber-500/20 text-amber-400 border border-amber-500/30"
                         : "bg-rose-500/20 text-red-400 border border-rose-500/30"
                     }`}>
-                      {row.status.replace("_", " ")}
+                      {row.status.replace(/_/g, " ")}
                     </span>
                   </div>
 
-                  {/* Multi-omic breakdown cards */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px] font-mono bg-black/30 p-2.5 rounded-lg border border-tactical-border/30">
-                    <div>
-                      <span className="text-zinc-500 text-[9px]">Autosomal STR LR:</span>
-                      <p className="text-zinc-200 font-bold">{row.autoLr}</p>
+                  {/* Multi-omic breakdown metrics grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 text-[10px] font-mono">
+                    <div className="bg-black/40 p-2.5 rounded-lg border border-tactical-border/30 space-y-0.5">
+                      <span className="text-zinc-400 text-[9px] font-semibold block">Autosomal STR LR</span>
+                      <p className="text-zinc-100 font-bold text-xs">{row.autoLr}</p>
                     </div>
-                    <div>
-                      <span className="text-zinc-500 text-[9px]">Y-STR LR (1/p̂):</span>
-                      <p className="text-cyan-300 font-bold">{row.ystrLr}</p>
+                    <div className="bg-black/40 p-2.5 rounded-lg border border-tactical-border/30 space-y-0.5">
+                      <span className="text-zinc-400 text-[9px] font-semibold block">Y-STR LR (1/p̂)</span>
+                      <p className="text-cyan-300 font-bold text-xs">{row.ystrLr}</p>
                     </div>
-                    <div>
-                      <span className="text-zinc-500 text-[9px]">mtDNA LR (1/p̂):</span>
-                      <p className="text-purple-300 font-bold">{row.mtdnaLr}</p>
+                    <div className="bg-black/40 p-2.5 rounded-lg border border-tactical-border/30 space-y-0.5">
+                      <span className="text-zinc-400 text-[9px] font-semibold block">mtDNA LR (1/p̂)</span>
+                      <p className="text-purple-300 font-bold text-xs">{row.mtdnaLr}</p>
                     </div>
-                    <div>
-                      <span className="text-zinc-500 text-[9px]">Combined LR_Joint:</span>
-                      <p className="text-emerald-400 font-bold">{row.jointLr} (log={row.log10})</p>
+                    <div className="bg-emerald-500/10 p-2.5 rounded-lg border border-emerald-500/30 space-y-0.5">
+                      <span className="text-emerald-400 text-[9px] font-semibold block">Combined LR_Joint</span>
+                      <p className="text-emerald-300 font-bold text-xs">
+                        {row.jointLr} <span className="text-[9px] font-normal text-emerald-400/80">(log={row.log10})</span>
+                      </p>
                     </div>
                   </div>
 
-                  <p className="text-[9px] text-zinc-400 italic">Judicial Action: {row.action}</p>
+                  <p className="text-[9px] text-zinc-400 italic pt-1 border-t border-tactical-border/20">
+                    Judicial Action: {row.action}
+                  </p>
                 </div>
               ))}
             </div>

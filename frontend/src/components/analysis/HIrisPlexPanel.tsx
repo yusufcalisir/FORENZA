@@ -237,13 +237,13 @@ export default function HIrisPlexPanel() {
 
     // ── Validation badge helper ──────────────────────────────────────────────
     const ValidationBadge = ({ valid }: { valid: boolean }) => valid ? (
-        <span className="flex items-center gap-1 text-[9px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 rounded-md">
-            <CheckCircle2 className="w-3 h-3" />
+        <span className="flex items-center gap-1 text-[9px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-1.5 sm:px-2 py-0.5 rounded-md whitespace-nowrap shrink-0">
+            <CheckCircle2 className="w-3 h-3 shrink-0" />
             NORMALIZED
         </span>
     ) : (
-        <span className="flex items-center gap-1 text-[9px] font-bold text-rose-400 bg-rose-500/10 border border-rose-500/30 px-2 py-0.5 rounded-md">
-            <AlertTriangle className="w-3 h-3" />
+        <span className="flex items-center gap-1 text-[9px] font-bold text-rose-400 bg-rose-500/10 border border-rose-500/30 px-1.5 sm:px-2 py-0.5 rounded-md whitespace-nowrap shrink-0">
+            <AlertTriangle className="w-3 h-3 shrink-0" />
             DISTRIBUTION ERROR
         </span>
     );
@@ -257,50 +257,60 @@ export default function HIrisPlexPanel() {
                         <Eye className="w-5 h-5" />
                     </div>
                     <div>
-                        <div className="flex items-center gap-2">
-                            <h2 className="text-sm font-bold tracking-widest text-tactical-text uppercase">
+                        <div className="flex flex-wrap items-center gap-2">
+                            <h2 className="text-xs sm:text-sm font-bold tracking-widest text-tactical-text uppercase">
                                 HIrisPlex-S DNA Phenotyping Engine
                             </h2>
-                            <span className="px-2 py-0.5 rounded text-[8px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                            <span className="px-2 py-0.5 rounded text-[8px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30 whitespace-nowrap">
                                 WALSH ET AL. (2018)
                             </span>
                         </div>
-                        <p className="text-[10px] text-zinc-400 mt-0.5">
+                        <p className="text-[9px] sm:text-[10px] text-zinc-400 mt-0.5">
                             24-SNP Multinomial Logistic Regression Model for Eye Color, Hair Pigmentation &amp; Fitzpatrick Skin Phototype
                         </p>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-2 text-[10px] text-zinc-400 bg-black/40 px-3 py-1.5 rounded-xl border border-tactical-border/60">
+                <div className="flex items-center gap-2 text-[10px] text-zinc-400 bg-black/40 px-3 py-1.5 rounded-xl border border-tactical-border/60 shrink-0 self-start sm:self-auto">
                     <span>Active Case:</span>
                     <strong className="text-purple-300">{activeCase.metadata.caseId}</strong>
                 </div>
             </div>
 
             {/* ── Biostatistical Integrity Banner ── */}
-            <div className={`flex flex-wrap items-center justify-between gap-3 px-4 py-2.5 rounded-xl border font-mono text-[10px] ${
+            <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-4 p-3 sm:px-4 sm:py-2.5 rounded-xl border font-mono text-[10px] overflow-hidden ${
                 allValid
                     ? "bg-emerald-500/5 border-emerald-500/25 text-emerald-300"
                     : "bg-rose-500/10 border-rose-500/30 text-rose-300"
             }`}>
-                <div className="flex items-center gap-2">
+                <div className="flex items-start sm:items-center gap-2 min-w-0">
                     {allValid
-                        ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                        : <AlertTriangle className="w-3.5 h-3.5 text-rose-400 shrink-0" />}
-                    <span className="font-bold uppercase tracking-wider">
-                        Multinomial Distribution Integrity:
-                    </span>
-                    <span className={allValid ? "text-emerald-400" : "text-rose-400"}>
-                        {allValid ? "All 3 distributions validated (Σ = 100% ± 1%)" : "Distribution normalization error detected"}
-                    </span>
+                        ? <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5 sm:mt-0" />
+                        : <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5 sm:mt-0" />}
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-0.5 sm:gap-2 min-w-0">
+                        <span className="font-bold uppercase tracking-wider text-tactical-text text-[10px] whitespace-nowrap">
+                            Multinomial Distribution Integrity:
+                        </span>
+                        <span className={`text-[9px] sm:text-[10px] ${allValid ? "text-emerald-400" : "text-rose-400"}`}>
+                            {allValid ? "All 3 distributions validated (Σ = 100% ± 1%)" : "Distribution normalization error detected"}
+                        </span>
+                    </div>
                 </div>
-                <div className="flex items-center gap-2">
-                    <span className="text-zinc-500 text-[9px]">Eye:</span>
-                    <ValidationBadge valid={eyeValid} />
-                    <span className="text-zinc-500 text-[9px]">Hair:</span>
-                    <ValidationBadge valid={hairValid} />
-                    <span className="text-zinc-500 text-[9px]">Skin:</span>
-                    <ValidationBadge valid={skinValid} />
+
+                {/* Badges Container */}
+                <div className="flex flex-wrap items-center gap-2 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-tactical-border/20">
+                    <div className="flex items-center gap-1.5 bg-black/40 px-2 py-0.5 rounded-md border border-tactical-border/40">
+                        <span className="text-zinc-400 text-[9px] font-bold">Eye:</span>
+                        <ValidationBadge valid={eyeValid} />
+                    </div>
+                    <div className="flex items-center gap-1.5 bg-black/40 px-2 py-0.5 rounded-md border border-tactical-border/40">
+                        <span className="text-zinc-400 text-[9px] font-bold">Hair:</span>
+                        <ValidationBadge valid={hairValid} />
+                    </div>
+                    <div className="flex items-center gap-1.5 bg-black/40 px-2 py-0.5 rounded-md border border-tactical-border/40">
+                        <span className="text-zinc-400 text-[9px] font-bold">Skin:</span>
+                        <ValidationBadge valid={skinValid} />
+                    </div>
                 </div>
             </div>
 

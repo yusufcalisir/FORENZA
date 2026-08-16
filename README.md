@@ -247,14 +247,14 @@ FORENZA structures its 30 biocomputational subsystems into 6 canonical operation
 ### Pillar 2: Lineage Forensics & Kinship Inference
 
 6. **Y-STR Haplotype Forensics (`06`):** Computes Clopper-Pearson 95% binomial upper confidence bounds for Y-chromosome STR haplotypes (Y-FILER Plus 27 loci) with Y-HRD database matching, rapid-mutating locus separation, and surveying paternal lineage ancestry.
-7. **X-STR Linkage & Kinship Index (`07`):** Evaluates Argus X-12 4 linkage clusters (LG1–LG4) with Kosambi map distance corrections and female kinship likelihood ratios ($KI_{X, \text{PHS}}$) for complex deficiency and incest casework.
+7. **X-STR Linkage & Kinship Index (`07`):** Evaluates Argus X-12 4 linkage clusters (LG1–LG4) with Kosambi map distance corrections and female kinship likelihood ratios $(KI_{X, \text{PHS}})$ for complex deficiency and incest casework.
 8. **mtDNA Control Region EMPOP Aligner (`08`):** Aligns mitochondrial control region (HV1, HV2, HV3) against rCRS/RSRS reference sequences enforcing EMPOP right-alignment phylogenetic rules, poly-C indel parsing, and heteroplasmy quantification.
-9. **Interpol DVI Disaster Victim Identification (`09`):** Implements Section 4 Bayesian Joint Likelihood Ratio ($LR_J = LR_{\text{DNA}} \times LR_{\text{Odon}} \times LR_{\text{Anthro}}$) for mass disaster ante-mortem/post-mortem reconciliation.
+9. **Interpol DVI Disaster Victim Identification (`09`):** Implements Section 4 Bayesian Joint Likelihood Ratio $(LR_J = LR_{\text{DNA}} \times LR_{\text{Odon}} \times LR_{\text{Anthro}})$ for mass disaster ante-mortem/post-mortem reconciliation.
 10. **Ancient DNA & Degraded SNP Damage Engine (`10`):** Models Briggs/MapDamage post-mortem deamination kinetics ($\text{C}\to\text{T}, \text{G}\to\text{A}$) and fragment length decay curves for highly degraded skeletal remains.
 
 ### Pillar 3: Phenotyping & Biogeographic Ancestry
 
-11. **HIrisPlex-S Pigmentation Engine (`11`):** Predicts eye (3-category), hair (4-category), and skin color (6-category Fitzpatrick phototypes) using 41-SNP multinomial logistic regression with strict softmax sum-to-one invariants ($|\sum P - 1| \le 10^{-6}$).
+11. **HIrisPlex-S Pigmentation Engine (`11`):** Predicts eye (3-category), hair (4-category), and skin color (6-category Fitzpatrick phototypes) using 41-SNP multinomial logistic regression with strict softmax sum-to-one invariants $(|\sum P - 1| \le 10^{-6})$.
 12. **55-SNP AIM Biogeographic Ancestry & GIS (`12`):** Projects continental ancestry proportions across 5 major biogeographic groups (EUR, AFR, EAS, SAS, AMR) with spherical coordinates and 95% bivariate Gaussian confidence ellipses.
 13. **3D Craniofacial Morphology Simulator (`13`):** Synthesizes 3D cephalometric landmarks and facial geometry meshes conditioned on facial developmental SNPs (*PAX3, PAX9, PRDM16, DCHS2, PCDH15*).
 14. **Hair Texture & Androgenetic Balding PRS (`14`):** Computes hair curvature scores (*EDAR, TCHH*) and Polygenic Risk Scores (PRS) for male/female pattern androgenetic alopecia (Hamilton-Norwood scale).
@@ -266,21 +266,21 @@ FORENZA structures its 30 biocomputational subsystems into 6 canonical operation
 17. **tDMR Body Fluid Identification (`17`):** Classifies biological trace tissue origin (Blood, Semen, Saliva, Vaginal Secretions, Menstrual Blood, Skin) using tissue-specific differentially methylated regions (tDMRs) and NNLS mixture deconvolution.
 18. **Lifestyle Epigenomics & AHRR Biomarkers (`18`):** Predicts cigarette smoking history (pack-years) via *AHRR* `cg05575921` hypomethylation, heavy alcohol consumption, and BMI from blood methylation.
 19. **Telomere Length Chronometer & ADH PMI (`19`):** Estimates biological senescence via quantitative $T/S$ ratio decay and post-mortem interval (PMI) via Accumulated Degree Hours (ADH) thermal decay kinetics.
-20. **Bisulfite QC & BMIQ Methylation Calibrator (`20`):** Enforces bisulfite conversion efficiency quality control ($C_c \ge 99.0\text{\%}$, c=conv) and Beta Mixture Quantile (BMIQ) Infinium I/II probe normalization.
+20. **Bisulfite QC & BMIQ Methylation Calibrator (`20`):** Enforces bisulfite conversion efficiency quality control $(C_c \ge 99.0\%, \; c=\text{conv})$ and Beta Mixture Quantile (BMIQ) Infinium I/II probe normalization.
 
 ### Pillar 5: Physical Evidence, Pathology & Trace Forensics
 
-21. **Bloodstain Pattern Analysis 3D Area of Origin (`21`):** Computes 3D spatial convergence and flight path origin ($\mathbf{P}_0 = \mathbf{A}^{-1}\mathbf{b}$) via least-squares trajectory intersection with 95% confidence ellipsoids.
+21. **Bloodstain Pattern Analysis 3D Area of Origin (`21`):** Computes 3D spatial convergence and flight path origin $(\mathbf{P}_0 = \mathbf{A}^{-1}\mathbf{b})$ via least-squares trajectory intersection with 95% confidence ellipsoids.
 22. **SEM-EDX GSR & CMC 3D Ballistics Striation (`22`):** Automated ASTM E1588 Pb-Ba-Sb characteristic gunshot residue scoring and 3D Congruent Matching Cells (CMC) striation topography.
-23. **Forensic Entomology Thermal Summation (`23`):** Calculates minimum PMI based on Accumulated Degree Days (ADD) thermal constants ($K$) and lower developmental thresholds ($T_0$) for *Lucilia sericata*, *Calliphora vicina*, and *Chrysomya albiceps*.
-24. **Multispectral Imaging & ATR-FTIR HQI (`24`):** Chemical trace and synthetic fiber identification using multispectral reflectance (365 nm, 415 nm Soret, 450 nm, 850 nm NIR) and Hit Quality Index ($\text{HQI} \ge 85.0\text{\%}$).
-25. **Post-Mortem Toxicology PMR & ADME Kinetics (`25`):** Quantifies Central-to-Peripheral ($C/P$) post-mortem drug redistribution ratios and zero/first-order clearance models for ethanol and synthetic opioids.
+23. **Forensic Entomology Thermal Summation (`23`):** Calculates minimum PMI based on Accumulated Degree Days (ADD) thermal constants $(K)$ and lower developmental thresholds $(T_0)$ for *Lucilia sericata*, *Calliphora vicina*, and *Chrysomya albiceps*.
+24. **Multispectral Imaging & ATR-FTIR HQI (`24`):** Chemical trace and synthetic fiber identification using multispectral reflectance (365 nm, 415 nm Soret, 450 nm, 850 nm NIR) and Hit Quality Index $(\text{HQI} \ge 85.0\%)$.
+25. **Post-Mortem Toxicology PMR & ADME Kinetics (`25`):** Quantifies Central-to-Peripheral $(C/P)$ post-mortem drug redistribution ratios and zero/first-order clearance models for ethanol and synthetic opioids.
 
 ### Pillar 6: LIMS, ISO 17025 QA/QC & Cryptographic Governance
 
 26. **Chain of Custody Merkle Tree Ledger (`26`):** Cryptographic SHA-256 / Blake3 binary append-only Merkle tree recording every evidence handling state transition with $O(\log_2 N)$ courtroom inclusion proofs.
-27. **Zero-Knowledge Proof Blind Forensic Auditor (`27`):** Circom / Groth16 zk-SNARK privacy-preserving matching engine proving suspect inclusion ($LR \ge M_t$, t=threshold) over BN254 bilinear pairing without exposing raw STR/SNP sequences or PII.
-28. **ISO/IEC 17025:2017 Metrological Uncertainty Budget (`28`):** GUM (JCGM 100:2008) combined and expanded measurement uncertainty ($U_{95\%} = k \cdot u_c, k=2.00$) for quantitative qPCR DNA yields and laboratory $z$-score proficiency validation.
+27. **Zero-Knowledge Proof Blind Forensic Auditor (`27`):** Circom / Groth16 zk-SNARK privacy-preserving matching engine proving suspect inclusion $(LR \ge M_t, \; t=\text{threshold})$ over BN254 bilinear pairing without exposing raw STR/SNP sequences or PII.
+28. **ISO/IEC 17025:2017 Metrological Uncertainty Budget (`28`):** GUM (JCGM 100:2008) combined and expanded measurement uncertainty $(U_{95} = k \cdot u_c, \; k=2.00)$ for quantitative qPCR DNA yields and laboratory $z$-score proficiency validation.
 29. **Dynamic ENFSI Evaluative Reporting Scaler (`29`):** Translates continuous Likelihood Ratios into standardized 7-tier ENFSI (2017) verbal scale testimony statements in English and Turkish with Daubert/Frye admissibility checks.
 30. **3D Spatial Evidence Presenter & Juror Visualizer (`30`):** Special Euclidean $SE(3)$ multi-sensor spatial registration and 95% volumetric probability ellipsoid rendering to reduce juror cognitive bias.
 

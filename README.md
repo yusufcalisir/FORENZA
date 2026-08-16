@@ -607,11 +607,21 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`D`:** M-value to Beta inverse transformation bijection verified ($|\beta - \text{inv}(M)| < 10^{-6}$).
   - **`E`:** Boundary conditions handling verified ($\beta = 0.0, 1.0$).
   - **`F`:** Detection $P$-value thresholding verified ($P_{\text{det}} \le 0.01$).
-  - **`G`:** BMIQ Type II probe bias quantile calibration verified.
-  - **`H`:** API integration testing across `/forensic/epigenetics/bisulfite-qc-and-calibrate`.
+* **`VECTOR_P5_01` (3D BPA Impact Spatter Origin Ground Truth — Module 21):**
+  - **`P5_01`:** 5-stain closed-form least-squares 3D point of convergence verified ($x_0 = 125.4\text{ cm}, y_0 = -45.2\text{ cm}, z_0 = 142.8\text{ cm}$, $r_{\text{err}} \le 3.0\text{ cm}$).
+* **`VECTOR_21_BPA_A-H` (3D Bloodstain Pattern Analysis & Flight Ballistics — Module 21):**
+  - **`A`:** Minimal 2-stain geometric intersection verified.
+  - **`B`:** Perpendicular droplet circular impact angle verified ($\alpha = 90^\circ, W/L = 1.0$).
+  - **`C`:** Glancing acute impact angle verified ($\alpha \approx 11.5^\circ, W/L = 0.20$).
+  - **`D`:** Parallel trajectories singular matrix detection verified ($|\det(\mathbf{A})| < 10^{-9}$).
+  - **`E`:** Single bloodstain rejection verified ($N \ge 2$).
+  - **`F`:** Aerodynamic drag and gravity upward correction verified ($\Delta z > 0$).
+  - **`G`:** Dimension domain validation verified ($W > 0, L > 0$).
+  - **`H`:** API integration testing across `/forensic/physical/bpa-area-of-origin`.
 * **`VECTOR_P6_01` (Chain of Custody Tamper Detection):** Merkle tree root divergence verified upon a single-second timestamp modification ($P_{\text{detection}} = 100\%$).
 * **`VECTOR_P6_02` (ISO 17025 Measurement Uncertainty):** Combined $u_c = 0.05385 \text{ ng/}\mu\text{L}$ and expanded $U_{95\%} = 0.1077 \text{ ng/}\mu\text{L}$ ($k=2.00$).
 * **`VECTOR_P6_03` (ENFSI Verbal Statement Mapping):** $LR = 3.5 \times 10^7$ maps deterministically to Verbal Tier 6 ("Extremely strong support for prosecution proposition").
+
 
 
 

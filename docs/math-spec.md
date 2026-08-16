@@ -1530,6 +1530,42 @@ $$M_i = \log_2\left( \frac{\max(\epsilon, \min(1 - \epsilon, \beta_i))}{1 - \max
 - Detection $P$-value threshold: $P_{\text{det}} \le 0.01$. Probes exceeding $0.01$ are excluded from forensic calling.
 - BMIQ quantile adjustment fits Infinium Type II probe density distributions onto Type I reference extremes.
 
+---
+
+## 55. 3D Bloodstain Pattern Analysis (BPA) Area of Origin & Flight Ballistics Engine (Module 21)
+
+### 55.1 Fluid Kinematics & Impact Dynamics
+
+Physical properties of human blood under standard conditions:
+- Density: $\rho_{\text{blood}} \approx 1060 \text{ kg/m}^3$
+- Dynamic Viscosity: $\mu_{\text{blood}} \approx 0.004 \text{ Pa}\cdot\text{s}$
+- Surface Tension: $\sigma_{\text{blood}} \approx 0.058 \text{ N/m}$
+
+The geometric impact angle ($\alpha$) and Balthazard directional unit vector ($\vec{v}_i$):
+
+$$\alpha = \arcsin\left(\min\left(1.0, \frac{W}{L}\right)\right)$$
+
+$$\vec{v}_i = \begin{pmatrix} v_{x,i} \\ v_{y,i} \\ v_{z,i} \end{pmatrix} = \begin{pmatrix} \cos\gamma_i \cos\alpha_i \\ \sin\gamma_i \cos\alpha_i \\ \sin\alpha_i \end{pmatrix}, \quad \|\vec{v}_i\| = 1.0$$
+
+### 55.2 Closed-Form Least Squares Orthogonal Distance Convergence ($\mathbf{P}_{\text{AO}}$)
+
+$$\mathbf{M}_i = (\mathbf{I} - \vec{v}_i \vec{v}_i^T) = \begin{pmatrix} 1 - v_x^2 & -v_x v_y & -v_x v_z \\ -v_y v_x & 1 - v_y^2 & -v_y v_z \\ -v_z v_x & -v_z v_y & 1 - v_z^2 \end{pmatrix}$$
+
+$$\mathbf{A} = \sum_{i=1}^N \mathbf{M}_i, \quad \mathbf{b} = \sum_{i=1}^N \mathbf{M}_i \mathbf{P}_i$$
+
+$$\mathbf{P}_{\text{AO}} = \mathbf{A}^{-1} \mathbf{b} = (x_0, y_0, z_0)^T$$
+
+Spatial error radius ($r_{\text{err}}$):
+
+$$\vec{d}_i = (\mathbf{P}_{\text{AO}} - \mathbf{P}_i) - ((\mathbf{P}_{\text{AO}} - \mathbf{P}_i) \cdot \vec{v}_i)\vec{v}_i \implies r_{\text{err}} = \sqrt{\frac{\sum_{i=1}^N \|\vec{d}_i\|^2}{\max(1, N - 3)}}$$
+
+### 55.3 Aerodynamic Drag & Gravitational Trajectory Correction
+
+$$\frac{d\vec{v}}{dt} = \vec{g} - \frac{3 \rho_{\text{air}} C_d(Re)}{4 \rho_{\text{blood}} d_d} \|\vec{v}\| \vec{v}$$
+
+$$C_d(Re) = \begin{cases} \frac{24}{Re} (1 + 0.15 Re^{0.687}) & \text{if } Re \le 1000 \quad (\text{Schiller-Naumann}) \\ 0.44 & \text{if } Re > 1000 \end{cases}$$
+
+
 
 
 

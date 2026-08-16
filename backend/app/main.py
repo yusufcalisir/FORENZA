@@ -323,6 +323,15 @@ try:
 except Exception as _epi_import_err:
     logger.warning(f"[boot] Epigenetics router not loaded: {_epi_import_err}")
 
+# --- Forensic Physical Evidence & Ballistics Router ---
+try:
+    from app.api.physical_routes import router as physical_router
+    app.include_router(physical_router, prefix="/api/v1")
+    logger.info("[boot] Forensic Physical Evidence & Ballistics API router registered at /api/v1/forensic/physical")
+except Exception as _phys_import_err:
+    logger.warning(f"[boot] Physical evidence router not loaded: {_phys_import_err}")
+
+
 # --- Multi-Layered Forensic Genomics Router ---
 try:
     from app.api.genomics_routes import router as genomics_router

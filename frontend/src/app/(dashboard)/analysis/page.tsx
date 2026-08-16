@@ -30,7 +30,9 @@ import SerologyPanel from "@/components/analysis/SerologyPanel";
 import BodyFluidPanel from "@/components/analysis/BodyFluidPanel";
 import MicroscopyPanel from "@/components/analysis/MicroscopyPanel";
 import BpaImagePanel from "@/components/analysis/BpaImagePanel";
+import BpaAreaOfOriginPanel from "@/components/analysis/BpaAreaOfOriginPanel";
 import InstrumentIngestionPanel from "@/components/analysis/InstrumentIngestionPanel";
+
 import QualityAssurancePanel from "@/components/analysis/QualityAssurancePanel";
 import HumanReviewPanel from "@/components/analysis/HumanReviewPanel";
 import IsoReportGeneratorPanel from "@/components/analysis/IsoReportGeneratorPanel";
@@ -499,8 +501,9 @@ function renderPanel(tabId: TabId) {
         case "telomere": return <AgeEstimationPanel />;
         case "mirna": return <BodyFluidPanel />;
         // Pillar 5: Pathology & Trace Forensics
-        case "bpa": return <BpaImagePanel />;
+        case "bpa": return <BpaAreaOfOriginPanel />;
         case "microscopy": return <MicroscopyPanel />;
+
         case "toxicology": return <ToxicologyPanel />;
         case "botany": return <BotanyPanel />;
         case "serology": return <SerologyPanel />;

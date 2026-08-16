@@ -177,38 +177,38 @@ export default function TraceSpectroscopyPanel() {
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-cyan-500/20 border border-cyan-500/40 text-cyan-300">
             <Sparkles className="w-5 h-5" />
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-sm font-bold tracking-widest text-tactical-text uppercase">
-                Trace Micro-Spectroscopy & MSI Engine (Pillar 5 §4)
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="text-xs sm:text-sm font-bold tracking-widest text-tactical-text uppercase">
+                Trace Micro-Spectroscopy &amp; MSI Engine (Pillar 5 §4)
               </h2>
-              <span className="px-2 py-0.5 rounded text-[8px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+              <span className="px-2 py-0.5 rounded text-[8px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 whitespace-nowrap">
                 SWGMAT • ASTM E2228 • HQI ≥ 90%
               </span>
             </div>
-            <p className="text-[10px] text-zinc-400 mt-0.5">
-              Multispectral Optical Imaging • ATR-FTIR & Raman Hit Quality Index (HQI) Dot Product Matching
+            <p className="text-[9px] sm:text-[10px] text-zinc-400 mt-0.5 truncate">
+              Multispectral Optical Imaging • ATR-FTIR &amp; Raman Hit Quality Index (HQI) Dot Product Matching
             </p>
           </div>
         </div>
 
         {/* Inner Tabs */}
-        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-black/60 border border-tactical-border/60">
+        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-black/60 border border-tactical-border/60 overflow-x-auto max-w-full shrink-0">
           <button
             onClick={() => setActiveTab("ftir")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
               activeTab === "ftir"
-                ? "bg-cyan-500 text-black shadow-md"
+                ? "bg-cyan-500 text-black shadow-md font-extrabold"
                 : "text-zinc-400 hover:text-zinc-200"
             }`}
           >
-            ATR-FTIR & Raman (HQI)
+            ATR-FTIR &amp; Raman (HQI)
           </button>
           <button
             onClick={() => setActiveTab("msi")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
               activeTab === "msi"
-                ? "bg-cyan-500 text-black shadow-md"
+                ? "bg-cyan-500 text-black shadow-md font-extrabold"
                 : "text-zinc-400 hover:text-zinc-200"
             }`}
           >

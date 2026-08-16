@@ -144,46 +144,46 @@ export default function MerkleLedgerPanel() {
   return (
     <div className="space-y-6 font-mono text-tactical-text">
       {/* ── Subsystem Header ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl border border-indigo-500/30 bg-indigo-500/10 shadow-lg">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl border border-indigo-500/30 bg-indigo-500/10 shadow-lg overflow-hidden">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-500/20 border border-indigo-500/40 text-indigo-300">
             <GitBranch className="w-5 h-5" />
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-sm font-bold tracking-widest text-tactical-text uppercase">
-                Cryptographic Chain of Custody (CoC) Merkle Tree Engine (Pillar 6 §1)
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="text-xs sm:text-sm font-bold tracking-widest text-tactical-text uppercase">
+                Tamper-Evident Merkle Tree Chain-of-Custody Ledger
               </h2>
-              <span className="px-2 py-0.5 rounded text-[8px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                ISO 17025 • FRE 702 • O(log₂ N)
+              <span className="px-2 py-0.5 rounded text-[8px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 whitespace-nowrap">
+                ISO/IEC 17025 • SHA-256
               </span>
             </div>
-            <p className="text-[10px] text-zinc-400 mt-0.5">
+            <p className="text-[9px] sm:text-[10px] text-zinc-400 mt-0.5 truncate">
               Chained SHA-256 Leaf Custody Events • Binary Balanced Merkle Reduction • Tamper-Evident Proof of Inclusion
             </p>
           </div>
         </div>
 
         {/* Inner Tabs & Tamper Switch */}
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3 shrink-0">
           <button
             onClick={handleTamperToggle}
-            className={`px-3 py-1.5 rounded-xl border text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+            className={`px-2.5 sm:px-3 py-1.5 rounded-xl border text-[10px] sm:text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0 ${
               isTampered
                 ? "bg-rose-500/20 text-rose-300 border-rose-500/50 animate-pulse"
                 : "bg-black/60 text-zinc-400 border-tactical-border/60 hover:text-zinc-200"
             }`}
           >
-            <AlertTriangle className="w-3.5 h-3.5" />
+            <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
             {isTampered ? "Tampered (+1s)" : "Simulate Tampering"}
           </button>
 
-          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-black/60 border border-tactical-border/60">
+          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-black/60 border border-tactical-border/60 overflow-x-auto max-w-full shrink-0">
             <button
               onClick={() => setActiveTab("tree")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              className={`px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                 activeTab === "tree"
-                  ? "bg-indigo-500 text-white shadow-md"
+                  ? "bg-indigo-500 text-white shadow-md font-extrabold"
                   : "text-zinc-400 hover:text-zinc-200"
               }`}
             >
@@ -194,9 +194,9 @@ export default function MerkleLedgerPanel() {
                 setActiveTab("proof");
                 generateProof(selectedEventIndex);
               }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              className={`px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                 activeTab === "proof"
-                  ? "bg-indigo-500 text-white shadow-md"
+                  ? "bg-indigo-500 text-white shadow-md font-extrabold"
                   : "text-zinc-400 hover:text-zinc-200"
               }`}
             >

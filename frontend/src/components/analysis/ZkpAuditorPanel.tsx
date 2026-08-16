@@ -137,19 +137,19 @@ export default function ZkpAuditorPanel() {
         </div>
 
         {/* Tab Controls */}
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
           <button
             onClick={() => setHidePrivateWitness(!hidePrivateWitness)}
-            className="px-3 py-1.5 rounded-xl border border-tactical-border/60 bg-black/60 text-xs font-bold text-zinc-300 hover:text-white flex items-center gap-1.5 cursor-pointer transition-all"
+            className="px-2.5 sm:px-3 py-1.5 rounded-xl border border-tactical-border/60 bg-black/60 text-[10px] sm:text-xs font-bold text-zinc-300 hover:text-white flex items-center gap-1.5 cursor-pointer transition-all whitespace-nowrap shrink-0"
           >
-            {hidePrivateWitness ? <EyeOff className="w-3.5 h-3.5 text-amber-400" /> : <Eye className="w-3.5 h-3.5 text-emerald-400" />}
+            {hidePrivateWitness ? <EyeOff className="w-3.5 h-3.5 text-amber-400 shrink-0" /> : <Eye className="w-3.5 h-3.5 text-emerald-400 shrink-0" />}
             {hidePrivateWitness ? "Private Witness (Masked)" : "Witness Revealed"}
           </button>
 
-          <div className="flex items-center gap-1 p-1 rounded-xl bg-black/60 border border-tactical-border/60">
+          <div className="flex items-center gap-1 p-1 rounded-xl bg-black/60 border border-tactical-border/60 overflow-x-auto max-w-full shrink-0">
             <button
               onClick={() => setActiveTab("comparator")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                 activeTab === "comparator" ? "bg-indigo-500 text-white shadow-md" : "text-zinc-400 hover:text-zinc-200"
               }`}
             >
@@ -160,7 +160,7 @@ export default function ZkpAuditorPanel() {
                 setActiveTab("pairing");
                 if (!proofData) handleSynthesizeProof();
               }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                 activeTab === "pairing" ? "bg-indigo-500 text-white shadow-md" : "text-zinc-400 hover:text-zinc-200"
               }`}
             >

@@ -338,33 +338,33 @@ export default function ComprehensiveEpigenomicsPanel() {
   return (
     <div className="space-y-6 font-mono text-tactical-text">
       {/* ── Subsystem Header ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl border border-purple-500/30 bg-purple-500/10 shadow-lg">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl border border-purple-500/30 bg-purple-500/10 shadow-lg overflow-hidden">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple-500/20 border border-purple-500/40 text-purple-300">
             <Dna className="w-5 h-5" />
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-sm font-bold tracking-widest text-tactical-text uppercase">
-                Forensic Epigenomics & Biological State Intelligence
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="text-xs sm:text-sm font-bold tracking-widest text-tactical-text uppercase">
+                Forensic Epigenomics &amp; Biological State Intelligence
               </h2>
-              <span className="px-2 py-0.5 rounded text-[8px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">
+              <span className="px-2 py-0.5 rounded text-[8px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30 whitespace-nowrap">
                 MULTI-OMICS EPIGENETICS
               </span>
             </div>
-            <p className="text-[10px] text-zinc-400 mt-0.5">
+            <p className="text-[9px] sm:text-[10px] text-zinc-400 mt-0.5 truncate">
               DNA Methylation • Epigenetic Clock • Tissue Deconvolution • AHRR Lifestyle Profiling
             </p>
           </div>
         </div>
 
         {/* Inner Navigation Tabs */}
-        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-black/60 border border-tactical-border/60">
+        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-black/60 border border-tactical-border/60 overflow-x-auto max-w-full shrink-0">
           <button
             onClick={() => setActiveResearchTab("clock")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+            className={`px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold transition-all whitespace-nowrap ${
               activeResearchTab === "clock"
-                ? "bg-purple-500 text-black shadow-md"
+                ? "bg-purple-500 text-black shadow-md font-extrabold"
                 : "text-zinc-400 hover:text-zinc-200"
             }`}
           >
@@ -372,9 +372,9 @@ export default function ComprehensiveEpigenomicsPanel() {
           </button>
           <button
             onClick={() => setActiveResearchTab("tissue")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+            className={`px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold transition-all whitespace-nowrap ${
               activeResearchTab === "tissue"
-                ? "bg-purple-500 text-black shadow-md"
+                ? "bg-purple-500 text-black shadow-md font-extrabold"
                 : "text-zinc-400 hover:text-zinc-200"
             }`}
           >
@@ -382,29 +382,29 @@ export default function ComprehensiveEpigenomicsPanel() {
           </button>
           <button
             onClick={() => setActiveResearchTab("lifestyle")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+            className={`px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold transition-all whitespace-nowrap ${
               activeResearchTab === "lifestyle"
-                ? "bg-purple-500 text-black shadow-md"
+                ? "bg-purple-500 text-black shadow-md font-extrabold"
                 : "text-zinc-400 hover:text-zinc-200"
             }`}
           >
-            Lifestyle & Environment
+            Lifestyle &amp; Environment
           </button>
           <button
             onClick={() => setActiveResearchTab("telomere_pmi")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+            className={`px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold transition-all whitespace-nowrap ${
               activeResearchTab === "telomere_pmi"
-                ? "bg-purple-500 text-black shadow-md"
+                ? "bg-purple-500 text-black shadow-md font-extrabold"
                 : "text-zinc-400 hover:text-zinc-200"
             }`}
           >
-            Telomere & PMI Decay
+            Telomere &amp; PMI Decay
           </button>
           <button
             onClick={() => setActiveResearchTab("bisulfite_qc")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+            className={`px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold transition-all whitespace-nowrap ${
               activeResearchTab === "bisulfite_qc"
-                ? "bg-purple-500 text-black shadow-md"
+                ? "bg-purple-500 text-black shadow-md font-extrabold"
                 : "text-zinc-400 hover:text-zinc-200"
             }`}
           >

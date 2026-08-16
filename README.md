@@ -599,9 +599,9 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`G`:** High somatic mosaicism drift verified ($\mathcal{M} > 0.15$).
   - **`H`:** API integration testing across `/forensic/epigenetics/telomere-and-pmi`.
 * **`VECTOR_20_QC_A-H` (Bisulfite QC & Probe Calibration - Module 20):**
-  - **`A`:** High-efficiency bisulfite conversion verified ($C_{\text{conv}} \ge 99.0\text{\%} \implies PASSED_QC$).
-  - **`B`:** Incomplete bisulfite conversion failure alert verified ($C_{\text{conv}} < 99.0\text{\%} \implies FAILED_INSUFFICIENT_CONVERSION$).
-  - **`C`:** Beta to M-value logarithmic logit transformation verified ($M = \log_2(\beta/(1-\beta))$).
+  - **`A`:** High-efficiency bisulfite conversion verified ($C_{\text{conv}} \ge 99.0\text{\%} \implies$ `PASSED_QC`).
+  - **`B`:** Incomplete bisulfite conversion failure alert verified ($C_{\text{conv}} < 99.0\text{\%} \implies$ `FAILED_INSUFFICIENT_CONVERSION`).
+  - **`C`:** Beta to M-value logarithmic logit transformation verified: $M = \log_2\left(\frac{\beta}{1-\beta}\right)$.
   - **`D`:** M-value to Beta inverse transformation bijection verified ($|\beta - \text{inv}(M)| < 10^{-6}$).
   - **`E`:** Boundary conditions handling verified ($\beta = 0.0, 1.0$).
   - **`F`:** Detection $P$-value thresholding verified ($P_{\text{det}} \le 0.01$).

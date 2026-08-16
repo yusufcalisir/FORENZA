@@ -465,7 +465,7 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** All 11 ENFSI tier boundaries verified: Tier 5 (log10 LR > 6), Tier 4 (4–6), Tier 3 (2–4), Tier 2 (1–2), Tier 1 (0–1), Tier 0 (=0), Tiers −1…−5 (symmetric defence); Turkish predicates present.
   - **`G`:** Prosecutor's Fallacy Shield present for all tiers; standard legal text identical across Hp-supporting tiers; `likelihood_equation` references LR value; English shield mentions `P(Evidence` / `Prosecutor`; Turkish shield mentions `Yanılgı`.
   - **`H`:** API integration across all 5 endpoints: FPR=FNR=0 for pristine, AUC≥0.999, Cllr EXCELLENT, HPD 5th pct ≤ median, Tier 5 for log10(LR)=26, Tier 0 for log10(LR)=0, negative tier for log10(LR)=−3.
-* **`VECTOR_P2_01` (Y-STR 27-Locus Paternal Match):** Full Y-FILER Plus 27-locus match, $k=0$, $N=25000$, $\alpha=0.05 \implies \hat{p}_{\text{upper}} \approx 0.00011982$, $\text{LR} \approx 8345.86$, $\log_{10}(\text{LR}) \approx 3.92147$. Clopper-Pearson 95% exact compliance.
+* **`VECTOR_P2_01` (Y-STR 27-Locus Paternal Match):** Full Y-FILER Plus 27-locus match ($k=0, \; N=25000, \; \alpha=0.05 \implies \hat{p}_{\text{upper}} \approx 0.00011982, \; LR \approx 8345.86, \; \log_{10} LR \approx 3.92147$). Clopper-Pearson 95% exact compliance.
 * **`VECTOR_06_YSTR_A-H` (Y-STR Haplotype Forensics & Mutation Invariants - Module 06):**
   - **`A`:** 27-locus panel completeness, 6 RM loci classification ($\mu_l \ge 0.011$), multi-copy flags (`DYS385a/b`, `DYF387S1a/b`), and locus name normalization.
   - **`B`:** Clopper-Pearson $k=0$ exact formula $\hat{p}_{\text{upper}} = 1 - (0.05)^{1/(N+1)}$ verified against analytical calculation; strict monotonic decrease with $N$.
@@ -475,7 +475,7 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** $N_{\text{male}} = \max_l \lceil n/2 \rceil$; multi-copy locus with $>4$ alleles enforces $N_{\text{male}} \ge 3$.
   - **`G`:** Stepwise Mutation Model (SMM) geometric decay with step distance $m$; RM locus higher mutation transition probability.
   - **`H`:** API integration across all 6 endpoints: panel metadata, Clopper-Pearson, Brenner, mixture contributors, SMM transition, and match evaluation.
-* **`VECTOR_P2_02` (X-STR Female Kinship - Argus X-12):** Paternal half-sisters (PHS) analysis across LG1–LG4 with obligate paternal allele sharing, mean intra-LG $r=0.01$, empirical $p_a \approx 0.3616 \implies \text{Combined } KI_X \approx 1.854 \times 10^5$, $\log_{10}(KI_X) \approx 5.268$.
+* **`VECTOR_P2_02` (X-STR Female Kinship - Argus X-12):** Paternal half-sisters (PHS) analysis across LG1–LG4 with obligate paternal allele sharing, mean intra-LG $r=0.01$, empirical $p_a \approx 0.3616 \implies \text{Combined } KI_X \approx 1.854 \times 10^5, \; \log_{10}(KI_X) \approx 5.268$.
 * **`VECTOR_07_XSTR_A-H` (X-STR Linkage Groups & Complex Female Kinship - Module 07):**
   - **`A`:** Argus X-12 12-locus panel completeness, 4 linkage groups (LG1–LG4) with 3 markers each, genetic map distances (cM), and locus name normalization.
   - **`B`:** Kosambi mapping function limits: $r(0)=0.0, r(50\text{ cM}) \approx 0.3808, \lim_{d \to \infty} r(d) = 0.50$, monotonic increase.
@@ -570,7 +570,7 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** Biological Age Acceleration classification ($\Delta\text{Age} > +5.0$ accelerated, $\Delta\text{Age} < -5.0$ decelerated).
   - **`G`:** ISO 17025 95% prediction interval bounds ($k=1.96 \cdot \text{SE}$).
   - **`H`:** API integration testing across `/forensic/epigenetics/predict-age`.
-* **`VECTOR_P4_03` (tDMR Body Fluid Identification - Semen Stain Confirmation):** Pure germ cell fraction calling verified with Semen Posterior $> 99.5\text{\%}$, Blood Posterior $< 0.1\text{\%}$, and $\text{LR}_{\text{tissue}} > 100.0$.
+* **`VECTOR_P4_03` (tDMR Body Fluid Identification - Semen Stain Confirmation):** Pure germ cell fraction calling verified with Semen Posterior $> 99.5\text{\%}$, Blood Posterior $< 0.1\text{\%}$, and $LR_{\text{tissue}} > 100.0$.
 * **`VECTOR_17_TISSUE_A-H` (tDMR Body Fluid & Tissue Provenance - Module 17):**
   - **`A`:** Peripheral Venous Blood calling verified ($P_{\text{blood}} \ge 98.0\text{\%}$).
   - **`B`:** Saliva calling verified ($P_{\text{saliva}} \ge 98.0\text{\%}$).

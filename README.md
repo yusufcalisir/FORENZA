@@ -694,11 +694,11 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** Domain validation for non-positive Likelihood Ratios $(LR \le 0 \implies \texttt{ValueError})$.
   - **`G`:** API integration testing across `/forensic/court/evaluative-report` and `/daubert-compliance`.
 * **`VECTOR_30_SPATIAL_A-G` (3D Spatial Crime Scene Reconstruction & Juror Visualizer - Module 30):**
-  - **`A`:** $SE(3)$ identity transform invariance $\left(\mathbf{R}=\mathbf{I},\;\mathbf{T}=\mathbf{0}\implies\mathbf{X}_{\text{scene}}=\mathbf{X}_{\text{local}},\;\text{residual}<10^{-10}\right)$.
-  - **`B`:** Euler ZYX rotation matrix invariants $\left(\mathbf{R}=\mathbf{R}_{z}(\psi)\mathbf{R}_{y}(\theta)\mathbf{R}_{x}(\phi),\;\|\mathbf{R}\mathbf{R}^{T}-\mathbf{I}\|_{F}<10^{-10},\;|\det(\mathbf{R})-1|<10^{-10}\right)$.
-  - **`C`:** Pure spatial translation additivity $\left(\mathbf{X}_{\text{scene}}=\mathbf{X}_{\text{local}}+\mathbf{T}\right)$.
-  - **`D`:** Probabilistic 95% confidence ellipsoid geometry $\left((\mathbf{X}-\boldsymbol{\mu})^{T}\boldsymbol{\Sigma}^{-1}(\mathbf{X}-\boldsymbol{\mu})\le\chi^{2}_{3,0.95}\approx7.815,\;a=\sqrt{\lambda_{1}\cdot7.815},\;V=\tfrac{4}{3}\pi abc\right)$.
-  - **`E`:** Multi-sensor spatial fusion precision calibration $\left(\sigma_{\text{LiDAR}}=\pm0.002\,\text{m},\;\sigma_{\text{BPA}}=\pm0.012\,\text{m},\;\sigma_{\text{Ballistics}}=\pm0.005\,\text{m},\;\sigma_{\text{DNA}}=\pm0.008\,\text{m}\right)$.
+  - **`A`:** $SE(3)$ identity transform invariance: $\mathbf{R}=\mathbf{I},\;\mathbf{T}=\mathbf{0}\implies\mathbf{X}_{\text{scene}}=\mathbf{X}_{\text{local}}$, residual $<10^{-10}$.
+  - **`B`:** Euler ZYX rotation matrix invariants: $\mathbf{R}=\mathbf{R}_{z}(\psi)\mathbf{R}_{y}(\theta)\mathbf{R}_{x}(\phi)$, $\|\mathbf{R}\mathbf{R}^{T}-\mathbf{I}\|_{F}<10^{-10}$, $|\det(\mathbf{R})-1|<10^{-10}$.
+  - **`C`:** Pure spatial translation additivity: $\mathbf{X}_{\text{scene}}=\mathbf{X}_{\text{local}}+\mathbf{T}$.
+  - **`D`:** Probabilistic 95% confidence ellipsoid geometry: $\mathbf{X}^{T}\boldsymbol{\Sigma}^{-1}\mathbf{X}\le\chi^{2}_{3,0.95}\approx7.815$, $a=\sqrt{\lambda_{1}\cdot7.815}$, $V=\tfrac{4}{3}\pi abc$.
+  - **`E`:** Multi-sensor spatial fusion precision calibration: $\sigma_{\text{LiDAR}}=\pm0.002\,\text{m}$, $\sigma_{\text{BPA}}=\pm0.012\,\text{m}$, $\sigma_{\text{Ballistics}}=\pm0.005\,\text{m}$, $\sigma_{\text{DNA}}=\pm0.008\,\text{m}$.
   - **`F`:** Domain validation for non-positive definite covariance matrices, dimension mismatch, and empty point sets.
   - **`G`:** API integration testing across `/forensic/court/spatial/transform-se3`, `/spatial/confidence-ellipsoid`, and `/spatial/reconstruct-scene`.
 

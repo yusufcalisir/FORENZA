@@ -11,11 +11,19 @@ desktop.ini
 # Environment & Secrets
 .env
 .env.*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 !.env.example
+*.pem
+*.key
+*.cert
 
 # Local Startup & Shell Scripts
 *.bat
 *.ps1
+*.sh
 start_project.*
 
 # Node.js & Next.js
@@ -30,6 +38,7 @@ build/
 .npm
 .turbo
 *.tsbuildinfo
+frontend/next-env.d.ts
 
 # Python
 __pycache__/
@@ -44,7 +53,9 @@ venv/
 backend/venv/
 backend/.venv/
 .pytest_cache/
+backend/.pytest_cache/
 .coverage
+coverage/
 htmlcov/
 .mypy_cache/
 .ruff_cache/
@@ -52,7 +63,7 @@ debug_error.log
 test_out.txt
 *.log
 
-# Docker, Infrastructure & Certificates
+# Docker, Infrastructure & PostgreSQL Data
 infra/milvus/volumes/
 infra/redis/data/
 infra/certs/
@@ -68,7 +79,12 @@ circuits/*.r1cs
 circuits/*.zkey
 circuits/*.sym
 
-# IDE & Editor Settings
+# AI Agents & IDE Settings
+.agents/
+.gemini/
+.claude/
+.cursor/
+.windsurf/
 .vscode/
 .idea/
 *.swp
@@ -79,4 +95,3 @@ circuits/*.sym
 # Local Deep Research Notes (Uncommitted)
 research/
 *.research.md
-

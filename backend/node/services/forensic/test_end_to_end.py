@@ -135,3 +135,26 @@ def test_api_health_metrics_endpoint():
     assert data["evaluated_loci_count"] == 20
     assert data["memory_footprint_mb"] > 0
     assert data["audit_chain_block_count"] >= 1
+
+
+def test_root_and_system_health_endpoints():
+    # Test /health
+    r_health = client.get("/health")
+    assert r_health.status_code == 200
+    assert r_health.json()["status"] == "operational"
+
+    # Test /api/health
+    r_api_health = client.get("/api/health")
+    assert r_api_health.status_code == 200
+    assert r_api_health.json()["status"] == "operational"
+
+    # Test /api/v1/health
+    r_v1_health = client.get("/api/v1/health")
+    assert r_v1_health.status_code == 200
+    assert r_v1_health.json()["status"] == "healthy"
+
+    # Test / (root)
+    r_root = client.get("/")
+    assert r_root.status_code == 200
+    assert r_root.json()["status"] == "tactical_online"
+

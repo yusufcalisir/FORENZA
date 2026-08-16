@@ -630,26 +630,26 @@ _STR_STORE["CASE-2026-8891"] = _STR_STORE["test-profile-eu"]
 # ═══════════════════════════════════════════════════════════════════════════════
 
 @app.get("/health", tags=["System"])
-def health_check():
+@app.head("/health", include_in_schema=False)
+@app.get("/api/health", tags=["System"], include_in_schema=False)
+@app.head("/api/health", include_in_schema=False)
+def health_check() -> dict:
     """
-    Secure health check endpoint for uptime monitoring.
-    Returns 200 OK if the API is responsive.
-    Does not expose sensitive internal state.
+    Health check endpoint for orchestration, uptime monitoring, and keep-alive cronjobs.
+    Returns 200 OK with node status, uptime in seconds, version, and UTC timestamp.
     """
     uptime_seconds = time.time() - _BOOT_TIME
-    
-    # Safe checks
-    db_status = "disabled"
-    if settings.DATABASE_URL:
-        # We perform a shallow config check instead of a blocking ping
-        # to ensure this endpoint remains fast and safe.
-        db_status = "configured"
+    db_status = "configured" if settings.DATABASE_URL else "disabled"
 
     return {
-        "status": "ok",
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "status": "operational",
+        "service": "FORENZA Forensic Evidence OS Backend",
+        "node_id": "PRIMARY",
         "uptime_seconds": round(uptime_seconds, 2),
-        "database": db_status
+        "version": "0.1.0",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "database": db_status,
+        "validator_active": _validator is not None,
     }
 
 
@@ -660,49 +660,28 @@ def system_stats():
     """
     uptime_seconds = time.time() - _BOOT_TIME
     
-    # Count profiles in memory stores
-    # In a real scenario, this would count from DB
     profile_count = len(_STR_STORE)
-    if _SNP_STORE:
-        # Avoid double counting if keys overlap, but usually they key by profile_id
-        # Let's just use the primary STR store count as the "Profile" count
-        pass
-        
     return {
         "total_profiles": profile_count,
         "uptime_seconds": round(uptime_seconds, 2),
-        "active_nodes": 12, # Still mock for now, or dynamic if we tracked nodes
+        "active_nodes": 12,
         "threat_level": "LOW"
     }
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# ENDPOINTS
+# ROOT ENDPOINT
 # ═══════════════════════════════════════════════════════════════════════════════
 
 @app.get("/")
+@app.head("/", include_in_schema=False)
 def root() -> dict:
     """Root endpoint — confirms the API process is alive."""
-    return {"message": "FORENZA API is operational", "status": "tactical_online"}
-
-
-@app.get("/health")
-def health_check() -> dict:
-    """
-    Health check endpoint for orchestration and monitoring.
-
-    Returns the current node status, uptime in seconds, API version,
-    and a UTC timestamp. Used by Docker health checks, load balancers,
-    and the frontend Global Network Status indicator to determine
-    whether this node is responsive and operational.
-    """
     return {
-        "status": "operational",
-        "node_id": "PRIMARY",
-        "uptime_seconds": round(time.time() - _BOOT_TIME, 2),
-        "version": "0.1.0",
-        "timestamp": datetime.now(timezone.utc).isoformat(),
-        "validator_active": _validator is not None,
+        "service": "FORENZA Forensic Evidence OS Backend",
+        "status": "tactical_online",
+        "health": "/health",
+        "docs": "/docs"
     }
 
 

@@ -37,6 +37,35 @@ class SystemMetricsResponse(BaseModel):
     memory_footprint_mb: float
 
 
+class HealthSummaryResponse(BaseModel):
+    status: str = Field("healthy", examples=["healthy"])
+    service: str = Field("forenza-backend", examples=["forenza-backend"])
+    timestamp: float
+    uptime_seconds: float
+
+
+@router.get(
+    "",
+    response_model=HealthSummaryResponse,
+    summary="Root Health Check",
+    description="Lightweight health check endpoint for uptime monitors and keep-alive cronjobs.",
+    status_code=status.HTTP_200_OK,
+)
+@router.get(
+    "/",
+    response_model=HealthSummaryResponse,
+    include_in_schema=False,
+    status_code=status.HTTP_200_OK,
+)
+async def check_health_summary() -> HealthSummaryResponse:
+    return HealthSummaryResponse(
+        status="healthy",
+        service="forenza-backend",
+        timestamp=time.time(),
+        uptime_seconds=round(time.time() - _system_start_time, 2),
+    )
+
+
 @router.get(
     "/live",
     response_model=LivenessResponse,

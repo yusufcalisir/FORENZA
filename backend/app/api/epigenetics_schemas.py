@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Dict, List, Optional, Any
 
 
@@ -32,6 +32,7 @@ class CpgContributionDetail(BaseModel):
 
 
 class PredictAgeResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
     estimated_age_years: float
     model_age_before_offset: Optional[float] = None
     linear_predictor_x: Optional[float] = None

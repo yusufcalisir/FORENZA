@@ -4,7 +4,7 @@ FORENZA Forensic DNA Phenotyping API — Pydantic v2 Schemas.
 
 from __future__ import annotations
 from typing import Dict, List, Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class SNPInputSchema(BaseModel):
@@ -28,6 +28,7 @@ class TraitPrediction(BaseModel):
 
 class PhenotypeResponse(BaseModel):
     """Response body for POST /forensic/phenotype."""
+    model_config = ConfigDict(protected_namespaces=())
     eye_colour: TraitPrediction
     hair_colour: TraitPrediction
     skin_tone: TraitPrediction

@@ -11,7 +11,7 @@ Covers:
 """
 
 from typing import Dict, List, Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 
 # ── MapDamage Kinetics ───────────────────────────────────────────────────────
@@ -23,6 +23,7 @@ class MapDamageRequest(BaseModel):
 
 
 class MapDamageResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
     delta_0: float
     decay_alpha: float
     max_position: int

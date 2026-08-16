@@ -10,7 +10,7 @@ Covers all LTDNA stochastic phenomenon endpoints verbatim from Pillar 1 §4:
 """
 
 from typing import Dict, List, Optional, Tuple
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 
 # ── Existing Schemas (retain) ─────────────────────────────────────────────────
@@ -68,6 +68,7 @@ class DropoutModelRequest(BaseModel):
     Request for logistic allele dropout probability computation.
     model_type: 'RFU' or 'MASS_PG'
     """
+    model_config = ConfigDict(protected_namespaces=())
     model_type: str = Field(
         "RFU",
         description="'RFU' for peak height model (β₀=+2.50, β₁=-0.025) or "
@@ -90,6 +91,7 @@ class DropoutModelRequest(BaseModel):
 
 
 class DropoutModelResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
     input_value: float
     model_type: str
     beta_0: float

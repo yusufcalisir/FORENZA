@@ -31,7 +31,7 @@ from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import numpy as np
 from numpy.typing import NDArray
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 logger = logging.getLogger(__name__)
 
@@ -67,6 +67,7 @@ class NodeSearchResult(BaseModel):
 
     Contains only similarity scores and metadata — never raw DNA data.
     """
+    model_config = ConfigDict(protected_namespaces=())
     node_id: str
     query_id: str
     matches: List[Dict[str, Any]] = Field(

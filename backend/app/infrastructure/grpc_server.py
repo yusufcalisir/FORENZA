@@ -26,7 +26,14 @@ import time
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Tuple
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
+
+try:
+    from cryptography.hazmat.primitives.ciphers.aead import AESGCM  # type: ignore
+    HAS_CRYPTOGRAPHY = True
+except ImportError:
+    AESGCM = None  # type: ignore
+    HAS_CRYPTOGRAPHY = False
 
 logger = logging.getLogger(__name__)
 
@@ -110,8 +117,7 @@ class AES256Cipher:
         """
         nonce = secrets.token_bytes(self.NONCE_SIZE)
 
-        try:
-            from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+        if HAS_CRYPTOGRAPHY and AESGCM is not None:
             aesgcm = AESGCM(self._key)
             ct_with_tag = aesgcm.encrypt(nonce, plaintext, None)
             # AESGCM appends tag to ciphertext
@@ -119,13 +125,12 @@ class AES256Cipher:
             tag = ct_with_tag[-self.TAG_SIZE:]
             return ciphertext, nonce, tag
 
-        except ImportError:
-            # Development fallback: XOR cipher (NOT production-safe)
-            logger.warning("[CRYPTO] Using XOR fallback — install 'cryptography' for AES-GCM")
-            key_stream = self._expand_key(len(plaintext), nonce)
-            ciphertext = bytes(a ^ b for a, b in zip(plaintext, key_stream))
-            tag = hmac.new(self._key, nonce + ciphertext, hashlib.sha256).digest()[:self.TAG_SIZE]
-            return ciphertext, nonce, tag
+        # Development fallback: XOR cipher (NOT production-safe)
+        logger.warning("[CRYPTO] Using XOR fallback — install 'cryptography' for AES-GCM")
+        key_stream = self._expand_key(len(plaintext), nonce)
+        ciphertext = bytes(a ^ b for a, b in zip(plaintext, key_stream))
+        tag = hmac.new(self._key, nonce + ciphertext, hashlib.sha256).digest()[:self.TAG_SIZE]
+        return ciphertext, nonce, tag
 
     def decrypt(self, ciphertext: bytes, nonce: bytes, tag: bytes) -> bytes:
         """
@@ -142,19 +147,17 @@ class AES256Cipher:
         Raises:
             ValueError: If authentication tag verification fails.
         """
-        try:
-            from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+        if HAS_CRYPTOGRAPHY and AESGCM is not None:
             aesgcm = AESGCM(self._key)
             ct_with_tag = ciphertext + tag
             return aesgcm.decrypt(nonce, ct_with_tag, None)
 
-        except ImportError:
-            # Development fallback
-            expected_tag = hmac.new(self._key, nonce + ciphertext, hashlib.sha256).digest()[:self.TAG_SIZE]
-            if not hmac.compare_digest(tag, expected_tag):
-                raise ValueError("AES-GCM authentication failed: tag mismatch")
-            key_stream = self._expand_key(len(ciphertext), nonce)
-            return bytes(a ^ b for a, b in zip(ciphertext, key_stream))
+        # Development fallback
+        expected_tag = hmac.new(self._key, nonce + ciphertext, hashlib.sha256).digest()[:self.TAG_SIZE]
+        if not hmac.compare_digest(tag, expected_tag):
+            raise ValueError("AES-GCM authentication failed: tag mismatch")
+        key_stream = self._expand_key(len(ciphertext), nonce)
+        return bytes(a ^ b for a, b in zip(ciphertext, key_stream))
 
     def _expand_key(self, length: int, nonce: bytes) -> bytes:
         """Expand key material for XOR fallback using counter-mode HMAC."""
@@ -204,6 +207,7 @@ class FederatedQueryRequest(BaseModel):
 
 class FederatedQueryResponse(BaseModel):
     """Response payload from a node after local search."""
+    model_config = ConfigDict(protected_namespaces=())
     query_id: str
     node_id: str
     matches: List[Dict[str, Any]] = Field(default_factory=list)

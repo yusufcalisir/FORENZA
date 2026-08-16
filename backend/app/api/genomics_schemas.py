@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Dict, List, Optional, Any
 
 
@@ -42,6 +42,7 @@ class LocusDeconvolutionDetail(BaseModel):
 
 
 class DeconvolveMixtureRequest(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
     observed_peaks: Dict[str, Dict[str, float]] = Field(
         ...,
         examples=[{"TH01": {"6.0": 700.0, "9.3": 300.0}}],
@@ -59,6 +60,7 @@ class DeconvolveMixtureRequest(BaseModel):
 
 
 class DeconvolveMixtureResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
     num_contributors: int
     model_engine: str
     log10_lr: float

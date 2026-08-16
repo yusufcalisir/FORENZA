@@ -95,3 +95,5 @@ circuits/*.sym
 # Local Deep Research Notes (Uncommitted)
 research/
 *.research.md
+scratch/
+

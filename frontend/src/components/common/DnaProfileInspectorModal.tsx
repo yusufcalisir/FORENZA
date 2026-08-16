@@ -43,7 +43,10 @@ import {
   calculateClientHIrisPlex,
   AIM_55_SNPS_CATALOG,
   HIRISPLEX_41_SNPS_CATALOG,
+  CONTINENTAL_COORDINATES,
+  ContinentalCluster,
 } from "@/utils/snpPhenotypeBgaEngine";
+import type { GeoProbability } from "@/components/analysis/ForensicMap";
 import {
   synthesizeClientEpg,
   EPG_DYE_COLORS,
@@ -141,6 +144,54 @@ export default function DnaProfileInspectorModal() {
       }))
       .sort((a, b) => b.probability - a.probability);
   }, [bgaResult.continentalPosteriors]);
+
+  // Dynamic WGS84 Centroid & Geographic Profiling Results
+  const geoResults = useMemo<GeoProbability[]>(() => {
+    const dominantColor =
+      bgaResult.dominantAncestry === 'EUR' ? '#06B6D4' :
+      bgaResult.dominantAncestry === 'AFR' ? '#22C55E' :
+      bgaResult.dominantAncestry === 'EAS' ? '#EC4899' :
+      bgaResult.dominantAncestry === 'SAS' ? '#F59E0B' :
+      bgaResult.dominantAncestry === 'AMR' ? '#8B5CF6' :
+      bgaResult.dominantAncestry === 'OCE' ? '#3B82F6' : '#14B8A6';
+
+    // 1. Primary Inferred WGS84 Centroid
+    const primaryRegion: GeoProbability = {
+      region: `${bgaResult.dominantAncestryLabel} (Inferred WGS84 Centroid)`,
+      lat: bgaResult.centroidLatitude,
+      lng: bgaResult.centroidLongitude,
+      probability: bgaResult.dominantProbability,
+      color: dominantColor,
+      initial_radius_km: Math.max(Math.round(bgaResult.r95ConfidenceRadiusKm * 1.5), 350),
+      final_radius_km: Math.max(Math.round(bgaResult.r95ConfidenceRadiusKm), 60),
+    };
+
+    // 2. Continental Reference Clusters with Posteriors >= 1%
+    const clusterRegions: GeoProbability[] = continentalBreakdown
+      .filter((c) => c.probability >= 0.01 && c.cluster !== bgaResult.dominantAncestry)
+      .map((c) => {
+        const coords = CONTINENTAL_COORDINATES[c.cluster as ContinentalCluster] || { latitude: 0, longitude: 0 };
+        const clusterColor =
+          c.cluster === 'EUR' ? '#06B6D4' :
+          c.cluster === 'AFR' ? '#22C55E' :
+          c.cluster === 'EAS' ? '#EC4899' :
+          c.cluster === 'SAS' ? '#F59E0B' :
+          c.cluster === 'AMR' ? '#8B5CF6' :
+          c.cluster === 'OCE' ? '#3B82F6' : '#14B8A6';
+
+        return {
+          region: `${c.label} (${c.cluster}) Reference Anchor`,
+          lat: coords.latitude,
+          lng: coords.longitude,
+          probability: c.probability,
+          color: clusterColor,
+          initial_radius_km: 450,
+          final_radius_km: 180,
+        };
+      });
+
+    return [primaryRegion, ...clusterRegions];
+  }, [bgaResult, continentalBreakdown]);
 
   const hirisResult = useMemo(() => {
     return calculateClientHIrisPlex(snpDosages);
@@ -361,20 +412,6 @@ export default function DnaProfileInspectorModal() {
     setRecalculatedBanner(true);
     setTab("inferred");
   };
-
-  const geoResults = activeProfile
-    ? [
-        {
-          region: activeProfile.geoLocation.cityRegion,
-          lat: bgaResult.centroidLatitude,
-          lng: bgaResult.centroidLongitude,
-          probability: bgaResult.dominantProbability,
-          color: "#06b6d4",
-          initial_radius_km: Math.round(bgaResult.r95ConfidenceRadiusKm),
-          final_radius_km: 30,
-        },
-      ]
-    : null;
 
   return (
     <AnimatePresence>

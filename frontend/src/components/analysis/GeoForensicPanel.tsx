@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Globe, Loader2, Crosshair, Radio } from "lucide-react";
 import dynamic from "next/dynamic";
 import AncestryDataPanel from "./AncestryDataPanel";
 import type { ScanPhase } from "./ForensicMap";
+import { useIngestStore } from "@/store/ingestStore";
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // DYNAMIC IMPORT — Leaflet must be loaded client-side only (no SSR)
@@ -210,11 +211,36 @@ export default function GeoForensicPanel({
     onRegionHover,
     selectedRegion,
 }: (GeoForensicPanelProps & { onRegionHover?: (region: string | null) => void }) = {}) {
-    // ── 1. Unified Data Source & Sorting ──
-    // Sort by probability descending to align Map and List
-    const sortedData = geoResults
-        ? [...geoResults].sort((a, b) => b.probability - a.probability).filter(d => d.probability > 0)
-        : [];
+    const activeProfile = useIngestStore((s) => s.activeProfile);
+
+    // ── 1. Unified Data Source & Dynamic Fallback ──
+    const sortedData = useMemo<GeoProbability[]>(() => {
+        if (geoResults && geoResults.length > 0) {
+            return [...geoResults].sort((a, b) => b.probability - a.probability).filter(d => d.probability > 0);
+        }
+        if (activeProfile && activeProfile.geoLocation) {
+            const dominantColor =
+                activeProfile.sampleType === "EU" ? "#06B6D4" :
+                activeProfile.sampleType === "AA" ? "#22C55E" :
+                activeProfile.sampleType === "EAS" ? "#EC4899" :
+                activeProfile.sampleType === "SAS" ? "#F59E0B" :
+                activeProfile.sampleType === "DVI" ? "#8B5CF6" :
+                activeProfile.sampleType === "TOUCH" ? "#F43F5E" : "#14B8A6";
+
+            return [
+                {
+                    region: `${activeProfile.ancestry.primary} (Inferred WGS84 Centroid)`,
+                    lat: activeProfile.geoLocation.lat,
+                    lng: activeProfile.geoLocation.lng,
+                    probability: (activeProfile.geoLocation.confidencePct || 90) / 100,
+                    color: dominantColor,
+                    initial_radius_km: 350,
+                    final_radius_km: 75,
+                }
+            ];
+        }
+        return DEFAULT_GEO_RESULTS;
+    }, [geoResults, activeProfile]);
 
     // ── 2. Dynamic Reliability Calculation ──
     // Score = (Top_Prob - Second_Prob) * Multiplier

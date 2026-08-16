@@ -16,20 +16,28 @@ const GeoForensicPanel = dynamic(() => import("@/components/analysis/GeoForensic
 
 export default function ActiveProfileBanner() {
     const { activeCase } = useForensicCaseStore();
-    const { setInspectorOpen } = useIngestStore();
+    const { activeProfile: storeProfile, setInspectorOpen } = useIngestStore();
 
-    const activeProfile = activeCase?.profile;
+    const activeProfile = storeProfile || activeCase?.profile;
     if (!activeProfile) return null;
+
+    const dominantColor =
+        activeProfile.sampleType === "EU" ? "#06B6D4" :
+        activeProfile.sampleType === "AA" ? "#22C55E" :
+        activeProfile.sampleType === "EAS" ? "#EC4899" :
+        activeProfile.sampleType === "SAS" ? "#F59E0B" :
+        activeProfile.sampleType === "DVI" ? "#8B5CF6" :
+        activeProfile.sampleType === "TOUCH" ? "#F43F5E" : "#A855F7";
 
     const geoResults = [
         {
-            region: activeProfile.geoLocation.cityRegion,
+            region: `${activeProfile.geoLocation.country} (${activeProfile.geoLocation.cityRegion})`,
             lat: activeProfile.geoLocation.lat,
             lng: activeProfile.geoLocation.lng,
             probability: activeProfile.geoLocation.confidencePct / 100,
-            color: activeProfile.sampleType === "EU" ? "#06b6d4" : "#a855f7",
-            initial_radius_km: 150,
-            final_radius_km: 30,
+            color: dominantColor,
+            initial_radius_km: 300,
+            final_radius_km: 75,
         }
     ];
 

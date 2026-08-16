@@ -135,26 +135,28 @@ function ScanController({
     const currentTargetRef = useRef<string | null>(null);
 
     useEffect(() => {
-        if (!target || target.region === currentTargetRef.current) return;
-        currentTargetRef.current = target.region;
+        if (!target || typeof target.lat !== "number" || typeof target.lng !== "number") return;
+        const targetKey = `${target.region}_${target.lat.toFixed(3)}_${target.lng.toFixed(3)}`;
+        if (targetKey === currentTargetRef.current) return;
+        currentTargetRef.current = targetKey;
 
         onPhaseChange("scanning");
 
         const t1 = setTimeout(() => {
-            map.flyTo([target.lat, target.lng], 5, { duration: 1.8 });
+            map.flyTo([target.lat, target.lng], 5, { duration: 1.6 });
             onPhaseChange("calculating");
-        }, 500);
+        }, 300);
 
         const t2 = setTimeout(() => {
-            map.flyTo([target.lat, target.lng], 6, { duration: 1.2 });
+            map.flyTo([target.lat, target.lng], 6, { duration: 1.0 });
             onPhaseChange("locked");
-        }, 2200);
+        }, 1800);
 
         return () => {
             clearTimeout(t1);
             clearTimeout(t2);
         };
-    }, [target, map, onPhaseChange]);
+    }, [target?.region, target?.lat, target?.lng, map, onPhaseChange]);
 
     return null;
 }

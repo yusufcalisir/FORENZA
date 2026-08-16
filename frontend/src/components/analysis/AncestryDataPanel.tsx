@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useIngestStore } from "@/store/ingestStore";
 import {
     Globe,
     ShieldCheck,
@@ -117,6 +118,8 @@ export default function AncestryDataPanel({
     txHash = "0x89f2a7b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9",
     selectedRegion,
 }: AncestryDataPanelProps = {}) {
+    const activeProfile = useIngestStore((s) => s.activeProfile);
+
     const [snpDosages, setSnpDosages] = useState<Record<string, number>>({
         rs1426654: 2,  // SLC24A5 European
         rs16891982: 2, // SLC45A2 European
@@ -127,6 +130,24 @@ export default function AncestryDataPanel({
         rs885479: 0,
         rs3340: 2,
     });
+
+    useEffect(() => {
+        if (activeProfile?.snpMarkers && Object.keys(activeProfile.snpMarkers).length > 0) {
+            const next: Record<string, number> = { ...snpDosages };
+            Object.entries(activeProfile.snpMarkers).forEach(([rsid, val]) => {
+                if (val.dosage !== undefined) {
+                    next[rsid] = val.dosage;
+                } else if (val.genotype === "A/A" || val.genotype === "1/1") {
+                    next[rsid] = 2;
+                } else if (val.genotype === "A/G" || val.genotype === "0/1") {
+                    next[rsid] = 1;
+                } else {
+                    next[rsid] = 0;
+                }
+            });
+            setSnpDosages(next);
+        }
+    }, [activeProfile?.profileId, activeProfile?.sampleType]);
 
     const bga = useMemo(() => computeBGA(snpDosages), [snpDosages]);
 

@@ -638,7 +638,17 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** Unsupported species and invalid stage domain error handling verified.
   - **`G`:** Insufficient temperature history warning handling verified.
   - **`H`:** API integration testing across `/forensic/physical/entomology-pmi-estimation`.
+* **`VECTOR_24_SPEC_A-H` (Trace Micro-Spectroscopy & MSI — Module 24):**
+  - **`A`:** Polyester (PET) characteristic $1715\,\text{cm}^{-1}$ and $1240\,\text{cm}^{-1}$ HQI match verified ($\text{HQI} \ge 95.0\%$).
+  - **`B`:** Nylon-6,6 Amide I ($1635\,\text{cm}^{-1}$) and Amide II ($1538\,\text{cm}^{-1}$) HQI match verified ($\text{HQI} \ge 95.0\%$).
+  - **`C`:** Acrylic PAN Nitrile peak ($2240\,\text{cm}^{-1}$) HQI match verified ($\text{HQI} \ge 95.0\%$).
+  - **`D`:** Weathered/contaminated spectrum classification verified ($75.0\% \le \text{HQI} < 90.0\% \implies \text{PROBABLE_MATCH_DEGRADED}$).
+  - **`E`:** Dissimilar polymer chemical exclusion verified ($\text{HQI} < 50.0\%$).
+  - **`F`:** Zero-energy spectrum and dimension mismatch error handling verified.
+  - **`G`:** 4-band MSI contrast simulation verified (365nm UV-A, 415nm Soret, 450nm Blue, 850nm NIR).
+  - **`H`:** API integration testing across `/forensic/physical/msi-optical-analysis` and `/ftir-raman-hqi-match`.
 * **`VECTOR_P6_01` (Chain of Custody Tamper Detection):** Merkle tree root divergence verified upon a single-second timestamp modification ($P_{\text{detection}} = 100\%$).
+
 
 * **`VECTOR_P6_02` (ISO 17025 Measurement Uncertainty):** Combined $u_c = 0.05385 \text{ ng/}\mu\text{L}$ and expanded $U_{95\%} = 0.1077 \text{ ng/}\mu\text{L}$ ($k=2.00$).
 * **`VECTOR_P6_03` (ENFSI Verbal Statement Mapping):** $LR = 3.5 \times 10^7$ maps deterministically to Verbal Tier 6 ("Extremely strong support for prosecution proposition").

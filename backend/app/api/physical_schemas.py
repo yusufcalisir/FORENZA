@@ -145,3 +145,46 @@ class EntomologyPmiResponse(BaseModel):
     prosecutors_fallacy_shield: str
 
 
+# ── Multispectral Imaging & Trace Spectroscopy Schemas ───────────────────────
+
+class MsiAnalysisRequest(BaseModel):
+    evidence_type: str = Field(
+        default="Latent Bloodstain",
+        description="Type of questioned biological or physical evidence."
+    )
+    active_wavelength_nm: int = Field(
+        default=415,
+        ge=300,
+        le=1000,
+        description="Selected optical excitation/transmission wavelength in nanometers."
+    )
+
+
+class MsiAnalysisResponse(BaseModel):
+    evidence_type: str
+    wavelength_nm: int
+    band_info: Dict[str, Any]
+    predicted_contrast_index: float
+    is_optimal_forensic_band: bool
+
+
+class TraceSpectroscopyRequest(BaseModel):
+    sample_spectrum: List[float] = Field(
+        ...,
+        min_length=10,
+        description="Intensity vector across ATR-FTIR or Raman wavenumbers (400 to 4000 cm^-1)."
+    )
+    wavenumbers_cm_1: Optional[List[float]] = Field(
+        default=None,
+        description="Optional list of corresponding wavenumber calibration points."
+    )
+
+
+class TraceSpectroscopyResponse(BaseModel):
+    top_match: Optional[Dict[str, Any]]
+    library_matches: List[Dict[str, Any]]
+    points_evaluated: int
+    prosecutors_fallacy_shield: str
+
+
+

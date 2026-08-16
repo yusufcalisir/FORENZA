@@ -8,17 +8,25 @@ from backend.app.api.physical_schemas import (
     CmcMatchingResponse,
     EntomologyPmiRequest,
     EntomologyPmiResponse,
+
+    MsiAnalysisRequest,
+    MsiAnalysisResponse,
+    TraceSpectroscopyRequest,
+    TraceSpectroscopyResponse,
 )
 from backend.node.services.forensic.physical import (
     BpaAreaOfOriginEngine,
     BallisticsGsrEngine,
     ForensicEntomologyEngine,
+    TraceSpectroscopyMsiEngine,
 )
 
 router = APIRouter(prefix="/forensic/physical", tags=["Forensic Physical Evidence & Ballistics"])
 _BPA_ENGINE = BpaAreaOfOriginEngine()
 _BALLISTICS_ENGINE = BallisticsGsrEngine()
 _ENTO_ENGINE = ForensicEntomologyEngine()
+_SPEC_ENGINE = TraceSpectroscopyMsiEngine()
+
 
 
 
@@ -130,5 +138,53 @@ async def estimate_entomology_pmi(req: EntomologyPmiRequest) -> EntomologyPmiRes
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Forensic Entomology PMI estimation error: {str(e)}"
         )
+
+
+@router.post(
+    "/msi-optical-analysis",
+    response_model=MsiAnalysisResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Multispectral Optical Wavelength Response & Contrast Simulation",
+    description="Evaluates 365nm UV-A, 415nm Soret, 450nm Blue, or 850nm NIR contrast mechanisms for questioned physical evidence."
+)
+async def analyze_msi_optical(req: MsiAnalysisRequest) -> MsiAnalysisResponse:
+    try:
+        result = _SPEC_ENGINE.simulate_msi_optical_response(
+            evidence_type=req.evidence_type,
+            active_wavelength_nm=req.active_wavelength_nm,
+        )
+        return MsiAnalysisResponse(**result)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"MSI optical analysis error: {str(e)}"
+        )
+
+
+@router.post(
+    "/ftir-raman-hqi-match",
+    response_model=TraceSpectroscopyResponse,
+    status_code=status.HTTP_200_OK,
+    summary="ATR-FTIR & Raman Trace Spectral Matching (Hit Quality Index — HQI)",
+    description="Compares unknown sample intensity spectrum against the forensic fiber & polymer library using normalized squared dot product (HQI >= 90.0% match)."
+)
+async def match_trace_spectroscopy(req: TraceSpectroscopyRequest) -> TraceSpectroscopyResponse:
+    try:
+        result = _SPEC_ENGINE.match_trace_spectrum(
+            sample_spectrum=req.sample_spectrum,
+            wavenumbers_cm_1=req.wavenumbers_cm_1,
+        )
+        return TraceSpectroscopyResponse(**result)
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Trace micro-spectroscopy matching error: {str(e)}"
+        )
+
 
 

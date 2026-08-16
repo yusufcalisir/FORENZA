@@ -1618,6 +1618,36 @@ $$\sum_{h=1}^{H_{\min}} \max\left(0, \; (T_h + \Delta T_{\text{mass}}) - T_{\tex
 
 $$t_{\text{colonisation}} = t_{\text{sample}} - PMI_{\min}$$
 
+---
+
+## 58. Digital Microscopy, Multispectral Imaging (MSI) & Trace Spectroscopy Engine (Module 24)
+
+### 58.1 Targeted Multispectral Wavelength Bands (MSI)
+
+| Band Identifier | Central Wavelength | Optical Phenomenon | Target Evidence Matrix | Physical Mechanism |
+| :--- | :--- | :--- | :--- | :--- |
+| **UV-A** | $365 \text{ nm}$ | Fluorescence Excitation | Semen, Saliva, Vaginal Fluids | Excitation of endogenous flavins & lipids |
+| **Soret Band** | $415 \text{ nm}$ | Peak Optical Absorption | Latent / Dilute Bloodstains | Porphyrin ring electronic absorption |
+| **Blue Light** | $450 \text{ nm}$ | Secondary Fluorescence | Latent Fingerprints & Serology | $530 \text{ nm}$ long-pass filtered dye excitation |
+| **Near-IR** | $850 \text{ nm}$ | Substrate Transmission | Blood & GSR on Dark Fabrics | Fabric dyes transparent; carbon particles visible |
+
+### 58.2 Hit Quality Index (HQI) Spectral Dot Product Formulation
+
+$$\text{HQI} = \frac{\left( \mathbf{S}_{\text{sample}} \cdot \mathbf{S}_{\text{ref}} \right)^2}{\left( \mathbf{S}_{\text{sample}} \cdot \mathbf{S}_{\text{sample}} \right) \left( \mathbf{S}_{\text{ref}} \cdot \mathbf{S}_{\text{ref}} \right)} \times 100\% = \frac{\left( \sum_{i=1}^M S_{\text{sample}, i} S_{\text{ref}, i} \right)^2}{\left( \sum_{i=1}^M S_{\text{sample}, i}^2 \right) \left( \sum_{i=1}^M S_{\text{ref}, i}^2 \right)} \times 100\%$$
+
+- $\text{HQI} \ge 90.0\% \implies$ **`POSITIVE_SPECTRAL_MATCH`** ($P_{\text{false}} < 10^{-4}$, definitive chemical identity).
+- $75.0\% \le \text{HQI} < 90.0\% \implies$ **`PROBABLE_MATCH_DEGRADED`** (Surface contamination / weathering).
+- $\text{HQI} < 75.0\% \implies$ **`NON_MATCH_EXCLUSION`** (Chemical exclusion).
+
+### 58.3 Diagnostic Forensic Fiber Wavenumbers
+
+- **Polyester (PET):** $1715 \text{ cm}^{-1}$ ($\text{C=O}$ ester), $1240 \text{ cm}^{-1}$ ($\text{C-O-C}$).
+- **Nylon-6,6:** $1635 \text{ cm}^{-1}$ (Amide I), $1538 \text{ cm}^{-1}$ (Amide II).
+- **Acrylic (PAN):** $2240 \text{ cm}^{-1}$ (Nitrile $\text{C}\equiv\text{N}$).
+- **Cotton (Cellulose):** $3330 \text{ cm}^{-1}$ ($\text{O-H}$ stretch), $1030 \text{ cm}^{-1}$ ($\text{C-O}$ stretch).
+- **Wool (Keratin):** $1650 \text{ cm}^{-1}$ (Amide I), $1520 \text{ cm}^{-1}$ (Amide II).
+
+
 
 
 

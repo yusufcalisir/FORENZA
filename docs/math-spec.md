@@ -1590,6 +1590,35 @@ Land engraved areas (LEA) are partitioned into $100 \ \mu\text{m} \times 100 \ \
 
 $$K \ge 6 \text{ CMC} \implies P_{\text{false}} < 10^{-6} \implies \text{POSITIVE_IDENTIFICATION}$$
 
+---
+
+## 57. Forensic Entomology & Calliphoridae Minimum PMI Thermal Summation Engine (Module 23)
+
+### 57.1 Accumulated Thermal Energy Models (ADD / ADH)
+
+$$\text{ADD} = \sum_{d=1}^D \max\left(0, \; \bar{T}_d - T_{\text{base}}\right), \quad \text{ADH} = \sum_{h=1}^H \max\left(0, \; (T_h + \Delta T_{\text{mass}}) - T_{\text{base}}\right)$$
+
+- $T_{\text{base}}$: Species-specific developmental thermal threshold below which physiological development ceases.
+- $\Delta T_{\text{mass}}$: Larval aggregate metabolic heating adjustment ($+1.5^\circ\text{C} \dots +3.5^\circ\text{C}$).
+
+### 57.2 Dipteran Species Calibration Parameters
+
+| Dipteran Species | $T_{\text{base}}$ ($^\circ\text{C}$) | Egg (ADH) | 1st Instar | 2nd Instar | 3rd Feeding | 3rd Post-Feeding | Pupae (ADH) | Total $K$ (ADH) |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| ***Lucilia sericata*** | $9.0$ | $240.0$ | $480.0$ | $800.0$ | $1254.5$ | $2200.0$ | $5000.0$ | $10174.5$ |
+| ***Calliphora vicina*** | $3.0$ | $450.0$ | $1170.0$ | $2250.0$ | $4050.0$ | $6450.0$ | $9300.0$ | $23670.0$ |
+| ***Chrysomya albiceps*** | $10.2$ | $260.0$ | $740.0$ | $1340.0$ | $2440.0$ | $4540.0$ | $8440.0$ | $17760.0$ |
+| ***Phormia regina*** | $10.0$ | $300.0$ | $800.0$ | $1500.0$ | $2900.0$ | $5100.0$ | $9200.0$ | $19800.0$ |
+
+### 57.3 Minimum Post-Mortem Interval ($PMI_{\min}$) Backwards Solver
+
+Walking backwards from sampling timestamp $t_{\text{sample}}$ across hourly ambient temperatures:
+
+$$\sum_{h=1}^{H_{\min}} \max\left(0, \; (T_h + \Delta T_{\text{mass}}) - T_{\text{base}}\right) \ge \text{ADH}_{\text{stage}} \implies PMI_{\min} = H_{\min} \text{ hours}$$
+
+$$t_{\text{colonisation}} = t_{\text{sample}} - PMI_{\min}$$
+
+
 
 
 

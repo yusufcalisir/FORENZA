@@ -607,6 +607,8 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`D`:** M-value to Beta inverse transformation bijection verified ($|\beta - \text{inv}(M)| < 10^{-6}$).
   - **`E`:** Boundary conditions handling verified ($\beta = 0.0, 1.0$).
   - **`F`:** Detection $P$-value thresholding verified ($P_{\text{det}} \le 0.01$).
+  - **`G`:** BMIQ Type II probe bias quantile calibration verified.
+  - **`H`:** API integration testing across `/forensic/epigenetics/bisulfite-qc-and-calibrate`.
 * **`VECTOR_P5_01` (3D BPA Impact Spatter Origin Ground Truth — Module 21):**
   - **`P5_01`:** 5-stain closed-form least-squares 3D point of convergence verified ($x_0 = 125.4\text{ cm}, y_0 = -45.2\text{ cm}, z_0 = 142.8\text{ cm}$, $r_{\text{err}} \le 3.0\text{ cm}$).
 * **`VECTOR_21_BPA_A-H` (3D Bloodstain Pattern Analysis & Flight Ballistics — Module 21):**
@@ -617,6 +619,7 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`E`:** Single bloodstain rejection verified ($N \ge 2$).
   - **`F`:** Aerodynamic drag and gravity upward correction verified ($\Delta z > 0$).
   - **`G`:** Dimension domain validation verified ($W > 0, L > 0$).
+  - **`H`:** API integration testing across `/forensic/physical/bpa-area-of-origin`.
 * **`VECTOR_22_GSR_A-H` (Forensic Ballistics, SEM-EDX GSR & 3D CMC — Module 22):**
   - **`A`:** Characteristic Pb-Ba-Sb triad verified ($N \ge 3 \implies LR = 10,000.0$, Extremely Strong Support).
   - **`B`:** Consistent 2-component elemental pairs verified ($N \ge 5 \implies LR = 500.0$, Strong Support).
@@ -626,9 +629,20 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** Spatial translation threshold rejection verified ($|\Delta x| > 15\,\mu\text{m}$).
   - **`G`:** Angular rotation threshold rejection verified ($|\Delta\theta| > 1.0^\circ$).
   - **`H`:** API integration testing across `/forensic/physical/gsr-sem-edx-analysis` and `/cmc-striation-matching`.
+* **`VECTOR_23_ENTO_A-H` (Forensic Entomology & Minimum PMI — Module 23):**
+  - **`A`:** *Lucilia sericata* 3rd Instar Feeding stage ADH threshold verified ($1254.5\text{ ADH}$).
+  - **`B`:** *Calliphora vicina* cold-adaptation baseline verified ($T_{\text{base}} = 3.0^\circ\text{C}$).
+  - **`C`:** Sub-threshold temperature dormancy verified ($T \le T_{\text{base}} \implies \text{ADH} = 0.0$).
+  - **`D`:** Larval mass metabolic self-heating acceleration verified ($\Delta T_{\text{mass}} = +2.5^\circ\text{C}$).
+  - **`E`:** Calendar colonisation timestamp back-projection verified ($t_{\text{colonisation}} = t_{\text{sample}} - PMI_{\min}$).
+  - **`F`:** Unsupported species and invalid stage domain error handling verified.
+  - **`G`:** Insufficient temperature history warning handling verified.
+  - **`H`:** API integration testing across `/forensic/physical/entomology-pmi-estimation`.
 * **`VECTOR_P6_01` (Chain of Custody Tamper Detection):** Merkle tree root divergence verified upon a single-second timestamp modification ($P_{\text{detection}} = 100\%$).
+
 * **`VECTOR_P6_02` (ISO 17025 Measurement Uncertainty):** Combined $u_c = 0.05385 \text{ ng/}\mu\text{L}$ and expanded $U_{95\%} = 0.1077 \text{ ng/}\mu\text{L}$ ($k=2.00$).
 * **`VECTOR_P6_03` (ENFSI Verbal Statement Mapping):** $LR = 3.5 \times 10^7$ maps deterministically to Verbal Tier 6 ("Extremely strong support for prosecution proposition").
+
 
 
 

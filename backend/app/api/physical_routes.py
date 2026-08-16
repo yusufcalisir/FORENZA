@@ -6,15 +6,20 @@ from backend.app.api.physical_schemas import (
     GsrAnalysisResponse,
     CmcMatchingRequest,
     CmcMatchingResponse,
+    EntomologyPmiRequest,
+    EntomologyPmiResponse,
 )
 from backend.node.services.forensic.physical import (
     BpaAreaOfOriginEngine,
     BallisticsGsrEngine,
+    ForensicEntomologyEngine,
 )
 
 router = APIRouter(prefix="/forensic/physical", tags=["Forensic Physical Evidence & Ballistics"])
 _BPA_ENGINE = BpaAreaOfOriginEngine()
 _BALLISTICS_ENGINE = BallisticsGsrEngine()
+_ENTO_ENGINE = ForensicEntomologyEngine()
+
 
 
 @router.post(
@@ -95,4 +100,35 @@ async def evaluate_cmc_striations(req: CmcMatchingRequest) -> CmcMatchingRespons
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"3D CMC striation analysis error: {str(e)}"
         )
+
+
+@router.post(
+    "/entomology-pmi-estimation",
+    response_model=EntomologyPmiResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Forensic Entomology Minimum Post-Mortem Interval (PMI_min) Thermal Summation",
+    description="Integrates backward through hourly ambient temperatures to determine exact Minimum Insect Colonisation Interval (MICI) and colonisation timestamp."
+)
+async def estimate_entomology_pmi(req: EntomologyPmiRequest) -> EntomologyPmiResponse:
+    try:
+        temps_dict = [t.model_dump() for t in req.hourly_temperatures]
+        result = _ENTO_ENGINE.estimate_pmi_min(
+            species_name=req.species_name,
+            development_stage=req.development_stage,
+            hourly_temperatures=temps_dict,
+            delta_t_mass=req.delta_t_mass,
+            sampling_time_iso=req.sampling_time_iso,
+        )
+        return EntomologyPmiResponse(**result)
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Forensic Entomology PMI estimation error: {str(e)}"
+        )
+
 

@@ -94,3 +94,54 @@ class CmcMatchingResponse(BaseModel):
     evaluated_cells: List[Dict[str, Any]]
     prosecutors_fallacy_shield: str
 
+
+# ── Forensic Entomology Schemas ──────────────────────────────────────────────
+
+class HourlyTemperatureInput(BaseModel):
+    hour_index: Optional[int] = Field(default=0, description="Sequential hour index.")
+    timestamp_iso: Optional[str] = Field(default=None, description="ISO timestamp of weather record.")
+    temperature_c: float = Field(..., description="Ambient air temperature in degrees Celsius.")
+
+
+class EntomologyPmiRequest(BaseModel):
+    species_name: str = Field(
+        default="Lucilia sericata",
+        description="Scientific name of collected Dipteran species."
+    )
+    development_stage: str = Field(
+        default="3rd Instar Feeding",
+        description="Oldest developmental stage identified on the body."
+    )
+    hourly_temperatures: List[HourlyTemperatureInput] = Field(
+        ...,
+        min_length=1,
+        description="Hourly ambient temperatures leading up to the sample collection time (chronologically ascending)."
+    )
+    delta_t_mass: float = Field(
+        default=0.0,
+        ge=0.0,
+        le=5.0,
+        description="Larval aggregate metabolic heating offset in degrees Celsius (+1.5°C to +3.5°C)."
+    )
+    sampling_time_iso: Optional[str] = Field(
+        default=None,
+        description="ISO 8601 timestamp when insect specimens were collected."
+    )
+
+
+class EntomologyPmiResponse(BaseModel):
+    species: str
+    development_stage: str
+    t_base_c: float
+    target_adh: float
+    accumulated_adh: float
+    pmi_min_hours: float
+    pmi_min_days: float
+    colonisation_timestamp: Optional[str] = None
+    delta_t_mass_applied_c: float
+    is_target_adh_satisfied: bool
+    hours_integrated: int
+    warning: Optional[str] = None
+    prosecutors_fallacy_shield: str
+
+

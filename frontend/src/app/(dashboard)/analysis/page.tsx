@@ -25,7 +25,9 @@ import ValidationLabPanel from "@/components/analysis/ValidationLabPanel";
 import AgeEstimationPanel from "@/components/analysis/AgeEstimationPanel";
 import AnthropologyPanel from "@/components/analysis/AnthropologyPanel";
 import EntomologyPanel from "@/components/analysis/EntomologyPanel";
+import EntomologyPmiPanel from "@/components/analysis/EntomologyPmiPanel";
 import BotanyPanel from "@/components/analysis/BotanyPanel";
+
 import MicrobiologyPanel from "@/components/analysis/MicrobiologyPanel";
 import SerologyPanel from "@/components/analysis/SerologyPanel";
 import BodyFluidPanel from "@/components/analysis/BodyFluidPanel";
@@ -189,11 +191,11 @@ const CATEGORIES: Category[] = [
         tabs: [
             { id: "bpa", label: "21. Bloodstain Pattern (BPA 3D)", icon: Eye, badge: "BPA-3D", maturity: "ACTIVE", maturityNote: "Live 3D trigonometric area of origin & impact angle calculator." },
             { id: "microscopy", label: "22. Ballistics & SEM-EDX GSR", icon: Target, badge: "GSR-CMC", maturity: "ACTIVE", maturityNote: "Live ASTM E1588-20 SEM-EDX GSR analysis & 3D CMC firearm striation matching." },
-            { id: "toxicology", label: "23. Post-Mortem GC-MS Tox", icon: Pill, badge: "TOX-GCMS", maturity: "DEMO", maturityNote: "Quantitative drug screening with ISO 17025 expanded uncertainty and Widmark BAC." },
-
-            { id: "botany", label: "24. Diatom & Palynology Ecology", icon: Leaf, badge: "PALYNO-ECO", maturity: "PLACEHOLDER", maturityNote: "Research prototype for diatom drowning & forensic palynology ecology." },
-            { id: "serology", label: "25. ABO / Rh Blood Serology", icon: Droplets, badge: "ABO-SERO", maturity: "DEMO", maturityNote: "ABO/Rh blood grouping & absorption-elution serology simulator." },
+            { id: "botany", label: "23. Forensic Entomology & PMI", icon: Bug, badge: "ENTO-PMI", maturity: "ACTIVE", maturityNote: "Live Calliphoridae thermal summation (ADD/ADH) & minimum PMI solver." },
+            { id: "toxicology", label: "24. Trace Spectroscopy & MSI", icon: Sparkles, badge: "MSI-FTIR", maturity: "DEMO", maturityNote: "Multispectral imaging & ATR-FTIR / Raman Hit Quality Index matching." },
+            { id: "serology", label: "25. Post-Mortem Toxicokinetics", icon: Pill, badge: "TOX-PMR", maturity: "DEMO", maturityNote: "Post-mortem drug redistribution (PMR C/P ratios) & Widmark kinetics." },
         ],
+
     },
     {
         id: "lims_governance",
@@ -507,10 +509,9 @@ function renderPanel(tabId: TabId) {
         // Pillar 5: Pathology & Trace Forensics
         case "bpa": return <BpaAreaOfOriginPanel />;
         case "microscopy": return <BallisticsGsrPanel />;
-        case "toxicology": return <ToxicologyPanel />;
-
-        case "botany": return <BotanyPanel />;
+        case "botany": return <EntomologyPmiPanel />;
         case "serology": return <SerologyPanel />;
+
         // Pillar 6: ISO 17025, LIMS & ZKP
         case "lims": return <LimsWorkflowPanel />;
         case "qc": return <QualityAssurancePanel />;

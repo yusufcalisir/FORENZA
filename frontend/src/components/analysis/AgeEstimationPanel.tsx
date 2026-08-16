@@ -112,21 +112,21 @@ export default function AgeEstimationPanel() {
   return (
     <div className="space-y-6 font-mono text-tactical-text">
       {/* ── Subsystem Header Banner ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl border border-purple-500/30 bg-purple-500/10 shadow-lg">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl border border-purple-500/30 bg-purple-500/10 shadow-lg overflow-hidden">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple-500/20 border border-purple-500/40 text-purple-300">
             <Clock className="w-5 h-5" />
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-sm font-bold tracking-widest text-tactical-text uppercase">
-                Epigenetic Clock & Age Estimation Engine (P4 §1)
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="text-xs sm:text-sm font-bold tracking-widest text-tactical-text uppercase leading-snug">
+                Epigenetic Clock &amp; Age Estimation Engine (P4 §1)
               </h2>
-              <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/40">
+              <span className="px-2.5 py-0.5 rounded-lg text-[8px] sm:text-[9px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/40 whitespace-nowrap shrink-0">
                 HORVATH / VISAGE
               </span>
             </div>
-            <p className="text-[11px] text-zinc-400">
+            <p className="text-[9px] sm:text-[10px] text-zinc-400 mt-0.5">
               10-CpG Elastic Net multi-tissue age deconvolution with Horvath link function (y0=20.0)
             </p>
           </div>
@@ -135,7 +135,7 @@ export default function AgeEstimationPanel() {
         <button
           onClick={runPrediction}
           disabled={loading}
-          className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-purple-500 hover:bg-purple-600 active:scale-95 text-white font-bold text-xs transition-all shadow-lg shadow-purple-500/20 disabled:opacity-50"
+          className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-purple-500 hover:bg-purple-600 active:scale-95 text-white font-bold text-xs transition-all shadow-lg shadow-purple-500/20 disabled:opacity-50 shrink-0 whitespace-nowrap"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
           <span>{loading ? "Computing Age..." : "Predict Epigenetic Age"}</span>

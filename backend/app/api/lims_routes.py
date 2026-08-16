@@ -1,21 +1,40 @@
 from fastapi import APIRouter, HTTPException, status
-from backend.app.api.lims_schemas import (
-    CreateCaseRequest,
-    CreateCaseResponse,
-    AccessionSampleRequest,
-    AccessionSampleResponse,
-    RecordWorkflowStepRequest,
-    RecordWorkflowStepResponse,
-    ChainOfCustodyResponse,
-    MerkleBuildTreeRequest,
-    MerkleBuildTreeResponse,
-    MerkleGenerateProofRequest,
-    MerkleGenerateProofResponse,
-    MerkleVerifyProofRequest,
-    MerkleVerifyProofResponse,
-)
-from backend.node.services.forensic.lims.workflow_tracker import LimsWorkflowTracker
-from backend.node.services.forensic.lims.merkle_ledger_engine import ForensicMerkleLedgerEngine, CustodyEvent
+try:
+    from app.api.lims_schemas import (
+        CreateCaseRequest,
+        CreateCaseResponse,
+        AccessionSampleRequest,
+        AccessionSampleResponse,
+        RecordWorkflowStepRequest,
+        RecordWorkflowStepResponse,
+        ChainOfCustodyResponse,
+        MerkleBuildTreeRequest,
+        MerkleBuildTreeResponse,
+        MerkleGenerateProofRequest,
+        MerkleGenerateProofResponse,
+        MerkleVerifyProofRequest,
+        MerkleVerifyProofResponse,
+    )
+    from node.services.forensic.lims.workflow_tracker import LimsWorkflowTracker
+    from node.services.forensic.lims.merkle_ledger_engine import ForensicMerkleLedgerEngine, CustodyEvent
+except ImportError:
+    from backend.app.api.lims_schemas import (
+        CreateCaseRequest,
+        CreateCaseResponse,
+        AccessionSampleRequest,
+        AccessionSampleResponse,
+        RecordWorkflowStepRequest,
+        RecordWorkflowStepResponse,
+        ChainOfCustodyResponse,
+        MerkleBuildTreeRequest,
+        MerkleBuildTreeResponse,
+        MerkleGenerateProofRequest,
+        MerkleGenerateProofResponse,
+        MerkleVerifyProofRequest,
+        MerkleVerifyProofResponse,
+    )
+    from backend.node.services.forensic.lims.workflow_tracker import LimsWorkflowTracker
+    from backend.node.services.forensic.lims.merkle_ledger_engine import ForensicMerkleLedgerEngine, CustodyEvent
 
 router = APIRouter(prefix="/forensic/lims", tags=["LIMS-Lite Sample Accessioning & Workflow"])
 _LIMS = LimsWorkflowTracker()

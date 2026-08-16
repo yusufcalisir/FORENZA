@@ -1,30 +1,56 @@
 from fastapi import APIRouter, HTTPException, status
-from backend.app.api.physical_schemas import (
-    BpaAreaOfOriginRequest,
-    BpaAreaOfOriginResponse,
-    GsrAnalysisRequest,
-    GsrAnalysisResponse,
-    CmcMatchingRequest,
-    CmcMatchingResponse,
-    EntomologyPmiRequest,
-    EntomologyPmiResponse,
-
-    MsiAnalysisRequest,
-    MsiAnalysisResponse,
-    TraceSpectroscopyRequest,
-    TraceSpectroscopyResponse,
-    PmrEvaluationRequest,
-    PmrEvaluationResponse,
-    AntemortemExtrapolationRequest,
-    AntemortemExtrapolationResponse,
-)
-from backend.node.services.forensic.physical import (
-    BpaAreaOfOriginEngine,
-    BallisticsGsrEngine,
-    ForensicEntomologyEngine,
-    TraceSpectroscopyMsiEngine,
-    ForensicToxicologyPmrEngine,
-)
+try:
+    from app.api.physical_schemas import (
+        BpaAreaOfOriginRequest,
+        BpaAreaOfOriginResponse,
+        GsrAnalysisRequest,
+        GsrAnalysisResponse,
+        CmcMatchingRequest,
+        CmcMatchingResponse,
+        EntomologyPmiRequest,
+        EntomologyPmiResponse,
+        MsiAnalysisRequest,
+        MsiAnalysisResponse,
+        TraceSpectroscopyRequest,
+        TraceSpectroscopyResponse,
+        PmrEvaluationRequest,
+        PmrEvaluationResponse,
+        AntemortemExtrapolationRequest,
+        AntemortemExtrapolationResponse,
+    )
+    from node.services.forensic.physical import (
+        BpaAreaOfOriginEngine,
+        BallisticsGsrEngine,
+        ForensicEntomologyEngine,
+        TraceSpectroscopyMsiEngine,
+        ForensicToxicologyPmrEngine,
+    )
+except ImportError:
+    from backend.app.api.physical_schemas import (
+        BpaAreaOfOriginRequest,
+        BpaAreaOfOriginResponse,
+        GsrAnalysisRequest,
+        GsrAnalysisResponse,
+        CmcMatchingRequest,
+        CmcMatchingResponse,
+        EntomologyPmiRequest,
+        EntomologyPmiResponse,
+        MsiAnalysisRequest,
+        MsiAnalysisResponse,
+        TraceSpectroscopyRequest,
+        TraceSpectroscopyResponse,
+        PmrEvaluationRequest,
+        PmrEvaluationResponse,
+        AntemortemExtrapolationRequest,
+        AntemortemExtrapolationResponse,
+    )
+    from backend.node.services.forensic.physical import (
+        BpaAreaOfOriginEngine,
+        BallisticsGsrEngine,
+        ForensicEntomologyEngine,
+        TraceSpectroscopyMsiEngine,
+        ForensicToxicologyPmrEngine,
+    )
 
 router = APIRouter(prefix="/forensic/physical", tags=["Forensic Physical Evidence & Ballistics"])
 _BPA_ENGINE = BpaAreaOfOriginEngine()

@@ -330,21 +330,23 @@ export default function LineageDnaPanel() {
           </div>
 
           <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-4 sm:p-5 space-y-4 shadow-lg overflow-hidden">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-4 border-b border-tactical-border/40 pb-3">
-              <span className="text-xs font-bold text-tactical-text uppercase tracking-wider leading-snug">
+            {/* Header Block */}
+            <div className="flex flex-col gap-2.5 sm:gap-3 border-b border-tactical-border/40 pb-3.5">
+              <span className="text-xs sm:text-sm font-bold text-tactical-text uppercase tracking-wider leading-snug">
                 Mitochondrial Sequence Differences vs. rCRS Reference (ISFG 3' Right-Aligned)
               </span>
-              <div className="flex flex-wrap items-center gap-2 shrink-0">
-                <span className="text-[9px] text-emerald-400 font-bold bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded whitespace-nowrap">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-[9px] sm:text-[10px] text-emerald-400 font-bold bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-lg whitespace-nowrap">
                   ISFG Right-Aligned
                 </span>
-                <span className="text-[9px] text-cyan-400 font-bold bg-cyan-500/10 border border-cyan-500/20 px-2 py-0.5 rounded whitespace-nowrap">
+                <span className="text-[9px] sm:text-[10px] text-cyan-400 font-bold bg-cyan-500/10 border border-cyan-500/20 px-2.5 py-1 rounded-lg whitespace-nowrap">
                   0 Differences (Maternal Match)
                 </span>
               </div>
             </div>
 
-            <div className="space-y-3">
+            {/* Sequence Differences Card List */}
+            <div className="space-y-2.5">
               {[
                 { pos: 73, ref: "A", alt: "G", region: "HV2", empop: "73G", note: "Transition" },
                 { pos: 263, ref: "A", alt: "G", region: "HV2", empop: "263G", note: "Transition" },
@@ -354,16 +356,35 @@ export default function LineageDnaPanel() {
                 { pos: 16189, ref: "T", alt: "Y (C/T)", region: "HV1", empop: "16189Y", note: "IUPAC Point Heteroplasmy" },
                 { pos: 16223, ref: "C", alt: "T", region: "HV1", empop: "16223T", note: "Transition" },
               ].map((v) => (
-                <div key={v.empop} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-xl bg-black/20 border border-tactical-border/40 gap-2">
-                  <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                    <span className="text-xs font-bold text-cyan-400 font-mono">{v.empop}</span>
-                    <span className="text-[10px] text-zinc-500 font-semibold">[{v.region}] Position {v.pos}</span>
-                    <span className="text-[9px] text-indigo-400 font-bold bg-indigo-500/10 px-2 py-0.5 rounded">{v.note}</span>
+                <div
+                  key={v.empop}
+                  className="p-3 rounded-xl bg-black/30 border border-tactical-border/40 hover:border-indigo-500/40 transition-all space-y-2"
+                >
+                  {/* Primary Row: EMPOP code, region/position, and Ref -> Alt transition */}
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                      <span className="text-xs sm:text-sm font-bold text-cyan-400 font-mono shrink-0">
+                        {v.empop}
+                      </span>
+                      <span className="text-[10px] sm:text-xs text-zinc-400 font-mono truncate">
+                        [{v.region}] Pos {v.pos}
+                      </span>
+                    </div>
+
+                    {/* Transition Pill */}
+                    <div className="flex items-center gap-1.5 text-xs font-bold font-mono px-2.5 py-0.5 rounded-lg bg-black/50 border border-tactical-border/50 shrink-0">
+                      <span className="text-zinc-400">{v.ref}</span>
+                      <ChevronRight className="w-3 h-3 text-zinc-600" />
+                      <span className="text-cyan-300 font-bold">{v.alt}</span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2 text-xs font-bold font-mono self-end sm:self-auto">
-                    <span className="text-zinc-500">{v.ref}</span>
-                    <ChevronRight className="w-3 h-3 text-zinc-600" />
-                    <span className="text-cyan-300">{v.alt}</span>
+
+                  {/* Secondary Row: Mutation Classification Badge */}
+                  <div className="flex items-center justify-between text-[9px] pt-1.5 border-t border-tactical-border/20">
+                    <span className="text-zinc-500 font-mono">Mutation Class</span>
+                    <span className="text-[9px] text-indigo-300 font-semibold bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded whitespace-nowrap">
+                      {v.note}
+                    </span>
                   </div>
                 </div>
               ))}

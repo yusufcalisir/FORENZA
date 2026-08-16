@@ -29,32 +29,55 @@ export default function AgeEstimationPanel() {
   const [tissueType, setTissueType] = useState<string>("BLOOD");
   const [knownAge, setKnownAge] = useState<string>("");
   const [cpgBetas, setCpgBetas] = useState<Record<string, number>>({
-    ELOVL2: 0.45,
-    FHL2: 0.35,
-    TRIM59: 0.25,
-    KLF14: 0.60,
-    MIR29B2CHG: 0.30
+    cg16867657: 0.22,
+    cg21572722: 0.20,
+    cg06639320: 0.18,
+    cg16419235: 0.35,
+    cg04084157: 0.25,
+    cg08097417: 0.22,
+    cg09809672: 0.20,
+    cg02088308: 0.21,
+    cg17861230: 0.22,
+    cg02228185: 0.30,
   });
+
+  const markerLabels: Record<string, string> = {
+    cg16867657: "ELOVL2 (cg16867657)",
+    cg21572722: "ELOVL2-2 (cg21572722)",
+    cg06639320: "FHL2 (cg06639320)",
+    cg16419235: "PENK (cg16419235)",
+    cg04084157: "TRIM59 (cg04084157)",
+    cg08097417: "KLF14 (cg08097417)",
+    cg09809672: "EDARADD (cg09809672)",
+    cg02088308: "MIR29B2CHG (cg02088308)",
+    cg17861230: "PDE4C (cg17861230)",
+    cg02228185: "ASPA (cg02228185)",
+  };
 
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<AgePredictionResult | null>({
-    estimated_age_years: 31.2,
-    prediction_interval_lower: 24.8,
-    prediction_interval_upper: 37.6,
-    standard_error_years: 3.2,
-    expanded_uncertainty_95: 6.4,
+    estimated_age_years: 25.2,
+    prediction_interval_lower: 17.6,
+    prediction_interval_upper: 32.8,
+    standard_error_years: 3.9,
+    expanded_uncertainty_95: 7.64,
     tissue_type: "BLOOD",
     tissue_offset_applied: 0.0,
-    age_acceleration_delta: 1.2,
+    age_acceleration_delta: 0.2,
     aging_status: "NORMAL_AGING",
     cpg_locus_contributions: [
-      { locus: "ELOVL2", methylation_beta: 0.45, weight: 52.4, contribution_years: 23.58 },
-      { locus: "FHL2", methylation_beta: 0.35, weight: 38.6, contribution_years: 13.51 },
-      { locus: "TRIM59", methylation_beta: 0.25, weight: 29.8, contribution_years: 7.45 },
-      { locus: "KLF14", methylation_beta: 0.60, weight: -18.5, contribution_years: -11.10 },
-      { locus: "MIR29B2CHG", methylation_beta: 0.30, weight: 24.1, contribution_years: 7.23 }
+      { locus: "cg16867657", methylation_beta: 0.22, weight: 102.45, contribution_years: 22.54 },
+      { locus: "cg21572722", methylation_beta: 0.20, weight: 88.12, contribution_years: 17.62 },
+      { locus: "cg06639320", methylation_beta: 0.18, weight: 74.30, contribution_years: 13.37 },
+      { locus: "cg16419235", methylation_beta: 0.35, weight: -45.20, contribution_years: -15.82 },
+      { locus: "cg04084157", methylation_beta: 0.25, weight: 56.80, contribution_years: 14.20 },
+      { locus: "cg08097417", methylation_beta: 0.22, weight: 62.15, contribution_years: 13.67 },
+      { locus: "cg09809672", methylation_beta: 0.20, weight: 41.90, contribution_years: 8.38 },
+      { locus: "cg02088308", methylation_beta: 0.21, weight: 38.75, contribution_years: 8.14 },
+      { locus: "cg17861230", methylation_beta: 0.22, weight: 49.10, contribution_years: 10.80 },
+      { locus: "cg02228185", methylation_beta: 0.30, weight: -32.40, contribution_years: -9.72 },
     ],
-    model_provenance: "Horvath-Hannum ElasticNet 5-CpG Forensic Standard"
+    model_provenance: "Horvath / VISAGE Multi-Tissue Elastic Net Epigenetic Clock (10-CpG Standard)"
   });
 
   const handleSliderChange = (locus: string, val: number) => {
@@ -97,14 +120,14 @@ export default function AgeEstimationPanel() {
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-sm font-bold tracking-widest text-tactical-text uppercase">
-                Epigenetic Clock & Age Estimation Engine
+                Epigenetic Clock & Age Estimation Engine (P4 §1)
               </h2>
-              <span className="px-2 py-0.5 rounded text-[8px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">
-                CpG METHYLATION
+              <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/40">
+                HORVATH / VISAGE
               </span>
             </div>
-            <p className="text-[10px] text-zinc-400 mt-0.5">
-              Horvath ElasticNet Multivariate Model • 95% Prediction Interval • ISO 17025 Calibrated
+            <p className="text-[11px] text-zinc-400">
+              10-CpG Elastic Net multi-tissue age deconvolution with Horvath link function (y0=20.0)
             </p>
           </div>
         </div>
@@ -112,19 +135,19 @@ export default function AgeEstimationPanel() {
         <button
           onClick={runPrediction}
           disabled={loading}
-          className="px-4 py-2 rounded-xl bg-purple-500 hover:bg-purple-400 text-black font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+          className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-purple-500 hover:bg-purple-600 active:scale-95 text-white font-bold text-xs transition-all shadow-lg shadow-purple-500/20 disabled:opacity-50"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
-          Predict Epigenetic Age
+          <span>{loading ? "Computing Age..." : "Predict Epigenetic Age"}</span>
         </button>
       </div>
 
-      {/* ── Main Layout: Controls & Dashboard ── */}
+      {/* ── Main Engine Workstation ── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        {/* Left Column: CpG Beta Inputs */}
-        <div className="space-y-4 rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 shadow-xl">
-          <div className="flex items-center justify-between border-b border-tactical-border/40 pb-3">
+        {/* Left Col: 10-CpG Controls & Tissue Intercept */}
+        <div className="rounded-2xl border border-tactical-border/70 bg-tactical-surface/40 p-5 space-y-4 shadow-xl">
+          <div className="flex items-center justify-between border-b border-tactical-border/50 pb-3">
             <div className="flex items-center gap-2">
               <Sliders className="w-4 h-4 text-purple-400" />
               <span className="text-xs font-bold uppercase tracking-wider text-tactical-text">
@@ -141,11 +164,10 @@ export default function AgeEstimationPanel() {
               onChange={(e) => setTissueType(e.target.value)}
               className="w-full bg-black/50 border border-tactical-border/70 rounded-xl p-2 font-mono text-xs text-purple-300 font-bold focus:outline-none focus:border-purple-500"
             >
-              <option value="BLOOD">Peripheral Blood (Baseline Offset: 0.0 yrs)</option>
-              <option value="BUCCAL">Buccal Swab (+1.2 yrs)</option>
-              <option value="SALIVA">Saliva (-0.8 yrs)</option>
-              <option value="BONE">Skeletal Bone (+2.1 yrs)</option>
-              <option value="TEETH">Dental Pulp (+2.5 yrs)</option>
+              <option value="BLOOD">Venous Blood (Offset: 0.0 yrs, MAE ±3.2)</option>
+              <option value="SALIVA">Saliva / Buccal Swab (+0.85 yrs, MAE ±3.7)</option>
+              <option value="SEMEN">Seminal Fluid (-4.20 yrs, MAE ±3.5)</option>
+              <option value="BONE">Post-Mortem Bone / Teeth (+1.10 yrs, MAE ±3.4)</option>
             </select>
           </div>
 
@@ -154,20 +176,20 @@ export default function AgeEstimationPanel() {
             <label className="text-[10px] text-zinc-400 block font-bold uppercase">Known Chronological Age (Optional)</label>
             <input
               type="number"
-              placeholder="e.g. 30.0"
+              placeholder="e.g. 25.0"
               value={knownAge}
               onChange={(e) => setKnownAge(e.target.value)}
               className="w-full bg-black/50 border border-tactical-border/70 rounded-xl p-2 font-mono text-xs text-purple-300 font-bold focus:outline-none focus:border-purple-500"
             />
           </div>
 
-          {/* 5-CpG Sliders */}
-          <div className="space-y-3.5 pt-3 border-t border-tactical-border/30">
+          {/* 10-CpG Sliders */}
+          <div className="space-y-3 pt-3 border-t border-tactical-border/30 max-h-[340px] overflow-y-auto pr-1">
             {Object.entries(cpgBetas).map(([locus, betaVal]) => (
               <div key={locus} className="space-y-1">
-                <div className="flex items-center justify-between text-[11px]">
-                  <span className="font-bold text-zinc-300">{locus}</span>
-                  <span className="font-mono text-purple-400 font-bold">Beta = {betaVal.toFixed(2)}</span>
+                <div className="flex items-center justify-between text-[10px]">
+                  <span className="font-bold text-zinc-300 truncate max-w-[170px]">{markerLabels[locus] || locus}</span>
+                  <span className="font-mono text-purple-400 font-bold">β = {betaVal.toFixed(2)}</span>
                 </div>
                 <input
                   type="range"
@@ -176,7 +198,7 @@ export default function AgeEstimationPanel() {
                   step="0.01"
                   value={betaVal}
                   onChange={(e) => handleSliderChange(locus, parseFloat(e.target.value))}
-                  className="w-full accent-purple-500 cursor-pointer"
+                  className="w-full accent-purple-500 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
                 />
               </div>
             ))}

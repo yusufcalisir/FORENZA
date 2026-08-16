@@ -17,7 +17,7 @@ def test_standard_blood_epigenetic_age_prediction():
     assert result["prediction_interval_lower"] < result["estimated_age_years"]
     assert result["prediction_interval_upper"] > result["estimated_age_years"]
     assert result["tissue_type"] == "BLOOD"
-    assert result["expanded_uncertainty_95"] == 6.4
+    assert result["expanded_uncertainty_95"] == 7.64
 
 
 def test_buccal_tissue_intercept_offset():
@@ -32,7 +32,8 @@ def test_buccal_tissue_intercept_offset():
     res_blood = engine.predict_age(cpg_data, tissue_type="BLOOD")
     res_buccal = engine.predict_age(cpg_data, tissue_type="BUCCAL")
     assert res_buccal["estimated_age_years"] > res_blood["estimated_age_years"]
-    assert res_buccal["tissue_offset_applied"] == 1.2
+    assert res_buccal["tissue_offset_applied"] == 0.85
+
 
 
 def test_age_acceleration_delta_calculation():

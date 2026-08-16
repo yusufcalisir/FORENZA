@@ -1351,6 +1351,45 @@ $$F_{\text{score}} = \min \left( 100.0, \; \frac{100.0}{1 + \exp\left( - \left( 
 - **$r/r$ or $r/wt$ (Mild Loss, $n_R = 0, n_r \ge 1$):** $\text{MED} \in [35, 50]\text{ mJ/cm}^2$. Mild tanning, occasional burns.
 - **$wt/wt$ (Wild-Type Consensus):** $\text{MED} > 50\text{ mJ/cm}^2$. Normal tanning, rare burns. Minimal ephelides.
 
+---
+
+## 50. Multi-Tissue Epigenetic Age Clock Engine (Module 16)
+
+The Multi-Tissue Epigenetic Age Clock calculates chronological and biological age from DNA methylation fractions ($\beta \in [0.0, 1.0]$) across 10 forensic CpG markers using Horvath piecewise non-linear transformations ($y_0 = 20.0$ pivot) and ISO 17025 expanded uncertainty intervals ($k = 1.96$).
+
+### 50.1 Horvath Piecewise Non-Linear Link Function
+
+$$x = \beta_{0,\text{tissue}} + \sum_{i=1}^{10} \frac{w_i \cdot \beta_i}{100.0}$$
+
+$$\text{DNAmAge}_{\text{model}} = F(x) = \begin{cases} (y_0 + 1) \cdot \exp(x) - 1 & \text{if } x < 0 \quad (\text{Pediatric Stage}, \text{Age} < 20) \\ (y_0 + 1) \cdot x + y_0 & \text{if } x \ge 0 \quad (\text{Adult Stage}, \text{Age} \ge 20) \end{cases}$$
+
+$$\text{DNAmAge}_{\text{final}} = \max\left(0.0, \; \text{DNAmAge}_{\text{model}} + \Delta_{\text{tissue}}\right)$$
+
+### 50.2 10 Key Forensic CpG Markers & Weights
+
+| Target Gene | Locus ID (cgID) | Chromosome | Position (hg19) | Forensic Weight ($w_i$) | Correlation |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **ELOVL2** | `cg16867657` | chr6 | 11,044,631 | $+102.45$ | Positive ($R > 0.85$) |
+| **ELOVL2** | `cg21572722` | chr6 | 11,044,680 | $+88.12$ | Positive |
+| **FHL2** | `cg06639320` | chr2 | 106,015,741 | $+74.30$ | Positive |
+| **PENK** | `cg16419235` | chr8 | 57,358,322 | $-45.20$ | Negative |
+| **TRIM59** | `cg04084157` | chr3 | 160,202,320 | $+56.80$ | Positive |
+| **KLF14** | `cg08097417` | chr7 | 130,418,180 | $+62.15$ | Positive |
+| **EDARADD** | `cg09809672` | chr1 | 236,539,634 | $+41.90$ | Positive |
+| **MIR29B2CHG**| `cg02088308` | chr1 | 207,819,301 | $+38.75$ | Positive |
+| **PDE4C** | `cg17861230` | chr19 | 18,228,810 | $+49.10$ | Positive |
+| **ASPA** | `cg02228185` | chr17 | 3,382,901 | $-32.40$ | Negative |
+
+### 50.3 Multi-Tissue Calibration Offsets & 95% Confidence Bounds
+
+| Tissue Type | Intercept ($\beta_0$) | Offset ($\Delta_{\text{tissue}}$) | MAE | RMSE | 95% Prediction Bounds |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Whole Venous Blood** | $-0.6542$ | $0.00 \text{ yrs}$ | $3.2 \text{ yrs}$ | $3.9 \text{ yrs}$ | $\pm 7.64 \text{ yrs}$ |
+| **Saliva / Buccal Swab** | $-0.6137$ | $+0.85 \text{ yrs}$ | $3.7 \text{ yrs}$ | $4.4 \text{ yrs}$ | $\pm 8.62 \text{ yrs}$ |
+| **Seminal Fluid (Sperm DNA)**| $-0.8541$ | $-4.20 \text{ yrs}$ | $3.5 \text{ yrs}$ | $4.2 \text{ yrs}$ | $\pm 8.23 \text{ yrs}$ |
+| **Post-Mortem Bone / Teeth** | $-0.6018$ | $+1.10 \text{ yrs}$ | $3.4 \text{ yrs}$ | $4.1 \text{ yrs}$ | $\pm 8.04 \text{ yrs}$ |
+
+
 
 
 

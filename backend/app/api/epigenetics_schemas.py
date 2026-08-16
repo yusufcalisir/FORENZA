@@ -25,6 +25,7 @@ class PredictAgeRequest(BaseModel):
 
 class CpgContributionDetail(BaseModel):
     locus: str
+    gene: Optional[str] = None
     methylation_beta: float
     weight: float
     contribution_years: float
@@ -32,6 +33,9 @@ class CpgContributionDetail(BaseModel):
 
 class PredictAgeResponse(BaseModel):
     estimated_age_years: float
+    model_age_before_offset: Optional[float] = None
+    linear_predictor_x: Optional[float] = None
+    developmental_stage: Optional[str] = None
     prediction_interval_lower: float
     prediction_interval_upper: float
     standard_error_years: float
@@ -42,6 +46,8 @@ class PredictAgeResponse(BaseModel):
     aging_status: str
     cpg_locus_contributions: List[CpgContributionDetail]
     model_provenance: str
+    prosecutors_fallacy_shield: Optional[str] = None
+
 
 
 class DeconvolveTissueRequest(BaseModel):

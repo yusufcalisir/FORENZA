@@ -561,9 +561,21 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** ASIP (`rs1015362`) and BNC2 (`rs10756819`) epistatic boosting on basal pigmentation ($F_{\text{score}}$ increases from $7.59\%$ to $62.25\%$).
   - **`G`:** Sigmoidal $F_{\text{score}}$ boundary invariance strictly clamped in $[0.0, 100.0]\%$.
   - **`H`:** API integration testing across `/phenotyping/ephelides/freckling-and-uv` and `/mc1r-genotype`.
+* **`VECTOR_P4_01` (Epigenetic Age Estimation — Young Adult Blood Donor):** Chronological age 25.0 in blood verified with $\text{DNAmAge} = 25.2 \pm 3.5$ years ($21.7 - 28.7$ years) and blood posterior $> 98\%$.
+* **`VECTOR_P4_02` (Epigenetic Age Estimation — Elderly Active Smoker):** Chronological age 68.0 in blood verified with $\text{DNAmAge} = 75.3$ years, biological age acceleration ($\Delta\text{Age} > +5.0$), and high pack-years ($> 40.0$).
+* **`VECTOR_16_AGE_A-H` (Multi-Tissue Epigenetic Age Clock — Module 16):**
+  - **`A`:** Pediatric non-linear piecewise exponential link function ($x < 0 \implies \text{Age} < 20$).
+  - **`B`:** Adult linear link function ($x \ge 0 \implies \text{Age} \ge 20$).
+  - **`C`:** ELOVL2 (`cg16867657`, `cg21572722`) and FHL2 (`cg06639320`) positive age driver scaling.
+  - **`D`:** ASPA (`cg02228185`) and PENK (`cg16419235`) negative correlation modulation.
+  - **`E`:** Multi-tissue calibration offsets (Blood $\Delta=0.00$, Saliva $\Delta=+0.85$, Semen $\Delta=-4.20$, Bone $\Delta=+1.10$).
+  - **`F`:** Biological Age Acceleration classification ($\Delta\text{Age} > +5.0$ accelerated, $\Delta\text{Age} < -5.0$ decelerated).
+  - **`G`:** ISO 17025 95% prediction interval bounds ($k=1.96 \cdot \text{SE}$).
+  - **`H`:** API integration testing across `/forensic/epigenetics/predict-age`.
 * **`VECTOR_P6_01` (Chain of Custody Tamper Detection):** Merkle tree root divergence verified upon a single-second timestamp modification ($P_{\text{detection}} = 100\%$).
 * **`VECTOR_P6_02` (ISO 17025 Measurement Uncertainty):** Combined $u_c = 0.05385 \text{ ng/}\mu\text{L}$ and expanded $U_{95\%} = 0.1077 \text{ ng/}\mu\text{L}$ ($k=2.00$).
 * **`VECTOR_P6_03` (ENFSI Verbal Statement Mapping):** $LR = 3.5 \times 10^7$ maps deterministically to Verbal Tier 6 ("Extremely strong support for prosecution proposition").
+
 
 
 

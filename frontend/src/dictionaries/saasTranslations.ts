@@ -222,7 +222,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       launchDemo: "Launch FORENZA OS",
       exploreSubsystems: "Explore 30 Modules",
       subsystemsStat: "Forensic Subsystems",
-      invariantsStat: "Forensic Precision",
+      invariantsStat: "Verified Invariants",
       courtStat: "Court Admissible",
       privacyStat: "Privacy Auditor",
     },
@@ -362,7 +362,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
     subsystems: {
       badge: "Subsystem Registry",
       title: "30 Specialized Forensic Subsystems",
-      subtitle: "Organized into 6 core architectural pillars covering every domain of forensic biology, probabilistic genotyping, epigenetics, pathology, LIMS SOP chains, and court testimony.",
+      subtitle: "Organized into 6 core architectural pillars covering every domain of forensic biology, probabilistic genotyping, epigenetics, physical traces, LIMS Merkle custody, and court visualizers.",
       searchPlaceholder: "Filter subsystems...",
       activeCount: "5 Active Biocomputational Subsystems",
       operationalStatus: "Operational Status",
@@ -370,21 +370,21 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       totalSubsystemsValue: "30 / 30 Active",
       archLayersLabel: "Architectural Layers",
       archLayersValue: "6-Layer DAG",
-      pytestInvariantsLabel: "Forensic Precision",
-      pytestInvariantsValue: "99.99% Accuracy",
+      pytestInvariantsLabel: "Automated Test Suite",
+      pytestInvariantsValue: "796 / 796 Verified",
       standardComplianceLabel: "Standard Compliance",
       standardComplianceValue: "ISO/IEC 17025",
       pillars: [
         {
-          name: "Probabilistic Genotyping & Population",
+          name: "Probabilistic Genotyping & Population Genetics",
           shortName: "Genotyping",
           badge: "CORE ENGINE",
           subsystems: [
-            { id: "01", name: "Autosomal STR & Kinship Engine", badge: "STR-24", metrics: "24 Extended Loci • LR Inclusion • Kinship Index", desc: "Calculates Likelihood Ratios for inclusion/exclusion across 20 FBI CODIS core loci plus SE33, Penta D/E, and evaluates kinship indices." },
-            { id: "02", name: "MCMC Probabilistic Genotyping", badge: "MCMC-MH", metrics: "Metropolis-Hastings • 2-4 Contributors • Deconvolution", desc: "Metropolis-Hastings Markov Chain Monte Carlo deconvolution for 2-to-4 person complex DNA mixtures with stochastic parameters." },
-            { id: "03", name: "Dirichlet Fst Population Genetics", badge: "NRC-II", metrics: "Balding-Nichols • Fst Correction • Dirichlet Smooth", desc: "Implements NRC II Recommendations 4.1 & 4.2 with subpopulation coancestry (Fst = 0.01 / 0.03) Dirichlet smoothing." },
-            { id: "04", name: "Touch DNA & Low-Template LTDNA", badge: "LTDNA-MOD", metrics: "Dropout p_d • Drop-in p_i • Smooth Substrates", desc: "Models stochastic allele dropout (p_d) and drop-in (p_i) for low-mass template touch DNA recovered from smooth & porous evidence." },
-            { id: "05", name: "Tippett Calibration Engine", badge: "TIPPETT", metrics: "H_p vs H_d • Non-Contributor LR • Calibration", desc: "Generates Tippett calibration curves plotting log10(LR) probability distributions under true contributor (H_p) vs non-contributor (H_d) hypotheses." }
+            { id: "01", name: "Autosomal STR & Kinship Engine", badge: "STR-24", metrics: "24 Extended Loci • NIST 1036 • Balding-Nichols θ", desc: "Calculates Likelihood Ratios across expanded 24-locus multiplex (CODIS 20 + SE33, Penta D/E, Amelogenin) calibrated with NIST 1036 allele frequency matrices and SMM mutation models." },
+            { id: "02", name: "MCMC Probabilistic Mixture Deconvoluter", badge: "MCMC-MH", metrics: "EuroForMix & STRmix • 3-Chain MCMC • 95% HPD", desc: "Continuous Gamma/Log-Normal mixture deconvolution for 2-to-4 contributors with Gelman-Rubin R̂ < 1.05 and ESS > 1000 convergence diagnostics." },
+            { id: "03", name: "Dirichlet Fst Population Genetics", badge: "POPGEN-FST", metrics: "Balding-Nichols • Fst Correction • Dirichlet Smooth", desc: "Implements NRC II Recommendations 4.1 & 4.2 with subpopulation coancestry (Fst = 0.01 / 0.03) Dirichlet smoothing." },
+            { id: "04", name: "Touch DNA & Low-Template LTDNA", badge: "LTDNA-MOD", metrics: "Dropout p_d • Drop-in p_i • Imbalance (<100 pg)", desc: "Models stochastic allele dropout (p_d) and Poisson drop-in (p_i) for low-template touch DNA recovered from porous and non-porous evidence." },
+            { id: "05", name: "Tippett Calibration & Validation Lab", badge: "TIPPETT", metrics: "H_p vs H_d • ROC-AUC • Cllr Metric", desc: "Generates empirical Tippett calibration curves plotting log10(LR) probability distributions under true contributor (H_p) vs non-contributor (H_d) hypotheses." }
           ]
         },
         {
@@ -392,11 +392,11 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
           shortName: "Lineage DNA",
           badge: "HAPLOTYPE",
           subsystems: [
-            { id: "06", name: "Y-STR Haplotype Forensics", badge: "Y-STR", metrics: "Clopper-Pearson 95% CI • Y-HRD Database • Haplotype", desc: "Computes Clopper-Pearson 95% binomial confidence intervals for Y-chromosome STR haplotypes with Y-HRD database matching." },
-            { id: "07", name: "X-STR Linkage & Kinship Index", badge: "X-STR", metrics: "Linkage Equilibrium • Female Kinship KI_X", desc: "Evaluates X-chromosomal linked marker cluster transmission probabilities and female kinship likelihood ratios (KI_X)." },
-            { id: "08", name: "mtDNA Control Region Forensics", badge: "mtDNA", metrics: "rCRS Alignment • RSRS • Haplogroup Tree", desc: "Aligns hypervariable regions (HV1/HV2/HV3) against revised Cambridge Reference Sequence (rCRS) for maternal lineage assignment." },
-            { id: "09", name: "DVI Mass Disaster Identification", badge: "DVI-PED", metrics: "Pedigree Trees • Kinship Search • Disaster Victim", desc: "Pedigree likelihood evaluation for Mass Fatality / Disaster Victim Identification (DVI) matching reference kin." },
-            { id: "10", name: "Ancient & Forensic SNP Mapper", badge: "aDNA-SNP", metrics: "Damage Patterns C->T • Low-Coverage • Map", desc: "Maps low-coverage forensic SNP arrays and ancient DNA C->T deamination damage patterns." }
+            { id: "06", name: "Y-STR Haplotype Forensics", badge: "Y-STR", metrics: "Y-FILER Plus 27 • Clopper-Pearson 95% • Y-HRD", desc: "Computes Clopper-Pearson 95% binomial confidence intervals for Y-chromosome STR haplotypes (Y-FILER Plus 27 loci) with Y-HRD database matching." },
+            { id: "07", name: "X-STR Linkage & Kinship Index", badge: "X-STR", metrics: "Argus X-12 • LG1-LG4 Linkage • KI_X Kinship", desc: "Evaluates Argus X-12 4 linkage clusters with Kosambi map distance corrections and female kinship likelihood ratios (KI_X)." },
+            { id: "08", name: "mtDNA Control Region rCRS/RSRS", badge: "mtDNA-rCRS", metrics: "EMPOP rCRS/RSRS • HV1-HV3 • Phylotree", desc: "Aligns hypervariable regions against revised Cambridge Reference Sequence (rCRS) and RSRS for maternal lineage assignment." },
+            { id: "09", name: "Interpol DVI Mass Disaster Engine", badge: "DVI-PED", metrics: "Interpol Joint LR • N x M Matrix • 4 Tiers", desc: "Multi-omic joint likelihood ratio evaluation (LR_Joint = LR_Auto · LR_Y · LR_mt · LR_SNP) and N x M cross-reconciliation matrix." },
+            { id: "10", name: "Ancient DNA & Degraded Forensic SNP", badge: "aDNA-SNP", metrics: "MapDamage Kinetics • C->T • Fragmentation", desc: "Models Briggs deamination damage kinetics (C->T transitions) and exponential fragmentation length distributions for degraded skeletal remains." }
           ]
         },
         {
@@ -404,11 +404,11 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
           shortName: "Phenotyping",
           badge: "HIRISPLEX-S",
           subsystems: [
-            { id: "11", name: "HIrisPlex-S Pigmentation Engine", badge: "HIRISPLEX", metrics: "Eye Color • Hair Color • Skin Tone", desc: "24-SNP HIrisPlex-S neural network model predicting iris color, hair pigmentation/morphology, and Fitzpatrick skin phototype." },
-            { id: "12", name: "Biogeographic Ancestry (BGA)", badge: "BGA-55", metrics: "55-SNP Panel • 7 Global Populations • PCA", desc: "Calculates posterior probabilities for 7 global biogeographic populations using 55 ancestral informative markers (AIMs)." },
-            { id: "13", name: "Facial Morphology & Craniofacial", badge: "CRANIO-3D", metrics: "3D Landmarks • Morphological Predictions", desc: "Predicts craniofacial structural proportions and facial landmark distances from genomic SNP markers." },
-            { id: "14", name: "Hair Texture & Balding Risk", badge: "HAIR-TEX", metrics: "EDAR V370A • Male Pattern Baldness • Curl", desc: "Predicts hair morphology (straight/wavy/curly) and androgenetic alopecia predisposition." },
-            { id: "15", name: "Freckling & UV Sensitivity", badge: "MC1R-UV", metrics: "MC1R Variants • Freckling Score • UV Sensitivity", desc: "Evaluates MC1R gene variant combinations to score ephelides (freckling) density and sun sensitivity." }
+            { id: "11", name: "HIrisPlex-S 41-SNP Pigmentation", badge: "HIRISPLEX", metrics: "Iris 6 • Hair 22 • Fitzpatrick Skin 36", desc: "Multinomial logistic regression neural model predicting eye, hair, and 5-class Fitzpatrick skin phototypes with Softmax sum-to-one invariant." },
+            { id: "12", name: "55-SNP AIM Ancestry & Live GIS", badge: "BGA-55", metrics: "55 AIMs • 7 Populations • 3D Spherical GIS", desc: "Calculates posterior probabilities for 7 continental biogeographic populations and projects 3D Cartesian spherical GIS coordinates." },
+            { id: "13", name: "Craniofacial 3D Morphology", badge: "CRANIO-3D", metrics: "Claes 3D Landmarks • Midline Symmetry • I_F", desc: "Reconstructs 3D craniofacial morphology landmarks, bizygomatic breadth, and clinical Facial Index (I_F) with strict vertical Z-monotonicity." },
+            { id: "14", name: "Hair Texture & Balding Risk PRS", badge: "HAIR-TEX", metrics: "EDAR Fiber Area • Curl Index • Hamilton-Norwood", desc: "Predicts hair cross-sectional fiber area, curl density index (straight/wavy/curly/kinky), and polygenic androgenetic alopecia risk." },
+            { id: "15", name: "Ephelides, MC1R Epistasis & UV", badge: "MC1R-UV", metrics: "MC1R R/r Weights • Freckling Score • MED mJ/cm²", desc: "Evaluates MC1R loss-of-function variants with epistatic ASIP/BNC2 interactions to score freckling density and Minimal Erythema Dose (MED)." }
           ]
         },
         {
@@ -416,39 +416,40 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
           shortName: "Epigenetics",
           badge: "EPIGENETICS",
           subsystems: [
-            { id: "16", name: "Horvath Epigenetic Age Clock", badge: "HORVATH", metrics: "5-CpG Methylation • Epigenetic Age ±2.8 yr", desc: "Quantifies DNA methylation levels at key CpG loci to estimate chronological age at time of deposition with ±2.8 year precision." },
-            { id: "17", name: "Tissue-Specific Body Fluid tDMR", badge: "tDMR-FLUID", metrics: "Blood • Saliva • Semen • Vaginal Fluid", desc: "Deconvolutes tissue-specific differentially methylated regions (tDMRs) to identify body fluid origin." },
-            { id: "18", name: "Environmental Lifestyle Epigenetics", badge: "AHRR-LIFESTYLE", metrics: "AHRR Smoking Score • Alcohol • Epigenetics", desc: "Analyzes AHRR gene hypomethylation to infer chronic tobacco smoke exposure and environmental lifestyle signatures." },
-            { id: "19", name: "Telomere Length Chronometer", badge: "TELO-CHRONO", metrics: "T/S Ratio • Cellular Senescence Rate", desc: "Measures relative telomere-to-single-copy-gene (T/S) length ratio for secondary biological age confirmation." },
-            { id: "20", name: "Forensic MicroRNA Profiling", badge: "miRNA", metrics: "miR-451a • miR-205 • Body Fluid ID", desc: "Quantifies body-fluid-specific microRNA expression profiles for forensic identification of degraded samples." }
+            { id: "16", name: "Horvath / VISAGE Epigenetic Clock", badge: "HORVATH", metrics: "Piecewise Elastic Net • 5-CpG • Multi-Tissue", desc: "Quantifies DNA methylation levels at key CpG loci using Horvath piecewise linear/exponential link function to estimate chronological age." },
+            { id: "17", name: "Body Fluid & Tissue Origin tDMR", badge: "tDMR-FLUID", metrics: "6-Tissue QDA/NNLS • Semen • Blood • Saliva", desc: "Deconvolutes tissue-specific differentially methylated regions (tDMRs) to identify 6 forensic body fluids with Sum-to-One invariant." },
+            { id: "18", name: "Lifestyle Epigenomics & AHRR", badge: "AHRR-LIFE", metrics: "AHRR Smoking • Pack-Years • Epigenetic BMI", desc: "Analyzes AHRR hypomethylation to quantify tobacco smoke pack-years, alcohol exposure indices, and epigenetic BMI." },
+            { id: "19", name: "Telomere Length Decay & PMI", badge: "TELO-PMI", metrics: "qPCR T/S Decay • ADH Thermal Summation", desc: "Measures relative telomere-to-single-copy-gene (T/S) length ratio and calculates inverse Post-Mortem Interval (PMI) under ADH." },
+            { id: "20", name: "Bisulfite QC & Probe Calibration Lab", badge: "BISULFITE-QC", metrics: "Conversion ≥99.0% • Logit M-Value • BMIQ", desc: "Validates bisulfite conversion efficiency (C_conv ≥ 99.0%), computes bijective Beta ↔ M logit transforms, and applies BMIQ normalization." }
           ]
         },
         {
-          name: "Pathology, Toxicology & Serology",
+          name: "Physical Evidence, Pathology & Trace Forensics",
           shortName: "Pathology",
-          badge: "PATHOLOGY",
+          badge: "PHYSICAL",
           subsystems: [
-            { id: "21", name: "Bloodstain Pattern Analysis (BPA)", badge: "BPA-3D", metrics: "Directionality • Area of Origin • Impact Angle", desc: "Calculates impact angle, stain directionality vectors, and 3D point-of-origin for bloodstain evidence." },
-            { id: "22", name: "High-Resolution Digital Microscopy", badge: "MICROSCOPY", metrics: "Spermatozoa Head • Fiber • Diatom Counts", desc: "Computer vision classification for spermatozoa identification, textile fiber morphology, and diatom counts." },
-            { id: "23", name: "Post-Mortem Toxicology & GC-MS", badge: "TOX-GCMS", metrics: "GC-MS Spectra • Blood Alcohol Concentration", desc: "Analyzes Gas Chromatography-Mass Spectrometry (GC-MS) spectral peaks for toxicological screening." },
-            { id: "24", name: "Diatom & Forensic Palynology", badge: "PALYNO-ECO", metrics: "Diatom Ratio • Soil Pollen Geolocation", desc: "Correlates drowning site diatom assemblages and soil pollen signatures to pinpoint geographical crime scene origins." },
-            { id: "25", name: "ABO / Rh Blood Serology", badge: "ABO-SERO", metrics: "ABO Glycosyltransferase • Rh Factor", desc: "Predicts classical ABO and Rh blood group antigens from ABO gene exon 6/7 sequencing." }
+            { id: "21", name: "Bloodstain Pattern Analysis (BPA 3D)", badge: "BPA-3D", metrics: "Least-Squares Point of Origin • Drag • Angle", desc: "Calculates impact angle, stain directionality vectors, and closed-form least-squares 3D flight convergence with 95% confidence ellipsoids." },
+            { id: "22", name: "SEM-EDX GSR & CMC 3D Ballistics", badge: "BALLISTICS-GSR", metrics: "ASTM E1588 Pb-Ba-Sb • 3D CMC Striations", desc: "Automated characteristic gunshot residue triad scoring and 3D Congruent Matching Cells striation surface topography matching." },
+            { id: "23", name: "Forensic Entomology & Minimum PMI", badge: "ENTO-PMI", metrics: "Accumulated Degree Days • T_base • Species", desc: "Calculates minimum PMI based on Accumulated Degree Days (ADD/ADH) thermal constants (K) and lower developmental thresholds (T_base)." },
+            { id: "24", name: "Multispectral Imaging (MSI) & ATR-FTIR", badge: "SPEC-MSI", metrics: "4-Band MSI • ATR-FTIR • HQI ≥ 85.0%", desc: "Trace evidence and synthetic fiber identification using 4-band multispectral reflectance and Hit Quality Index (HQI ≥ 85.0%) spectral matching." },
+            { id: "25", name: "Post-Mortem Toxicokinetics & PMR", badge: "TOX-PMR", metrics: "Central/Peripheral C/P • Widmark • Opioids", desc: "Quantifies Central-to-Peripheral (C/P) post-mortem drug redistribution ratios and zero/first-order metabolic clearance models." }
           ]
         },
         {
-          name: "LIMS, ISO 17025 QA/QC & Governance",
+          name: "LIMS, ISO 17025 QA/QC & Cryptographic Governance",
           shortName: "ISO & LIMS",
-          badge: "COMPLIANCE",
+          badge: "GOVERNANCE",
           subsystems: [
-            { id: "26", name: "LIMS Accessioning & Chain of Custody", badge: "LIMS-HMAC", metrics: "SHA-256 Custody Ledger • Barcode Tracking", desc: "Manages LIMS sample accessioning, chain-of-custody ledgers, storage temperatures, and analyst sign-offs." },
-            { id: "27", name: "ISO 17025 QA/QC Inspection Matrix", badge: "ISO-17025", metrics: "7-Point QA Check • Stutter Thresholds", desc: "Enforces 7-point QA/QC inspection rules including heterozygote peak height ratio (Hb), analytical thresholds, and controls." },
-            { id: "28", name: "Zero-Knowledge Privacy Auditor", badge: "ZKP-CIRCOM", metrics: "Groth16 Proofs • Polygon Ledger", desc: "Generates Circom zero-knowledge proofs confirming DNA profile match criteria without revealing raw genomic data." },
-            { id: "29", name: "Expert Witness Court Mode Framework", badge: "COURT-MODE", metrics: "7-Point Framework • Prosecutor Shield", desc: "Compiles complete judicial testimony packages, verbal LR translation, and Prosecutor's Fallacy defense shields." },
-            { id: "30", name: "Benchmark & Ground Truth Validator", badge: "VALIDATOR", metrics: "Synthetic Case Gen • ROC-AUC • 241 Tests", desc: "Runs automated validation benchmarks against synthetic ground-truth cases to verify pipeline accuracy across 41 test modules." }
+            { id: "26", name: "Chain of Custody Merkle Tree Ledger", badge: "LIMS-MERKLE", metrics: "SHA-256 / Blake3 • O(log₂ N) Proofs • Append-Only", desc: "Binary append-only cryptographic Merkle tree recording evidence handling transitions with O(log₂ N) courtroom inclusion proofs." },
+            { id: "27", name: "Zero-Knowledge Proof Blind Forensic Auditor", badge: "ZKP-GROTH16", metrics: "Circom Groth16 • BN254 Pairings • Zero Leakage", desc: "Privacy-preserving matching engine proving suspect inclusion (LR ≥ M_thresh) over BN254 bilinear pairing without exposing raw STR/SNP sequences." },
+            { id: "28", name: "ISO/IEC 17025:2017 Metrological Uncertainty Budget", badge: "ISO-17025-GUM", metrics: "GUM Uncertainty • U_95% = 2.00 · u_c • z-Score", desc: "Combined and expanded measurement uncertainty (U_95% = 2.00 · u_c) for qPCR DNA yields and laboratory z-score proficiency validation." },
+            { id: "29", name: "Dynamic ENFSI Evaluative Reporting Scaler", badge: "ENFSI-2017", metrics: "7-Tier Verbal Scale • Daubert FRE 702 • Frye Audit", desc: "Translates continuous Likelihood Ratios into standardized 7-tier ENFSI verbal scale statements with Daubert FRE 702 and Frye statutory admissibility audits." },
+            { id: "30", name: "3D Spatial Evidence Presenter & Juror Visualizer", badge: "SPATIAL-3D", metrics: "SE(3) Registration • 95% Ellipsoids • Multi-Sensor", desc: "Special Euclidean SE(3) multi-sensor spatial registration (LiDAR, BPA, Ballistics, DNA) and 95% volumetric probability ellipsoid rendering (χ²₃ = 7.815)." }
           ]
         }
       ],
     },
+
     architecture: {
       badge: "System Architecture",
       title: "Directed Acyclic Graph (DAG) Evidence Pipeline",
@@ -512,17 +513,17 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       ],
       specs: [
         { label: "Autosomal STR Multiplex", value: "Expanded 24-Locus Forensic Panel (20 FBI CODIS Core + ESS SE33, Penta D, Penta E, Amelogenin)" },
-        { label: "Lineage Forensics", value: "Y-STR (Clopper-Pearson 95% CI), X-STR (KI_X Linkage), mtDNA rCRS Alignment" },
-        { label: "Probabilistic Mixture MCMC", value: "Metropolis-Hastings 2-4 Contributor Deconvolution with Dropout (p_d) & Drop-in (p_i)" },
-        { label: "Phenotype & Epigenetics", value: "HIrisPlex-S Extended (Eye/Hair/Skin/Freckles) & Horvath 5-CpG Epigenetic Age Clock" },
-        { label: "Population Models", value: "NRC II Recommendation 4.1 & 4.2 Balding-Nichols Dirichlet Subpopulation Fst Correction" },
+        { label: "Lineage Forensics", value: "Y-STR 27 Loci (Clopper-Pearson 95% CI), X-STR 4 Clusters (Argus X-12), mtDNA rCRS/RSRS" },
+        { label: "Probabilistic Mixture MCMC", value: "EuroForMix Gamma & STRmix Log-Normal 2-4 Contributors (Dropout p_d & Drop-in p_i)" },
+        { label: "Phenotype & Epigenetics", value: "HIrisPlex-S 41-SNP (Eye/Hair/Skin), 55-SNP AIM GIS & Horvath 5-CpG Epigenetic Age Clock" },
+        { label: "Physical & Trace Evidence", value: "3D BPA Least-Squares Origin, SEM-EDX GSR (Pb-Ba-Sb), CMC Ballistics & Entomology ADD/ADH" },
+        { label: "Population Models", value: "NRC II Recommendations 4.1 & 4.2 Balding-Nichols Dirichlet Subpopulation Fst Correction" },
         { label: "Instrument Ingestion", value: "Automated Gateway for CE GeneMapper CSV, qPCR Quantifiler Trio Cq/DI & NGS MiSeq VCF" },
-        { label: "ISO 17025 Compliance", value: "8-Section Formal Certificate Compiler, 7-Point QA/QC Inspection & Expert Witness Court Mode" },
-        { label: "Forensic Precision", value: "99.99% Multi-Omic Analytical Validation & Invariant Security" },
+        { label: "ISO 17025 Compliance", value: "8-Section Formal Certificate Compiler, GUM Uncertainty (k=2.00) & 7-Tier ENFSI Scaler" },
+        { label: "Automated Test Suite", value: "796 / 796 Automated Tests Passed (100% Invariant Validation)" },
         { label: "Frontend Stack", value: "Next.js 16 Turbopack App Router, React 19, Tailwind CSS, Framer Motion" },
-        { label: "Backend Stack", value: "FastAPI (Python 3.12), PyTorch, Scikit-learn, MCMC Metropolis-Hastings Engine" },
-        { label: "Privacy Auditor", value: "Circom zkSNARK Groth16 Proof Engine + Polygon Cryptographic Ledger" },
-        { label: "Master Platform OS", value: "FORENZA Forensic Evidence OS 6-Layer Directed Acyclic Graph (DAG) PROD" }
+        { label: "Backend Stack", value: "FastAPI (Python 3.12), NumPy, SciPy, Scikit-learn, MCMC Metropolis-Hastings Engine" },
+        { label: "Privacy & Ledger", value: "Circom zk-SNARK Groth16 (BN254 Pairings) + Binary Merkle Tree O(log₂ N) Custody Ledger" }
       ]
     },
     faq: {
@@ -579,7 +580,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       launchDemo: "Demoyu Başlat",
       exploreSubsystems: "30 Modülü İncele",
       subsystemsStat: "Adli Alt Sistem",
-      invariantsStat: "Analitik Doğruluk",
+      invariantsStat: "Doğrulanmış İnvaryant",
       courtStat: "Mahkeme Uyumlu",
       privacyStat: "Gizlilik Denetçisi",
     },
@@ -718,8 +719,8 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
     },
     subsystems: {
       badge: "Modüler Analiz Dizini",
-      title: "30 Adli Genetik ve Biyobilişim Modülü",
-      subtitle: "Adli biyoloji, olasılıksal genotipleme, epigenetik, patoloji, LIMS iş akışları ve adli rapor standartlarını kapsayan 6 temel mimari kategoride sunulmaktadır.",
+      title: "30 Adli Biyobilgisayar ve Kanıt Modülü",
+      subtitle: "Adli biyoloji, olasılıksal genotipleme, epigenetik, fiziksel izler, LIMS Merkle delil zinciri ve jüri görselleştiricilerini kapsayan 6 temel mimari sütunda sunulmaktadır.",
       searchPlaceholder: "Modülleri filtreleyin...",
       activeCount: "5 Aktif Adli Analiz Modülü",
       operationalStatus: "Operasyonel Durum",
@@ -727,21 +728,21 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       totalSubsystemsValue: "30 / 30 Aktif",
       archLayersLabel: "Mimari Katmanlar",
       archLayersValue: "6 Katmanlı DAG",
-      pytestInvariantsLabel: "Analitik Doğruluk",
-      pytestInvariantsValue: "%99.99 Hassasiyet",
+      pytestInvariantsLabel: "Doğrulanmış Test Paketi",
+      pytestInvariantsValue: "796 / 796 Doğrulandı",
       standardComplianceLabel: "Standart Uyumluluk",
       standardComplianceValue: "ISO/IEC 17025",
       pillars: [
         {
-          name: "Olasılıksal Genotipleme ve Popülasyon Analizleri",
+          name: "Olasılıksal Genotipleme ve Popülasyon Genetiği",
           shortName: "Olasılıksal",
           badge: "TEMEL MOTOR",
           subsystems: [
-            { id: "01", name: "Otozomal STR ve Akrabalık Motoru", badge: "STR-24", metrics: "24 Genişletilmiş Lokus • LR Analizi • Akrabalık İndeksi", desc: "20 FBI CODIS çekirdek lokusu ve SE33, Penta D/E belirteçlerinde dahil etme/dışlama olabilirlik oranlarını (LR) ve akrabalık indekslerini hesaplar." },
-            { id: "02", name: "MCMC Karışım Dekonvolüsyonu", badge: "MCMC-MH", metrics: "Metropolis-Hastings • 2-4 Katkıcı • Karışım Analizi", desc: "Stokastik parametrelerle 2 ila 4 kişilik karmaşık DNA karışımları için Metropolis-Hastings MCMC ayrıştırması yürütür." },
-            { id: "03", name: "Dirichlet Fst Popülasyon Genetiği", badge: "NRC-II", metrics: "Balding-Nichols • Fst Düzeltmesi • Dirichlet Modeli", desc: "Alt popülasyon akrabalığı (Fst = 0.01 / 0.03) ile NRC II Tavsiye 4.1 ve 4.2 standartlarında Dirichlet yumuşatması uygular." },
-            { id: "04", name: "Temas DNA'sı ve LTDNA Analizi", badge: "LTDNA-MOD", metrics: "Alel Kaybolması p_d • Alel Eklenmesi p_i • Yüzey Tespiti", desc: "Düşük kütleli iz DNA örneklerinde stokastik alel kaybolması (p_d) ve alel eklenmesini (p_i) modeller." },
-            { id: "05", name: "Tippett Kalibrasyon Analizi", badge: "TIPPETT", metrics: "H_p vs H_d • LR Dağılımı • Tippett Eğrisi", desc: "Gerçek katkıda bulunan (H_p) ile katkıda bulunmayan (H_d) hipotezleri için olabilirlik oranı kalibrasyon eğrilerini raporlar." }
+            { id: "01", name: "Otozomal STR ve Soybağı Analiz Motoru", badge: "STR-24", metrics: "24 Genişletilmiş Lokus • NIST 1036 • Balding-Nichols θ", desc: "Genişletilmiş 24 lokuslu adli panelde (CODIS 20 + SE33, Penta D/E, Amelogenin) NIST 1036 frekans matrisleri ve SMM mutasyon modeliyle olabilirlik oranı (LR) hesaplar." },
+            { id: "02", name: "MCMC Olasılıksal Karışım Dekonvolüsyonu", badge: "MCMC-MH", metrics: "EuroForMix & STRmix • 3 Zincirli MCMC • %95 HPD", desc: "2 ila 4 kişilik karmaşık DNA karışımları için Gelman-Rubin R̂ < 1.05 ve ESS > 1000 yakınsama denetimli sürekli Gamma/Log-Normal dekonvolüsyon yürütür." },
+            { id: "03", name: "Dirichlet Fst Popülasyon Genetiği", badge: "POPGEN-FST", metrics: "Balding-Nichols • Fst Düzeltmesi • Dirichlet Modeli", desc: "Alt popülasyon akrabalığı (Fst = 0.01 / 0.03) ile NRC II Tavsiye 4.1 ve 4.2 standartlarında Dirichlet yumuşatması uygular." },
+            { id: "04", name: "Temas DNA'sı ve LTDNA Analizi", badge: "LTDNA-MOD", metrics: "Alel Kaybolması p_d • Alel Eklenmesi p_i • Dengesizlik (<100 pg)", desc: "Gözenekli ve gözeneksiz delil yüzeylerinden elde edilen düşük şablonlu iz DNA'larda stokastik alel kaybolması (p_d) ve Poisson alel eklenmesini (p_i) modeller." },
+            { id: "05", name: "Tippett Kalibrasyon ve Doğrulama Laboratuvarı", badge: "TIPPETT", metrics: "H_p vs H_d • ROC-AUC • Cllr Metriği", desc: "Gerçek katkıda bulunan (H_p) ile katkıda bulunmayan (H_d) hipotezleri için ampirik Tippett kalibrasyon eğrilerini ve Cllr maliyet metriklerini raporlar." }
           ]
         },
         {
@@ -749,11 +750,11 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
           shortName: "Soy Analizi",
           badge: "HAPLOTİP",
           subsystems: [
-            { id: "06", name: "Y-STR Haplotip Analizi", badge: "Y-STR", metrics: "Clopper-Pearson %95 Güven • Y-HRD Veri Tabanı", desc: "Y-kromozomu STR haplotipleri için Clopper-Pearson %95 binom güven aralıklarını hesaplar ve Y-HRD veri tabanıyla eşleştirir." },
-            { id: "07", name: "X-STR Bağlantılı Markör Analizi", badge: "X-STR", metrics: "Bağlantı Dengesi • Kadın Soy Akrabalığı (KI_X)", desc: "X-kromozomu bağlantılı markör kümelerinin aktarım olasılıklarını ve kadın soy akrabalık indekslerini değerlendirir." },
-            { id: "08", name: "mtDNA Kontrol Bölgesi Analizi", badge: "mtDNA", metrics: "rCRS Hizalaması • RSRS • Anne Soyu Haplogrubu", desc: "Anne soyu tespiti için hiperdeğişken bölgeleri (HV1/HV2/HV3) revize edilmiş Cambridge Referans Dizisi (rCRS) ile hizalar." },
-            { id: "09", name: "DVI ve Afet Kurbanı Kimliklendirme", badge: "DVI-PED", metrics: "Soyağacı Analizi • Profil Eşleştirme • Interpol DVI", desc: "Toplu ölümler ve felaket kurbanlarının kimlik tespiti (DVI) için referans akrabalarla soyağacı olabilirlik değerlendirmesi yapar." },
-            { id: "10", name: "Antik DNA ve Adli SNP Haritalama", badge: "aDNA-SNP", metrics: "C->T Deaminasyon Hasarı • Düşük Kapsama • SNP", desc: "Düşük kapsamlı adli SNP dizilimlerini ve antik DNA C->T deaminasyon hasar desenlerini haritalandırır." }
+            { id: "06", name: "Y-STR Haplotip Analizi", badge: "Y-STR", metrics: "Y-FILER Plus 27 • Clopper-Pearson %95 • Y-HRD", desc: "Y-kromozomu STR haplotipleri (Y-FILER Plus 27 lokus) için Clopper-Pearson %95 binom güven aralıklarını hesaplar ve Y-HRD veri tabanıyla eşleştirir." },
+            { id: "07", name: "X-STR Bağlantılı Markör Analizi", badge: "X-STR", metrics: "Argus X-12 • LG1-LG4 Bağlantısı • KI_X Soybağı", desc: "Argus X-12 4 bağlantı kümesini Kosambi harita mesafesi düzeltmeleriyle değerlendirir ve kadın soybağı olabilirlik oranlarını (KI_X) hesaplar." },
+            { id: "08", name: "mtDNA Kontrol Bölgesi rCRS/RSRS", badge: "mtDNA-rCRS", metrics: "EMPOP rCRS/RSRS • HV1-HV3 • Filotree", desc: "Anne soyu tespiti için hiperdeğişken bölgeleri revize edilmiş Cambridge Referans Dizisi (rCRS) ve RSRS ile hizalar." },
+            { id: "09", name: "Interpol DVI ve Afet Kurbanı Kimliklendirme", badge: "DVI-PED", metrics: "Interpol Birleşik LR • N x M Matris • 4 Kademe", desc: "Çoklu-omik birleşik olabilirlik oranı (LR_Birleşik = LR_Oto · LR_Y · LR_mt · LR_SNP) ve N x M afet çapraz mutabakat matrisi hesaplar." },
+            { id: "10", name: "Antik DNA ve Adli SNP Deaminasyon Motoru", badge: "aDNA-SNP", metrics: "MapDamage Kinetiği • C->T • Fragmantasyon", desc: "Bozunmuş iskelet kalıntıları için Briggs deaminasyon hasar kinetiğini (C->T geçişleri) ve üstel fragmantasyon uzunluk dağılımını modeller." }
           ]
         },
         {
@@ -761,51 +762,52 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
           shortName: "Fenotipleme",
           badge: "HIRISPLEX-S",
           subsystems: [
-            { id: "11", name: "HIrisPlex-S Pigmentasyon Analizi", badge: "HIRISPLEX", metrics: "Göz Rengi • Saç Rengi • Ten Fototipi", desc: "Göz rengi, saç pigmentasyonu/morfolojisi ve Fitzpatrick ten fototipini tahmin eden 24-SNP HIrisPlex-S yapay zeka modeli." },
-            { id: "12", name: "Coğrafi Atasal Soy Tahmini (BGA)", badge: "BGA-55", metrics: "55-SNP Paneli • 7 Atasal Popülasyon • PCA", desc: "55 atasal bilgi markörü (AIM) kullanarak 7 küresel coğrafi popülasyon için sonralı olasılıkları hesaplar." },
-            { id: "13", name: "Kraniyofasiyal Yüz Morfolojisi", badge: "CRANIO-3D", metrics: "3D Nirengi Noktaları • Morfolojik Tahmin", desc: "Genetik markörlerden kraniyofasiyal yapısal oranları ve yüz nirengi noktalarını tahmin eder." },
-            { id: "14", name: "Saç Yapısı ve Kellik Riski", badge: "HAIR-TEX", metrics: "EDAR V370A • Erkek Tipi Kellik • Saç Şekli", desc: "Saç morfolojisini (düz/dalgalı/kıvırcık) ve androgenetik alopesi yatkınlığını tahmin eder." },
-            { id: "15", name: "Çil Yoğunluğu ve UV Hassasiyeti", badge: "MC1R-UV", metrics: "MC1R Varyantları • Çil Skoru • Güneş Hassasiyeti", desc: "Çil yoğunluğunu ve güneşe hassasiyet derecesini MC1R geni varyant kombinasyonları üzerinden puanlar." }
+            { id: "11", name: "HIrisPlex-S 41-SNP Pigmentasyon Analizi", badge: "HIRISPLEX", metrics: "İris 6 • Saç 22 • Fitzpatrick Ten 36", desc: "Göz rengi, saç pigmentasyonu ve 5 sınıflı Fitzpatrick ten fototipini Softmax toplamı bire eşitlik değişmeziyle tahmin eden çok terimli lojistik regresyon modeli." },
+            { id: "12", name: "55-SNP AIM Atasal Soy ve Canlı GIS Haritası", badge: "BGA-55", metrics: "55 AIM • 7 Popülasyon • 3D Küresel GIS", desc: "55 atasal bilgi markörü (AIM) kullanarak 7 küresel coğrafi popülasyon için sonralı olasılıkları hesaplar ve 3D Kartezyen küresel GIS koordinatlarına izdüşürür." },
+            { id: "13", name: "Kraniyofasiyal 3D Yüz Morfolojisi", badge: "CRANIO-3D", metrics: "Claes 3D Nirengi • Simetri • I_F İndeksi", desc: "Genetik markörlerden kraniyofasiyal yapısal oranları, yüz nirengi noktalarını ve klinik Yüz İndeksini (I_F) dikey Z-monotonluk garantisiyle yeniden üretir." },
+            { id: "14", name: "Saç Yapısı ve Kellik Riski PRS", badge: "HAIR-TEX", metrics: "EDAR Lif Alanı • Kıvrım İndeksi • Hamilton-Norwood", desc: "Saç lifi enine kesit alanını, kıvrım yoğunluğu indeksini (düz/dalgalı/kıvırcık) ve poligenik androgenetik alopesi kellik riskini tahmin eder." },
+            { id: "15", name: "Çil Yoğunluğu, MC1R Epistazı ve UV Hassasiyeti", badge: "MC1R-UV", metrics: "MC1R R/r Ağırlıkları • Çil Skoru • MED mJ/cm²", desc: "Çil yoğunluğunu ve Minimal Eritem Dozunu (MED) ASIP/BNC2 epistatik etkileşimleriyle birlikte MC1R geni varyant kombinasyonları üzerinden puanlar." }
           ]
         },
         {
-          name: "Epigenetik ve Yaş Tayini",
+          name: "Epigenetik ve Çevresel Yaşlanma",
           shortName: "Epigenetik",
           badge: "EPİGENETİK",
           subsystems: [
-            { id: "16", name: "Horvath Epigenetik Yaş Saati", badge: "HORVATH", metrics: "5-CpG Metilasyonu • Epigenetik Yaş ±2.8 Yıl", desc: "Delil bırakma anındaki kronolojik yaşı ±2.8 yıl hassasiyetle tahmin etmek için temel CpG lokuslarındaki metilasyon seviyelerini ölçer." },
-            { id: "17", name: "Dokuya Özgü Vücut Sıvısı Tespiti (tDMR)", badge: "tDMR-FLUID", metrics: "Kan • Tükürük • Meni • Vajinal Sıvı", desc: "Dokuya özgü farklı metillenen bölgeleri (tDMR) çözümleyerek adli vücut sıvısı türünü tespit eder." },
-            { id: "18", name: "Çevresel Yaşam Tarzı Epigenetiği", badge: "AHRR-LIFESTYLE", metrics: "AHRR Sigara Skoru • Alkol • Epigenetik", desc: "Kronik tütün kullanımı ve çevresel yaşam tarzı izlerini belirlemek için AHRR geni hipometilasyonunu analiz eder." },
-            { id: "19", name: "Telomer Uzunluğu Analizi", badge: "TELO-CHRONO", metrics: "T/S Oranı • Hücresel Yaşlanma Hızı", desc: "İkincil biyolojik yaş doğrulaması için göreceli telomer/tek kopya gen (T/S) uzunluk oranını ölçer." },
-            { id: "20", name: "Adli MicroRNA Profili", badge: "miRNA", metrics: "miR-451a • miR-205 • Vücut Sıvısı Tespiti", desc: "Bozunmuş örneklerde adli tespit için dokuya özgü microRNA ifade profillerini niceliksel olarak ölçer." }
+            { id: "16", name: "Horvath / VISAGE Çoklu-Doku Yaş Saati", badge: "HORVATH", metrics: "Parçalı Elastik Net • 5-CpG • Çoklu-Doku", desc: "Delil bırakma anındaki kronolojik yaşı tahmin etmek için temel CpG lokuslarındaki metilasyon seviyelerini Horvath parçalı doğrusal/üstel bağlantı fonksiyonuyla ölçer." },
+            { id: "17", name: "Dokuya Özgü Vücut Sıvısı tDMR Ayrıştırması", badge: "tDMR-FLUID", metrics: "6-Doku QDA/NNLS • Meni • Kan • Tükürük", desc: "Dokuya özgü farklı metillenen bölgeleri (tDMR) çözümleyerek 6 adli vücut sıvısı türünü Toplam-1 olasılık değişmeziyle tespit eder." },
+            { id: "18", name: "Çevresel Yaşam Tarzı Epigenetiği ve AHRR", badge: "AHRR-LIFE", metrics: "AHRR Sigara Skoru • Paket-Yıl • Epigenetik BMI", desc: "Kronik tütün kullanım paket-yılını, alkol maruziyet indeksini ve epigenetik vücut kitle indeksini belirlemek için AHRR geni hipometilasyonunu analiz eder." },
+            { id: "19", name: "Telomer Uzunluğu Azalması ve PMI", badge: "TELO-PMI", metrics: "qPCR T/S Azalması • ADH Termal Toplamı", desc: "Göreceli telomer/tek kopya gen (T/S) uzunluk oranını ölçer ve ADH termal toplamı altında ters Ölüm Sonrası Zaman Aralığını (PMI) hesaplar." },
+            { id: "20", name: "Bisülfit Kalite Kontrol ve Prob Kalibrasyon Laboratuvarı", badge: "BISULFITE-QC", metrics: "Dönüşüm ≥%99.0 • Logit M-Değeri • BMIQ", desc: "Bisülfit dönüşüm verimliliğini doğrular (C_conv ≥ %99.0), bijektif Beta ↔ M logit dönüşümlerini hesaplar ve BMIQ Tip II prob normalizasyonu uygular." }
           ]
         },
         {
-          name: "Adli Patoloji, Toksikoloji ve Seroloji",
+          name: "Fiziksel Kanıtlar, Adli Patoloji ve İz İnceleme",
           shortName: "Patoloji",
-          badge: "PATOLOJİ",
+          badge: "FİZİKSEL",
           subsystems: [
-            { id: "21", name: "Kan Lekesi Deseni Analizi (BPA)", badge: "BPA-3D", metrics: "Yönelim • Çıkış Açısı • Darbe Açısı", desc: "Kan lekesi delilleri için darbe açısını, leke yönelim vektörlerini ve 3D çıkış noktasını hesaplar." },
-            { id: "22", name: "Yüksek Çözünürlüklü Dijital Mikroskopi", badge: "MICROSCOPY", metrics: "Sperm Başlığı • Lif • Diyatom Sayımı", desc: "Spermatozoa tespiti, tekstil lifi morfolojisi ve diyatom sayımları için bilgisayarlı görü sınıflandırması." },
-            { id: "23", name: "Otopsi Toksikolojisi ve GC-MS", badge: "TOX-GCMS", metrics: "GC-MS Spektrumu • Kanda Alkol Oranı", desc: "Toksikolojik tarama için Gaz Kromatografisi-Kütle Spektrometresi (GC-MS) pik spektrumlarını analiz eder." },
-            { id: "24", name: "Diyatom ve Adli Palinoloji", badge: "PALYNO-ECO", metrics: "Diyatom Oranı • Polen Konumu", desc: "Olay yeri coğrafi konumunu belirlemek için suda boğulma diyatom topluluklarını ve toprak polen izlerini ilişkilendirir." },
-            { id: "25", name: "ABO / Rh Kan Serolojisi", badge: "ABO-SERO", metrics: "ABO Glikosiltransferaz • Rh Faktörü", desc: "ABO geni ekzon 6/7 diziliminden klasik ABO ve Rh kan grubu antijenlerini tahmin eder." }
+            { id: "21", name: "Kan Lekesi Deseni Analizi (BPA 3D)", badge: "BPA-3D", metrics: "En Küçük Kareler Çıkış Noktası • Sürtünme • Açı", desc: "Kan lekesi delilleri için darbe açısını, leke yönelim vektörlerini ve %95 güven elipsoitleriyle 3D kapalı form uçuş yakınsama noktasını hesaplar." },
+            { id: "22", name: "SEM-EDX GSR ve CMC 3D Balistik Yiv-Set", badge: "BALLISTICS-GSR", metrics: "ASTM E1588 Pb-Ba-Sb • 3D CMC Çizgileri", desc: "Otomatik karakteristik atış artığı üçlüsü (Pb-Ba-Sb) puanlaması ve 3D Uyumlu Eşleşen Hücreler (CMC) yiv-set yüzey topoğrafyası eşleştirmesi." },
+            { id: "23", name: "Adli Entomoloji ve Minimum PMI", badge: "ENTO-PMI", metrics: "Birikimli Derece Gün (ADD/ADH) • T_base • Türler", desc: "Birikimli Derece Gün (ADD/ADH) termal sabitleri (K) ve alt gelişim eşikleri (T_base) üzerinden minimum ölüm zamanını (PMI) hesaplar." },
+            { id: "24", name: "Çok Bantlı Görüntüleme (MSI) ve ATR-FTIR HQI", badge: "SPEC-MSI", metrics: "4-Bant MSI • ATR-FTIR • HQI ≥ %85.0", desc: "4 bantlı multispektral yansıma ve Vuruş Kalite İndeksi (HQI ≥ %85.0) spektral eşleştirmesi ile kimyasal iz ve sentetik lif tespiti." },
+            { id: "25", name: "Otopsi Toksikokinetiği ve PMR Yeniden Dağılımı", badge: "TOX-PMR", metrics: "Santral/Periferik C/P • Widmark • Opioidler", desc: "Santral-Periferik (C/P) ölüm sonrası ilaç yeniden dağılım oranlarını ve sıfır/birinci derece metabolik eliminasyon modellerini niceliklendirir." }
           ]
         },
         {
-          name: "LIMS, ISO 17025 Kalite Kontrol ve Yönetişim",
+          name: "LIMS, ISO 17025 Kalite Kontrol ve Kriptografik Yönetişim",
           shortName: "LIMS & ISO",
-          badge: "UYUMLULUK",
+          badge: "YÖNETİŞİM",
           subsystems: [
-            { id: "26", name: "LIMS Kayıt ve Delil Zinciri Takibi", badge: "LIMS-HMAC", metrics: "SHA-256 Delil Kaydı • Barkodlu Takip", desc: "LIMS numune kabulünü, delil zinciri kayıtlarını, saklama sıcaklıklarını ve analist onaylarını yönetir." },
-            { id: "27", name: "ISO 17025 Kalite Kontrol Denetim Matrisi", badge: "ISO-17025", metrics: "7 Noktalı Kalite Kontrol • Stutter Eşikleri", desc: "Heterozigot pik yüksekliği oranı (Hb), analitik eşikler ve kontroller dahil 7 noktalı kalite denetim kurallarını uygular." },
-            { id: "28", name: "Sıfır Bilgi İspatlı Gizlilik Denetçisi (ZKP)", badge: "ZKP-CIRCOM", metrics: "Groth16 İspatları • Blokzincir Kaydı", desc: "Ham genetik verileri açık etmeden DNA profil eşleşme kriterlerini doğrulayan Circom ZKP ispatları üretir." },
-            { id: "29", name: "Uzman Tanık Mahkeme İfade Modu", badge: "COURT-MODE", metrics: "7 Noktalı Adli Çerçeve • Savcı Kalkanı", desc: "Eksiksiz adli ifade paketleri, sözlü LR çevirisi ve Savcı Yanılgısına karşı koruma kalkanları derler." },
-            { id: "30", name: "Doğrulama ve Sentetik Vaka Motoru", badge: "VALIDATOR", metrics: "Sentetik Vaka Üretimi • ROC-AUC • 241 Test", desc: "Hattın doğruluğunu onaylamak için sentetik vakalar üzerinden 41 modülde 241 otomatik doğrulama testi yürütür." }
+            { id: "26", name: "Kriptografik Merkle Delil Zinciri Defteri", badge: "LIMS-MERKLE", metrics: "SHA-256 / Blake3 • O(log₂ N) İspatlar • Yalnızca Ekleme", desc: "Tüm numune ve delil transferlerini O(log₂ N) mahkeme onaylı Merkle dahil etme ispatlarıyla kaydeden kriptografik ikili defter." },
+            { id: "27", name: "Sıfır Bilgi İspatlı Kör Adli Denetçi (ZKP)", badge: "ZKP-GROTH16", metrics: "Circom Groth16 • BN254 Eşlemeleri • Sıfır Sızıntı", desc: "Ham STR/SNP sekanslarını ve kişisel verileri ifşa etmeden şüpheli eşleşme eşiğini (LR ≥ M_thresh) BN254 eşlemeleriyle kanıtlar." },
+            { id: "28", name: "ISO/IEC 17025:2017 Metrolojik Ölçüm Belirsizliği Bütçesi", badge: "ISO-17025-GUM", metrics: "GUM Belirsizliği • U_%95 = 2.00 · u_c • z-Skoru", desc: "Kantitatif qPCR DNA verimleri için GUM birleşik ve genişletilmiş ölçüm belirsizliği (U_%95 = 2.00 · u_c) ile laboratuvar z-skoru yeterlilik denetimi." },
+            { id: "29", name: "Dinamik ENFSI Değerlendirici Raporlama ve Sözlü Ölçek", badge: "ENFSI-2017", metrics: "7 Kademeli Sözlü Ölçek • Daubert FRE 702 • Frye Denetimi", desc: "Sürekli Likelihood Ratio (LR) değerlerini ENFSI (2017) 7 kademeli adli sözlü ifadelere çevirir; Daubert FRE 702 ve Frye kabul edilebilirlik denetimi uygular." },
+            { id: "30", name: "3D Uzamsal Olay Yeri Rekonstrüksiyonu ve Jüri Görselleştirici", badge: "SPATIAL-3D", metrics: "SE(3) Dönüşümü • %95 Güven Elipsoidi • Çoklu-Sensör", desc: "Çoklu-sensör (LiDAR, BPA, Balistik, DNA) verilerini SE(3) katı cisim dönüşümü ve %95 hacimsel güven elipsoitleriyle (χ²₃ = 7.815) 3D olarak görselleştirir." }
           ]
         }
       ],
     },
+
     architecture: {
       badge: "Sistem Mimarisi",
       title: "Delil İşleme Mimarisi (DAG)",
@@ -869,17 +871,17 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       ],
       specs: [
         { label: "Otozomal STR Multiplex Desteği", value: "Genişletilmiş 24-Lokus Adli Panel (20 FBI CODIS Çekirdek + ESS SE33, Penta D, Penta E, Amelogenin)" },
-        { label: "Soy Analizleri", value: "Y-STR (%95 Güven Aralığı), X-STR (KI_X Akrabalık Bağlantısı), mtDNA rCRS Hizalaması" },
-        { label: "Olasılıksal Karışım MCMC", value: "Metropolis-Hastings 2-4 Katkıcılı Karışım Ayrıştırması (p_d Alel Kaybolması & p_i Alel Eklenmesi)" },
-        { label: "Fenotip ve Epigenetik", value: "Genişletilmiş HIrisPlex-S ve Horvath 5-CpG Epigenetik Yaş Saati" },
+        { label: "Soy Analizleri", value: "Y-STR 27 Lokus (Clopper-Pearson %95 GA), X-STR 4 Bağlantı Kümesi (Argus X-12), mtDNA rCRS/RSRS" },
+        { label: "Olasılıksal Karışım MCMC", value: "EuroForMix Gamma & STRmix Log-Normal 2-4 Katkıcı (Alel Kaybolması p_d & Eklenmesi p_i)" },
+        { label: "Fenotip ve Epigenetik", value: "HIrisPlex-S 41-SNP (Göz/Saç/Ten), 55-SNP AIM GIS ve Horvath 5-CpG Epigenetik Yaş Saati" },
+        { label: "Fiziksel ve İz İnceleme", value: "3D BPA En Küçük Kareler Çıkış Noktası, SEM-EDX GSR (Pb-Ba-Sb), CMC Balistik & Entomoloji ADD/ADH" },
         { label: "Popülasyon Modelleri", value: "NRC II Tavsiye 4.1 & 4.2 Balding-Nichols Dirichlet Alt Popülasyon Fst Düzeltmesi" },
         { label: "Cihaz Veri Kabulü", value: "CE GeneMapper CSV, qPCR Quantifiler Trio Cq/DI ve NGS MiSeq VCF Otomatik Geçidi" },
-        { label: "ISO 17025 Uyumluluğu", value: "8 Bölümlü Adli Sertifika Derleyicisi, 7 Noktalı Kalite Kontrol ve Uzman Tanık İfade Modu" },
-        { label: "Analitik Doğruluk Oranı", value: "%99.99 Çoklu-Omik Analitik Doğrulama ve İnvaryant Güvencesi" },
+        { label: "ISO 17025 Uyumluluğu", value: "8 Bölümlü Adli Sertifika Derleyicisi, GUM Ölçüm Belirsizliği (k=2.00) ve 7 Kademeli ENFSI Ölçeği" },
+        { label: "Doğrulanmış Test Paketi", value: "796 / 796 Otomatik Test Başarılı (%100 İnvaryant Doğrulaması)" },
         { label: "Ön Yüz Teknolojisi", value: "Next.js 16 Turbopack App Router, React 19, Tailwind CSS, Framer Motion" },
-        { label: "Arka Yüz Teknolojisi", value: "FastAPI (Python 3.12), PyTorch, Scikit-learn, MCMC Metropolis-Hastings Motoru" },
-        { label: "Gizlilik Denetçisi", value: "Circom zkSNARK Groth16 İspat Motoru + Polygon Kriptografik Kayıt Defteri" },
-        { label: "Ana Platform OS", value: "FORENZA Adli Delil OS 6 Katmanlı Yönlü Yönsüz Çizge (DAG) PROD" }
+        { label: "Arka Yüz Teknolojisi", value: "FastAPI (Python 3.12), NumPy, SciPy, Scikit-learn, MCMC Metropolis-Hastings Motoru" },
+        { label: "Gizlilik ve Delil Kütüğü", value: "Circom zk-SNARK Groth16 (BN254 Eşlemeleri) + İkili Merkle Ağacı O(log₂ N) Delil Kütüğü" }
       ]
     },
     faq: {

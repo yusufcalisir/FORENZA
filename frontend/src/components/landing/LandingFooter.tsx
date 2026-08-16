@@ -7,9 +7,9 @@ import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 const TECH_BADGES = [
     { label: "Next.js 16 Turbopack", color: "#06B6D4" },
-    { label: "99.99% Precision", color: "#8B5CF6" },
-    { label: "Circom zkSNARK", color: "#22C55E" },
-    { label: "Polygon Ledger", color: "#06B6D4" },
+    { label: "796 Verified Tests", color: "#8B5CF6" },
+    { label: "Circom zk-SNARK", color: "#22C55E" },
+    { label: "Merkle Custody", color: "#06B6D4" },
 ];
 
 export default function LandingFooter() {

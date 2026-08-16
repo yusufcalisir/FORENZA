@@ -8,12 +8,15 @@ from backend.app.api.epigenetics_schemas import (
     LifestyleProfileResponse,
     TelomerePmiRequest,
     TelomerePmiResponse,
+    BisulfiteQcRequest,
+    BisulfiteQcResponse,
 )
 from backend.node.services.forensic.epigenetics import (
     EpigeneticClockEngine,
     TissueDeconvolutionEngine,
     LifestyleEpigeneticEngine,
     TelomerePmiEngine,
+    BisulfiteQcEngine,
 )
 
 router = APIRouter(prefix="/forensic/epigenetics", tags=["Forensic Epigenetics & Research"])
@@ -21,6 +24,8 @@ _AGE_ENGINE = EpigeneticClockEngine()
 _TISSUE_ENGINE = TissueDeconvolutionEngine()
 _LIFESTYLE_ENGINE = LifestyleEpigeneticEngine()
 _TELOMERE_PMI_ENGINE = TelomerePmiEngine()
+_BISULFITE_QC_ENGINE = BisulfiteQcEngine()
+
 
 
 
@@ -137,4 +142,31 @@ async def telomere_and_pmi(req: TelomerePmiRequest) -> TelomerePmiResponse:
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Telomere and PMI epigenetics error: {str(e)}"
         )
+
+
+@router.post(
+    "/bisulfite-qc-and-calibrate",
+    response_model=BisulfiteQcResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Evaluate Bisulfite Conversion Efficiency (C_conv >= 99%) and Calibrate Probes (BMIQ / Beta-M)",
+    description="Calculates conversion efficiency C_conv from non-CpG control cytosine probes, applies bidirectional Beta/M-value transformations, and performs BMIQ Type II probe calibration."
+)
+async def bisulfite_qc_and_calibrate(req: BisulfiteQcRequest) -> BisulfiteQcResponse:
+    try:
+        result = _BISULFITE_QC_ENGINE.run_full_epigenetic_qc(
+            non_cpg_signals=req.non_cpg_signals,
+            probes=req.probes,
+        )
+        return BisulfiteQcResponse(**result)
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Bisulfite QC error: {str(e)}"
+        )
+
 

@@ -600,9 +600,19 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** Somatic mosaicism clonal homogeneity verified ($\mathcal{M} < 0.05$).
   - **`G`:** High somatic mosaicism drift verified ($\mathcal{M} > 0.15$).
   - **`H`:** API integration testing across `/forensic/epigenetics/telomere-and-pmi`.
+* **`VECTOR_20_QC_A-H` (Bisulfite QC & Probe Calibration — Module 20):**
+  - **`A`:** High-efficiency bisulfite conversion verified ($C_{\text{conv}} \ge 99.0\% \implies \text{PASSED_QC}$).
+  - **`B`:** Incomplete bisulfite conversion failure alert verified ($C_{\text{conv}} < 99.0\% \implies \text{FAILED_INSUFFICIENT_CONVERSION}$).
+  - **`C`:** Beta to M-value logarithmic logit transformation verified ($M = \log_2(\beta/(1-\beta))$).
+  - **`D`:** M-value to Beta inverse transformation bijection verified ($|\beta - \text{inv}(M)| < 10^{-6}$).
+  - **`E`:** Boundary conditions handling verified ($\beta = 0.0, 1.0$).
+  - **`F`:** Detection $P$-value thresholding verified ($P_{\text{det}} \le 0.01$).
+  - **`G`:** BMIQ Type II probe bias quantile calibration verified.
+  - **`H`:** API integration testing across `/forensic/epigenetics/bisulfite-qc-and-calibrate`.
 * **`VECTOR_P6_01` (Chain of Custody Tamper Detection):** Merkle tree root divergence verified upon a single-second timestamp modification ($P_{\text{detection}} = 100\%$).
 * **`VECTOR_P6_02` (ISO 17025 Measurement Uncertainty):** Combined $u_c = 0.05385 \text{ ng/}\mu\text{L}$ and expanded $U_{95\%} = 0.1077 \text{ ng/}\mu\text{L}$ ($k=2.00$).
 * **`VECTOR_P6_03` (ENFSI Verbal Statement Mapping):** $LR = 3.5 \times 10^7$ maps deterministically to Verbal Tier 6 ("Extremely strong support for prosecution proposition").
+
 
 
 

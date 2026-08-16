@@ -61,8 +61,35 @@ interface TelomerePmiApiResult {
   prosecutors_fallacy_shield: string;
 }
 
+interface BisulfiteQcApiResult {
+  bisulfite_conversion_qc?: {
+    conversion_efficiency_percent: number;
+    qc_status: string;
+    non_cpg_probes_evaluated: number;
+    unmethylated_sum: number;
+    methylated_sum: number;
+    threshold_percent: number;
+  };
+  probe_calibration?: {
+    total_probes_evaluated: number;
+    probes_passed_qc: number;
+    probes_filtered_out: number;
+    calibrated_probes: Array<{
+      probe_id: string;
+      raw_beta: number;
+      calibrated_beta: number;
+      m_value: number;
+      detection_p_value: number;
+      qc_filter_passed: boolean;
+      probe_design_type: string;
+    }>;
+  };
+  prosecutors_fallacy_shield: string;
+}
+
 export default function ComprehensiveEpigenomicsPanel() {
-  const [activeResearchTab, setActiveResearchTab] = useState<"clock" | "tissue" | "lifestyle" | "telomere_pmi">("clock");
+  const [activeResearchTab, setActiveResearchTab] = useState<"clock" | "tissue" | "lifestyle" | "telomere_pmi" | "bisulfite_qc">("clock");
+
 
   // Tissue Deconvolution State (12 Diagnostic tDMR CpG Markers)
   const [tdmrBetas, setTdmrBetas] = useState<Record<string, number>>({
@@ -251,6 +278,61 @@ export default function ComprehensiveEpigenomicsPanel() {
     }
   };
 
+  // Bisulfite QC & Probe Calibration State (Module 20)
+  const [nonCpgMethylated, setNonCpgMethylated] = useState<number>(1.5);
+  const [nonCpgUnmethylated, setNonCpgUnmethylated] = useState<number>(398.5);
+  const [qcRawBeta, setQcRawBeta] = useState<number>(0.22);
+  const [qcProbeType, setQcProbeType] = useState<"TYPE_I" | "TYPE_II">("TYPE_II");
+  const [bisulfiteLoading, setBisulfiteLoading] = useState(false);
+  const [bisulfiteResult, setBisulfiteResult] = useState<BisulfiteQcApiResult | null>({
+    bisulfite_conversion_qc: {
+      conversion_efficiency_percent: 99.62,
+      qc_status: "PASSED_QC",
+      non_cpg_probes_evaluated: 10,
+      unmethylated_sum: 3985.0,
+      methylated_sum: 15.0,
+      threshold_percent: 99.0
+    },
+    probe_calibration: {
+      total_probes_evaluated: 3,
+      probes_passed_qc: 3,
+      probes_filtered_out: 0,
+      calibrated_probes: [
+        { probe_id: "cg16867657", raw_beta: 0.22, calibrated_beta: 0.22, m_value: -1.8242, detection_p_value: 0.0005, qc_filter_passed: true, probe_design_type: "TYPE_I" },
+        { probe_id: "cg21572722", raw_beta: 0.85, calibrated_beta: 0.855, m_value: 2.5583, detection_p_value: 0.0010, qc_filter_passed: true, probe_design_type: "TYPE_II" },
+        { probe_id: "cg06639320", raw_beta: 0.18, calibrated_beta: 0.162, m_value: -2.3707, detection_p_value: 0.0020, qc_filter_passed: true, probe_design_type: "TYPE_II" },
+      ]
+    },
+    prosecutors_fallacy_shield: "Complete bisulfite conversion (C_conv >= 99.0%) and detection P-value filtering (P_det <= 0.01) are mandatory forensic quality controls under ISO/IEC 17025."
+  });
+
+  const runBisulfiteQcAnalysis = async () => {
+    setBisulfiteLoading(true);
+    try {
+      const res = await fetch(`${API_BASE}/api/v1/forensic/epigenetics/bisulfite-qc-and-calibrate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          non_cpg_signals: [
+            { methylated: nonCpgMethylated, unmethylated: nonCpgUnmethylated }
+          ],
+          probes: [
+            { probe_id: "cg_target_locus", raw_beta: qcRawBeta, detection_p_value: 0.001, probe_design_type: qcProbeType },
+            { probe_id: "cg16867657", raw_beta: 0.22, detection_p_value: 0.0005, probe_design_type: "TYPE_I" },
+            { probe_id: "cg21572722", raw_beta: 0.85, detection_p_value: 0.0010, probe_design_type: "TYPE_II" },
+          ]
+        })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setBisulfiteResult(data);
+      }
+    } catch (e) {
+      console.error("Bisulfite QC analysis failed:", e);
+    } finally {
+      setBisulfiteLoading(false);
+    }
+  };
 
 
   return (
@@ -318,8 +400,19 @@ export default function ComprehensiveEpigenomicsPanel() {
           >
             Telomere & PMI Decay
           </button>
+          <button
+            onClick={() => setActiveResearchTab("bisulfite_qc")}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              activeResearchTab === "bisulfite_qc"
+                ? "bg-purple-500 text-black shadow-md"
+                : "text-zinc-400 hover:text-zinc-200"
+            }`}
+          >
+            Bisulfite QC
+          </button>
         </div>
       </div>
+
 
 
       {/* ── Tab Content ── */}
@@ -731,8 +824,165 @@ export default function ComprehensiveEpigenomicsPanel() {
           </div>
         </div>
       )}
+
+      {activeResearchTab === "bisulfite_qc" && (
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Controls */}
+          <div className="space-y-4 rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 shadow-xl">
+            <div className="flex items-center justify-between border-b border-tactical-border/40 pb-3">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                <span className="text-xs font-bold uppercase tracking-wider text-tactical-text">
+                  Bisulfite QC & BMIQ Controls
+                </span>
+              </div>
+              <button
+                onClick={runBisulfiteQcAnalysis}
+                disabled={bisulfiteLoading}
+                className="px-3 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 font-bold text-[10px] uppercase transition-all flex items-center gap-1 cursor-pointer"
+              >
+                <RefreshCw className={`w-3 h-3 ${bisulfiteLoading ? "animate-spin" : ""}`} />
+                Run QC
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              <div className="text-[10px] font-bold text-emerald-400 uppercase border-b border-tactical-border/30 pb-1">
+                Non-CpG Cytosine Control Signals
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center justify-between text-[10px]">
+                  <span className="font-bold text-zinc-300">Unmethylated Intensity (U)</span>
+                  <span className="font-mono text-emerald-400 font-bold">{nonCpgUnmethylated.toFixed(1)}</span>
+                </div>
+                <input
+                  type="range"
+                  min="100.0"
+                  max="1000.0"
+                  step="1.0"
+                  value={nonCpgUnmethylated}
+                  onChange={(e) => setNonCpgUnmethylated(parseFloat(e.target.value))}
+                  className="w-full accent-emerald-500 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
+                />
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center justify-between text-[10px]">
+                  <span className="font-bold text-zinc-300">Methylated Intensity (M - Unconverted)</span>
+                  <span className="font-mono text-rose-400 font-bold">{nonCpgMethylated.toFixed(1)}</span>
+                </div>
+                <input
+                  type="range"
+                  min="0.0"
+                  max="50.0"
+                  step="0.5"
+                  value={nonCpgMethylated}
+                  onChange={(e) => setNonCpgMethylated(parseFloat(e.target.value))}
+                  className="w-full accent-rose-500 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
+                />
+                <span className="text-[9px] text-zinc-500 block">
+                  C_conv = (1 - M/(M+U)) * 100% (Forensic threshold &ge; 99.0%)
+                </span>
+              </div>
+
+              <div className="text-[10px] font-bold text-purple-400 uppercase border-b border-tactical-border/30 pb-1 pt-2">
+                Probe Calibration & Probe Design Type
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center justify-between text-[10px]">
+                  <span className="font-bold text-zinc-300">Sample CpG Raw Beta</span>
+                  <span className="font-mono text-purple-400 font-bold">{qcRawBeta.toFixed(2)}</span>
+                </div>
+                <input
+                  type="range"
+                  min="0.0"
+                  max="1.0"
+                  step="0.01"
+                  value={qcRawBeta}
+                  onChange={(e) => setQcRawBeta(parseFloat(e.target.value))}
+                  className="w-full accent-purple-500 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
+                />
+              </div>
+              <div className="flex items-center gap-2 pt-1">
+                <button
+                  onClick={() => setQcProbeType("TYPE_I")}
+                  className={`flex-1 py-1 rounded text-[10px] font-bold ${
+                    qcProbeType === "TYPE_I" ? "bg-purple-500 text-black" : "bg-black/40 text-zinc-400 border border-tactical-border/40"
+                  }`}
+                >
+                  Type I (Reference)
+                </button>
+                <button
+                  onClick={() => setQcProbeType("TYPE_II")}
+                  className={`flex-1 py-1 rounded text-[10px] font-bold ${
+                    qcProbeType === "TYPE_II" ? "bg-purple-500 text-black" : "bg-black/40 text-zinc-400 border border-tactical-border/40"
+                  }`}
+                >
+                  Type II (BMIQ Target)
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Results Display */}
+          <div className="lg:col-span-2 space-y-6">
+            {bisulfiteResult && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+                <div className="rounded-2xl border border-emerald-500/40 bg-gradient-to-br from-emerald-500/10 via-tactical-surface/60 to-black/80 p-6 space-y-4 shadow-2xl">
+                  <div className="flex items-center justify-between border-b border-emerald-500/20 pb-4">
+                    <div>
+                      <span className="text-[10px] font-bold text-emerald-300 uppercase tracking-widest block">
+                        BISULFITE CONVERSION EFFICIENCY QUALITY CONTROL
+                      </span>
+                      <span className="text-2xl font-black text-emerald-300 font-mono">
+                        {bisulfiteResult.bisulfite_conversion_qc?.conversion_efficiency_percent.toFixed(2)}%
+                      </span>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-[10px] text-zinc-400 block uppercase font-bold">Forensic QC Status</span>
+                      <span className={`text-sm font-bold font-mono px-2 py-0.5 rounded border ${
+                        bisulfiteResult.bisulfite_conversion_qc?.qc_status === "PASSED_QC"
+                          ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
+                          : "bg-rose-500/20 text-rose-300 border-rose-500/40"
+                      }`}>
+                        {bisulfiteResult.bisulfite_conversion_qc?.qc_status}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Calibration Grid */}
+                  <div className="space-y-2 pt-2">
+                    <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block">
+                      BMIQ Calibrated CpG Probes & M-Value Transformations
+                    </span>
+                    <div className="space-y-1.5 max-h-[160px] overflow-y-auto pr-1">
+                      {bisulfiteResult.probe_calibration?.calibrated_probes.map((probe) => (
+                        <div key={probe.probe_id} className="flex items-center justify-between p-2 rounded-lg bg-black/40 border border-tactical-border/40 text-[11px] font-mono">
+                          <div>
+                            <span className="font-bold text-zinc-200">{probe.probe_id}</span>
+                            <span className="ml-2 text-[9px] text-zinc-500">{probe.probe_design_type}</span>
+                          </div>
+                          <div className="flex items-center gap-4">
+                            <span className="text-zinc-400">Raw β: {probe.raw_beta.toFixed(2)}</span>
+                            <span className="text-emerald-300 font-bold">Calibrated β: {probe.calibrated_beta.toFixed(3)}</span>
+                            <span className="text-purple-300">M: {probe.m_value.toFixed(2)}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-black/30 border border-tactical-border/30 text-[10px] text-zinc-400 font-mono">
+                    {bisulfiteResult.prosecutors_fallacy_shield}
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 
-
 }
+

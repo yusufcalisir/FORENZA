@@ -180,3 +180,21 @@ class TelomerePmiResponse(BaseModel):
     prosecutors_fallacy_shield: str
 
 
+class BisulfiteQcRequest(BaseModel):
+    non_cpg_signals: Optional[List[Dict[str, float]]] = Field(
+        default=None,
+        description="List of non-CpG control cytosine probe signals with 'methylated' and 'unmethylated' intensities."
+    )
+    probes: Optional[List[Dict[str, Any]]] = Field(
+        default=None,
+        description="List of probe dictionaries with 'probe_id', 'raw_beta', 'detection_p_value', 'probe_design_type'."
+    )
+
+
+class BisulfiteQcResponse(BaseModel):
+    bisulfite_conversion_qc: Optional[Dict[str, Any]] = None
+    probe_calibration: Optional[Dict[str, Any]] = None
+    prosecutors_fallacy_shield: str
+
+
+

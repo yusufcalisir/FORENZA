@@ -1507,6 +1507,30 @@ $$\mathcal{M} = \sqrt{\frac{1}{M} \sum_{m=1}^M (\beta_{m,\text{tissue1}} - \beta
 - $0.05 \le \mathcal{M} \le 0.15 \implies$ **LOW_SOMATIC_DRIFT**
 - $\mathcal{M} > 0.15 \implies$ **HIGH_SOMATIC_MOSAICISM**
 
+---
+
+## 54. Bisulfite QC & Methylation Probe Bias Calibration Engine (Module 20)
+
+### 54.1 Bisulfite Conversion Efficiency Quality Control
+
+$$C_{\text{conv}} = \left( 1 - \frac{\sum_{j=1}^{N_{\text{non-CpG}}} M_j}{\sum_{j=1}^{N_{\text{non-CpG}}} (M_j + U_j)} \right) \times 100\% \ge 99.0\%$$
+
+- $C_{\text{conv}} \ge 99.0\% \implies$ **PASSED_QC** (Valid forensic DNA methylation profile).
+- $C_{\text{conv}} < 99.0\% \implies$ **FAILED_INSUFFICIENT_CONVERSION** (Bisulfite artifact alert).
+
+### 54.2 Beta $\leftrightarrow$ M-Value Bidirectional Transformations
+
+$$M_i = \log_2\left( \frac{\max(\epsilon, \min(1 - \epsilon, \beta_i))}{1 - \max(\epsilon, \min(1 - \epsilon, \beta_i))} \right) \iff \beta_i = \frac{2^{M_i}}{2^{M_i} + 1}$$
+
+- Guard boundary constant: $\epsilon = 10^{-6}$.
+- Bijection recovery error: $|\beta - \text{inv}(M)| < 10^{-6}$.
+
+### 54.3 Detection $P$-Value Filtering & BMIQ Calibration
+
+- Detection $P$-value threshold: $P_{\text{det}} \le 0.01$. Probes exceeding $0.01$ are excluded from forensic calling.
+- BMIQ quantile adjustment fits Infinium Type II probe density distributions onto Type I reference extremes.
+
+
 
 
 

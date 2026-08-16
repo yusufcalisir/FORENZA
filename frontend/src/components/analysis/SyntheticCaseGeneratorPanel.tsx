@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Dna, RefreshCw, CheckCircle2, Play, Activity, Sparkles, Cpu, ShieldCheck, Layers, FileText } from "lucide-react";
+import { getApiBaseUrl } from "@/lib/api";
 
 interface BenchmarkResult {
   synthetic_case_id: string;
@@ -102,10 +103,9 @@ export default function SyntheticCaseGeneratorPanel() {
     self_validation_verdict: "PASSED_ACADEMIC_BENCHMARK"
   });
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
-
   // Handle "SYNTHESIZE NEW CASE" action
   const handleGenerateCase = async () => {
+    const API_BASE = getApiBaseUrl();
     setLoading(true);
     setSynthProgress(15);
 
@@ -152,6 +152,7 @@ export default function SyntheticCaseGeneratorPanel() {
   // Handle "RUN SELF-VALIDATION BENCHMARK HARNESS" action
   const handleEvaluateBenchmark = async () => {
     if (!caseData) return;
+    const API_BASE = getApiBaseUrl();
     setEvaluating(true);
     setEvalProgress(10);
 

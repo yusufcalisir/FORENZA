@@ -15,6 +15,7 @@ import {
   Info,
   Scale
 } from "lucide-react";
+import { getApiBaseUrl } from "@/lib/api";
 
 interface LocusDeconvolution {
   locus: string;
@@ -119,7 +120,7 @@ export default function ProbabilisticGenotypingPanel() {
     setIsSampling(true);
     setSampleProgress(15);
 
-    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+    const API_BASE = getApiBaseUrl();
 
     const progressInterval = setInterval(() => {
       setSampleProgress((prev) => {

@@ -17,6 +17,7 @@ import {
   Sparkles,
   Check
 } from "lucide-react";
+import { getApiBaseUrl } from "@/lib/api";
 
 interface ValidationMetrics {
   accuracy: number;
@@ -152,7 +153,7 @@ export default function ValidationLabPanel() {
     const nextIteration = runCount + 1;
     setRunCount(nextIteration);
 
-    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+    const API_BASE = getApiBaseUrl();
 
     // Progressively update stages over 1.2 seconds for realistic, clear tactile feedback
     const stageTimer1 = setTimeout(() => {

@@ -2,7 +2,7 @@
 
 <p align="center">
   <strong>Enterprise Multi-Omic Biocomputational Forensic Intelligence Platform</strong><br />
-  ISO/IEC 17025:2017 Aligned Architecture • 30 Integrated Subsystems • Zero-Knowledge Evidence Verification
+  ISO/IEC 17025:2017 Aligned Architecture • 35 Integrated Subsystems (7 Pillars) • Zero-Knowledge Evidence Verification
 </p>
 
 <p align="center">
@@ -48,7 +48,7 @@
 ### Architectural Objectives
 
 - **Unified Intelligence Platform:** Replaces standalone, single-purpose legacy desktop software with a distributed microservices gateway and interactive web workstation.
-- **Multi-Omic Analytical Scope:** Integrates 30 specialized subsystems spanning CODIS 24 Autosomal STRs, Y-STR & mtDNA lineages, MCMC probabilistic mixture deconvolution, HIrisPlex-S phenotyping, 55-SNP AIM biogeographic ancestry, Horvath 5-CpG epigenetic age estimation, skeletal morphometrics, entomological PMI, and bloodstain pattern analysis (BPA).
+- **Multi-Omic Analytical Scope:** Integrates 35 specialized subsystems spanning CODIS 24 Autosomal STRs, Y-STR & mtDNA lineages, MCMC probabilistic mixture deconvolution, HIrisPlex-S phenotyping, 55-SNP AIM biogeographic ancestry, Horvath 5-CpG epigenetic age estimation, skeletal morphometrics, entomological PMI, bloodstain pattern analysis (BPA), and multi-isotope spatial isoscapes.
 - **Court-Admissible Standardization:** Automated SWGDAM 2020 and ENFSI 2017 verbal scale report generation converting Likelihood Ratios into formal expert witness testimony documents.
 - **Dual-Engine Architecture (Demo vs. Live BYO-Key Mode):** Instant out-of-the-box operation with simulated biocomputational models, seamlessly upgrading to live production execution when users supply their custom API keys (Google Gemini 2.0 Flash, OpenAI GPT-4o, Groq LLaMA, NCBI E-utilities, Python FastAPI endpoints) via an interactive in-app modal or environment variables.
 - **Zero-Knowledge Privacy Preservation:** Employs Circom/Groth16 ZK-SNARK zero-knowledge proofs and Polygon blockchain anchor logging, enabling cross-border inter-agency profile matching without disclosing raw genomic profiles outside accredited laboratories.
@@ -123,7 +123,7 @@ flowchart TD
 | **4** | **Compliance** | Raw Combined LR Value | SWGDAM & ENFSI Verbal Scale Mapping | "Conclusive Support for Identity" |
 | **5** | **Audit Trail** | Case ID, Timestamp, Operator ID | HMAC-SHA256 Hash Chaining | Immutable Audit Record |
 | **6** | **Zero-Knowledge** | Genotype Alleles & Threshold $(LR > 10^6)$ | Circom Groth16 ZK-SNARK Prover & Verifier | Cryptographic Proof (0% Data Leakage) |
-| **7** | **Presentation** | JSON Response Bundle | Next.js Reactive Dashboard Rendering | Live GIS Map, 30 Panels & ISO PDF Export |
+| **7** | **Presentation** | JSON Response Bundle | Next.js Reactive Dashboard Rendering | Live GIS Map, 35 Subsystem Workstations & ISO PDF Export |
 
 ---
 
@@ -211,12 +211,33 @@ str-analysis/
 ├── frontend/                              # Next.js 16 Workstation Dashboard
 │   ├── public/                            # Static Assets, Icons, Favicons
 │   └── src/                               # TypeScript Source Code
-│       ├── app/                           # App Router Pages
+│       ├── app/                           # App Router Dynamic Routing
 │       │   ├── page.tsx                   # Interactive Landing Page
-│       │   └── (dashboard)/               # Dashboard Layout Group
+│       │   └── (dashboard)/               # Unified Workstation Layout Group
+│       │       ├── analysis/              # Workstation Hub
+│       │       │   ├── page.tsx           # Hub (Case Telemetry & 7 Pillar Inference Matrix)
+│       │       │   ├── [category]/        # Dynamic Pillar Hub (5 Subsystem Cards)
+│       │       │   │   └── page.tsx       
+│       │       │   └── [category]/[tab]/  # Dedicated Viewport for Focused 35 Modules
+│       │       │       └── page.tsx
+│       │       ├── investigation/         # Global Cross-Node Investigation & Case Matching
+│       │       ├── database/              # Forensic Knowledgebase & Locus Population Frequencies
+│       │       ├── audit/                 # ISO 17025 Immutable Chain of Custody Audit Trail
+│       │       └── nodes/                 # P2P Multi-Node Network Telemetry
 │       ├── components/                    # React UI Components
-│       │   └── analysis/                  # Tactical Forensic Panels
-│       │       └── GeoForensicIntelligencePanel.tsx # Multi-Modal Geo-Forensic Platform
+│       │   ├── analysis/                  # 35 Tactical Forensic Viewport Panels & Router
+│       │   │   ├── PanelRouter.tsx        # Centralized Biocomputational Panel Router
+│       │   │   └── GeoForensicIntelligencePanel.tsx # Multi-Modal Geo-Forensic Platform
+│       │   ├── common/                    # Shared Modals & Telemetry Banners
+│       │   │   ├── DnaProfileInspectorModal.tsx # DNA & SNP Terminal with Interactive CLI
+│       │   │   └── ActiveProfileBanner.tsx # Active Profile HUD & Live Leaflet GIS Map
+│       │   └── layout/                    # Layout Navigation & Streamlined Sidebar
+│       │       └── DashboardLayout.tsx    # Responsive Sidebar Navigation
+│       ├── config/                        # Subsystem Catalogs & Maturity Config
+│       │   └── subsystems.ts              # 7 Canonical Pillars & 35 Modules Metadata
+│       ├── store/                         # Global Reactive Stores (Zustand)
+│       │   ├── forensicCaseStore.ts       # Unified Active Case, Profile & Audit Trail
+│       │   └── ingestStore.ts             # DNA Ingest & Inspector Modal State
 │       ├── context/                       # React Context Providers
 │       ├── dictionaries/                  # Bilingual Translations (TR / EN)
 │       ├── lib/                           # Utility Functions & API Clients

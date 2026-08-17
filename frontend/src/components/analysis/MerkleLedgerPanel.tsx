@@ -46,9 +46,26 @@ const DEFAULT_EVENTS: CustodyEvent[] = [
   { event_id: "EVT-004", timestamp_iso: "2026-08-16T13:45:00Z", officer_id: "DR-CONNOR-042", sample_barcode: "BC-DNA-99104", location_id: "EXTRACTION_SUITE_B", action_type: "EXTRACTION", notes: "Automated magnetic bead DNA extraction completed." },
 ];
 
+import { useForensicCaseStore } from "@/store/forensicCaseStore";
+
 export default function MerkleLedgerPanel() {
+  const { auditTrail, activeCase } = useForensicCaseStore();
   const [activeTab, setActiveTab] = useState<"tree" | "proof">("tree");
-  const [events, setEvents] = useState<CustodyEvent[]>(DEFAULT_EVENTS);
+
+  // Synchronize case audit trail into custody events
+  const dynamicEvents: CustodyEvent[] = auditTrail && auditTrail.length > 0
+    ? auditTrail.slice(0, 8).map((log, idx) => ({
+        event_id: log.id || `EVT-00${idx + 1}`,
+        timestamp_iso: log.timestamp || "2026-08-16T12:00:00Z",
+        officer_id: log.analyst || "LEAD-FORENSIC-ANALYST",
+        sample_barcode: activeCase.profile.profileId || "BC-DNA-99104",
+        location_id: log.module || "EVIDENCE_LEDGER",
+        action_type: log.status || "COLLECTION",
+        notes: log.event || "Audit log cryptographic event recorded.",
+      }))
+    : DEFAULT_EVENTS;
+
+  const [events, setEvents] = useState<CustodyEvent[]>(dynamicEvents);
   const [isTampered, setIsTampered] = useState<boolean>(false);
   const [selectedEventIndex, setSelectedEventIndex] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);

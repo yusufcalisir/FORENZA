@@ -60,14 +60,26 @@ interface VerifyResponse {
   prosecutors_fallacy_shield: string;
 }
 
+import { useForensicCaseStore } from "@/store/forensicCaseStore";
+
 export default function ZkpAuditorPanel() {
+  const { activeCase } = useForensicCaseStore();
   const [hidePrivateWitness, setHidePrivateWitness] = useState<boolean>(true);
   const [matchThreshold, setMatchThreshold] = useState<number>(44);
   const [activeTab, setActiveTab] = useState<"comparator" | "pairing">("comparator");
   const [loading, setLoading] = useState<boolean>(false);
 
+  // Derive dynamic suspect loci from activeCase store
+  const activeSuspectLoci = Object.entries(activeCase.profile.strMarkers).reduce(
+    (acc, [locus, d]) => {
+      acc[locus] = [Number(d.allele1) || 12.0, Number(d.allele2) || 12.0];
+      return acc;
+    },
+    { ...DEFAULT_SUSPECT_LOCI } as Record<string, number[]>
+  );
+
   // Evidence alleles (exact match default)
-  const [evidenceLoci] = useState<Record<string, number[]>>(DEFAULT_SUSPECT_LOCI);
+  const evidenceLoci = activeSuspectLoci;
 
   const [proofData, setProofData] = useState<SynthesizeResponse | null>(null);
   const [verifyResult, setVerifyResult] = useState<VerifyResponse | null>(null);

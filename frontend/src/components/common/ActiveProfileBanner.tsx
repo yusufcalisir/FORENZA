@@ -135,8 +135,8 @@ export default function ActiveProfileBanner() {
                 </div>
             </div>
 
-            {/* Live GIS Map Visualizer */}
-            <div className="w-full h-64 sm:h-72 rounded-xl overflow-hidden border border-tactical-border/60 relative">
+            {/* Live GIS Map Visualizer (Isolated stacking context to prevent z-index bleed) */}
+            <div className="w-full h-64 sm:h-72 rounded-xl overflow-hidden border border-tactical-border/60 relative z-0 isolate">
                 <GeoForensicPanel
                     geoResults={geoResults}
                     reliabilityScore={activeProfile.geoLocation.confidencePct / 100}

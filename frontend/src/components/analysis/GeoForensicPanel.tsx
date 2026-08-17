@@ -270,7 +270,7 @@ export default function GeoForensicPanel({
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.2 }}
-            className="rounded-lg border border-tactical-border bg-tactical-surface overflow-hidden flex flex-col h-fit"
+            className="rounded-lg border border-tactical-border bg-tactical-surface overflow-hidden flex flex-col h-fit relative z-0 isolate"
         >
             {/* ── Header ── */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-tactical-border shrink-0">

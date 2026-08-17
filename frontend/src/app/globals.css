@@ -199,6 +199,8 @@
 
 .leaflet-container {
   background: #0A0A0B !important;
+  z-index: 1 !important;
+  isolation: isolate !important;
 }
 
 .leaflet-control-zoom a {

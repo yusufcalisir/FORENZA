@@ -370,14 +370,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setMobileMenuOpen(false)}
-              className="fixed inset-0 z-[60] bg-black/75 backdrop-blur-sm lg:hidden"
+              className="fixed inset-0 z-[9990] bg-black/80 backdrop-blur-sm lg:hidden"
             />
             <motion.aside
               initial={{ x: "-100%" }}
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 220 }}
-              className="fixed inset-y-0 left-0 z-[70] w-72 max-w-[85vw] bg-[#0a0f1a] border-r border-tactical-border lg:hidden flex flex-col"
+              className="fixed inset-y-0 left-0 z-[9999] w-72 max-w-[85vw] bg-[#0a0f1a] border-r border-tactical-border lg:hidden flex flex-col shadow-2xl"
             >
               <div className="flex h-14 items-center justify-between px-4 border-b border-tactical-border/60 shrink-0">
                 <div className="flex items-center gap-2.5">
@@ -413,7 +413,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <motion.aside
         animate={{ width: sidebarCollapsed ? 64 : 272 }}
         transition={{ type: "spring", damping: 26, stiffness: 220 }}
-        className="hidden lg:flex flex-col bg-[#0A0F1D] border-r border-tactical-border/70 overflow-hidden shrink-0 shadow-2xl relative z-30"
+        className="hidden lg:flex flex-col bg-[#0A0F1D] border-r border-tactical-border/70 overflow-hidden shrink-0 shadow-2xl relative z-40"
       >
         {/* Logo & Toggle Header */}
         <div

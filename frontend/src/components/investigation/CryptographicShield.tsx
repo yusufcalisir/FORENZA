@@ -1,50 +1,75 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ShieldCheck, Lock, Binary } from "lucide-react";
+import { ShieldCheck, Lock, Binary, Cpu } from "lucide-react";
 
 export default function CryptographicShield({ active }: { active: boolean }) {
-    if (!active) return null;
+  if (!active) return null;
 
-    return (
-        <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="absolute inset-0 bg-zinc-950/80 backdrop-blur-sm flex flex-col items-center justify-center z-50 rounded-lg border border-emerald-500/30"
-        >
-            <div className="relative">
-                {/* Rotating Rings */}
-                <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                    className="w-32 h-32 rounded-full border-2 border-emerald-500/30 border-t-emerald-400 absolute inset-0 -top-8 -left-8"
-                />
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[99999] bg-black/85 backdrop-blur-md flex items-center justify-center p-4 font-mono select-none"
+    >
+      <motion.div
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.9, opacity: 0 }}
+        className="flex flex-col items-center justify-center max-w-md w-full text-center p-6 sm:p-8 rounded-2xl bg-[#070D18]/90 border border-emerald-500/40 shadow-[0_0_50px_rgba(16,185,129,0.2)]"
+      >
+        {/* Animated Gyroscope Rings */}
+        <div className="relative w-36 h-36 flex items-center justify-center mb-6">
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+            className="w-36 h-36 rounded-full border-2 border-dashed border-emerald-500/30 border-t-emerald-400 absolute"
+          />
 
-                <motion.div
-                    animate={{ rotate: -360 }}
-                    transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-                    className="w-48 h-48 rounded-full border border-emerald-500/10 border-b-emerald-400 absolute -top-16 -left-16"
-                />
+          <motion.div
+            animate={{ rotate: -360 }}
+            transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+            className="w-28 h-28 rounded-full border border-emerald-400/20 border-b-cyan-400 absolute"
+          />
 
-                <ShieldCheck className="w-16 h-16 text-emerald-400 relative z-10" />
-            </div>
+          <motion.div
+            animate={{ scale: [1, 1.08, 1] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            className="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/40 flex items-center justify-center shadow-lg shadow-emerald-500/20 z-10"
+          >
+            <ShieldCheck className="w-8 h-8 text-emerald-400" />
+          </motion.div>
+        </div>
 
-            <motion.h3
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mt-8 text-xl font-bold tracking-widest text-emerald-400 uppercase"
-            >
-                Zero-Knowledge Proof Active
-            </motion.h3>
+        {/* Title */}
+        <h3 className="text-base sm:text-lg font-extrabold tracking-widest text-emerald-400 uppercase">
+          Zero-Knowledge Proof Active
+        </h3>
 
-            <p className="mt-2 text-zinc-400 font-mono text-xs max-w-md text-center">
-                Generating mathematical proof of knowledge. Your DNA data is being hashed locally and remains private.
-            </p>
+        {/* Description */}
+        <p className="mt-2 text-zinc-400 text-xs leading-relaxed max-w-sm">
+          Synthesizing Circom / Groth16 BN254 mathematical witness. Raw DNA STR/SNP markers remain encrypted client-side.
+        </p>
 
-            <div className="mt-6 flex items-center gap-2">
-                <Lock className="w-3 h-3 text-zinc-500" />
-                <span className="text-[10px] text-zinc-600 font-mono uppercase">Client-Side Encryption</span>
-            </div>
-        </motion.div>
-    );
+        {/* Live Cryptographic Status Badges */}
+        <div className="mt-5 w-full grid grid-cols-2 gap-2 text-[10px]">
+          <div className="p-2 rounded-xl bg-black/60 border border-tactical-border/60 flex items-center justify-center gap-1.5 text-zinc-300">
+            <Binary className="w-3 h-3 text-cyan-400" />
+            <span>BN254 Pairings</span>
+          </div>
+          <div className="p-2 rounded-xl bg-black/60 border border-tactical-border/60 flex items-center justify-center gap-1.5 text-zinc-300">
+            <Cpu className="w-3 h-3 text-emerald-400" />
+            <span>Client-Side Prover</span>
+          </div>
+        </div>
+
+        {/* Bottom Tag */}
+        <div className="mt-4 flex items-center justify-center gap-1.5 text-[9px] text-zinc-500 font-bold uppercase tracking-wider">
+          <Lock className="w-3 h-3 text-emerald-400" />
+          <span>ISO/IEC 17025:2017 Cryptographic Isolation</span>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
 }

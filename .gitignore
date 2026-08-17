@@ -20,11 +20,9 @@ desktop.ini
 *.key
 *.cert
 
-# Local Startup & Shell Scripts
-*.bat
-*.ps1
-*.sh
-start_project.*
+# Local Startup & Shell Scripts (Track master starter scripts)
+!start_project.bat
+!start_project.sh
 
 # Node.js & Next.js
 node_modules/

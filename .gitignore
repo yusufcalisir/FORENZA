@@ -90,3 +90,8 @@ circuits/*.sym
 *.sublime-project
 *.sublime-workspace
 scratch/
+AGENTS.md
+*roadmap*.md
+ROADMAP.md
+forenza_master_validation_roadmap.md
+

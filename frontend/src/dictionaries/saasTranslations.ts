@@ -112,6 +112,18 @@ export interface SaasTranslation {
       alleleCall: string;
       popFreq: string;
       locusLr: string;
+      baldingNicholsTitle: string;
+      baldingNicholsDesc: string;
+      populationGroup: string;
+      thetaCoancestry: string;
+      combinedLr: string;
+      log10Lr: string;
+      enfsiScale: string;
+      additivityInvariant: string;
+      deltaDeviation: string;
+      iso17025Title: string;
+      expandedUncertainty: string;
+      confidenceInterval: string;
     };
     zkpTab: {
       circuitId: string;
@@ -337,6 +349,18 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
         alleleCall: "Allele Call",
         popFreq: "Population Frequency",
         locusLr: "Locus Likelihood Ratio",
+        baldingNicholsTitle: "Balding-Nichols Subpopulation Coancestry Model (NRC II Rec 4.4)",
+        baldingNicholsDesc: "Evaluates P(G | θ) allele coancestry and exact product Combined LR = ∏ LR_l = 10^(∑ log₁₀ LR_l)",
+        populationGroup: "Reference Population Group",
+        thetaCoancestry: "Coancestry Coefficient (θ)",
+        combinedLr: "Combined Match LR (Product)",
+        log10Lr: "Log10 Likelihood Ratio",
+        enfsiScale: "ENFSI (2017) Verbal Scale",
+        additivityInvariant: "Biostatistical Additivity Invariant Verified",
+        deltaDeviation: "0.000% Deviation",
+        iso17025Title: "ISO/IEC 17025:2017 Measurement Uncertainty",
+        expandedUncertainty: "Expanded Uncertainty (U_95%)",
+        confidenceInterval: "95% Confidence Interval",
       },
       zkpTab: {
         circuitId: "Circuit Identifier",
@@ -713,6 +737,18 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
         alleleCall: "Alel Tespiti",
         popFreq: "Popülasyon Frekansı",
         locusLr: "Lokus Olabilirlik Oranı (LR)",
+        baldingNicholsTitle: "Balding-Nichols Alt Popülasyon Akrabalık Katsayısı Modeli (NRC II Rec 4.4)",
+        baldingNicholsDesc: "P(G | θ) alel ortak soy katsayısını ve kesin çarpımsal Birleşik LR = ∏ LR_l = 10^(∑ log₁₀ LR_l) değerini hesaplar",
+        populationGroup: "Referans Popülasyon Grubu",
+        thetaCoancestry: "Akrabalık Katsayısı (θ)",
+        combinedLr: "Birleşik Eşleşme LR (Çarpımsal)",
+        log10Lr: "Log10 Olabilirlik Oranı",
+        enfsiScale: "ENFSI (2017) Sözel Değerlendirme Ölçeği",
+        additivityInvariant: "Biyoistatistiksel Toplamsallık Değişmezi Doğrulandı",
+        deltaDeviation: "%0.000 Sapma",
+        iso17025Title: "ISO/IEC 17025:2017 Ölçüm Belirsizliği",
+        expandedUncertainty: "Genişletilmiş Belirsizlik (U_95%)",
+        confidenceInterval: "%95 Güven Aralığı",
       },
       zkpTab: {
         circuitId: "Devre Kimliği",

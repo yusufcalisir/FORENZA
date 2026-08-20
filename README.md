@@ -483,6 +483,8 @@ The FastAPI gateway exposes a clean `/api/v1` RESTful interface.
 | Domain | Route | Method | Description |
 | :--- | :--- | :--- | :--- |
 | **Kinship** | `/api/v1/forensics/kinship-lr` | `POST` | Computes parent-child, sibling, and extended kinship LRs |
+| **Population Genetics (RMP)** | `/api/v1/forensic/population/profile-rmp` | `POST` | Computes 24-locus NIST 1036 Combined Random Match Probability (RMP) & Single-Source LR with Balding-Nichols $\theta$ coancestry |
+| **Kinship (STR-24 Duo/Pedigree)** | `/api/v1/forensic/population/kinship-duo` | `POST` | Evaluates 24-locus Parent-Child / Sibling kinship LRs with IBD decomposition & Stepwise Mutation Model (SMM) rescue |
 | **Mixture** | `/api/v1/genomics/deconvolve` | `POST` | Runs MCMC probabilistic mixture deconvolution |
 | **Phenotype** | `/api/v1/phenotype/predict` | `POST` | Computes HIrisPlex-S eye, skin, and hair probabilities |
 | **Ancestry** | `/api/v1/phenotype/ancestry` | `POST` | Evaluates 55-SNP AIM biogeographic ancestry clusters |

@@ -21,6 +21,9 @@ from .population_schemas import (
     HWETestRequest, HWETestResponse,
     ThetaCorrectedLRRequest, ThetaCorrectedLRResponse,
     FstMatrixRequest, FstMatrixResponse,
+    ProfileRMPRequest, ProfileRMPResponse,
+    KinshipDuoRequest, KinshipDuoResponse,
+    KinshipLocusSchema,
 )
 
 router = APIRouter(prefix="/forensic/population", tags=["Population Genetics"])
@@ -281,4 +284,110 @@ async def fst_matrix(body: FstMatrixRequest) -> FstMatrixResponse:
         theta_recommendation=result.theta_recommendation,
         verdict=result.verdict,
     )
+
+
+# ── 24-Locus STR & Kinship Endpoints ────────────────────────────────────────
+
+@router.post(
+    "/profile-rmp",
+    response_model=ProfileRMPResponse,
+    summary="24-Locus Autosomal STR Multi-Population Match Probability",
+    description=(
+        "Computes full 24-locus Random Match Probability (RMP), combined LR, and "
+        "ISO/IEC 17025:2017 GUM expanded measurement uncertainty (U_95% = 2.00 * u_c)."
+    ),
+    status_code=status.HTTP_200_OK,
+)
+async def compute_profile_rmp(body: ProfileRMPRequest) -> ProfileRMPResponse:
+    try:
+        from node.services.forensic.terminal.nist_1036_popgen_engine import Nist1036PopGenEngine
+        res = Nist1036PopGenEngine.calculate_multilocus_profile_probability(
+            profile=body.profile,
+            population=body.population,
+            theta=body.theta,
+            dropout_map=body.dropout_map,
+            dropout_q=body.dropout_q,
+            use_exact_balding_nichols=body.use_exact_balding_nichols,
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Profile RMP computation failed: {str(exc)}"
+        )
+
+    return ProfileRMPResponse(
+        population=res["population"],
+        theta=res["theta"],
+        evaluated_loci_count=res["evaluated_loci_count"],
+        combined_rmp=res["combined_rmp"],
+        combined_lr=res["combined_lr"],
+        combined_log10_lr=res["combined_log10_lr"],
+        enfsi_verbal_scale=res["enfsi_verbal_scale"],
+        measurement_uncertainty=res["measurement_uncertainty"],
+        invariants=res["invariants"],
+        locus_results=res["locus_results"],
+    )
+
+
+@router.post(
+    "/kinship-duo",
+    response_model=KinshipDuoResponse,
+    summary="Pedigree Kinship Evaluation (IBD & SMM)",
+    description=(
+        "Calculates pairwise Kinship Index (KI), Combined Paternity Index (CPI), and "
+        "Probability of Paternity W(%) under Balding-Nichols theta and Stepwise Mutation Model."
+    ),
+    status_code=status.HTTP_200_OK,
+)
+async def compute_kinship_duo(body: KinshipDuoRequest) -> KinshipDuoResponse:
+    try:
+        from node.services.forensic.kinship.str_engine import KinshipSTREngine, KinshipRelationship
+        # Resolve relationship enum
+        rel_enum = KinshipRelationship.PARENT_CHILD
+        for r in KinshipRelationship:
+            if r.value.lower() == body.relationship.lower() or r.name.lower() == body.relationship.lower().replace("-", "_").replace(" ", "_"):
+                rel_enum = r
+                break
+
+        res = KinshipSTREngine.compute_kinship_profile_analysis(
+            profile1=body.profile1,
+            profile2=body.profile2,
+            relationship=rel_enum,
+            population=body.population,
+            theta=body.theta,
+            apply_smm=body.apply_smm,
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Kinship duo calculation failed: {str(exc)}"
+        )
+
+    locus_schemas = [
+        KinshipLocusSchema(
+            locus_name=loc.locus_name,
+            genotype1=loc.genotype1,
+            genotype2=loc.genotype2,
+            shared_alleles=loc.shared_alleles,
+            kinship_index=loc.kinship_index,
+            log10_ki=loc.log10_ki,
+            mutation_occurred=loc.mutation_occurred,
+            formula=loc.formula,
+        )
+        for loc in res.locus_results
+    ]
+
+    return KinshipDuoResponse(
+        relationship=res.relationship.value,
+        population=res.population,
+        theta=res.theta,
+        evaluated_loci_count=res.evaluated_loci_count,
+        combined_kinship_index=res.combined_kinship_index,
+        combined_log10_ki=res.combined_log10_ki,
+        probability_of_paternity_w=res.probability_of_paternity_w,
+        enfsi_verbal_scale=res.enfsi_verbal_scale,
+        locus_results=locus_schemas,
+        invariants=res.invariants,
+    )
+
 

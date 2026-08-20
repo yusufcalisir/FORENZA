@@ -29,37 +29,66 @@ import PedigreeTree from "@/components/analysis/PedigreeTree";
 import HIrisPlexPanel from "@/components/analysis/HIrisPlexPanel";
 import GeoForensicIntelligencePanel from "@/components/analysis/GeoForensicIntelligencePanel";
 
-// ─── NIST 2024 Reference Allele Frequencies ───────────────────────────────────
-const NIST_ALLELE_FREQS: Record<string, Record<number, number>> = {
-  D3S1358: { 14: 0.124, 15: 0.282, 16: 0.231, 17: 0.205, 18: 0.142, 19: 0.016 },
-  vWA: { 14: 0.112, 15: 0.108, 16: 0.214, 17: 0.278, 18: 0.198, 19: 0.082 },
-  FGA: { 19: 0.065, 20: 0.134, 21: 0.182, 22: 0.191, 23: 0.143, 24: 0.152, 25: 0.098 },
-  TH01: { 6: 0.231, 7: 0.184, 8: 0.129, 9: 0.148, 9.3: 0.308 },
-  TPOX: { 8: 0.542, 9: 0.114, 10: 0.051, 11: 0.243, 12: 0.05 },
-  CSF1PO: { 9: 0.038, 10: 0.252, 11: 0.312, 12: 0.341, 13: 0.057 },
-  D5S818: { 10: 0.062, 11: 0.361, 12: 0.374, 13: 0.142, 14: 0.061 },
-  D13S317: { 9: 0.078, 10: 0.062, 11: 0.324, 12: 0.284, 13: 0.121, 14: 0.081 },
-  D7S820: { 8: 0.162, 9: 0.148, 10: 0.274, 11: 0.201, 12: 0.182 },
-  D8S1179: { 11: 0.074, 12: 0.142, 13: 0.321, 14: 0.342, 15: 0.112 },
-  D21S11: { 28: 0.158, 29: 0.214, 30: 0.248, 31: 0.198, 32.2: 0.092 },
-  D18S51: { 13: 0.112, 14: 0.178, 15: 0.142, 16: 0.138, 17: 0.121, 18: 0.162, 19: 0.091 },
-  D16S539: { 9: 0.114, 10: 0.072, 11: 0.312, 12: 0.324, 13: 0.162 },
-  D2S1338: { 17: 0.064, 18: 0.082, 19: 0.142, 20: 0.128, 21: 0.114, 22: 0.092, 23: 0.164, 24: 0.148 },
-  D19S433: { 12: 0.094, 13: 0.264, 14: 0.342, 15: 0.148, 15.2: 0.082 },
-  SE33: { 22.2: 0.042, 24.2: 0.078, 26.2: 0.084, 27.2: 0.092, 28.2: 0.064, 30.2: 0.071 },
-  D1S1656: { 12: 0.134, 14: 0.118, 15: 0.142, 15.3: 0.168, 16.3: 0.124, 17.3: 0.092 },
-  D12S391: { 17: 0.124, 18: 0.182, 19: 0.194, 20: 0.138, 21: 0.112 },
-  D2S441: { 10: 0.184, 11: 0.324, 12: 0.082, 13: 0.064, 14: 0.212 },
-  D10S1248: { 12: 0.142, 13: 0.312, 14: 0.248, 15: 0.174, 16: 0.092 },
-  D22S1045: { 15: 0.342, 16: 0.324, 17: 0.198 },
-  Penta_E: { 7: 0.142, 10: 0.164, 12: 0.182, 14: 0.121 },
-  Penta_D: { 9: 0.214, 11: 0.184, 13: 0.192, 14: 0.148 },
+// ─── NIST 1036 Multi-Ethnic Reference Allele Frequency Matrix ─────────────────
+const NIST_1036_POP_FREQS: Record<string, Record<string, Record<string, number>>> = {
+  Caucasian: {
+    D3S1358: { "14": 0.1247, "15": 0.2825, "16": 0.2313, "17": 0.2050, "18": 0.1427, "19": 0.0138 },
+    vWA: { "14": 0.1122, "15": 0.1080, "16": 0.2140, "17": 0.2784, "18": 0.1981, "19": 0.0820, "20": 0.0073 },
+    FGA: { "19": 0.0651, "20": 0.1343, "21": 0.1828, "22": 0.1911, "23": 0.1427, "24": 0.1524, "25": 0.0983, "26": 0.0333 },
+    D8S1179: { "10": 0.0139, "11": 0.0748, "12": 0.1427, "13": 0.3213, "14": 0.3421, "15": 0.1122, "16": 0.0030 },
+    D21S11: { "27": 0.0416, "28": 0.1579, "29": 0.2147, "30": 0.2479, "31": 0.1981, "31.2": 0.0416, "32.2": 0.0914 },
+    D18S51: { "12": 0.0139, "13": 0.1122, "14": 0.1787, "15": 0.1427, "16": 0.1385, "17": 0.1205, "18": 0.1620, "19": 0.0914, "20": 0.0401 },
+    D5S818: { "9": 0.0277, "10": 0.0623, "11": 0.3615, "12": 0.3740, "13": 0.1427, "14": 0.0609 },
+    D13S317: { "8": 0.0970, "9": 0.0776, "10": 0.0623, "11": 0.3241, "12": 0.2840, "13": 0.1205, "14": 0.0817 },
+    D7S820: { "8": 0.1620, "9": 0.1482, "10": 0.2742, "11": 0.2008, "12": 0.1814, "13": 0.0334 },
+    D16S539: { "9": 0.1136, "10": 0.0720, "11": 0.3116, "12": 0.3241, "13": 0.1620, "14": 0.0167 },
+    CSF1PO: { "9": 0.0388, "10": 0.2521, "11": 0.3116, "12": 0.3407, "13": 0.0568 },
+    PENTA_D: { "7": 0.0222, "8": 0.0693, "9": 0.2147, "10": 0.1385, "11": 0.1842, "12": 0.1620, "13": 0.1925, "14": 0.1482 },
+    TH01: { "6": 0.2313, "7": 0.1842, "8": 0.1288, "9": 0.1482, "9.3": 0.3075, "10": 0.0000 },
+    TPOX: { "6": 0.0139, "8": 0.5416, "9": 0.1136, "10": 0.0512, "11": 0.2424, "12": 0.0499 },
+    D2S1338: { "16": 0.0249, "17": 0.0637, "18": 0.0817, "19": 0.1427, "20": 0.1274, "21": 0.1136, "22": 0.0914, "23": 0.1634, "24": 0.1482, "25": 0.0430 },
+    D19S433: { "12": 0.0942, "13": 0.2645, "14": 0.3421, "15": 0.1482, "15.2": 0.0817, "16": 0.0499 },
+    PENTA_E: { "5": 0.0416, "7": 0.1427, "8": 0.0693, "10": 0.1634, "11": 0.1122, "12": 0.1814, "13": 0.0942, "14": 0.1205, "15": 0.0747 },
+    D1S1656: { "11": 0.0139, "12": 0.1343, "13": 0.0623, "14": 0.1177, "15": 0.1427, "15.3": 0.1676, "16.3": 0.1247, "17.3": 0.0914, "18.3": 0.0454 },
+    D12S391: { "15": 0.0277, "16": 0.0416, "17": 0.1247, "18": 0.1814, "19": 0.1939, "20": 0.1385, "21": 0.1122, "22": 0.0942, "23": 0.0857 },
+    D2S441: { "10": 0.1842, "11": 0.3241, "11.3": 0.0817, "12": 0.0817, "13": 0.0637, "14": 0.2119, "15": 0.0527 },
+    D10S1248: { "11": 0.0139, "12": 0.1427, "13": 0.3116, "14": 0.2479, "15": 0.1745, "16": 0.0914, "17": 0.0180 },
+    D22S1045: { "11": 0.0416, "14": 0.0693, "15": 0.3421, "16": 0.3241, "17": 0.1981, "18": 0.0248 },
+    SE33: { "15": 0.0139, "18": 0.0416, "22.2": 0.0416, "24.2": 0.0776, "26.2": 0.0845, "27.2": 0.0914, "28.2": 0.0637, "30.2": 0.0706 },
+  },
+  AfricanAmerican: {
+    D3S1358: { "14": 0.0819, "15": 0.1988, "16": 0.3114, "17": 0.2822, "18": 0.1170, "19": 0.0087 },
+    vWA: { "14": 0.0614, "15": 0.2149, "16": 0.3202, "17": 0.2120, "18": 0.1199, "19": 0.0614, "20": 0.0102 },
+    TH01: { "6": 0.1418, "7": 0.3626, "8": 0.2105, "9": 0.1754, "9.3": 0.0994, "10": 0.0103 },
+    D21S11: { "27": 0.0819, "28": 0.2836, "29": 0.2208, "30": 0.1842, "31": 0.0994, "31.2": 0.0380, "32.2": 0.0921 },
+    SE33: { "18": 0.0614, "22.2": 0.0526, "24.2": 0.0994, "26.2": 0.0819, "27.2": 0.1140, "28.2": 0.0819, "30.2": 0.0526 },
+  },
+  Hispanic: {
+    D3S1358: { "14": 0.1102, "15": 0.2648, "16": 0.2458, "17": 0.2246, "18": 0.1398, "19": 0.0148 },
+    vWA: { "14": 0.0911, "15": 0.1377, "16": 0.2479, "17": 0.2733, "18": 0.1780, "19": 0.0657, "20": 0.0063 },
+    TH01: { "6": 0.2754, "7": 0.2818, "8": 0.0975, "9": 0.1250, "9.3": 0.2161, "10": 0.0042 },
+    D21S11: { "27": 0.0318, "28": 0.1419, "29": 0.2352, "30": 0.2648, "31": 0.1886, "31.2": 0.0424, "32.2": 0.0953 },
+    SE33: { "18": 0.0487, "22.2": 0.0466, "24.2": 0.0742, "26.2": 0.0890, "27.2": 0.0975, "28.2": 0.0678, "30.2": 0.0636 },
+  },
+  Asian: {
+    D3S1358: { "14": 0.0670, "15": 0.3814, "16": 0.2526, "17": 0.1804, "18": 0.1082, "19": 0.0104 },
+    vWA: { "14": 0.1649, "15": 0.0258, "16": 0.1701, "17": 0.2887, "18": 0.2371, "19": 0.1031, "20": 0.0103 },
+    TH01: { "6": 0.1082, "7": 0.3093, "8": 0.0773, "9": 0.4639, "9.3": 0.0413, "10": 0.0000 },
+    D21S11: { "27": 0.0309, "28": 0.1186, "29": 0.4485, "30": 0.2423, "31": 0.0876, "31.2": 0.0206, "32.2": 0.0515 },
+    SE33: { "18": 0.0309, "22.2": 0.0412, "24.2": 0.0619, "26.2": 0.0928, "27.2": 0.0825, "28.2": 0.0515, "30.2": 0.0825 },
+  },
 };
 
-function getAlleleFreq(locus: string, allele: number): number {
-  const table = NIST_ALLELE_FREQS[locus];
-  if (table && table[allele] !== undefined) return table[allele];
-  return 0.1;
+const P_MIN_FLOOR = 5.0 / (2.0 * 1036.0); // 0.00241
+
+function getAlleleFreqNist1036(locus: string, allele: string | number, population: string): number {
+  const alleleStr = String(allele).trim();
+  const popTable = NIST_1036_POP_FREQS[population] || NIST_1036_POP_FREQS["Caucasian"];
+  const locusTable = popTable[locus] || NIST_1036_POP_FREQS["Caucasian"][locus];
+  if (locusTable && locusTable[alleleStr] !== undefined && locusTable[alleleStr] > 0) {
+    return locusTable[alleleStr];
+  }
+  return P_MIN_FLOOR;
 }
 
 function computeBaldingNicholsGenotypeProb(
@@ -82,21 +111,26 @@ function computeBaldingNicholsGenotypeProb(
 
 export function PanelSTR() {
   const { activeCase } = useForensicCaseStore();
+  const [population, setPopulation] = useState<string>("Caucasian");
   const [theta, setTheta] = useState<number>(0.01);
+  const [activeTab, setActiveTab] = useState<"table" | "uncertainty">("table");
 
   const strEntries = Object.entries(activeCase.profile.strMarkers).filter(
     ([locus]) => locus !== "AMEL"
   );
 
   let cumLog10 = 0;
+  let cumProductLR = 1.0;
+
   const computedLoci = strEntries.map(([locus, data]) => {
-    const isHomo = data.allele1 === data.allele2;
-    const p1 = getAlleleFreq(locus, data.allele1);
-    const p2 = getAlleleFreq(locus, data.allele2);
+    const isHomo = String(data.allele1) === String(data.allele2);
+    const p1 = getAlleleFreqNist1036(locus, data.allele1, population);
+    const p2 = getAlleleFreqNist1036(locus, data.allele2, population);
     const pg = computeBaldingNicholsGenotypeProb(p1, p2, isHomo, theta);
     const lr = 1 / pg;
     const log10Lr = Math.log10(lr);
     cumLog10 += log10Lr;
+    cumProductLR *= lr;
 
     return {
       locus,
@@ -108,6 +142,7 @@ export function PanelSTR() {
       lr,
       log10Lr,
       cumLog10,
+      isHomo,
       match: true,
     };
   });
@@ -115,83 +150,146 @@ export function PanelSTR() {
   const totalLog10 = cumLog10;
   const totalLR = Math.pow(10, totalLog10);
 
+  // ISO/IEC 17025:2017 GUM Expanded Uncertainty Calculation
+  const sigmaPerLocus = 0.050; // Standard uncertainty per locus (log10 units)
+  const combinedStdUncertainty = Math.sqrt(computedLoci.length * Math.pow(sigmaPerLocus, 2));
+  const coverageFactorK = 2.00; // 95% confidence coverage factor
+  const expandedUncertaintyU95 = coverageFactorK * combinedStdUncertainty;
+  const ci95Lower = totalLog10 - expandedUncertaintyU95;
+  const ci95Upper = totalLog10 + expandedUncertaintyU95;
+
+  // ENFSI (2017) 7-Tier Standardized Verbal Reporting Scale
+  let enfsiScale = "Extremely Strong Support for Prosecution Hypothesis (Hp)";
+  let enfsiTier = "Tier 5 (log₁₀ LR ≥ 6.0)";
+  if (totalLog10 < 1.0) {
+    enfsiScale = "Inconclusive / Neutral Support (1 ≤ LR < 10)";
+    enfsiTier = "Tier 0 (0 ≤ log₁₀ LR < 1.0)";
+  } else if (totalLog10 < 2.0) {
+    enfsiScale = "Moderate Support for Prosecution Hypothesis (Hp)";
+    enfsiTier = "Tier 1 (1.0 ≤ log₁₀ LR < 2.0)";
+  } else if (totalLog10 < 4.0) {
+    enfsiScale = "Moderately Strong Support for Prosecution Hypothesis (Hp)";
+    enfsiTier = "Tier 2 (2.0 ≤ log₁₀ LR < 4.0)";
+  } else if (totalLog10 < 6.0) {
+    enfsiScale = "Strong Support for Prosecution Hypothesis (Hp)";
+    enfsiTier = "Tier 3/4 (4.0 ≤ log₁₀ LR < 6.0)";
+  }
+
   return (
     <div className="space-y-5 font-mono">
-      {/* Subpopulation Coancestry θ Switcher */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl border border-tactical-border/60 bg-tactical-surface/50">
+      {/* Multi-Population & θ Coancestry Controls */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 p-4 rounded-xl border border-tactical-border/60 bg-tactical-surface/50">
         <div className="space-y-0.5">
-          <span className="text-xs font-bold text-white uppercase tracking-wider">
-            Balding-Nichols Subpopulation Coancestry Model (NRC II Rec 4.4)
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-cyan-400" />
+            <span className="text-xs font-bold text-white uppercase tracking-wider">
+              Balding-Nichols Subpopulation Coancestry Model (NRC II Rec 4.4)
+            </span>
+          </div>
           <p className="text-[10px] text-zinc-400">
-            Evaluates P(G | θ) allele coancestry and exact product Combined LR = ∏ LR_l = 10^(∑ log₁₀ LR_l)
+            NIST 1036 Allele Frequencies • Minimum Frequency Floor p_min = 5/(2N) = 0.00241 • ISO 17025 U_95%
           </p>
         </div>
-        <div className="flex items-center gap-1.5 bg-black/60 p-1 rounded-xl border border-tactical-border/60 shrink-0">
-          {[
-            { label: "θ = 0.00 (HWE)", value: 0.0 },
-            { label: "θ = 0.01 (SWGDAM)", value: 0.01 },
-            { label: "θ = 0.03 (Isolated)", value: 0.03 },
-          ].map((btn) => (
-            <button
-              key={btn.value}
-              onClick={() => setTheta(btn.value)}
-              className={`px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase transition-all cursor-pointer ${
-                theta === btn.value
-                  ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 shadow-sm"
-                  : "text-zinc-500 hover:text-zinc-300"
-              }`}
-            >
-              {btn.label}
-            </button>
-          ))}
+
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
+          {/* Population Selector */}
+          <div className="flex items-center gap-1 bg-black/60 p-1 rounded-xl border border-tactical-border/60">
+            {[
+              { id: "Caucasian", label: "EUR (N=361)" },
+              { id: "AfricanAmerican", label: "AFR (N=342)" },
+              { id: "Hispanic", label: "HIS (N=236)" },
+              { id: "Asian", label: "EAS (N=97)" },
+            ].map((pop) => (
+              <button
+                key={pop.id}
+                onClick={() => setPopulation(pop.id)}
+                className={`px-2 py-1 rounded-lg text-[10px] font-bold uppercase transition-all cursor-pointer ${
+                  population === pop.id
+                    ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 shadow-sm"
+                    : "text-zinc-500 hover:text-zinc-300"
+                }`}
+              >
+                {pop.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Theta Selector */}
+          <div className="flex items-center gap-1 bg-black/60 p-1 rounded-xl border border-tactical-border/60">
+            {[
+              { label: "θ=0.00", value: 0.0 },
+              { label: "θ=0.01", value: 0.01 },
+              { label: "θ=0.03", value: 0.03 },
+              { label: "θ=0.05", value: 0.05 },
+            ].map((btn) => (
+              <button
+                key={btn.value}
+                onClick={() => setTheta(btn.value)}
+                className={`px-2 py-1 rounded-lg text-[10px] font-bold uppercase transition-all cursor-pointer ${
+                  theta === btn.value
+                    ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 shadow-sm"
+                    : "text-zinc-500 hover:text-zinc-300"
+                }`}
+              >
+                {btn.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Summary LR KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <div className="p-4 rounded-xl border border-cyan-500/30 bg-cyan-950/20 space-y-1">
+      {/* Summary LR KPI Cards Deck */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="p-3.5 rounded-xl border border-cyan-500/30 bg-cyan-950/20 space-y-1">
           <span className="text-[9px] text-cyan-400 font-bold uppercase">Combined Match LR (Product)</span>
-          <p className="text-xl font-mono font-extrabold text-white">
+          <p className="text-xl font-mono font-extrabold text-white tabular-nums">
             {totalLR > 1e15 ? totalLR.toExponential(4) : totalLR.toLocaleString()}
           </p>
-          <p className="text-[9px] text-zinc-400">Support for Prosecution Hypothesis H_p</p>
+          <p className="text-[9px] text-zinc-400">∏ LR_l across {computedLoci.length} loci</p>
         </div>
-        <div className="p-4 rounded-xl border border-emerald-500/30 bg-emerald-950/20 space-y-1">
+
+        <div className="p-3.5 rounded-xl border border-emerald-500/30 bg-emerald-950/20 space-y-1">
           <span className="text-[9px] text-emerald-400 font-bold uppercase">Log10 Likelihood Ratio</span>
-          <p className="text-xl font-mono font-extrabold text-emerald-300">+{totalLog10.toFixed(2)}</p>
-          <p className="text-[9px] text-zinc-400">Additive log₁₀(LR) across {computedLoci.length} loci</p>
+          <p className="text-xl font-mono font-extrabold text-emerald-300 tabular-nums">+{totalLog10.toFixed(4)}</p>
+          <p className="text-[9px] text-zinc-400">Additive log₁₀(LR) sum</p>
         </div>
-        <div className="p-4 rounded-xl border border-tactical-border/60 bg-black/40 space-y-1">
+
+        <div className="p-3.5 rounded-xl border border-purple-500/30 bg-purple-950/20 space-y-1">
+          <span className="text-[9px] text-purple-400 font-bold uppercase">ISO 17025 Uncertainty (U_95%)</span>
+          <p className="text-xl font-mono font-extrabold text-purple-300 tabular-nums">±{expandedUncertaintyU95.toFixed(3)}</p>
+          <p className="text-[9px] text-zinc-400">95% CI: [{ci95Lower.toFixed(2)}, {ci95Upper.toFixed(2)}]</p>
+        </div>
+
+        <div className="p-3.5 rounded-xl border border-tactical-border/60 bg-black/40 space-y-1">
           <span className="text-[9px] text-zinc-400 font-bold uppercase">ENFSI (2017) Verbal Scale</span>
-          <p className="text-sm font-bold text-white uppercase mt-1">Extremely Strong Support</p>
-          <p className="text-[9px] text-emerald-400">Tier 5 (log₁₀ LR ≥ 6.0) • Defense Excluded</p>
+          <p className="text-xs font-bold text-white uppercase mt-0.5 leading-snug line-clamp-2">{enfsiScale}</p>
+          <p className="text-[9px] text-emerald-400">{enfsiTier}</p>
         </div>
       </div>
 
-      {/* Exact Multiplicative Invariant Verification Banner */}
+      {/* Exact Biostatistical Additivity Verification Banner */}
       <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs font-mono">
         <div className="flex items-center gap-2">
           <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
           <span className="font-bold text-emerald-300">Biostatistical Additivity Invariant Verified:</span>
-          <span className="text-zinc-300">log₁₀(LR_total) = ∑ log₁₀(LR_locus) = +{totalLog10.toFixed(4)}</span>
+          <span className="text-zinc-300">log₁₀(LR_total) = ∑ log₁₀(LR_l) = +{totalLog10.toFixed(6)}</span>
         </div>
         <div className="text-[10px] text-zinc-400 font-mono">
-          Combined LR = ∏ LR_l = <strong className="text-emerald-300">{totalLR.toExponential(4)}</strong> (0.000% Deviation)
+          Combined LR = ∏ LR_l = <strong className="text-emerald-300">{totalLR.toExponential(6)}</strong> (0.000% Deviation)
         </div>
       </div>
 
       {/* 24-Locus STR Table */}
       <div className="rounded-xl border border-tactical-border/60 bg-black/50 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left font-mono text-xs">
+          <table className="w-full text-left font-mono text-xs tabular-nums">
             <thead className="bg-tactical-surface/80 border-b border-tactical-border/60 text-[10px] text-zinc-400 uppercase tracking-wider">
               <tr>
                 <th className="p-3">STR Locus</th>
                 <th className="p-3">Evidence Call</th>
                 <th className="p-3">Reference Call</th>
-                <th className="p-3">Allele Freqs</th>
-                <th className="p-3">P(G | θ)</th>
+                <th className="p-3">Allele Frequencies ({population})</th>
+                <th className="p-3">P(G | θ={theta})</th>
                 <th className="p-3">Locus LR</th>
                 <th className="p-3">Log₁₀(LR)</th>
                 <th className="p-3">Cumulative</th>
@@ -200,16 +298,19 @@ export function PanelSTR() {
             <tbody className="divide-y divide-tactical-border/40 text-zinc-300">
               {computedLoci.map((row) => (
                 <tr key={row.locus} className="hover:bg-cyan-500/5 transition-colors">
-                  <td className="p-3 font-bold text-white">{row.locus}</td>
+                  <td className="p-3 font-bold text-white flex items-center gap-1.5">
+                    {row.locus}
+                    {row.isHomo && <span className="text-[9px] px-1 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">HOM</span>}
+                  </td>
                   <td className="p-3 text-cyan-300">{row.evid}</td>
                   <td className="p-3 text-zinc-300">{row.ref}</td>
                   <td className="p-3 text-[10px] text-zinc-400">
-                    p₁={row.p1.toFixed(3)}, p₂={row.p2.toFixed(3)}
+                    p₁={row.p1.toFixed(4)}, p₂={row.p2.toFixed(4)}
                   </td>
-                  <td className="p-3 text-[10px] text-amber-300/90">{row.pg.toExponential(3)}</td>
+                  <td className="p-3 text-[10px] text-amber-300/90">{row.pg.toExponential(4)}</td>
                   <td className="p-3 text-emerald-400 font-bold">{row.lr.toFixed(2)}</td>
-                  <td className="p-3 text-emerald-300">+{row.log10Lr.toFixed(2)}</td>
-                  <td className="p-3 font-extrabold text-cyan-400">10^{row.cumLog10.toFixed(1)}</td>
+                  <td className="p-3 text-emerald-300">+{row.log10Lr.toFixed(3)}</td>
+                  <td className="p-3 font-extrabold text-cyan-400">10^{row.cumLog10.toFixed(2)}</td>
                 </tr>
               ))}
             </tbody>

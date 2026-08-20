@@ -4,7 +4,7 @@ Module 03: Dirichlet Smoothing, HWE, Linkage Equilibrium, FST Matrix.
 """
 
 from __future__ import annotations
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Any
 from pydantic import BaseModel, Field
 
 
@@ -136,4 +136,72 @@ class FstMatrixResponse(BaseModel):
     nei_matrix: Dict[str, float]
     theta_recommendation: float
     verdict: str
+
+
+# ── 24-Locus STR & Kinship Schemas ──────────────────────────────────────────
+
+class ProfileRMPRequest(BaseModel):
+    """Request body for POST /population/profile-rmp."""
+    profile: Dict[str, Any] = Field(..., examples=[{"TH01": ["6", "9.3"], "D21S11": ["28", "31.2"]}])
+    population: str = Field("Caucasian", examples=["Caucasian"])
+    theta: float = Field(0.01, ge=0.0, le=0.20)
+    use_exact_balding_nichols: bool = True
+    dropout_map: Optional[Dict[str, bool]] = None
+    dropout_q: float = Field(0.05, ge=0.0, le=1.0)
+
+
+class MeasurementUncertaintySchema(BaseModel):
+    combined_standard_uncertainty_log10: float
+    coverage_factor_k: float = 2.00
+    expanded_uncertainty_U95: float
+    ci_95_lower: float
+    ci_95_upper: float
+
+
+class ProfileRMPResponse(BaseModel):
+    population: str
+    theta: float
+    evaluated_loci_count: int
+    combined_rmp: float
+    combined_lr: float
+    combined_log10_lr: float
+    enfsi_verbal_scale: str
+    measurement_uncertainty: MeasurementUncertaintySchema
+    invariants: Dict[str, Any]
+    locus_results: List[Dict[str, Any]]
+
+
+class KinshipDuoRequest(BaseModel):
+    """Request body for POST /population/kinship-duo."""
+    profile1: Dict[str, Any] = Field(..., description="Child / Proband profile")
+    profile2: Dict[str, Any] = Field(..., description="Alleged relative profile")
+    relationship: str = Field("Parent-Child", examples=["Parent-Child", "Full Sibling", "Half Sibling", "First Cousin", "Unrelated"])
+    population: str = Field("Caucasian", examples=["Caucasian"])
+    theta: float = Field(0.01, ge=0.0, le=0.20)
+    apply_smm: bool = True
+
+
+class KinshipLocusSchema(BaseModel):
+    locus_name: str
+    genotype1: Tuple[str, str]
+    genotype2: Tuple[str, str]
+    shared_alleles: List[str]
+    kinship_index: float
+    log10_ki: float
+    mutation_occurred: bool
+    formula: str
+
+
+class KinshipDuoResponse(BaseModel):
+    relationship: str
+    population: str
+    theta: float
+    evaluated_loci_count: int
+    combined_kinship_index: float
+    combined_log10_ki: float
+    probability_of_paternity_w: float
+    enfsi_verbal_scale: str
+    locus_results: List[KinshipLocusSchema]
+    invariants: Dict[str, Any]
+
 

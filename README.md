@@ -235,6 +235,14 @@ str-analysis/
 │           │   ├── test_tippett_reference_datasets.py # 10k Monte Carlo & Casework Cohort Tests
 │           │   ├── test_tippett_cross_validation.py # External Benchmark & ENFSI Scale Tests
 │           │   └── test_tippett_edge_cases.py # 5 Empirical Edge-Case Tests (EC-TIP-01 to 05)
+│           ├── ystr/                      # 31. Y-STR 27-Locus Lineage Forensics Engine (Y-FILER Plus)
+│           │   ├── ystr_mathematical_formulation.py # Clopper-Pearson 95%, Brenner theta, SMM, RM Loci
+│           │   ├── ystr_reference_datasets.py # YHRD R68 (N=385k), SRM 2391d, HG002, NA18507
+│           │   ├── ystr_cross_validation.py # YHRD Surveying Engine & Ballantyne RM Model Concordance
+│           │   ├── test_ystr_mathematical_formulation.py # Pure Formulation Tests (24/24 Passed)
+│           │   ├── test_ystr_reference_datasets.py # Global Metapopulations & Gold Standards (12/12 Passed)
+│           │   ├── test_ystr_cross_validation.py # External Concordance & ISFG Shield (6/6 Passed)
+│           │   └── test_ystr_edge_cases.py # 8 Empirical Edge-Case Tests (8/8 Passed)
 │           └── tests/                     # Automated Test Suite (1050+ Tests Passing)
 │
 ├── frontend/                              # Next.js 16 Workstation Dashboard
@@ -256,6 +264,7 @@ str-analysis/
 │       ├── components/                    # React UI Components
 │       │   ├── analysis/                  # 35 Tactical Forensic Viewport Panels & Router
 │       │   │   ├── PanelRouter.tsx        # Centralized Biocomputational Panel Router
+│       │   │   ├── PanelYSTR.tsx          # Y-STR 27-Locus Multi-Panel Tactical Visualizer
 │       │   │   └── GeoForensicIntelligencePanel.tsx # Multi-Modal Geo-Forensic Platform
 │       │   ├── common/                    # Shared Modals & Telemetry Banners
 │       │   │   ├── DnaProfileInspectorModal.tsx # DNA & SNP Terminal with Interactive CLI
@@ -335,7 +344,7 @@ FORENZA structures its 35 biocomputational subsystems into 7 canonical operation
 
 ### Pillar 2: Lineage Forensics & Kinship Inference
 
-6. **Y-STR Haplotype Forensics (`06`):** Computes Clopper-Pearson 95% binomial upper confidence bounds for Y-chromosome STR haplotypes (Y-FILER Plus 27 loci) with Y-HRD database matching, rapid-mutating locus separation, and surveying paternal lineage ancestry.
+6. **Y-STR 27-Locus Lineage Forensics (`06` / `2.1`):** Evaluates the Thermo Fisher Y-FILER Plus 27-locus multiplex (25 systems, 19 standard single-copy, 2 multi-copy `DYS385a/b` and `DYF387S1a/b`, 7 Rapidly Mutating markers). Computes exact Clopper-Pearson 95% binomial upper confidence bounds ($p_{\text{upper}} = 7.7811 \times 10^{-6}$ for $N=385,000$, $1 \text{ in } 128,517$), Brenner $\theta$ coancestry correction ($p = (k+\theta)/(N+\theta)$), biophysical DYS389 nested repeat decoupling ($\text{DYS389.2}_{\text{pure}} = \text{DYS389II} - \text{DYS389I}$), SMM $m$-meioses paternal kinship likelihoods ($LR \ge 157.30$ with RM mutation rescue, $LR = 0.0$ on multi-step exclusion), Bayesian Y-DNA haplogroup classification across 16 modal clades, and active ISFG (2020) patrilineal reporting shields.
 7. **X-STR Linkage & Kinship Index (`07`):** Evaluates Argus X-12 4 linkage clusters (LG1–LG4) with Kosambi map distance corrections and female kinship likelihood ratios $(KI_{X, \text{PHS}})$ for complex deficiency and incest casework.
 8. **mtDNA Control Region EMPOP Aligner (`08`):** Aligns mitochondrial control region (HV1, HV2, HV3) against rCRS/RSRS reference sequences enforcing EMPOP right-alignment phylogenetic rules, poly-C indel parsing, and heteroplasmy quantification.
 9. **Interpol DVI Disaster Victim Identification (`09`):** Implements Section 4 Bayesian Joint Likelihood Ratio $(LR_J = LR_{\text{DNA}} \times LR_{\text{Odon}} \times LR_{\text{Anthro}})$ for mass disaster ante-mortem/post-mortem reconciliation.

@@ -416,7 +416,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
           shortName: "Lineage DNA",
           badge: "HAPLOTYPE",
           subsystems: [
-            { id: "06", name: "Y-STR Haplotype Forensics", badge: "Y-STR", metrics: "Y-FILER Plus 27 • Clopper-Pearson 95% • Y-HRD", desc: "Computes Clopper-Pearson 95% binomial confidence intervals for Y-chromosome STR haplotypes (Y-FILER Plus 27 loci) with Y-HRD database matching." },
+            { id: "06", name: "Y-STR 27-Locus Lineage Forensics", badge: "Y-STR", metrics: "Y-FILER Plus 27 • 7 RM Loci • Clopper-Pearson 95% • YHRD R68", desc: "Computes Clopper-Pearson 95% upper bounds, Brenner theta coancestry, SMM m-meioses paternal kinship likelihoods, DYS389 pure decoupling, and 16 Bayesian Y-DNA haplogroup clades with ISFG reporting shields." },
             { id: "07", name: "X-STR Linkage & Kinship Index", badge: "X-STR", metrics: "Argus X-12 • LG1-LG4 Linkage • KI_X Kinship", desc: "Evaluates Argus X-12 4 linkage clusters with Kosambi map distance corrections and female kinship likelihood ratios (KI_X)." },
             { id: "08", name: "mtDNA Control Region rCRS/RSRS", badge: "mtDNA-rCRS", metrics: "EMPOP rCRS/RSRS • HV1-HV3 • Phylotree", desc: "Aligns hypervariable regions against revised Cambridge Reference Sequence (rCRS) and RSRS for maternal lineage assignment." },
             { id: "09", name: "Interpol DVI Mass Disaster Engine", badge: "DVI-PED", metrics: "Interpol Joint LR • N x M Matrix • 4 Tiers", desc: "Multi-omic joint likelihood ratio evaluation (LR_Joint = LR_Auto · LR_Y · LR_mt · LR_SNP) and N x M cross-reconciliation matrix." },
@@ -804,7 +804,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
           shortName: "Soy Analizi",
           badge: "HAPLOTİP",
           subsystems: [
-            { id: "06", name: "Y-STR Haplotip Analizi", badge: "Y-STR", metrics: "Y-FILER Plus 27 • Clopper-Pearson %95 • Y-HRD", desc: "Y-kromozomu STR haplotipleri (Y-FILER Plus 27 lokus) için Clopper-Pearson %95 binom güven aralıklarını hesaplar ve Y-HRD veri tabanıyla eşleştirir." },
+            { id: "06", name: "Y-STR 27-Lokus Soy Analiz Motoru", badge: "Y-STR", metrics: "Y-FILER Plus 27 • 7 RM Lokus • Clopper-Pearson %95 • YHRD R68", desc: "27 lokuslu Y-FILER Plus panelinde Clopper-Pearson %95 üst sınırı, Brenner theta alt popülasyon frekansı, SMM baba soyu olabilirlik oranı (LR), DYS389 ayrıştırması ve Bayesçi haplogrup tahmini yapar." },
             { id: "07", name: "X-STR Bağlantılı Markör Analizi", badge: "X-STR", metrics: "Argus X-12 • LG1-LG4 Bağlantısı • KI_X Soybağı", desc: "Argus X-12 4 bağlantı kümesini Kosambi harita mesafesi düzeltmeleriyle değerlendirir ve kadın soybağı olabilirlik oranlarını (KI_X) hesaplar." },
             { id: "08", name: "mtDNA Kontrol Bölgesi rCRS/RSRS", badge: "mtDNA-rCRS", metrics: "EMPOP rCRS/RSRS • HV1-HV3 • Filotree", desc: "Anne soyu tespiti için hiperdeğişken bölgeleri revize edilmiş Cambridge Referans Dizisi (rCRS) ve RSRS ile hizalar." },
             { id: "09", name: "Interpol DVI ve Afet Kurbanı Kimliklendirme", badge: "DVI-PED", metrics: "Interpol Birleşik LR • N x M Matris • 4 Kademe", desc: "Çoklu-omik birleşik olabilirlik oranı (LR_Birleşik = LR_Oto · LR_Y · LR_mt · LR_SNP) ve N x M afet çapraz mutabakat matrisi hesaplar." },

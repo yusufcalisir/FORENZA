@@ -134,7 +134,7 @@ const PRESETS = [
 
 export default function ExpertWitnessPanel() {
   const [activeTab, setActiveTab] = useState<"enfsi" | "daubert">("enfsi");
-  const [language, setLanguage] = useState<"tr" | "en">("tr");
+  const [language, setLanguage] = useState<"tr" | "en">("en");
   const [log10LR, setLog10LR] = useState<number>(7.5441); // VECTOR_P6_03 default
   const [hp, setHp] = useState("The DNA evidence originates from the named suspect.");
   const [hd, setHd] = useState("The DNA evidence originates from an unknown unrelated person.");

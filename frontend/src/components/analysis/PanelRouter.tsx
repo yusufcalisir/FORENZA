@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useForensicCaseStore } from "@/store/forensicCaseStore";
 import AncestryDataPanel from "@/components/analysis/AncestryDataPanel";
 import LineageDnaPanel from "@/components/analysis/LineageDnaPanel";
+import PanelYSTR from "@/components/analysis/PanelYSTR";
 import DviPanel from "@/components/analysis/DviPanel";
 import HumanIdPanel from "@/components/analysis/HumanIdPanel";
 import ProbabilisticGenotypingPanel from "@/components/analysis/ProbabilisticGenotypingPanel";
@@ -439,10 +440,13 @@ export function renderPanel(tabId: string) {
 
     // Pillar 2: Lineage Forensics & Kinship
     case "lineage_y":
-      return <LineageDnaPanel initialTab="ystr" />;
+    case "ystr":
+      return <PanelYSTR />;
     case "lineage_x":
+    case "xstr":
       return <LineageDnaPanel initialTab="xstr" />;
     case "lineage_mt":
+    case "mtdna":
       return <LineageDnaPanel initialTab="mtdna" />;
     case "dvi":
       return <DviPanel />;

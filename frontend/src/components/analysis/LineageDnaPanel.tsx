@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Dna, ShieldCheck, GitCommit, Compass, RefreshCw, CheckCircle2, ChevronRight, Binary } from "lucide-react";
+import PanelYSTR from "./PanelYSTR";
 
 export default function LineageDnaPanel({
   initialTab = "ystr",
@@ -117,117 +118,7 @@ export default function LineageDnaPanel({
       </div>
 
       {/* ── Sub-tab 1: Y-STR Paternal Haplotype ── */}
-      {selectedTab === "ystr" && (
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="rounded-xl border border-tactical-border/60 bg-tactical-surface/40 p-4 space-y-1">
-              <span className="text-[10px] text-zinc-500 font-bold uppercase">Lineage Status</span>
-              <p className="text-base sm:text-lg font-bold text-emerald-400">PATERNAL MATCH (INCLUSION)</p>
-              <p className="text-[9px] text-zinc-400">27-Locus Y-FILER Plus identical haplotype shared</p>
-            </div>
-            <div className="rounded-xl border border-tactical-border/60 bg-tactical-surface/40 p-4 space-y-1">
-              <span className="text-[10px] text-zinc-500 font-bold uppercase">Clopper-Pearson 95% Bound</span>
-              <p className="text-base sm:text-lg font-bold text-indigo-400 font-mono">p &lt; {cpUpper.toFixed(6)}</p>
-              <p className="text-[9px] text-zinc-400">LR = {cpLR.toFixed(1)} (log₁₀ = {cpLogLR.toFixed(2)})</p>
-            </div>
-            <div className="rounded-xl border border-tactical-border/60 bg-tactical-surface/40 p-4 space-y-1">
-              <span className="text-[10px] text-zinc-500 font-bold uppercase">Brenner Subpopulation (θ={theta})</span>
-              <p className="text-base sm:text-lg font-bold text-cyan-400 font-mono">p = {brennerProb.toFixed(6)}</p>
-              <p className="text-[9px] text-zinc-400">LR = {brennerLR.toFixed(1)} (k={dbK}, N={dbN})</p>
-            </div>
-            <div className="rounded-xl border border-tactical-border/60 bg-tactical-surface/40 p-4 space-y-1">
-              <span className="text-[10px] text-zinc-500 font-bold uppercase">Mixture Deconvolution</span>
-              <p className="text-base sm:text-lg font-bold text-purple-400 font-mono">N_male = 1 (Single Source)</p>
-              <p className="text-[9px] text-zinc-400">Max 1 allele per single-copy locus</p>
-            </div>
-          </div>
-
-          {/* Database Parameters Control Strip */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 p-3.5 sm:p-4 rounded-xl bg-black/30 border border-tactical-border/50 text-xs">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full md:w-auto">
-              <div className="flex items-center justify-between sm:justify-start gap-2 bg-black/40 px-3 py-1.5 rounded-lg border border-tactical-border/40">
-                <span className="text-zinc-400 text-xs font-bold whitespace-nowrap">Observed (k):</span>
-                <input
-                  type="number"
-                  min={0}
-                  max={dbN}
-                  value={dbK}
-                  onChange={(e) => setDbK(Math.max(0, parseInt(e.target.value) || 0))}
-                  className="w-16 px-2 py-1 rounded bg-black/60 border border-tactical-border text-indigo-300 font-mono font-bold text-center text-xs"
-                />
-              </div>
-              <div className="flex items-center justify-between sm:justify-start gap-2 bg-black/40 px-3 py-1.5 rounded-lg border border-tactical-border/40">
-                <span className="text-zinc-400 text-xs font-bold whitespace-nowrap">Database (N):</span>
-                <input
-                  type="number"
-                  min={100}
-                  step={1000}
-                  value={dbN}
-                  onChange={(e) => setDbN(Math.max(100, parseInt(e.target.value) || 25000))}
-                  className="w-20 px-2 py-1 rounded bg-black/60 border border-tactical-border text-indigo-300 font-mono font-bold text-center text-xs"
-                />
-              </div>
-              <div className="flex items-center justify-between sm:justify-start gap-2 bg-black/40 px-3 py-1.5 rounded-lg border border-tactical-border/40">
-                <span className="text-zinc-400 text-xs font-bold whitespace-nowrap">Theta (θ):</span>
-                <select
-                  value={theta}
-                  onChange={(e) => setTheta(parseFloat(e.target.value))}
-                  className="px-2 py-1 rounded bg-black/60 border border-tactical-border text-cyan-300 font-mono font-bold text-xs"
-                >
-                  <option value={0.01}>0.01 (General)</option>
-                  <option value={0.03}>0.03 (SWGDAM / NRC-II)</option>
-                  <option value={0.05}>0.05 (Isolated)</option>
-                </select>
-              </div>
-            </div>
-            <div className="text-[10px] text-zinc-400 font-bold shrink-0 self-end md:self-auto">
-              SWGDAM (2020) & Y-HRD Counting Standard
-            </div>
-          </div>
-
-          <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-4 sm:p-5 space-y-4 shadow-lg overflow-hidden">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-4 border-b border-tactical-border/40 pb-3">
-              <span className="text-xs font-bold text-tactical-text uppercase tracking-wider leading-snug">
-                Y-FILER Plus 27-Locus Multiplex Haplotype Profile
-              </span>
-              <div className="flex flex-wrap items-center gap-2 shrink-0">
-                <span className="text-[9px] text-pink-400 font-bold bg-pink-500/10 border border-pink-500/20 px-2 py-0.5 rounded whitespace-nowrap">
-                  6 RM Loci (Rapidly Mutating)
-                </span>
-                <span className="text-[9px] text-indigo-400 font-bold bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded whitespace-nowrap">
-                  27 Targets Evaluated
-                </span>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-2.5 sm:gap-3">
-              {ystrLoci.map((item) => (
-                <div
-                  key={item.locus}
-                  className={`rounded-lg border p-2.5 sm:p-3 text-center space-y-1 ${
-                    item.rm
-                      ? "border-pink-500/40 bg-pink-500/5 shadow-[0_0_10px_rgba(236,72,153,0.08)]"
-                      : "border-tactical-border/40 bg-black/20"
-                  }`}
-                >
-                  <div className="flex items-center justify-center gap-1">
-                    <p className="text-[9px] text-zinc-400 font-bold truncate">{item.locus}</p>
-                    {item.rm && (
-                      <span className="text-[7px] font-bold text-pink-400 bg-pink-500/20 px-1 py-0.2 rounded shrink-0">
-                        RM
-                      </span>
-                    )}
-                  </div>
-                  <p className={`text-sm font-bold font-mono ${item.rm ? "text-pink-300" : "text-indigo-400"}`}>
-                    {item.allele}
-                  </p>
-                  <p className="text-[8px] text-zinc-500">μ = {item.rate}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
+      {selectedTab === "ystr" && <PanelYSTR />}
 
       {/* ── Sub-tab 2: X-STR Kinship ── */}
       {selectedTab === "xstr" && (

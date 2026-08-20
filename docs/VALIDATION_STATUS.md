@@ -24,7 +24,7 @@ Last updated: 2026-08-20 (1.4.7 LTDNA Stochastic Low-Template Modeling Fully Val
 
 | ID | Module | Status | Reference Dataset | Cross-Check Tool | Edge Cases Passing | Notes |
 |---|---|---|---|---|---|---|
-| Y-STR | Y-Chromosome STR Lineage | NOT_STARTED | YHRD R68 / YFiler Platinum | YHRD Clopper-Pearson / RM-YSTR | 0/5 | Y-FILER Plus 27 Loci |
+| Y-STR | Y-Chromosome STR Lineage | VERIFIED | YHRD Release 68 ($N=385,000$ global + 5 regional partitions), Certified Reference Standards NIST SRM 2391d Comp A (R1b), HG002 (J2a), NA18507 (O2a), female negative controls NA12878/NA19240, 4 Casework Cohorts | YHRD Online Engine & Surveying Method concordance ($|\hat{p}_{\text{computed}} - \hat{p}_{\text{YHRD}}| < 10^{-6}$), Applied Biosystems YFiler Plus developmental validation, Ballantyne & Kayser (2012) RM Y-STR model ($3.02\times$ father-son differentiation boost), ISFG (2020) patrilineal reporting shield | 5/5 | 27 Loci (21 standard + 6 RM markers / 7 targets), Clopper-Pearson 95% Snedecor F bound ($k=0, N=385,000 \implies p_{\text{upper}} = 7.7811 \times 10^{-6}$), Brenner theta coancestry, DYS389 pure decoupling, SMM $m$-meioses paternal LR, Bayesian haplogroups (16 modal clades), 63 module tests passing |
 | X-STR | X-Chromosome STR Kinship | NOT_STARTED | Tillmar 2017 Argus X-12 | Familias 3 X-STR | 0/5 | 12 Loci Linkage Clusters |
 | mtDNA | Mitochondrial DNA Lineage | NOT_STARTED | EMPOP R15 / NIST SRM 2391d | HaploSearch / EMPOP SAM 2 | 0/5 | rCRS / RSRS Alignment |
 | DVI-PED | Interpol DVI Pedigree Matching | NOT_STARTED | Interpol DVI Standard | Familias 3 DVI Engine | 0/5 | Joint Pedigree Likelihood |

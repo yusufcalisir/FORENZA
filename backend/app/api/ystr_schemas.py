@@ -1,249 +1,230 @@
 """
-FORENZA Y-STR Haplotype Forensics & Population Frequency API — Pydantic v2 Schemas (Module 06).
-
-Covers all endpoints:
-  - 27-Locus Y-FILER Plus Haplotype Match Evaluation (Inclusion / Exclusion / Mutation)
-  - Clopper-Pearson 95% Exact Binomial Upper Bound (k=0 and k>0)
-  - Brenner / Surveyor Subpopulation Correction (theta)
-  - Discrete Laplace Clonal Clustering Smoothing
-  - Minimum Male Contributor Estimation (N_male) from Y-STR Mixture
-  - Stepwise Mutation Model (SMM) Father-Son Paternity Discrepancies
-  - Panel Metadata Inspection
+FORENZA Y-STR Haplotype Forensics API — Pydantic v2 Schemas (Module 2.1).
+Standards Compliance: ISO/IEC 17025:2017, SWGDAM Lineage Guidelines (2020), ENFSI Evaluative Reporting (2017).
+Research Source: research/pillar_2_lineage_kinship_research.md & research/ystr_27_mtdna_empop_lineage_research.md
 """
 
-from typing import Dict, List, Optional
-from pydantic import BaseModel, Field
+from typing import Dict, List, Optional, Any, Union
+from pydantic import BaseModel, Field, ConfigDict
 
 
-# ── Match Evaluation ─────────────────────────────────────────────────────────
+# ── 1. Match & Kinship Evaluation Schemas ────────────────────────────────────
 
-class YSTRMatchRequest(BaseModel):
-    """
-    Request for full 27-locus Y-FILER Plus match evaluation.
-    """
-    evidence_id: str = Field("EVIDENCE-01", description="Evidence sample identifier.")
-    suspect_id: str = Field("SUSPECT-01", description="Suspect sample identifier.")
-    evidence_markers: Dict[str, float] = Field(
+class PaternalKinshipRequest(BaseModel):
+    """Request for full 27-locus Y-FILER Plus paternal lineage kinship evaluation."""
+    model_config = ConfigDict(protected_namespaces=())
+
+    evidence_id: str = Field("EVIDENCE-YSTR-01", description="Evidence sample identifier.")
+    suspect_id: str = Field("SUSPECT-YSTR-01", description="Suspect/Reference sample identifier.")
+    evidence_markers: Dict[str, Any] = Field(
         ...,
-        description="Evidence Y-STR allele map (e.g. {'DYS19': 14.0, 'DYS390': 24.0, ...}).",
-        examples=[{"DYS19": 14.0, "DYS389I": 13.0, "DYS390": 24.0, "DYS570": 17.0}],
+        description="Evidence Y-STR allele map (e.g. {'DYS19': 14, 'DYS385a/b': [11, 14], ...}).",
+        examples=[{"DYS19": 14, "DYS389I": 13, "DYS389II": 29, "DYS390": 24, "DYS385a/b": [11, 14]}],
     )
-    suspect_markers: Dict[str, float] = Field(
+    suspect_markers: Dict[str, Any] = Field(
         ...,
-        description="Suspect Y-STR allele map.",
-        examples=[{"DYS19": 14.0, "DYS389I": 13.0, "DYS390": 24.0, "DYS570": 17.0}],
+        description="Suspect/Reference Y-STR allele map.",
+        examples=[{"DYS19": 14, "DYS389I": 13, "DYS389II": 29, "DYS390": 24, "DYS385a/b": [11, 14]}],
     )
-    database_count_k: int = Field(
-        0,
-        ge=0,
-        description="Number of times this haplotype was observed in reference database (k). Research §1.1.",
-        examples=[0],
-    )
-    database_size_n: int = Field(
-        25000,
-        ge=1,
-        description="Total database size (N, e.g. 25,000 for Y-HRD). Research §1.1.",
-        examples=[25000],
-    )
-    theta: float = Field(
-        0.03,
-        ge=0.0,
-        le=0.10,
-        description="Brenner subpopulation coancestry correction theta (default 0.03).",
-        examples=[0.03],
-    )
+    meioses_m: int = Field(1, ge=1, le=10, description="Number of father-to-son meioses separating individuals.")
+    database_size_n: int = Field(385000, ge=100, description="YHRD reference database size N.")
+    theta: float = Field(0.03, ge=0.0, le=0.20, description="Brenner subpopulation coancestry theta.")
 
 
-class SMMTransitionSchema(BaseModel):
-    locus_name: str
-    father_allele: float
-    son_allele: float
-    step_distance_m: int
-    is_mutation: bool
-    mutation_rate: float
+class LocusKinshipDetailSchema(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
+    allele_a: Any
+    allele_b: Any
+    is_match: bool
     transition_probability: float
-    log10_transition_probability: float
-    mutation_classification: str
+    is_rm: bool
+    mutation_rate: float
 
 
-class ClopperPearsonSchema(BaseModel):
-    observed_count_k: int
+class PaternalKinshipResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
+    evidence_id: str
+    suspect_id: str
+    meioses_m: int
+    total_loci_evaluated: int
+    matching_loci_count: int
+    mutated_loci_count: int
+    rm_mutations_count: int
+    standard_mutations_count: int
+    transition_probability_product: float
+    haplotype_p_upper: float
+    paternal_lr: float
+    log10_paternal_lr: float
+    is_lineage_excluded: bool
+    locus_evaluations: Dict[str, LocusKinshipDetailSchema]
+    verbal_predicate_en: str
+    verbal_predicate_tr: str
+    patrilineal_disclaimer_en: str
+    patrilineal_disclaimer_tr: str
+
+
+# ── 2. Population Frequency & Confidence Bounds ─────────────────────────────
+
+class ClopperPearsonRequest(BaseModel):
+    """Request for exact Clopper-Pearson 95% binomial upper confidence bound."""
+    model_config = ConfigDict(protected_namespaces=())
+
+    observed_count_k: int = Field(0, ge=0, description="Observed haplotype matches in database (k).")
+    database_size_n: int = Field(385000, ge=1, description="Database size (N).")
+    alpha: float = Field(0.05, gt=0.0, lt=1.0, description="Significance level (default 0.05 for 95% CI).")
+
+
+class ClopperPearsonResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
     database_size_n: int
+    observed_matches_k: int
     alpha: float
-    p_upper: float
-    p_lower: float
     point_estimate: float
-    lr_upper_bound: float
-    log10_lr_upper_bound: float
-    method_formula: str
+    p_upper_bound: float
+    equivalent_match_ratio: float
+    method: str
 
 
-class BrennerSchema(BaseModel):
+class BrennerFrequencyRequest(BaseModel):
+    """Request for Brenner / Surveyor subpopulation coancestry correction."""
+    model_config = ConfigDict(protected_namespaces=())
+
+    observed_count_k: int = Field(0, ge=0, description="Observed haplotype matches (k).")
+    database_size_n: int = Field(385000, ge=1, description="Database size (N).")
+    theta: float = Field(0.03, ge=0.0, le=0.20, description="Coancestry coefficient theta (Fst).")
+
+
+class BrennerFrequencyResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
     observed_count_k: int
     database_size_n: int
     theta: float
     p_brenner: float
-    lr_brenner: float
-    log10_lr_brenner: float
+    equivalent_match_ratio: float
 
 
-class YSTRMatchResponse(BaseModel):
-    evidence_id: str
-    suspect_id: str
-    matching_loci_count: int
-    total_evaluated_loci: int
-    mismatch_loci_count: int
-    match_status: str
-    database_count_k: int
-    database_size_n: int
-    theta: float
-    clopper_pearson: ClopperPearsonSchema
-    brenner: BrennerSchema
-    smm_mutations: List[SMMTransitionSchema]
-    paternal_lineage_verdict: str
-    prosecutors_fallacy_shield: str
+# ── 3. Haplogroup Prediction ────────────────────────────────────────────────
 
+class HaplogroupPredictionRequest(BaseModel):
+    """Request for Bayesian Y-DNA haplogroup prediction from 27-locus vector."""
+    model_config = ConfigDict(protected_namespaces=())
 
-# ── Clopper-Pearson Exact Bound ──────────────────────────────────────────────
-
-class ClopperPearsonRequest(BaseModel):
-    """
-    Request for Clopper-Pearson 95% exact binomial upper bound.
-    """
-    observed_count_k: int = Field(
-        0,
-        ge=0,
-        description="Observed haplotype count in database (k). Research §1.1.",
-        examples=[0],
-    )
-    database_size_n: int = Field(
-        25000,
-        ge=1,
-        description="Total database size (N). Research §1.1.",
-        examples=[25000],
-    )
-    alpha: float = Field(
-        0.05,
-        gt=0.0,
-        lt=1.0,
-        description="Significance level (default 0.05 for 95% confidence).",
-        examples=[0.05],
-    )
-
-
-# ── Brenner Subpopulation Correction ─────────────────────────────────────────
-
-class BrennerFrequencyRequest(BaseModel):
-    """
-    Request for Brenner / Surveyor subpopulation correction.
-    """
-    observed_count_k: int = Field(
-        0,
-        ge=0,
-        description="Observed haplotype count (k).",
-        examples=[0],
-    )
-    database_size_n: int = Field(
-        25000,
-        ge=1,
-        description="Database size (N).",
-        examples=[25000],
-    )
-    theta: float = Field(
-        0.03,
-        ge=0.0,
-        le=0.10,
-        description="Subpopulation coancestry theta (default 0.03).",
-        examples=[0.03],
-    )
-
-
-# ── Discrete Laplace Smoothing ───────────────────────────────────────────────
-
-class LaplaceClusterSchema(BaseModel):
-    weight: float = Field(..., gt=0.0, description="Cluster prior weight w_c.")
-    center_haplotype: Dict[str, float] = Field(..., description="Center haplotype mu_cl for each locus.")
-    scale_parameters: Dict[str, float] = Field(..., description="Scale parameter lambda_cl for each locus.")
-
-
-class DiscreteLaplaceRequest(BaseModel):
-    """
-    Request for Discrete Laplace clonal clustering frequency estimation.
-    """
-    haplotype: Dict[str, float] = Field(
+    y_str_markers: Dict[str, Any] = Field(
         ...,
-        description="Target 27-locus Y-STR haplotype.",
-        examples=[{"DYS19": 14.0, "DYS389I": 13.0, "DYS390": 24.0}],
+        description="27-locus Y-STR profile dictionary.",
+        examples=[{"DYS19": 14, "DYS389I": 13, "DYS389II": 29, "DYS390": 24, "DYS393": 13}],
     )
-    clusters: List[LaplaceClusterSchema] = Field(
+
+
+class HaplogroupPredictionResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
+    predicted_haplogroup: str
+    confidence_score: float
+    primary_snp_marker: str
+    distance_to_modal: float
+    description: str
+    bayesian_posteriors: Dict[str, float]
+
+
+# ── 4. Decoupling & Mixture Helpers ─────────────────────────────────────────
+
+class DecoupleDys389Request(BaseModel):
+    """Request to decouple nested repeat system DYS389."""
+    model_config = ConfigDict(protected_namespaces=())
+
+    dys389i: float = Field(..., ge=8.0, le=20.0, description="Nested DYS389I repeat count.")
+    dys389ii_total: float = Field(..., ge=20.0, le=40.0, description="Total DYS389II amplicon repeat count.")
+
+
+class DecoupleDys389Response(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
+    dys389i: float
+    dys389ii_total: float
+    dys389_2_pure: float
+    explanation: str
+
+
+class MixtureContributorsRequest(BaseModel):
+    """Request to estimate minimum male contributors from multi-allele mixture."""
+    model_config = ConfigDict(protected_namespaces=())
+
+    locus_allele_counts: Dict[str, int] = Field(
         ...,
-        min_length=1,
-        description="List of clonal clusters with weights, centers, and scales.",
+        description="Observed peak/allele counts per locus.",
+        examples=[{"DYS19": 2, "DYS389I": 2, "DYS385a/b": 3, "DYF387S1a/b": 4}],
     )
 
 
-class DiscreteLaplaceResponse(BaseModel):
-    haplotype: Dict[str, float]
-    num_clusters: int
-    haplotype_probability: float
-    log10_probability: float
-    lr: float
-    log10_lr: float
+class MixtureContributorsResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
 
-
-# ── Mixture Deconvolution ───────────────────────────────────────────────────
-
-class YSTRMixtureDeconvRequest(BaseModel):
-    """
-    Request for minimum male contributor estimation from Y-STR mixture profile.
-    """
-    locus_alleles: Dict[str, List[float]] = Field(
-        ...,
-        description="Map of locus names to list of observed alleles in the mixture.",
-        examples=[{
-            "DYS19": [14.0, 15.0],
-            "DYS389I": [13.0, 14.0, 15.0],
-            "DYS385a_b": [11.0, 14.0, 15.0, 16.0, 17.0],
-        }],
-    )
-
-
-class YSTRMixtureDeconvResponse(BaseModel):
     minimum_male_contributors: int
-    locus_with_max_alleles: str
-    max_allele_count: int
-    multi_copy_locus_flag: bool
     locus_allele_counts: Dict[str, int]
-    interpretation: str
+    methodology: str
 
 
-# ── Stepwise Mutation Model (SMM) ────────────────────────────────────────────
+# ── 5. Reference Catalogs & Cohorts ─────────────────────────────────────────
 
-class SMMTransitionRequest(BaseModel):
-    """
-    Request for SMM father-son transmission probability at a specific Y-STR locus.
-    """
-    father_allele: float = Field(..., description="Father's repeat count (a_f).", examples=[14.0])
-    son_allele: float = Field(..., description="Son's repeat count (a_s).", examples=[15.0])
-    locus_name: str = Field(..., description="Y-STR locus name (e.g. 'DYS570').", examples=["DYS570"])
-    p_step: float = Field(0.10, gt=0.0, lt=1.0, description="Step geometric decay parameter p (default 0.10).")
+class YStrLocusMetadataSchema(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
 
-
-# ── Panel Metadata ───────────────────────────────────────────────────────────
-
-class YSTRLocusMetadataSchema(BaseModel):
     locus_name: str
-    sequence_type: str
-    mutation_class: str
+    cytogenetic_band: str
+    grch38_start: int
+    grch38_end: int
+    repeat_unit_bp: int
+    canonical_motif: str
+    ce_dye: str
+    amplicon_min_bp: int
+    amplicon_max_bp: int
     mutation_rate: float
-    repeat_motif: str
-    is_multicopy: bool
+    stepwise_param_r: float
+    mutation_class: str
     is_rapidly_mutating: bool
+    is_multi_copy: bool
 
 
-class YSTRPanelMetadataResponse(BaseModel):
-    panel_name: str
-    total_loci: int
-    standard_loci_count: int
-    rapidly_mutating_loci_count: int
-    loci: List[YSTRLocusMetadataSchema]
+class YhrdMetapopulationSchema(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
+    code: str
+    name: str
+    database_size_n: int
+    default_theta: float
+    description: str
+    primary_modal_haplogroups: List[str]
+
+
+class GoldStandardIndividualSchema(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
+    sample_id: str
+    coriell_id: str
+    nist_srm_designation: Optional[str]
+    sex: str
+    population_group: str
+    certified_haplogroup: str
+    primary_snp: str
+    description: str
+    y_str_haplotype: Dict[str, Any]
+
+
+class CaseworkCohortSchema(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
+    cohort_id: str
+    name: str
+    description: str
+    meioses_m: int
+    expected_outcome: str
+    expected_matching_loci: int
+    expected_mutation_count: int
+    expected_min_lr: float
+    profile_a: Dict[str, Any]
+    profile_b: Dict[str, Any]

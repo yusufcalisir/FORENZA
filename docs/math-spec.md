@@ -385,15 +385,61 @@ $$V(LR) = \begin{cases}
 
 ## 9. Expanded Lineage DNA Forensics (Y-STR, X-STR, mtDNA)
 
-### 9.1 Y-STR Clopper-Pearson 95% Confidence Upper Bound
-For haplotype count $x$ observed in database of size $N$ with confidence $1 - \alpha = 0.95$:
-If $x = 0$ (unobserved haplotype):
+### 9.1 Y-STR 27-Locus Lineage Forensics & Kinship Engine (Module 06 / 2.1)
 
-$$p_{\text{upper}} = 1 - \alpha^{1/N}$$
+#### 9.1.1 Y-FILER Plus 27-Locus Multiplex Registry
+The panel evaluates 25 marker systems encompassing 27 target amplicons:
+- **19 Single-Copy Standard Forensic Loci:** `DYS19`, `DYS389I`, `DYS389II`, `DYS390`, `DYS391`, `DYS392`, `DYS393`, `DYS437`, `DYS438`, `DYS439`, `DYS448`, `DYS456`, `DYS458`, `DYS635`, `YGATAH4`, `DYS460`, `DYS481`, `DYS533` ($\mu_l \in [0.000375, 0.00870]$).
+- **2 Multi-Copy Duplicated Systems (4 targets):** `DYS385a/b` (Standard, $\mu=0.0023$), `DYF387S1a/b` (Rapidly Mutating, $\mu=0.0160$).
+- **5 Single-Copy Rapidly Mutating (RM) Loci (6 RM systems / 7 targets):** `DYS570` ($\mu=0.0120$), `DYS576` ($\mu=0.0140$), `DYS627` ($\mu=0.0110$), `DYS518` ($\mu=0.0180$), `DYS449` ($\mu=0.0120$).
 
-For $N = 2500$ and $\alpha = 0.05$:
+#### 9.1.2 Exact Clopper-Pearson 95% Binomial Upper Confidence Limit ($p_{\text{upper}}$)
+For haplotype observed $k$ times in reference database $N$ under significance level $\alpha = 0.05$:
 
-$$p_{\text{upper}} = 1 - 0.05^{1/2500} \approx 0.001198$$
+**Case 1: Unobserved Haplotype ($k = 0$):**
+$$p_{\text{upper}} = 1 - \alpha^{\frac{1}{N+1}} = 1 - (0.05)^{\frac{1}{N+1}}$$
+- In YHRD Global Database ($N=385,000$): $p_{\text{upper}} = 7.7810723 \times 10^{-6}$ ($1 \text{ in } 128,517$).
+- In Regional Metapopulation ($N=38,500$): $p_{\text{upper}} = 7.7806180 \times 10^{-5}$ ($1 \text{ in } 12,852$).
+
+**Case 2: Observed Haplotype ($k > 0$):**
+Exact Snedecor $F$-distribution quantile with degrees of freedom $d_1 = 2(k+1)$ and $d_2 = 2(N-k)$:
+$$p_{\text{upper}} = \frac{(k+1) F_{1-\alpha/2}(2(k+1), 2(N-k))}{(N-k) + (k+1) F_{1-\alpha/2}(2(k+1), 2(N-k))}$$
+
+#### 9.1.3 Brenner / Surveyor Subpopulation Coancestry Frequency Correction ($p_{\text{Brenner}}$)
+Adjusts for subpopulation structure and common ancestry using Wright's $\theta \in [0.01, 0.05]$:
+$$p_{\text{Brenner}} = \frac{k + \theta}{N + \theta}, \quad LR_{\text{Brenner}} = \frac{1}{p_{\text{Brenner}}}$$
+
+#### 9.1.4 Biophysical Decoupling of Nested Repeat System DYS389
+Because the DYS389II PCR amplicon physically encloses the DYS389I locus:
+$$\text{DYS389.2}_{\text{pure}} = \text{DYS389II} - \text{DYS389I}$$
+Evaluating $\text{DYS389.2}_{\text{pure}}$ ensures that a single mutation at DYS389I is not falsely double-counted as two independent mutations.
+
+#### 9.1.5 Stepwise Mutation Model (SMM) & Paternal Likelihood Ratio ($LR_{\text{paternal}}$)
+For $m$ father-to-son meioses separating two male individuals across 25 systems:
+
+**Single Locus Transition Probability:**
+$$P(y_{B,l} \mid y_{A,l}, m) = \begin{cases}
+(1 - \mu_l)^m & \text{if } y_{B,l} = y_{A,l} \text{ (Identity)} \\
+\frac{1}{2} \left[1 - (1 - \mu_l)^m\right] (1 - r_l) r_l^{|y_B - y_A| - 1} & \text{if } |y_{B,l} - y_{A,l}| \ge 1 \text{ (Stepwise Mutation)}
+\end{cases}$$
+where $\mu_l$ is locus mutation rate and $r_l \in [0.75, 0.96]$ is the single-step geometric contraction parameter.
+
+**Multilocus Paternal Likelihood Ratio:**
+$$LR_{\text{paternal}} = \frac{\prod_{l=1}^{25} P(y_{B,l} \mid y_{A,l}, m)}{p_{\text{upper}}}$$
+
+**Definitive Exclusion Rule:** If standard locus mismatches $\ge 3$ or total mutation distance $\ge 5$ repeat steps:
+$$LR_{\text{paternal}} = 0.0, \quad \log_{10} LR_{\text{paternal}} = -300.0$$
+
+#### 9.1.6 Minimum Male Contributor Count ($N_{\text{male}}$)
+From observed peak counts $n_{\text{alleles}, l}$ across single-copy and multi-copy loci:
+$$N_{\text{male}} = \max\left( \max_{l \in \text{SingleCopy}} n_{\text{alleles}, l}, \; \max_{l \in \text{MultiCopy}} \left\lceil \frac{n_{\text{alleles}, l}}{2} \right\rceil \right)$$
+
+#### 9.1.7 Bayesian Y-DNA Haplogroup Prediction Simplex
+Evaluates distance to 16 major ISOGG modal signatures $\mathbf{M}_k$ via Softmax temperature normalization:
+$$P(H_k \mid Y) = \frac{\exp\left(-\frac{1}{2\sigma^2} \sum_{l=1}^L |y_l - M_{k,l}|^2\right)}{\sum_{j=1}^{16} \exp\left(-\frac{1}{2\sigma^2} \sum_{l=1}^L |y_l - M_{j,l}|^2\right)}, \quad \sum_{k=1}^{16} P(H_k \mid Y) = 1.000000$$
+
+#### 9.1.8 ISFG (2020) Patrilineal Lineage Legal Reporting Shield
+Y-STR matches provide evidence that the DNA originates from the suspect **or any of his patrilineal male relatives** sharing the same unbroken paternal lineage. Reporting statements strictly include active shields against Prosecutor's Fallacy transposition.
 
 ### 9.2 X-STR Kinship Index ($KI_X$)
 For father-daughter pair at locus $l$ where father possesses allele $A_f$ and daughter possesses alleles $\{A_{d1}, A_{d2}\}$:

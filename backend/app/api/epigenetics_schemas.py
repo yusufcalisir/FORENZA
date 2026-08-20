@@ -3,6 +3,7 @@ from typing import Dict, List, Optional, Any
 
 
 class PredictAgeRequest(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
     cpg_methylation: Dict[str, float] = Field(
         default={
             "ELOVL2": 0.42,

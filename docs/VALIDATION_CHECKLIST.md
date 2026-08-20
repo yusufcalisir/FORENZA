@@ -62,7 +62,7 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
   - [x] Ran 10,000 synthetic true-donor ($H_p$) vs 10,000 non-donor ($H_d$) Monte Carlo vectors from NIST 1036 24-locus frequencies with Balding-Nichols $\theta = 0.03$.
   - [x] Evaluated multi-tier casework cohorts: Pristine 24-locus standard (`COHORT_PRISTINE_24L`), Low-template degraded touch (`COHORT_LTDNA_DEGRADED`, $P(D)=0.40$), and Certified Reference NIST SRM 2391d Component A (`COHORT_NIST_SRM2391D_COMP_A`).
 - [x] **Criterion 2 (Independent Tool Cross-Check) ✅ COMPLETE [2026-08-20]:**
-  - [x] FoCal / Ramos & Gonzalez-Rodriguez (2013) Log-Likelihood-Ratio Cost ($C_{\text{llr}}$) analytical benchmark concordance ($|\Delta C_{\text{llr}}| < 10^{-5}$).
+  - [x] FoCal / Ramos & Gonzalez-Rodriguez (2013) Log-Likelihood-Ratio Cost ($C_{\text{llr}}$) analytical benchmark concordance ($|C_{\text{llr}}^{\text{computed}} - C_{\text{llr}}^{\text{FoCal}}| < 10^{-5}$).
   - [x] EuroForMix 24-locus empirical separation concordance ($\text{AUC} \ge 0.9990$).
   - [x] STRmix misleading evidence standard concordance ($P(LR \ge 10^6 \mid H_d) \le 10^{-6}$, 0 false positives).
   - [x] ENFSI (2017) 7-Tier verbal reporting scale fully mapped and verified in English and Turkish with active Prosecutor's Fallacy Shield.

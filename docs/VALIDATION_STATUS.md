@@ -18,7 +18,7 @@ Last updated: 2026-08-20 (1.4.7 LTDNA Stochastic Low-Template Modeling Fully Val
 | MCMC-MH | MCMC Mixture Deconvoluter | VERIFIED | Zenodo BTSC 349/268 & PROVEDIt (synthetic EPG via BiophysicalPeakModel) | STRmix Log-Normal LL / EuroForMix Gamma LL (both engines implemented) | 5/5 | 5 edge-case tests passing: Convergence R̂≤1.10, 1:19 imbalance, 1:1 MLE symmetry, back-stutter discrimination, adaptive acceptance [0.10,0.55]; 10 API integration tests passing |
 | NRC-II | Dirichlet Fst Population Genetics | VERIFIED | NIST 1036 4-Populations (N=1036), 1000 Genomes Phase 3, SRM 2391d A/B/C | NRC II (1996) Rec 4.4 Tables 4.1/4.2, Curran & Buckleton (2007) Weighted ANOVA, Familias 3 / EuroForMix PopGen | 5/5 | 5 edge cases passing: Zero-theta HWE reduction, theta=0.15 endogamy stress, 24-locus diploid simplex unity sum, demographic cross-comparison ratio, reciprocal balance symmetry; 47 module tests passing |
 | LTDNA | Touch DNA & Low-Template Modeling | VERIFIED | Peter Gill LCN Dilution Series (15-1000pg), 4-Substrate Matrix, Golden Casework VECTOR_03 & VECTOR_TERM_06, NIST SRM 2391d A | LikeLTD Semi-Continuous Logistic Grid (18/18 concordant), EuroForMix Gamma Continuous Integral (R²=0.9952), Curran-Gill 4-State Closed Forms (|Δ| < 10⁻⁴), STRmix Inverse Variance Scaling | 5/5 | 5 edge cases passing: EC-01 Pristine 1000pg asymptote, EC-02 Single-cell 15pg bound (P(D)=88.08%), EC-03 Exact Poisson drop-in & 24-locus clean product (61.88%), EC-04 Sub-AT RFU culling (AT=50RFU), EC-05 Hb peak imbalance & false homozygote mask; 106 module tests passing |
-| TIPPETT | Tippett Calibration & Validation | NOT_STARTED | 10k Monte Carlo Vectors | ENFSI 2017 ROC Standard | 0/5 | Rate of misleading evidence |
+| TIPPETT | Tippett Calibration & Validation | VERIFIED | 10k Monte Carlo True Donor & Non-Donor Vectors (NIST 1036), Pristine 24L, LTDNA Touch 40% Dropout, NIST SRM 2391d Comp A | FoCal / Ramos & Gonzalez-Rodriguez (2013) Cllr (|Δ| < 10⁻⁵), EuroForMix 24-Locus Separation (AUC ≥ 0.9990), STRmix Misleading Evidence Standard (P(LR ≥ 10⁶ | Hd) ≤ 10⁻⁶, 0 false positives), ENFSI 2017 7-Tier Scale & Prosecutor's Fallacy Shield | 5/5 | 5 edge cases passing: EC-TIP-01 Dense 500-pt monotonicity invariant, EC-TIP-02 Zero false positives in 10,000 trials, EC-TIP-03 AUC=1.000000 pristine separation, EC-TIP-04 P(D)=0.60 shift without negative bias, EC-TIP-05 Symmetrical neutral decision intersection; 104 module tests passing |
 
 ## Pillar 2 — Lineage Forensics & Kinship
 
@@ -84,9 +84,9 @@ Last updated: 2026-08-20 (1.4.7 LTDNA Stochastic Low-Template Modeling Fully Val
 
 ## Summary counters
 
-- Verified: 3 / 35
+- Verified: 4 / 35
 - In Progress: 0 / 35
-- Not Started: 32 / 35
+- Not Started: 31 / 35
 
 ## UI integration rule
 

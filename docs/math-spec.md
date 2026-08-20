@@ -287,18 +287,58 @@ $$\log_{10}LR_{\text{HPD},95} = \bar{\log_{10}LR} - 1.96 \cdot \frac{s_{\log_{10
 
 The lower bound is reported in court proceedings as the conservative statistical weight of evidence (Prosecutor's Fallacy shield).
 
-### 6.6 Tippett Calibration Curve
+### 6.6 Tippett Calibration Curves, Empirical ROC & Cllr Metric (Module 05)
 
-$$\text{True Donor Curve:}\quad P\!\left(\log_{10}LR \ge x \mid H_p\right) = \frac{|\{LR_i \ge 10^x\}|}{n_{H_p}}$$
+#### 6.6.1 Empirical Complementary Cumulative Distribution Functions (ECCDF)
+For $N_{H_p}$ true donor pairs and $N_{H_d}$ non-donor pairs:
 
-$$\text{Non-Donor Curve:}\quad P\!\left(\log_{10}LR \ge x \mid H_d\right) = \frac{|\{LR_j \ge 10^x\}|}{n_{H_d}}$$
+$$\text{Tippett}_{H_p}(x) = P\!\left(\log_{10}LR \ge x \mid H_p\right) = \frac{1}{N_{H_p}} \sum_{i=1}^{N_{H_p}} \mathbb{I}\left(\log_{10} LR_i \ge x\right)$$
 
-**Calibration metric — Cllr (Log-Likelihood Ratio Cost):**
+$$\text{Tippett}_{H_d}(x) = P\!\left(\log_{10}LR \ge x \mid H_d\right) = \frac{1}{N_{H_d}} \sum_{j=1}^{N_{H_d}} \mathbb{I}\left(\log_{10} LR_j \ge x\right)$$
 
-$$C_{\text{llr}} = \frac{1}{2}\left[\frac{1}{n_{H_p}}\sum_{i}\log_2\!\left(1 + \frac{1}{LR_i}\right) + \frac{1}{n_{H_d}}\sum_{j}\log_2(1 + LR_j)\right]$$
+**Monotonicity Invariant:**
+$$\forall x_1 < x_2 \implies \text{Tippett}_{H_p}(x_1) \ge \text{Tippett}_{H_p}(x_2) \quad \text{and} \quad \text{Tippett}_{H_d}(x_1) \ge \text{Tippett}_{H_d}(x_2)$$
 
-- $C_{\text{llr}} = 0$: Perfect discrimination
-- $C_{\text{llr}} = 1$: Uninformative system (all $LR = 1$)
+#### 6.6.2 Royall Misleading Evidence Inequality
+Under the defense hypothesis $H_d$, the probability of obtaining misleading evidence of strength $k$ satisfies the theoretical bound (Royall 1997):
+
+$$P\left(LR \ge k \mid H_d\right) \le \frac{1}{k} \implies P\left(\log_{10} LR \ge 6.0 \mid H_d\right) \le 10^{-6}$$
+
+#### 6.6.3 Error Rates & Discrimination Power
+At the neutral decision boundary ($\tau = 0.0, LR = 1.0$):
+- **False Positive Rate:** $\text{FPR}_{\text{neutral}} = P(\log_{10} LR > 0 \mid H_d) = \text{Tippett}_{H_d}(0^+)$
+- **False Negative Rate:** $\text{FNR}_{\text{neutral}} = P(\log_{10} LR < 0 \mid H_p) = 1 - \text{Tippett}_{H_p}(0)$
+- **Discrimination Power:** $D_{\text{power}} = 1 - \text{FPR}_{\text{neutral}} - \text{FNR}_{\text{neutral}} \in [0, 1]$
+
+#### 6.6.4 Non-Parametric ROC Analysis & Mann-Whitney U AUC
+The area under the Receiver Operating Characteristic curve is calculated via exact pair comparisons:
+
+$$\text{AUC} = \frac{1}{N_{H_p} N_{H_d}} \sum_{i=1}^{N_{H_p}} \sum_{j=1}^{N_{H_d}} \left[ \mathbb{I}\left(\log_{10} LR_i^{(H_p)} > \log_{10} LR_j^{(H_d)}\right) + 0.5 \cdot \mathbb{I}\left(\log_{10} LR_i^{(H_p)} = \log_{10} LR_j^{(H_d)}\right) \right]$$
+
+- Single-source pristine 24-locus benchmark requirement: $\text{AUC} \ge 0.9990$.
+
+#### 6.6.5 Information-Theoretic Log-Likelihood Ratio Cost ($C_{\text{llr}}$)
+Measures the overall information penalty of the probabilistic genotyping output (Brümmer & du Preez 2006, Ramos & Gonzalez-Rodriguez 2013):
+
+$$C_{\text{llr}} = \frac{1}{2 \cdot N_{H_p}} \sum_{i=1}^{N_{H_p}} \log_2\left(1 + 10^{-\log_{10} LR_i}\right) + \frac{1}{2 \cdot N_{H_d}} \sum_{j=1}^{N_{H_d}} \log_2\left(1 + 10^{+\log_{10} LR_j}\right)$$
+
+**PAV Isotonic Regression Decomposition:**
+$$C_{\text{llr}} = C_{\text{llr}}^{\min} + C_{\text{llr}}^{\text{cal}}$$
+- $C_{\text{llr}}^{\min}$: Minimum achievable cost after optimal monotonic probability calibration (discrimination loss).
+- $C_{\text{llr}}^{\text{cal}} \ge 0$: Calibration loss / entropy penalty due to miscalibration.
+- Benchmark quality standards: $C_{\text{llr}} < 0.05$ (Excellent), $C_{\text{llr}} < 0.20$ (Acceptable).
+
+#### 6.6.6 ENFSI (2017) Dynamic 7-Tier Verbal Reporting Scale
+Likelihood ratios are translated into standardized evaluative statements across 7 positive and negative tiers:
+- Tier 0: Inconclusive / Neutral ($\log_{10} LR = 0.0$)
+- Tier 1: Weak Support ($0 < \log_{10} LR \le 1.0$)
+- Tier 2: Moderate Support ($1.0 < \log_{10} LR \le 2.0$)
+- Tier 3: Moderately Strong Support ($2.0 < \log_{10} LR \le 4.0$)
+- Tier 4: Strong Support ($4.0 < \log_{10} LR \le 6.0$)
+- Tier 5: Very Strong Support ($6.0 < \log_{10} LR \le 9.0$)
+- Tier 6: Extremely Strong Support ($\log_{10} LR > 9.0$)
+
+**Prosecutor's Fallacy Invariant:** Statements strictly evaluate the conditional probability of evidence given competing propositions $P(E \mid H_p) / P(E \mid H_d)$, never the transposed probability of guilt $P(H_p \mid E)$.
 
 ---
 

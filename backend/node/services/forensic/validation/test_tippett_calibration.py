@@ -497,3 +497,58 @@ class TestVector05TippettH:
         resp_o = client.post("/api/v1/forensic/validation/cllr-score",
                              json={"hp_log10_lrs": HP_OVERLAP, "hd_log10_lrs": HD_OVERLAP})
         assert resp_o.json()["cllr"] > resp_p.json()["cllr"]
+
+    def test_api_get_benchmarks(self):
+        """GET /forensic/validation/benchmarks: Retrieve golden benchmarks."""
+        resp = client.get("/api/v1/forensic/validation/benchmarks")
+        assert resp.status_code == 200
+        data = resp.json()
+        assert "benchmarks" in data
+        assert len(data["benchmarks"]) >= 3
+        ids = [b["id"] for b in data["benchmarks"]]
+        assert "VECTOR_05_TIPPETT_A" in ids
+
+    def test_api_generate_cohort_pristine(self):
+        """POST /forensic/validation/generate-cohort: Pristine cohort."""
+        payload = {"cohort_type": "pristine", "n_pairs": 50, "seed": 42}
+        resp = client.post("/api/v1/forensic/validation/generate-cohort", json=payload)
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["cohort_id"] == "COHORT_PRISTINE_24L"
+        assert data["median_hp"] > 20.0
+        assert data["median_hd"] < -20.0
+        assert data["auc"] >= 0.999
+
+    def test_api_generate_cohort_ltdna_degraded(self):
+        """POST /forensic/validation/generate-cohort: LTDNA degraded cohort."""
+        payload = {"cohort_type": "ltdna_degraded", "n_pairs": 50, "p_dropout": 0.40, "seed": 42}
+        resp = client.post("/api/v1/forensic/validation/generate-cohort", json=payload)
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["cohort_id"] == "COHORT_LTDNA_DEGRADED"
+        assert data["median_hp"] > 5.0
+        assert data["auc"] >= 0.98
+
+    def test_api_generate_cohort_nist_srm2391d(self):
+        """POST /forensic/validation/generate-cohort: NIST SRM 2391d Component A."""
+        payload = {"cohort_type": "nist_srm2391d", "n_pairs": 50, "seed": 42}
+        resp = client.post("/api/v1/forensic/validation/generate-cohort", json=payload)
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["cohort_id"] == "COHORT_NIST_SRM2391D_COMP_A"
+        assert data["median_hp"] > 25.0
+
+    def test_api_misleading_evidence_royall_bound(self):
+        """POST /forensic/validation/misleading-evidence: Royall bound evaluation."""
+        payload = {"hd_log10_lrs": [-10.0, -12.0, -8.5, -15.0, -20.0], "threshold_log10": 6.0}
+        resp = client.post("/api/v1/forensic/validation/misleading-evidence", json=payload)
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["count_exceeding"] == 0
+        assert data["bound_satisfied"] is True
+
+    def test_api_422_validation_error_handling(self):
+        """API: Unprocessable entity on invalid input."""
+        resp = client.post("/api/v1/forensic/validation/tippett-curve", json={"hp_log10_lrs": [], "hd_log10_lrs": []})
+        assert resp.status_code == 422
+

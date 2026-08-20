@@ -159,6 +159,8 @@ str-analysis/
 │   │   │   ├── physical_routes.py         # Routes for Ballistics, BPA, Entomology & Tox
 │   │   │   ├── geoint_schemas.py          # Schemas for Isoscapes, Soil, Palynology & Rossmo
 │   │   │   ├── geoint_routes.py           # REST Gateway for Pillar 7 Geo-Forensics
+│   │   │   ├── tippett_schemas.py         # Schemas for Tippett Calibration, ROC, Cllr & ENFSI
+│   │   │   ├── tippett_routes.py          # REST Gateway for Tippett ROC Calibration Lab
 │   │   │   ├── terminal_schemas.py        # Schemas for DNA & SNP Ingestion, BGA & HIrisPlex
 │   │   │   └── terminal_routes.py         # REST Gateway for DNA Terminal Ingestion Engine
 │   │   ├── core/                          # Security, JWT, Config & HMAC Utilities
@@ -225,7 +227,15 @@ str-analysis/
 │           │   ├── test_epg_synthesis_engine.py # EPG Waveform & QC Unit Tests
 │           │   ├── test_casework_presets.py # Casework Presets & Exporter Unit Tests
 │           │   └── test_terminal_routes.py # REST API Integration Tests (/api/v1/forensic/terminal)
-│           └── tests/                     # Automated Test Suite (952 Tests Passing)
+│           ├── tippett/                   # 30. Tippett Plot ROC Calibration & Misleading Evidence Engine
+│           │   ├── tippett_mathematical_formulation.py # Dual ECCDF, Royall Bound, Cllr, HPD & ENFSI
+│           │   ├── tippett_reference_datasets.py # NIST 1036 Monte Carlo Cohorts & Golden Vectors
+│           │   ├── tippett_cross_validation.py # FoCal, EuroForMix & STRmix Cross-Validation
+│           │   ├── test_tippett_mathematical_formulation.py # Pure Mathematical Formulation Tests
+│           │   ├── test_tippett_reference_datasets.py # 10k Monte Carlo & Casework Cohort Tests
+│           │   ├── test_tippett_cross_validation.py # External Benchmark & ENFSI Scale Tests
+│           │   └── test_tippett_edge_cases.py # 5 Empirical Edge-Case Tests (EC-TIP-01 to 05)
+│           └── tests/                     # Automated Test Suite (1050+ Tests Passing)
 │
 ├── frontend/                              # Next.js 16 Workstation Dashboard
 │   ├── public/                            # Static Assets, Icons, Favicons

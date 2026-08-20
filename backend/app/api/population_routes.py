@@ -391,3 +391,217 @@ async def compute_kinship_duo(body: KinshipDuoRequest) -> KinshipDuoResponse:
     )
 
 
+# ── Module 1.3: NRC-II & Balding-Nichols Endpoints ───────────────────────────
+
+from node.services.forensic.kinship.nrc_engine import NRCPopulationEngine
+from .population_schemas import (
+    NRCProfileLRRequest,
+    NRCProfileLRResponse,
+    NRCLocusResultSchema,
+    NRCDemographicReportResponse,
+    WeirCockerhamAPIRequest,
+    WeirCockerhamAPIResponse,
+    DCMAPIRequest,
+    DCMAPIResponse,
+    SimplexValidateRequest,
+    SimplexValidateResponse,
+    GoldenProfilesListResponse,
+)
+
+_nrc_engine = NRCPopulationEngine()
+
+
+@router.post(
+    "/nrc/profile-lr",
+    response_model=NRCProfileLRResponse,
+    summary="NRC II 24-Locus Profile Likelihood Ratio",
+    description="Computes composite 24-locus Likelihood Ratio under Balding-Nichols coancestry theta correction with reciprocal hypothesis balance verification.",
+    status_code=status.HTTP_200_OK,
+)
+async def compute_nrc_profile_lr(body: NRCProfileLRRequest) -> NRCProfileLRResponse:
+    try:
+        res = _nrc_engine.compute_profile_lr(
+            suspect_profile=body.suspect_profile,
+            evidence_profile=body.evidence_profile,
+            population=body.population,
+            theta=body.theta,
+            p_min=body.p_min or 0.0024131
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"NRC Profile LR computation failed: {str(exc)}"
+        )
+
+    locus_schemas = [
+        NRCLocusResultSchema(
+            locus=l.locus,
+            suspect_genotype=l.suspect_genotype,
+            evidence_genotype=l.evidence_genotype,
+            match_state=l.match_state,
+            theta=l.theta,
+            p_conditional=l.p_conditional,
+            lr_locus=l.lr_locus,
+            log10_lr_locus=l.log10_lr_locus,
+        )
+        for l in res.locus_results
+    ]
+
+    return NRCProfileLRResponse(
+        locus_results=locus_schemas,
+        total_lr=res.total_lr,
+        log10_total_lr=res.log10_total_lr,
+        reciprocal_lr=res.reciprocal_lr,
+        is_reciprocal_balanced=res.is_reciprocal_balanced,
+        reciprocal_product_delta=res.reciprocal_product_delta,
+        theta_used=res.theta_used,
+        population_used=res.population_used,
+        verbal_scale_en=res.verbal_scale_en,
+        verbal_scale_tr=res.verbal_scale_tr,
+    )
+
+
+@router.post(
+    "/nrc/demographic-report",
+    response_model=NRCDemographicReportResponse,
+    summary="NRC II Multi-Population Demographic Stratification Report",
+    description="Cross-evaluates a suspect DNA profile across all 4 NIST 1036 demographic populations (Caucasian, African American, Hispanic, Asian).",
+    status_code=status.HTTP_200_OK,
+)
+async def compute_nrc_demographic_report(body: NRCProfileLRRequest) -> NRCDemographicReportResponse:
+    try:
+        res = _nrc_engine.evaluate_demographic_stratification(
+            suspect_profile=body.suspect_profile,
+            theta=body.theta
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Demographic stratification evaluation failed: {str(exc)}"
+        )
+
+    return NRCDemographicReportResponse(
+        profile_id=res.profile_id,
+        theta_used=res.theta_used,
+        population_lrs=res.population_lrs,
+        population_log10_lrs=res.population_log10_lrs,
+        verbal_scales_en=res.verbal_scales_en,
+        verbal_scales_tr=res.verbal_scales_tr,
+        min_lr=res.min_lr,
+        max_lr=res.max_lr,
+        stratification_ratio=res.stratification_ratio,
+    )
+
+
+@router.post(
+    "/nrc/weir-cockerham",
+    response_model=WeirCockerhamAPIResponse,
+    summary="Weir & Cockerham (1984) ANOVA Fst Estimation",
+    description="Estimates unbiased theta_hat across multiple sub-populations from discrete sample count matrices.",
+    status_code=status.HTTP_200_OK,
+)
+async def compute_weir_cockerham_api(body: WeirCockerhamAPIRequest) -> WeirCockerhamAPIResponse:
+    try:
+        # Convert string allele keys to float
+        parsed_counts: Dict[str, Dict[float, int]] = {}
+        for pop, counts in body.subpop_allele_counts.items():
+            parsed_counts[pop] = {float(a): c for a, c in counts.items()}
+
+        res = _nrc_engine.estimate_weir_cockerham_fst(
+            subpop_allele_counts=parsed_counts,
+            locus=body.locus
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Weir-Cockerham estimation failed: {str(exc)}"
+        )
+
+    return WeirCockerhamAPIResponse(
+        theta_hat=res.theta_hat,
+        msp=res.msp,
+        msg=res.msg,
+        n_c=res.n_c,
+        num_populations=res.num_populations,
+        num_alleles=res.num_alleles,
+        locus=res.locus,
+    )
+
+
+@router.post(
+    "/nrc/dcm",
+    response_model=DCMAPIResponse,
+    summary="Dirichlet Compound Multinomial Sampling Likelihood",
+    description="Evaluates Dirichlet Compound Multinomial (Polya-Eggenberger) log-likelihood in log-gamma space.",
+    status_code=status.HTTP_200_OK,
+)
+async def compute_dcm_api(body: DCMAPIRequest) -> DCMAPIResponse:
+    try:
+        parsed_counts = {float(a): c for a, c in body.allele_counts.items()}
+        res = _nrc_engine.evaluate_dcm_likelihood(
+            allele_counts=parsed_counts,
+            population=body.population,
+            locus=body.locus,
+            theta=body.theta
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"DCM evaluation failed: {str(exc)}"
+        )
+
+    return DCMAPIResponse(
+        log_likelihood=res.log_likelihood,
+        probability=res.probability,
+        kappa=res.kappa,
+        total_alleles_sampled=res.total_alleles_sampled,
+        num_distinct_alleles=res.num_distinct_alleles,
+    )
+
+
+@router.post(
+    "/nrc/simplex-validate",
+    response_model=SimplexValidateResponse,
+    summary="Probability Simplex Normalization Invariant Validator",
+    description="Validates that the sum of all diploid genotype probabilities on a locus equals 1.00000000 ± tolerance.",
+    status_code=status.HTTP_200_OK,
+)
+async def validate_simplex_api(body: SimplexValidateRequest) -> SimplexValidateResponse:
+    try:
+        res = _nrc_engine.validate_locus_simplex(
+            locus=body.locus,
+            population=body.population,
+            theta=body.theta,
+            tolerance=body.tolerance
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Simplex validation failed: {str(exc)}"
+        )
+
+    return SimplexValidateResponse(
+        locus=res.locus,
+        theta=res.theta,
+        sum_probability=res.sum_probability,
+        delta_from_unity=res.delta_from_unity,
+        num_genotypes_evaluated=res.num_genotypes_evaluated,
+        is_valid=res.is_valid,
+    )
+
+
+@router.get(
+    "/nrc/golden-profiles",
+    response_model=GoldenProfilesListResponse,
+    summary="List Certified Reference Individual Profiles",
+    description="Returns metadata for globally standardized golden reference profiles (NIST SRM 2391d Components A, B, C and GIAB NA12878).",
+    status_code=status.HTTP_200_OK,
+)
+async def list_golden_profiles_api() -> GoldenProfilesListResponse:
+    profiles = _nrc_engine.list_golden_reference_profiles()
+    return GoldenProfilesListResponse(
+        total_profiles=len(profiles),
+        profiles=profiles
+    )
+
+

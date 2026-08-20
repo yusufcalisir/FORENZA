@@ -46,6 +46,21 @@ To prevent zero-division singularities, minimum frequency floor is strictly enfo
 
 $$p_{\min} = \max\left(\frac{5}{2N}, 0.001\right) \approx 0.00241 \quad (N = 1036 \text{ individuals in NIST 1036})$$
 
+### 2.4 Dirichlet Compound Multinomial (Polya-Eggenberger) Sampling Distribution
+To model allelic sampling variance in structured subpopulations with coancestry parameter $\theta$, the compound likelihood is evaluated in log-gamma space:
+
+$$\ln P(\mathbf{n} \mid \boldsymbol{\alpha}, \theta) = \ln \Gamma\left(\kappa\right) - \ln \Gamma\left(N + \kappa\right) + \sum_{i=1}^K \left[ \ln \Gamma\left(n_i + \kappa p_i\right) - \ln \Gamma\left(\kappa p_i\right) \right], \quad \kappa = \frac{1-\theta}{\theta}$$
+
+### 2.5 Weir & Cockerham (1984) Unbiased ANOVA $\hat{\theta}$ / $F_{st}$ Estimator
+Decomposes total allelic variance across $r$ sub-populations into Mean Square Between Populations (MSP) and Mean Square Within Populations (MSG):
+
+$$\hat{\theta} = \frac{\text{MSP} - \text{MSG}}{\text{MSP} + (n_c - 1)\text{MSG}}, \quad n_c = \frac{1}{r - 1} \left( N - \frac{\sum_{k=1}^r n_k^2}{N} \right)$$
+
+### 2.6 Curran & Buckleton (2007) Multi-Locus Weighted Estimator
+Combines locus-specific variance components across all $L=24$ loci:
+
+$$\bar{\theta} = \frac{\sum_{l=1}^L (\text{MSP}_l - \text{MSG}_l)}{\sum_{l=1}^L [\text{MSP}_l + (n_{c,l} - 1)\text{MSG}_l]}$$
+
 ---
 
 ## 3. Kinship Index ($KI$) Formulations & Stepwise Mutation Model (SMM)

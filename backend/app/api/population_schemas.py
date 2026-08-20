@@ -205,3 +205,123 @@ class KinshipDuoResponse(BaseModel):
     invariants: Dict[str, Any]
 
 
+# ── Module 1.3: NRC-II & Balding-Nichols Schemas ─────────────────────────────
+
+from pydantic import ConfigDict
+
+
+class NRCLocusResultSchema(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    locus: str
+    suspect_genotype: Tuple[float, float]
+    evidence_genotype: Tuple[float, float]
+    match_state: str
+    theta: float
+    p_conditional: float
+    lr_locus: float
+    log10_lr_locus: float
+
+
+class NRCProfileLRRequest(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    suspect_profile: Dict[str, Tuple[float, float]] = Field(
+        ...,
+        examples=[{"TH01": [6.0, 9.3], "D3S1358": [15.0, 16.0]}]
+    )
+    evidence_profile: Optional[Dict[str, Tuple[float, float]]] = Field(
+        None,
+        description="Optional evidence profile. If omitted, defaults to suspect_profile."
+    )
+    population: str = Field("Caucasian", examples=["Caucasian", "AfricanAmerican", "Hispanic", "Asian"])
+    theta: float = Field(0.03, ge=0.0, le=0.50)
+    p_min: Optional[float] = Field(None, ge=0.0, le=0.10)
+
+
+class NRCProfileLRResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    locus_results: List[NRCLocusResultSchema]
+    total_lr: float
+    log10_total_lr: float
+    reciprocal_lr: float
+    is_reciprocal_balanced: bool
+    reciprocal_product_delta: float
+    theta_used: float
+    population_used: str
+    verbal_scale_en: str
+    verbal_scale_tr: str
+
+
+class NRCDemographicReportResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    profile_id: Optional[str]
+    theta_used: float
+    population_lrs: Dict[str, float]
+    population_log10_lrs: Dict[str, float]
+    verbal_scales_en: Dict[str, str]
+    verbal_scales_tr: Dict[str, str]
+    min_lr: float
+    max_lr: float
+    stratification_ratio: float
+
+
+class WeirCockerhamAPIRequest(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    subpop_allele_counts: Dict[str, Dict[str, int]] = Field(
+        ...,
+        examples=[{"PopA": {"14.0": 80, "15.0": 20}, "PopB": {"14.0": 20, "15.0": 80}}]
+    )
+    locus: Optional[str] = Field(None, examples=["D3S1358"])
+
+
+class WeirCockerhamAPIResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    theta_hat: float
+    msp: float
+    msg: float
+    n_c: float
+    num_populations: int
+    num_alleles: int
+    locus: Optional[str]
+
+
+class DCMAPIRequest(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    allele_counts: Dict[str, int] = Field(..., examples=[{"14.0": 30, "15.0": 40, "16.0": 20}])
+    population: str = Field("Caucasian", examples=["Caucasian"])
+    locus: str = Field("TH01", examples=["TH01"])
+    theta: float = Field(0.03, ge=0.0, le=0.50)
+
+
+class DCMAPIResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    log_likelihood: float
+    probability: float
+    kappa: float
+    total_alleles_sampled: int
+    num_distinct_alleles: int
+
+
+class SimplexValidateRequest(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    locus: str = Field("TH01", examples=["TH01"])
+    population: str = Field("Caucasian", examples=["Caucasian"])
+    theta: float = Field(0.03, ge=0.0, le=0.50)
+    tolerance: float = Field(1e-6, ge=1e-12, le=1e-3)
+
+
+class SimplexValidateResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    locus: str
+    theta: float
+    sum_probability: float
+    delta_from_unity: float
+    num_genotypes_evaluated: int
+    is_valid: bool
+
+
+class GoldenProfilesListResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    total_profiles: int
+    profiles: List[Dict[str, Any]]
+
+

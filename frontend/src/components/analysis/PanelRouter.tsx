@@ -8,6 +8,7 @@ import DviPanel from "@/components/analysis/DviPanel";
 import HumanIdPanel from "@/components/analysis/HumanIdPanel";
 import ProbabilisticGenotypingPanel from "@/components/analysis/ProbabilisticGenotypingPanel";
 import BayesianShiftChart from "@/components/analysis/BayesianShiftChart";
+import PanelNRC from "@/components/analysis/PanelNRC";
 import ValidationLabPanel from "@/components/analysis/ValidationLabPanel";
 import AgeEstimationPanel from "@/components/analysis/AgeEstimationPanel";
 import EntomologyPmiPanel from "@/components/analysis/EntomologyPmiPanel";
@@ -429,7 +430,8 @@ export function renderPanel(tabId: string) {
     case "mcmc":
       return <ProbabilisticGenotypingPanel />;
     case "population":
-      return <BayesianShiftChart />;
+    case "nrc":
+      return <PanelNRC />;
     case "touch":
       return <TouchDnaPanel />;
     case "validation":
@@ -512,5 +514,6 @@ export function renderPanel(tabId: string) {
   }
 }
 
-// Canonical alias for Pillar 1.2 MCMC Mixture Deconvoluter
+// Canonical aliases for Pillar 1
 export { ProbabilisticGenotypingPanel as PanelMCMC };
+export { PanelNRC };

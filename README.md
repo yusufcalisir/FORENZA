@@ -68,34 +68,38 @@ FORENZA uses an asynchronous, event-driven microservice architecture designed fo
                                   +---------------------------+---------------------------+
                                                               | REST API / WebSockets
                                   v                           v
-+---------------------------------------------------------------------------------------------------+
-|                                  FASTAPI MICROSERVICES GATEWAY                                    |
-|                                    Asyncio Concurrent Pipeline                                    |
-+---------------------------------------------------------------------------------------------------+
-       |                  |                  |                  |                  |
-       v                  v                  v                  v                  v
-+--------------+   +--------------+   +--------------+   +--------------+   +--------------+
-|    DNA &     |   |PROBABILISTIC |   |  PHENOTYPE,  |   |   PHYSICAL   |   |  LIMS, QA/QC |
-|   KINSHIP    |   |  GENOTYPING  |   | ANCESTRY &   |   |   EVIDENCE   |   | & GOVERNANCE |
-|   ENGINE     |   | (MCMC M-H)   |   | EPIGENETICS  |   |   ENGINE     |   |   ENGINE     |
-+--------------+   +--------------+   +--------------+   +--------------+   +--------------+
-       |                  |                  |                  |                  |
-       +------------------+------------------+------------------+------------------+
-                                             |
-                                             v
-                                  +---------------------+
-                                  | ENFSI/SWGDAM SCALER |
-                                  +----------+----------+
-                                             |
-                                             v
-                                  +---------------------+
-                                  | HMAC-SHA256 LEDGER  |
-                                  +----------+----------+
-                                             |
-                                             v
-                                  +---------------------+
-                                  |  CIRCOM ZK-SNARKs   |
-                                  +---------------------+
++-----------------------------------------------------------------------------------------------------------------------------------+
+|                                                   FASTAPI MICROSERVICES GATEWAY                                                   |
+|                                         Asyncio Concurrent Pipeline (35 Subsystems)                                               |
++-----------------------------------------------------------------------------------------------------------------------------------+
+   |             |              |              |              |              |              |
+   v             v              v              v              v              v              v
++------------+ +------------+ +------------+ +------------+ +------------+ +------------+ +------------+
+|  PILLAR 1  | |  PILLAR 2  | |  PILLAR 3  | |  PILLAR 4  | |  PILLAR 5  | |  PILLAR 6  | |  PILLAR 7  |
+|PROBABILISTIC| | LINEAGE &  | |PHENOTYPE & | |EPIGENETICS | | PHYSICAL &  | | LIMS, ISO  | |GEO-FORENSIC|
+| GENOTYPING | |  KINSHIP   | |  ANCESTRY  | |   AGING    | | PATHOLOGY  | | 17025, ZKP | |SPATIAL GIS |
+| (MCMC M-H) | | (Y/X/mtDNA)| |(HIris/AIM) | | (Horvath)  | |(BPA/Tox/GSR| |& GOVERNANCE| | (Isoscape) |
++------------+ +------------+ +------------+ +------------+ +------------+ +------------+ +------------+
+   |             |              |              |              |              |              |
+   +-------------+--------------+--------------+--------------+--------------+--------------+
+                                               |
+                                               v
+                                    +---------------------+
+                                    | ENFSI/SWGDAM SCALER |
+                                    | 7-Tier Verbal Scale |
+                                    +----------+----------+
+                                               |
+                                               v
+                                    +---------------------+
+                                    | HMAC-SHA256 LEDGER  |
+                                    | Immutable Audit Log |
+                                    +----------+----------+
+                                               |
+                                               v
+                                    +---------------------+
+                                    |  CIRCOM ZK-SNARKs   |
+                                    | BN254 Groth16 Proof |
+                                    +---------------------+
 ```
 
 ### End-to-End Pipeline Execution

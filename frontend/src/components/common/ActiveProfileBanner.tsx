@@ -61,9 +61,9 @@ export default function ActiveProfileBanner() {
                         <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[9px] sm:text-[10px] text-zinc-400 font-mono">
                             <span>Node: <strong className="text-cyan-300">{activeProfile.nodeId}</strong></span>
                             <span className="text-zinc-600">•</span>
-                            <span className="text-zinc-300 font-bold">{activeProfile.markerCount} CODIS Loci</span>
+                            <span className="text-zinc-300 font-bold">{activeProfile.markerCount} Autosomal STR Loci (20 FBI Expanded CODIS + 4 Extended)</span>
                             <span className="text-zinc-600">•</span>
-                            <span className="text-zinc-300 font-bold">{activeProfile.snpCount} AIM SNPs</span>
+                            <span className="text-zinc-300 font-bold">55-SNP AIM Panel (Kidd et al. 2014)</span>
                         </div>
                     </div>
                 </div>

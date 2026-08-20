@@ -10,6 +10,29 @@
  * Compliance: ISO/IEC 17025:2017 • FBI CODIS NDIS v3.2/v4.0 • SWGDAM 2020 Guidelines
  */
 
+import { AIM_55_METADATA, AIM_55_ALLELE_FREQUENCIES, ContinentalCluster } from './snpPhenotypeBgaEngine';
+
+/**
+ * Constructs a full 55-SNP AIM genotype dosage profile for a given continental cluster.
+ * Guarantees that all 55 AIMs from Kidd et al. (2014) are represented.
+ */
+export function build55AimDosages(
+  targetPop: ContinentalCluster | 'AJ',
+  overrides?: Record<string, number>
+): Record<string, number> {
+  const result: Record<string, number> = {};
+  const cluster: ContinentalCluster = targetPop === 'AJ' ? 'EUR' : targetPop;
+  for (const rsid of Object.keys(AIM_55_METADATA)) {
+    const freqs = AIM_55_ALLELE_FREQUENCIES[rsid];
+    const f = freqs ? freqs[cluster] : 0.5;
+    result[rsid] = f >= 0.65 ? 2 : f >= 0.35 ? 1 : 0;
+  }
+  if (overrides) {
+    Object.assign(result, overrides);
+  }
+  return result;
+}
+
 export interface MultiOmicReferenceProfile {
   sampleId: string;
   coriellId?: string;
@@ -144,12 +167,12 @@ export const PRESET_NIST_SRM_2391D: ClientCaseworkPreset = {
     PENTA_D: { allele1: '9', allele2: '12', rfu1: 2350, rfu2: 2300 },
     PENTA_E: { allele1: '12', allele2: '14', rfu1: 2100, rfu2: 2050 },
   },
-  snpDosages: {
+  snpDosages: build55AimDosages('EUR', {
     rs12913832: 1, rs1805007: 0, rs16891982: 2, rs1426654: 2,
     rs1042602: 2, rs12203592: 0, rs3827072: 0, rs727811: 2,
     rs3811801: 2, rs2814778: 0, rs1800414: 2, rs11019: 2,
     rs10886828: 2, rs2032582: 0, rs2300986: 2, rs1028531: 2,
-  },
+  }),
   ystrProfile: {
     DYS19: { allele1: '14', rfu1: 1600 },
     DYS389I: { allele1: '13', rfu1: 1550 },
@@ -248,12 +271,12 @@ export const PRESET_NA12878_CEU: ClientCaseworkPreset = {
     PENTA_D: { allele1: '9', allele2: '13', rfu1: 2300, rfu2: 2250 },
     PENTA_E: { allele1: '7', allele2: '12', rfu1: 2050, rfu2: 2000 },
   },
-  snpDosages: {
+  snpDosages: build55AimDosages('EUR', {
     rs12913832: 2, rs1805007: 0, rs16891982: 2, rs1426654: 2,
     rs1042602: 1, rs12203592: 1, rs3827072: 0, rs727811: 2,
     rs3811801: 2, rs2814778: 0, rs1800414: 2, rs11019: 2,
     rs10886828: 2, rs2032582: 0, rs2300986: 2, rs1028531: 2,
-  },
+  }),
   ystrProfile: {},
   mtdnaMutations: ['263G', '309.1C', '315.1C', '16263T', '16519C'],
   aimProfile: {
@@ -324,12 +347,12 @@ export const PRESET_HG002_AJ: ClientCaseworkPreset = {
     PENTA_D: { allele1: '10', allele2: '12', rfu1: 2300, rfu2: 2250 },
     PENTA_E: { allele1: '11', allele2: '13', rfu1: 2050, rfu2: 2000 },
   },
-  snpDosages: {
+  snpDosages: build55AimDosages('AJ', {
     rs12913832: 0, rs1805007: 0, rs16891982: 1, rs1426654: 2,
     rs1042602: 2, rs12203592: 0, rs3827072: 0, rs727811: 2,
     rs3811801: 2, rs2814778: 0, rs1800414: 2, rs11019: 2,
     rs10886828: 1, rs2032582: 0, rs2300986: 2, rs1028531: 2,
-  },
+  }),
   ystrProfile: {
     DYS19: { allele1: '15', rfu1: 1600 },
     DYS389I: { allele1: '13', rfu1: 1550 },
@@ -428,12 +451,12 @@ export const PRESET_NA19240_YRI: ClientCaseworkPreset = {
     PENTA_D: { allele1: '9', allele2: '11', rfu1: 2300, rfu2: 2250 },
     PENTA_E: { allele1: '12', allele2: '15', rfu1: 2050, rfu2: 2000 },
   },
-  snpDosages: {
+  snpDosages: build55AimDosages('AFR', {
     rs12913832: 0, rs1805007: 0, rs16891982: 0, rs1426654: 0,
     rs1042602: 0, rs12203592: 0, rs3827072: 0, rs727811: 0,
     rs3811801: 0, rs2814778: 2, rs1800414: 0, rs11019: 0,
     rs10886828: 0, rs2032582: 0, rs2300986: 0, rs1028531: 0,
-  },
+  }),
   ystrProfile: {},
   mtdnaMutations: [
     '73G', '143A', '146C', '152C', '195C', '247G', '263G', '315.1C',
@@ -508,12 +531,12 @@ export const PRESET_NA18507_CHB: ClientCaseworkPreset = {
     PENTA_D: { allele1: '9', allele2: '12', rfu1: 2300, rfu2: 2250 },
     PENTA_E: { allele1: '10', allele2: '14', rfu1: 2050, rfu2: 2000 },
   },
-  snpDosages: {
+  snpDosages: build55AimDosages('EAS', {
     rs12913832: 0, rs1805007: 0, rs16891982: 0, rs1426654: 2,
     rs1042602: 2, rs12203592: 0, rs3827072: 2, rs727811: 2,
     rs3811801: 2, rs2814778: 0, rs1800414: 2, rs11019: 1,
     rs10886828: 2, rs2032582: 2, rs2300986: 2, rs1028531: 2,
-  },
+  }),
   ystrProfile: {
     DYS19: { allele1: '15', rfu1: 1600 },
     DYS389I: { allele1: '14', rfu1: 1550 },

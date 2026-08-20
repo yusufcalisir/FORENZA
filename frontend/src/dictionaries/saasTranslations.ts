@@ -882,7 +882,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
     },
     security: {
       badge: "Kurumsal Güvenlik ve ISO 17025 Standartları",
-      title: "Kriptografik Delil Zinciri ve ISO 17025 Akreditasyonu",
+      title: "Kriptografik Delil Zinciri ve ISO 17025 Standart Formatı",
       subtitle: "Müdahaleye karşı korumalı denetim izi, sıfır bilgi kanıtlı delil doğrulaması ve katı delil zinciri takibi.",
       matrixTitle: "Teknik Platform Özellikleri ve Standartlar Matrisi",
       passedBadge: "%100 DOĞRULANMIŞ (952 TEST)",

@@ -723,14 +723,14 @@ $$RMSE_{\text{log10LR}} = \sqrt{\frac{1}{N} \sum_{i=1}^N \left( \log_{10} LR_{\t
 ## 34. Forensic Evidence OS Directed Acyclic Graph & End-to-End Pipeline Entropy Reduction
 
 ### 34.1 Evidence OS Directed Acyclic Graph ($\mathcal{G}_{\text{OS}}$)
-The FORENZA Master OS forms a 6-layer topological graph $\mathcal{G}_{\text{OS}} = (\mathcal{V}, \mathcal{E})$ with 30 subsystem nodes:
+The FORENZA Master OS forms a 7-pillar topological graph $\mathcal{G}_{\text{OS}} = (\mathcal{V}, \mathcal{E})$ with 35 subsystem nodes:
 
-$$\mathcal{V} = \mathcal{V}_{\text{Ingest}} \cup \mathcal{V}_{\text{Inference}} \cup \mathcal{V}_{\text{Ledger}} \cup \mathcal{V}_{\text{QC}} \cup \mathcal{V}_{\text{Review}} \cup \mathcal{V}_{\text{Reporting}}$$
+$$\mathcal{V} = \mathcal{V}_{\text{Ingest}} \cup \mathcal{V}_{\text{Inference}} \cup \mathcal{V}_{\text{Ledger}} \cup \mathcal{V}_{\text{QC}} \cup \mathcal{V}_{\text{Review}} \cup \mathcal{V}_{\text{GeoFusion}} \cup \mathcal{V}_{\text{Reporting}}$$
 
 ### 34.2 End-to-End Joint System Entropy Reduction ($\Delta \mathcal{H}_{\text{system}}$)
 For initial uninformative evidence entropy $\mathcal{H}_0$ and post-inference joint likelihood state $\mathcal{H}_{\text{joint}}$:
 
-$$\Delta \mathcal{H}_{\text{system}} = \mathcal{H}_0 - \sum_{k=1}^{30} \mathcal{I}(X_k; Y_{\text{verdict}}) \ge 0$$
+$$\Delta \mathcal{H}_{\text{system}} = \mathcal{H}_0 - \sum_{k=1}^{35} \mathcal{I}(X_k; Y_{\text{verdict}}) \ge 0$$
 
 ---
 

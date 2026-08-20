@@ -98,27 +98,85 @@ $$KI_{FS} = \frac{P(G_1, G_2 \mid \text{Full Sibs})}{P(G_1) P(G_2)}$$
 
 ---
 
-## 4. Stochastic Modeling: Dropout & Drop-in
+## 4. Stochastic Modeling: Dropout, Drop-in & Heterozygote Balance (Module 1.4)
 
-In low-template DNA analysis ($< 100\text{ pg}$), stochastic effects are modeled probabilistically:
+In low-template DNA analysis ($T < 100\text{ pg}$ or peak heights $< \text{ST} = 150\text{ RFU}$), stochastic phenomena (allelic dropout, sporadic drop-in, and severe peak imbalance) are modeled verbatim from Pillar 1 Research §4 and Curran & Gill (2016).
 
-### 4.1 Dropout Probability ($P(D)$)
-Dropout probability $P(D)$ is modeled as a logistic function of peak height or DNA concentration $x$:
+### 4.1 Calibrated Logistic Allele Dropout Model ($P(D \mid x)$)
 
-$$P(D \mid x) = \frac{1}{1 + e^{\beta_0 + \beta_1 x}}$$
+Dropout probability $P(D \mid x)$ is evaluated via calibrated sigmoid functions:
 
-Where $\beta_0, \beta_1$ are empirically calibrated parameters per locus.
+$$P(D \mid x) = \frac{1}{1 + \exp\left(-(\beta_0 + \beta_1 x)\right)}$$
 
-### 4.2 Drop-in Probability ($P(C)$)
-Drop-in is modeled as a Poisson process with rate parameter $\lambda_C$:
+1. **RFU-Based Calibration ($x = \text{RFU}$):**
+   $$\beta_0 = +2.50, \quad \beta_1 = -0.025\text{ RFU}^{-1}$$
+   - $P(D \mid 50\text{ RFU}) = 77.73\%$
+   - $P(D \mid 100\text{ RFU}) = 50.00\%$
+   - $P(D \mid 150\text{ RFU}) = 22.27\%$
+   - Critical $1\%$ threshold: $x_{\text{crit}} = \frac{-\ln(99) - \beta_0}{\beta_1} = 283.81\text{ RFU}$.
 
-$$P(C = k) = \frac{\lambda_C^k e^{-\lambda_C}}{k!}$$
+2. **DNA Mass-Based Calibration ($x = \text{pg}$):**
+   $$\beta_0 = +3.20, \quad \beta_1 = -0.080\text{ pg}^{-1}$$
+   - $P(D \mid 15\text{ pg}) = 88.08\%$ (Single-cell limit)
+   - $P(D \mid 40\text{ pg}) = 50.00\%$ (Half-dropout template)
+   - $P(D \mid 100\text{ pg}) = 0.82\%$ (Standard SWGDAM threshold)
+   - Critical $1\%$ threshold: $x_{\text{crit}} = 97.44\text{ pg}$.
 
-Drop-in allele height $h_c$ follows an exponential distribution:
+3. **Amplicon Size Dependent Degradation Scaling ($x = T\text{ pg}, \text{bp}$):**
+   $$P(D \mid T, \text{bp}) = \frac{1}{1 + \exp\left(-(\beta_0 + \beta_1 T + \beta_s (\text{bp} - 100))\right)}, \quad \beta_s = 0.008\text{ bp}^{-1}$$
 
-$$f(h_c) = \lambda_h e^{-\lambda_h (h_c - AT)}$$
+### 4.2 Discrete Poisson Allele Drop-in Model ($P(C = k)$)
 
-where $AT$ is the analytical threshold (e.g., 50 RFU).
+Sporadic drop-in allele count per locus follows a discrete Poisson distribution:
+
+$$P(C = k \mid \lambda_C) = \frac{\lambda_C^k e^{-\lambda_C}}{k!}, \quad \lambda_C = 0.020\text{ per locus}$$
+
+- $P(C = 0) = 0.98019867$, $P(C = 1) = 0.01960397$, $P(C = 2) = 0.00019604$.
+- **24-Locus Clean Profile Invariant:**
+  $$P(C_{\text{total}} = 0) = \prod_{l=1}^{24} P(C_l = 0) = e^{-24 \times 0.020} = e^{-0.48} \approx 0.618783$$
+
+### 4.3 Truncated Exponential Drop-in Peak Height Density ($f(h_C)$)
+
+Drop-in fluorescence signals above the Analytical Threshold ($\text{AT} = 50.0\text{ RFU}$) follow a truncated exponential PDF:
+
+$$f(h_C) = \begin{cases} \lambda_h \exp\left(-\lambda_h (h_C - \text{AT})\right) & \text{for } h_C \ge \text{AT} \\ 0.0 & \text{for } h_C < \text{AT} \end{cases}, \quad \lambda_h = 0.015\text{ RFU}^{-1}$$
+
+- Expected Drop-in Peak Height: $E[h_C] = \text{AT} + \frac{1}{\lambda_h} = 50.0 + 66.667 = 116.667\text{ RFU}$.
+
+### 4.4 Heterozygote Peak Balance ($H_b$) & Stochastic Quality Flags
+
+For a heterozygous genotype with peak heights $h_1, h_2$:
+
+$$H_b = \frac{\min(h_1, h_2)}{\max(h_1, h_2)}$$
+
+A 3-tier stochastic quality flag is triggered if:
+1. $H_b < 0.60$ (Severe peak height imbalance).
+2. $h_{\min} < \text{ST} = 150.0\text{ RFU}$ (Sub-stochastic threshold peak).
+3. Any peak $< \text{AT} = 50.0\text{ RFU}$ (Sub-analytical threshold peak).
+
+If flagged, single-peak loci are masked with an allelic dropout wildcard $[0]$ to prevent false homozygosity calls.
+
+### 4.5 Curran-Gill 4-State Markov Observation Model
+
+Under prosecution proposition $H_p$ (suspect with genotype $G_S = (A_1, A_2)$ is contributor):
+- **Scenario A (Both Sister Alleles Present):** $P(E \mid H_p) = (1 - P(D))^2 \cdot (1 - \lambda_C)$
+- **Scenario B (Single Sister Allele Dropout):** $P(E \mid H_p) = 2 P(D) (1 - P(D)) \cdot (1 - \lambda_C)$
+- **Scenario C (Double Sister Allele Dropout):** $P(E \mid H_p) = P(D)^2 \cdot (1 - \lambda_C)$
+- **Scenario D (Sporadic Drop-in Detected):** $P(E \mid H_p) = 2 P(D) (1 - P(D)) \cdot \lambda_C f(h_{\text{extra}})$
+
+Under defense proposition $H_d$ (unrelated contributor from population with coancestry $\theta$):
+$$P(E \mid H_d) = P(G_S \mid \theta) = \frac{2 [\theta + (1-\theta)p_1][\theta + (1-\theta)p_2]}{(1+\theta)(1+2\theta)}$$
+
+### 4.6 Substrate Physical Transfer & Recovery Matrix
+
+$$\text{Recovered Mass: } m_{\text{rec}} = m_{\text{in}} \cdot \eta$$
+
+| Substrate ID | Name | Recovery Efficiency ($\eta$) | Porosity Class |
+| :--- | :--- | :---: | :--- |
+| `SMOOTH_NON_POROUS` | Smooth Non-Porous (Glass / Metal) | $0.60$ | Non-Porous |
+| `TEXTURED_NON_POROUS` | Textured Non-Porous (Gun Grip / Steering Wheel) | $0.40$ | Textured |
+| `POROUS_FABRIC` | Porous Fabric (Cotton / Denim) | $0.20$ | Porous |
+| `ROUGH_WOOD` | Rough Wood / Brick | $0.15$ | Highly Porous |
 
 ---
 

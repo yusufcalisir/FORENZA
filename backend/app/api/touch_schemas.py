@@ -6,16 +6,19 @@ Covers all LTDNA stochastic phenomenon endpoints verbatim from Pillar 1 §4:
   - Poisson Drop-in P(C=k) — count probability and exponential height PDF
   - Heterozygote Balance H_b — peak balance and stochastic quality flags
   - Curran-Gill Stochastic LTDNA Likelihood Ratio
+  - Multi-Locus LTDNA Profile Likelihood Ratio
   - Substrate recovery and full LTDNA analysis
+  - Dilution tiers and benchmark casework vectors
 """
 
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Any
 from pydantic import BaseModel, Field, ConfigDict
 
 
-# ── Existing Schemas (retain) ─────────────────────────────────────────────────
+# ── Substrate & Stochastic Schemas ───────────────────────────────────────────
 
 class SubstrateEfficiencySchema(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
     substrate_type: str
     efficiency_factor: float
     input_mass_pg: float
@@ -23,6 +26,7 @@ class SubstrateEfficiencySchema(BaseModel):
 
 
 class StochasticDropoutSchema(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
     recovered_mass_pg: float
     dropout_probability_pd: float
     dropin_probability_pc: float
@@ -30,15 +34,17 @@ class StochasticDropoutSchema(BaseModel):
 
 
 class AnalyzeLtdnaRequest(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
     sample_id: str = Field(..., examples=["TOUCH-HANDLE-001"])
     substrate_type: str = Field(
-        ..., examples=["TEXTURED_NON_POROUS", "SMOOTH_NON_POROUS", "POROUS_FABRIC"]
+        ..., examples=["TEXTURED_NON_POROUS", "SMOOTH_NON_POROUS", "POROUS_FABRIC", "ROUGH_WOOD"]
     )
     input_mass_pg: float = Field(..., gt=0.0, examples=[80.0])
     lambda_dropout: float = Field(0.05, gt=0.0, examples=[0.05])
 
 
 class AnalyzeLtdnaResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
     sample_id: str
     substrate: SubstrateEfficiencySchema
     stochastic_model: StochasticDropoutSchema
@@ -47,12 +53,14 @@ class AnalyzeLtdnaResponse(BaseModel):
 
 
 class ContributorDeconvRequest(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
     sample_id: str = Field(..., examples=["TOUCH-HANDLE-001"])
     num_contributors: int = Field(..., ge=1, le=4, examples=[2])
     recovered_mass_pg: float = Field(..., gt=0.0, examples=[32.0])
 
 
 class ContributorDeconvResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
     sample_id: str
     num_contributors: int
     deconvolution_status: str
@@ -61,24 +69,30 @@ class ContributorDeconvResponse(BaseModel):
     log10_lr: float
 
 
-# ── Module 04 New Schemas ─────────────────────────────────────────────────────
+# ── §4.1 Logistic Dropout P(D) Schemas ───────────────────────────────────────
 
 class DropoutModelRequest(BaseModel):
     """
     Request for logistic allele dropout probability computation.
-    model_type: 'RFU' or 'MASS_PG'
+    model_type: 'RFU' or 'MASS_PG' or 'FRAGMENT_BP'
     """
     model_config = ConfigDict(protected_namespaces=())
     model_type: str = Field(
         "RFU",
         description="'RFU' for peak height model (β₀=+2.50, β₁=-0.025) or "
-                    "'MASS_PG' for DNA mass model (β₀=+3.20, β₁=-0.080).",
-        examples=["RFU", "MASS_PG"],
+                    "'MASS_PG' for DNA mass model (β₀=+3.20, β₁=-0.080) or "
+                    "'FRAGMENT_BP' for amplicon size decay model.",
+        examples=["RFU", "MASS_PG", "FRAGMENT_BP"],
     )
     input_value: float = Field(
         ...,
         description="Peak height in RFU or DNA mass in pg depending on model_type.",
         examples=[50.0, 150.0],
+    )
+    amplicon_bp: Optional[float] = Field(
+        None,
+        description="Optional amplicon size in base pairs (bp) for fragment degradation penalty.",
+        examples=[175.0, 360.0],
     )
     beta_0: Optional[float] = Field(
         None,
@@ -102,8 +116,11 @@ class DropoutModelResponse(BaseModel):
     is_below_critical: bool
 
 
+# ── §4.2 Poisson Drop-in & Exponential Height Schemas ─────────────────────────
+
 class DropinModelRequest(BaseModel):
     """Request for Poisson drop-in count probability and/or exponential peak height PDF."""
+    model_config = ConfigDict(protected_namespaces=())
     k: int = Field(
         0,
         ge=0,
@@ -136,6 +153,7 @@ class DropinModelRequest(BaseModel):
 
 
 class DropinModelResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
     k: int
     lambda_c: float
     poisson_probability: float
@@ -146,8 +164,11 @@ class DropinModelResponse(BaseModel):
     is_above_at: Optional[bool]
 
 
+# ── §4.2 Heterozygote Balance Schemas ─────────────────────────────────────────
+
 class HeterozygoteBalanceRequest(BaseModel):
     """Request for heterozygote peak balance and stochastic quality flag evaluation."""
+    model_config = ConfigDict(protected_namespaces=())
     h1: float = Field(
         ...,
         ge=0.0,
@@ -182,6 +203,7 @@ class HeterozygoteBalanceRequest(BaseModel):
 
 
 class HeterozygoteBalanceResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
     h1: float
     h2: float
     h_min: float
@@ -197,11 +219,14 @@ class HeterozygoteBalanceResponse(BaseModel):
     interpretation: str
 
 
+# ── Single-Locus Curran-Gill Stochastic LR Schemas ───────────────────────────
+
 class StochasticLRRequest(BaseModel):
     """
     Request for Curran-Gill stochastic single-source LTDNA Likelihood Ratio.
     VECTOR_03 example: vWA locus, suspect (16,17), observed {16: 80.0}, 17 dropped.
     """
+    model_config = ConfigDict(protected_namespaces=())
     locus: str = Field(
         ...,
         description="Locus name (e.g. 'vWA', 'TH01').",
@@ -227,7 +252,7 @@ class StochasticLRRequest(BaseModel):
         ge=0.0,
         le=1.0,
         description="Allele dropout probability P(D) computed from logistic model.",
-        examples=[0.7773],
+        examples=[0.6225],
     )
     p_dropin: float = Field(
         ...,
@@ -251,6 +276,7 @@ class StochasticLRRequest(BaseModel):
 
 
 class StochasticLRResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
     locus: str
     suspect_genotype: List[float]
     p_dropout: float
@@ -264,3 +290,98 @@ class StochasticLRResponse(BaseModel):
     match_probability: float
     log10_lr: float
     interpretation: str
+
+
+# ── Multi-Locus LTDNA Profile LR Schemas ──────────────────────────────────────
+
+class MultiLocusLTDNARequest(BaseModel):
+    """Request for composite multi-locus profile stochastic Likelihood Ratio."""
+    model_config = ConfigDict(protected_namespaces=())
+    suspect_profile: Dict[str, List[float]] = Field(
+        ...,
+        description="Suspect 24-locus diploid genotypes keyed by locus name.",
+        examples=[{"vWA": [16.0, 17.0], "D3S1358": [15.0, 16.0]}],
+    )
+    observed_profile: Dict[str, Dict[str, float]] = Field(
+        ...,
+        description="Observed electropherogram peaks with peak heights per locus.",
+        examples=[{"vWA": {"16": 80.0}, "D3S1358": {"15": 110.0, "16": 95.0}}],
+    )
+    template_pg: float = Field(
+        ...,
+        gt=0.0,
+        description="Total DNA template mass in picograms.",
+        examples=[50.0],
+    )
+    theta: float = Field(
+        0.03,
+        ge=0.0,
+        le=0.15,
+        description="Subpopulation coancestry theta (default 0.03).",
+        examples=[0.03],
+    )
+    population_frequencies: Optional[Dict[str, Dict[str, float]]] = Field(
+        None,
+        description="Optional population allele frequency database override.",
+    )
+
+
+class SingleLocusLRDetail(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    locus: str
+    suspect_genotype: List[float]
+    observed_state: str
+    likelihood_hp: float
+    likelihood_hd: float
+    log10_lr: float
+    stochastic_flags: List[str]
+    verbal_en: str
+    verbal_tr: str
+
+
+class MultiLocusLTDNAResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    n_loci: int
+    template_pg: float
+    p_dropout: float
+    total_log10_lr: float
+    total_lr_point: float
+    total_stochastic_flags_count: int
+    verbal_en: str
+    verbal_tr: str
+    additivity_verified: bool
+    locus_breakdown: List[SingleLocusLRDetail]
+
+
+# ── Reference Catalog Schemas ─────────────────────────────────────────────────
+
+class DilutionTierDetailSchema(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    tier_id: str
+    nominal_mass_pg: float
+    equivalent_cells: float
+    expected_p_dropout: float
+    expected_hb: float
+    stochastic_zone: str
+    operational_designation: str
+    dropout_loci_count: int
+
+
+class SubstrateDetailSchema(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    substrate_id: str
+    name: str
+    description: str
+    recovery_efficiency: float
+    porosity_type: str
+    touch_swab_protocol: str
+
+
+class BenchmarkVectorDetailSchema(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    vector_id: str
+    title: str
+    description: str
+    nominal_template_pg: float
+    substrate_id: str
+    masked_dropout_loci: List[str]

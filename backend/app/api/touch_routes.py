@@ -5,21 +5,41 @@ Exposes endpoints for LTDNA Stochastic Phenomenon Modeling (Pillar 1 §4):
   POST /forensic/touch/dropout-model        — Logistic P(D) for RFU or DNA mass
   POST /forensic/touch/dropin-model         — Poisson P(C=k) and exponential height PDF
   POST /forensic/touch/heterozygote-balance — H_b balance evaluation and stochastic flags
-  POST /forensic/touch/stochastic-lr        — Curran-Gill stochastic LTDNA LR
+  POST /forensic/touch/stochastic-lr        — Curran-Gill stochastic single-locus LR
+  POST /forensic/touch/multi-locus-lr       — Multi-locus 24-locus profile stochastic LR
   POST /forensic/touch/analyze-ltdna        — Full substrate recovery + stochastic analysis
   POST /forensic/touch/contributor-deconv   — MCMC Touch DNA mixture deconvolution
+  GET  /forensic/touch/dilution-tiers       — 6 Peter Gill LCN dilution benchmark tiers
+  GET  /forensic/touch/substrates           — 4 Forensic substrate recovery materials
+  GET  /forensic/touch/benchmark-vectors    — Golden casework benchmark vectors
 """
 
 from fastapi import APIRouter, HTTPException, status
-from typing import Dict
+from typing import Dict, List, Any, Tuple
 
-from node.services.forensic.touch_dna.touch_engine import (
-    TouchDnaEngine,
-    DROPOUT_BETA0_RFU,
-    DROPOUT_BETA1_RFU,
-    DROPOUT_BETA0_MASS,
-    DROPOUT_BETA1_MASS,
-)
+try:
+    from node.services.forensic.touch_dna.touch_engine import (
+        TouchDnaEngine,
+        DROPOUT_BETA0_RFU,
+        DROPOUT_BETA1_RFU,
+        DROPOUT_BETA0_MASS,
+        DROPOUT_BETA1_MASS,
+    )
+    from node.services.forensic.ltdna.ltdna_reference_datasets import (
+        LTDNAReferenceDatasetRegistry,
+    )
+except ImportError:
+    from backend.node.services.forensic.touch_dna.touch_engine import (
+        TouchDnaEngine,
+        DROPOUT_BETA0_RFU,
+        DROPOUT_BETA1_RFU,
+        DROPOUT_BETA0_MASS,
+        DROPOUT_BETA1_MASS,
+    )
+    from backend.node.services.forensic.ltdna.ltdna_reference_datasets import (
+        LTDNAReferenceDatasetRegistry,
+    )
+
 from .touch_schemas import (
     AnalyzeLtdnaRequest, AnalyzeLtdnaResponse,
     ContributorDeconvRequest, ContributorDeconvResponse,
@@ -28,6 +48,8 @@ from .touch_schemas import (
     DropinModelRequest, DropinModelResponse,
     HeterozygoteBalanceRequest, HeterozygoteBalanceResponse,
     StochasticLRRequest, StochasticLRResponse,
+    MultiLocusLTDNARequest, MultiLocusLTDNAResponse, SingleLocusLRDetail,
+    DilutionTierDetailSchema, SubstrateDetailSchema, BenchmarkVectorDetailSchema,
 )
 
 router = APIRouter(prefix="/forensic/touch", tags=["Touch DNA & Low-Template Genotyping"])
@@ -54,7 +76,10 @@ async def compute_dropout_model(body: DropoutModelRequest) -> DropoutModelRespon
             beta_0 = body.beta_0 if body.beta_0 is not None else DROPOUT_BETA0_MASS
             beta_1 = body.beta_1 if body.beta_1 is not None else DROPOUT_BETA1_MASS
             res = _touch_engine.compute_mass_dropout_probability(
-                mass_pg=body.input_value, beta_0=beta_0, beta_1=beta_1
+                mass_pg=body.input_value,
+                amplicon_bp=body.amplicon_bp,
+                beta_0=beta_0,
+                beta_1=beta_1,
             )
         else:
             beta_0 = body.beta_0 if body.beta_0 is not None else DROPOUT_BETA0_RFU
@@ -171,7 +196,7 @@ async def evaluate_heterozygote_balance(body: HeterozygoteBalanceRequest) -> Het
     )
 
 
-# ── Curran-Gill Stochastic LTDNA LR ──────────────────────────────────────────
+# ── Curran-Gill Single-Locus Stochastic LTDNA LR ─────────────────────────────
 
 @router.post(
     "/stochastic-lr",
@@ -186,7 +211,6 @@ async def evaluate_heterozygote_balance(body: HeterozygoteBalanceRequest) -> Het
 )
 async def compute_stochastic_lr(body: StochasticLRRequest) -> StochasticLRResponse:
     try:
-        # Convert string-keyed observed peaks and locus_frequencies to float keys
         observed_peaks: Dict[float, float] = {
             float(k): v for k, v in body.observed_peaks.items()
         }
@@ -224,7 +248,77 @@ async def compute_stochastic_lr(body: StochasticLRRequest) -> StochasticLRRespon
     )
 
 
-# ── Existing Endpoints (retained) ─────────────────────────────────────────────
+# ── Multi-Locus LTDNA Profile Likelihood Ratio ────────────────────────────────
+
+@router.post(
+    "/multi-locus-lr",
+    response_model=MultiLocusLTDNAResponse,
+    summary="Composite Multi-Locus Profile Stochastic Likelihood Ratio",
+    description=(
+        "Computes 24-locus composite Likelihood Ratio under stochastic dropout/drop-in "
+        "regime with mathematical log-additivity verification |log10(LR) - ∑log10(LR_l)| < 10⁻⁶."
+    ),
+    status_code=status.HTTP_200_OK,
+)
+async def compute_multi_locus_lr(body: MultiLocusLTDNARequest) -> MultiLocusLTDNAResponse:
+    try:
+        suspect_typed: Dict[str, Tuple[float, float]] = {
+            loc: (g[0], g[1]) for loc, g in body.suspect_profile.items()
+        }
+        observed_typed: Dict[str, Dict[float, float]] = {
+            loc: {float(al): h for al, h in peaks.items()}
+            for loc, peaks in body.observed_profile.items()
+        }
+        pop_db_typed: Optional[Dict[str, Dict[float, float]]] = None
+        if body.population_frequencies:
+            pop_db_typed = {
+                loc: {float(al): f for al, f in freqs.items()}
+                for loc, freqs in body.population_frequencies.items()
+            }
+
+        res = _touch_engine.calculate_multi_locus_ltdna_lr(
+            suspect_profile=suspect_typed,
+            observed_profile=observed_typed,
+            template_pg=body.template_pg,
+            population_db=pop_db_typed,
+            theta=body.theta,
+        )
+
+        details = [
+            SingleLocusLRDetail(
+                locus=lres.locus,
+                suspect_genotype=list(lres.suspect_genotype),
+                observed_state=lres.observed_state,
+                likelihood_hp=lres.likelihood_hp,
+                likelihood_hd=lres.likelihood_hd,
+                log10_lr=lres.log10_lr,
+                stochastic_flags=lres.stochastic_flags,
+                verbal_en=lres.verbal_en,
+                verbal_tr=lres.verbal_tr,
+            )
+            for lres in res.locus_results
+        ]
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Multi-locus LTDNA LR computation failed: {str(exc)}"
+        )
+
+    return MultiLocusLTDNAResponse(
+        n_loci=res.n_loci,
+        template_pg=body.template_pg,
+        p_dropout=res.mean_p_dropout,
+        total_log10_lr=res.total_log10_lr,
+        total_lr_point=res.total_lr_point,
+        total_stochastic_flags_count=res.total_stochastic_flags_count,
+        verbal_en=res.verbal_en,
+        verbal_tr=res.verbal_tr,
+        additivity_verified=res.additivity_verified,
+        locus_breakdown=details,
+    )
+
+
+# ── Substrate Recovery & Full LTDNA Analysis ──────────────────────────────────
 
 @router.post(
     "/analyze-ltdna",
@@ -307,3 +401,73 @@ async def contributor_deconv(body: ContributorDeconvRequest) -> ContributorDecon
         mcmc_acceptance_rate=0.421,
         log10_lr=log_lr,
     )
+
+
+# ── Reference Datasets & Catalogs ─────────────────────────────────────────────
+
+@router.get(
+    "/dilution-tiers",
+    response_model=List[DilutionTierDetailSchema],
+    summary="List Peter Gill LCN Dilution Series Benchmark Tiers",
+    description="Retrieves the 6 calibrated forensic dilution tiers (15 pg to 1000 pg).",
+    status_code=status.HTTP_200_OK,
+)
+async def list_dilution_tiers() -> List[DilutionTierDetailSchema]:
+    tiers = LTDNAReferenceDatasetRegistry.get_all_dilution_tiers()
+    return [
+        DilutionTierDetailSchema(
+            tier_id=t.tier_id,
+            nominal_mass_pg=t.nominal_mass_pg,
+            equivalent_cells=t.equivalent_cells,
+            expected_p_dropout=t.expected_p_dropout,
+            expected_hb=t.expected_hb,
+            stochastic_zone=t.stochastic_zone,
+            operational_designation=t.operational_designation,
+            dropout_loci_count=len(t.dropout_loci),
+        )
+        for t in tiers
+    ]
+
+
+@router.get(
+    "/substrates",
+    response_model=List[SubstrateDetailSchema],
+    summary="List Forensic Substrate Materials & Recovery Efficiencies",
+    description="Retrieves the 4 forensic substrate materials with empirical recovery efficiencies.",
+    status_code=status.HTTP_200_OK,
+)
+async def list_substrates() -> List[SubstrateDetailSchema]:
+    subs = LTDNAReferenceDatasetRegistry.get_all_substrates()
+    return [
+        SubstrateDetailSchema(
+            substrate_id=s.substrate_id,
+            name=s.name,
+            description=s.description,
+            recovery_efficiency=s.recovery_efficiency,
+            porosity_type=s.porosity_type,
+            touch_swab_protocol=s.touch_swab_protocol,
+        )
+        for s in subs
+    ]
+
+
+@router.get(
+    "/benchmark-vectors",
+    response_model=List[BenchmarkVectorDetailSchema],
+    summary="List Touch DNA Golden Benchmark Casework Vectors",
+    description="Retrieves standard benchmark vectors (VECTOR_03, VECTOR_TERM_06).",
+    status_code=status.HTTP_200_OK,
+)
+async def list_benchmark_vectors() -> List[BenchmarkVectorDetailSchema]:
+    vectors = LTDNAReferenceDatasetRegistry.get_all_benchmark_vectors()
+    return [
+        BenchmarkVectorDetailSchema(
+            vector_id=v.vector_id,
+            title=v.title,
+            description=v.description,
+            nominal_template_pg=v.nominal_template_pg,
+            substrate_id=v.substrate_id,
+            masked_dropout_loci=v.masked_dropout_loci,
+        )
+        for v in vectors
+    ]

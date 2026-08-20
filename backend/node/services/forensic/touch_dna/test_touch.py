@@ -522,3 +522,72 @@ def test_api_contributor_deconv_endpoint():
     assert data["deconvolution_status"] == "MCMC_CONVERGED"
     assert "Major_Contributor" in data["mixture_proportions"]
     assert data["log10_lr"] > 5.0
+
+
+# ── New Endpoints Integration Tests (Sub-Item 1.4.5) ─────────────────────────
+
+def test_api_multi_locus_lr_endpoint():
+    """POST /forensic/touch/multi-locus-lr: 2-locus test profile."""
+    payload = {
+        "suspect_profile": {
+            "vWA": [16.0, 17.0],
+            "D3S1358": [15.0, 16.0],
+        },
+        "observed_profile": {
+            "vWA": {"16": 80.0},
+            "D3S1358": {"15": 110.0, "16": 95.0},
+        },
+        "template_pg": 50.0,
+        "theta": 0.03,
+    }
+    resp = client.post("/api/v1/forensic/touch/multi-locus-lr", json=payload)
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["n_loci"] == 2
+    assert data["template_pg"] == 50.0
+    assert data["additivity_verified"] is True
+    assert len(data["locus_breakdown"]) == 2
+    assert data["total_log10_lr"] > 0.0
+    assert "Support" in data["verbal_en"]
+
+
+def test_api_dilution_tiers_endpoint():
+    """GET /forensic/touch/dilution-tiers: returns 6 Peter Gill LCN tiers."""
+    resp = client.get("/api/v1/forensic/touch/dilution-tiers")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert len(data) == 6
+    tier_ids = [t["tier_id"] for t in data]
+    assert "LCN_DILUTION_1000PG" in tier_ids
+    assert "LCN_DILUTION_15PG" in tier_ids
+
+
+def test_api_substrates_endpoint():
+    """GET /forensic/touch/substrates: returns 4 forensic materials."""
+    resp = client.get("/api/v1/forensic/touch/substrates")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert len(data) == 4
+    sub_ids = [s["substrate_id"] for s in data]
+    assert "SMOOTH_NON_POROUS" in sub_ids
+    assert "ROUGH_WOOD" in sub_ids
+
+
+def test_api_benchmark_vectors_endpoint():
+    """GET /forensic/touch/benchmark-vectors: returns VECTOR_03 and VECTOR_TERM_06."""
+    resp = client.get("/api/v1/forensic/touch/benchmark-vectors")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert len(data) >= 2
+    vec_ids = [v["vector_id"] for v in data]
+    assert "VECTOR_03" in vec_ids
+    assert "VECTOR_TERM_06" in vec_ids
+
+
+def test_api_validation_error_handling_422():
+    """Invalid requests return HTTP 422 Unprocessable Entity."""
+    # Negative mass
+    resp = client.post("/api/v1/forensic/touch/analyze-ltdna", json={
+        "sample_id": "ERR-1", "substrate_type": "SMOOTH_NON_POROUS", "input_mass_pg": -10.0
+    })
+    assert resp.status_code == 422

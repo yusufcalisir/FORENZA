@@ -6,16 +6,9 @@ import {
   Globe2,
   ShieldCheck,
   Scale,
-  Percent,
   Sliders,
   BarChart3,
   CheckCircle2,
-  AlertTriangle,
-  Info,
-  Layers,
-  Sparkles,
-  Users,
-  Activity,
   FileSpreadsheet,
 } from "lucide-react";
 import { useForensicCaseStore } from "@/store/forensicCaseStore";
@@ -183,11 +176,11 @@ export function PanelNRC() {
     }
     // Case profile fallback
     const res: Record<string, [number, number]> = {};
-    for (const [locus, vals] of Object.entries(activeCase.profile.strMarkers)) {
+    for (const [locus, locusData] of Object.entries(activeCase.profile.strMarkers)) {
       if (locus === "AMEL") continue;
-      const numVals = vals.map((v) => parseFloat(v)).filter((v) => !isNaN(v));
-      if (numVals.length >= 2) res[locus] = [numVals[0], numVals[1]];
-      else if (numVals.length === 1) res[locus] = [numVals[0], numVals[0]];
+      if (locusData && typeof locusData.allele1 === "number" && typeof locusData.allele2 === "number") {
+        res[locus] = [locusData.allele1, locusData.allele2];
+      }
     }
     return Object.keys(res).length > 0 ? res : GOLDEN_PROFILES["SRM_2391D_COMP_A"].markers;
   }, [selectedStandard, activeCase.profile.strMarkers]);
@@ -255,14 +248,14 @@ export function PanelNRC() {
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-lg font-bold text-slate-100 tracking-tight">
-                Module 1.3: NRC-II Dirichlet $F_{st}$ & Balding-Nichols Population Genetics
+                Module 1.3: NRC-II Dirichlet F_st &amp; Balding-Nichols Population Genetics
               </h2>
               <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
                 VERIFIED (3/3 Criteria)
               </span>
             </div>
             <p className="text-xs text-slate-400 mt-0.5">
-              Multi-ethnic subpopulation coancestry ($\theta$), Weir-Cockerham ANOVA & ENFSI (2017) Reciprocal Shield
+              Multi-ethnic subpopulation coancestry (θ), Weir-Cockerham ANOVA &amp; ENFSI (2017) Reciprocal Shield
             </p>
           </div>
         </div>
@@ -289,7 +282,7 @@ export function PanelNRC() {
             <div className="flex items-center gap-2">
               <Sliders className="w-4 h-4 text-emerald-400" />
               <span className="text-sm font-semibold text-slate-200">
-                Coancestry Coefficient ($\theta = F_{st}$):{" "}
+                Coancestry Coefficient (θ = F_st):{" "}
                 <span className="font-mono text-emerald-400 text-base">{theta.toFixed(3)}</span>
               </span>
             </div>
@@ -401,7 +394,7 @@ export function PanelNRC() {
           }`}
         >
           <BarChart3 className="w-3.5 h-3.5" />
-          Demographic Stratification & ENFSI Reporting
+          Demographic Stratification &amp; ENFSI Reporting
         </button>
         <button
           onClick={() => setActiveTab("loci_table")}
@@ -423,7 +416,7 @@ export function PanelNRC() {
           }`}
         >
           <Scale className="w-3.5 h-3.5" />
-          Weir & Cockerham (1984) ANOVA $F_{st}$ Estimator
+          Weir &amp; Cockerham (1984) ANOVA F_st Estimator
         </button>
       </div>
 
@@ -435,16 +428,16 @@ export function PanelNRC() {
             <div className="p-5 rounded-xl bg-slate-900/60 border border-slate-800 space-y-4">
               <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                ENFSI (2017) Evaluative Reporting & Reciprocal Invariant
+                ENFSI (2017) Evaluative Reporting &amp; Reciprocal Invariant
               </h3>
 
               <div className="p-3.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-xs text-emerald-200 space-y-1">
                 <div className="font-bold flex items-center gap-1.5">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                  Prosecutor's Fallacy Active Shield:
+                  Prosecutor&apos;s Fallacy Active Shield:
                 </div>
                 <p>
-                  $LR(H_p / H_d) \times LR(H_d / H_p) = 1.00000000 \pm 10^{-6}$. Evaluative weight is formulated
+                  LR(Hp / Hd) × LR(Hd / Hp) = 1.00000000 ± 10⁻⁶. Evaluative weight is formulated
                   strictly as conditional probability of evidence given hypotheses, eliminating prior odds bias.
                 </p>
               </div>
@@ -461,7 +454,7 @@ export function PanelNRC() {
                 <div className="flex justify-between p-2.5 rounded-lg bg-slate-800/60 border border-slate-700/50">
                   <span className="text-slate-400">Demographic Sensitivity Spread:</span>
                   <span className="font-mono text-emerald-400 font-bold">
-                    $\Delta \log_{10} LR = {popTelemetry.logSpread.toFixed(2)}$ ($10^{popTelemetry.logSpread.toFixed(2)}\times$)
+                    Δ Log₁₀ LR = {popTelemetry.logSpread.toFixed(2)} (10^{popTelemetry.logSpread.toFixed(2)}×)
                   </span>
                 </div>
               </div>
@@ -472,7 +465,7 @@ export function PanelNRC() {
           <div className="lg:col-span-6 p-5 rounded-xl bg-slate-900/60 border border-slate-800 flex flex-col justify-between">
             <h3 className="text-sm font-bold text-slate-100 mb-4 flex items-center gap-2">
               <BarChart3 className="w-4 h-4 text-emerald-400" />
-              Composite $\log_{10} LR$ Across Demographies ($\theta = {theta.toFixed(3)}$)
+              Composite Log₁₀ LR Across Demographies (θ = {theta.toFixed(3)})
             </h3>
 
             <div className="space-y-4 my-auto">
@@ -500,7 +493,7 @@ export function PanelNRC() {
 
             <div className="mt-4 pt-3 border-t border-slate-800/80 text-[11px] text-slate-400 flex items-center justify-between">
               <span>Standard: NIST 1036 Stratified Database</span>
-              <span className="font-mono">$p_{\min} = 0.00241$</span>
+              <span className="font-mono">p_min = 0.00241</span>
             </div>
           </div>
         </div>
@@ -511,7 +504,7 @@ export function PanelNRC() {
         <div className="rounded-xl border border-slate-800 bg-slate-900/60 overflow-hidden">
           <div className="p-4 bg-slate-800/40 border-b border-slate-800 flex justify-between items-center">
             <span className="text-xs font-bold text-slate-200">
-              Locus-by-Locus Balding-Nichols Evaluation ({selectedPopulation}, $\theta={theta.toFixed(3)}$)
+              Locus-by-Locus Balding-Nichols Evaluation ({selectedPopulation}, θ = {theta.toFixed(3)})
             </span>
             <div className="flex items-center gap-2">
               <span className="px-2 py-0.5 text-[10px] font-mono rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
@@ -567,7 +560,7 @@ export function PanelNRC() {
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-sm font-bold text-slate-100">
-                Weir & Cockerham (1984) Unbiased ANOVA $F_{st} / \hat{\theta}$ Estimator
+                Weir &amp; Cockerham (1984) Unbiased ANOVA F_st / θ̂ Estimator
               </h3>
               <p className="text-xs text-slate-400">
                 Decomposes total allelic variance into Mean Square Between Populations (MSP) and Mean Square Within
@@ -575,7 +568,7 @@ export function PanelNRC() {
               </p>
             </div>
             <span className="px-2.5 py-1 text-xs font-mono rounded-lg bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-bold">
-              $\hat{\theta} = \frac{\text{MSP} - \text{MSG}}{\text{MSP} + (n_c - 1)\text{MSG}}$
+              θ̂ = (MSP - MSG) / [MSP + (n_c - 1)MSG]
             </span>
           </div>
 
@@ -589,7 +582,7 @@ export function PanelNRC() {
               <div className="text-lg font-bold font-mono text-indigo-400 mt-1">0.0124</div>
             </div>
             <div className="p-4 rounded-lg bg-slate-800/60 border border-slate-700/50">
-              <span className="text-xs text-slate-400">Effective Sample Size ($n_c$):</span>
+              <span className="text-xs text-slate-400">Effective Sample Size (n_c):</span>
               <div className="text-lg font-bold font-mono text-emerald-400 mt-1">518.0</div>
             </div>
           </div>

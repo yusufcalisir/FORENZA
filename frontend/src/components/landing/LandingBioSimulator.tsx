@@ -59,9 +59,9 @@ const SKIN_TYPES_DATA = [
 ];
 
 const HAIR_TYPES_DATA = [
-    { key: "straight" as const, score: "88.0%", gene: "EDAR rs3827072 (T/T)" },
+    { key: "straight" as const, score: "88.0%", gene: "EDAR rs3827760 (370A)" },
     { key: "wavy" as const, score: "10.0%", gene: "TCHH rs11803731" },
-    { key: "curly" as const, score: "2.0%", gene: "WNT10A rs7349332" },
+    { key: "curly" as const, score: "2.0%", gene: "ACKR1 rs2814778" },
 ];
 
 function PhenotypeTab() {

@@ -18,7 +18,7 @@ FORENZA is engineered with a **Dual-Engine Architecture**:
 | **Anthropic** | Claude 3.5 Sonnet | `ANTHROPIC_API_KEY` | `anthropicKey` | High-precision scientific reasoning & report synthesis |
 | **DeepSeek** | DeepSeek V3 / R1 | `DEEPSEEK_API_KEY` | `deepseekKey` | Advanced mathematical biocomputational analysis |
 | **NCBI** | Entrez E-utilities | `NCBI_API_KEY` | `ncbiKey` | Live dbSNP & PubMed literature searches |
-| **Backend** | Python FastAPI Engine | `FASTAPI_BACKEND_URL` | `backendUrl` | 30 microservice endpoints (MCMC, BPA, Horvath Clock) |
+| **Backend** | Python FastAPI Engine | `FASTAPI_BACKEND_URL` | `backendUrl` | 35 microservice endpoints (MCMC, BPA, Horvath Clock, Geo-Forensics, Lineage Y-STR/mtDNA) |
 | **Ledger** | Polygon Testnet/Mainnet | `POLYGON_RPC_URL` | `polygonRpc` | ZK-SNARK Circom Groth16 proof anchoring |
 
 ---

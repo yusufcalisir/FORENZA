@@ -8,7 +8,7 @@
 <p align="center">
   <a href="https://github.com/yusufcalisir/FORENZA/actions/workflows/ci.yml"><img src="https://github.com/yusufcalisir/FORENZA/actions/workflows/ci.yml/badge.svg" alt="CI/CD Pipeline" /></a>
   <a href="https://forenzaos.vercel.app"><img src="https://img.shields.io/badge/Deployment-forenzaos.vercel.app-success?style=flat-square&logo=vercel" alt="Live Deployment" /></a>
-  <a href="https://python.org"><img src="https://img.shields.io/badge/Python-3.11%2B-blue?style=flat-square&logo=python" /></a>
+  <a href="https://python.org"><img src="https://img.shields.io/badge/Python-3.12%2B-blue?style=flat-square&logo=python" /></a>
   <a href="https://nextjs.org"><img src="https://img.shields.io/badge/Next.js-16%20Turbopack-black?style=flat-square&logo=nextdotjs" /></a>
   <a href="https://fastapi.tiangolo.com"><img src="https://img.shields.io/badge/FastAPI-Microservices-009688?style=flat-square&logo=fastapi" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-emerald?style=flat-square" /></a>
@@ -134,9 +134,9 @@ str-analysis/
 ├── README.md                              # Technical Specification & Documentation
 ├── LICENSE                                # MIT License File
 ├── CONTRIBUTING.md                        # Contribution Guidelines
-├── start_project.bat                      # Windows Launcher Script
-├── start_project.ps1                      # PowerShell Launcher Script
-├── start_project.sh                       # Linux/macOS Shell Launcher
+├── SECURITY.md                            # Security Policy & Vulnerability Reporting
+├── AGENTS.md                              # Agent Operating Guidelines & Biocomputational Rules
+├── pytest.ini                             # Pytest Suite Configuration
 │
 ├── backend/                               # Python Biocomputational Backend
 │   ├── app/                               # FastAPI Gateway & REST Endpoints
@@ -198,15 +198,27 @@ str-analysis/
 │           │   └── geo_fusion_engine.py          # Multi-Criteria Bayesian Raster GIS Fusion
 │           ├── terminal/                  # 29. Multi-Format Forensic Ingestion & Quality Engine
 │           │   ├── dna_terminal_parser.py # GeneMapper CSV, CODIS CMF XML, NGS VCF, LIMS JSON
+│           │   ├── cli_batch_parser.py    # Forensic CLI Batch Ingestion & EBNF Grammar Engine
+│           │   ├── str_locus_registry_engine.py # 24-STR Locus Master Registry & Micro-Variant Engine
+│           │   ├── nist_1036_popgen_engine.py # NIST 1036 4-Pop Empirical Frequencies & Dirichlet-Laplace
 │           │   ├── snp_phenotype_bga_engine.py # 55-SNP AIM BGA & 41-SNP HIrisPlex-S Softmax MLR
+│           │   ├── ystr_27_locus_engine.py # 27-Locus Y-STR Engine (25 Systems, RM Loci, SMM Kinship, Clopper-Pearson)
+│           │   ├── mtdna_empop_engine.py  # mtDNA Control Region D-Loop (EMPOP 3'-Alignment, PhyloTree 17)
 │           │   ├── epg_synthesis_engine.py# 5/6-Dye EPG Waveform Synthesis & Spectral QC Engine
 │           │   ├── casework_presets.py    # 6 Golden Benchmark Vectors & Multi-Format Exporter
+│           │   ├── test_cli_batch_parser.py # CLI Batch & EBNF Grammar Unit Tests (VECTOR_CLI_01-06)
 │           │   ├── test_dna_terminal_parser.py # Benchmark Tests (VECTOR_TERM_01-06)
+│           │   ├── test_str_locus_registry_engine.py # 24-STR Registry & Microvariant Tests
+│           │   ├── test_nist_1036_popgen_engine.py # NIST 1036 PopGen & Dirichlet Tests
+│           │   ├── test_golden_str_benchmarks.py # Golden Benchmarks (STR-A/B/C) Tests
 │           │   ├── test_snp_phenotype_bga_engine.py # BGA & HIrisPlex-S Unit Tests
+│           │   ├── test_ystr_27_locus_engine.py # Y-STR 27-Locus Unit Tests (RM Loci, SMM, Phr)
+│           │   ├── test_mtdna_empop_engine.py # mtDNA EMPOP & PhyloTree 17 Unit Tests
+│           │   ├── test_golden_lineage_benchmarks.py # Lineage Golden Benchmark Vectors Tests
 │           │   ├── test_epg_synthesis_engine.py # EPG Waveform & QC Unit Tests
 │           │   ├── test_casework_presets.py # Casework Presets & Exporter Unit Tests
 │           │   └── test_terminal_routes.py # REST API Integration Tests (/api/v1/forensic/terminal)
-│           └── tests/                     # Automated Test Suite (829 Tests)
+│           └── tests/                     # Automated Test Suite (952 Tests Passing)
 │
 ├── frontend/                              # Next.js 16 Workstation Dashboard
 │   ├── public/                            # Static Assets, Icons, Favicons
@@ -242,7 +254,13 @@ str-analysis/
 │       ├── dictionaries/                  # Bilingual Translations (TR / EN)
 │       ├── lib/                           # Utility Functions & API Clients
 │       └── utils/                         # Client-Side Biocomputational Simulation Engines
+│           ├── strLocusRegistryEngine.ts  # 24-STR Locus Registry & CE Sizing TS Engine
+│           ├── forensicCliBatchParser.ts  # Forensic CLI Batch Lexer & Ingestion TS Engine
+│           ├── nist1036PopGenEngine.ts    # NIST 1036 PopGen & Dirichlet-Laplace TS Engine
 │           ├── snpPhenotypeBgaEngine.ts   # 55-SNP AIM BGA & 41-SNP HIrisPlex-S TS Engine
+│           ├── ystr27LocusEngine.ts       # 27-Locus Y-STR Client-Side Simulation Engine
+│           ├── mtdnaEmpopEngine.ts        # mtDNA EMPOP & PhyloTree 17 Client-Side Simulation Engine
+│           ├── visageAgeEngine.ts         # VISAGE 5-CpG & Multi-Tissue Epigenetic Age TS Engine
 │           ├── epgSynthesisEngine.ts      # 5/6-Dye EPG Waveform & Spectral Filter TS Engine
 │           └── caseworkPresets.ts         # 6 Casework Reference Presets & Browser Exporter TS Engine
 │
@@ -394,23 +412,28 @@ The impact angle $\alpha$ of a blood droplet striking a surface is computed from
 
 $$\alpha = \arcsin\left(\frac{W}{L}\right)$$
 
-### 6. Dynamic ENFSI 2017 Evaluative Verbal Scale Mapping
+### 7. Y-STR 27-Locus Lineage Statistics & SMM Kinship
 
-The formal expert witness certificate compiler dynamically maps calculated $\log_{10}(LR)$ to standardized ENFSI verbal predicates:
+The Y-STR biocomputational engine computes exact Clopper-Pearson 95% binomial upper bounds for $k$ matching observations in database size $N$ (YHRD standard $N=35,000$):
 
-$$\mathcal{S}_{\text{ENFSI}}(\log_{10} LR) = \begin{cases} 
-\text{"Extremely / Astronomically Strong Support for Prosecution"}, & \log_{10} LR \ge 18 \\
-\text{"Extremely Strong Support for Prosecution"}, & 6 \le \log_{10} LR < 18 \\
-\text{"Very Strong Support for Prosecution"}, & 4 \le \log_{10} LR < 6 \\
-\text{"Strong Support for Prosecution"}, & 3 \le \log_{10} LR < 4 \\
-\text{"Moderately Strong Support for Prosecution"}, & 2 \le \log_{10} LR < 3 \\
-\text{"Moderate Support for Prosecution"}, & 1 \le \log_{10} LR < 2 \\
-\text{"Limited / Weak Support for Prosecution"}, & 0 < \log_{10} LR < 1 \\
-\text{"Inconclusive / Neutral Evidence $(LR = 1)$"}, & \log_{10} LR = 0 \\
-\text{"Support for Defense Hypothesis / Exclusion"}, & \log_{10} LR < 0 
-\end{cases}$$
+$$p_{\text{upper}} = \begin{cases} 1 - \alpha^{1/(N+1)}, & k = 0 \\ \frac{(k+1) F_{1-\alpha/2, 2(k+1), 2(N-k)}}{(N-k) + (k+1) F_{1-\alpha/2, 2(k+1), 2(N-k)}}, & k > 0 \end{cases}$$
 
-See [Formal Mathematical Specification](file:///c:/Users/Yusuf/str-analysis/docs/math-spec.md) for full 43-section mathematical formalizations.
+With Brenner subpopulation coancestry correction ($\theta = 0.02$):
+
+$$p_{\text{Brenner}} = \frac{k + \theta}{N + \theta}$$
+
+For paternal kinship inference spanning $m$ transmission meioses across 27 loci (including 7 Rapidly Mutating loci), the Stepwise Mutation Model (SMM) evaluates:
+
+$$P(\text{Transmission} \mid m) = \prod_{l=1}^{27} \left[ \mathbb{I}(\Delta_l=0)(1-\mu_l)^m + \mathbb{I}(\Delta_l \ge 1) \cdot m \frac{\mu_l}{2}(1-r_l)r_l^{\Delta_l-1} \right]$$
+
+### 8. Mitochondrial DNA (mtDNA) EMPOP 3'-Right-Alignment & PhyloTree 17 Classification
+
+Maternal lineages are normalized against rCRS (NC_012920.1) across HV1 (16024–16365), HV2 (73–340), and HV3 (438–574) using EMPOP 3'-right-alignment rules:
+- Poly-C indels right-aligned to `315.1C` (HV2) and `16193.1C` (HV1).
+- Dinucleotide AC repeats normalized to `524.1A` / `524del` (HV3).
+- Softmax posterior probabilities over 20 PhyloTree Build 17 macro-haplogroups evaluated against EMPOP global dataset ($N=48,200$).
+
+See [Formal Mathematical Specification](file:///c:/Users/Yusuf/str-analysis/docs/math-spec.md) for full mathematical formalizations.
 
 ---
 
@@ -471,6 +494,9 @@ The FastAPI gateway exposes a clean `/api/v1` RESTful interface.
 | **Geo-Forensics (Palynology/eDNA)** | `/api/v1/forensic/geoint/palynology-edna-analysis` | `POST` | Forensic palynology, 6-biome classification & 16S/ITS eDNA spatial regression |
 | **Geo-Forensics (Rossmo Profiling)** | `/api/v1/forensic/geoint/geographic-profile` | `POST` | Bayesian Rossmo targeted hunting geographic profiling & Canter circle mobility |
 | **Geo-Forensics (Evidence Fusion)** | `/api/v1/forensic/geoint/fuse-evidence-layers` | `POST` | Multi-criteria Bayesian raster fusion, 2D adaptive KDE & SEI search prioritization |
+| **Forensic Terminal (CLI Batch)** | `/api/v1/forensic/terminal/cli-batch` | `POST` | Executes multi-omic batch CLI ingestion commands (`str`, `ystr`, `mtdna`, `snp`, `cpg`) with ISO 17025 SHA-256 state hashing |
+| **Forensic Terminal (PopGen LR)** | `/api/v1/forensic/terminal/popgen-lr` | `POST` | Computes NIST 1036 Combined Match LR & RMP under NRC II 4.1 |
+| **Forensic Terminal (EPG Synth)** | `/api/v1/forensic/terminal/epg/synthesize` | `POST` | Synthesizes 5/6-dye capillary electropherograms with degradation & stutter modeling |
 | **System** | `/api/v1/system/health` | `GET` | Returns subsystem telemetry, memory, and probe status |
 
 ---
@@ -488,7 +514,8 @@ FORENZA maintains rigorous automated test coverage across all biocomputational m
 | **Pillar 5: Physical Evidence & Pathology** | `test_bpa.py`, `test_toxicology.py`, `test_microscopy.py`, `test_entomology.py`, `test_botany.py`, `test_serology.py` | 3D BPA Origin, SEM-EDX GSR/CMC, Entomology ADD PMI, GC-MS Tox, Diatoms | **48** | 100% | `VERIFIED` |
 | **Pillar 6: LIMS, ISO 17025 & ZKP** | `test_zkp.py`, `test_lims.py`, `test_qc.py`, `test_iso_report_compiler.py`, `test_expert_witness.py`, `test_evidence_os.py` | Merkle Tree CoC Ledger, Groth16 ZKP, ISO 17025 GUM Budget, ENFSI Reporting | **56** | 100% | `VERIFIED` |
 | **Pillar 7: Geo-Forensic Intelligence & Isoscapes** | `test_isoscape_provenance_engine.py`, `test_soil_mineralogy_engine.py`, `test_palynology_edna_engine.py`, `test_geographic_profiling_engine.py`, `test_geo_fusion_engine.py` | Multi-Isotope Precipitation Isoscapes (H/O/Sr), Bioapatite/Keratin Calibration, Bataille Sr Mixing, QXRD Mineralogy, ZTR Heavy Minerals, CoDa CLR Transform, MCD Robust Mahalanobis Distance, Hotelling F-test, CIEDE2000 Colorimetry, Forensic Palynology RPF, Bray-Curtis/Cosine/Canberra Metrics, 6-Biome Ecological Classifier, 16S/ITS eDNA Spatial Regression, Rossmo Targeted Hunting Formula, WGS84 Vincenty Geodesics, Canter Circle Marauder/Commuter, SDE Ellipses, 2D Adaptive Gaussian KDE (Silverman rule), Multi-Modal Bayesian Evidence Fusion ($P \propto P_0 \prod \mathcal{L}_k$), SEI Search Prioritization, VECTOR_GEO_01, VECTOR_GEO_02, VECTOR_GEO_03 | **30** | 100% | `30/30 PASSED` |
-| **Total Automated Suite** | **52 Verification Modules** | **35 Biocomputational Subsystems (Full Platform)** | **524+** | **100%** | **`524/524 PASSED`** |
+| **Forensic Terminal & Batch Ingestion** | `test_cli_batch_parser.py`, `test_dna_terminal_parser.py`, `test_str_locus_registry_engine.py`, `test_nist_1036_popgen_engine.py`, `test_golden_str_benchmarks.py`, `test_snp_phenotype_bga_engine.py`, `test_ystr_27_locus_engine.py`, `test_mtdna_empop_engine.py`, `test_golden_lineage_benchmarks.py`, `test_epg_synthesis_engine.py`, `test_casework_presets.py`, `test_terminal_routes.py` | EBNF Lexer & DFA Batch Engine, GeneMapper/CODIS/VCF Ingestion, 24-STR Master Registry, NIST 1036 PopGen, 27-Locus Y-STR, mtDNA EMPOP/PhyloTree 17, 5/6-Dye EPG Synthesis, 5 Certified Standards (NIST SRM 2391d, NA12878, HG002, NA19240, NA18507) + 6 Casework Presets, VECTOR_CLI_01–06, VECTOR_TERM_01–06 | **458** | 100% | `458/458 PASSED` |
+| **Total Automated Suite** | **64 Verification Modules** | **35 Biocomputational Subsystems (Full Platform)** | **952** | **100%** | **`952/952 PASSED`** |
 
 ### Golden Ground-Truth Benchmark Test Vectors
 
@@ -635,6 +662,12 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`F`:** ASIP (`rs1015362`) and BNC2 (`rs10756819`) epistatic boosting on basal pigmentation ($F_s$ increases from $7.59\text{\%}$ to $62.25\text{\%}$).
   - **`G`:** Sigmoidal $F_s$ boundary invariance strictly clamped in $[0.0, 100.0]\text{\%}$.
   - **`H`:** API integration testing across `/phenotyping/ephelides/freckling-and-uv` and `/mc1r-genotype`.
+* **`VECTOR_VISAGE_01-05` (VISAGE Consortium 5-CpG Epigenetic Age Clock - Module 16):**
+  - **`VISAGE_01` (Pediatric Sample):** $\beta=[0.05, 0.08, 0.04, 0.05, 0.03] \implies x = -0.8374, \text{Age} = 8.09 \pm 0.05\text{ yrs}$, 95% PI $[2.01, 14.17]\text{ yrs}$, Child / Minor.
+  - **`VISAGE_02` (Young Adult Bloodstain):** $\beta=[0.20, 0.19, 0.15, 0.16, 0.14] \implies x = +0.1291, \text{Age} = 22.71 \pm 0.05\text{ yrs}$, 95% PI $[18.89, 26.53]\text{ yrs}$, Young Adult.
+  - **`VISAGE_03` (Middle-Aged Adult):** $\beta=[0.42, 0.38, 0.31, 0.33, 0.28] \implies x = +1.5835, \text{Age} = 53.25 \pm 0.05\text{ yrs}$, 95% PI $[49.43, 57.07]\text{ yrs}$, Middle-Aged Adult.
+  - **`VISAGE_04` (Elderly Adult):** $\beta=[0.72, 0.62, 0.53, 0.56, 0.48] \implies x = +3.5407, \text{Age} = 94.35 \pm 0.10\text{ yrs}$, Senior / Elderly.
+  - **`VISAGE_05` (Oral Epithelial Buccal Swab):** $\beta=[0.28, 0.25, 0.20, 0.22, 0.19]$ on Buccal Matrix ($\Delta=+2.45\text{ yrs}$) $\implies \text{Age} = 35.68 \pm 0.05\text{ yrs}$, 95% PI $[31.27, 40.09]\text{ yrs}$.
 * **`VECTOR_P4_01` (Epigenetic Age Estimation - Young Adult Blood Donor):** Chronological age 25.0 in blood verified with $\text{DNAmAge} = 25.2 \pm 3.5$ years ($21.7 - 28.7$ years) and blood posterior $> 98\text{\%}$.
 * **`VECTOR_P4_02` (Epigenetic Age Estimation - Elderly Active Smoker):** Chronological age 68.0 in blood verified with $\text{DNAmAge} = 75.3$ years, biological age acceleration ($\Delta\text{Age} > +5.0$), and high pack-years ($> 40.0$).
 * **`VECTOR_16_AGE_A-H` (Multi-Tissue Epigenetic Age Clock - Module 16):**
@@ -780,7 +813,24 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
   - **`D`:** Probabilistic 95% confidence ellipsoid geometry: $\mathbf{d}^T\boldsymbol{\Sigma}^{-1}\mathbf{d}\le\chi^2_{3,0.95}\approx7.815$, $a=\sqrt{7.815\lambda_1}$, $V=\tfrac{4}{3}\pi abc$, $\mathbf{d}=\mathbf{X}-\boldsymbol{\mu}$.
   - **`E`:** Multi-sensor spatial fusion precision calibration: LiDAR $\sigma=\pm0.002\,\text{m}$, BPA $\sigma=\pm0.012\,\text{m}$, Ballistics $\sigma=\pm0.005\,\text{m}$, DNA $\sigma=\pm0.008\,\text{m}$.
   - **`F`:** Domain validation for non-positive definite covariance matrices, dimension mismatch, and empty point sets.
-  - **`G`:** API integration testing across `/forensic/court/spatial/transform-se3`, `/spatial/confidence-ellipsoid`, and `/spatial/reconstruct-scene`.
+* **`VECTOR_STR_BENCHMARK_A-C` (NIST 1036 Population Genetics & 24-STR Golden Benchmark Profiles):**
+  - **`STR-A` (European Reference / EUR):** $\text{RMP} = 9.3677 \times 10^{-25}$, $LR = 1.0675 \times 10^{24}$, $\log_{10}(LR) = 24.0284$, `TH01 (9.3, 9.3)`, `D1S1656 (14, 17.3)`, `SE33 (26.2, 28.2)`.
+  - **`STR-B` (African American Reference / AFR):** $\text{RMP} = 6.9141 \times 10^{-28}$, $LR = 1.4463 \times 10^{27}$, $\log_{10}(LR) = 27.1603$, `D21S11 (29, 31.2)`, `FGA (22, 25)`, `D19S433 (12, 14.2)`.
+  - **`STR-C` (Hispanic Reference / HIS Amelogenin Y-Null Deletion):** $\text{RMP} = 4.9150 \times 10^{-30}$, $LR = 2.0346 \times 10^{29}$, $\log_{10}(LR) = 29.3085$, `Amelogenin (X, X)` with `DYS391=11` confirming male biological sex.
+* **`VECTOR_TERM_01-06` (Multi-Omic Terminal Golden Lineage & Casework Presets):**
+  - **`TERM-01` (European Patrilineal & Matrilineal):** 24 STR + 55 AIM EUR ($P > 95\%$) + HIrisPlex Blue/Blond/Fair + Y-STR `R1b-M269` ($CPI > 10^5$) + mtDNA `H1` ($P > 90\%$).
+  - **`TERM-02` (West African Patrilineal & Matrilineal):** 24 STR + 55 AIM AFR ($P > 95\%$) + HIrisPlex Brown/Black/Dark + Y-STR `E1b1a-V38` + mtDNA `L2a1`.
+  - **`TERM-03` (East Asian Patrilineal & Matrilineal):** 24 STR + 55 AIM EAS ($P > 95\%$) + HIrisPlex Brown/Black/Intermediate + Y-STR `O-M175` + mtDNA `A2`.
+  - **`TERM-04` (South Asian Patrilineal & Matrilineal):** 24 STR + 55 AIM SAS ($P > 90\%$) + HIrisPlex Brown/Black/Intermediate + Y-STR `R1a-M420` + mtDNA `M`.
+  - **`TERM-05` (Indigenous American / Pan-American AMR):** 24 STR + 55 AIM AMR ($P > 85\%$) + Y-STR `Q-M3` + mtDNA `C1`.
+  - **`TERM-06` (Low-Template LTDNA Stochastic 2-Male Mixture):** Touch DNA ($P(D)=0.35, H_b=0.45$), Y-STR tri-allelic detection ($N_{\text{male}} \ge 2$), and heteroplasmy flagging.
+* **`VECTOR_CLI_01-06` (Interactive Forensic Terminal CLI Batch Ingestion & EBNF Grammar Engine):**
+  - **`CLI-01` (Autosomal STR 24-Locus Batch):** `str set-batch --data "..." --rfu "..." --mode STRICT` parses 24 core loci, verifies microvariants (`TH01:9.3`, `SE33:25.2`), and computes SHA-256 state hashes.
+  - **`CLI-02` (Y-STR 27-Locus Multiplex Batch):** `ystr set-batch --data "..."` correctly classifies duplicated systems (`DYS385a/b`, `DYF387S1a/b`) and tags 6 Rapidly Mutating loci ($\mu \approx 10^{-2}$).
+  - **`CLI-03` (mtDNA Control Region D-Loop Batch):** `mtdna set-batch --data "..." --ref rCRS` right-aligns insertions (`315.1C`), deletions (`524del`), and decodes IUPAC point heteroplasmies (`16093Y`, `16189R`).
+  - **`CLI-04` (55-SNP AIM Ancestry Batch):** `snp set-batch --data "rs12913832:2, ..."` ingests integer dosages and triggers continental centroid GIS inference.
+  - **`CLI-05` (41-SNP HIrisPlex-S Phenotype Batch):** `snp set-batch --data "rs12913832:G/G, ..."` translates explicit nucleotide genotypes to trait dosages for MLR prediction.
+  - **`CLI-06` (VISAGE 5-CpG Epigenetic Aging Batch):** `cpg set-batch --data "ELOVL2:0.42, ... " --tissue BLOOD` computes $M$-values and estimates chronological age with 95% confidence intervals.
 
 
 
@@ -795,6 +845,13 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
 
 
 
+
+* **`VECTOR_CERT_STANDARDS_01-05` (5 Globally Certified Reference Standards & Concordance Engine):**
+  - **`NIST SRM 2391d (Component C - Male/Female Standard Reference Material)`:** Full 24-STR CODIS FBI Expanded + SE33/Penta concordance verified, Y-STR 27 loci, mtDNA rCRS `73G`, `263G`, `315.1C`, and VISAGE blood epigenetic age ($32.4 \pm 2.8$ yr).
+  - **`NA12878 / HG001 (NIST Genome in a Bottle CEPH/Utah Female Reference)`:** Utah/CEPH Caucasian baseline, 24 STRs (`TH01: 9.3, 9.3`, `SE33: 26.2, 28.2`), mtDNA Haplogroup `H1a`, VISAGE 5-CpG chronological age ($36.0 \pm 3.2$ yr).
+  - **`HG002 / NA24385 (NIST GIAB Ashkenazi Son Reference)`:** Ashkenazi Jewish male reference standard, Y-STR `J2a-M410`, mtDNA `T2b`, 100% STR concordant with NIST GIAB v4.2.1 callset.
+  - **`NA19240 (HapMap / 1000G YRI Yoruba in Ibadan, Nigeria Reference)`:** African reference baseline, Y-STR `E1b1a-V38`, mtDNA `L2a1`, 55-SNP AIM African ancestry probability ($P_{\text{AFR}} = 98.4\%$).
+  - **`NA18507 (HapMap / 1000G CHB Han Chinese in Beijing Reference)`:** East Asian reference baseline, Y-STR `O-M175`, mtDNA `D4`, 55-SNP AIM East Asian ancestry probability ($P_{\text{EAS}} = 99.1\%$).
 
 ---
 
@@ -802,21 +859,12 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
 
 ### Prerequisites
 
-- **Python:** 3.11+ (with `pip` or `uv`)
-- **Node.js:** 18+ (with `npm` or `pnpm`)
+- **Python:** 3.12+ (with `pip` or `uv`)
+- **Node.js:** 20+ (with `npm` or `pnpm`)
 - **Circom / Rust:** Optional (for compiling ZK circuits from scratch)
 
-### 1. Quickstart Launchers
+### 1. Backend Setup
 
-Platform launchers are provided in the repository root:
-
-- **Windows PowerShell:** `.\start_project.ps1`
-- **Windows Command Prompt:** `start_project.bat`
-- **Linux / macOS:** `./start_project.sh`
-
-### 2. Manual Installation
-
-#### Backend Setup
 
 ```bash
 # Clone the repository
@@ -834,7 +882,7 @@ pip install -r backend/requirements.txt
 uvicorn backend.app.main:app --reload --port 8000
 ```
 
-#### Frontend Setup
+### 2. Frontend Setup
 
 ```bash
 # Navigate to frontend directory

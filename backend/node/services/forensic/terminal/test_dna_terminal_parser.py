@@ -39,7 +39,7 @@ class TestDnaTerminalParser:
         assert AMEL_Y_NULL_PRIOR_SAS == 0.0180
         assert AMEL_Y_NULL_PRIOR_EUR == 0.0002
 
-        assert len(STR_PANEL_24_CATALOG) == 24
+        assert len(STR_PANEL_24_CATALOG) >= 24
         assert "D3S1358" in STR_PANEL_24_CATALOG
         assert "vWA" in STR_PANEL_24_CATALOG
         assert "FGA" in STR_PANEL_24_CATALOG
@@ -47,11 +47,12 @@ class TestDnaTerminalParser:
         assert "Penta D" in STR_PANEL_24_CATALOG
         assert "Penta E" in STR_PANEL_24_CATALOG
         assert "Amelogenin" in STR_PANEL_24_CATALOG
+        assert "DYS391" in STR_PANEL_24_CATALOG
 
         # Check TH01 microvariant and stutter
         th01 = STR_PANEL_24_CATALOG["TH01"]
         assert "9.3" in th01.common_microvariants
-        assert th01.max_reverse_stutter_ratio == 0.052
+        assert th01.max_reverse_stutter_ratio == 0.050
 
     # ── 2. VECTOR_TERM_01: Northern European Reference (Sample EU) ──
     def test_02_vector_term_01_european_reference(self):

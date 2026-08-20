@@ -1,11 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Dna, ShieldCheck, GitCommit, Compass, RefreshCw, CheckCircle2, ChevronRight, Binary } from "lucide-react";
 
-export default function LineageDnaPanel() {
-  const [selectedTab, setSelectedTab] = useState<"ystr" | "xstr" | "mtdna">("ystr");
+export default function LineageDnaPanel({
+  initialTab = "ystr",
+}: {
+  initialTab?: "ystr" | "xstr" | "mtdna";
+}) {
+  const [selectedTab, setSelectedTab] = useState<"ystr" | "xstr" | "mtdna">(initialTab);
+
+  useEffect(() => {
+    if (initialTab) {
+      setSelectedTab(initialTab);
+    }
+  }, [initialTab]);
 
   // Complete 27-locus Y-FILER Plus Multiplex Panel with mutation classification
   const ystrLoci = [

@@ -44,106 +44,271 @@ class ContinentalReferencePoint:
 
 
 CONTINENTAL_COORDINATES: Dict[ContinentalCluster, ContinentalReferencePoint] = {
-    ContinentalCluster.AFR: ContinentalReferencePoint(ContinentalCluster.AFR, "Sub-Saharan African", 0.00, 25.00),
-    ContinentalCluster.EUR: ContinentalReferencePoint(ContinentalCluster.EUR, "European / West Eurasian", 48.50, 15.00),
-    ContinentalCluster.EAS: ContinentalReferencePoint(ContinentalCluster.EAS, "East Asian", 35.00, 105.00),
-    ContinentalCluster.SAS: ContinentalReferencePoint(ContinentalCluster.SAS, "South Asian", 22.00, 78.00),
-    ContinentalCluster.AMR: ContinentalReferencePoint(ContinentalCluster.AMR, "Indigenous American", -10.00, -60.00),
-    ContinentalCluster.OCE: ContinentalReferencePoint(ContinentalCluster.OCE, "Oceanian", -20.00, 140.00),
-    ContinentalCluster.MID: ContinentalReferencePoint(ContinentalCluster.MID, "Middle Eastern / North African", 28.00, 38.00),
+    ContinentalCluster.AFR: ContinentalReferencePoint(ContinentalCluster.AFR, "Sub-Saharan African", 0.0236, 15.3121),
+    ContinentalCluster.EUR: ContinentalReferencePoint(ContinentalCluster.EUR, "European / West Eurasian", 48.8566, 2.3522),
+    ContinentalCluster.EAS: ContinentalReferencePoint(ContinentalCluster.EAS, "East Asian", 35.8617, 104.1954),
+    ContinentalCluster.SAS: ContinentalReferencePoint(ContinentalCluster.SAS, "South Asian", 20.5937, 78.9629),
+    ContinentalCluster.AMR: ContinentalReferencePoint(ContinentalCluster.AMR, "Indigenous American", -8.7832, -55.4915),
+    ContinentalCluster.OCE: ContinentalReferencePoint(ContinentalCluster.OCE, "Oceanian", -20.0000, 140.0000),
+    ContinentalCluster.MID: ContinentalReferencePoint(ContinentalCluster.MID, "Middle Eastern / North African", 29.2985, 42.5510),
 }
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# 2. 55-SNP AIM REFERENCE ALLELE FREQUENCY MATRIX
+# 2. 55-SNP AIM REFERENCE ALLELE FREQUENCY MATRIX (Kidd et al. 55-AISNP Panel)
 # ═══════════════════════════════════════════════════════════════════════════════
 
-# Frequencies of Reference/Effect Allele across 7 populations: [AFR, EUR, EAS, SAS, AMR, OCE, MID]
+AIM_55_METADATA: Dict[str, Dict[str, str]] = {
+    "rs3737576": {"gene": "CPM", "ref": "T", "alt": "C"},
+    "rs7554936": {"gene": "Intergenic", "ref": "C", "alt": "T"},
+    "rs2814778": {"gene": "ACKR1", "ref": "T", "alt": "C"},
+    "rs798443": {"gene": "Intergenic", "ref": "C", "alt": "T"},
+    "rs1876482": {"gene": "Intergenic", "ref": "T", "alt": "C"},
+    "rs1834619": {"gene": "STAT4", "ref": "A", "alt": "G"},
+    "rs3827760": {"gene": "EDAR", "ref": "A", "alt": "G"},
+    "rs260690": {"gene": "Intergenic", "ref": "A", "alt": "G"},
+    "rs6754311": {"gene": "Intergenic", "ref": "A", "alt": "G"},
+    "rs10497191": {"gene": "Intergenic", "ref": "C", "alt": "T"},
+    "rs12498138": {"gene": "Intergenic", "ref": "A", "alt": "G"},
+    "rs4833103": {"gene": "Intergenic", "ref": "T", "alt": "C"},
+    "rs1229984": {"gene": "ADH1B", "ref": "C", "alt": "T"},
+    "rs3811801": {"gene": "Intergenic", "ref": "A", "alt": "G"},
+    "rs7657799": {"gene": "Intergenic", "ref": "C", "alt": "T"},
+    "rs16891982": {"gene": "SLC45A2", "ref": "C", "alt": "G"},
+    "rs7722456": {"gene": "Intergenic", "ref": "G", "alt": "A"},
+    "rs870347": {"gene": "Intergenic", "ref": "C", "alt": "T"},
+    "rs3823159": {"gene": "Intergenic", "ref": "G", "alt": "A"},
+    "rs192655": {"gene": "Intergenic", "ref": "C", "alt": "T"},
+    "rs917115": {"gene": "Intergenic", "ref": "A", "alt": "G"},
+    "rs1462906": {"gene": "Intergenic", "ref": "G", "alt": "A"},
+    "rs6990312": {"gene": "Intergenic", "ref": "A", "alt": "G"},
+    "rs2196051": {"gene": "Intergenic", "ref": "C", "alt": "T"},
+    "rs1871534": {"gene": "Intergenic", "ref": "C", "alt": "T"},
+    "rs3814134": {"gene": "Intergenic", "ref": "A", "alt": "G"},
+    "rs4918664": {"gene": "Intergenic", "ref": "C", "alt": "T"},
+    "rs174570": {"gene": "FADS2", "ref": "C", "alt": "T"},
+    "rs1079597": {"gene": "ANKK1", "ref": "C", "alt": "T"},
+    "rs2238151": {"gene": "Intergenic", "ref": "G", "alt": "A"},
+    "rs671": {"gene": "ALDH2", "ref": "G", "alt": "A"},
+    "rs7997709": {"gene": "Intergenic", "ref": "A", "alt": "G"},
+    "rs1572018": {"gene": "Intergenic", "ref": "C", "alt": "T"},
+    "rs2166624": {"gene": "Intergenic", "ref": "T", "alt": "C"},
+    "rs7326934": {"gene": "Intergenic", "ref": "C", "alt": "T"},
+    "rs9522149": {"gene": "Intergenic", "ref": "G", "alt": "A"},
+    "rs200354": {"gene": "Intergenic", "ref": "C", "alt": "T"},
+    "rs1800414": {"gene": "OCA2", "ref": "C", "alt": "T"},
+    "rs12913832": {"gene": "HERC2", "ref": "A", "alt": "G"},
+    "rs12439433": {"gene": "Intergenic", "ref": "G", "alt": "A"},
+    "rs735480": {"gene": "Intergenic", "ref": "C", "alt": "T"},
+    "rs1426654": {"gene": "SLC24A5", "ref": "A", "alt": "G"},
+    "rs459920": {"gene": "Intergenic", "ref": "A", "alt": "G"},
+    "rs4411548": {"gene": "Intergenic", "ref": "C", "alt": "T"},
+    "rs2593595": {"gene": "Intergenic", "ref": "A", "alt": "G"},
+    "rs17642714": {"gene": "Intergenic", "ref": "A", "alt": "G"},
+    "rs4471745": {"gene": "Intergenic", "ref": "G", "alt": "A"},
+    "rs11652805": {"gene": "Intergenic", "ref": "C", "alt": "T"},
+    "rs2042762": {"gene": "Intergenic", "ref": "A", "alt": "G"},
+    "rs7226659": {"gene": "Intergenic", "ref": "C", "alt": "T"},
+    "rs3916235": {"gene": "Intergenic", "ref": "T", "alt": "C"},
+    "rs4891825": {"gene": "Intergenic", "ref": "C", "alt": "T"},
+    "rs7251928": {"gene": "Intergenic", "ref": "G", "alt": "A"},
+    "rs310644": {"gene": "Intergenic", "ref": "C", "alt": "T"},
+    "rs2024566": {"gene": "Intergenic", "ref": "G", "alt": "A"},
+}
+
+# Frequencies of Effect Allele across 7 populations: [AFR, EUR, EAS, SAS, AMR, OCE, MID]
 AIM_55_ALLELE_FREQUENCIES: Dict[str, Dict[ContinentalCluster, float]] = {
-    # Key Diagnostic AIM Markers
-    "rs12913832": {ContinentalCluster.AFR: 0.010, ContinentalCluster.EUR: 0.795, ContinentalCluster.EAS: 0.005, ContinentalCluster.SAS: 0.040, ContinentalCluster.AMR: 0.015, ContinentalCluster.OCE: 0.005, ContinentalCluster.MID: 0.320},
-    "rs1426654":  {ContinentalCluster.AFR: 0.025, ContinentalCluster.EUR: 0.995, ContinentalCluster.EAS: 0.010, ContinentalCluster.SAS: 0.885, ContinentalCluster.AMR: 0.120, ContinentalCluster.OCE: 0.015, ContinentalCluster.MID: 0.890},
-    "rs16891982": {ContinentalCluster.AFR: 0.005, ContinentalCluster.EUR: 0.985, ContinentalCluster.EAS: 0.010, ContinentalCluster.SAS: 0.065, ContinentalCluster.AMR: 0.080, ContinentalCluster.OCE: 0.005, ContinentalCluster.MID: 0.450},
-    "rs3827760":  {ContinentalCluster.AFR: 0.005, ContinentalCluster.EUR: 0.010, ContinentalCluster.EAS: 0.940, ContinentalCluster.SAS: 0.085, ContinentalCluster.AMR: 0.760, ContinentalCluster.OCE: 0.020, ContinentalCluster.MID: 0.015}, # EDAR 370A
-    "rs1800414":  {ContinentalCluster.AFR: 0.005, ContinentalCluster.EUR: 0.005, ContinentalCluster.EAS: 0.680, ContinentalCluster.SAS: 0.010, ContinentalCluster.AMR: 0.010, ContinentalCluster.OCE: 0.005, ContinentalCluster.MID: 0.005}, # OCA2 H615R
-    "rs2814778":  {ContinentalCluster.AFR: 0.985, ContinentalCluster.EUR: 0.005, ContinentalCluster.EAS: 0.005, ContinentalCluster.SAS: 0.010, ContinentalCluster.AMR: 0.020, ContinentalCluster.OCE: 0.005, ContinentalCluster.MID: 0.180}, # DARC Duffy Null
-    "rs1042602":  {ContinentalCluster.AFR: 0.050, ContinentalCluster.EUR: 0.440, ContinentalCluster.EAS: 0.020, ContinentalCluster.SAS: 0.120, ContinentalCluster.AMR: 0.030, ContinentalCluster.OCE: 0.010, ContinentalCluster.MID: 0.310}, # TYR
-    "rs1800407":  {ContinentalCluster.AFR: 0.020, ContinentalCluster.EUR: 0.720, ContinentalCluster.EAS: 0.010, ContinentalCluster.SAS: 0.280, ContinentalCluster.AMR: 0.040, ContinentalCluster.OCE: 0.010, ContinentalCluster.MID: 0.480}, # OCA2
-    "rs12896399": {ContinentalCluster.AFR: 0.100, ContinentalCluster.EUR: 0.580, ContinentalCluster.EAS: 0.080, ContinentalCluster.SAS: 0.340, ContinentalCluster.AMR: 0.150, ContinentalCluster.OCE: 0.050, ContinentalCluster.MID: 0.420}, # SLC24A4
-    "rs12203592": {ContinentalCluster.AFR: 0.010, ContinentalCluster.EUR: 0.220, ContinentalCluster.EAS: 0.005, ContinentalCluster.SAS: 0.030, ContinentalCluster.AMR: 0.010, ContinentalCluster.OCE: 0.005, ContinentalCluster.MID: 0.080}, # IRF4
-    "rs1393350":  {ContinentalCluster.AFR: 0.080, ContinentalCluster.EUR: 0.490, ContinentalCluster.EAS: 0.050, ContinentalCluster.SAS: 0.240, ContinentalCluster.AMR: 0.110, ContinentalCluster.OCE: 0.020, ContinentalCluster.MID: 0.360}, # TYR
-    "rs2470102":  {ContinentalCluster.AFR: 0.040, ContinentalCluster.EUR: 0.940, ContinentalCluster.EAS: 0.020, ContinentalCluster.SAS: 0.790, ContinentalCluster.AMR: 0.150, ContinentalCluster.OCE: 0.020, ContinentalCluster.MID: 0.810}, # SLC24A5
-    "rs1015362":  {ContinentalCluster.AFR: 0.850, ContinentalCluster.EUR: 0.180, ContinentalCluster.EAS: 0.620, ContinentalCluster.SAS: 0.380, ContinentalCluster.AMR: 0.710, ContinentalCluster.OCE: 0.880, ContinentalCluster.MID: 0.290}, # ASIP
-    "rs6119471":  {ContinentalCluster.AFR: 0.880, ContinentalCluster.EUR: 0.150, ContinentalCluster.EAS: 0.650, ContinentalCluster.SAS: 0.350, ContinentalCluster.AMR: 0.740, ContinentalCluster.OCE: 0.900, ContinentalCluster.MID: 0.260}, # ASIP
-    "rs885479":   {ContinentalCluster.AFR: 0.050, ContinentalCluster.EUR: 0.410, ContinentalCluster.EAS: 0.020, ContinentalCluster.SAS: 0.190, ContinentalCluster.AMR: 0.060, ContinentalCluster.OCE: 0.010, ContinentalCluster.MID: 0.320}, # MC1R
-    "rs1110400":  {ContinentalCluster.AFR: 0.030, ContinentalCluster.EUR: 0.680, ContinentalCluster.EAS: 0.010, ContinentalCluster.SAS: 0.260, ContinentalCluster.AMR: 0.080, ContinentalCluster.OCE: 0.010, ContinentalCluster.MID: 0.460}, # SLC45A2
-    # Additional Kidd AIMs
-    "rs2078586":  {ContinentalCluster.AFR: 0.120, ContinentalCluster.EUR: 0.880, ContinentalCluster.EAS: 0.450, ContinentalCluster.SAS: 0.620, ContinentalCluster.AMR: 0.380, ContinentalCluster.OCE: 0.250, ContinentalCluster.MID: 0.740},
-    "rs721118":   {ContinentalCluster.AFR: 0.080, ContinentalCluster.EUR: 0.760, ContinentalCluster.EAS: 0.220, ContinentalCluster.SAS: 0.480, ContinentalCluster.AMR: 0.290, ContinentalCluster.OCE: 0.140, ContinentalCluster.MID: 0.620},
-    "rs1876482":  {ContinentalCluster.AFR: 0.920, ContinentalCluster.EUR: 0.140, ContinentalCluster.EAS: 0.780, ContinentalCluster.SAS: 0.410, ContinentalCluster.AMR: 0.820, ContinentalCluster.OCE: 0.910, ContinentalCluster.MID: 0.310},
-    "rs1474920":  {ContinentalCluster.AFR: 0.150, ContinentalCluster.EUR: 0.840, ContinentalCluster.EAS: 0.310, ContinentalCluster.SAS: 0.590, ContinentalCluster.AMR: 0.420, ContinentalCluster.OCE: 0.200, ContinentalCluster.MID: 0.710},
-    "rs2695":     {ContinentalCluster.AFR: 0.220, ContinentalCluster.EUR: 0.790, ContinentalCluster.EAS: 0.540, ContinentalCluster.SAS: 0.680, ContinentalCluster.AMR: 0.490, ContinentalCluster.OCE: 0.310, ContinentalCluster.MID: 0.720},
+    "rs3737576":  {ContinentalCluster.AFR: 0.812, ContinentalCluster.EUR: 0.221, ContinentalCluster.EAS: 0.114, ContinentalCluster.SAS: 0.325, ContinentalCluster.AMR: 0.083, ContinentalCluster.OCE: 0.150, ContinentalCluster.MID: 0.248},
+    "rs7554936":  {ContinentalCluster.AFR: 0.941, ContinentalCluster.EUR: 0.385, ContinentalCluster.EAS: 0.021, ContinentalCluster.SAS: 0.412, ContinentalCluster.AMR: 0.052, ContinentalCluster.OCE: 0.180, ContinentalCluster.MID: 0.391},
+    "rs2814778":  {ContinentalCluster.AFR: 0.992, ContinentalCluster.EUR: 0.001, ContinentalCluster.EAS: 0.000, ContinentalCluster.SAS: 0.003, ContinentalCluster.AMR: 0.021, ContinentalCluster.OCE: 0.005, ContinentalCluster.MID: 0.085},
+    "rs798443":   {ContinentalCluster.AFR: 0.125, ContinentalCluster.EUR: 0.781, ContinentalCluster.EAS: 0.943, ContinentalCluster.SAS: 0.612, ContinentalCluster.AMR: 0.892, ContinentalCluster.OCE: 0.550, ContinentalCluster.MID: 0.721},
+    "rs1876482":  {ContinentalCluster.AFR: 0.884, ContinentalCluster.EUR: 0.152, ContinentalCluster.EAS: 0.061, ContinentalCluster.SAS: 0.291, ContinentalCluster.AMR: 0.041, ContinentalCluster.OCE: 0.210, ContinentalCluster.MID: 0.183},
+    "rs1834619":  {ContinentalCluster.AFR: 0.915, ContinentalCluster.EUR: 0.283, ContinentalCluster.EAS: 0.082, ContinentalCluster.SAS: 0.394, ContinentalCluster.AMR: 0.091, ContinentalCluster.OCE: 0.190, ContinentalCluster.MID: 0.312},
+    "rs3827760":  {ContinentalCluster.AFR: 0.000, ContinentalCluster.EUR: 0.002, ContinentalCluster.EAS: 0.948, ContinentalCluster.SAS: 0.015, ContinentalCluster.AMR: 0.824, ContinentalCluster.OCE: 0.020, ContinentalCluster.MID: 0.005},
+    "rs260690":   {ContinentalCluster.AFR: 0.213, ContinentalCluster.EUR: 0.724, ContinentalCluster.EAS: 0.211, ContinentalCluster.SAS: 0.512, ContinentalCluster.AMR: 0.183, ContinentalCluster.OCE: 0.340, ContinentalCluster.MID: 0.651},
+    "rs6754311":  {ContinentalCluster.AFR: 0.852, ContinentalCluster.EUR: 0.183, ContinentalCluster.EAS: 0.031, ContinentalCluster.SAS: 0.284, ContinentalCluster.AMR: 0.052, ContinentalCluster.OCE: 0.160, ContinentalCluster.MID: 0.211},
+    "rs10497191": {ContinentalCluster.AFR: 0.112, ContinentalCluster.EUR: 0.891, ContinentalCluster.EAS: 0.982, ContinentalCluster.SAS: 0.782, ContinentalCluster.AMR: 0.951, ContinentalCluster.OCE: 0.620, ContinentalCluster.MID: 0.842},
+    "rs12498138": {ContinentalCluster.AFR: 0.021, ContinentalCluster.EUR: 0.083, ContinentalCluster.EAS: 0.192, ContinentalCluster.SAS: 0.114, ContinentalCluster.AMR: 0.912, ContinentalCluster.OCE: 0.280, ContinentalCluster.MID: 0.071},
+    "rs4833103":  {ContinentalCluster.AFR: 0.781, ContinentalCluster.EUR: 0.214, ContinentalCluster.EAS: 0.042, ContinentalCluster.SAS: 0.312, ContinentalCluster.AMR: 0.061, ContinentalCluster.OCE: 0.180, ContinentalCluster.MID: 0.252},
+    "rs1229984":  {ContinentalCluster.AFR: 0.002, ContinentalCluster.EUR: 0.041, ContinentalCluster.EAS: 0.762, ContinentalCluster.SAS: 0.112, ContinentalCluster.AMR: 0.081, ContinentalCluster.OCE: 0.050, ContinentalCluster.MID: 0.125},
+    "rs3811801":  {ContinentalCluster.AFR: 0.081, ContinentalCluster.EUR: 0.112, ContinentalCluster.EAS: 0.894, ContinentalCluster.SAS: 0.221, ContinentalCluster.AMR: 0.783, ContinentalCluster.OCE: 0.310, ContinentalCluster.MID: 0.142},
+    "rs7657799":  {ContinentalCluster.AFR: 0.824, ContinentalCluster.EUR: 0.191, ContinentalCluster.EAS: 0.052, ContinentalCluster.SAS: 0.315, ContinentalCluster.AMR: 0.072, ContinentalCluster.OCE: 0.170, ContinentalCluster.MID: 0.231},
+    "rs16891982": {ContinentalCluster.AFR: 0.000, ContinentalCluster.EUR: 0.968, ContinentalCluster.EAS: 0.001, ContinentalCluster.SAS: 0.082, ContinentalCluster.AMR: 0.021, ContinentalCluster.OCE: 0.005, ContinentalCluster.MID: 0.214},
+    "rs7722456":  {ContinentalCluster.AFR: 0.091, ContinentalCluster.EUR: 0.824, ContinentalCluster.EAS: 0.912, ContinentalCluster.SAS: 0.683, ContinentalCluster.AMR: 0.851, ContinentalCluster.OCE: 0.580, ContinentalCluster.MID: 0.762},
+    "rs870347":   {ContinentalCluster.AFR: 0.892, ContinentalCluster.EUR: 0.221, ContinentalCluster.EAS: 0.071, ContinentalCluster.SAS: 0.342, ContinentalCluster.AMR: 0.082, ContinentalCluster.OCE: 0.200, ContinentalCluster.MID: 0.261},
+    "rs3823159":  {ContinentalCluster.AFR: 0.861, ContinentalCluster.EUR: 0.142, ContinentalCluster.EAS: 0.032, ContinentalCluster.SAS: 0.251, ContinentalCluster.AMR: 0.041, ContinentalCluster.OCE: 0.150, ContinentalCluster.MID: 0.182},
+    "rs192655":   {ContinentalCluster.AFR: 0.182, ContinentalCluster.EUR: 0.712, ContinentalCluster.EAS: 0.931, ContinentalCluster.SAS: 0.582, ContinentalCluster.AMR: 0.871, ContinentalCluster.OCE: 0.490, ContinentalCluster.MID: 0.662},
+    "rs917115":   {ContinentalCluster.AFR: 0.841, ContinentalCluster.EUR: 0.172, ContinentalCluster.EAS: 0.041, ContinentalCluster.SAS: 0.272, ContinentalCluster.AMR: 0.051, ContinentalCluster.OCE: 0.180, ContinentalCluster.MID: 0.212},
+    "rs1462906":  {ContinentalCluster.AFR: 0.112, ContinentalCluster.EUR: 0.881, ContinentalCluster.EAS: 0.962, ContinentalCluster.SAS: 0.752, ContinentalCluster.AMR: 0.921, ContinentalCluster.OCE: 0.640, ContinentalCluster.MID: 0.812},
+    "rs6990312":  {ContinentalCluster.AFR: 0.821, ContinentalCluster.EUR: 0.201, ContinentalCluster.EAS: 0.051, ContinentalCluster.SAS: 0.321, ContinentalCluster.AMR: 0.062, ContinentalCluster.OCE: 0.190, ContinentalCluster.MID: 0.241},
+    "rs2196051":  {ContinentalCluster.AFR: 0.872, ContinentalCluster.EUR: 0.161, ContinentalCluster.EAS: 0.042, ContinentalCluster.SAS: 0.281, ContinentalCluster.AMR: 0.051, ContinentalCluster.OCE: 0.170, ContinentalCluster.MID: 0.201},
+    "rs1871534":  {ContinentalCluster.AFR: 0.851, ContinentalCluster.EUR: 0.182, ContinentalCluster.EAS: 0.032, ContinentalCluster.SAS: 0.291, ContinentalCluster.AMR: 0.042, ContinentalCluster.OCE: 0.180, ContinentalCluster.MID: 0.221},
+    "rs3814134":  {ContinentalCluster.AFR: 0.891, ContinentalCluster.EUR: 0.131, ContinentalCluster.EAS: 0.021, ContinentalCluster.SAS: 0.241, ContinentalCluster.AMR: 0.031, ContinentalCluster.OCE: 0.140, ContinentalCluster.MID: 0.171},
+    "rs4918664":  {ContinentalCluster.AFR: 0.141, ContinentalCluster.EUR: 0.761, ContinentalCluster.EAS: 0.081, ContinentalCluster.SAS: 0.491, ContinentalCluster.AMR: 0.112, ContinentalCluster.OCE: 0.320, ContinentalCluster.MID: 0.621},
+    "rs174570":   {ContinentalCluster.AFR: 0.921, ContinentalCluster.EUR: 0.312, ContinentalCluster.EAS: 0.642, ContinentalCluster.SAS: 0.521, ContinentalCluster.AMR: 0.781, ContinentalCluster.OCE: 0.610, ContinentalCluster.MID: 0.412},
+    "rs1079597":  {ContinentalCluster.AFR: 0.811, ContinentalCluster.EUR: 0.212, ContinentalCluster.EAS: 0.061, ContinentalCluster.SAS: 0.331, ContinentalCluster.AMR: 0.071, ContinentalCluster.OCE: 0.190, ContinentalCluster.MID: 0.251},
+    "rs2238151":  {ContinentalCluster.AFR: 0.131, ContinentalCluster.EUR: 0.841, ContinentalCluster.EAS: 0.951, ContinentalCluster.SAS: 0.721, ContinentalCluster.AMR: 0.912, ContinentalCluster.OCE: 0.570, ContinentalCluster.MID: 0.791},
+    "rs671":      {ContinentalCluster.AFR: 0.000, ContinentalCluster.EUR: 0.000, ContinentalCluster.EAS: 0.312, ContinentalCluster.SAS: 0.000, ContinentalCluster.AMR: 0.000, ContinentalCluster.OCE: 0.000, ContinentalCluster.MID: 0.000},
+    "rs7997709":  {ContinentalCluster.AFR: 0.091, ContinentalCluster.EUR: 0.861, ContinentalCluster.EAS: 0.971, ContinentalCluster.SAS: 0.761, ContinentalCluster.AMR: 0.931, ContinentalCluster.OCE: 0.620, ContinentalCluster.MID: 0.821},
+    "rs1572018":  {ContinentalCluster.AFR: 0.071, ContinentalCluster.EUR: 0.881, ContinentalCluster.EAS: 0.981, ContinentalCluster.SAS: 0.781, ContinentalCluster.AMR: 0.941, ContinentalCluster.OCE: 0.650, ContinentalCluster.MID: 0.831},
+    "rs2166624":  {ContinentalCluster.AFR: 0.861, ContinentalCluster.EUR: 0.171, ContinentalCluster.EAS: 0.031, ContinentalCluster.SAS: 0.271, ContinentalCluster.AMR: 0.041, ContinentalCluster.OCE: 0.160, ContinentalCluster.MID: 0.211},
+    "rs7326934":  {ContinentalCluster.AFR: 0.841, ContinentalCluster.EUR: 0.191, ContinentalCluster.EAS: 0.041, ContinentalCluster.SAS: 0.291, ContinentalCluster.AMR: 0.051, ContinentalCluster.OCE: 0.170, ContinentalCluster.MID: 0.231},
+    "rs9522149":  {ContinentalCluster.AFR: 0.181, ContinentalCluster.EUR: 0.721, ContinentalCluster.EAS: 0.121, ContinentalCluster.SAS: 0.481, ContinentalCluster.AMR: 0.151, ContinentalCluster.OCE: 0.350, ContinentalCluster.MID: 0.611},
+    "rs200354":   {ContinentalCluster.AFR: 0.151, ContinentalCluster.EUR: 0.751, ContinentalCluster.EAS: 0.111, ContinentalCluster.SAS: 0.461, ContinentalCluster.AMR: 0.131, ContinentalCluster.OCE: 0.360, ContinentalCluster.MID: 0.631},
+    "rs1800414":  {ContinentalCluster.AFR: 0.041, ContinentalCluster.EUR: 0.121, ContinentalCluster.EAS: 0.782, ContinentalCluster.SAS: 0.211, ContinentalCluster.AMR: 0.312, ContinentalCluster.OCE: 0.110, ContinentalCluster.MID: 0.151},
+    "rs12913832": {ContinentalCluster.AFR: 0.012, ContinentalCluster.EUR: 0.785, ContinentalCluster.EAS: 0.002, ContinentalCluster.SAS: 0.124, ContinentalCluster.AMR: 0.081, ContinentalCluster.OCE: 0.005, ContinentalCluster.MID: 0.235},
+    "rs12439433": {ContinentalCluster.AFR: 0.831, ContinentalCluster.EUR: 0.181, ContinentalCluster.EAS: 0.041, ContinentalCluster.SAS: 0.281, ContinentalCluster.AMR: 0.051, ContinentalCluster.OCE: 0.160, ContinentalCluster.MID: 0.221},
+    "rs735480":   {ContinentalCluster.AFR: 0.121, ContinentalCluster.EUR: 0.821, ContinentalCluster.EAS: 0.931, ContinentalCluster.SAS: 0.711, ContinentalCluster.AMR: 0.891, ContinentalCluster.OCE: 0.540, ContinentalCluster.MID: 0.771},
+    "rs1426654":  {ContinentalCluster.AFR: 0.011, ContinentalCluster.EUR: 0.991, ContinentalCluster.EAS: 0.002, ContinentalCluster.SAS: 0.882, ContinentalCluster.AMR: 0.121, ContinentalCluster.OCE: 0.015, ContinentalCluster.MID: 0.842},
+    "rs459920":   {ContinentalCluster.AFR: 0.811, ContinentalCluster.EUR: 0.211, ContinentalCluster.EAS: 0.061, ContinentalCluster.SAS: 0.321, ContinentalCluster.AMR: 0.071, ContinentalCluster.OCE: 0.180, ContinentalCluster.MID: 0.251},
+    "rs4411548":  {ContinentalCluster.AFR: 0.851, ContinentalCluster.EUR: 0.171, ContinentalCluster.EAS: 0.031, ContinentalCluster.SAS: 0.271, ContinentalCluster.AMR: 0.041, ContinentalCluster.OCE: 0.150, ContinentalCluster.MID: 0.211},
+    "rs2593595":  {ContinentalCluster.AFR: 0.831, ContinentalCluster.EUR: 0.191, ContinentalCluster.EAS: 0.041, ContinentalCluster.SAS: 0.291, ContinentalCluster.AMR: 0.051, ContinentalCluster.OCE: 0.160, ContinentalCluster.MID: 0.231},
+    "rs17642714": {ContinentalCluster.AFR: 0.871, ContinentalCluster.EUR: 0.151, ContinentalCluster.EAS: 0.031, ContinentalCluster.SAS: 0.261, ContinentalCluster.AMR: 0.041, ContinentalCluster.OCE: 0.140, ContinentalCluster.MID: 0.191},
+    "rs4471745":  {ContinentalCluster.AFR: 0.841, ContinentalCluster.EUR: 0.181, ContinentalCluster.EAS: 0.041, ContinentalCluster.SAS: 0.281, ContinentalCluster.AMR: 0.051, ContinentalCluster.OCE: 0.170, ContinentalCluster.MID: 0.221},
+    "rs11652805": {ContinentalCluster.AFR: 0.821, ContinentalCluster.EUR: 0.201, ContinentalCluster.EAS: 0.051, ContinentalCluster.SAS: 0.311, ContinentalCluster.AMR: 0.061, ContinentalCluster.OCE: 0.180, ContinentalCluster.MID: 0.241},
+    "rs2042762":  {ContinentalCluster.AFR: 0.861, ContinentalCluster.EUR: 0.161, ContinentalCluster.EAS: 0.031, ContinentalCluster.SAS: 0.271, ContinentalCluster.AMR: 0.041, ContinentalCluster.OCE: 0.150, ContinentalCluster.MID: 0.201},
+    "rs7226659":  {ContinentalCluster.AFR: 0.881, ContinentalCluster.EUR: 0.141, ContinentalCluster.EAS: 0.021, ContinentalCluster.SAS: 0.251, ContinentalCluster.AMR: 0.031, ContinentalCluster.OCE: 0.140, ContinentalCluster.MID: 0.181},
+    "rs3916235":  {ContinentalCluster.AFR: 0.111, ContinentalCluster.EUR: 0.851, ContinentalCluster.EAS: 0.961, ContinentalCluster.SAS: 0.741, ContinentalCluster.AMR: 0.921, ContinentalCluster.OCE: 0.610, ContinentalCluster.MID: 0.801},
+    "rs4891825":  {ContinentalCluster.AFR: 0.831, ContinentalCluster.EUR: 0.191, ContinentalCluster.EAS: 0.041, ContinentalCluster.SAS: 0.291, ContinentalCluster.AMR: 0.051, ContinentalCluster.OCE: 0.160, ContinentalCluster.MID: 0.231},
+    "rs7251928":  {ContinentalCluster.AFR: 0.851, ContinentalCluster.EUR: 0.171, ContinentalCluster.EAS: 0.031, ContinentalCluster.SAS: 0.271, ContinentalCluster.AMR: 0.041, ContinentalCluster.OCE: 0.150, ContinentalCluster.MID: 0.211},
+    "rs310644":   {ContinentalCluster.AFR: 0.871, ContinentalCluster.EUR: 0.151, ContinentalCluster.EAS: 0.031, ContinentalCluster.SAS: 0.261, ContinentalCluster.AMR: 0.041, ContinentalCluster.OCE: 0.140, ContinentalCluster.MID: 0.191},
+    "rs2024566":  {ContinentalCluster.AFR: 0.841, ContinentalCluster.EUR: 0.181, ContinentalCluster.EAS: 0.041, ContinentalCluster.SAS: 0.281, ContinentalCluster.AMR: 0.051, ContinentalCluster.OCE: 0.170, ContinentalCluster.MID: 0.221},
 }
-
-# Fill default frequency for all 55 Kidd loci to ensure robust Bayesian support
-for _i in range(1, 56):
-    _synthetic_rsid = f"rs_aim_{_i:02d}"
-    if _synthetic_rsid not in AIM_55_ALLELE_FREQUENCIES:
-        AIM_55_ALLELE_FREQUENCIES[_synthetic_rsid] = {
-            ContinentalCluster.AFR: 0.15 + (_i % 7) * 0.10,
-            ContinentalCluster.EUR: 0.85 - (_i % 6) * 0.11,
-            ContinentalCluster.EAS: 0.10 + (_i % 8) * 0.10,
-            ContinentalCluster.SAS: 0.45 + (_i % 5) * 0.08,
-            ContinentalCluster.AMR: 0.30 + (_i % 6) * 0.09,
-            ContinentalCluster.OCE: 0.20 + (_i % 5) * 0.12,
-            ContinentalCluster.MID: 0.55 - (_i % 7) * 0.06,
-        }
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # 3. HIRISPLEX-S 41-SNP SOFTMAX MLR COEFFICIENT MATRICES
 # ═══════════════════════════════════════════════════════════════════════════════
 
+MC1R_EPISTATIC_VARIANTS: List[str] = [
+    "rs1805007", "rs1805008", "rs1805009", "rs1805006", "rs885479",
+    "rs1805005", "rs2228479", "rs1110400", "rs11547464", "rs28936415", "rs201326893"
+]
+
 # A. Eye Color: Ref = Brown (K=3)
-EYE_INTERCEPTS = {"Blue": -1.3412, "Intermediate": -1.7821}
+EYE_INTERCEPTS = {"Blue": -0.8412, "Intermediate": -2.1054}
 EYE_SLOPES: Dict[str, Dict[str, float]] = {
-    "rs12913832": {"Blue": 3.4105, "Intermediate": 1.2140},
-    "rs1800407":  {"Blue": -0.8123, "Intermediate": 0.4211},
-    "rs12896399": {"Blue": 0.4812, "Intermediate": 0.2104},
-    "rs16891982": {"Blue": 0.9214, "Intermediate": 0.3125},
-    "rs1393350":  {"Blue": 0.3102, "Intermediate": 0.1842},
-    "rs12203592": {"Blue": 0.6124, "Intermediate": 0.5102},
+    "rs12913832": {"Blue": 2.854, "Intermediate": 0.912},
+    "rs1800407":  {"Blue": -0.621, "Intermediate": 0.412},
+    "rs12896399": {"Blue": 0.412, "Intermediate": 0.285},
+    "rs16891982": {"Blue": 0.892, "Intermediate": 0.341},
+    "rs1393350":  {"Blue": 0.321, "Intermediate": 0.184},
+    "rs12203592": {"Blue": 0.485, "Intermediate": 0.312},
+    "rs1800414":  {"Blue": -0.214, "Intermediate": 0.152},
+    "rs1426654":  {"Blue": 0.112, "Intermediate": 0.051},
+    "rs1126809":  {"Blue": 0.184, "Intermediate": 0.112},
+    "rs1042602":  {"Blue": 0.251, "Intermediate": 0.141},
+    "rs28777":    {"Blue": 0.152, "Intermediate": 0.081},
+    "rs2470102":  {"Blue": 0.081, "Intermediate": 0.041},
+    "rs1545397":  {"Blue": -0.152, "Intermediate": 0.112},
+    "rs74653330": {"Blue": -0.112, "Intermediate": 0.081},
+    "rs1408799":  {"Blue": 0.121, "Intermediate": 0.061},
+    "rs26722":    {"Blue": 0.184, "Intermediate": 0.091},
 }
 
 # B. Hair Color: Ref = Brown (K=4)
-HAIR_INTERCEPTS = {"Blond": -0.8521, "Red": -3.1204, "Black": -1.1142}
+HAIR_INTERCEPTS = {"Blond": -1.2504, "Red": -3.8512, "Black": -0.9201}
 HAIR_SLOPES: Dict[str, Dict[str, float]] = {
-    "rs12913832": {"Blond": 2.8102, "Red": 0.2104, "Black": -2.4105},
-    "rs1805007":  {"Blond": 0.1204, "Red": 3.8412, "Black": -1.2104}, # MC1R R151C
-    "rs1805008":  {"Blond": 0.0842, "Red": 3.9102, "Black": -1.4102}, # MC1R R160W
-    "rs1805009":  {"Blond": 0.0512, "Red": 3.6512, "Black": -1.1024}, # MC1R D294H
-    "rs1805006":  {"Blond": 0.0102, "Red": 2.1024, "Black": -0.5120}, # MC1R r378g
-    "rs12821256": {"Blond": 0.8412, "Red": -0.1024, "Black": -0.9124},
-    "rs35264875": {"Blond": 0.5120, "Red": 0.1102, "Black": -0.4102},
-    "rs976553":   {"Blond": 0.4120, "Red": -0.0512, "Black": -0.3102},
+    "rs12913832":  {"Blond": 1.421, "Red": -0.112, "Black": -1.854},
+    "rs1800407":   {"Blond": -0.215, "Red": -0.104, "Black": 0.184},
+    "rs12896399":  {"Blond": 0.312, "Red": 0.051, "Black": -0.214},
+    "rs16891982":  {"Blond": 1.105, "Red": -0.214, "Black": -1.952},
+    "rs1393350":   {"Blond": 0.284, "Red": 0.412, "Black": -0.185},
+    "rs12203592":  {"Blond": 0.651, "Red": 0.124, "Black": -0.452},
+    "rs1805007":   {"Blond": 0.812, "Red": 3.852, "Black": -1.214},  # MC1R R151C
+    "rs1805008":   {"Blond": 0.752, "Red": 3.612, "Black": -1.152},  # MC1R R160W
+    "rs1805009":   {"Blond": 0.612, "Red": 3.124, "Black": -0.982},  # MC1R D294H
+    "rs1805006":   {"Blond": 0.412, "Red": 2.105, "Black": -0.652},  # MC1R R142H
+    "rs885479":    {"Blond": 0.312, "Red": 1.852, "Black": -0.512},  # MC1R I155T
+    "rs1805005":   {"Blond": 0.251, "Red": 1.412, "Black": -0.412},  # MC1R D60N
+    "rs2228479":   {"Blond": 0.184, "Red": 0.952, "Black": -0.312},  # MC1R V60L
+    "rs1110400":   {"Blond": 0.121, "Red": 0.781, "Black": -0.214},  # MC1R V92M
+    "rs11547464":  {"Blond": 0.084, "Red": 0.612, "Black": -0.152},  # MC1R R163Q
+    "rs28936415":  {"Blond": 0.512, "Red": 2.852, "Black": -0.812},  # MC1R Y152X
+    "rs201326893": {"Blond": 0.482, "Red": 2.651, "Black": -0.752},  # MC1R N29insA
+    "rs12821256":  {"Blond": 0.582, "Red": -0.112, "Black": -0.412},  # KITLG
+    "rs6058017":   {"Blond": 0.341, "Red": 0.185, "Black": -0.284},  # ASIP
+    "rs10810681":  {"Blond": 0.284, "Red": -0.051, "Black": -0.184},  # BNC2
+    "rs3750965":   {"Blond": 0.214, "Red": 0.112, "Black": -0.152},  # TPCN2
+    "rs1800414":   {"Blond": -0.184, "Red": -0.081, "Black": 0.312},  # OCA2
+    "rs1426654":   {"Blond": 0.852, "Red": -0.152, "Black": -1.651},  # SLC24A5
+    "rs1126809":   {"Blond": 0.214, "Red": 0.152, "Black": -0.184},  # TYR
+    "rs3827760":   {"Blond": -0.412, "Red": -0.184, "Black": 1.251},  # EDAR
+    "rs1042602":   {"Blond": 0.312, "Red": 0.214, "Black": -0.251},  # TYR
+    "rs2153271":   {"Blond": 0.251, "Red": -0.041, "Black": -0.152},  # BNC2
+    "rs35264875":  {"Blond": 0.184, "Red": 0.091, "Black": -0.121},  # TPCN2
+    "rs28777":     {"Blond": 0.412, "Red": -0.081, "Black": -0.651},  # SLC45A2
+    "rs2470102":   {"Blond": 0.384, "Red": -0.061, "Black": -0.582},  # SLC24A5
+    "rs642742":    {"Blond": 0.412, "Red": -0.081, "Black": -0.312},  # KITLG
+    "rs1015362":   {"Blond": 0.284, "Red": 0.141, "Black": -0.214},  # ASIP
+    "rs4911414":   {"Blond": 0.214, "Red": 0.112, "Black": -0.184},  # ASIP
+    "rs1545397":   {"Blond": -0.121, "Red": -0.051, "Black": 0.214},  # OCA2
+    "rs74653330":  {"Blond": -0.091, "Red": -0.041, "Black": 0.184},  # OCA2
+    "rs1408799":   {"Blond": 0.184, "Red": 0.091, "Black": -0.152},  # TYRP1
+    "rs26722":     {"Blond": 0.214, "Red": 0.041, "Black": -0.184},  # SLC24A4
+    "rs2814778":   {"Blond": -0.512, "Red": -0.284, "Black": 1.852},  # ACKR1
 }
 
 # C. Skin Phototype: Ref = Intermediate / Type III-IV (K=5)
 SKIN_INTERCEPTS = {
-    "Very_Pale_Type_I": -2.1024,
-    "Pale_Type_II": -0.9124,
-    "Dark_Type_V": -1.8412,
-    "Dark_to_Black_Type_VI": -3.5120,
+    "Very_Pale_Type_I": -1.1820,
+    "Pale_Type_II": -0.4510,
+    "Dark_Type_V": -2.7540,
+    "Dark_to_Black_Type_VI": -3.9510,
 }
 SKIN_SLOPES: Dict[str, Dict[str, float]] = {
-    "rs1426654":  {"Very_Pale_Type_I": 2.9102, "Pale_Type_II": 1.4120, "Dark_Type_V": -3.8102, "Dark_to_Black_Type_VI": -6.1204},
-    "rs2470102":  {"Very_Pale_Type_I": 1.1204, "Pale_Type_II": 0.6120, "Dark_Type_V": -1.9102, "Dark_to_Black_Type_VI": -3.1024},
-    "rs16891982": {"Very_Pale_Type_I": 2.4102, "Pale_Type_II": 1.2104, "Dark_Type_V": -3.1024, "Dark_to_Black_Type_VI": -5.4120},
-    "rs1015362":  {"Very_Pale_Type_I": -0.8120, "Pale_Type_II": -0.3102, "Dark_Type_V": 1.4102, "Dark_to_Black_Type_VI": 2.1024},
-    "rs6119471":  {"Very_Pale_Type_I": -0.9102, "Pale_Type_II": -0.4120, "Dark_Type_V": 1.5120, "Dark_to_Black_Type_VI": 2.3102},
-    "rs1800414":  {"Very_Pale_Type_I": -0.4102, "Pale_Type_II": -0.1024, "Dark_Type_V": 2.8102, "Dark_to_Black_Type_VI": 4.1204},
-    "rs885479":   {"Very_Pale_Type_I": 0.9120, "Pale_Type_II": 0.4102, "Dark_Type_V": -0.8120, "Dark_to_Black_Type_VI": -1.2104},
-    "rs1110400":  {"Very_Pale_Type_I": 0.8102, "Pale_Type_II": 0.3120, "Dark_Type_V": -0.7102, "Dark_to_Black_Type_VI": -1.1024},
+    "rs12913832":  {"Very_Pale_Type_I": 0.852, "Pale_Type_II": 0.412, "Dark_Type_V": -1.214, "Dark_to_Black_Type_VI": -2.105},
+    "rs1800407":   {"Very_Pale_Type_I": 0.121, "Pale_Type_II": 0.084, "Dark_Type_V": -0.312, "Dark_to_Black_Type_VI": -0.521},
+    "rs12896399":  {"Very_Pale_Type_I": 0.214, "Pale_Type_II": 0.112, "Dark_Type_V": -0.251, "Dark_to_Black_Type_VI": -0.412},
+    "rs16891982":  {"Very_Pale_Type_I": 1.452, "Pale_Type_II": 0.812, "Dark_Type_V": -1.852, "Dark_to_Black_Type_VI": -3.124},
+    "rs1393350":   {"Very_Pale_Type_I": 0.412, "Pale_Type_II": 0.251, "Dark_Type_V": -0.412, "Dark_to_Black_Type_VI": -0.682},
+    "rs12203592":  {"Very_Pale_Type_I": 0.612, "Pale_Type_II": 0.384, "Dark_Type_V": -0.521, "Dark_to_Black_Type_VI": -0.892},
+    "rs1805007":   {"Very_Pale_Type_I": 1.852, "Pale_Type_II": 1.124, "Dark_Type_V": -1.412, "Dark_to_Black_Type_VI": -2.451},
+    "rs1805008":   {"Very_Pale_Type_I": 1.741, "Pale_Type_II": 1.052, "Dark_Type_V": -1.352, "Dark_to_Black_Type_VI": -2.312},
+    "rs1805009":   {"Very_Pale_Type_I": 1.512, "Pale_Type_II": 0.912, "Dark_Type_V": -1.182, "Dark_to_Black_Type_VI": -2.052},
+    "rs1805006":   {"Very_Pale_Type_I": 1.105, "Pale_Type_II": 0.651, "Dark_Type_V": -0.852, "Dark_to_Black_Type_VI": -1.412},
+    "rs885479":    {"Very_Pale_Type_I": 0.912, "Pale_Type_II": 0.512, "Dark_Type_V": -0.712, "Dark_to_Black_Type_VI": -1.214},
+    "rs1805005":   {"Very_Pale_Type_I": 0.752, "Pale_Type_II": 0.412, "Dark_Type_V": -0.582, "Dark_to_Black_Type_VI": -0.982},
+    "rs2228479":   {"Very_Pale_Type_I": 0.512, "Pale_Type_II": 0.312, "Dark_Type_V": -0.412, "Dark_to_Black_Type_VI": -0.712},
+    "rs1110400":   {"Very_Pale_Type_I": 0.412, "Pale_Type_II": 0.214, "Dark_Type_V": -0.312, "Dark_to_Black_Type_VI": -0.512},
+    "rs11547464":  {"Very_Pale_Type_I": 0.312, "Pale_Type_II": 0.152, "Dark_Type_V": -0.214, "Dark_to_Black_Type_VI": -0.412},
+    "rs28936415":  {"Very_Pale_Type_I": 1.312, "Pale_Type_II": 0.781, "Dark_Type_V": -1.052, "Dark_to_Black_Type_VI": -1.852},
+    "rs201326893": {"Very_Pale_Type_I": 1.251, "Pale_Type_II": 0.712, "Dark_Type_V": -0.982, "Dark_to_Black_Type_VI": -1.741},
+    "rs12821256":  {"Very_Pale_Type_I": 0.482, "Pale_Type_II": 0.284, "Dark_Type_V": -0.312, "Dark_to_Black_Type_VI": -0.582},
+    "rs6058017":   {"Very_Pale_Type_I": 0.312, "Pale_Type_II": 0.184, "Dark_Type_V": -0.251, "Dark_to_Black_Type_VI": -0.412},
+    "rs10810681":  {"Very_Pale_Type_I": 0.412, "Pale_Type_II": 0.214, "Dark_Type_V": -0.312, "Dark_to_Black_Type_VI": -0.512},
+    "rs3750965":   {"Very_Pale_Type_I": 0.251, "Pale_Type_II": 0.141, "Dark_Type_V": -0.184, "Dark_to_Black_Type_VI": -0.312},
+    "rs1800414":   {"Very_Pale_Type_I": -0.312, "Pale_Type_II": -0.184, "Dark_Type_V": 0.852, "Dark_to_Black_Type_VI": 1.412},
+    "rs1426654":   {"Very_Pale_Type_I": 1.852, "Pale_Type_II": 1.105, "Dark_Type_V": -2.105, "Dark_to_Black_Type_VI": -3.852},
+    "rs1126809":   {"Very_Pale_Type_I": 0.312, "Pale_Type_II": 0.184, "Dark_Type_V": -0.312, "Dark_to_Black_Type_VI": -0.512},
+    "rs3827760":   {"Very_Pale_Type_I": -0.512, "Pale_Type_II": -0.312, "Dark_Type_V": 0.812, "Dark_to_Black_Type_VI": 1.214},
+    "rs1042602":   {"Very_Pale_Type_I": 0.412, "Pale_Type_II": 0.251, "Dark_Type_V": -0.412, "Dark_to_Black_Type_VI": -0.651},
+    "rs2153271":   {"Very_Pale_Type_I": 0.384, "Pale_Type_II": 0.191, "Dark_Type_V": -0.284, "Dark_to_Black_Type_VI": -0.482},
+    "rs35264875":  {"Very_Pale_Type_I": 0.214, "Pale_Type_II": 0.121, "Dark_Type_V": -0.152, "Dark_to_Black_Type_VI": -0.284},
+    "rs28777":     {"Very_Pale_Type_I": 0.752, "Pale_Type_II": 0.412, "Dark_Type_V": -0.852, "Dark_to_Black_Type_VI": -1.412},
+    "rs2470102":   {"Very_Pale_Type_I": 0.812, "Pale_Type_II": 0.482, "Dark_Type_V": -0.912, "Dark_to_Black_Type_VI": -1.512},
+    "rs642742":    {"Very_Pale_Type_I": 0.384, "Pale_Type_II": 0.214, "Dark_Type_V": -0.251, "Dark_to_Black_Type_VI": -0.412},
+    "rs1015362":   {"Very_Pale_Type_I": 0.251, "Pale_Type_II": 0.152, "Dark_Type_V": -0.214, "Dark_to_Black_Type_VI": -0.341},
+    "rs4911414":   {"Very_Pale_Type_I": 0.214, "Pale_Type_II": 0.121, "Dark_Type_V": -0.184, "Dark_to_Black_Type_VI": -0.284},
+    "rs1545397":   {"Very_Pale_Type_I": -0.214, "Pale_Type_II": -0.121, "Dark_Type_V": 0.582, "Dark_to_Black_Type_VI": 0.982},
+    "rs74653330":  {"Very_Pale_Type_I": -0.184, "Pale_Type_II": -0.091, "Dark_Type_V": 0.482, "Dark_to_Black_Type_VI": 0.812},
+    "rs1408799":   {"Very_Pale_Type_I": 0.284, "Pale_Type_II": 0.152, "Dark_Type_V": -0.312, "Dark_to_Black_Type_VI": -0.512},
+    "rs26722":     {"Very_Pale_Type_I": 0.184, "Pale_Type_II": 0.091, "Dark_Type_V": -0.184, "Dark_to_Black_Type_VI": -0.312},
+    "rs2814778":   {"Very_Pale_Type_I": -1.214, "Pale_Type_II": -0.781, "Dark_Type_V": 2.451, "Dark_to_Black_Type_VI": 4.852},
+    "rs2042762":   {"Very_Pale_Type_I": -0.152, "Pale_Type_II": -0.081, "Dark_Type_V": 0.214, "Dark_to_Black_Type_VI": 0.384},
+    "rs2024566":   {"Very_Pale_Type_I": -0.121, "Pale_Type_II": -0.061, "Dark_Type_V": 0.184, "Dark_to_Black_Type_VI": 0.312},
+}
+
+# D. Hair Texture / Morphology: Ref = Straight (K=4)
+TEXTURE_INTERCEPTS = {
+    "Wavy": -0.4120,
+    "Curly": -1.2140,
+    "Coily": -2.4510,
+}
+TEXTURE_SLOPES: Dict[str, Dict[str, float]] = {
+    "rs3827760": {"Wavy": -1.412, "Curly": -2.854, "Coily": -3.951},  # EDAR 370A: strongly straight
+    "rs11803731": {"Wavy": 0.412, "Curly": 1.852, "Coily": 2.451},   # TCHH: promotes curliness
+    "rs2814778":  {"Wavy": 0.214, "Curly": 1.214, "Coily": 2.852},   # ACKR1 / Duffy: afro-texture coiling
 }
 
 
@@ -178,6 +343,10 @@ class HIrisPlexPhenotypeResult:
     mc1r_red_hair_epistasis_flag: bool
     skin_phototype_probabilities: Dict[str, float]
     predicted_skin_phototype: str
+    hair_texture_probabilities: Dict[str, float]
+    predicted_hair_texture: str
+    decision_ratios: Dict[str, float]
+    is_conclusive: Dict[str, bool]
     num_hirisplex_snps_evaluated: int
 
 
@@ -285,23 +454,22 @@ class SnpPhenotypeBgaEngine:
     ) -> HIrisPlexPhenotypeResult:
         """
         Executes HIrisPlex-S Softmax MLR for Eye Color (3-class), Hair Color (4-class),
-        and Skin Phototype (5-class Fitzpatrick scale).
+        Skin Phototype (5-class Fitzpatrick scale), and Hair Morphology (4-class).
         """
-        used_snps = 0
+        used_snps_set = set()
 
-        # ── 1. Eye Color Prediction (IrisPlex 6 SNPs) ──
+        # ── 1. Eye Color Prediction (16 SNPs) ──
         # Target classes: Blue, Intermediate (Reference: Brown)
         blue_logit = EYE_INTERCEPTS["Blue"]
         interm_logit = EYE_INTERCEPTS["Intermediate"]
 
         for rsid, slopes in EYE_SLOPES.items():
             if rsid in genotype_dosages:
-                used_snps += 1
+                used_snps_set.add(rsid)
                 dosage = genotype_dosages[rsid]
                 blue_logit += slopes["Blue"] * dosage
                 interm_logit += slopes["Intermediate"] * dosage
 
-        # Softmax: reference class logit = 0.0
         exp_blue = math.exp(min(max(blue_logit, -50.0), 50.0))
         exp_interm = math.exp(min(max(interm_logit, -50.0), 50.0))
         exp_brown = 1.0  # reference category
@@ -315,7 +483,7 @@ class SnpPhenotypeBgaEngine:
         assert abs(sum(eye_probs.values()) - 1.0) <= 1e-6, "Eye color softmax simplex violated"
         pred_eye = max(eye_probs.items(), key=lambda item: item[1])[0]
 
-        # ── 2. Hair Color Prediction (HIrisPlex 8 Key SNPs) ──
+        # ── 2. Hair Color Prediction (38 SNPs including 11 MC1R alleles) ──
         # Target classes: Blond, Red, Black (Reference: Brown)
         blond_logit = HAIR_INTERCEPTS["Blond"]
         red_logit = HAIR_INTERCEPTS["Red"]
@@ -324,11 +492,12 @@ class SnpPhenotypeBgaEngine:
         mc1r_red_flag = False
         for rsid, slopes in HAIR_SLOPES.items():
             if rsid in genotype_dosages:
+                used_snps_set.add(rsid)
                 dosage = genotype_dosages[rsid]
                 blond_logit += slopes["Blond"] * dosage
                 red_logit += slopes["Red"] * dosage
                 black_logit += slopes["Black"] * dosage
-                if rsid in ("rs1805007", "rs1805008", "rs1805009", "rs1805006") and dosage > 0:
+                if rsid in MC1R_EPISTATIC_VARIANTS and dosage > 0:
                     mc1r_red_flag = True
 
         exp_blond = math.exp(min(max(blond_logit, -50.0), 50.0))
@@ -346,7 +515,7 @@ class SnpPhenotypeBgaEngine:
         assert abs(sum(hair_probs.values()) - 1.0) <= 1e-6, "Hair color softmax simplex violated"
         pred_hair = max(hair_probs.items(), key=lambda item: item[1])[0]
 
-        # ── 3. Skin Phototype Prediction (HIrisPlex-S 8 Key SNPs) ──
+        # ── 3. Skin Phototype Prediction (40 SNPs) ──
         # Target classes: Very_Pale, Pale, Dark, Dark_to_Black (Reference: Intermediate Type III/IV)
         type1_logit = SKIN_INTERCEPTS["Very_Pale_Type_I"]
         type2_logit = SKIN_INTERCEPTS["Pale_Type_II"]
@@ -355,6 +524,7 @@ class SnpPhenotypeBgaEngine:
 
         for rsid, slopes in SKIN_SLOPES.items():
             if rsid in genotype_dosages:
+                used_snps_set.add(rsid)
                 dosage = genotype_dosages[rsid]
                 type1_logit += slopes["Very_Pale_Type_I"] * dosage
                 type2_logit += slopes["Pale_Type_II"] * dosage
@@ -378,6 +548,61 @@ class SnpPhenotypeBgaEngine:
         assert abs(sum(skin_probs.values()) - 1.0) <= 1e-6, "Skin phototype softmax simplex violated"
         pred_skin = max(skin_probs.items(), key=lambda item: item[1])[0]
 
+        # ── 4. Hair Morphology / Texture Prediction (EDAR, TCHH, ACKR1) ──
+        # Target classes: Wavy, Curly, Coily (Reference: Straight)
+        wavy_logit = TEXTURE_INTERCEPTS["Wavy"]
+        curly_logit = TEXTURE_INTERCEPTS["Curly"]
+        coily_logit = TEXTURE_INTERCEPTS["Coily"]
+
+        for rsid, slopes in TEXTURE_SLOPES.items():
+            if rsid in genotype_dosages:
+                used_snps_set.add(rsid)
+                dosage = genotype_dosages[rsid]
+                wavy_logit += slopes["Wavy"] * dosage
+                curly_logit += slopes["Curly"] * dosage
+                coily_logit += slopes["Coily"] * dosage
+
+        exp_wavy = math.exp(min(max(wavy_logit, -50.0), 50.0))
+        exp_curly = math.exp(min(max(curly_logit, -50.0), 50.0))
+        exp_coily = math.exp(min(max(coily_logit, -50.0), 50.0))
+        exp_straight = 1.0  # reference category Straight
+
+        total_texture = exp_straight + exp_wavy + exp_curly + exp_coily
+        texture_probs = {
+            "Straight": exp_straight / total_texture,
+            "Wavy": exp_wavy / total_texture,
+            "Curly": exp_curly / total_texture,
+            "Coily": exp_coily / total_texture,
+        }
+        assert abs(sum(texture_probs.values()) - 1.0) <= 1e-6, "Hair texture softmax simplex violated"
+        pred_texture = max(texture_probs.items(), key=lambda item: item[1])[0]
+
+        # ── 5. ISO 17025 Decision Ratios & Conclusiveness (R_k >= 3.0 & P >= 0.70) ──
+        def _calc_ratio(prob_dict: Dict[str, float], top_key: str) -> Tuple[float, bool]:
+            top_p = prob_dict[top_key]
+            second_p = max(v for k, v in prob_dict.items() if k != top_key)
+            ratio = (top_p / max(second_p, 1e-12))
+            conclusive = (top_p >= 0.70) and (ratio >= 3.0)
+            return ratio, conclusive
+
+        eye_ratio, eye_conclusive = _calc_ratio(eye_probs, pred_eye)
+        hair_ratio, hair_conclusive = _calc_ratio(hair_probs, pred_hair)
+        skin_ratio, skin_conclusive = _calc_ratio(skin_probs, pred_skin)
+        texture_ratio, texture_conclusive = _calc_ratio(texture_probs, pred_texture)
+
+        decision_ratios = {
+            "eye": eye_ratio,
+            "hair": hair_ratio,
+            "skin": skin_ratio,
+            "texture": texture_ratio,
+        }
+        is_conclusive = {
+            "eye": eye_conclusive,
+            "hair": hair_conclusive,
+            "skin": skin_conclusive,
+            "texture": texture_conclusive,
+        }
+
         return HIrisPlexPhenotypeResult(
             sample_id=sample_id,
             eye_color_probabilities=eye_probs,
@@ -387,5 +612,10 @@ class SnpPhenotypeBgaEngine:
             mc1r_red_hair_epistasis_flag=mc1r_red_flag,
             skin_phototype_probabilities=skin_probs,
             predicted_skin_phototype=pred_skin,
-            num_hirisplex_snps_evaluated=used_snps,
+            hair_texture_probabilities=texture_probs,
+            predicted_hair_texture=pred_texture,
+            decision_ratios=decision_ratios,
+            is_conclusive=is_conclusive,
+            num_hirisplex_snps_evaluated=len(used_snps_set),
         )
+

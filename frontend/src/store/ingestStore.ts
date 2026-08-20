@@ -50,6 +50,10 @@ export interface ActiveProfileData {
   kinshipLR: string;
   epigeneticAge: number;
   degradationIndex?: number;
+  ystrMarkers?: Record<string, { alleles: string[]; rfus?: number[] }>;
+  mtdnaMutations?: string[];
+  ystrHaplogroup?: string;
+  mtdnaHaplogroup?: string;
 }
 
 function presetToActiveProfile(presetId: string): ActiveProfileData {
@@ -74,7 +78,25 @@ function presetToActiveProfile(presetId: string): ActiveProfileData {
     };
   }
 
+  const ystrMarkers: Record<string, { alleles: string[]; rfus?: number[] }> = {};
+  if (p.ystrProfile) {
+    for (const [marker, call] of Object.entries(p.ystrProfile)) {
+      const alleles: string[] = [];
+      const rfus: number[] = [];
+      if (call.allele1) alleles.push(String(call.allele1));
+      if (call.allele2 && call.allele2 !== call.allele1) alleles.push(String(call.allele2));
+      if (call.rfu1 !== undefined) rfus.push(Number(call.rfu1));
+      if (call.rfu2 !== undefined && call.allele2) rfus.push(Number(call.rfu2));
+      ystrMarkers[marker] = { alleles, rfus };
+    }
+  }
+
   const sampleTypeMap: Record<string, "EU" | "AA" | "EAS" | "SAS" | "DVI" | "TOUCH" | "CUSTOM"> = {
+    PRESET_NIST_SRM_2391D: "EU",
+    PRESET_NA12878_CEU: "EU",
+    PRESET_HG002_AJ: "EU",
+    PRESET_NA19240_YRI: "AA",
+    PRESET_NA18507_CHB: "EAS",
     VECTOR_TERM_01: "EU",
     VECTOR_TERM_02: "AA",
     VECTOR_TERM_03: "EAS",
@@ -83,7 +105,7 @@ function presetToActiveProfile(presetId: string): ActiveProfileData {
     VECTOR_TERM_06: "TOUCH",
   };
 
-  const sampleType = sampleTypeMap[p.presetId] || "CUSTOM";
+  const sampleType = sampleTypeMap[p.presetId] || (p.targetPopulation.includes("African") ? "AA" : p.targetPopulation.includes("East Asian") ? "EAS" : "EU");
 
   const sortedBreakdown = Object.entries(bga.continentalPosteriors)
     .map(([cluster, prob]) => ({
@@ -105,6 +127,10 @@ function presetToActiveProfile(presetId: string): ActiveProfileData {
     timestamp: "2026-08-16 19:30",
     strMarkers,
     snpMarkers,
+    ystrMarkers,
+    mtdnaMutations: p.mtdnaMutations || [],
+    ystrHaplogroup: p.targetPopulation.includes("African") ? "E1b1a" : p.targetPopulation.includes("East Asian") ? "O2a2b1" : p.targetPopulation.includes("Ashkenazi") ? "J2a1a1" : "R1b1a1b",
+    mtdnaHaplogroup: p.targetPopulation.includes("African") ? "L2a1" : p.targetPopulation.includes("East Asian") ? "D4a1" : p.targetPopulation.includes("Ashkenazi") ? "K1a9" : "H1a1",
     phenotype: {
       eyeColor: hiris.predictedEyeColor,
       eyeColorProb: Math.round(hiris.eyeColorProbabilities[hiris.predictedEyeColor as keyof typeof hiris.eyeColorProbabilities] * 1000) / 10,
@@ -129,7 +155,7 @@ function presetToActiveProfile(presetId: string): ActiveProfileData {
       confidencePct: Math.round(bga.dominantProbability * 1000) / 10,
     },
     kinshipLR: "1.42e8",
-    epigeneticAge: 32.4,
+    epigeneticAge: p.visageEpigeneticProfile?.predictedAgeYears ?? 38.5,
     degradationIndex: p.degradationIndex,
   };
 }

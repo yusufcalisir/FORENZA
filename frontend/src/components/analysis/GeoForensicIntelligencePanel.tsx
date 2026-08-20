@@ -122,14 +122,22 @@ const GOLDEN_VECTOR_03: CrimeSite[] = [
 
 export default function GeoForensicIntelligencePanel({
     initialMode = "BAYESIAN_FUSION",
+    hideHeaderTabs = false,
 }: {
     initialMode?: GeoSubsystemMode;
+    hideHeaderTabs?: boolean;
 }) {
     const [mode, setMode] = useState<GeoSubsystemMode>(initialMode);
     const [isExecuting, setIsExecuting] = useState(false);
     const [executionProgress, setExecutionProgress] = useState(100);
     const [currentPhaseIndex, setCurrentPhaseIndex] = useState(3);
     const [apiErrorNotice, setApiErrorNotice] = useState<string | null>(null);
+
+    React.useEffect(() => {
+        if (initialMode) {
+            setMode(initialMode);
+        }
+    }, [initialMode]);
 
     // ── Mode 1: Isoscapes State
     const [enamelD18O, setEnamelD18O] = useState(GOLDEN_VECTOR_01.enamelD18O);
@@ -335,80 +343,54 @@ export default function GeoForensicIntelligencePanel({
     return (
         <div className="w-full space-y-4 sm:space-y-6 text-zinc-100 font-sans">
             {/* ═══════════════════════════════════════════════════════════════════
-          HEADER: Tactical Banner & Mode Navigation
+          HEADER: Tactical Controls & Mode Actions
       ═══════════════════════════════════════════════════════════════════ */}
-            <div className="p-4 sm:p-6 rounded-2xl border border-tactical-border/60 bg-tactical-surface/50 backdrop-blur-md relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
-
-                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 relative z-10">
-                    <div className="space-y-1.5 min-w-0">
-                        <div className="flex items-center gap-2.5 flex-wrap">
-                            <div className="px-2.5 py-1 rounded-md bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-mono text-[10px] font-bold tracking-wider uppercase flex items-center gap-1.5 min-h-[28px]">
-                                <Globe className="w-3.5 h-3.5" />
-                                PILLAR 7: GEO-FORENSIC INTELLIGENCE
-                            </div>
-                            <span className="text-[10px] font-mono text-zinc-400 bg-zinc-800/80 px-2 py-0.5 rounded border border-zinc-700/50 min-h-[24px] flex items-center">
-                                ISO/IEC 17025:2017 & ASTM E3272-21
-                            </span>
-                        </div>
-                        <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white flex items-center gap-2 break-words">
-                            Spatial Biogeochemistry & Bayesian GIS Platform
-                        </h2>
-                        <p className="text-xs text-zinc-400 max-w-2xl leading-relaxed">
-                            Continuous multi-isotope isoscape mapping, forensic soil QXRD pedology, botanical palynology,
-                            and Rossmo targeted hunting geographic crime profiling.
-                        </p>
-                    </div>
-
-                    {/* Action Button & Preset Loader (Touch Targets >= 44px) */}
-                    <div className="flex items-center gap-2.5 flex-wrap">
-                        <button
-                            onClick={() => {
-                                setEnamelD18O(GOLDEN_VECTOR_01.enamelD18O);
-                                setEnamelSr(GOLDEN_VECTOR_01.enamelSr);
-                                setHairD2H(GOLDEN_VECTOR_01.hairD2H);
-                                setResolvedLat(GOLDEN_VECTOR_01.expectedLat);
-                                setResolvedLon(GOLDEN_VECTOR_01.expectedLon);
-                                setResolvedRadius(GOLDEN_VECTOR_01.expectedRadius);
-                                setSoilQ(GOLDEN_VECTOR_02);
-                                setIsDivergentSoil(false);
-                                setCrimeSites(GOLDEN_VECTOR_03);
-                            }}
-                            className="min-h-[44px] px-3.5 py-2.5 rounded-xl border border-zinc-700/60 bg-zinc-900/60 hover:bg-zinc-800 active:scale-95 text-xs font-mono text-zinc-300 transition-all flex items-center gap-2 cursor-pointer"
-                        >
-                            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                            Load Golden Benchmarks
-                        </button>
-                        <button
-                            onClick={handleRunAnalysis}
-                            disabled={isExecuting}
-                            className="min-h-[44px] px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 active:scale-95 text-white font-mono text-xs font-bold tracking-wide shadow-lg shadow-cyan-900/20 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
-                        >
-                            <RefreshCw className={`w-3.5 h-3.5 ${isExecuting ? "animate-spin" : ""}`} />
-                            {isExecuting ? `Solving Engine (${executionProgress}%)` : "Execute Solver"}
-                        </button>
-                    </div>
-                </div>
-
-                {/* Live Progress Bar & Telemetry Multi-Stage Progress (%0 - %100) */}
-                <div className="mt-4 pt-3 border-t border-tactical-border/40 space-y-2">
-                    <div className="flex items-center justify-between text-xs font-mono">
-                        <div className="flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-                            <span className="text-zinc-300 font-bold">
+            {hideHeaderTabs ? (
+                /* Compact Action Bar when embedded in dedicated /analysis/geoint/[tab] routes */
+                <div className="p-3.5 sm:p-4 rounded-2xl border border-tactical-border/70 bg-tactical-surface/60 backdrop-blur-md space-y-3 shadow-lg">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div className="flex items-center gap-2 text-xs font-mono min-w-0">
+                            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shrink-0" />
+                            <span className="text-zinc-300 font-bold truncate">
                                 {TELEMETRY_PHASES[currentPhaseIndex].label}
                             </span>
-                            <span className="text-zinc-500 hidden sm:inline">
+                            <span className="text-zinc-500 hidden md:inline truncate">
                                 — {TELEMETRY_PHASES[currentPhaseIndex].description}
                             </span>
                         </div>
-                        <span className="text-cyan-400 font-bold tabular-nums">
-                            {executionProgress}%
-                        </span>
+
+                        {/* Action Buttons */}
+                        <div className="flex items-center gap-2 flex-wrap shrink-0">
+                            <button
+                                onClick={() => {
+                                    setEnamelD18O(GOLDEN_VECTOR_01.enamelD18O);
+                                    setEnamelSr(GOLDEN_VECTOR_01.enamelSr);
+                                    setHairD2H(GOLDEN_VECTOR_01.hairD2H);
+                                    setResolvedLat(GOLDEN_VECTOR_01.expectedLat);
+                                    setResolvedLon(GOLDEN_VECTOR_01.expectedLon);
+                                    setResolvedRadius(GOLDEN_VECTOR_01.expectedRadius);
+                                    setSoilQ(GOLDEN_VECTOR_02);
+                                    setIsDivergentSoil(false);
+                                    setCrimeSites(GOLDEN_VECTOR_03);
+                                }}
+                                className="min-h-[38px] px-3 py-1.5 rounded-xl border border-zinc-700/60 bg-zinc-900/80 hover:bg-zinc-800 active:scale-95 text-xs font-mono text-zinc-300 transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
+                            >
+                                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                                <span>Load Benchmarks</span>
+                            </button>
+                            <button
+                                onClick={handleRunAnalysis}
+                                disabled={isExecuting}
+                                className="min-h-[38px] px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 active:scale-95 text-white font-mono text-xs font-bold tracking-wide shadow-md shadow-cyan-900/20 transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                            >
+                                <RefreshCw className={`w-3.5 h-3.5 ${isExecuting ? "animate-spin" : ""}`} />
+                                <span>{isExecuting ? `Solving (${executionProgress}%)` : "Execute Solver"}</span>
+                            </button>
+                        </div>
                     </div>
 
-                    {/* Progress Bar Container with h-full and flex protection */}
-                    <div className="w-full h-2 rounded-full bg-zinc-900/90 border border-zinc-800 overflow-hidden relative">
+                    {/* Progress Bar Container */}
+                    <div className="w-full h-1.5 rounded-full bg-zinc-900/90 border border-zinc-800 overflow-hidden relative">
                         <motion.div
                             className="h-full bg-gradient-to-r from-cyan-500 via-blue-500 to-emerald-400 rounded-full"
                             initial={{ width: "100%" }}
@@ -417,41 +399,124 @@ export default function GeoForensicIntelligencePanel({
                         />
                     </div>
                 </div>
+            ) : (
+                /* Full Standalone Banner & Navigation Grid */
+                <div className="p-4 sm:p-6 rounded-2xl border border-tactical-border/60 bg-tactical-surface/50 backdrop-blur-md relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
 
-                {/* Subsystem Mode Navigation Tabs (Responsive & Touch-Friendly >= 44px) */}
-                <div className="mt-4 pt-3 border-t border-tactical-border/40 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
-                    {[
-                        { id: "ISOSCAPES", label: "1. Isoscapes (H/O/Sr)", icon: Globe, badge: "GMWL" },
-                        { id: "SOIL_CODA", label: "2. Soil Pedology", icon: Mountain, badge: "QXRD" },
-                        { id: "PALYNOLOGY_EDNA", label: "3. Palynology & eDNA", icon: TreePine, badge: "16S/ITS" },
-                        { id: "ROSSMO_GEO", label: "4. Rossmo Profiling", icon: Crosshair, badge: "SEI 96%" },
-                        { id: "BAYESIAN_FUSION", label: "5. Bayesian Fusion", icon: Layers, badge: "Raster" },
-                    ].map((tab) => {
-                        const active = mode === tab.id;
-                        const Icon = tab.icon;
-                        return (
-                            <button
-                                key={tab.id}
-                                onClick={() => setMode(tab.id as GeoSubsystemMode)}
-                                className={`min-h-[48px] p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-1.5 ${active
-                                        ? "bg-cyan-500/15 border-cyan-500/50 shadow-md shadow-cyan-950/40"
-                                        : "bg-zinc-900/40 border-zinc-800/60 hover:border-zinc-700 text-zinc-400 hover:text-zinc-200"
-                                    }`}
-                            >
-                                <div className="flex items-center justify-between w-full">
-                                    <Icon className={`w-4 h-4 ${active ? "text-cyan-400" : "text-zinc-500"}`} />
-                                    <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-black/40 text-zinc-400 border border-zinc-800">
-                                        {tab.badge}
-                                    </span>
+                    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 relative z-10">
+                        <div className="space-y-1.5 min-w-0">
+                            <div className="flex items-center gap-2.5 flex-wrap">
+                                <div className="px-2.5 py-1 rounded-md bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-mono text-[10px] font-bold tracking-wider uppercase flex items-center gap-1.5 min-h-[28px]">
+                                    <Globe className="w-3.5 h-3.5" />
+                                    PILLAR 7: GEO-FORENSIC INTELLIGENCE
                                 </div>
-                                <span className={`text-xs font-bold truncate ${active ? "text-white" : ""}`}>
-                                    {tab.label}
+                                <span className="text-[10px] font-mono text-zinc-400 bg-zinc-800/80 px-2 py-0.5 rounded border border-zinc-700/50 min-h-[24px] flex items-center">
+                                    ISO/IEC 17025:2017 & ASTM E3272-21
                                 </span>
+                            </div>
+                            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white flex items-center gap-2 break-words">
+                                Spatial Biogeochemistry & Bayesian GIS Platform
+                            </h2>
+                            <p className="text-xs text-zinc-400 max-w-2xl leading-relaxed">
+                                Continuous multi-isotope isoscape mapping, forensic soil QXRD pedology, botanical palynology,
+                                and Rossmo targeted hunting geographic crime profiling.
+                            </p>
+                        </div>
+
+                        {/* Action Button & Preset Loader (Touch Targets >= 44px) */}
+                        <div className="flex items-center gap-2.5 flex-wrap">
+                            <button
+                                onClick={() => {
+                                    setEnamelD18O(GOLDEN_VECTOR_01.enamelD18O);
+                                    setEnamelSr(GOLDEN_VECTOR_01.enamelSr);
+                                    setHairD2H(GOLDEN_VECTOR_01.hairD2H);
+                                    setResolvedLat(GOLDEN_VECTOR_01.expectedLat);
+                                    setResolvedLon(GOLDEN_VECTOR_01.expectedLon);
+                                    setResolvedRadius(GOLDEN_VECTOR_01.expectedRadius);
+                                    setSoilQ(GOLDEN_VECTOR_02);
+                                    setIsDivergentSoil(false);
+                                    setCrimeSites(GOLDEN_VECTOR_03);
+                                }}
+                                className="min-h-[44px] px-3.5 py-2.5 rounded-xl border border-zinc-700/60 bg-zinc-900/60 hover:bg-zinc-800 active:scale-95 text-xs font-mono text-zinc-300 transition-all flex items-center gap-2 cursor-pointer"
+                            >
+                                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                                Load Golden Benchmarks
                             </button>
-                        );
-                    })}
+                            <button
+                                onClick={handleRunAnalysis}
+                                disabled={isExecuting}
+                                className="min-h-[44px] px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 active:scale-95 text-white font-mono text-xs font-bold tracking-wide shadow-lg shadow-cyan-900/20 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                            >
+                                <RefreshCw className={`w-3.5 h-3.5 ${isExecuting ? "animate-spin" : ""}`} />
+                                {isExecuting ? `Solving Engine (${executionProgress}%)` : "Execute Solver"}
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Live Progress Bar & Telemetry Multi-Stage Progress (%0 - %100) */}
+                    <div className="mt-4 pt-3 border-t border-tactical-border/40 space-y-2">
+                        <div className="flex items-center justify-between text-xs font-mono">
+                            <div className="flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+                                <span className="text-zinc-300 font-bold">
+                                    {TELEMETRY_PHASES[currentPhaseIndex].label}
+                                </span>
+                                <span className="text-zinc-500 hidden sm:inline">
+                                    — {TELEMETRY_PHASES[currentPhaseIndex].description}
+                                </span>
+                            </div>
+                            <span className="text-cyan-400 font-bold tabular-nums">
+                                {executionProgress}%
+                            </span>
+                        </div>
+
+                        {/* Progress Bar Container with h-full and flex protection */}
+                        <div className="w-full h-2 rounded-full bg-zinc-900/90 border border-zinc-800 overflow-hidden relative">
+                            <motion.div
+                                className="h-full bg-gradient-to-r from-cyan-500 via-blue-500 to-emerald-400 rounded-full"
+                                initial={{ width: "100%" }}
+                                animate={{ width: `${executionProgress}%` }}
+                                transition={{ ease: "easeInOut", duration: 0.15 }}
+                            />
+                        </div>
+                    </div>
+
+                    {/* Subsystem Mode Navigation Tabs (Responsive & Touch-Friendly >= 44px) */}
+                    <div className="mt-4 pt-3 border-t border-tactical-border/40 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
+                        {[
+                            { id: "ISOSCAPES", label: "1. Isoscapes (H/O/Sr)", icon: Globe, badge: "GMWL" },
+                            { id: "SOIL_CODA", label: "2. Soil Pedology", icon: Mountain, badge: "QXRD" },
+                            { id: "PALYNOLOGY_EDNA", label: "3. Palynology & eDNA", icon: TreePine, badge: "16S/ITS" },
+                            { id: "ROSSMO_GEO", label: "4. Rossmo Profiling", icon: Crosshair, badge: "SEI 96%" },
+                            { id: "BAYESIAN_FUSION", label: "5. Bayesian Fusion", icon: Layers, badge: "Raster" },
+                        ].map((tab) => {
+                            const active = mode === tab.id;
+                            const Icon = tab.icon;
+                            return (
+                                <button
+                                    key={tab.id}
+                                    onClick={() => setMode(tab.id as GeoSubsystemMode)}
+                                    className={`min-h-[48px] p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-1.5 ${active
+                                            ? "bg-cyan-500/15 border-cyan-500/50 shadow-md shadow-cyan-950/40"
+                                            : "bg-zinc-900/40 border-zinc-800/60 hover:border-zinc-700 text-zinc-400 hover:text-zinc-200"
+                                        }`}
+                                >
+                                    <div className="flex items-center justify-between w-full">
+                                        <Icon className={`w-4 h-4 ${active ? "text-cyan-400" : "text-zinc-500"}`} />
+                                        <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-black/40 text-zinc-400 border border-zinc-800">
+                                            {tab.badge}
+                                        </span>
+                                    </div>
+                                    <span className={`text-xs font-bold truncate ${active ? "text-white" : ""}`}>
+                                        {tab.label}
+                                    </span>
+                                </button>
+                            );
+                        })}
+                    </div>
                 </div>
-            </div>
+            )}
 
             {/* ═══════════════════════════════════════════════════════════════════
           ACTIVE SUBSYSTEM VIEW ROUTER

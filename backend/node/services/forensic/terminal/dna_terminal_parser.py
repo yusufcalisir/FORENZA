@@ -33,6 +33,17 @@ AMEL_Y_NULL_PRIOR_SAS: float = 0.0180     # 1.80% in South Asian / Indian Subcon
 AMEL_Y_NULL_PRIOR_EUR: float = 0.0002     # 0.02% in Western European lineages
 
 
+from backend.node.services.forensic.terminal.str_locus_registry_engine import (
+    StrLocusRegistryEngine,
+    STR_LOCUS_24_MASTER_REGISTRY,
+    MICROVARIANT_MUTATIONAL_CATALOG,
+    StrRepeatUnitClass,
+    StrMotifClass,
+    MicrovariantDetail,
+    MicrovariantEtiologyClass,
+)
+
+
 @dataclass(frozen=True)
 class LocusMetadata:
     locus_name: str
@@ -44,107 +55,25 @@ class LocusMetadata:
     common_microvariants: Tuple[str, ...]
     max_reverse_stutter_ratio: float  # SR_max
     mutation_rate_10k: float          # mu * 10^-3
-    stepwise_mutation_r: float = 0.10
+    stepwise_mutation_r: float = 0.850
 
 
 STR_PANEL_24_CATALOG: Dict[str, LocusMetadata] = {
-    "D3S1358": LocusMetadata(
-        "D3S1358", "3p21.31", "chr3:45,540,691-45,540,820", "Compound",
-        "TCTA [TCTG]n [TCTA]m", "9 to 20", ("12", "13", "14", "15", "16", "17", "18"), 0.102, 1.12
-    ),
-    "vWA": LocusMetadata(
-        "vWA", "12p13.31", "chr12:5,983,800-5,984,000", "Compound",
-        "[TCTA]n [TCTG]m [TCTA]p", "11 to 24", ("14", "16", "17", "18", "19", "20"), 0.105, 1.74
-    ),
-    "FGA": LocusMetadata(
-        "FGA", "4q31.3", "chr4:154,583,600-154,583,900", "Complex",
-        "[GGAA]2 GGAG [AAAG]n AGAA AAAA [GAAA]3", "15 to 51.2", ("21.2", "22.2", "26.2"), 0.114, 2.82
-    ),
-    "D8S1179": LocusMetadata(
-        "D8S1179", "8q24.13", "chr8:124,911,200-124,911,400", "Compound",
-        "[TCTA]n [TCTG]m", "8 to 19", ("10", "11", "12", "13", "14", "15"), 0.091, 1.41
-    ),
-    "D21S11": LocusMetadata(
-        "D21S11", "21q21.1", "chr21:19,182,100-19,182,400", "Complex",
-        "[TCTA]n [TCTG]m [TCTA]p [TA]q [TCTA]r", "24 to 38", ("28.2", "29.2", "30.2", "31.2"), 0.108, 2.15
-    ),
-    "D18S51": LocusMetadata(
-        "D18S51", "18q21.33", "chr18:63,275,300-63,275,600", "Simple",
-        "[AGAA]n", "7 to 27", ("12", "13", "14", "15", "16", "17", "18", "19"), 0.121, 2.23
-    ),
-    "D5S818": LocusMetadata(
-        "D5S818", "5q23.2", "chr5:123,742,400-123,742,600", "Simple",
-        "[AGAT]n", "7 to 18", ("9", "10", "11", "12", "13"), 0.082, 1.05
-    ),
-    "D13S317": LocusMetadata(
-        "D13S317", "13q31.1", "chr13:82,148,000-82,148,200", "Simple",
-        "[TATC]n", "7 to 16", ("8", "9", "10", "11", "12", "13", "14"), 0.084, 1.32
-    ),
-    "D7S820": LocusMetadata(
-        "D7S820", "7q21.11", "chr7:83,789,500-83,789,700", "Simple",
-        "[GATA]n", "6 to 16", ("8", "9", "10", "11", "12", "13"), 0.081, 1.02
-    ),
-    "D16S539": LocusMetadata(
-        "D16S539", "16q24.1", "chr16:86,350,100-86,350,300", "Simple",
-        "[GATA]n", "5 to 16", ("9", "10", "11", "12", "13", "14"), 0.083, 1.14
-    ),
-    "CSF1PO": LocusMetadata(
-        "CSF1PO", "5q33.1", "chr5:150,076,000-150,076,200", "Simple",
-        "[AGAT]n", "6 to 16", ("9", "10", "11", "12", "13"), 0.074, 1.21
-    ),
-    "TH01": LocusMetadata(
-        "TH01", "11p15.5", "chr11:2,149,300-2,149,500", "Simple",
-        "[AATG]n", "3 to 14", ("6", "7", "8", "9", "9.3", "10"), 0.052, 0.22
-    ),
-    "TPOX": LocusMetadata(
-        "TPOX", "2p25.3", "chr2:1,489,300-1,489,500", "Simple",
-        "[AATG]n", "6 to 14", ("8", "9", "10", "11", "12"), 0.048, 0.45
-    ),
-    "D1S1656": LocusMetadata(
-        "D1S1656", "1q42.13", "chr1:230,808,187-230,808,318", "Compound",
-        "[CCTA]m [TCTA]n", "9 to 20.3", ("14.3", "15.3", "16.3", "17.3"), 0.112, 1.85
-    ),
-    "D2S441": LocusMetadata(
-        "D2S441", "2p14", "chr2:68,011,281-68,011,400", "Compound",
-        "[TCTA]n [TTTA]2", "8 to 17", ("10", "11", "11.3", "12", "14"), 0.076, 1.23
-    ),
-    "D2S1338": LocusMetadata(
-        "D2S1338", "2q35", "chr2:218,010,750-218,010,910", "Compound",
-        "[GGAA]n [GGCA]m", "15 to 28", ("17", "18", "19", "20", "23", "24"), 0.111, 1.36
-    ),
-    "D10S1248": LocusMetadata(
-        "D10S1248", "10q26.3", "chr10:130,566,800-130,567,000", "Simple",
-        "[GGAA]n", "7 to 19", ("12", "13", "14", "15", "16", "17"), 0.083, 0.91
-    ),
-    "D12S391": LocusMetadata(
-        "D12S391", "12p13.2", "chr12:12,341,200-12,341,450", "Compound",
-        "[AGAT]n [AGAC]m", "14 to 27", ("17.3", "18.3", "19.3", "20"), 0.129, 2.31
-    ),
-    "D19S433": LocusMetadata(
-        "D19S433", "19q12", "chr19:30,417,000-30,417,200", "Compound",
-        "[AAGG]a [AAAG]b [AAGG]n [TAGG]m", "9 to 17.2", ("13", "13.2", "14", "14.2", "15.2"), 0.089, 1.01
-    ),
-    "D22S1045": LocusMetadata(
-        "D22S1045", "22q12.3", "chr22:35,768,400-35,768,600", "Simple",
-        "[ATT]n", "7 to 20", ("11", "14", "15", "16", "17"), 0.068, 0.82
-    ),
-    "SE33": LocusMetadata(
-        "SE33", "6q14", "chr6:88,272,300-88,272,800", "Complex",
-        "[AAAG]n", "11 to 40", ("26.2", "28.2", "30.2", "31.2"), 0.142, 3.52
-    ),
-    "Penta D": LocusMetadata(
-        "Penta D", "21q22.3", "chr21:43,767,500-43,767,800", "Simple",
-        "[AAAGA]n", "2.2 to 17", ("8", "9", "10", "11", "12", "13"), 0.038, 1.34
-    ),
-    "Penta E": LocusMetadata(
-        "Penta E", "15q26.2", "chr15:96,878,000-96,878,300", "Simple",
-        "[AAAGA]n", "5 to 24", ("7", "10", "11", "12", "13", "14"), 0.041, 1.51
-    ),
-    "Amelogenin": LocusMetadata(
-        "Amelogenin", "Xp22.2 / Yp11.2", "chrX:11.21M / chrY:6.86M", "Non-STR Indel",
-        "6 bp deletion in intron 1 of AMELX", "X, Y", ("X", "Y"), 0.000, 0.0001
-    ),
+    name: LocusMetadata(
+        locus_name=meta.locus_name,
+        cytogenetic_band=meta.cytogenetic_band,
+        grch38_coords=meta.grch38_coords,
+        repeat_class=meta.motif_class.value,
+        repeat_motif=meta.canonical_motif_sequence,
+        allelic_range=f"{meta.observed_allele_spectrum[0]} to {meta.observed_allele_spectrum[-1]}" if meta.observed_allele_spectrum else "N/A",
+        common_microvariants=meta.documented_microvariants,
+        max_reverse_stutter_ratio=meta.max_reverse_stutter_ratio,
+        mutation_rate_10k=meta.germline_mutation_rate_10k,
+        stepwise_mutation_r=meta.stepwise_mutation_r,
+    )
+    for name, meta in STR_LOCUS_24_MASTER_REGISTRY.items()
 }
+
 
 
 # ═══════════════════════════════════════════════════════════════════════════════

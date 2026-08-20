@@ -371,7 +371,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       archLayersLabel: "Architectural Layers",
       archLayersValue: "7-Layer DAG",
       pytestInvariantsLabel: "Automated Test Suite",
-      pytestInvariantsValue: "829 / 829 Verified",
+      pytestInvariantsValue: "952 / 952 Verified",
       standardComplianceLabel: "Standard Compliance",
       standardComplianceValue: "ISO/IEC 17025",
       pillars: [
@@ -509,7 +509,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       title: "Cryptographic Evidence Custody & ISO 17025 Compliance",
       subtitle: "Tamper-evident audit logging, zero-knowledge evidence verification, and strict chain of custody.",
       matrixTitle: "Technical Platform Specifications & Standards Matrix",
-      passedBadge: "829 TESTS VERIFIED",
+      passedBadge: "952 TESTS VERIFIED",
       pillars: [
         {
           title: "Zero-Knowledge Privacy Auditor",
@@ -536,9 +536,9 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
         { label: "Physical & Trace Evidence", value: "3D BPA Least-Squares Origin, SEM-EDX GSR (Pb-Ba-Sb), CMC Ballistics & Entomology ADD/ADH" },
         { label: "Geo-Forensic Intelligence", value: "Multi-Isotope Isoscapes (H/O/Sr), Soil QXRD CoDa, Palynology eDNA & Rossmo Profiling" },
         { label: "Population Models", value: "NRC II Recommendations 4.1 & 4.2 Balding-Nichols Dirichlet Subpopulation Fst Correction" },
-        { label: "Instrument Ingestion", value: "Automated Gateway for CE GeneMapper CSV, qPCR Quantifiler Trio Cq/DI & NGS MiSeq VCF" },
+        { label: "Instrument Ingestion", value: "Automated Gateway for CE GeneMapper CSV, CODIS CMF XML, NGS VCF, 24-STR, 55-SNP, 27 Y-STR & mtDNA D-Loop" },
         { label: "ISO 17025 Compliance", value: "8-Section Formal Certificate Compiler, GUM Uncertainty (k=2.00) & 7-Tier ENFSI Scaler" },
-        { label: "Automated Test Suite", value: "829 / 829 Automated Tests Passed (100% Invariant Validation)" },
+        { label: "Automated Test Suite", value: "952 / 952 Automated Tests Passed (100% Invariant Validation)" },
         { label: "Frontend Stack", value: "Next.js 16 Turbopack App Router, React 19, Tailwind CSS, Framer Motion" },
         { label: "Backend Stack", value: "FastAPI (Python 3.12), NumPy, SciPy, Scikit-learn, MCMC Metropolis-Hastings Engine" },
         { label: "Privacy & Ledger", value: "Circom zk-SNARK Groth16 (BN254 Pairings) + Binary Merkle Tree O(log₂ N) Custody Ledger" }
@@ -747,7 +747,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       archLayersLabel: "Mimari Katmanlar",
       archLayersValue: "7 Katmanlı DAG",
       pytestInvariantsLabel: "Doğrulanmış Test Paketi",
-      pytestInvariantsValue: "829 / 829 Doğrulandı",
+      pytestInvariantsValue: "952 / 952 Doğrulandı",
       standardComplianceLabel: "Standart Uyumluluk",
       standardComplianceValue: "ISO/IEC 17025",
       pillars: [
@@ -885,7 +885,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       title: "Kriptografik Delil Zinciri ve ISO 17025 Akreditasyonu",
       subtitle: "Müdahaleye karşı korumalı denetim izi, sıfır bilgi kanıtlı delil doğrulaması ve katı delil zinciri takibi.",
       matrixTitle: "Teknik Platform Özellikleri ve Standartlar Matrisi",
-      passedBadge: "%100 DOĞRULANMIŞ (829 TEST)",
+      passedBadge: "%100 DOĞRULANMIŞ (952 TEST)",
       pillars: [
         {
           title: "Sıfır Bilgi İspatlı Gizlilik Denetçisi (ZKP)",
@@ -912,9 +912,9 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
         { label: "Fiziksel ve İz İnceleme", value: "3D BPA En Küçük Kareler Çıkış Noktası, SEM-EDX GSR (Pb-Ba-Sb), CMC Balistik & Entomoloji ADD/ADH" },
         { label: "Jeo-Adli İstihbarat", value: "Çoklu İzotop İzoskapları (H/O/Sr), Toprak QXRD CoDa, Palinoloji eDNA & Rossmo Profilleme" },
         { label: "Popülasyon Modelleri", value: "NRC II Tavsiye 4.1 & 4.2 Balding-Nichols Dirichlet Alt Popülasyon Fst Düzeltmesi" },
-        { label: "Cihaz Veri Kabulü", value: "CE GeneMapper CSV, qPCR Quantifiler Trio Cq/DI ve NGS MiSeq VCF Otomatik Geçidi" },
+        { label: "Cihaz Veri Kabulü", value: "CE GeneMapper CSV, CODIS CMF XML, NGS VCF, 24-STR, 55-SNP, 27 Y-STR ve mtDNA D-Loop Veri Kabul Geçidi" },
         { label: "ISO 17025 Uyumluluğu", value: "8 Bölümlü Adli Sertifika Derleyicisi, GUM Ölçüm Belirsizliği (k=2.00) ve 7 Kademeli ENFSI Ölçeği" },
-        { label: "Doğrulanmış Test Paketi", value: "829 / 829 Otomatik Test Başarılı (%100 İnvaryant Doğrulaması)" },
+        { label: "Doğrulanmış Test Paketi", value: "952 / 952 Otomatik Test Başarılı (%100 İnvaryant Doğrulaması)" },
         { label: "Ön Yüz Teknolojisi", value: "Next.js 16 Turbopack App Router, React 19, Tailwind CSS, Framer Motion" },
         { label: "Arka Yüz Teknolojisi", value: "FastAPI (Python 3.12), NumPy, SciPy, Scikit-learn, MCMC Metropolis-Hastings Motoru" },
         { label: "Gizlilik ve Delil Kütüğü", value: "Circom zk-SNARK Groth16 (BN254 Eşlemeleri) + İkili Merkle Ağacı O(log₂ N) Delil Kütüğü" }

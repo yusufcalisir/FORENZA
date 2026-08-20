@@ -227,9 +227,9 @@ Analyze this forensic dataset and return structured results containing:
       },
       full_multiomic: {
         summary: isTr
-          ? `FORENZA Çoklu-Omik Canlı Taraması Tamamlandı: 30 adli alt sistem doğrulamadan geçti. LR = ${kinshipLR}, Fenotip %${eyeColorProb} ${eyeColor} Göz, Epigenetik Yaş ${epigeneticAge} yıl, ZK-SNARK ispatı mühürlendi.`
-          : `FORENZA Full Multi-Omic Live Sweep Complete: All 30 subsystems validated. LR = ${kinshipLR}, Phenotype ${eyeColorProb}% ${eyeColor} Eye, Epigenetic Age ${epigeneticAge} yrs, ZK-SNARK proof sealed.`,
-        metrics: { overallConfidence: 0.998, activeSubsystems: 30, chainIntegrity: "100% OK" },
+          ? `FORENZA Çoklu-Omik Canlı Taraması Tamamlandı: 35 adli alt sistem doğrulamadan geçti. LR = ${kinshipLR}, Fenotip %${eyeColorProb} ${eyeColor} Göz, Epigenetik Yaş ${epigeneticAge} yıl, ZK-SNARK ispatı mühürlendi.`
+          : `FORENZA Full Multi-Omic Live Sweep Complete: All 35 subsystems validated. LR = ${kinshipLR}, Phenotype ${eyeColorProb}% ${eyeColor} Eye, Epigenetic Age ${epigeneticAge} yrs, ZK-SNARK proof sealed.`,
+        metrics: { overallConfidence: 0.998, activeSubsystems: 35, chainIntegrity: "100% OK" },
         recommendations: [isTr ? "ISO/IEC 17025 mahkeme raporunu dışa aktar." : "Export ISO/IEC 17025 court testimony package."]
       }
     };

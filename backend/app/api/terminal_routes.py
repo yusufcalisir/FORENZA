@@ -37,6 +37,13 @@ try:
         CaseworkPresetDto,
         ExportProfileRequest,
         ExportProfileResponse,
+        CliBatchExecuteRequest,
+        CliBatchExecuteResponse,
+    )
+    from backend.node.services.forensic.terminal.cli_batch_parser import (
+        ForensicCliBatchParser,
+        ForensicCliLexer,
+        CliSyntaxError,
     )
     from backend.node.services.forensic.terminal.dna_terminal_parser import (
         DnaTerminalParser,
@@ -88,6 +95,13 @@ except ImportError:
         CaseworkPresetDto,
         ExportProfileRequest,
         ExportProfileResponse,
+        CliBatchExecuteRequest,
+        CliBatchExecuteResponse,
+    )
+    from node.services.forensic.terminal.cli_batch_parser import (
+        ForensicCliBatchParser,
+        ForensicCliLexer,
+        CliSyntaxError,
     )
     from node.services.forensic.terminal.dna_terminal_parser import (
         DnaTerminalParser,
@@ -359,7 +373,7 @@ def calculate_bga_ancestry(req: TerminalBgaRequest) -> TerminalBgaResponse:
 @router.post("/hirisplex", response_model=TerminalHIrisPlexResponse, summary="41-SNP HIrisPlex-S Softmax MLR Pigmentation")
 def calculate_hirisplex_pigmentation(req: TerminalHIrisPlexRequest) -> TerminalHIrisPlexResponse:
     """
-    Executes HIrisPlex-S Softmax MLR for Eye (3-class), Hair (4-class + MC1R epistasis), and Skin (5-class).
+    Executes HIrisPlex-S Softmax MLR for Eye (3-class), Hair (4-class + MC1R epistasis), Skin (5-class), and Hair Texture (4-class).
     """
     res = SnpPhenotypeBgaEngine.calculate_hirisplex_phenotypes(req.sample_id, req.genotype_dosages)
     return TerminalHIrisPlexResponse(
@@ -371,6 +385,10 @@ def calculate_hirisplex_pigmentation(req: TerminalHIrisPlexRequest) -> TerminalH
         mc1r_red_hair_epistasis_flag=res.mc1r_red_hair_epistasis_flag,
         predicted_skin_phototype=res.predicted_skin_phototype,
         skin_phototype_probabilities=res.skin_phototype_probabilities,
+        hair_texture_probabilities=res.hair_texture_probabilities,
+        predicted_hair_texture=res.predicted_hair_texture,
+        decision_ratios=res.decision_ratios,
+        is_conclusive=res.is_conclusive,
         num_hirisplex_snps_evaluated=res.num_hirisplex_snps_evaluated,
     )
 
@@ -624,8 +642,18 @@ def get_casework_presets() -> List[CaseworkPresetDto]:
             heterozygote_balance=p.heterozygote_balance,
             str_profile=p.str_profile,
             snp_dosages=p.snp_dosages,
+            ystr_profile=p.ystr_profile,
+            mtdna_mutations=p.mtdna_mutations,
             supplementary_markers=p.supplementary_markers,
             chain_of_custody_hash=p.chain_of_custody_hash,
+            coriell_id=p.coriell_id,
+            nist_srm_designation=p.nist_srm_designation,
+            sex=p.sex,
+            population_group=p.population_group,
+            is_certified_standard=p.is_certified_standard,
+            aim_profile=p.aim_profile,
+            hirisplex_profile=p.hirisplex_profile,
+            visage_epigenetic_profile=p.visage_epigenetic_profile,
         )
         for p in presets
     ]
@@ -634,13 +662,13 @@ def get_casework_presets() -> List[CaseworkPresetDto]:
 @router.get("/presets/{preset_id}", response_model=CaseworkPresetDto, summary="Retrieve a Specific Casework Preset")
 def get_casework_preset_by_id(preset_id: str) -> CaseworkPresetDto:
     """
-    Retrieves a specific casework preset by its vector identifier (e.g. VECTOR_TERM_01).
+    Retrieves a specific casework preset by its vector identifier (e.g. PRESET_NA12878_CEU).
     """
     p = CaseworkPresetsEngine.get_preset_by_id(preset_id)
     if not p:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Casework preset '{preset_id}' not found. Available presets: VECTOR_TERM_01 to VECTOR_TERM_06."
+            detail=f"Casework preset '{preset_id}' not found. Available presets: PRESET_NIST_SRM_2391D, PRESET_NA12878_CEU, PRESET_HG002_AJ, PRESET_NA19240_YRI, PRESET_NA18507_CHB."
         )
 
     return CaseworkPresetDto(
@@ -658,8 +686,18 @@ def get_casework_preset_by_id(preset_id: str) -> CaseworkPresetDto:
         heterozygote_balance=p.heterozygote_balance,
         str_profile=p.str_profile,
         snp_dosages=p.snp_dosages,
+        ystr_profile=p.ystr_profile,
+        mtdna_mutations=p.mtdna_mutations,
         supplementary_markers=p.supplementary_markers,
         chain_of_custody_hash=p.chain_of_custody_hash,
+        coriell_id=p.coriell_id,
+        nist_srm_designation=p.nist_srm_designation,
+        sex=p.sex,
+        population_group=p.population_group,
+        is_certified_standard=p.is_certified_standard,
+        aim_profile=p.aim_profile,
+        hirisplex_profile=p.hirisplex_profile,
+        visage_epigenetic_profile=p.visage_epigenetic_profile,
     )
 
 
@@ -715,6 +753,38 @@ def export_forensic_profile(req: ExportProfileRequest) -> ExportProfileResponse:
         filename_suggestion=filename,
         sha256_checksum=sha256_hash,
     )
+
+
+@router.post("/cli-batch", response_model=CliBatchExecuteResponse)
+async def execute_cli_batch_command(req: CliBatchExecuteRequest):
+    """
+    Executes an interactive forensic CLI command string e.g.
+      - str set-batch --data "..." --rfu "..." --mode STRICT
+      - ystr set-batch --data "..."
+      - mtdna set-batch --data "..."
+      - snp set-batch --data "..."
+      - cpg set-batch --data "..." --tissue BLOOD
+    Returns parsed canonical LIMS profile state and ISO/IEC 17025 SHA-256 cryptographic audit digests.
+    """
+    try:
+        res = ForensicCliBatchParser.execute_command(req.command_line)
+        return CliBatchExecuteResponse(**res)
+    except CliSyntaxError as cse:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={
+                "error": "CLI_SYNTAX_ERROR",
+                "message": str(cse),
+                "offset": cse.offset,
+                "token": cse.token,
+            }
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"CLI batch execution failed: {str(e)}"
+        )
+
 
 
 

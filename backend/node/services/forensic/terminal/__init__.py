@@ -40,9 +40,25 @@ from .epg_synthesis_engine import (
 )
 
 from .casework_presets import (
-    CaseworkPresetsEngine,
+    CaseworkPresetExporter,
     CaseworkPresetItem,
     GOLDEN_CASEWORK_PRESETS,
+    CERTIFIED_GLOBAL_REFERENCE_PRESETS,
+    PRESET_NIST_SRM_2391D,
+    PRESET_NA12878_CEU,
+    PRESET_HG002_AJ,
+    PRESET_NA19240_YRI,
+    PRESET_NA18507_CHB,
+    ForensicMultiOmicValidator,
+)
+
+from .cli_batch_parser import (
+    ForensicCliBatchParser,
+    ForensicCliLexer,
+    CliSyntaxError,
+    ExecutionMode,
+    DomainPrefix,
+    ParsedCommand,
 )
 
 __all__ = [
@@ -73,9 +89,22 @@ __all__ = [
     "EpgSynthesisResult",
     "PANEL_24_LOCUS_MAPPING",
     "LIZ_600_STANDARD_SIZES",
-    "CaseworkPresetsEngine",
+    "CaseworkPresetExporter",
     "CaseworkPresetItem",
     "GOLDEN_CASEWORK_PRESETS",
+    "CERTIFIED_GLOBAL_REFERENCE_PRESETS",
+    "PRESET_NIST_SRM_2391D",
+    "PRESET_NA12878_CEU",
+    "PRESET_HG002_AJ",
+    "PRESET_NA19240_YRI",
+    "PRESET_NA18507_CHB",
+    "ForensicMultiOmicValidator",
+    "ForensicCliBatchParser",
+    "ForensicCliLexer",
+    "CliSyntaxError",
+    "ExecutionMode",
+    "DomainPrefix",
+    "ParsedCommand",
 ]
 
 

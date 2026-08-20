@@ -1,4 +1,4 @@
-# Operating System
+# Operating System & File System Artifacts
 .DS_Store
 .DS_Store?
 ._*
@@ -8,7 +8,7 @@ ehthumbs.db
 Thumbs.db
 desktop.ini
 
-# Environment & Secrets
+# Environment Variables & Secrets
 .env
 .env.*
 .env.local
@@ -20,13 +20,10 @@ desktop.ini
 *.key
 *.cert
 
-# Local Startup & Shell Scripts (Track master starter scripts)
-!start_project.bat
-!start_project.sh
-
-# Node.js & Next.js
+# Node.js & Next.js Build Artifacts
 node_modules/
 frontend/node_modules/
+contracts/node_modules/
 .next/
 frontend/.next/
 out/
@@ -38,7 +35,7 @@ build/
 *.tsbuildinfo
 frontend/next-env.d.ts
 
-# Python
+# Python Virtual Environments, Caches & Testing
 __pycache__/
 */__pycache__/
 */*/__pycache__/
@@ -52,23 +49,23 @@ backend/venv/
 backend/.venv/
 .pytest_cache/
 backend/.pytest_cache/
+.ruff_cache/
+.mypy_cache/
 .coverage
 coverage/
 htmlcov/
-.mypy_cache/
-.ruff_cache/
+*.log
 debug_error.log
 test_out.txt
-*.log
 
-# Docker, Infrastructure & PostgreSQL Data
+# Docker & Local Infrastructure Data
 infra/milvus/volumes/
 infra/redis/data/
 infra/certs/
 infra/data/
 infra/docker-compose.global.yml
 
-# Hardhat, Solidity & ZKP Artifacts
+# Hardhat, Solidity & ZKP Generated Artifacts
 artifacts/
 cache/
 contracts/artifacts/
@@ -80,8 +77,7 @@ circuits/*.r1cs
 circuits/*.zkey
 circuits/*.sym
 
-# AI Agents & IDE Settings
-AGENTS.md
+# Local IDE & AI Agent Workspace Caches
 .agents/
 .gemini/
 .claude/
@@ -93,9 +89,4 @@ AGENTS.md
 *.swo
 *.sublime-project
 *.sublime-workspace
-
-# Local Deep Research Notes (Uncommitted)
-research/
-*.research.md
 scratch/
-

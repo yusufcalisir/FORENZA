@@ -41,7 +41,8 @@ async def predict_age(req: PredictAgeRequest) -> PredictAgeResponse:
         result = _AGE_ENGINE.predict_age(
             cpg_methylation=req.cpg_methylation,
             tissue_type=req.tissue_type,
-            chronological_age_known=req.chronological_age_known
+            chronological_age_known=req.chronological_age_known,
+            model_mode=req.model_mode or "VISAGE_5CPG_ELASTIC_NET"
         )
         return PredictAgeResponse(**result)
     except ValueError as e:

@@ -324,11 +324,11 @@ export function renderPanel(tabId: string) {
 
     // Pillar 2: Lineage Forensics & Kinship
     case "lineage_y":
-      return <LineageDnaPanel />;
+      return <LineageDnaPanel initialTab="ystr" />;
     case "lineage_x":
-      return <PanelKinship />;
+      return <LineageDnaPanel initialTab="xstr" />;
     case "lineage_mt":
-      return <LineageDnaPanel />;
+      return <LineageDnaPanel initialTab="mtdna" />;
     case "dvi":
       return <DviPanel />;
     case "humanid":
@@ -384,15 +384,15 @@ export function renderPanel(tabId: string) {
 
     // Pillar 7: Geo-Forensics & Spatial Intelligence
     case "geo_isoscape":
-      return <GeoForensicIntelligencePanel initialMode="ISOSCAPES" />;
+      return <GeoForensicIntelligencePanel initialMode="ISOSCAPES" hideHeaderTabs={true} />;
     case "geo_soil":
-      return <GeoForensicIntelligencePanel initialMode="SOIL_CODA" />;
+      return <GeoForensicIntelligencePanel initialMode="SOIL_CODA" hideHeaderTabs={true} />;
     case "geo_palynology":
-      return <GeoForensicIntelligencePanel initialMode="PALYNOLOGY_EDNA" />;
+      return <GeoForensicIntelligencePanel initialMode="PALYNOLOGY_EDNA" hideHeaderTabs={true} />;
     case "geo_rossmo":
-      return <GeoForensicIntelligencePanel initialMode="ROSSMO_GEO" />;
+      return <GeoForensicIntelligencePanel initialMode="ROSSMO_GEO" hideHeaderTabs={true} />;
     case "geo_fusion":
-      return <GeoForensicIntelligencePanel initialMode="BAYESIAN_FUSION" />;
+      return <GeoForensicIntelligencePanel initialMode="BAYESIAN_FUSION" hideHeaderTabs={true} />;
 
     default:
       return <PanelSTR />;

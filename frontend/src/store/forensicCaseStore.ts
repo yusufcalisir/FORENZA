@@ -52,6 +52,10 @@ export interface ForensicProfile {
   geoLocation: GeoLocationData;
   kinshipLR: string;
   epigeneticAge: number;
+  yStrMarkers?: Record<string, { alleles: string[]; rfus?: number[] }>;
+  mtDnaMutations?: string[];
+  yStrHaplogroup?: string;
+  mtDnaHaplogroup?: string;
 }
 
 export interface AuditEntry {

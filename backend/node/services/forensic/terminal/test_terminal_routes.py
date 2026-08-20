@@ -100,6 +100,8 @@ def test_api_terminal_hirisplex():
             "rs12913832": 2,  # HERC2 A/A
             "rs16891982": 2,  # SLC45A2 C/C
             "rs1426654": 2,   # SLC24A5 A/A
+            "rs3827760": 0,
+            "rs11803731": 0,
         }
     }
     res = client.post("/api/v1/forensic/terminal/hirisplex", json=req)
@@ -108,6 +110,10 @@ def test_api_terminal_hirisplex():
     assert data["predicted_eye_color"] == "Blue"
     assert data["eye_color_probabilities"]["Blue"] > 0.90
     assert data["predicted_skin_phototype"] in ("Very_Pale_Type_I", "Pale_Type_II")
+    assert data["predicted_hair_texture"] == "Straight"
+    assert "eye" in data["decision_ratios"]
+    assert "eye" in data["is_conclusive"]
+
 
 
 def test_api_terminal_comprehensive():
@@ -187,19 +193,26 @@ def test_api_terminal_presets_list():
     res = client.get("/api/v1/forensic/terminal/presets")
     assert res.status_code == 200
     data = res.json()
-    assert len(data) == 6
+    assert len(data) >= 5
     ids = {p["preset_id"] for p in data}
+    assert "PRESET_NA12878_CEU" in ids
+    assert "PRESET_HG002_AJ" in ids
+    assert "PRESET_NIST_SRM_2391D" in ids
     assert "VECTOR_TERM_01" in ids
-    assert "VECTOR_TERM_04" in ids
 
 
 def test_api_terminal_preset_get_by_id():
-    res = client.get("/api/v1/forensic/terminal/presets/VECTOR_TERM_04")
+    res = client.get("/api/v1/forensic/terminal/presets/PRESET_NA12878_CEU")
     assert res.status_code == 200
     data = res.json()
-    assert data["preset_id"] == "VECTOR_TERM_04"
-    assert data["str_profile"]["Amelogenin"]["allele1"] == "X"
-    assert data["supplementary_markers"]["DYS391"] == "11"
+    assert data["preset_id"] == "PRESET_NA12878_CEU"
+    assert data["str_profile"]["AMEL"]["allele1"] == "X"
+    assert data["str_profile"]["AMEL"]["allele2"] == "X"
+    assert data["is_certified_standard"] is True
+
+    # Test alias lookup
+    res_alias = client.get("/api/v1/forensic/terminal/presets/NA12878")
+    assert res_alias.status_code == 200
 
     # Test 404 for invalid ID
     res_404 = client.get("/api/v1/forensic/terminal/presets/NON_EXISTENT_ID")

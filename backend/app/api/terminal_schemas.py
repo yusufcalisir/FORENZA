@@ -167,7 +167,12 @@ class TerminalHIrisPlexResponse(BaseModel):
     mc1r_red_hair_epistasis_flag: bool
     predicted_skin_phototype: str
     skin_phototype_probabilities: Dict[str, float]
+    hair_texture_probabilities: Dict[str, float] = Field(default_factory=dict)
+    predicted_hair_texture: str = Field(default="Straight")
+    decision_ratios: Dict[str, float] = Field(default_factory=dict)
+    is_conclusive: Dict[str, bool] = Field(default_factory=dict)
     num_hirisplex_snps_evaluated: int
+
 
 
 class TerminalComprehensiveRequest(BaseModel):
@@ -283,8 +288,18 @@ class CaseworkPresetDto(BaseModel):
     heterozygote_balance: float
     str_profile: Dict[str, Dict[str, Any]]
     snp_dosages: Dict[str, int]
+    ystr_profile: Dict[str, Dict[str, Any]] = Field(default_factory=dict)
+    mtdna_mutations: List[str] = Field(default_factory=list)
     supplementary_markers: Dict[str, str] = Field(default_factory=dict)
     chain_of_custody_hash: str = ""
+    coriell_id: Optional[str] = None
+    nist_srm_designation: Optional[str] = None
+    sex: str = "FEMALE"
+    population_group: str = ""
+    is_certified_standard: bool = True
+    aim_profile: Dict[str, Any] = Field(default_factory=dict)
+    hirisplex_profile: Dict[str, Any] = Field(default_factory=dict)
+    visage_epigenetic_profile: Dict[str, Any] = Field(default_factory=dict)
 
 
 class ExportProfileRequest(BaseModel):
@@ -305,6 +320,36 @@ class ExportProfileResponse(BaseModel):
     mime_type: str
     filename_suggestion: str
     sha256_checksum: str
+
+
+class CliBatchExecuteRequest(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    command_line: str = Field(..., description="Raw forensic CLI command string e.g. str set-batch --data '...'")
+
+
+class CliBatchExecuteResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    transaction_id: str
+    domain: str
+    status: str
+    execution_mode: Optional[str] = "STRICT"
+    kit_name: Optional[str] = None
+    panel_name: Optional[str] = None
+    loci_count: Optional[int] = None
+    variant_count: Optional[int] = None
+    snp_count: Optional[int] = None
+    cpg_count: Optional[int] = None
+    tissue_calibration: Optional[str] = None
+    profiles: Optional[Dict[str, Any]] = None
+    haplotype: Optional[Dict[str, Any]] = None
+    aligned_variants: Optional[List[Dict[str, Any]]] = None
+    genotypes: Optional[Dict[str, Any]] = None
+    phenotype_markers: Optional[Dict[str, Any]] = None
+    methylation_profile: Optional[Dict[str, Any]] = None
+    age_estimation_model_output: Optional[Dict[str, Any]] = None
+    audit: Dict[str, Any]
+    warnings: List[str] = Field(default_factory=list)
+
 
 
 

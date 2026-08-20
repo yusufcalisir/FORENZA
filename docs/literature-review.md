@@ -15,9 +15,11 @@ This document provides a systematic review of foundational literature, statistic
 
 ## 1. Forensic Short Tandem Repeat (STR) Analysis
 
-### 1.1 Biological Mechanism & CODIS Panel
-Short Tandem Repeats (STRs) consist of repetitive DNA sequences (typically 2–6 base pairs in length) located at specific polymorphic loci across the human genome. The Federal Bureau of Investigation (FBI) expanded the core Combined DNA Index System (CODIS) from 13 to **20 core loci** in 2017 to enhance discrimination power and reduce accidental matching probabilities in international database searches:
-* **Core Loci:** CSF1PO, FGA, TH01, TPOX, vWA, D3S1358, D5S818, D7S820, D8S1179, D13S317, D16S539, D18S51, D21S11, D1S1656, D2S1338, D10S1248, D12S391, D19S433, D22S1045, and Amelogenin (sex determination).
+### 1.1 Biological Mechanism & Expanded 24-STR Panel
+Short Tandem Repeats (STRs) consist of repetitive DNA sequences (typically 2–6 base pairs in length) located at specific polymorphic loci across the human genome. The Federal Bureau of Investigation (FBI) expanded the core Combined DNA Index System (CODIS) from 13 to **20 core loci** in 2017, and modern forensic kits (GlobalFiler, PowerPlex Fusion 6C) employ **24-locus multiplexes** to maximize discrimination power:
+* **Autosomal STR Loci (22):** CSF1PO, FGA, TH01, TPOX, vWA, D3S1358, D5S818, D7S820, D8S1179, D13S317, D16S539, D18S51, D21S11, D1S1656, D2S1338, D2S441, D10S1248, D12S391, D19S433, D22S1045, Penta D, Penta E.
+* **Sex & Lineage Quality Markers (2):** Amelogenin (X/Y sex determination), DYS391 (Y-insertion verification for Amelogenin Y-null deletion anomalies), and SRY.
+* **Population Reference Matrix:** NIST 1036 revised U.S. population dataset (Caucasian, African American, Hispanic, Asian, Total $2N=2072$ alleles) with Dirichlet-Laplace smoothing and NRC II $p_{\min} = 0.00241$ empirical floors.
 
 ### 1.2 Polymerase Chain Reaction (PCR) Artifacts
 Capillary electrophoresis (CE) electropherograms (EPGs) display peak heights measured in Relative Fluorescence Units (RFUs). Real-world forensic EPG interpretation is complicated by three main biological/technical artifacts:
@@ -108,13 +110,47 @@ The President's Council of Advisors on Science and Technology (PCAST) evaluated 
 
 ---
 
-## 7. Implications for FORENZA Engine Architecture
+## 7. Lineage Markers: Paternal Y-STR & Maternal mtDNA Forensics
+
+### 7.1 Y-Chromosome STR Analysis & YHRD Guidelines
+* **Y-FILER Plus 27-Locus Panel:** Includes 20 standard plus 7 Rapidly Mutating (RM) loci (`DYS570`, `DYS576`, `DYS627`, `DYS518`, `DYS449`, `DYF387S1a/b`) with mutation rates $\mu > 10^{-2}$ per generation, allowing separation of close patrilineal relatives (Ballantyne et al., 2014).
+* **Clopper-Pearson 95% Binomial Upper Bound:** Exact estimation of haplotype frequency in reference database $N$ (YHRD $N=35,000$) when $k=0$ observations occur:
+  $$p_{\text{upper}} = 1 - (1 - \alpha)^{1/(N+1)}$$
+* **Brenner Subpopulation Coancestry Correction:**
+  $$p_{\text{Brenner}} = \frac{k + \theta}{N + \theta} \quad (\theta = 0.02)$$
+* **Stepwise Mutation Model (SMM) Kinship:** Kinship index evaluation for father-son or brother-brother transmissions factoring locus-specific single/multi-step germline mutations.
+
+### 7.2 Mitochondrial DNA (mtDNA) Control Region & EMPOP Framework
+* **rCRS vs. RSRS Alignment:** Sequence alignment against revised Cambridge Reference Sequence (rCRS, NC_012920.1) and Reconstructed Sapiens Reference Sequence (RSRS) across hypervariable segments HV1 (16024–16365), HV2 (73–340), and HV3 (438–574).
+* **EMPOP 3'-Right-Alignment Normalization:** Standardized shift of homopolymeric C-tracts (`315.1C`, `16193.1C`) and dinucleotide AC repeats (`524.1A`, `524del`) on the light strand (Parson et al., 2014).
+* **Point & Length Heteroplasmy (PHP/LHP):** IUPAC ambiguity representation (`R`, `Y`, `M`, `K`, `S`, `W`) with analytical threshold validation for mixed base calling.
+* **PhyloTree Build 17 Classification:** Hierarchical motif-matching algorithm classifying mtDNA sequences into 20 global maternal macro-haplogroups (`H`, `U`, `K`, `J`, `T`, `V`, `W`, `X`, `L0-L3`, `M`, `N`, `A2`, `B2`, `C1`) with Clopper-Pearson match bounds against EMPOP ($N=48,200$).
+
+---
+
+## 8. Forensic Epigenetics: DNA Methylation Age Estimation & Tissue Deconvolution
+
+### 8.1 VISAGE Consortium Epigenetic Age Clock
+The European VISAGE (Visible Attributes Through Genomics) Consortium developed standardized epigenetic multiplex assays for age estimation from forensic biological traces (Sobeck et al., 2020; Woźniak et al., 2021):
+* **Core 5-CpG Multiplex:** Targeting *ELOVL2* (`cg16867657`), *FHL2* (`cg06639320`), *PENK* (`cg16419235`), *TRIM59* (`cg04523812`), and *KLF14* (`cg07955995`).
+* **Piecewise Non-Linear Elastic Net Model:** Implements Horvath log-linear continuous link functions with pediatric boundary transformation ($y_0 = 20.0$ yrs) achieving mean absolute error $\text{MAE} \approx 3.15\text{ yrs}$ in blood and $\text{MAE} \approx 3.68\text{ yrs}$ in saliva/buccal cells.
+* **Direct MLR Power Transformations:** Captures non-linear kinetics via $\beta_{\text{ELOVL2}}^{2.366}$ power transformation (Zbieć-Piekarska et al., 2015).
+* **ISO/IEC 17025 Dynamic Uncertainty Budget:** Accounts for individual sample leverage via $(\mathbf{X}^T \mathbf{X})^{-1}$ Mahalanobis distance covariance matrix evaluation.
+
+### 8.2 Tissue Specificity & Calibration Offsets
+Epigenetic age predictions vary across cellular matrix origins due to cell-type turnover rates. Standardized tissue calibration offsets ($\Delta_{\text{tissue}}$) calibrate predictions across whole blood ($0.00\text{ yrs}$), oral buccal/saliva ($+2.45\text{ yrs}$), seminal fluid ($+18.60\text{ yrs}$), and post-mortem skeletal bone/teeth ($+1.15\text{ yrs}$).
+
+---
+
+## 9. Implications for FORENZA Engine Architecture
 
 Based on this review, the FORENZA platform adheres to the following core architectural invariants:
 1. **Continuous LR Engine:** Implement probabilistic genotyping using quantitative peak-height modeling and MCMC sampling across 24 core autosomal STR loci.
-2. **Balding-Nichols Integration:** Apply NRC II $\theta$-correction ($F_{st} = 0.01 / 0.03$) dynamically across all kinship and match calculations.
-3. **Multinomial Distribution Validation:** Enforce strict sum-to-unity ($\sum P_i = 100\% \pm 1\%$) biostatistical validation across all HIrisPlex-S phenotyping and ancestry categorical vectors.
-4. **Transparent Uncertainty:** Report LR values alongside 95% Bayesian highest posterior density (HPD) intervals and explicit assumption logs.
-5. **Court-Admissible ISO 17025 Reports:** Dynamically generate ENFSI 2017 compliant Certificates of Analysis bound to live calculated $\log_{10}(LR)$ values with zero clerical drift.
-6. **Zero-Knowledge Privacy Ledger:** Couple Circom Groth16 ZK-SNARK provers with HMAC-SHA256 audit chaining to ensure zero raw allele leakage during inter-agency verification.
-7. **Explainable Multi-Provider AI (BYO-Key):** Enforce strict boundary conditions where LLM reasoning engines (Gemini 2.0 Flash, OpenAI GPT-4o, Claude 3.5 Sonnet, DeepSeek V3/R1, Groq LLaMA 3.3) synthesize and contextualize computed statistics without altering underlying mathematical invariants.
+2. **Lineage Forensics Engine:** Incorporate 27-locus Y-STR Clopper-Pearson / SMM kinship calculations and mtDNA EMPOP 3'-alignment with PhyloTree 17 classification.
+3. **Epigenetics & Age Estimation Engine:** Integrate VISAGE 5-CpG Elastic Net and direct MLR models with dynamic Mahalanobis covariance $95\%$ prediction intervals.
+4. **Balding-Nichols Integration:** Apply NRC II $\theta$-correction ($F_{st} = 0.01 / 0.03$) dynamically across all kinship and match calculations.
+5. **Multinomial Distribution Validation:** Enforce strict sum-to-unity ($\sum P_i = 100\% \pm 1\%$) biostatistical validation across all HIrisPlex-S phenotyping and ancestry categorical vectors.
+6. **Transparent Uncertainty:** Report LR values alongside 95% Bayesian highest posterior density (HPD) intervals and explicit assumption logs.
+7. **Court-Admissible ISO 17025 Reports:** Dynamically generate ENFSI 2017 compliant Certificates of Analysis bound to live calculated $\log_{10}(LR)$ values with zero clerical drift.
+8. **Zero-Knowledge Privacy Ledger:** Couple Circom Groth16 ZK-SNARK provers with HMAC-SHA256 audit chaining to ensure zero raw allele leakage during inter-agency verification.
+9. **Explainable Multi-Provider AI (BYO-Key):** Enforce strict boundary conditions where LLM reasoning engines (Gemini 2.0 Flash, OpenAI GPT-4o, Claude 3.5 Sonnet, DeepSeek V3/R1, Groq LLaMA 3.3) synthesize and contextualize computed statistics without altering underlying mathematical invariants.

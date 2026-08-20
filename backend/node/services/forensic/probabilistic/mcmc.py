@@ -33,7 +33,7 @@ import math
 import random
 import statistics
 from dataclasses import dataclass, field
-from typing import Callable, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 from .peak_model import (
     EuroForMixGammaModel,
@@ -270,18 +270,40 @@ class MCMCSampler:
     # Internal: log-likelihood for a full profile configuration
     # ------------------------------------------------------------------
 
+    # ------------------------------------------------------------------
+    # Internal: log-likelihood for a full profile configuration
+    # ------------------------------------------------------------------
+
     def _compute_log_likelihood(
         self,
         observed: Dict[str, Dict[float, float]],
-        genotypes: List[Tuple[float, float]],
+        genotypes: Any,
         weights:   List[float],
         degradation: List[float],
     ) -> float:
         """Compute Σ_l Σ_a log P(h_{l,a} | Θ) using the configured model."""
         total_ll = 0.0
         for locus, allele_obs in observed.items():
-            expected = self._bphys.expected_peak_heights(
-                locus, genotypes, weights, degradation
+            if isinstance(genotypes, dict):
+                locus_genotypes = genotypes.get(locus)
+            elif isinstance(genotypes, list):
+                locus_genotypes = genotypes
+            else:
+                locus_genotypes = None
+
+            if not locus_genotypes:
+                continue
+
+            locus_rfu = sum(allele_obs.values())
+            bphys = BiophysicalPeakModel(
+                template_scale=max(50.0, 0.5 * locus_rfu),
+                amplification=self._bphys.amplification,
+                stutter_ratios=self._bphys.stutter_ratios,
+                s0_bp=self._bphys.s0_bp,
+            )
+
+            expected = bphys.expected_peak_heights(
+                locus, locus_genotypes, weights, degradation
             )
             for allele, h_obs in allele_obs.items():
                 h_exp = expected.get(allele, 0.0)
@@ -300,24 +322,33 @@ class MCMCSampler:
         observed: Dict[str, Dict[float, float]],
         K: int,
         rng: random.Random,
-    ) -> List[Tuple[float, float]]:
-        """Uniformly sample K genotypes from locus-union allele pool."""
-        all_alleles_per_locus: Dict[str, List[float]] = {
-            loc: list(obs.keys()) for loc, obs in observed.items()
-        }
-        genotypes = []
-        for _ in range(K):
-            g = {}
-            for locus, alleles in all_alleles_per_locus.items():
-                if len(alleles) >= 2:
-                    a1, a2 = rng.sample(alleles, 2)
-                    g[locus] = (min(a1, a2), max(a1, a2))
-                elif len(alleles) == 1:
-                    g[locus] = (alleles[0], alleles[0])
-            # Represent as first locus tuple for single-locus chains
-            first = next(iter(g.values())) if g else (0.0, 0.0)
-            genotypes.append(first)
-        return genotypes
+    ) -> Dict[str, List[Tuple[float, float]]]:
+        """Sample K genotypes per locus from the observed allele pool with height weighting."""
+        genotypes_by_locus: Dict[str, List[Tuple[float, float]]] = {}
+        for locus, allele_obs in observed.items():
+            alleles = list(allele_obs.keys())
+            if not alleles:
+                continue
+            # Sort alleles by height descending
+            sorted_alleles = sorted(alleles, key=lambda a: allele_obs[a], reverse=True)
+            locus_genotypes: List[Tuple[float, float]] = []
+
+            for k in range(K):
+                if len(sorted_alleles) >= 2 * (k + 1):
+                    # Distinct pair for each contributor
+                    a1 = sorted_alleles[2 * k]
+                    a2 = sorted_alleles[2 * k + 1]
+                    locus_genotypes.append((min(a1, a2), max(a1, a2)))
+                elif len(sorted_alleles) >= 2:
+                    a1, a2 = rng.sample(sorted_alleles, 2)
+                    locus_genotypes.append((min(a1, a2), max(a1, a2)))
+                elif len(sorted_alleles) == 1:
+                    locus_genotypes.append((sorted_alleles[0], sorted_alleles[0]))
+                else:
+                    locus_genotypes.append((0.0, 0.0))
+
+            genotypes_by_locus[locus] = locus_genotypes
+        return genotypes_by_locus
 
     # ------------------------------------------------------------------
     # Run a single chain
@@ -330,40 +361,71 @@ class MCMCSampler:
         K:           int,
         init_weights: List[float],
         init_degradation: List[float],
-        init_genotypes: List[Tuple[float, float]],
+        init_genotypes: Any,
+        adaptive_tuning: bool = True,
     ) -> MCMCChainResult:
-        """Execute one complete Metropolis-Hastings chain."""
+        """Execute one complete Metropolis-Hastings chain with burn-in adaptive tuning."""
         rng = random.Random(self.base_seed + chain_id if self.base_seed is not None else None)
 
         # Current state
         w_cur   = list(init_weights)
         d_cur   = list(init_degradation)
-        g_cur   = list(init_genotypes)
+        g_cur   = dict(init_genotypes) if isinstance(init_genotypes, dict) else list(init_genotypes)
         ll_cur  = self._compute_log_likelihood(observed, g_cur, w_cur, d_cur)
 
         samples: List[MCMCSample] = []
         n_accepted = 0
         total_proposals = 0
 
-        # -- Dirichlet concentration parameter for mixture proportion proposals --
-        dirichlet_conc = 50.0  # tighter around current → fine-tuned proposals
+        # -- Dirichlet concentration parameter and step size for proposals --
+        dirichlet_conc = 50.0  # proposal concentration parameter
+        d_step = 0.0005        # proposal standard deviation for degradation
+
+        # Adaptive batch tracking
+        tune_interval = 100
+        batch_accepted = 0
+        batch_proposals = 0
 
         for i in range(self.n_burn + self.n_sample):
-            # -- Propose mixture weights via symmetric Dirichlet --
-            alpha_prop = [w * dirichlet_conc for w in w_cur]
+            is_burnin = (i < self.n_burn)
+
+            # -- Adaptive proposal tuning during burn-in (Roberts-Gelman-Gilks target [0.22, 0.44]) --
+            if adaptive_tuning and is_burnin and batch_proposals >= tune_interval:
+                batch_rate = batch_accepted / max(1, batch_proposals)
+                if batch_rate > 0.44:
+                    # Acceptance too high -> take bolder jumps -> decrease concentration / increase step
+                    dirichlet_conc = max(5.0, dirichlet_conc * 0.85)
+                    d_step = min(0.005, d_step * 1.15)
+                elif batch_rate < 0.22:
+                    # Acceptance too low -> take finer jumps -> increase concentration / decrease step
+                    dirichlet_conc = min(500.0, dirichlet_conc * 1.20)
+                    d_step = max(0.0001, d_step * 0.85)
+                batch_accepted = 0
+                batch_proposals = 0
+
+            # -- Propose mixture weights via Dirichlet --
+            alpha_prop = [max(w * dirichlet_conc, 1e-4) for w in w_cur]
             w_prop = _sample_dirichlet(alpha_prop, rng)
 
             # -- Propose degradation slopes (truncated Normal, positivity) --
             d_prop = []
             for dk in d_cur:
-                dk_new = rng.gauss(dk, 0.0005)
+                dk_new = rng.gauss(dk, d_step)
                 d_prop.append(max(0.0, dk_new))
 
-            # -- Genotype proposal (occasional random perturbation) --
-            if rng.random() < 0.10:
-                g_prop = self._propose_genotypes(observed, K, rng)
+            # -- Genotype proposal (occasional perturbation of a single locus) --
+            if rng.random() < 0.15 and isinstance(g_cur, dict):
+                g_prop = {loc: list(gen_list) for loc, gen_list in g_cur.items()}
+                pert_loc = rng.choice(list(observed.keys()))
+                pert_alleles = list(observed[pert_loc].keys())
+                if len(pert_alleles) >= 2:
+                    new_g = []
+                    for _ in range(K):
+                        a1, a2 = rng.sample(pert_alleles, 2)
+                        new_g.append((min(a1, a2), max(a1, a2)))
+                    g_prop[pert_loc] = new_g
             else:
-                g_prop = list(g_cur)
+                g_prop = g_cur
 
             # -- Compute proposed log-likelihood --
             ll_prop = self._compute_log_likelihood(observed, g_prop, w_prop, d_prop)
@@ -371,17 +433,19 @@ class MCMCSampler:
             # -- Metropolis-Hastings acceptance --
             log_alpha = ll_prop - ll_cur   # prior is flat; q symmetric for Gaussian d
             # Correction for Dirichlet proposal asymmetry
-            log_q_cur = _log_dirichlet_pdf(w_cur, [w * dirichlet_conc for w in w_prop])
-            log_q_prop = _log_dirichlet_pdf(w_prop, [w * dirichlet_conc for w in w_cur])
+            log_q_cur = _log_dirichlet_pdf(w_cur, [max(w * dirichlet_conc, 1e-4) for w in w_prop])
+            log_q_prop = _log_dirichlet_pdf(w_prop, [max(w * dirichlet_conc, 1e-4) for w in w_cur])
             log_alpha += (log_q_cur - log_q_prop)
 
             total_proposals += 1
+            batch_proposals += 1
             if math.log(max(rng.random(), 1e-300)) <= log_alpha:
                 w_cur  = w_prop
                 d_cur  = d_prop
                 g_cur  = g_prop
                 ll_cur = ll_prop
                 n_accepted += 1
+                batch_accepted += 1
 
             # -- Retain after burn-in, with thinning --
             if i >= self.n_burn and (i - self.n_burn) % self.k_thin == 0:
@@ -389,7 +453,7 @@ class MCMCSampler:
                     iteration=i,
                     mixture_weights=list(w_cur),
                     degradation=list(d_cur),
-                    genotypes=list(g_cur),
+                    genotypes=dict(g_cur) if isinstance(g_cur, dict) else list(g_cur),
                     log_likelihood=ll_cur,
                 ))
 
@@ -436,14 +500,45 @@ class MCMCSampler:
         )
 
     # ------------------------------------------------------------------
-    # Public: run full 3-chain MCMC & compute LR
+    # Public: run full multi-chain MCMC & compute LR
     # ------------------------------------------------------------------
+
+    @staticmethod
+    def _get_dispersed_init_weights(chain_id: int, K: int) -> List[float]:
+        """Generate overdispersed initial contributor weights for multi-chain MCMC."""
+        if K == 2:
+            presets = [
+                [0.75, 0.25],
+                [0.25, 0.75],
+                [0.50, 0.50],
+                [0.65, 0.35],
+                [0.35, 0.65],
+            ]
+            return presets[chain_id % len(presets)]
+        elif K == 3:
+            presets = [
+                [0.60, 0.25, 0.15],
+                [0.20, 0.60, 0.20],
+                [0.15, 0.25, 0.60],
+                [0.333, 0.333, 0.334],
+                [0.50, 0.30, 0.20],
+            ]
+            return presets[chain_id % len(presets)]
+        elif K == 4:
+            presets = [
+                [0.40, 0.30, 0.20, 0.10],
+                [0.10, 0.20, 0.30, 0.40],
+                [0.25, 0.25, 0.25, 0.25],
+                [0.50, 0.20, 0.15, 0.15],
+            ]
+            return presets[chain_id % len(presets)]
+        return [1.0 / K] * K
 
     def run_mixture_deconvolution(
         self,
         observed: Dict[str, Dict[float, float]],
         K: int,
-        suspect_genotype: Optional[List[Tuple[float, float]]] = None,
+        suspect_genotype: Optional[Any] = None,
     ) -> MixtureLRResult:
         """
         Full MCMC mixture deconvolution and Likelihood Ratio computation.
@@ -451,7 +546,7 @@ class MCMCSampler:
         Args:
             observed : {locus → {allele → observed_RFU}}
             K        : Number of contributors (2, 3, or 4)
-            suspect_genotype : Per-locus genotype for H_p computation (optional).
+            suspect_genotype : Per-locus genotype for H_p computation (Dict[locus -> (a1, a2)] or List[(a1, a2)]).
                                If None, returns only H_d denominator LR.
 
         Returns:
@@ -460,21 +555,20 @@ class MCMCSampler:
         if K not in (2, 3, 4):
             raise ValueError(f"K must be 2, 3, or 4 contributors (got {K})")
 
-        # -- Initial parameter values --
-        init_weights    = [1.0 / K] * K
-        init_degradation= [0.002] * K
-        init_genotypes  = self._propose_genotypes(observed, K, random.Random(42))
+        init_degradation = [0.002] * K
+        init_genotypes   = self._propose_genotypes(observed, K, random.Random(42))
 
-        # -- Run N_CHAINS parallel chains --
+        # -- Run N_CHAINS parallel chains with overdispersed initializations --
         chain_results: List[MCMCChainResult] = []
         for c_id in range(self.n_chains):
+            chain_init_weights = self._get_dispersed_init_weights(c_id, K)
             chain = self._run_chain(
                 chain_id=c_id,
                 observed=observed,
                 K=K,
-                init_weights=list(init_weights),
+                init_weights=chain_init_weights,
                 init_degradation=list(init_degradation),
-                init_genotypes=list(init_genotypes),
+                init_genotypes=dict(init_genotypes),
             )
             chain_results.append(chain)
 
@@ -490,12 +584,33 @@ class MCMCSampler:
         # -- Compute H_d integrated likelihood (all K unknown) --
         ll_hd_vals: List[float] = [s.log_likelihood for s in all_samples]
 
+        # -- Map suspect_genotype to Dict[str, Tuple[float, float]] --
+        suspect_dict: Dict[str, Tuple[float, float]] = {}
+        if suspect_genotype:
+            if isinstance(suspect_genotype, dict):
+                suspect_dict = suspect_genotype
+            elif isinstance(suspect_genotype, list):
+                for loc_idx, loc_name in enumerate(observed.keys()):
+                    if loc_idx < len(suspect_genotype):
+                        suspect_dict[loc_name] = suspect_genotype[loc_idx]
+
         # -- Compute H_p integrated likelihood if suspect provided --
         ll_hp_vals: List[float] = []
-        if suspect_genotype:
+        if suspect_dict:
             for s in all_samples:
-                # Fix genotype of contributor 1 to suspect; resample others
-                fixed_genotypes = [suspect_genotype[0] if suspect_genotype else s.genotypes[0]] + s.genotypes[1:]
+                fixed_genotypes: Dict[str, List[Tuple[float, float]]] = {}
+                if isinstance(s.genotypes, dict):
+                    for loc_name, s_locus_genotypes in s.genotypes.items():
+                        if loc_name in suspect_dict:
+                            fixed_genotypes[loc_name] = [suspect_dict[loc_name]] + s_locus_genotypes[1:]
+                        else:
+                            fixed_genotypes[loc_name] = s_locus_genotypes
+                else:
+                    # Single locus list
+                    first_loc = next(iter(observed.keys()))
+                    if first_loc in suspect_dict:
+                        fixed_genotypes[first_loc] = [suspect_dict[first_loc]] + s.genotypes[1:]
+
                 ll_hp = self._compute_log_likelihood(
                     observed, fixed_genotypes, s.mixture_weights, s.degradation
                 )
@@ -522,7 +637,7 @@ class MCMCSampler:
 
         # -- Point estimate & 95% HPD --
         log10_lr_point = (log_l_hp - log_l_hd) / math.log(10) if ll_hp_vals else statistics.mean(log10_lr_samples)
-        se_log10_lr    = statistics.stdev(log10_lr_samples) / math.sqrt(max(1, len(log10_lr_samples)))
+        se_log10_lr    = statistics.stdev(log10_lr_samples) / math.sqrt(max(1, len(log10_lr_samples))) if len(log10_lr_samples) > 1 else 0.0
         hpd_lo         = log10_lr_point - 1.96 * se_log10_lr
         hpd_hi         = log10_lr_point + 1.96 * se_log10_lr
 

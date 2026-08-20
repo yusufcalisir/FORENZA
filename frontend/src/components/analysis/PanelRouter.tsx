@@ -511,3 +511,6 @@ export function renderPanel(tabId: string) {
       return <PanelSTR />;
   }
 }
+
+// Canonical alias for Pillar 1.2 MCMC Mixture Deconvoluter
+export { ProbabilisticGenotypingPanel as PanelMCMC };

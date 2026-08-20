@@ -160,6 +160,14 @@ try:
 except Exception as _forensic_import_err:
     logger.warning(f"[boot] Forensic router not loaded: {_forensic_import_err}")
 
+# --- MCMC Mixture Deconvolution Router (1.2.5) ---
+try:
+    from app.api.mixture_routes import router as mixture_router
+    app.include_router(mixture_router, prefix="/api/v1")
+    logger.info("[boot] MCMC mixture router registered at /api/v1/forensic/mixture")
+except Exception as _mix_import_err:
+    logger.warning(f"[boot] Mixture router not loaded: {_mix_import_err}")
+
 # --- Forensic DNA Phenotyping Router ---
 try:
     from app.api.phenotype_routes import router as phenotype_router

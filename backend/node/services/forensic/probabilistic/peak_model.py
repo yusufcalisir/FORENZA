@@ -310,11 +310,10 @@ class BiophysicalPeakModel:
         # --- Phase 2: Add back-stutter (n−1 repeat → allele - 1) ---
         SR_l = self.stutter_ratios.get(locus.upper(), 0.07)
         mu_final: Dict[float, float] = dict(mu_pre)
-        for allele in list(all_alleles):
-            parent_allele = allele + 1.0  # Back-stutter from n+1 allele
-            if parent_allele in mu_pre and mu_pre[parent_allele] > 0.0:
-                stutter_contrib = SR_l * mu_pre[parent_allele]
-                mu_final[allele] = mu_final.get(allele, 0.0) + stutter_contrib
+        for b, h in mu_pre.items():
+            if h > 0.0:
+                stutter_a = round(b - 1.0, 4)
+                mu_final[stutter_a] = mu_final.get(stutter_a, 0.0) + SR_l * h
 
         return mu_final
 

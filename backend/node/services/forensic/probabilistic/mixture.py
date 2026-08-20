@@ -170,6 +170,7 @@ class MixtureDeconvolutionEngine:
         locus_name: str,
         observed_alleles_with_heights: Dict[float, float],
         mixture_weights: Optional[List[float]] = None,
+        degradation_slopes: Optional[List[float]] = None,
     ) -> LocusDeconvolutionResult:
         """
         Enumerate candidate genotype pairs for K contributors at a single locus.
@@ -179,13 +180,14 @@ class MixtureDeconvolutionEngine:
             locus_name:                   STR locus name.
             observed_alleles_with_heights: {allele → observed_RFU}
             mixture_weights:               Posterior mixture weights (w_k).
+            degradation_slopes:           Optional degradation slopes per contributor.
 
         Returns:
             LocusDeconvolutionResult with top-ranked genotype candidates.
         """
         K = len(mixture_weights) if mixture_weights else 2
         weights = mixture_weights or [1.0 / K] * K
-        degradation = [0.002] * K
+        degradation = degradation_slopes or [0.0] * K
         alleles = sorted(observed_alleles_with_heights.keys())
         n = len(alleles)
 
@@ -203,6 +205,14 @@ class MixtureDeconvolutionEngine:
 
         scored: List[Tuple[float, List[Tuple[float, float]]]] = []  # (log_ll, genotypes)
 
+        locus_rfu = sum(observed_alleles_with_heights.values())
+        bphys = BiophysicalPeakModel(
+            template_scale=max(50.0, 0.5 * locus_rfu),
+            amplification=self._bphys.amplification,
+            stutter_ratios=self._bphys.stutter_ratios,
+            s0_bp=self._bphys.s0_bp,
+        )
+
         for geno_set in candidate_genotype_sets:
             # Check coverage: union of all genotypes must include all observed alleles
             covered = set()
@@ -212,7 +222,7 @@ class MixtureDeconvolutionEngine:
                 continue
 
             # Expected peak heights under this genotype configuration
-            expected = self._bphys.expected_peak_heights(
+            expected = bphys.expected_peak_heights(
                 locus=locus_name,
                 genotypes=geno_set,
                 mixture_weights=weights,
@@ -224,7 +234,10 @@ class MixtureDeconvolutionEngine:
             for allele, h_obs in observed_alleles_with_heights.items():
                 h_exp = expected.get(allele, 0.0)
                 if h_exp > 0.0:
-                    ll += self.peak_model.log_likelihood(locus_name, h_obs, h_exp)
+                    if hasattr(self, "_sampler") and hasattr(self._sampler, "_ll_engine") and hasattr(self._sampler._ll_engine, "log_likelihood_locus_allele"):
+                        ll += self._sampler._ll_engine.log_likelihood_locus_allele(h_obs, h_exp)
+                    else:
+                        ll += self.peak_model.log_likelihood(locus_name, h_obs, h_exp)
                 else:
                     ll -= 1e6
             scored.append((ll, geno_set))

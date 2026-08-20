@@ -147,6 +147,8 @@ str-analysis/
 │   │   ├── api/                           # Endpoint Routers per Domain
 │   │   │   ├── forensics_schemas.py       # Pydantic Schemas for DNA & Kinship
 │   │   │   ├── genomics_schemas.py        # Pydantic Schemas for STR/SNP Loci
+│   │   │   ├── mixture_schemas.py         # Pydantic Schemas for MCMC Mixture Deconvolution
+│   │   │   ├── mixture_routes.py          # REST Gateway for MCMC Mixture Deconvolution
 │   │   │   ├── phenotype_extended_schemas.py # Schemas for HIrisPlex-S & BGA
 │   │   │   ├── epigenetics_schemas.py     # Schemas for Methylation Age Clock
 │   │   │   ├── fluid_schemas.py           # Schemas for Serology & Fluid ID
@@ -168,7 +170,8 @@ str-analysis/
 │   └── node/                              # Biocomputational Algorithmic Services
 │       └── services/forensic/             # 35 Specialized Biocomputational Modules (7 Pillars)
 │           ├── kinship/                   # 1. Autosomal STR & Kinship LR Engine
-│           ├── probabilistic/             # 2. MCMC Probabilistic Mixture Deconvoluter
+│           ├── probabilistic/             # 2. MCMC Probabilistic Mixture Deconvoluter (Core Engine)
+│           ├── deconvolution/             # 2b. MCMC Mixture Deconvoluter Service Adapter
 │           ├── phenotype/                 # 3. HIrisPlex-S Phenotype Prediction Engine
 │           ├── popgen/                    # 4. Statistical Population Genetics & Fst
 │           ├── enfsi/                     # 5. ENFSI/SWGDAM Legal Report Generator

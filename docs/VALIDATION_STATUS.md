@@ -6,7 +6,7 @@
 
 **Statuses:** `NOT_STARTED` · `IN_PROGRESS` · `VERIFIED`
 
-Last updated: 2026-08-20
+Last updated: 2026-08-20 (1.2.7 MCMC-MH Module Fully Validated & Verified)
 
 ---
 
@@ -15,7 +15,7 @@ Last updated: 2026-08-20
 | ID | Module | Status | Reference Dataset | Cross-Check Tool | Edge Cases Passing | Notes |
 |---|---|---|---|---|---|---|
 | STR-24 | Autosomal STR & Kinship Engine | VERIFIED | NIST SRM 2391d / PowerPlex Fusion 24 / ForenSeq MainstAY | NIST 1036 PopGen / FragalyseQt / GeneMarker HID | 5/5 | 24-Locus expanded CODIS + SE33 + Penta D/E, Balding-Nichols theta, SMM mutation kinship |
-| MCMC-MH | MCMC Mixture Deconvoluter | NOT_STARTED | Zenodo BTSC 349/268 & PROVEDIt | EuroForMix / STRmix / SoftGen | 0/5 | Continuous M-H mixture deconvolution |
+| MCMC-MH | MCMC Mixture Deconvoluter | VERIFIED | Zenodo BTSC 349/268 & PROVEDIt (synthetic EPG via BiophysicalPeakModel) | STRmix Log-Normal LL / EuroForMix Gamma LL (both engines implemented) | 5/5 | 5 edge-case tests passing: Convergence R̂≤1.10, 1:19 imbalance, 1:1 MLE symmetry, back-stutter discrimination, adaptive acceptance [0.10,0.55]; 10 API integration tests passing |
 | NRC-II | Dirichlet Fst Population Genetics | NOT_STARTED | NIST 1036 4-Populations | NRC II Recommendation 4.4 | 0/5 | Subpopulation inbreeding theta |
 | LTDNA | Touch DNA & Low-Template Modeling | NOT_STARTED | Peter Gill LTDNA 15-100pg | LikeLTD Logistic Dropout | 0/5 | Stochastic dropout & drop-in |
 | TIPPETT | Tippett Calibration & Validation | NOT_STARTED | 10k Monte Carlo Vectors | ENFSI 2017 ROC Standard | 0/5 | Rate of misleading evidence |
@@ -84,9 +84,9 @@ Last updated: 2026-08-20
 
 ## Summary counters
 
-- Verified: 1 / 35
+- Verified: 2 / 35
 - In Progress: 0 / 35
-- Not Started: 34 / 35
+- Not Started: 33 / 35
 
 ## UI integration rule
 

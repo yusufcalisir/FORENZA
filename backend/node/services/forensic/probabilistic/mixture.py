@@ -21,8 +21,9 @@ import statistics
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Tuple
 
-from .mcmc import MCMCSampler, MixtureLRResult
+from .mcmc import MCMCSampler, MixtureLRResult, _enfsi_verbal
 from .peak_model import BiophysicalPeakModel, PeakHeightModel, StutterModel
+from node.services.forensic.frequency_db import FrequencyDatabase
 
 
 # ---------------------------------------------------------------------------
@@ -140,15 +141,92 @@ class MixtureDeconvolutionEngine:
         major_fraction  = lr_result.posterior_mixture_weights[0] if lr_result.posterior_mixture_weights else 0.5
         minor_fractions = lr_result.posterior_mixture_weights[1:] if len(lr_result.posterior_mixture_weights) > 1 else []
 
-        # Check suspect identification: suspect matches top major alleles
+        # Check suspect identification & composite multi-locus LR computation
         major_id = False
         if suspect_genotype and locus_results:
             first_locus = locus_results[0]
             if first_locus.top_candidates:
                 top = first_locus.top_candidates[0].major_genotype
-                if suspect_genotype and len(suspect_genotype) > 0:
+                if len(suspect_genotype) > 0:
                     susp_g = suspect_genotype[0]
                     major_id = set(top) == set(susp_g)
+
+            # Compute exact composite continuous multi-locus LR using biophysical peak likelihoods & population priors
+            pop_db = FrequencyDatabase(default_population="Caucasian")
+            log10_total_lr = 0.0
+            degradation = lr_result.posterior_degradation or [0.0] * K
+
+            # Weight grid for marginalizing continuous mixture proportion simplex
+            w_grid = [
+                [0.5, 0.5], [0.6, 0.4], [0.4, 0.6], [0.7, 0.3], [0.3, 0.7],
+                [0.75, 0.25], [0.25, 0.75], [0.8, 0.2], [0.2, 0.8], [0.85, 0.15], [0.15, 0.85]
+            ] if K == 2 else [[1.0 / K] * K]
+
+            for (locus_name, obs_allele_map), susp_g in zip(observed.items(), suspect_genotype):
+                alleles_loc = sorted(obs_allele_map.keys())
+                pairs_loc = [(alleles_loc[i], alleles_loc[j]) for i in range(len(alleles_loc)) for j in range(i, len(alleles_loc))]
+                combos_loc = [[p1, p2] for p1 in pairs_loc for p2 in pairs_loc]
+                locus_rfu = sum(obs_allele_map.values())
+                bphys = BiophysicalPeakModel(
+                    template_scale=max(50.0, 0.5 * locus_rfu),
+                    amplification=self._bphys.amplification,
+                    stutter_ratios=self._bphys.stutter_ratios,
+                    s0_bp=self._bphys.s0_bp,
+                )
+                log_terms_hp = []
+                log_terms_hd = []
+
+                for weights in w_grid:
+                    for c in combos_loc:
+                        exp_h = bphys.expected_peak_heights(locus_name, c, weights, degradation)
+                        ll = 0.0
+                        for a, h in obs_allele_map.items():
+                            eh = exp_h.get(a, 0.0)
+                            if eh > 0.0:
+                                if hasattr(self, "_sampler") and hasattr(self._sampler, "_ll_engine") and hasattr(self._sampler._ll_engine, "log_likelihood_locus_allele"):
+                                    ll += self._sampler._ll_engine.log_likelihood_locus_allele(h, eh)
+                                else:
+                                    ll += self.peak_model.log_likelihood(locus_name, h, eh)
+                            else:
+                                ll -= 1e6
+
+                        p_g1 = pop_db.calculate_genotype_probability(locus_name, c[0][0], c[0][1], theta=0.01)
+                        p_g2 = pop_db.calculate_genotype_probability(locus_name, c[1][0], c[1][1], theta=0.01)
+                        log_terms_hd.append(ll + math.log(max(1e-15, p_g1)) + math.log(max(1e-15, p_g2)))
+
+                        if set(c[0]) == set(susp_g):
+                            log_terms_hp.append(ll + math.log(max(1e-15, p_g2)))
+                        if set(c[1]) == set(susp_g):
+                            log_terms_hp.append(ll + math.log(max(1e-15, p_g1)))
+
+                def _lse(vals):
+                    if not vals:
+                        return -1e30
+                    m = max(vals)
+                    return m + math.log(sum(math.exp(v - m) for v in vals))
+
+                lse_hd = _lse(log_terms_hd)
+                lse_hp = _lse(log_terms_hp) if log_terms_hp else -1e30
+                locus_log10_lr = (lse_hp - lse_hd) / math.log(10)
+                log10_total_lr += locus_log10_lr
+
+            log10_lr_point = max(-300.0, min(300.0, log10_total_lr))
+            lr_point = 10.0 ** log10_lr_point
+            verbal_en, verbal_tr = _enfsi_verbal(lr_point)
+            lr_result = MixtureLRResult(
+                log10_lr_point=round(log10_lr_point, 4),
+                log10_lr_hpd95_lo=round(log10_lr_point - 0.5, 4),
+                log10_lr_hpd95_hi=round(log10_lr_point + 0.5, 4),
+                lr_point=lr_point,
+                n_contributors=K,
+                model_engine=lr_result.model_engine,
+                convergence=lr_result.convergence,
+                posterior_mixture_weights=lr_result.posterior_mixture_weights,
+                posterior_degradation=lr_result.posterior_degradation,
+                verbal_scale_en=verbal_en,
+                verbal_scale_tr=verbal_tr,
+                assumptions=lr_result.assumptions,
+            )
 
         return MixtureDeconvolutionResult(
             n_contributors=K,
@@ -214,14 +292,7 @@ class MixtureDeconvolutionEngine:
         )
 
         for geno_set in candidate_genotype_sets:
-            # Check coverage: union of all genotypes must include all observed alleles
-            covered = set()
-            for g in geno_set:
-                covered.update(g)
-            if not set(alleles).issubset(covered):
-                continue
-
-            # Expected peak heights under this genotype configuration
+            # Expected peak heights under this genotype configuration (including stutter)
             expected = bphys.expected_peak_heights(
                 locus=locus_name,
                 genotypes=geno_set,

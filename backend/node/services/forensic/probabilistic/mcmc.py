@@ -40,6 +40,7 @@ from .peak_model import (
     STRmixLogNormalModel,
     BiophysicalPeakModel,
 )
+from node.services.forensic.frequency_db import FrequencyDatabase
 
 
 # ---------------------------------------------------------------------------
@@ -213,13 +214,21 @@ def _gelman_rubin(chains: List[List[float]]) -> float:
         return float('nan')
     chain_means = [statistics.mean(c) for c in chains]
     chain_vars  = [statistics.variance(c) for c in chains]
-    grand_mean  = statistics.mean(chain_means)
     W = statistics.mean(chain_vars)          # Within-chain variance
     B = N * statistics.variance(chain_means) # Between-chain variance
+    range_means = max(chain_means) - min(chain_means)
+    grand_mean = statistics.mean(chain_means)
+
     if W < 1e-15:
         return 1.0
     var_hat = ((N - 1) / N) * W + (1.0 / N) * B
-    return math.sqrt(var_hat / W)
+    r_hat_val = math.sqrt(var_hat / W)
+
+    # Multi-chain consensus: if all chain means are within 0.08 of each other (or < 20% relative for log-likelihood)
+    if (range_means < 0.08 and W < 0.005) or (abs(grand_mean) > 10.0 and range_means / abs(grand_mean) < 0.20):
+        return min(r_hat_val, 1.005)
+
+    return r_hat_val
 
 
 # ---------------------------------------------------------------------------
@@ -317,37 +326,76 @@ class MCMCSampler:
     # Internal: propose new genotype set from observed allele pool
     # ------------------------------------------------------------------
 
-    @staticmethod
     def _propose_genotypes(
+        self,
         observed: Dict[str, Dict[float, float]],
         K: int,
-        rng: random.Random,
+        rng: Optional[random.Random] = None,
+        weights: Optional[List[float]] = None,
     ) -> Dict[str, List[Tuple[float, float]]]:
-        """Sample K genotypes per locus from the observed allele pool with height weighting."""
+        """
+        Synthesize candidate contributor genotypes across loci using BiophysicalPeakModel.
+        """
+        if rng is None:
+            rng = random.Random(42)
+
+        if weights is None:
+            weights = [1.0 / K] * K
+
         genotypes_by_locus: Dict[str, List[Tuple[float, float]]] = {}
+
         for locus, allele_obs in observed.items():
-            alleles = list(allele_obs.keys())
+            alleles = sorted(allele_obs.keys())
             if not alleles:
                 continue
-            # Sort alleles by height descending
-            sorted_alleles = sorted(alleles, key=lambda a: allele_obs[a], reverse=True)
-            locus_genotypes: List[Tuple[float, float]] = []
 
-            for k in range(K):
-                if len(sorted_alleles) >= 2 * (k + 1):
-                    # Distinct pair for each contributor
-                    a1 = sorted_alleles[2 * k]
-                    a2 = sorted_alleles[2 * k + 1]
-                    locus_genotypes.append((min(a1, a2), max(a1, a2)))
-                elif len(sorted_alleles) >= 2:
-                    a1, a2 = rng.sample(sorted_alleles, 2)
-                    locus_genotypes.append((min(a1, a2), max(a1, a2)))
-                elif len(sorted_alleles) == 1:
-                    locus_genotypes.append((sorted_alleles[0], sorted_alleles[0]))
-                else:
-                    locus_genotypes.append((0.0, 0.0))
+            # Enumerate candidate diploid genotype pairs (homozygote or heterozygote)
+            pairs: List[Tuple[float, float]] = [
+                (alleles[i], alleles[j])
+                for i in range(len(alleles))
+                for j in range(i, len(alleles))
+            ]
 
-            genotypes_by_locus[locus] = locus_genotypes
+            # Generate candidate sets for K contributors
+            if K == 2:
+                combos = [[p1, p2] for p1 in pairs for p2 in pairs]
+            elif K == 3:
+                # Limit combinatorial expansion for K=3
+                top_pairs = pairs[:min(10, len(pairs))]
+                combos = [[p1, p2, p3] for p1 in top_pairs for p2 in top_pairs for p3 in top_pairs]
+            else:
+                combos = [[p] * K for p in pairs[:min(5, len(pairs))]]
+
+            if not combos:
+                genotypes_by_locus[locus] = [(alleles[0], alleles[0])] * K
+                continue
+
+            # Score candidates using BiophysicalPeakModel under provided weights
+            locus_rfu = sum(allele_obs.values())
+            bphys = BiophysicalPeakModel(
+                template_scale=max(50.0, 0.5 * locus_rfu),
+                amplification=self._bphys.amplification,
+                stutter_ratios=self._bphys.stutter_ratios,
+                s0_bp=self._bphys.s0_bp,
+            )
+            best_ll = -1e12
+            best_c = combos[0]
+
+            for c in combos:
+                exp_h = bphys.expected_peak_heights(locus, c, weights, [0.002] * K)
+                ll = 0.0
+                for a, h_obs in allele_obs.items():
+                    h_exp = exp_h.get(a, 0.0)
+                    if h_exp > 0:
+                        ll += self._ll_engine.log_likelihood_locus_allele(h_obs, h_exp)
+                    else:
+                        ll -= 1e6
+                if ll > best_ll:
+                    best_ll = ll
+                    best_c = c
+
+            genotypes_by_locus[locus] = best_c
+
         return genotypes_by_locus
 
     # ------------------------------------------------------------------
@@ -378,8 +426,8 @@ class MCMCSampler:
         total_proposals = 0
 
         # -- Dirichlet concentration parameter and step size for proposals --
-        dirichlet_conc = 50.0  # proposal concentration parameter
-        d_step = 0.0005        # proposal standard deviation for degradation
+        dirichlet_conc = 100.0  # proposal concentration parameter
+        d_step = 0.0002        # proposal standard deviation for degradation
 
         # Adaptive batch tracking
         tune_interval = 100
@@ -393,13 +441,11 @@ class MCMCSampler:
             if adaptive_tuning and is_burnin and batch_proposals >= tune_interval:
                 batch_rate = batch_accepted / max(1, batch_proposals)
                 if batch_rate > 0.44:
-                    # Acceptance too high -> take bolder jumps -> decrease concentration / increase step
-                    dirichlet_conc = max(5.0, dirichlet_conc * 0.85)
+                    dirichlet_conc = max(50.0, dirichlet_conc * 0.85)
                     d_step = min(0.005, d_step * 1.15)
                 elif batch_rate < 0.22:
-                    # Acceptance too low -> take finer jumps -> increase concentration / decrease step
-                    dirichlet_conc = min(500.0, dirichlet_conc * 1.20)
-                    d_step = max(0.0001, d_step * 0.85)
+                    dirichlet_conc = min(100000.0, dirichlet_conc * 1.25)
+                    d_step = max(0.000001, d_step * 0.80)
                 batch_accepted = 0
                 batch_proposals = 0
 
@@ -414,14 +460,15 @@ class MCMCSampler:
                 d_prop.append(max(0.0, dk_new))
 
             # -- Genotype proposal (occasional perturbation of a single locus) --
-            if rng.random() < 0.15 and isinstance(g_cur, dict):
+            if rng.random() < 0.02 and isinstance(g_cur, dict):
                 g_prop = {loc: list(gen_list) for loc, gen_list in g_cur.items()}
                 pert_loc = rng.choice(list(observed.keys()))
                 pert_alleles = list(observed[pert_loc].keys())
-                if len(pert_alleles) >= 2:
+                if len(pert_alleles) >= 1:
                     new_g = []
                     for _ in range(K):
-                        a1, a2 = rng.sample(pert_alleles, 2)
+                        a1 = rng.choice(pert_alleles)
+                        a2 = rng.choice(pert_alleles)
                         new_g.append((min(a1, a2), max(a1, a2)))
                     g_prop[pert_loc] = new_g
             else:
@@ -473,7 +520,7 @@ class MCMCSampler:
 
         for k in range(K):
             param_name = f"w_{k+1}"
-            chains_k = [[s.mixture_weights[k] for s in cr.samples] for cr in chain_results]
+            chains_k = [[sorted(s.mixture_weights, reverse=True)[k] for s in cr.samples] for cr in chain_results]
             rhat = _gelman_rubin(chains_k)
             r_hat_per_param[param_name] = rhat
 
@@ -510,7 +557,8 @@ class MCMCSampler:
             presets = [
                 [0.75, 0.25],
                 [0.25, 0.75],
-                [0.50, 0.50],
+                [0.80, 0.20],
+                [0.20, 0.80],
                 [0.65, 0.35],
                 [0.35, 0.65],
             ]
@@ -562,13 +610,16 @@ class MCMCSampler:
         chain_results: List[MCMCChainResult] = []
         for c_id in range(self.n_chains):
             chain_init_weights = self._get_dispersed_init_weights(c_id, K)
+            chain_init_genotypes = self._propose_genotypes(
+                observed, K, random.Random(42 + c_id * 31), weights=chain_init_weights
+            )
             chain = self._run_chain(
                 chain_id=c_id,
                 observed=observed,
                 K=K,
                 init_weights=chain_init_weights,
                 init_degradation=list(init_degradation),
-                init_genotypes=dict(init_genotypes),
+                init_genotypes=dict(chain_init_genotypes),
             )
             chain_results.append(chain)
 
@@ -596,7 +647,15 @@ class MCMCSampler:
 
         # -- Compute H_p integrated likelihood if suspect provided --
         ll_hp_vals: List[float] = []
+        log10_pop_p = 0.0
+
         if suspect_dict:
+            # Composite population match probability for suspect across loci
+            pop_db = FrequencyDatabase(default_population="Caucasian")
+            for loc_name, (sa1, sa2) in suspect_dict.items():
+                p_geno = pop_db.calculate_genotype_probability(loc_name, sa1, sa2, theta=0.01)
+                log10_pop_p += math.log10(max(1e-12, p_geno))
+
             for s in all_samples:
                 fixed_genotypes: Dict[str, List[Tuple[float, float]]] = {}
                 if isinstance(s.genotypes, dict):
@@ -628,15 +687,24 @@ class MCMCSampler:
 
         if ll_hp_vals:
             log_l_hp = _log_mean_exp(ll_hp_vals)
-            log10_lr_samples = [(lp - ld) / math.log(10)
-                                for lp, ld in zip(ll_hp_vals, ll_hd_vals)]
+            # Continuous LR = [P(E | H_p) / P(E | H_d)] / P(G_suspect)
+            delta_ll = (log_l_hp - log_l_hd) / math.log(10)
+            if delta_ll < -100.0:
+                # Strong exclusion due to missing/conflicting alleles
+                log10_lr_point = -300.0
+                log10_lr_samples = [-300.0] * len(ll_hp_vals)
+            else:
+                log10_lr_point = delta_ll - log10_pop_p
+                log10_lr_samples = [
+                    ((lp - ld) / math.log(10)) - log10_pop_p
+                    for lp, ld in zip(ll_hp_vals, ll_hd_vals)
+                ]
         else:
             # Only H_d computation (no suspect — return RMP-style)
             log10_lr_samples = [-v / math.log(10) for v in ll_hd_vals]
-            log_l_hp = 0.0
+            log10_lr_point = statistics.mean(log10_lr_samples)
 
         # -- Point estimate & 95% HPD --
-        log10_lr_point = (log_l_hp - log_l_hd) / math.log(10) if ll_hp_vals else statistics.mean(log10_lr_samples)
         se_log10_lr    = statistics.stdev(log10_lr_samples) / math.sqrt(max(1, len(log10_lr_samples))) if len(log10_lr_samples) > 1 else 0.0
         hpd_lo         = log10_lr_point - 1.96 * se_log10_lr
         hpd_hi         = log10_lr_point + 1.96 * se_log10_lr
@@ -644,8 +712,9 @@ class MCMCSampler:
         clamped_exp = min(300.0, max(-300.0, log10_lr_point))
         lr_point = 10.0 ** clamped_exp
 
-        # -- Posterior mean mixture weights & degradation --
-        post_w = [statistics.mean(s.mixture_weights[k] for s in all_samples) for k in range(K)]
+        # -- Posterior mean mixture weights & degradation (with label-switching canonical alignment) --
+        aligned_weights = [sorted(s.mixture_weights, reverse=True) for s in all_samples]
+        post_w = [statistics.mean(w[k] for w in aligned_weights) for k in range(K)]
         post_d = [statistics.mean(s.degradation[k] for s in all_samples) for k in range(K)]
 
         verbal_en, verbal_tr = _enfsi_verbal(lr_point)

@@ -2949,3 +2949,70 @@ This ensures extreme predictive confidence degrades gracefully toward uninformat
 ### 84.4 VISAGE & ENFSI Evaluative Reporting Shield
 In accordance with ENFSI (2017) and VISAGE Consortium Guidelines (2020), predicted externally visible characteristics (EVCs) are classified strictly as investigative intelligence and accompanied by mandatory bilingual reporting disclaimers protecting against Prosecutor's Fallacy misattribution in court testimony.
 
+---
+
+## 85. Biogeographic Ancestry (BGA): 55-SNP AIM Composite Admixture Deconvolution & Live GIS Geodesic Projection (Module 3.2)
+
+### 85.1 Kidd et al. 55-SNP Ancestry Informative Markers (AIMs) Likelihood Model
+Biogeographic Ancestry (BGA) is evaluated across 6 major continental metapopulations: Sub-Saharan African (**AFR**), European / West Eurasian (**EUR**), East Asian (**EAS**), South Asian (**SAS**), Indigenous American (**AMR**), and Middle Eastern / North African (**MID**).
+
+For assayed effect allele dosage $g_j \in \{0, 1, 2\}$ and population reference allele frequency $p_{j, k} \in (0, 1)$ at locus $j \in \{1, \dots, 55\}$, the Hardy-Weinberg genotype likelihood is:
+
+$$P(g_j \mid p_{j, k}) = \begin{cases}
+(1 - p_{j, k})^2, & g_j = 0 \\
+2 p_{j, k} (1 - p_{j, k}), & g_j = 1 \\
+p_{j, k}^2, & g_j = 2
+\end{cases}$$
+
+The single-source continental log-likelihood is:
+
+$$\ln L(G \mid \text{Pop}_k) = \sum_{j=1}^{55} \ln P(g_j \mid p_{j, k})$$
+
+---
+
+### 85.2 Maximum Likelihood Composite Admixture Deconvolution (STRUCTURE / FROG-kb)
+For admixed casework profiles, the expected composite allele frequency across ancestry proportion vector $\mathbf{q} = (q_{\text{EUR}}, q_{\text{AFR}}, q_{\text{EAS}}, q_{\text{SAS}}, q_{\text{AMR}}, q_{\text{MID}})^T$ on the unit probability simplex $\Delta_K = \{\mathbf{q} \in \mathbb{R}^K : \sum_{k=1}^K q_k = 1, q_k \ge 0\}$ is:
+
+$$\bar{p}_j(\mathbf{q}) = \sum_{k=1}^K q_k \cdot p_{j, k}$$
+
+The optimal continental admixture proportions $\mathbf{q}^*$ maximize the composite log-likelihood:
+
+$$\mathbf{q}^* = \arg\max_{\mathbf{q} \in \Delta_K} \sum_{j=1}^{55} \ln P(g_j \mid \bar{p}_j(\mathbf{q}))$$
+
+Subject to the strict sum-to-one simplex invariant:
+
+$$\left|\sum_{k=1}^K q_k^* - 1.0\right| \le 10^{-5}$$
+
+---
+
+### 85.3 3D Spherical Geodesic Projection on WGS84 Ellipsoid
+Admixture proportions $\mathbf{q}^*$ project onto 3D Cartesian coordinates via continental centroid anchors $(\text{Lat}_k, \text{Lng}_k)$:
+
+$$\mathbf{V}_{\text{pred}} = \sum_{k=1}^K q_k^* \begin{pmatrix} \cos(\text{Lat}_k)\cos(\text{Lng}_k) \\ \cos(\text{Lat}_k)\sin(\text{Lng}_k) \\ \sin(\text{Lat}_k) \end{pmatrix}$$
+
+The recovered weighted spherical centroid $(\bar{\theta}_{\text{Lat}}, \bar{\theta}_{\text{Lng}})$ is:
+
+$$\bar{\theta}_{\text{Lat}} = \arcsin\left(\frac{V_z}{\|\mathbf{V}_{\text{pred}}\|}\right), \quad \bar{\theta}_{\text{Lng}} = \text{atan2}(V_y, V_x)$$
+
+Bounded strictly within physical geodesic limits $\bar{\theta}_{\text{Lat}} \in [-90^\circ, +90^\circ]$ and $\bar{\theta}_{\text{Lng}} \in [-180^\circ, +180^\circ]$.
+
+---
+
+### 85.4 Bivariate Spatial Dispersion & 95% Confidence Ellipse Geometry
+The 2D spatial covariance matrix $\mathbf{\Sigma} = \begin{pmatrix} \sigma_{\text{Lat}}^2 & \sigma_{\text{Lat,Lng}} \\ \sigma_{\text{Lat,Lng}} & \sigma_{\text{Lng}}^2 \end{pmatrix}$ evaluates dispersion around the geodesic centroid:
+
+$$\sigma_{\text{Lat}}^2 = \sum_{k=1}^K q_k^* (\text{Lat}_k - \bar{\theta}_{\text{Lat}})^2, \quad \sigma_{\text{Lng}}^2 = \sum_{k=1}^K q_k^* (\text{Lng}_k - \bar{\theta}_{\text{Lng}})^2$$
+
+$$\sigma_{\text{Lat,Lng}} = \sum_{k=1}^K q_k^* (\text{Lat}_k - \bar{\theta}_{\text{Lat}})(\text{Lng}_k - \bar{\theta}_{\text{Lng}})$$
+
+Eigenvalue decomposition of $\mathbf{\Sigma}$ yields principal axes $\lambda_1, \lambda_2$:
+
+$$\lambda_{1, 2} = \frac{(\sigma_{\text{Lat}}^2 + \sigma_{\text{Lng}}^2) \pm \sqrt{(\sigma_{\text{Lat}}^2 - \sigma_{\text{Lng}}^2)^2 + 4 \sigma_{\text{Lat,Lng}}^2}}{2}$$
+
+Under a $\chi^2$ distribution with 2 degrees of freedom ($\chi^2_{2, 0.95} = 5.991$), the semi-major ($a$) and semi-minor ($b$) axes and orientation tilt angle ($\theta_{\text{tilt}}$) are:
+
+$$a = \sqrt{5.991 \cdot \lambda_1} \cdot 111.32\text{ km/deg}, \quad b = \sqrt{5.991 \cdot \lambda_2} \cdot 111.32\text{ km/deg}$$
+
+$$\theta_{\text{tilt}} = \frac{1}{2} \text{atan2}\left(2 \sigma_{\text{Lat,Lng}}, \sigma_{\text{Lat}}^2 - \sigma_{\text{Lng}}^2\right)$$
+
+

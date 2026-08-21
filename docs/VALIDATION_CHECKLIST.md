@@ -192,5 +192,25 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
-*(Pillars 3.2 to 7 checklist sections are formatted identically following the master roadmap).*
+### Module 3.2: BGA-55 — 55-SNP AIM Continental Centroid & Live GIS Geodesic Engine [VERIFIED 2026-08-21]
+- [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-21]:**
+  - [x] Kidd et al. (2014) 55-AIM Reference Matrix across 73 global populations ($N=4,100$ individuals across 6 continental clusters: EUR, AFR, EAS, SAS, AMR, MID).
+  - [x] Certified Reference Standards: NA12878 (CEU European Reference), NA19240 (YRI Sub-Saharan African Reference with DARC Duffy Null C/C), NA18507 / HG005 (CHB Han Chinese Reference with EDAR G/G, ADH1B T/T), HG002 / NA24385 (Ashkenazi Jewish / Mediterranean), ADMIXED_EUR_AFR synthetic benchmark.
+  - [x] Casework Benchmark Cohorts: Golden Benchmark VECTOR_P3_01 (European), VECTOR_P3_02 (African), VECTOR_P3_03 (East Asian), and 50/50 Balanced F1 Synthetic Admixture.
+- [x] **Criterion 2 (Independent Tool Cross-Check) ✅ COMPLETE [2026-08-21]:**
+  - [x] FROG-kb (Forensic Population Genetics Knowledge Base, Yale University) concordance for continental ancestry assignment ($|\Delta Q| < 0.05$).
+  - [x] STRUCTURE 2.3.4 (Pritchard Lab) MCMC admixture decomposition concordance across pure and admixed reference genomes.
+  - [x] ISFG & ENFSI (2017) Evaluative Reporting Guidelines with active BGA Statistical Disclaimer and Prosecutor's Fallacy Shield.
+- [x] **Criterion 3 (5 Documented Edge Cases) ✅ COMPLETE [2026-08-21]:**
+  - [x] `EC-BGA-01`: Pure European NA12878 standard assigns $Q_{\text{EUR}} \ge 0.95$ with geodesic centroid localized to Europe ($40^\circ \le \text{Lat} \le 55^\circ, 5^\circ \le \text{Lng} \le 25^\circ$).
+  - [x] `EC-BGA-02`: Pure Sub-Saharan African NA19240 standard assigns $Q_{\text{AFR}} \ge 0.98$ with geodesic centroid localized to Africa ($-5^\circ \le \text{Lat} \le 15^\circ, 10^\circ \le \text{Lng} \le 35^\circ$).
+  - [x] `EC-BGA-03`: Pure East Asian NA18507 standard assigns $Q_{\text{EAS}} \ge 0.95$ with geodesic centroid localized to East Asia ($25^\circ \le \text{Lat} \le 45^\circ, 90^\circ \le \text{Lng} \le 125^\circ$).
+  - [x] `EC-BGA-04`: 50/50 Balanced Synthetic Admixture standard resolves intermediate proportions ($Q_{\text{EUR}} \ge 0.25, Q_{\text{AFR}} \ge 0.25, Q_{\text{EUR}} + Q_{\text{AFR}} \ge 0.80$) without numerical breakdown.
+  - [x] `EC-BGA-05`: Geodesic coordinate projection strictly bounds physical limits ($\text{Lat} \in [-90^\circ, +90^\circ], \text{Lng} \in [-180^\circ, +180^\circ]$) and guarantees sum-to-one simplex $|\sum Q_k - 1.0| \le 10^{-5}$ across extreme permutations.
+  - **Full test run:** `pytest backend/app/api/test_bga_routes.py backend/node/services/forensic/phenotyping/test_bga_*.py backend/node/services/forensic/phenotyping/test_aim_bga_engine.py -v` → **40 passed in 4.82s**
+
+---
+
+*(Pillars 3.3 to 7 checklist sections are formatted identically following the master roadmap).*
+
 

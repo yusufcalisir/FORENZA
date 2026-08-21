@@ -270,7 +270,16 @@ str-analysis/
 │           │   ├── test_adna_reference_datasets.py # Reference Datasets & Casework Cohort Tests
 │           │   ├── test_adna_cross_validation.py # External Concordance & ISFG Shield Tests
 │           │   └── test_adna_edge_cases.py # 6 Empirical Edge-Case Tests (EC-ADNA-01 to 06)
-│           └── tests/                     # Automated Test Suite (1100+ Tests Passing)
+│           ├── phenotyping/               # 35. Forensic Phenotyping & Biogeographic Ancestry (BGA-55 & HIrisPlex-S)
+│           │   ├── hirisplex_mathematical_formulation.py # HIrisPlex-S 41-SNP MLR & Softmax Normalization
+│           │   ├── hirisplex_reference_datasets.py # 5 Multi-Omic Standards & Casework Cohorts
+│           │   ├── hirisplex_cross_validation.py # Erasmus MC & VISAGE Concordance, ENFSI Shield
+│           │   ├── bga_mathematical_formulation.py # 55-SNP AIM Dirichlet Likelihood, SLSQP Admixture, 3D WGS84 Geodesics
+│           │   ├── bga_reference_datasets.py # Kidd 73-Pop Reference Matrix & 5 Multi-Omic Standards
+│           │   ├── bga_cross_validation.py # FROG-kb & STRUCTURE 2.3.4 Concordance, ISFG Shield
+│           │   ├── test_hirisplex_edge_cases.py # 5 Empirical Edge-Case Tests (EC-HIR-01 to 05)
+│           │   └── test_bga_edge_cases.py # 5 Empirical Edge-Case Tests (EC-BGA-01 to 05)
+│           └── tests/                     # Automated Test Suite (1150+ Tests Passing)
 │
 ├── frontend/                              # Next.js 16 Workstation Dashboard
 │   ├── public/                            # Static Assets, Icons, Favicons

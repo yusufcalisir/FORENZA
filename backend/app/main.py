@@ -504,6 +504,14 @@ try:
 except Exception as _hirisplex_import_err:
     logger.warning(f"[boot] HIrisPlex-S router not loaded: {_hirisplex_import_err}")
 
+# --- Biogeographic Ancestry (BGA-55) & GIS Geolocation Router (Module 3.2) ---
+try:
+    from app.api.bga_routes import router as bga_router
+    app.include_router(bga_router, prefix="/api/v1")
+    logger.info("[boot] BGA-55 Continental Ancestry & GIS API router registered at /api/v1/forensic/phenotyping/bga")
+except Exception as _bga_import_err:
+    logger.warning(f"[boot] BGA-55 router not loaded: {_bga_import_err}")
+
 
 
 

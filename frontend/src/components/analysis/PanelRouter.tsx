@@ -469,6 +469,9 @@ export function renderPanel(tabId: string) {
     case "pigmentation":
       return <HIrisPlexPanel />;
     case "ancestry":
+    case "bga":
+    case "bga_55":
+    case "aims":
       return <AncestryDataPanel />;
     case "craniofacial":
       return <SyntheticCaseGeneratorPanel />;

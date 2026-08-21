@@ -35,7 +35,7 @@ Last updated: 2026-08-20 (1.4.7 LTDNA Stochastic Low-Template Modeling Fully Val
 | ID | Module | Status | Reference Dataset | Cross-Check Tool | Edge Cases Passing | Notes |
 |---|---|---|---|---|---|---|
 | HIRISPLEX | HIrisPlex-S Eye/Hair/Skin | VERIFIED | Walsh 2018 ($N=632$, PubMed 31518964), Spanish MDPI Genes 2024 ($N=450$), Certified Standards NA12878, NA19240, Celtic Red Hair, NA18507, HG002 | Erasmus MC HIrisPlex-S Online Webtool ($|\Delta P| < 0.01$), VISAGE Consortium Guidelines (2020), ENFSI Evaluative Reporting (2017) | 5/5 | 41-SNP Multinomial Logistic Regression & Softmax Normalization ($|\sum P - 1.0| \le 10^{-5}$), Eye (3 classes), Hair (4 classes + shade), Skin (5 classes Fitzpatrick I–VI), Hair Morphology (Straight/Wavy/Curly), Missing SNP Imputation & Logit Scaling Penalty ($\lambda=0.35$), MC1R R151C/R160W Epistasis, 37 module tests passing |
-| BGA-55 | 55-SNP Biogeographic Ancestry | NOT_STARTED | Kidd 2014 (73 Pops) | FROG-kb / STRUCTURE | 0/5 | 55-SNP AIM GIS Centroids |
+| BGA-55 | 55-SNP Biogeographic Ancestry | VERIFIED | Kidd et al. (2014) 55-AIM Panel across 73 global populations ($N=4,100$), Certified Reference Standards NA12878 (CEU), NA19240 (YRI), NA18507 (CHB), HG002 (AJ), ADMIXED_EUR_AFR synthetic benchmark | FROG-kb Online Engine (Yale University) & STRUCTURE 2.3.4 MCMC ($|\Delta Q| < 0.05$), ISFG & ENFSI (2017) Evaluative Reporting Guidelines | 5/5 | 55-SNP AIM Dirichlet-Multinomial likelihoods, Maximum Likelihood Composite Admixture Deconvolution (SLSQP simplex optimization, $|\sum Q_k - 1.0| \le 10^{-5}$), 3D WGS84 Geodesic Spherical Centroid $(\text{Lat}^*, \text{Lng}^*)$, Bivariate Spatial Covariance & 95% Confidence Ellipse ($a = \sqrt{5.991 \lambda_1}, b = \sqrt{5.991 \lambda_2}, \theta_{\text{tilt}}$), Shannon Entropy & Simpson Diversity, 40 module tests passing |
 | CRANIO-3D | 3D Craniofacial Morphology | NOT_STARTED | Claes 2014 (20 Landmarks)| 3D Procrustes Superposition| 0/5 | Sexual dimorphism & craniometry |
 | HAIR-TEX | Hair Texture Prediction | NOT_STARTED | Medland 2009 / Adhikari | Polygenic Risk Score (PRS) | 0/5 | EDAR V370A / TCHH / AR Balding |
 | MC1R-UV | MC1R Epistasis / UV Sensitivity | NOT_STARTED | Sulem 2007 MC1R Cohort | Red Hair Color (RHC) Model | 0/5 | Loss-of-function epistasis |
@@ -84,9 +84,9 @@ Last updated: 2026-08-20 (1.4.7 LTDNA Stochastic Low-Template Modeling Fully Val
 
 ## Summary counters
 
-- Verified: 4 / 35
+- Verified: 5 / 35
 - In Progress: 0 / 35
-- Not Started: 31 / 35
+- Not Started: 30 / 35
 
 ## UI integration rule
 

@@ -573,28 +573,90 @@ export default function SuspectVisualizer({
                                 })}
                             </div>
                         ) : activeView === "morphometrics" ? (
-                            /* 3D Craniofacial Morphometrics Tab (Module 13) */
+                            /* 3D Craniofacial Morphometrics Tab (Module 3.3) */
                             <div className="space-y-3">
-                                {/* Facial Index & Typology Badge */}
-                                <div className="p-2.5 rounded bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-between">
-                                    <div>
-                                        <div className="font-mono text-[7px] text-zinc-400 uppercase">Facial Index (I_F)</div>
-                                        <div className="font-mono text-xs font-bold text-cyan-300">
-                                            {((Math.sqrt(Math.pow((12.4 + 1.25 * (morphoSnps.rs974448 || 0)) - (18.2 + 1.85 * (morphoSnps.rs7559252 || 0)), 2) + Math.pow((45.2 + 0.85 * (morphoSnps.rs974448 || 0)) - (-68.5 - 1.20 * (morphoSnps.rs7559252 || 0)), 2)) / (2 * (18.5 + 0.95 * (morphoSnps.rs12882923 || 0)))) * 100).toFixed(1)}
-                                        </div>
-                                    </div>
-                                    <div className="text-right">
-                                        <div className="font-mono text-[7px] text-zinc-400 uppercase">Typology</div>
-                                        <span className="font-mono text-[8px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-bold">
-                                            MESOPROSOPIC
-                                        </span>
-                                    </div>
+                                {/* Standard Presets Bar */}
+                                <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
+                                    <span className="font-mono text-[7px] text-zinc-500 uppercase shrink-0">Standards:</span>
+                                    <button
+                                        onClick={() => setMorphoSnps({ rs974448: 1, rs12882923: 0, rs11130635: 2, rs13289: 0, rs7559252: 1 })}
+                                        className="px-1.5 py-0.5 rounded bg-cyan-950/40 border border-cyan-700/40 text-[7px] font-mono text-cyan-300 hover:bg-cyan-900/40 shrink-0"
+                                    >
+                                        NA12878 (EUR Leptorrhine)
+                                    </button>
+                                    <button
+                                        onClick={() => setMorphoSnps({ rs974448: 0, rs12882923: 2, rs11130635: 0, rs13289: 2, rs7559252: 2 })}
+                                        className="px-1.5 py-0.5 rounded bg-amber-950/40 border border-amber-700/40 text-[7px] font-mono text-amber-300 hover:bg-amber-900/40 shrink-0"
+                                    >
+                                        NA19240 (AFR Platyrrhine)
+                                    </button>
+                                    <button
+                                        onClick={() => setMorphoSnps({ rs974448: 1, rs12882923: 1, rs11130635: 1, rs13289: 1, rs7559252: 1 })}
+                                        className="px-1.5 py-0.5 rounded bg-emerald-950/40 border border-emerald-700/40 text-[7px] font-mono text-emerald-300 hover:bg-emerald-900/40 shrink-0"
+                                    >
+                                        NA18507 (EAS Mesorrhine)
+                                    </button>
                                 </div>
 
-                                {/* 7 Landmarks Matrix */}
+                                {/* Anthropological Indices Summary Cards */}
+                                {(() => {
+                                    const x_pax3 = morphoSnps.rs974448 || 0;
+                                    const x_pax9 = morphoSnps.rs12882923 || 0;
+                                    const x_prdm16 = morphoSnps.rs11130635 || 0;
+                                    const x_dchs2 = morphoSnps.rs13289 || 0;
+                                    const x_pcdh15 = morphoSnps.rs7559252 || 0;
+
+                                    const n_y = 12.40 + 1.25 * x_pax3;
+                                    const n_z = 45.20 + 0.85 * x_pax3;
+                                    const sn_y = 38.20 - 1.10 * x_dchs2;
+                                    const sn_z = -2.50 - 0.65 * x_dchs2;
+                                    const me_y = 18.20 + 1.85 * x_pcdh15;
+                                    const me_z = -68.50 - 1.20 * x_pcdh15;
+
+                                    const alar_w = 2.0 * (18.50 + 0.95 * x_pax9);
+                                    const nasal_h = Math.sqrt(Math.pow(n_y - sn_y, 2) + Math.pow(n_z - sn_z, 2));
+                                    const nasal_idx = (alar_w / Math.max(nasal_h, 1e-6)) * 100.0;
+
+                                    const facial_h = Math.sqrt(Math.pow(n_y - me_y, 2) + Math.pow(n_z - me_z, 2));
+                                    const bizygomatic_w = 2.0 * (67.50 + 1.60 * x_pax9);
+                                    const facial_idx = (facial_h / Math.max(bizygomatic_w, 1e-6)) * 100.0;
+
+                                    const nasal_typology = nasal_idx < 70.0 ? "LEPTORRHINE (Narrow)" : nasal_idx < 75.0 ? "MESORRHINE (Medium)" : "PLATYRRHINE (Broad)";
+                                    const facial_typology = facial_idx < 80.0 ? "HYPEREURYPROSOPIC" : facial_idx < 85.0 ? "EURYPROSOPIC" : facial_idx < 90.0 ? "MESOPROSOPIC" : "LEPTOPROSOPIC";
+
+                                    return (
+                                        <div className="grid grid-cols-2 gap-2">
+                                            <div className="p-2.5 rounded bg-cyan-500/10 border border-cyan-500/30">
+                                                <div className="flex justify-between items-center mb-1">
+                                                    <span className="font-mono text-[7px] text-zinc-400 uppercase">Nasal Index (NI)</span>
+                                                    <span className="font-mono text-[7px] px-1 py-0.2 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-bold">
+                                                        {nasal_typology}
+                                                    </span>
+                                                </div>
+                                                <div className="font-mono text-sm font-bold text-cyan-300">
+                                                    {nasal_idx.toFixed(1)} <span className="text-[9px] font-normal text-zinc-400">({alar_w.toFixed(1)} / {nasal_h.toFixed(1)} mm)</span>
+                                                </div>
+                                            </div>
+                                            <div className="p-2.5 rounded bg-purple-500/10 border border-purple-500/30">
+                                                <div className="flex justify-between items-center mb-1">
+                                                    <span className="font-mono text-[7px] text-zinc-400 uppercase">Facial Index (I_F)</span>
+                                                    <span className="font-mono text-[7px] px-1 py-0.2 rounded bg-purple-500/20 text-purple-300 border border-purple-500/40 font-bold">
+                                                        {facial_typology}
+                                                    </span>
+                                                </div>
+                                                <div className="font-mono text-sm font-bold text-purple-300">
+                                                    {facial_idx.toFixed(1)} <span className="text-[9px] font-normal text-zinc-400">({facial_h.toFixed(1)} / {bizygomatic_w.toFixed(1)} mm)</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })()}
+
+                                {/* Cephalometric Coordinates Matrix */}
                                 <div className="space-y-1.5">
-                                    <div className="font-mono text-[8px] text-zinc-400 uppercase tracking-wider">
-                                        Cephalometric Coordinates (mm)
+                                    <div className="font-mono text-[8px] text-zinc-400 uppercase tracking-wider flex justify-between">
+                                        <span>Cephalometric Landmarks [X, Y, Z] (mm)</span>
+                                        <span className="text-cyan-400 font-bold">Sagittal Symmetrical</span>
                                     </div>
                                     <div className="grid grid-cols-2 gap-1.5 text-[8px] font-mono">
                                         <div className="p-1.5 rounded bg-black/40 border border-zinc-800 flex justify-between">
@@ -610,12 +672,12 @@ export default function SuspectVisualizer({
                                             <span className="text-zinc-300 font-bold">0.0, {(38.2 - 1.10 * (morphoSnps.rs13289 || 0)).toFixed(1)}, {(-2.5 - 0.65 * (morphoSnps.rs13289 || 0)).toFixed(1)}</span>
                                         </div>
                                         <div className="p-1.5 rounded bg-black/40 border border-zinc-800 flex justify-between">
-                                            <span className="text-zinc-400">Alar Width:</span>
-                                            <span className="text-pink-300 font-bold">{(2 * (18.5 + 0.95 * (morphoSnps.rs12882923 || 0))).toFixed(1)} mm</span>
+                                            <span className="text-zinc-400">Alare (Al_L / Al_R):</span>
+                                            <span className="text-pink-300 font-bold">±{(18.5 + 0.95 * (morphoSnps.rs12882923 || 0)).toFixed(1)}, {(36.1 + 0.45 * (morphoSnps.rs12882923 || 0)).toFixed(1)}</span>
                                         </div>
                                         <div className="p-1.5 rounded bg-black/40 border border-zinc-800 flex justify-between">
-                                            <span className="text-zinc-400">Labiale Sup (Ls):</span>
-                                            <span className="text-zinc-300 font-bold">0.0, {(34.5 + 0.60 * (morphoSnps.rs7559252 || 0)).toFixed(1)}, {(-12.4 - 0.40 * (morphoSnps.rs7559252 || 0)).toFixed(1)}</span>
+                                            <span className="text-zinc-400">Zygion (Zy_L / Zy_R):</span>
+                                            <span className="text-purple-300 font-bold">±{(67.5 + 1.60 * (morphoSnps.rs12882923 || 0)).toFixed(1)}, 15.2</span>
                                         </div>
                                         <div className="p-1.5 rounded bg-black/40 border border-zinc-800 flex justify-between">
                                             <span className="text-zinc-400">Menton (Me):</span>
@@ -627,9 +689,9 @@ export default function SuspectVisualizer({
                                 {/* Morphometric SNP Dosage Toggles */}
                                 <div className="space-y-1.5 pt-1">
                                     <div className="font-mono text-[8px] text-zinc-400 uppercase tracking-wider">
-                                        Predictor Loci (Click to toggle dosage 0, 1, 2)
+                                        Morphometric Predictor Loci (Click to toggle dosage 0, 1, 2)
                                     </div>
-                                    <div className="grid grid-cols-3 gap-1">
+                                    <div className="grid grid-cols-5 gap-1">
                                         {[
                                             { rs: "rs974448", gene: "PAX3" },
                                             { rs: "rs12882923", gene: "PAX9" },
@@ -642,14 +704,24 @@ export default function SuspectVisualizer({
                                                 <button
                                                     key={rs}
                                                     onClick={() => setMorphoSnps(p => ({ ...p, [rs]: ((p[rs] || 0) + 1) % 3 }))}
-                                                    className="p-1 rounded bg-black/50 border border-zinc-800 hover:border-cyan-500/50 flex justify-between items-center text-[7px] font-mono"
+                                                    className="p-1 rounded bg-black/50 border border-zinc-800 hover:border-cyan-500/50 flex flex-col items-center text-[7px] font-mono"
                                                 >
                                                     <span className="text-zinc-300 font-bold">{gene}</span>
-                                                    <span className="px-1 py-0.2 rounded bg-cyan-500/20 text-cyan-300 font-bold">d={d}</span>
+                                                    <span className="mt-0.5 px-1 py-0.2 rounded bg-cyan-500/20 text-cyan-300 font-bold">d={d}</span>
                                                 </button>
                                             );
                                         })}
                                     </div>
+                                </div>
+
+                                {/* ENFSI Evaluative Reporting Shield */}
+                                <div className="p-2 rounded bg-zinc-900/60 border border-zinc-800 text-[7px] font-mono text-zinc-400 space-y-0.5">
+                                    <div className="text-cyan-400 font-bold flex items-center gap-1">
+                                        <span>⚖️</span> ENFSI (2017) Evaluative Reporting Shield
+                                    </div>
+                                    <p className="leading-tight text-zinc-400">
+                                        3D cephalometric landmarks reflect population-level anatomical estimates. Must not be used as photo-exact biometric composites.
+                                    </p>
                                 </div>
                             </div>
                         ) : activeView === "hair_balding" ? (

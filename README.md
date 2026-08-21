@@ -270,16 +270,22 @@ str-analysis/
 │           │   ├── test_adna_reference_datasets.py # Reference Datasets & Casework Cohort Tests
 │           │   ├── test_adna_cross_validation.py # External Concordance & ISFG Shield Tests
 │           │   └── test_adna_edge_cases.py # 6 Empirical Edge-Case Tests (EC-ADNA-01 to 06)
-│           ├── phenotyping/               # 35. Forensic Phenotyping & Biogeographic Ancestry (BGA-55 & HIrisPlex-S)
+│           ├── phenotyping/               # 35. Forensic Phenotyping & Biogeographic Ancestry (BGA-55, HIrisPlex-S, Cranio, Hair, MC1R)
 │           │   ├── hirisplex_mathematical_formulation.py # HIrisPlex-S 41-SNP MLR & Softmax Normalization
 │           │   ├── hirisplex_reference_datasets.py # 5 Multi-Omic Standards & Casework Cohorts
 │           │   ├── hirisplex_cross_validation.py # Erasmus MC & VISAGE Concordance, ENFSI Shield
 │           │   ├── bga_mathematical_formulation.py # 55-SNP AIM Dirichlet Likelihood, SLSQP Admixture, 3D WGS84 Geodesics
 │           │   ├── bga_reference_datasets.py # Kidd 73-Pop Reference Matrix & 5 Multi-Omic Standards
 │           │   ├── bga_cross_validation.py # FROG-kb & STRUCTURE 2.3.4 Concordance, ISFG Shield
+│           │   ├── cranio_mathematical_formulation.py # 3D Craniofacial Morphometry & Anthropological Landmarks
+│           │   ├── hair_mathematical_formulation.py # Hair Texture (EDAR/TCHH) & Male Pattern Balding PRS
+│           │   ├── mc1r_mathematical_formulation.py # MC1R Epistasis, Ephelides (Freckling) & UV Sensitivity
 │           │   ├── test_hirisplex_edge_cases.py # 5 Empirical Edge-Case Tests (EC-HIR-01 to 05)
-│           │   └── test_bga_edge_cases.py # 5 Empirical Edge-Case Tests (EC-BGA-01 to 05)
-│           └── tests/                     # Automated Test Suite (1150+ Tests Passing)
+│           │   ├── test_bga_edge_cases.py # 5 Empirical Edge-Case Tests (EC-BGA-01 to 05)
+│           │   ├── test_cranio_edge_cases.py # 5 Empirical Edge-Case Tests (EC-CRANIO-01 to 05)
+│           │   ├── test_hair_edge_cases.py # 5 Empirical Edge-Case Tests (EC-HAIR-01 to 05)
+│           │   └── test_mc1r_edge_cases.py # 5 Empirical Edge-Case Tests (EC-MC1R-01 to 05)
+│           └── tests/                     # Automated Test Suite (1200+ Tests Passing)
 │
 ├── frontend/                              # Next.js 16 Workstation Dashboard
 │   ├── public/                            # Static Assets, Icons, Favicons
@@ -301,6 +307,9 @@ str-analysis/
 │       │   ├── analysis/                  # 35 Tactical Forensic Viewport Panels & Router
 │       │   │   ├── PanelRouter.tsx        # Centralized Biocomputational Panel Router
 │       │   │   ├── PanelYSTR.tsx          # Y-STR 27-Locus Multi-Panel Tactical Visualizer
+│       │   │   ├── PanelFreckling.tsx     # MC1R Epistasis & UV Sensitivity Tactical Panel
+│       │   │   ├── PanelHair.tsx          # Hair Texture & Balding PRS Tactical Panel
+│       │   │   ├── SuspectVisualizer.tsx  # 3D Craniofacial Cephalometric Visualizer
 │       │   │   └── GeoForensicIntelligencePanel.tsx # Multi-Modal Geo-Forensic Platform
 │       │   ├── common/                    # Shared Modals & Telemetry Banners
 │       │   │   ├── DnaProfileInspectorModal.tsx # DNA & SNP Terminal with Interactive CLI

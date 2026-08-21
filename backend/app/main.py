@@ -512,6 +512,14 @@ try:
 except Exception as _bga_import_err:
     logger.warning(f"[boot] BGA-55 router not loaded: {_bga_import_err}")
 
+# --- 3D Craniofacial Morphometry & Anthropological Landmarks Router (Module 3.3) ---
+try:
+    from app.api.cranio_routes import router as cranio_router
+    app.include_router(cranio_router, prefix="/api/v1")
+    logger.info("[boot] Craniofacial Morphometry API router registered at /api/v1/forensic/phenotyping/craniofacial")
+except Exception as _cranio_import_err:
+    logger.warning(f"[boot] Craniofacial router not loaded: {_cranio_import_err}")
+
 
 
 

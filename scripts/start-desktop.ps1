@@ -67,11 +67,23 @@ if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
 $nodeVersion = & node --version 2>&1
 Write-Host "  [OK]  Node.js $nodeVersion" -ForegroundColor Green
 
-# --- npm (required for dependency install and Next.js dev server) ---
-if (-not (Get-Command npm -ErrorAction SilentlyContinue)) {
+# --- Resolve npm and npx (Windows Win32 CreateProcess requires .cmd wrapper) ---
+$npmCmd = (Get-Command npm.cmd -ErrorAction SilentlyContinue).Source
+if (-not $npmCmd) {
+    $npmCmd = (Get-Command npm -ErrorAction SilentlyContinue).Source
+}
+if (-not $npmCmd) {
     Write-Host "  [FAIL] npm is required but not found in PATH." -ForegroundColor Red
     Write-Host "         npm ships with Node.js - reinstall Node.js from https://nodejs.org/" -ForegroundColor Yellow
     exit 1
+}
+
+$npxCmd = (Get-Command npx.cmd -ErrorAction SilentlyContinue).Source
+if (-not $npxCmd) {
+    $npxCmd = (Get-Command npx -ErrorAction SilentlyContinue).Source
+}
+if (-not $npxCmd) {
+    $npxCmd = "npx.cmd"
 }
 
 # --- Python >= 3.12 ---
@@ -108,7 +120,7 @@ Write-Host "[2/4] Verifying Project Dependencies..." -ForegroundColor Cyan
 # --- Desktop (Electron wrapper) ---
 if (-not (Test-Path (Join-Path $DesktopDir "node_modules"))) {
     Write-Host "  Installing desktop Electron dependencies (one-time)..." -ForegroundColor Yellow
-    $npmDesktop = Start-Process -FilePath "npm" `
+    $npmDesktop = Start-Process -FilePath $npmCmd `
         -ArgumentList "install","--prefer-offline","--no-audit" `
         -WorkingDirectory $DesktopDir -PassThru -NoNewWindow -Wait
     if ($npmDesktop.ExitCode -ne 0) {
@@ -122,7 +134,7 @@ Write-Host "  [OK]  Desktop dependencies ready." -ForegroundColor Green
 # --- Frontend (Next.js application) ---
 if (-not (Test-Path (Join-Path $FrontendDir "node_modules"))) {
     Write-Host "  Installing frontend Next.js dependencies (one-time)..." -ForegroundColor Yellow
-    $npmFrontend = Start-Process -FilePath "npm" `
+    $npmFrontend = Start-Process -FilePath $npmCmd `
         -ArgumentList "install","--prefer-offline","--no-audit" `
         -WorkingDirectory $FrontendDir -PassThru -NoNewWindow -Wait
     if ($npmFrontend.ExitCode -ne 0) {
@@ -152,7 +164,7 @@ else {
     $stdoutLog = Join-Path $env:TEMP "forenza-next-stdout.log"
     $stderrLog = Join-Path $env:TEMP "forenza-next-stderr.log"
 
-    $frontendProcess = Start-Process -FilePath "npm" `
+    $frontendProcess = Start-Process -FilePath $npmCmd `
         -ArgumentList "run","dev" `
         -WorkingDirectory $FrontendDir `
         -PassThru -WindowStyle Hidden `
@@ -221,7 +233,7 @@ $electronExitCode = 0
 try {
     # npx resolves the local electron binary from desktop/node_modules
     Push-Location $DesktopDir
-    & npx electron .
+    & $npxCmd electron .
     $electronExitCode = $LASTEXITCODE
 }
 finally {

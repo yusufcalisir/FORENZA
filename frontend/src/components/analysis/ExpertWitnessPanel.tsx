@@ -14,6 +14,7 @@ import {
   RefreshCw,
   ChevronRight,
 } from "lucide-react";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -125,19 +126,25 @@ const TIER_CONFIG = [
 
 // ── Presets (log10 LR values) ─────────────────────────────────────────────────
 const PRESETS = [
-  { label: "1.0 (Neutral)", log10: 0 },
-  { label: "10 (Weak)", log10: 1 },
-  { label: "500 (Mod. Strong)", log10: 2.699 },
-  { label: "5,000 (Strong)", log10: 3.699 },
-  { label: "3.5×10⁷ (P6_03)", log10: 7.5441 },
+  { label: "1.0 (Neutral)", labelTr: "1.0 (Nötr)", log10: 0 },
+  { label: "10 (Weak)", labelTr: "10 (Zayıf)", log10: 1 },
+  { label: "500 (Mod. Strong)", labelTr: "500 (Orta-Güçlü)", log10: 2.699 },
+  { label: "5,000 (Strong)", labelTr: "5.000 (Güçlü)", log10: 3.699 },
+  { label: "3.5×10⁷ (P6_03)", labelTr: "3.5×10⁷ (P6_03)", log10: 7.5441 },
 ];
 
 export default function ExpertWitnessPanel() {
+  const { lang, setLang } = useSaasLanguage();
+  const isTr = lang === "tr";
+
   const [activeTab, setActiveTab] = useState<"enfsi" | "daubert">("enfsi");
-  const [language, setLanguage] = useState<"tr" | "en">("en");
   const [log10LR, setLog10LR] = useState<number>(7.5441); // VECTOR_P6_03 default
-  const [hp, setHp] = useState("The DNA evidence originates from the named suspect.");
-  const [hd, setHd] = useState("The DNA evidence originates from an unknown unrelated person.");
+  const [hp, setHp] = useState(
+    isTr ? "DNA profili şüpheli şahıstan kaynaklanmaktadır." : "The DNA evidence originates from the named suspect."
+  );
+  const [hd, setHd] = useState(
+    isTr ? "DNA profili toplumdan rastgele, akraba olmayan bir şahıstan kaynaklanmaktadır." : "The DNA evidence originates from an unknown unrelated person."
+  );
   const [loading, setLoading] = useState(false);
 
   // Daubert inputs
@@ -163,7 +170,7 @@ export default function ExpertWitnessPanel() {
           likelihood_ratio: computedLR,
           hp_proposition: hp,
           hd_proposition: hd,
-          language,
+          language: lang,
         }),
       });
       if (res.ok) setReportData(await res.json());
@@ -172,7 +179,7 @@ export default function ExpertWitnessPanel() {
     } finally {
       setLoading(false);
     }
-  }, [computedLR, hp, hd, language, API_BASE]);
+  }, [computedLR, hp, hd, lang, API_BASE]);
 
   const fetchDaubert = useCallback(async () => {
     setLoading(true);
@@ -195,10 +202,10 @@ export default function ExpertWitnessPanel() {
     }
   }, [errorRate, peerReviewed, swgdam, iso17025, API_BASE]);
 
-  // Auto-fetch on mount
+  // Auto-fetch on mount & lang change
   useEffect(() => {
     fetchReport();
-  }, []);
+  }, [lang]);
 
   const activeTier = reportData ? TIER_CONFIG[reportData.verbal_tier] : null;
 
@@ -213,14 +220,20 @@ export default function ExpertWitnessPanel() {
           <div>
             <div className="flex items-center gap-2 flex-wrap">
               <h2 className="text-sm font-bold tracking-widest text-tactical-text uppercase">
-                Dynamic ENFSI Evaluative Reporting & Verbal Scale Engine (Pillar 6 §4)
+                {isTr
+                  ? "Dinamik ENFSI Değerlendirici Raporlama & Sözlü Ölçek Motoru (Pillar 6 §4)"
+                  : "Dynamic ENFSI Evaluative Reporting & Verbal Scale Engine (Pillar 6 §4)"}
               </h2>
               <span className="px-2 py-0.5 rounded text-[8px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                ENFSI 2017 • Daubert FRE 702 • Frye • Prosecutor's Fallacy Shield
+                {isTr
+                  ? "ENFSI 2017 • Daubert FRE 702 • Frye • Savcılık Safsatası Kalkanı"
+                  : "ENFSI 2017 • Daubert FRE 702 • Frye • Prosecutor's Fallacy Shield"}
               </span>
             </div>
             <p className="text-[10px] text-zinc-400 mt-0.5">
-              Bayesian LR → 7-Tier ENFSI 2017 Verbal Scale • Bilingual EN/TR • Statutory Legal Admissibility Audit
+              {isTr
+                ? "Bayesyen LR → 7 Düzeyli ENFSI 2017 Sözlü Ölçeği • İki Dilli EN/TR • Yasal Kabul Edilebilirlik Denetimi"
+                : "Bayesian LR → 7-Tier ENFSI 2017 Verbal Scale • Bilingual EN/TR • Statutory Legal Admissibility Audit"}
             </p>
           </div>
         </div>
@@ -230,15 +243,15 @@ export default function ExpertWitnessPanel() {
           <button
             onClick={() => { setActiveTab("enfsi"); if (!reportData) fetchReport(); }}
             className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-              activeTab === "enfsi" ? "bg-amber-500 text-black shadow-md" : "text-zinc-400 hover:text-zinc-200"
+              activeTab === "enfsi" ? "bg-amber-500 text-black shadow-md font-extrabold" : "text-zinc-400 hover:text-zinc-200"
             }`}
           >
-            ENFSI Verbal Scale
+            {isTr ? "ENFSI Sözlü Ölçek" : "ENFSI Verbal Scale"}
           </button>
           <button
             onClick={() => { setActiveTab("daubert"); if (!daubertData) fetchDaubert(); }}
             className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-              activeTab === "daubert" ? "bg-amber-500 text-black shadow-md" : "text-zinc-400 hover:text-zinc-200"
+              activeTab === "daubert" ? "bg-amber-500 text-black shadow-md font-extrabold" : "text-zinc-400 hover:text-zinc-200"
             }`}
           >
             Daubert / Frye
@@ -253,15 +266,15 @@ export default function ExpertWitnessPanel() {
           <div className="space-y-4 rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 shadow-xl">
             <div className="border-b border-tactical-border/40 pb-3 flex items-center justify-between">
               <span className="text-xs font-bold uppercase tracking-wider text-tactical-text">
-                Evaluative Parameters
+                {isTr ? "Değerlendirici Parametreler" : "Evaluative Parameters"}
               </span>
               {/* Language Toggle */}
               <button
-                onClick={() => setLanguage(l => l === "tr" ? "en" : "tr")}
+                onClick={() => setLang(lang === "tr" ? "en" : "tr")}
                 className="flex items-center gap-1 px-2 py-1 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300 text-[10px] font-bold cursor-pointer hover:bg-amber-500/20 transition-all"
               >
                 <Globe className="w-3 h-3" />
-                {language === "tr" ? "🇹🇷 TR" : "🇬🇧 EN"}
+                {lang === "tr" ? "🇹🇷 TR" : "🇬🇧 EN"}
               </button>
             </div>
 
@@ -282,14 +295,14 @@ export default function ExpertWitnessPanel() {
                 />
                 <div className="flex justify-between text-[9px] text-zinc-600 mt-0.5">
                   <span>10⁻⁶</span>
-                  <span>1 (Neutral)</span>
+                  <span>1 ({isTr ? "Nötr" : "Neutral"})</span>
                   <span>10¹⁰</span>
                 </div>
               </div>
 
               {/* Presets */}
               <div>
-                <label className="text-zinc-400 block mb-1.5">Quick Presets:</label>
+                <label className="text-zinc-400 block mb-1.5">{isTr ? "Hızlı Hazır Ayarlar:" : "Quick Presets:"}</label>
                 <div className="flex flex-wrap gap-1">
                   {PRESETS.map(p => (
                     <button
@@ -301,14 +314,16 @@ export default function ExpertWitnessPanel() {
                           : "bg-black/40 text-zinc-400 border-tactical-border/40 hover:border-amber-500/40 hover:text-amber-300"
                       }`}
                     >
-                      {p.label}
+                      {isTr ? p.labelTr : p.label}
                     </button>
                   ))}
                 </div>
               </div>
 
               <div>
-                <label className="text-zinc-400 block mb-1">H_p (Prosecution Proposition):</label>
+                <label className="text-zinc-400 block mb-1">
+                  {isTr ? "H_p (İddia Makamı Hipotezi):" : "H_p (Prosecution Proposition):"}
+                </label>
                 <textarea
                   rows={2}
                   value={hp}
@@ -317,7 +332,9 @@ export default function ExpertWitnessPanel() {
                 />
               </div>
               <div>
-                <label className="text-zinc-400 block mb-1">H_d (Defense Proposition):</label>
+                <label className="text-zinc-400 block mb-1">
+                  {isTr ? "H_d (Savunma Hipotezi):" : "H_d (Defense Proposition):"}
+                </label>
                 <textarea
                   rows={2}
                   value={hd}
@@ -333,7 +350,7 @@ export default function ExpertWitnessPanel() {
               className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
             >
               <Scale className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
-              Generate Evaluative Report
+              {isTr ? "Değerlendirici Raporu Oluştur" : "Generate Evaluative Report"}
             </button>
           </div>
 
@@ -346,14 +363,18 @@ export default function ExpertWitnessPanel() {
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <span className={`text-[10px] font-bold uppercase tracking-widest block mb-1 ${activeTier?.color}`}>
-                        ENFSI 2017 — TIER {reportData.verbal_tier} OF 6 • {reportData.reporting_standard}
+                        {isTr
+                          ? `ENFSI 2017 — DÜZEY ${reportData.verbal_tier} / 6 • ${reportData.reporting_standard}`
+                          : `ENFSI 2017 — TIER ${reportData.verbal_tier} OF 6 • ${reportData.reporting_standard}`}
                       </span>
                       <span className={`text-2xl font-black font-mono ${activeTier?.color}`}>
-                        {language === "tr" ? activeTier?.labelTr : activeTier?.label}
+                        {isTr ? activeTier?.labelTr : activeTier?.label}
                       </span>
                       <div className="flex items-center gap-2 mt-1">
                         <span className="text-xs text-zinc-400">
-                          {reportData.is_prosecution_supported ? "→ Prosecution H_p" : "→ Defense H_d"} supported
+                          {reportData.is_prosecution_supported
+                            ? (isTr ? "→ İddia H_p Destekleniyor" : "→ Prosecution H_p supported")
+                            : (isTr ? "→ Savunma H_d Destekleniyor" : "→ Defense H_d supported")}
                         </span>
                         <span className={`px-2 py-0.5 rounded text-[9px] font-bold border ${reportData.is_prosecution_supported ? "bg-emerald-500/10 text-emerald-300 border-emerald-500/30" : "bg-sky-500/10 text-sky-300 border-sky-500/30"}`}>
                           {reportData.supported_proposition}
@@ -373,7 +394,7 @@ export default function ExpertWitnessPanel() {
                   <div className="p-4 rounded-xl bg-black/50 border border-tactical-border/40">
                     <div className="text-[10px] text-zinc-500 uppercase font-bold mb-2 flex items-center gap-1">
                       <Gavel className="w-3 h-3" />
-                      Standardized Courtroom Evaluative Statement ({language === "tr" ? "Türkçe" : "English"})
+                      {isTr ? "Standart Mahkeme Değerlendirici İfadesi (Türkçe)" : "Standardized Courtroom Evaluative Statement (English)"}
                     </div>
                     <p className="text-sm text-zinc-100 font-mono leading-relaxed italic">
                       "{reportData.evaluative_statement}"
@@ -396,7 +417,7 @@ export default function ExpertWitnessPanel() {
                 {/* 7-Tier Stepladder Visual */}
                 <div className="rounded-2xl border border-tactical-border/60 bg-black/40 p-4 space-y-2">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block mb-3">
-                    ENFSI 2017 Seven-Tier Verbal Strength Scale
+                    {isTr ? "ENFSI 2017 Yedi Düzeyli Sözlü Güç Ölçeği" : "ENFSI 2017 Seven-Tier Verbal Strength Scale"}
                   </span>
                   <div className="space-y-1.5">
                     {[...TIER_CONFIG].reverse().map(tc => (
@@ -416,7 +437,7 @@ export default function ExpertWitnessPanel() {
                         )}
                         <span className={`text-[11px] font-bold w-6 ${tc.color}`}>{tc.tier}</span>
                         <span className={`text-[11px] font-bold flex-1 ${tc.tier === reportData.verbal_tier ? tc.color : "text-zinc-500"}`}>
-                          {tc.label}
+                          {isTr ? tc.labelTr : tc.label}
                         </span>
                         <span className="text-[9px] text-zinc-600 font-mono">{tc.logRange}</span>
                       </div>
@@ -428,7 +449,7 @@ export default function ExpertWitnessPanel() {
                 <div className="p-3 rounded-xl bg-rose-500/5 border border-rose-500/20 text-[10px] font-mono text-zinc-400">
                   <div className="flex items-center gap-1.5 text-rose-400 font-bold mb-1">
                     <ShieldCheck className="w-3.5 h-3.5" />
-                    Prosecutor's Fallacy Shield
+                    {isTr ? "Savcılık Safsatası Kalkanı (Prosecutor's Fallacy Shield)" : "Prosecutor's Fallacy Shield"}
                   </div>
                   <p className="leading-relaxed">{reportData.prosecutors_fallacy_shield.substring(0, 320)}…</p>
                 </div>
@@ -445,28 +466,42 @@ export default function ExpertWitnessPanel() {
           <div className="space-y-4 rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 shadow-xl">
             <div className="border-b border-tactical-border/40 pb-3">
               <span className="text-xs font-bold uppercase tracking-wider text-tactical-text block">
-                Daubert FRE 702 Audit Parameters
+                {isTr ? "Daubert FRE 702 Denetim Parametreleri" : "Daubert FRE 702 Audit Parameters"}
               </span>
             </div>
 
             <div className="space-y-3 text-xs">
               <div>
-                <label className="text-zinc-400 block mb-1">Observed System Error Rate (P_error):</label>
+                <label className="text-zinc-400 block mb-1">
+                  {isTr ? "Gözlemlenen Sistem Hata Oranı (P_error):" : "Observed System Error Rate (P_error):"}
+                </label>
                 <select
                   value={errorRate}
                   onChange={e => setErrorRate(parseFloat(e.target.value))}
                   className="w-full px-3 py-2 rounded-xl bg-black/50 border border-tactical-border/60 text-tactical-text font-mono"
                 >
-                  <option value={1e-9}>1×10⁻⁹ (Pass: ≤ 1×10⁻⁶)</option>
-                  <option value={1e-6}>1×10⁻⁶ (Boundary)</option>
-                  <option value={5e-5}>5×10⁻⁵ (Fail: &gt; 1×10⁻⁶)</option>
+                  <option value={1e-9}>{isTr ? "1×10⁻⁹ (Geçerli: ≤ 1×10⁻⁶)" : "1×10⁻⁹ (Pass: ≤ 1×10⁻⁶)"}</option>
+                  <option value={1e-6}>{isTr ? "1×10⁻⁶ (Sınır)" : "1×10⁻⁶ (Boundary)"}</option>
+                  <option value={5e-5}>{isTr ? "5×10⁻⁵ (Başarısız: > 1×10⁻⁶)" : "5×10⁻⁵ (Fail: > 1×10⁻⁶)"}</option>
                 </select>
               </div>
 
               {[
-                { label: "Peer-Reviewed Algorithms (Pillar 3)", value: peerReviewed, setter: setPeerReviewed },
-                { label: "SWGDAM (2020) QAS Compliant (Pillar 4)", value: swgdam, setter: setSwgdam },
-                { label: "ISO/IEC 17025:2017 Accreditation (Pillar 4)", value: iso17025, setter: setIso17025 },
+                {
+                  label: isTr ? "Hakemli Algoritmalar (Pillar 3)" : "Peer-Reviewed Algorithms (Pillar 3)",
+                  value: peerReviewed,
+                  setter: setPeerReviewed
+                },
+                {
+                  label: isTr ? "SWGDAM (2020) QAS Uyumluluğu (Pillar 4)" : "SWGDAM (2020) QAS Compliant (Pillar 4)",
+                  value: swgdam,
+                  setter: setSwgdam
+                },
+                {
+                  label: isTr ? "ISO/IEC 17025:2017 Akreditasyonu (Pillar 4)" : "ISO/IEC 17025:2017 Accreditation (Pillar 4)",
+                  value: iso17025,
+                  setter: setIso17025
+                },
               ].map(({ label, value, setter }) => (
                 <label key={label} className="flex items-center justify-between gap-2 cursor-pointer">
                   <span className="text-zinc-400">{label}:</span>
@@ -478,7 +513,7 @@ export default function ExpertWitnessPanel() {
                         : "bg-rose-500/20 text-rose-300 border-rose-500/40"
                     }`}
                   >
-                    {value ? "✓ YES" : "✗ NO"}
+                    {value ? (isTr ? "✓ EVET" : "✓ YES") : (isTr ? "✗ HAYIR" : "✗ NO")}
                   </button>
                 </label>
               ))}
@@ -490,7 +525,7 @@ export default function ExpertWitnessPanel() {
               className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
             >
               <Gavel className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
-              Run Daubert Audit
+              {isTr ? "Daubert Denetimini Çalıştır" : "Run Daubert Audit"}
             </button>
           </div>
 
@@ -503,10 +538,12 @@ export default function ExpertWitnessPanel() {
                   <div className="flex items-center justify-between mb-4">
                     <div>
                       <span className={`text-[10px] font-bold uppercase tracking-widest block ${daubertData.overall_admissible ? "text-emerald-300" : "text-rose-300"}`}>
-                        STATUTORY LEGAL ADMISSIBILITY VERDICT
+                        {isTr ? "YASAL KABUL EDİLEBİLİRLİK KARARI" : "STATUTORY LEGAL ADMISSIBILITY VERDICT"}
                       </span>
                       <span className={`text-2xl font-black font-mono ${daubertData.overall_admissible ? "text-emerald-300" : "text-rose-300"}`}>
-                        {daubertData.overall_admissible ? "COURT ADMISSIBLE" : "INADMISSIBLE"}
+                        {daubertData.overall_admissible
+                          ? (isTr ? "MAHKEMEDE KABUL EDİLEBİLİR" : "COURT ADMISSIBLE")
+                          : (isTr ? "KABUL EDİLEMEZ" : "INADMISSIBLE")}
                       </span>
                     </div>
                     {daubertData.overall_admissible
@@ -516,12 +553,28 @@ export default function ExpertWitnessPanel() {
                   </div>
 
                   {/* Pillar Grid */}
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {[
-                      { label: "Pillar 1: Falsifiability & Testability", sub: "Automated deterministic unit test suites", pass: daubertData.pillar_1_falsifiability },
-                      { label: "Pillar 2: Error Rate", sub: `P_error ≤ ${daubertData.error_rate_bound.toExponential(0)} (Daubert FRE 702)`, pass: daubertData.pillar_2_error_rate },
-                      { label: "Pillar 3: Peer-Reviewed Literature", sub: "Published algorithms & peer-reviewed validation", pass: daubertData.pillar_3_peer_review },
-                      { label: "Pillar 4: Standards Control", sub: "SWGDAM (2020) & ISO/IEC 17025:2017", pass: daubertData.pillar_4_standards },
+                      {
+                        label: isTr ? "Pillar 1: Yanlışlanabilirlik & Test Edilebilirlik" : "Pillar 1: Falsifiability & Testability",
+                        sub: isTr ? "Otomatik deterministik birim test paketleri" : "Automated deterministic unit test suites",
+                        pass: daubertData.pillar_1_falsifiability
+                      },
+                      {
+                        label: isTr ? "Pillar 2: Hata Oranı" : "Pillar 2: Error Rate",
+                        sub: `P_error ≤ ${daubertData.error_rate_bound.toExponential(0)} (Daubert FRE 702)`,
+                        pass: daubertData.pillar_2_error_rate
+                      },
+                      {
+                        label: isTr ? "Pillar 3: Hakemli Bilimsel Literatür" : "Pillar 3: Peer-Reviewed Literature",
+                        sub: isTr ? "Yayınlanmış algoritmalar ve hakemli doğrulama" : "Published algorithms & peer-reviewed validation",
+                        pass: daubertData.pillar_3_peer_review
+                      },
+                      {
+                        label: isTr ? "Pillar 4: Standartlar ve Kalite Kontrol" : "Pillar 4: Standards Control",
+                        sub: "SWGDAM (2020) & ISO/IEC 17025:2017",
+                        pass: daubertData.pillar_4_standards
+                      },
                     ].map(({ label, sub, pass }) => (
                       <div key={label} className={`p-3 rounded-xl border ${pass ? "border-emerald-500/30 bg-emerald-500/10" : "border-rose-500/30 bg-rose-500/10"}`}>
                         <div className="flex items-center gap-2 mb-1">
@@ -537,7 +590,10 @@ export default function ExpertWitnessPanel() {
                   </div>
 
                   <div className={`mt-3 p-2.5 rounded-xl border text-center text-xs font-bold ${daubertData.frye_general_acceptance ? "border-sky-500/30 bg-sky-500/10 text-sky-300" : "border-rose-500/30 bg-rose-500/10 text-rose-300"}`}>
-                    Frye Standard — General Scientific Acceptance: {daubertData.frye_general_acceptance ? "✓ ESTABLISHED" : "✗ NOT ESTABLISHED"}
+                    {isTr ? "Frye Standardı — Genel Bilimsel Kabul:" : "Frye Standard — General Scientific Acceptance:"}{" "}
+                    {daubertData.frye_general_acceptance
+                      ? (isTr ? "✓ SAĞLANDI" : "✓ ESTABLISHED")
+                      : (isTr ? "✗ SAĞLANMADI" : "✗ NOT ESTABLISHED")}
                   </div>
                 </div>
               </motion.div>

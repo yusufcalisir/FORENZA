@@ -7,6 +7,7 @@ import dynamic from "next/dynamic";
 import AncestryDataPanel from "./AncestryDataPanel";
 import type { ScanPhase } from "./ForensicMap";
 import { useIngestStore } from "@/store/ingestStore";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // DYNAMIC IMPORT — Leaflet must be loaded client-side only (no SSR)
@@ -32,6 +33,7 @@ const ForensicMap = dynamic(() => import("./ForensicMap"), {
 
 interface GeoProbability {
     region: string;
+    regionTr?: string;
     lat: number;
     lng: number;
     probability: number;
@@ -41,10 +43,10 @@ interface GeoProbability {
 }
 
 const DEFAULT_GEO_RESULTS: GeoProbability[] = [
-    { region: "Northwestern Europe", lat: 53.5, lng: -2.0, probability: 0.684, color: "#06B6D4", initial_radius_km: 400, final_radius_km: 150 },
-    { region: "Central Europe", lat: 50.0, lng: 14.0, probability: 0.182, color: "#8B5CF6", initial_radius_km: 500, final_radius_km: 250 },
-    { region: "Southern Europe", lat: 41.9, lng: 12.5, probability: 0.091, color: "#F59E0B", initial_radius_km: 450, final_radius_km: 200 },
-    { region: "Eastern Europe", lat: 55.7, lng: 37.6, probability: 0.043, color: "#22C55E", initial_radius_km: 600, final_radius_km: 300 },
+    { region: "Northwestern Europe", regionTr: "Kuzeybatı Avrupa", lat: 53.5, lng: -2.0, probability: 0.684, color: "#06B6D4", initial_radius_km: 400, final_radius_km: 150 },
+    { region: "Central Europe", regionTr: "Orta Avrupa", lat: 50.0, lng: 14.0, probability: 0.182, color: "#8B5CF6", initial_radius_km: 500, final_radius_km: 250 },
+    { region: "Southern Europe", regionTr: "Güney Avrupa", lat: 41.9, lng: 12.5, probability: 0.091, color: "#F59E0B", initial_radius_km: 450, final_radius_km: 200 },
+    { region: "Eastern Europe", regionTr: "Doğu Avrupa", lat: 55.7, lng: 37.6, probability: 0.043, color: "#22C55E", initial_radius_km: 600, final_radius_km: 300 },
 ];
 
 interface GeoForensicPanelProps {
@@ -57,10 +59,13 @@ interface GeoForensicPanelProps {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// SCANNING LOADER (New Component)
+// SCANNING LOADER
 // ═══════════════════════════════════════════════════════════════════════════════
 
 function ScanningMapLoader() {
+    const { lang } = useSaasLanguage();
+    const isTr = lang === "tr";
+
     return (
         <div className="flex-1 flex flex-col items-center justify-center bg-[#070709] relative overflow-hidden min-h-[400px]">
             {/* Grid Background */}
@@ -132,11 +137,11 @@ function ScanningMapLoader() {
                 <div className="flex items-center justify-center gap-2">
                     <Loader2 className="w-4 h-4 text-tactical-primary animate-spin" />
                     <p className="font-mono text-[10px] font-bold text-tactical-primary tracking-[0.2em] uppercase">
-                        Scanning Geo-Spatial Index
+                        {isTr ? "Jeo-Uzamsal İndeks Taranıyor" : "Scanning Geo-Spatial Index"}
                     </p>
                 </div>
                 <p className="font-mono text-[8px] text-zinc-500 tracking-wider">
-                    Calculating Allele Frequencies...
+                    {isTr ? "Alel Frekansları Hesaplanıyor..." : "Calculating Allele Frequencies..."}
                 </p>
             </div>
         </div>
@@ -147,16 +152,20 @@ function ScanningMapLoader() {
 // SCAN STATUS TICKER
 // ═══════════════════════════════════════════════════════════════════════════════
 
-const SCAN_MESSAGES: Record<ScanPhase, { text: string; color: string }> = {
-    idle: { text: "Awaiting Analysis Data...", color: "text-zinc-600" },
-    scanning: { text: "Scanning Global Databases...", color: "text-blue-400" },
-    calculating: { text: "Calculating Population Covariance...", color: "text-amber-400" },
-    locked: { text: "95% Confidence Zone Locked.", color: "text-tactical-primary" },
+const SCAN_MESSAGES: Record<ScanPhase, { text: string; textTr: string; color: string }> = {
+    idle: { text: "Awaiting Analysis Data...", textTr: "Analiz Verisi Bekleniyor...", color: "text-zinc-600" },
+    scanning: { text: "Scanning Global Databases...", textTr: "Küresel Veritabanları Taranıyor...", color: "text-blue-400" },
+    calculating: { text: "Calculating Population Covariance...", textTr: "Popülasyon Kovaryansı Hesaplanıyor...", color: "text-amber-400" },
+    locked: { text: "95% Confidence Zone Locked.", textTr: "%95 Güven Bölgesi Kilitlendi.", color: "text-tactical-primary" },
 };
 
 function ScanStatusTicker({ phase, region }: { phase: ScanPhase; region?: GeoProbability }) {
+    const { lang } = useSaasLanguage();
+    const isTr = lang === "tr";
     const msg = SCAN_MESSAGES[phase];
     const isLocked = phase === "locked";
+
+    const displayRegion = region ? (isTr && region.regionTr ? region.regionTr : region.region) : "";
 
     return (
         <div className="flex items-center gap-2 px-3 py-1 rounded bg-black/70 backdrop-blur-sm border border-tactical-border/50">
@@ -168,11 +177,11 @@ function ScanStatusTicker({ phase, region }: { phase: ScanPhase; region?: GeoPro
                 <Loader2 className="w-3 h-3 animate-spin text-blue-400" />
             )}
             <span className={`font-mono text-[8px] tracking-wider uppercase ${msg.color}`}>
-                {msg.text}
+                {isTr ? msg.textTr : msg.text}
             </span>
             {isLocked && region && (
                 <span className="font-mono text-[8px] font-bold text-tactical-primary">
-                    — {region.region} ({(region.probability * 100).toFixed(1)}%)
+                    — {displayRegion} ({(region.probability * 100).toFixed(1)}%)
                 </span>
             )}
         </div>
@@ -184,14 +193,27 @@ function ScanStatusTicker({ phase, region }: { phase: ScanPhase; region?: GeoPro
 // ═══════════════════════════════════════════════════════════════════════════════
 
 function EmptyState() {
+    const { lang } = useSaasLanguage();
+    const isTr = lang === "tr";
+
     return (
         <div className="flex-1 flex items-center justify-center">
             <div className="text-center space-y-3 opacity-40">
                 <Globe className="w-12 h-12 text-zinc-600 mx-auto" />
-                <p className="font-mono text-[9px] text-zinc-500 uppercase tracking-widest">
-                    NO GEO-FORENSIC DATA
-                    <br />
-                    Run analysis to generate ancestry map
+                <p className="font-mono text-[9px] text-zinc-500 uppercase tracking-widest leading-relaxed">
+                    {isTr ? (
+                        <>
+                            JEO-ADLİ VERİ BULUNAMADI
+                            <br />
+                            Soy haritası oluşturmak için analiz çalıştırın
+                        </>
+                    ) : (
+                        <>
+                            NO GEO-FORENSIC DATA
+                            <br />
+                            Run analysis to generate ancestry map
+                        </>
+                    )}
                 </p>
             </div>
         </div>
@@ -211,6 +233,8 @@ export default function GeoForensicPanel({
     onRegionHover,
     selectedRegion,
 }: (GeoForensicPanelProps & { onRegionHover?: (region: string | null) => void }) = {}) {
+    const { lang } = useSaasLanguage();
+    const isTr = lang === "tr";
     const activeProfile = useIngestStore((s) => s.activeProfile);
 
     // ── 1. Unified Data Source & Dynamic Fallback ──
@@ -230,6 +254,7 @@ export default function GeoForensicPanel({
             return [
                 {
                     region: `${activeProfile.ancestry.primary} (Inferred WGS84 Centroid)`,
+                    regionTr: `${activeProfile.ancestry.primary} (Çıkarsanan WGS84 Sentroidi)`,
                     lat: activeProfile.geoLocation.lat,
                     lng: activeProfile.geoLocation.lng,
                     probability: (activeProfile.geoLocation.confidencePct || 90) / 100,
@@ -243,23 +268,16 @@ export default function GeoForensicPanel({
     }, [geoResults, activeProfile]);
 
     // ── 2. Dynamic Reliability Calculation ──
-    // Score = (Top_Prob - Second_Prob) * Multiplier
-    // If top two are close, reliability is low.
     let calculatedReliability = reliabilityScore;
     if (sortedData.length >= 2) {
         const margin = sortedData[0].probability - sortedData[1].probability;
-        // Multiplier 2.5 means a 40% margin gives 100% confidence
         calculatedReliability = Math.min(Math.max(margin * 2.5, 0.1), 0.99);
     } else if (sortedData.length === 1) {
-        calculatedReliability = 0.95; // Single match is high confidence
+        calculatedReliability = 0.95;
     }
 
     const hasData = sortedData.length > 0;
     const [scanPhase, setScanPhase] = useState<ScanPhase>("idle");
-
-    // Reset scan phase when data changes (new profile)
-    // using a ref or effect to detect data change if needed, 
-    // but ForensicMap handles flyTo on data change.
 
     const handleScanPhaseChange = useCallback((phase: ScanPhase) => {
         setScanPhase(phase);
@@ -277,7 +295,7 @@ export default function GeoForensicPanel({
                 <div className="flex items-center gap-2">
                     <Globe className="w-4 h-4 text-tactical-primary" />
                     <h3 className="font-mono text-[10px] font-bold tracking-[0.2em] text-tactical-text uppercase">
-                        Geo-Forensic_Intelligence
+                        {isTr ? "JEO-ADLİ_İSTİHBARAT" : "Geo-Forensic_Intelligence"}
                     </h3>
                 </div>
                 {hasData && (
@@ -290,10 +308,10 @@ export default function GeoForensicPanel({
                             }`} />
                         <span className="font-mono text-[8px] text-zinc-500 tracking-wider uppercase">
                             {scanPhase === "locked"
-                                ? `${sortedData.length} REGIONS · LOCKED`
+                                ? (isTr ? `${sortedData.length} BÖLGE · KİLİTLENDİ` : `${sortedData.length} REGIONS · LOCKED`)
                                 : scanPhase === "idle"
-                                    ? `${sortedData.length} regions`
-                                    : "SCANNING..."
+                                    ? (isTr ? `${sortedData.length} bölge` : `${sortedData.length} regions`)
+                                    : (isTr ? "TARANIYOR..." : "SCANNING...")
                             }
                         </span>
                     </div>

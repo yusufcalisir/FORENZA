@@ -4,6 +4,7 @@ import { useForensicCaseStore } from "@/store/forensicCaseStore";
 import { useIngestStore } from "@/store/ingestStore";
 import { Dna, Eye, Globe, MapPin, Sliders, ArrowRight } from "lucide-react";
 import dynamic from "next/dynamic";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 const GeoForensicPanel = dynamic(() => import("@/components/analysis/GeoForensicPanel"), {
     ssr: false,
@@ -15,6 +16,8 @@ const GeoForensicPanel = dynamic(() => import("@/components/analysis/GeoForensic
 });
 
 export default function ActiveProfileBanner() {
+    const { lang } = useSaasLanguage();
+    const isTr = lang === "tr";
     const { activeCase } = useForensicCaseStore();
     const { activeProfile: storeProfile, setInspectorOpen } = useIngestStore();
 
@@ -52,18 +55,22 @@ export default function ActiveProfileBanner() {
                     <div className="min-w-0 space-y-1">
                         <div className="flex items-center gap-2 flex-wrap">
                             <h3 className="text-xs sm:text-base font-extrabold text-white tracking-wider font-mono leading-tight break-words">
-                                ACTIVE CASE: {activeProfile.profileId}
+                                {isTr ? "AKTİF VAKA:" : "ACTIVE CASE:"} {activeProfile.profileId}
                             </h3>
                             <span className="px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shrink-0">
-                                {activeProfile.sampleType} CASE
+                                {activeProfile.sampleType} {isTr ? "VAKASI" : "CASE"}
                             </span>
                         </div>
                         <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[9px] sm:text-[10px] text-zinc-400 font-mono">
-                            <span>Node: <strong className="text-cyan-300">{activeProfile.nodeId}</strong></span>
+                            <span>{isTr ? "Düğüm:" : "Node:"} <strong className="text-cyan-300">{activeProfile.nodeId}</strong></span>
                             <span className="text-zinc-600">•</span>
-                            <span className="text-zinc-300 font-bold">{activeProfile.markerCount} Autosomal STR Loci (20 FBI Expanded CODIS + 4 Extended)</span>
+                            <span className="text-zinc-300 font-bold">
+                                {activeProfile.markerCount} {isTr ? "Otozomal STR Lokusu (20 FBI Genişletilmiş CODIS + 4 Ek)" : "Autosomal STR Loci (20 FBI Expanded CODIS + 4 Extended)"}
+                            </span>
                             <span className="text-zinc-600">•</span>
-                            <span className="text-zinc-300 font-bold">55-SNP AIM Panel (Kidd et al. 2014)</span>
+                            <span className="text-zinc-300 font-bold">
+                                {isTr ? "55-SNP AIM Paneli (Kidd vd. 2014)" : "55-SNP AIM Panel (Kidd et al. 2014)"}
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -73,7 +80,7 @@ export default function ActiveProfileBanner() {
                     className="w-full sm:w-auto px-4 py-2 rounded-xl text-xs font-bold bg-cyan-500/20 border border-cyan-500/40 text-cyan-200 hover:bg-cyan-500/30 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_15px_rgba(6,182,212,0.2)] shrink-0 font-mono uppercase tracking-wider"
                 >
                     <Sliders className="w-4 h-4 text-cyan-400" />
-                    <span>Open DNA &amp; SNP Terminal</span>
+                    <span>{isTr ? "DNA & SNP Terminalini Aç" : "Open DNA & SNP Terminal"}</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                 </button>
             </div>
@@ -84,16 +91,16 @@ export default function ActiveProfileBanner() {
                 <div className="p-3.5 rounded-xl bg-black/50 border border-tactical-border/80 space-y-2">
                     <div className="flex items-center gap-1.5 text-emerald-400 font-bold text-[11px] border-b border-tactical-border/50 pb-1.5">
                         <Eye className="w-3.5 h-3.5 shrink-0" />
-                        <span>Inferred Phenotype</span>
+                        <span>{isTr ? "Çıkarsanan Fenotip" : "Inferred Phenotype"}</span>
                     </div>
                     <div className="grid grid-cols-[100px_1fr] items-center gap-y-1.5 gap-x-2 text-[10px]">
-                        <span className="text-zinc-400 font-mono">Eye Color:</span>
+                        <span className="text-zinc-400 font-mono">{isTr ? "Göz Rengi:" : "Eye Color:"}</span>
                         <span className="font-bold text-cyan-300 font-mono truncate">{activeProfile.phenotype.eyeColor} ({activeProfile.phenotype.eyeColorProb}%)</span>
 
-                        <span className="text-zinc-400 font-mono">Skin Phototype:</span>
+                        <span className="text-zinc-400 font-mono">{isTr ? "Ten Tipi:" : "Skin Phototype:"}</span>
                         <span className="font-bold text-amber-300 font-mono truncate">{activeProfile.phenotype.skinType}</span>
 
-                        <span className="text-zinc-400 font-mono">Hair Texture:</span>
+                        <span className="text-zinc-400 font-mono">{isTr ? "Saç Dokusu:" : "Hair Texture:"}</span>
                         <span className="font-bold text-purple-300 font-mono truncate">{activeProfile.phenotype.hairType}</span>
                     </div>
                 </div>
@@ -102,16 +109,16 @@ export default function ActiveProfileBanner() {
                 <div className="p-3.5 rounded-xl bg-black/50 border border-tactical-border/80 space-y-2">
                     <div className="flex items-center gap-1.5 text-cyan-400 font-bold text-[11px] border-b border-tactical-border/50 pb-1.5">
                         <Globe className="w-3.5 h-3.5 shrink-0" />
-                        <span>Biogeographic Ancestry</span>
+                        <span>{isTr ? "Biyocoğrafi Köken" : "Biogeographic Ancestry"}</span>
                     </div>
                     <div className="grid grid-cols-[100px_1fr] items-center gap-y-1.5 gap-x-2 text-[10px]">
-                        <span className="text-zinc-400 font-mono">Primary:</span>
+                        <span className="text-zinc-400 font-mono">{isTr ? "Birincil:" : "Primary:"}</span>
                         <span className="font-bold text-cyan-300 font-mono truncate">{activeProfile.ancestry.primary} ({activeProfile.ancestry.primaryPct}%)</span>
 
-                        <span className="text-zinc-400 font-mono">Secondary:</span>
+                        <span className="text-zinc-400 font-mono">{isTr ? "İkincil:" : "Secondary:"}</span>
                         <span className="font-bold text-purple-300 font-mono truncate">{activeProfile.ancestry.secondary} ({activeProfile.ancestry.secondaryPct}%)</span>
 
-                        <span className="text-zinc-400 font-mono">Cluster:</span>
+                        <span className="text-zinc-400 font-mono">{isTr ? "Küme:" : "Cluster:"}</span>
                         <span className="font-bold text-white font-mono truncate">{activeProfile.ancestry.populationCluster}</span>
                     </div>
                 </div>
@@ -120,16 +127,16 @@ export default function ActiveProfileBanner() {
                 <div className="p-3.5 rounded-xl bg-black/50 border border-tactical-border/80 space-y-2">
                     <div className="flex items-center gap-1.5 text-amber-400 font-bold text-[11px] border-b border-tactical-border/50 pb-1.5">
                         <MapPin className="w-3.5 h-3.5 shrink-0" />
-                        <span>Estimated Geo-Location</span>
+                        <span>{isTr ? "Tahmini Konum" : "Estimated Geo-Location"}</span>
                     </div>
                     <div className="grid grid-cols-[100px_1fr] items-center gap-y-1.5 gap-x-2 text-[10px]">
-                        <span className="text-zinc-400 font-mono">Coords:</span>
-                        <span className="font-bold text-amber-300 font-mono truncate">{activeProfile.geoLocation.lat.toFixed(4)}° N, {activeProfile.geoLocation.lng.toFixed(4)}° E</span>
+                        <span className="text-zinc-400 font-mono">{isTr ? "Koord:" : "Coords:"}</span>
+                        <span className="font-bold text-amber-300 font-mono truncate">{activeProfile.geoLocation.lat.toFixed(4)}° {isTr ? "K" : "N"}, {activeProfile.geoLocation.lng.toFixed(4)}° {isTr ? "D" : "E"}</span>
 
-                        <span className="text-zinc-400 font-mono">Location:</span>
+                        <span className="text-zinc-400 font-mono">{isTr ? "Konum:" : "Location:"}</span>
                         <span className="font-bold text-white font-mono truncate">{activeProfile.geoLocation.cityRegion}</span>
 
-                        <span className="text-zinc-400 font-mono">Country:</span>
+                        <span className="text-zinc-400 font-mono">{isTr ? "Ülke:" : "Country:"}</span>
                         <span className="font-bold text-cyan-300 font-mono truncate">{activeProfile.geoLocation.country}</span>
                     </div>
                 </div>

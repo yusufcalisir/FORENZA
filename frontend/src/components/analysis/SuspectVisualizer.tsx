@@ -15,6 +15,7 @@ import {
     ChevronRight,
     AlertTriangle,
     CheckCircle2,
+    ShieldCheck,
 } from "lucide-react";
 import { toPng } from "html-to-image";
 
@@ -262,6 +263,8 @@ function GenerationLog({ isGenerating }: { isGenerating: boolean }) {
 // MAIN COMPONENT
 // ═══════════════════════════════════════════════════════════════════════════════
 
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
+
 interface ForensicIdentityCardProps {
     profileId?: string;
     hoveredRegion?: string | null;
@@ -290,6 +293,8 @@ export default function SuspectVisualizer({
     isLoading: externalLoading,
     hideIfEmpty = false
 }: ForensicIdentityCardProps) {
+    const { lang } = useSaasLanguage();
+    const isTr = lang === "tr";
     const containerRef = useRef<HTMLDivElement>(null);
     const [activeView, setActiveView] = useState<"overview" | "morphometrics" | "hair_balding" | "freckles_uv">("overview");
     const [morphoSnps, setMorphoSnps] = useState<Record<string, number>>({
@@ -337,7 +342,7 @@ export default function SuspectVisualizer({
             : coherenceScore > 0.6 ? "text-amber-500"
                 : "text-red-500"
         : "text-zinc-500";
-    const reliabilityLabel = coherenceScore ? `${reliabilityValue}%` : "CALCULATING...";
+    const reliabilityLabel = coherenceScore ? `${reliabilityValue}%` : (isTr ? "HESAPLANIYOR..." : "CALCULATING...");
 
     // Helper: Determine if trait matches hovered region
     const isTraitRelevant = (trait: string, value: string) => {
@@ -354,33 +359,33 @@ export default function SuspectVisualizer({
     // Mapping backend traits to requested display labels
     const displayTraits = [
         {
-            label: "BIOLOGICAL_EYE_COLOR",
-            value: data?.traits?.["Ocular Pigmentation"] || "Blue (P=0.85, U95=±0.07)",
+            label: isTr ? "BİYOLOJİK_GÖZ_RENGİ" : "BIOLOGICAL_EYE_COLOR",
+            value: data?.traits?.["Ocular Pigmentation"] || (isTr ? "Mavi (P=0.85, U95=±0.07)" : "Blue (P=0.85, U95=±0.07)"),
             key: "Ocular Pigmentation"
         },
         {
-            label: "DERMAL_PIGMENTATION",
-            value: data?.traits?.["Dermal Classification"] || "Pale (P=0.70, U95=±0.09)",
+            label: isTr ? "CİLT_PİGMENTASYONU" : "DERMAL_PIGMENTATION",
+            value: data?.traits?.["Dermal Classification"] || (isTr ? "Açık Ten (P=0.70, U95=±0.09)" : "Pale (P=0.70, U95=±0.09)"),
             key: "Dermal Classification"
         },
         {
-            label: "HAIR_STRUCTURE",
-            value: data?.traits?.["Hair Morphology"] || "Blond / Straight (P=0.75)",
+            label: isTr ? "SAÇ_MORFOLOJİSİ" : "HAIR_STRUCTURE",
+            value: data?.traits?.["Hair Morphology"] || (isTr ? "Sarı / Düz (P=0.75)" : "Blond / Straight (P=0.75)"),
             key: "Hair Morphology"
         },
         {
-            label: "EPHELIDES_FRECKLING_RISK",
-            value: data?.traits?.["Freckling Risk"] || "High Risk (P=0.85, U95=±0.07)",
+            label: isTr ? "EFELİD_ÇİLLENME_RİSKİ" : "EPHELIDES_FRECKLING_RISK",
+            value: data?.traits?.["Freckling Risk"] || (isTr ? "Yüksek Risk (P=0.85, U95=±0.07)" : "High Risk (P=0.85, U95=±0.07)"),
             key: "Freckling Risk"
         },
         {
-            label: "ESTIMATED_CHRONOLOGICAL_AGE",
-            value: data?.traits?.["Estimated Age"] || "31.2 Years [95% CI: 24.8 - 37.6]",
+            label: isTr ? "TAHMİNİ_KRONOLOJİK_YAŞ" : "ESTIMATED_CHRONOLOGICAL_AGE",
+            value: data?.traits?.["Estimated Age"] || (isTr ? "31.2 Yaş [%95 GA: 24.8 - 37.6]" : "31.2 Years [95% CI: 24.8 - 37.6]"),
             key: "Estimated Age"
         },
         {
-            label: "GENETIC_ANCESTRY_KEY",
-            value: ancestryRegion || "Northern / Western European (P=0.92)",
+            label: isTr ? "GENETİK_KÖKEN_BİLGİSİ" : "GENETIC_ANCESTRY_KEY",
+            value: ancestryRegion || (isTr ? "Kuzey / Batı Avrupa (P=0.92)" : "Northern / Western European (P=0.92)"),
             key: "Ancestry"
         }
     ];
@@ -410,7 +415,7 @@ export default function SuspectVisualizer({
                 <div className="flex items-center gap-2">
                     <User className="w-4 h-4 text-emerald-500" />
                     <h3 className="font-mono text-[10px] font-bold tracking-[0.2em] text-emerald-500 uppercase">
-                        Forensic_Identity_Panel
+                        {isTr ? "Adli_Kimlik_Paneli" : "Forensic_Identity_Panel"}
                     </h3>
                 </div>
 
@@ -421,7 +426,7 @@ export default function SuspectVisualizer({
                         }`}>
                         {(coherenceScore || 0) > 0.85 ? <CheckCircle2 className="w-3 h-3" /> : <AlertTriangle className="w-3 h-3" />}
                         <span className="font-mono text-[8px] font-bold tracking-tighter uppercase whitespace-nowrap">
-                            {(coherenceScore || 0) > 0.85 ? "VERIFIED" : "LOW SYNC"}
+                            {(coherenceScore || 0) > 0.85 ? (isTr ? "DOĞRULANDI" : "VERIFIED") : (isTr ? "DÜŞÜK SENK" : "LOW SYNC")}
                         </span>
                     </div>
                 )}
@@ -453,10 +458,12 @@ export default function SuspectVisualizer({
 
                         <div className="text-center space-y-2 max-w-[200px]">
                             <p className="font-mono text-[10px] text-zinc-400 tracking-[0.2em] uppercase font-bold">
-                                AWAITING DNA SEQUENCE
+                                {isTr ? "DNA DİZİSİ BEKLENİYOR" : "AWAITING DNA SEQUENCE"}
                             </p>
                             <p className="font-mono text-[8px] text-zinc-600 leading-relaxed">
-                                Upload a valid .fsa file or manually enter at least 13 STR loci to generate a forensic profile.
+                                {isTr
+                                    ? "Adli profil oluşturmak için geçerli bir .fsa dosyası yükleyin veya en az 13 STR lokusu girin."
+                                    : "Upload a valid .fsa file or manually enter at least 13 STR loci to generate a forensic profile."}
                             </p>
                         </div>
                     </div>
@@ -464,10 +471,10 @@ export default function SuspectVisualizer({
                     <div className="flex-1 flex flex-col items-center justify-center space-y-3 py-10 opacity-60">
                         <div className="space-y-1 text-center">
                             <p className="font-mono text-[10px] text-cyan-400 tracking-[0.2em] uppercase animate-pulse">
-                                ANALYZING PHENOTYPE...
+                                {isTr ? "FENOTİP ANALİZ EDİLİYOR..." : "ANALYZING PHENOTYPE..."}
                             </p>
                             <p className="font-mono text-[8px] text-zinc-500">
-                                Constructing Forensic Profile
+                                {isTr ? "Adli Profil Oluşturuluyor" : "Constructing Forensic Profile"}
                             </p>
                         </div>
                     </div>
@@ -476,11 +483,15 @@ export default function SuspectVisualizer({
                         {/* Summary Header */}
                         <div className="grid grid-cols-2 gap-4 pb-4 border-b border-zinc-900">
                             <div>
-                                <p className="font-mono text-[7px] text-zinc-500 uppercase tracking-widest mb-1">Subject_Reference</p>
+                                <p className="font-mono text-[7px] text-zinc-500 uppercase tracking-widest mb-1">
+                                    {isTr ? "Özne_Referansı" : "Subject_Reference"}
+                                </p>
                                 <p className="font-mono text-xs font-bold text-white truncate">{profileId}</p>
                             </div>
                             <div className="text-right">
-                                <p className="font-mono text-[7px] text-zinc-500 uppercase tracking-widest mb-1">Reliability_Index</p>
+                                <p className="font-mono text-[7px] text-zinc-500 uppercase tracking-widest mb-1">
+                                    {isTr ? "Güvenilirlik_İndeksi" : "Reliability_Index"}
+                                </p>
                                 <p className={`font-mono text-xs font-bold ${reliabilityColor}`}>
                                     {reliabilityLabel}
                                 </p>
@@ -491,43 +502,43 @@ export default function SuspectVisualizer({
                         <div className="flex items-center gap-0.5 p-1 bg-black/40 rounded border border-tactical-border/50">
                             <button
                                 onClick={() => setActiveView("overview")}
-                                className={`flex-1 py-1 px-1 rounded text-[7px] font-mono font-bold uppercase transition-all ${
+                                className={`flex-1 py-1 px-1 rounded text-[7px] font-mono font-bold uppercase transition-all cursor-pointer ${
                                     activeView === "overview"
                                         ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
                                         : "text-zinc-500 hover:text-zinc-300"
                                 }`}
                             >
-                                Overview
+                                {isTr ? "Genel Bakış" : "Overview"}
                             </button>
                             <button
                                 onClick={() => setActiveView("morphometrics")}
-                                className={`flex-1 py-1 px-1 rounded text-[7px] font-mono font-bold uppercase transition-all ${
+                                className={`flex-1 py-1 px-1 rounded text-[7px] font-mono font-bold uppercase transition-all cursor-pointer ${
                                     activeView === "morphometrics"
                                         ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40"
                                         : "text-zinc-500 hover:text-zinc-300"
                                 }`}
                             >
-                                3D Ceph
+                                {isTr ? "3D Sefalometri" : "3D Ceph"}
                             </button>
                             <button
                                 onClick={() => setActiveView("hair_balding")}
-                                className={`flex-1 py-1 px-1 rounded text-[7px] font-mono font-bold uppercase transition-all ${
+                                className={`flex-1 py-1 px-1 rounded text-[7px] font-mono font-bold uppercase transition-all cursor-pointer ${
                                     activeView === "hair_balding"
                                         ? "bg-amber-500/20 text-amber-300 border border-amber-500/40"
                                         : "text-zinc-500 hover:text-zinc-300"
                                 }`}
                             >
-                                Hair / Bald
+                                {isTr ? "Saç / Kellik" : "Hair / Bald"}
                             </button>
                             <button
                                 onClick={() => setActiveView("freckles_uv")}
-                                className={`flex-1 py-1 px-1 rounded text-[7px] font-mono font-bold uppercase transition-all ${
+                                className={`flex-1 py-1 px-1 rounded text-[7px] font-mono font-bold uppercase transition-all cursor-pointer ${
                                     activeView === "freckles_uv"
                                         ? "bg-rose-500/20 text-rose-300 border border-rose-500/40"
                                         : "text-zinc-500 hover:text-zinc-300"
                                 }`}
                             >
-                                Ephelides (P3 §5)
+                                {isTr ? "Efelid (P3 §5)" : "Ephelides (P3 §5)"}
                             </button>
                         </div>
 
@@ -553,7 +564,9 @@ export default function SuspectVisualizer({
                                                 {highlight && (
                                                     <div className="flex items-center gap-1">
                                                         <div className="w-1 h-1 bg-emerald-500 animate-pulse" />
-                                                        <span className="font-mono text-[7px] text-emerald-500 max-[280px]:hidden">MATCH</span>
+                                                        <span className="font-mono text-[7px] text-emerald-500 max-[280px]:hidden">
+                                                            {isTr ? "EŞLEŞME" : "MATCH"}
+                                                        </span>
                                                     </div>
                                                 )}
                                             </div>
@@ -564,7 +577,7 @@ export default function SuspectVisualizer({
                                                 {/* Source Tag */}
                                                 {sources.length > 0 && (
                                                     <div className="font-mono text-[8px] text-zinc-600 text-right">
-                                                        Ref: {sources.map(s => s.split(' ')[0]).join(', ')}
+                                                        {isTr ? "Ref:" : "Ref:"} {sources.map(s => s.split(' ')[0]).join(', ')}
                                                     </div>
                                                 )}
                                             </div>
@@ -577,22 +590,24 @@ export default function SuspectVisualizer({
                             <div className="space-y-3">
                                 {/* Standard Presets Bar */}
                                 <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
-                                    <span className="font-mono text-[7px] text-zinc-500 uppercase shrink-0">Standards:</span>
+                                    <span className="font-mono text-[7px] text-zinc-500 uppercase shrink-0">
+                                        {isTr ? "Standartlar:" : "Standards:"}
+                                    </span>
                                     <button
                                         onClick={() => setMorphoSnps({ rs974448: 1, rs12882923: 0, rs11130635: 2, rs13289: 0, rs7559252: 1 })}
-                                        className="px-1.5 py-0.5 rounded bg-cyan-950/40 border border-cyan-700/40 text-[7px] font-mono text-cyan-300 hover:bg-cyan-900/40 shrink-0"
+                                        className="px-1.5 py-0.5 rounded bg-cyan-950/40 border border-cyan-700/40 text-[7px] font-mono text-cyan-300 hover:bg-cyan-900/40 shrink-0 cursor-pointer"
                                     >
                                         NA12878 (EUR Leptorrhine)
                                     </button>
                                     <button
                                         onClick={() => setMorphoSnps({ rs974448: 0, rs12882923: 2, rs11130635: 0, rs13289: 2, rs7559252: 2 })}
-                                        className="px-1.5 py-0.5 rounded bg-amber-950/40 border border-amber-700/40 text-[7px] font-mono text-amber-300 hover:bg-amber-900/40 shrink-0"
+                                        className="px-1.5 py-0.5 rounded bg-amber-950/40 border border-amber-700/40 text-[7px] font-mono text-amber-300 hover:bg-amber-900/40 shrink-0 cursor-pointer"
                                     >
                                         NA19240 (AFR Platyrrhine)
                                     </button>
                                     <button
                                         onClick={() => setMorphoSnps({ rs974448: 1, rs12882923: 1, rs11130635: 1, rs13289: 1, rs7559252: 1 })}
-                                        className="px-1.5 py-0.5 rounded bg-emerald-950/40 border border-emerald-700/40 text-[7px] font-mono text-emerald-300 hover:bg-emerald-900/40 shrink-0"
+                                        className="px-1.5 py-0.5 rounded bg-emerald-950/40 border border-emerald-700/40 text-[7px] font-mono text-emerald-300 hover:bg-emerald-900/40 shrink-0 cursor-pointer"
                                     >
                                         NA18507 (EAS Mesorrhine)
                                     </button>
@@ -621,14 +636,26 @@ export default function SuspectVisualizer({
                                     const bizygomatic_w = 2.0 * (67.50 + 1.60 * x_pax9);
                                     const facial_idx = (facial_h / Math.max(bizygomatic_w, 1e-6)) * 100.0;
 
-                                    const nasal_typology = nasal_idx < 70.0 ? "LEPTORRHINE (Narrow)" : nasal_idx < 75.0 ? "MESORRHINE (Medium)" : "PLATYRRHINE (Broad)";
-                                    const facial_typology = facial_idx < 80.0 ? "HYPEREURYPROSOPIC" : facial_idx < 85.0 ? "EURYPROSOPIC" : facial_idx < 90.0 ? "MESOPROSOPIC" : "LEPTOPROSOPIC";
+                                    const nasal_typology = nasal_idx < 70.0
+                                        ? (isTr ? "LEPTORRİN (Dar Burun)" : "LEPTORRHINE (Narrow)")
+                                        : nasal_idx < 75.0
+                                        ? (isTr ? "MEZORRİN (Orta Burun)" : "MESORRHINE (Medium)")
+                                        : (isTr ? "PLATİRRİN (Geniş Burun)" : "PLATYRRHINE (Broad)");
+                                    const facial_typology = facial_idx < 80.0
+                                        ? (isTr ? "HİPERÖRİPROZOPOK (Geniş Yüz)" : "HYPEREURYPROSOPIC")
+                                        : facial_idx < 85.0
+                                        ? (isTr ? "ÖRİPROZOPOK" : "EURYPROSOPIC")
+                                        : facial_idx < 90.0
+                                        ? (isTr ? "MEZOPROZOPOK" : "MESOPROSOPIC")
+                                        : (isTr ? "LEPTOPROZOPOK (Dar Yüz)" : "LEPTOPROSOPIC");
 
                                     return (
                                         <div className="grid grid-cols-2 gap-2">
                                             <div className="p-2.5 rounded bg-cyan-500/10 border border-cyan-500/30">
                                                 <div className="flex justify-between items-center mb-1">
-                                                    <span className="font-mono text-[7px] text-zinc-400 uppercase">Nasal Index (NI)</span>
+                                                    <span className="font-mono text-[7px] text-zinc-400 uppercase">
+                                                        {isTr ? "Burun İndeksi (NI)" : "Nasal Index (NI)"}
+                                                    </span>
                                                     <span className="font-mono text-[7px] px-1 py-0.2 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-bold">
                                                         {nasal_typology}
                                                     </span>
@@ -639,7 +666,9 @@ export default function SuspectVisualizer({
                                             </div>
                                             <div className="p-2.5 rounded bg-purple-500/10 border border-purple-500/30">
                                                 <div className="flex justify-between items-center mb-1">
-                                                    <span className="font-mono text-[7px] text-zinc-400 uppercase">Facial Index (I_F)</span>
+                                                    <span className="font-mono text-[7px] text-zinc-400 uppercase">
+                                                        {isTr ? "Yüz İndeksi (I_F)" : "Facial Index (I_F)"}
+                                                    </span>
                                                     <span className="font-mono text-[7px] px-1 py-0.2 rounded bg-purple-500/20 text-purple-300 border border-purple-500/40 font-bold">
                                                         {facial_typology}
                                                     </span>
@@ -655,8 +684,8 @@ export default function SuspectVisualizer({
                                 {/* Cephalometric Coordinates Matrix */}
                                 <div className="space-y-1.5">
                                     <div className="font-mono text-[8px] text-zinc-400 uppercase tracking-wider flex justify-between">
-                                        <span>Cephalometric Landmarks [X, Y, Z] (mm)</span>
-                                        <span className="text-cyan-400 font-bold">Sagittal Symmetrical</span>
+                                        <span>{isTr ? "Sefalometrik Kerterizler [X, Y, Z] (mm)" : "Cephalometric Landmarks [X, Y, Z] (mm)"}</span>
+                                        <span className="text-cyan-400 font-bold">{isTr ? "Sagital Simetrik" : "Sagittal Symmetrical"}</span>
                                     </div>
                                     <div className="grid grid-cols-2 gap-1.5 text-[8px] font-mono">
                                         <div className="p-1.5 rounded bg-black/40 border border-zinc-800 flex justify-between">
@@ -689,7 +718,9 @@ export default function SuspectVisualizer({
                                 {/* Morphometric SNP Dosage Toggles */}
                                 <div className="space-y-1.5 pt-1">
                                     <div className="font-mono text-[8px] text-zinc-400 uppercase tracking-wider">
-                                        Morphometric Predictor Loci (Click to toggle dosage 0, 1, 2)
+                                        {isTr
+                                            ? "Morfometrik Belirteç Lokusları (Dozajı 0, 1, 2 değiştirmek için tıklayın)"
+                                            : "Morphometric Predictor Loci (Click to toggle dosage 0, 1, 2)"}
                                     </div>
                                     <div className="grid grid-cols-5 gap-1">
                                         {[
@@ -704,7 +735,7 @@ export default function SuspectVisualizer({
                                                 <button
                                                     key={rs}
                                                     onClick={() => setMorphoSnps(p => ({ ...p, [rs]: ((p[rs] || 0) + 1) % 3 }))}
-                                                    className="p-1 rounded bg-black/50 border border-zinc-800 hover:border-cyan-500/50 flex flex-col items-center text-[7px] font-mono"
+                                                    className="p-1 rounded bg-black/50 border border-zinc-800 hover:border-cyan-500/50 flex flex-col items-center text-[7px] font-mono cursor-pointer"
                                                 >
                                                     <span className="text-zinc-300 font-bold">{gene}</span>
                                                     <span className="mt-0.5 px-1 py-0.2 rounded bg-cyan-500/20 text-cyan-300 font-bold">d={d}</span>
@@ -717,10 +748,13 @@ export default function SuspectVisualizer({
                                 {/* ENFSI Evaluative Reporting Shield */}
                                 <div className="p-2 rounded bg-zinc-900/60 border border-zinc-800 text-[7px] font-mono text-zinc-400 space-y-0.5">
                                     <div className="text-cyan-400 font-bold flex items-center gap-1">
-                                        <span>⚖️</span> ENFSI (2017) Evaluative Reporting Shield
+                                        <ShieldCheck className="w-3 h-3 text-cyan-400 shrink-0" />
+                                        {isTr ? "ENFSI (2017) Değerlendirici Raporlama Kalkanı" : "ENFSI (2017) Evaluative Reporting Shield"}
                                     </div>
                                     <p className="leading-tight text-zinc-400">
-                                        3D cephalometric landmarks reflect population-level anatomical estimates. Must not be used as photo-exact biometric composites.
+                                        {isTr
+                                            ? "3D sefalometrik kerterizler popülasyon düzeyinde anatomik tahminlerdir. Birebir foto-gerçekçi biyometrik kimliklendirme kanıtı olarak kullanılamaz."
+                                            : "3D cephalometric landmarks reflect population-level anatomical estimates. Must not be used as photo-exact biometric composites."}
                                     </p>
                                 </div>
                             </div>
@@ -730,21 +764,29 @@ export default function SuspectVisualizer({
                                 {/* Fiber Cross-Section & Curl Index Summary */}
                                 <div className="grid grid-cols-2 gap-2">
                                     <div className="p-2 rounded bg-amber-500/10 border border-amber-500/30">
-                                        <div className="font-mono text-[7px] text-zinc-400 uppercase">Fiber Area</div>
+                                        <div className="font-mono text-[7px] text-zinc-400 uppercase">
+                                            {isTr ? "Lif Alanı" : "Fiber Area"}
+                                        </div>
                                         <div className="font-mono text-xs font-bold text-amber-300">
                                             {(3850.0 + 1420.0 * (hairSnps.rs3827072 || 0)).toFixed(0)} μm²
                                         </div>
                                         <div className="font-mono text-[7px] text-zinc-400">
-                                            {(hairSnps.rs3827072 || 0) >= 2 ? "Thick Asian (EDAR)" : "Fine/Medium European"}
+                                            {(hairSnps.rs3827072 || 0) >= 2
+                                                ? (isTr ? "Kalın Asya Tipi (EDAR)" : "Thick Asian (EDAR)")
+                                                : (isTr ? "İnce/Orta Avrupa Tipi" : "Fine/Medium European")}
                                         </div>
                                     </div>
                                     <div className="p-2 rounded bg-purple-500/10 border border-purple-500/30">
-                                        <div className="font-mono text-[7px] text-zinc-400 uppercase">Curl Index (C_curl)</div>
+                                        <div className="font-mono text-[7px] text-zinc-400 uppercase">
+                                            {isTr ? "Kıvrılma İndeksi (C_curl)" : "Curl Index (C_curl)"}
+                                        </div>
                                         <div className="font-mono text-xs font-bold text-purple-300">
                                             {Math.max(0, Math.min(10, 1.20 + 1.85 * (hairSnps.rs11803731 || 0) + 1.42 * (hairSnps.rs7349332 || 0) - 2.10 * (hairSnps.rs3827072 || 0))).toFixed(2)}
                                         </div>
                                         <div className="font-mono text-[7px] text-zinc-400">
-                                            {Math.max(0, 1.20 + 1.85 * (hairSnps.rs11803731 || 0) + 1.42 * (hairSnps.rs7349332 || 0) - 2.10 * (hairSnps.rs3827072 || 0)) < 2 ? "STRAIGHT" : "WAVY / CURLY"}
+                                            {Math.max(0, 1.20 + 1.85 * (hairSnps.rs11803731 || 0) + 1.42 * (hairSnps.rs7349332 || 0) - 2.10 * (hairSnps.rs3827072 || 0)) < 2
+                                                ? (isTr ? "DÜZ" : "STRAIGHT")
+                                                : (isTr ? "DALGALI / KIVIRCIK" : "WAVY / CURLY")}
                                         </div>
                                     </div>
                                 </div>
@@ -752,21 +794,21 @@ export default function SuspectVisualizer({
                                 {/* Androgenetic Alopecia Hamilton-Norwood Meter */}
                                 <div className="p-2.5 rounded bg-black/40 border border-tactical-border/60 space-y-1.5">
                                     <div className="flex justify-between items-center text-[8px] font-mono">
-                                        <span className="text-zinc-400">Balding PRS Score:</span>
+                                        <span className="text-zinc-400">{isTr ? "Kellik PRS Skoru:" : "Balding PRS Score:"}</span>
                                         <span className="text-rose-400 font-bold">
                                             {(0.982 * (hairSnps.rs6152 || 0) + 0.541 * (hairSnps.rs2180439 || 0) + 0.485 * (hairSnps.rs1160312 || 0) + 0.362 * (hairSnps.rs756853 || 0)).toFixed(3)}
                                         </span>
                                     </div>
                                     <div className="flex justify-between items-center text-[8px] font-mono">
-                                        <span className="text-zinc-400">Hamilton-Norwood Scale:</span>
+                                        <span className="text-zinc-400">{isTr ? "Hamilton-Norwood Ölçeği:" : "Hamilton-Norwood Scale:"}</span>
                                         <span className="px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40 font-bold">
                                             {(0.982 * (hairSnps.rs6152 || 0) + 0.541 * (hairSnps.rs2180439 || 0) + 0.485 * (hairSnps.rs1160312 || 0) + 0.362 * (hairSnps.rs756853 || 0)) < 0.50
-                                                ? "GRADE I / II"
+                                                ? (isTr ? "EVRE I / II" : "GRADE I / II")
                                                 : (0.982 * (hairSnps.rs6152 || 0) + 0.541 * (hairSnps.rs2180439 || 0) + 0.485 * (hairSnps.rs1160312 || 0) + 0.362 * (hairSnps.rs756853 || 0)) < 1.20
-                                                ? "GRADE III"
+                                                ? (isTr ? "EVRE III" : "GRADE III")
                                                 : (0.982 * (hairSnps.rs6152 || 0) + 0.541 * (hairSnps.rs2180439 || 0) + 0.485 * (hairSnps.rs1160312 || 0) + 0.362 * (hairSnps.rs756853 || 0)) < 2.10
-                                                ? "GRADE IV / V"
-                                                : "GRADE VI / VII"}
+                                                ? (isTr ? "EVRE IV / V" : "GRADE IV / V")
+                                                : (isTr ? "EVRE VI / VII" : "GRADE VI / VII")}
                                         </span>
                                     </div>
                                 </div>
@@ -774,7 +816,9 @@ export default function SuspectVisualizer({
                                 {/* Hair & Balding SNP Toggles */}
                                 <div className="space-y-1.5 pt-1">
                                     <div className="font-mono text-[8px] text-zinc-400 uppercase tracking-wider">
-                                        Hair &amp; Balding Loci (Click to toggle dosage)
+                                        {isTr
+                                            ? "Saç & Kellik Lokusları (Dozajı değiştirmek için tıklayın)"
+                                            : "Hair & Balding Loci (Click to toggle dosage)"}
                                     </div>
                                     <div className="grid grid-cols-4 gap-1">
                                         {[
@@ -791,7 +835,7 @@ export default function SuspectVisualizer({
                                                 <button
                                                     key={rs}
                                                     onClick={() => setHairSnps(p => ({ ...p, [rs]: ((p[rs] || 0) + 1) % 3 }))}
-                                                    className="p-1 rounded bg-black/50 border border-zinc-800 hover:border-amber-500/50 flex justify-between items-center text-[7px] font-mono"
+                                                    className="p-1 rounded bg-black/50 border border-zinc-800 hover:border-amber-500/50 flex justify-between items-center text-[7px] font-mono cursor-pointer"
                                                 >
                                                     <span className="text-zinc-300 font-bold">{gene}</span>
                                                     <span className="px-1 py-0.2 rounded bg-amber-500/20 text-amber-300 font-bold">d={d}</span>
@@ -817,17 +861,27 @@ export default function SuspectVisualizer({
                                         return (
                                             <>
                                                 <div className="p-2 rounded bg-rose-500/10 border border-rose-500/30">
-                                                    <div className="font-mono text-[7px] text-zinc-400 uppercase">MC1R Diplotype</div>
+                                                    <div className="font-mono text-[7px] text-zinc-400 uppercase">
+                                                        {isTr ? "MC1R Diplotipi" : "MC1R Diplotype"}
+                                                    </div>
                                                     <div className="font-mono text-xs font-bold text-rose-300">{dip}</div>
                                                     <div className="font-mono text-[7px] text-zinc-400">
-                                                        Loss Weight: {wTotal.toFixed(2)}
+                                                        {isTr ? "Kayıp Ağırlığı:" : "Loss Weight:"} {wTotal.toFixed(2)}
                                                     </div>
                                                 </div>
                                                 <div className="p-2 rounded bg-amber-500/10 border border-amber-500/30">
-                                                    <div className="font-mono text-[7px] text-zinc-400 uppercase">Freckling Score (F_score)</div>
-                                                    <div className="font-mono text-xs font-bold text-amber-300">{fScore.toFixed(1)}%</div>
+                                                    <div className="font-mono text-[7px] text-zinc-400 uppercase">
+                                                        {isTr ? "Çillenme Skoru (F_score)" : "Freckling Score (F_score)"}
+                                                    </div>
+                                                    <div className="font-mono text-xs font-bold text-amber-300">%{fScore.toFixed(1)}</div>
                                                     <div className="font-mono text-[7px] text-zinc-400">
-                                                        {fScore >= 75 ? "DENSE" : fScore >= 45 ? "MODERATE" : fScore >= 20 ? "MILD" : "MINIMAL"}
+                                                        {fScore >= 75
+                                                            ? (isTr ? "YOĞUN" : "DENSE")
+                                                            : fScore >= 45
+                                                            ? (isTr ? "ORTA" : "MODERATE")
+                                                            : fScore >= 20
+                                                            ? (isTr ? "HAFİF" : "MILD")
+                                                            : (isTr ? "MİNİMAL" : "MINIMAL")}
                                                     </div>
                                                 </div>
                                             </>
@@ -840,17 +894,29 @@ export default function SuspectVisualizer({
                                     {(() => {
                                         const nR = (mc1rSnps.rs1805007 || 0) + (mc1rSnps.rs1805008 || 0) + (mc1rSnps.rs1805009 || 0);
                                         const nr = (mc1rSnps.rs1805005 || 0) + (mc1rSnps.rs885479 || 0);
-                                        const medCat = nR >= 2 ? "< 20 mJ/cm² (Extremely Low MED)" : (nR >= 1 ? "20 - 35 mJ/cm² (Low MED)" : (nr >= 1 ? "35 - 50 mJ/cm² (Moderate MED)" : "> 50 mJ/cm² (High MED)"));
-                                        const tanCap = nR >= 2 ? "NEVER TANS, ALWAYS BURNS" : (nR >= 1 ? "RARE TAN, FREQUENT BURNS" : (nr >= 1 ? "MILD TAN, OCCASIONAL BURNS" : "NORMAL TANNING CAPACITY"));
+                                        const medCat = nR >= 2
+                                            ? (isTr ? "< 20 mJ/cm² (Aşırı Düşük MED)" : "< 20 mJ/cm² (Extremely Low MED)")
+                                            : (nR >= 1
+                                                ? (isTr ? "20 - 35 mJ/cm² (Düşük MED)" : "20 - 35 mJ/cm² (Low MED)")
+                                                : (nr >= 1
+                                                    ? (isTr ? "35 - 50 mJ/cm² (Orta MED)" : "35 - 50 mJ/cm² (Moderate MED)")
+                                                    : (isTr ? "> 50 mJ/cm² (Yüksek MED)" : "> 50 mJ/cm² (High MED)")));
+                                        const tanCap = nR >= 2
+                                            ? (isTr ? "ASLA BRONZLAŞMAZ, HER ZAMAN YANAR" : "NEVER TANS, ALWAYS BURNS")
+                                            : (nR >= 1
+                                                ? (isTr ? "NADİREN BRONZLAŞIR, SIKLIKLA YANAR" : "RARE TAN, FREQUENT BURNS")
+                                                : (nr >= 1
+                                                    ? (isTr ? "HAFİF BRONZLAŞIR, BAZEN YANAR" : "MILD TAN, OCCASIONAL BURNS")
+                                                    : (isTr ? "NORMAL BRONZLAŞMA KAPASİTESİ" : "NORMAL TANNING CAPACITY")));
 
                                         return (
                                             <>
                                                 <div className="flex justify-between items-center text-[8px] font-mono">
-                                                    <span className="text-zinc-400">Minimal Erythema Dose:</span>
+                                                    <span className="text-zinc-400">{isTr ? "Minimal Eritem Dozu:" : "Minimal Erythema Dose:"}</span>
                                                     <span className="text-rose-400 font-bold">{medCat}</span>
                                                 </div>
                                                 <div className="flex justify-between items-center text-[8px] font-mono">
-                                                    <span className="text-zinc-400">Tanning Capacity:</span>
+                                                    <span className="text-zinc-400">{isTr ? "Bronzlaşma Kapasitesi:" : "Tanning Capacity:"}</span>
                                                     <span className="px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40 font-bold text-[7px]">
                                                         {tanCap}
                                                     </span>
@@ -863,7 +929,7 @@ export default function SuspectVisualizer({
                                 {/* MC1R & Modifiers SNP Toggles */}
                                 <div className="space-y-1.5 pt-1">
                                     <div className="font-mono text-[8px] text-zinc-400 uppercase tracking-wider">
-                                        MC1R &amp; Modifier Loci (Click to toggle dosage)
+                                        {isTr ? "MC1R & Modifiyer Lokusları (Dozajı değiştirmek için tıklayın)" : "MC1R & Modifier Loci (Click to toggle dosage)"}
                                     </div>
                                     <div className="grid grid-cols-4 gap-1">
                                         {[
@@ -880,7 +946,7 @@ export default function SuspectVisualizer({
                                                 <button
                                                     key={rs}
                                                     onClick={() => setMc1rSnps(p => ({ ...p, [rs]: ((p[rs] || 0) + 1) % 3 }))}
-                                                    className="p-1 rounded bg-black/50 border border-zinc-800 hover:border-rose-500/50 flex justify-between items-center text-[7px] font-mono"
+                                                    className="p-1 rounded bg-black/50 border border-zinc-800 hover:border-rose-500/50 flex justify-between items-center text-[7px] font-mono cursor-pointer"
                                                 >
                                                     <span className="text-zinc-300 font-bold">{gene}</span>
                                                     <span className="px-1 py-0.2 rounded bg-rose-500/20 text-rose-300 font-bold">d={d}</span>
@@ -904,7 +970,7 @@ export default function SuspectVisualizer({
                                 >
                                     <CheckCircle2 className="w-3.5 h-3.5" />
                                     <span className="font-mono text-[9px] font-bold tracking-wider uppercase">
-                                        View On-Chain Proof
+                                        {isTr ? "Blokzincir Kanıtını Görüntüle" : "View On-Chain Proof"}
                                     </span>
                                     <ChevronRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                                 </a>
@@ -912,7 +978,7 @@ export default function SuspectVisualizer({
                                 <div className="flex items-center justify-center gap-2 w-full bg-zinc-900/50 border border-zinc-800 border-dashed text-zinc-600 py-2.5 rounded cursor-not-allowed">
                                     <AlertTriangle className="w-3.5 h-3.5" />
                                     <span className="font-mono text-[9px] tracking-wider uppercase">
-                                        Proof Not Finalized
+                                        {isTr ? "Kanıt Henüz Kesinleşmedi" : "Proof Not Finalized"}
                                     </span>
                                 </div>
                             )}

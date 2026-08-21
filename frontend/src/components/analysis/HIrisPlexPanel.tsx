@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Eye, Palette, Sparkles, CheckCircle2, AlertTriangle } from "lucide-react";
+import { Eye, Palette, Sparkles, CheckCircle2, AlertTriangle, ShieldCheck } from "lucide-react";
 import { useForensicCaseStore } from "@/store/forensicCaseStore";
 import { validateProbabilityDistribution } from "@/lib/forensicStatusUtils";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 // ─── Walsh et al. (2018) HIrisPlex-S Multinomial Softmax Architecture ───────────
 
@@ -88,7 +89,7 @@ function computeHairProbabilities(snps: Record<string, number>) {
     };
 }
 
-function computeSkinToneProbabilities(snps: Record<string, number>) {
+function computeSkinToneProbabilities(snps: Record<string, number>, isTr: boolean) {
     let logit_very_pale = -2.150;
     let logit_pale = -1.100;
     let logit_dark = -2.850;
@@ -126,25 +127,25 @@ function computeSkinToneProbabilities(snps: Record<string, number>) {
     const p_db = (exp_db / total) * 100;
     const p_inter = (exp_inter / total) * 100;
 
-    let typeStr = "Type III / IV (Intermediate / Tans Moderately)";
+    let typeStr = isTr ? "Tip III / IV (Buğday / Orta Derecede Bronzlaşır)" : "Type III / IV (Intermediate / Tans Moderately)";
     let confVal = Math.round(p_inter * 10) / 10;
     let colorStr = "text-amber-400";
 
     const maxP = Math.max(p_vp, p_p, p_inter, p_d, p_db);
     if (maxP === p_vp) {
-        typeStr = "Type I (Very Pale / Always Burns)";
+        typeStr = isTr ? "Tip I (Çok Açık / Her Zaman Yanar)" : "Type I (Very Pale / Always Burns)";
         confVal = Math.round(p_vp * 10) / 10;
         colorStr = "text-amber-200";
     } else if (maxP === p_p) {
-        typeStr = "Type II (Pale / Usually Burns)";
+        typeStr = isTr ? "Tip II (Açık / Genellikle Yanar)" : "Type II (Pale / Usually Burns)";
         confVal = Math.round(p_p * 10) / 10;
         colorStr = "text-amber-300";
     } else if (maxP === p_d) {
-        typeStr = "Type V (Dark / Rarely Burns)";
+        typeStr = isTr ? "Tip V (Koyu / Nadiren Yanar)" : "Type V (Dark / Rarely Burns)";
         confVal = Math.round(p_d * 10) / 10;
         colorStr = "text-orange-400";
     } else if (maxP === p_db) {
-        typeStr = "Type VI (Dark to Black / Never Burns)";
+        typeStr = isTr ? "Tip VI (Koyu-Siyah / Asla Yanmaz)" : "Type VI (Dark to Black / Never Burns)";
         confVal = Math.round(p_db * 10) / 10;
         colorStr = "text-amber-600";
     }
@@ -162,6 +163,8 @@ function computeSkinToneProbabilities(snps: Record<string, number>) {
 
 
 export default function HIrisPlexPanel() {
+    const { lang } = useSaasLanguage();
+    const isTr = lang === "tr";
     const { activeCase } = useForensicCaseStore();
 
     const isAfrican = activeCase.profile.sampleType === "AA";
@@ -194,7 +197,7 @@ export default function HIrisPlexPanel() {
 
     const eyeProbs = computeEyeProbabilities(snpDosages);
     const hairProbs = computeHairProbabilities(snpDosages);
-    const skinTone = computeSkinToneProbabilities(snpDosages);
+    const skinTone = computeSkinToneProbabilities(snpDosages, isTr);
 
     // ── Biostatistical Distribution Integrity Validation ────────────────────
     // Each multinomial distribution must sum to 100% ± 1% to be forensically valid.
@@ -227,24 +230,60 @@ export default function HIrisPlexPanel() {
     };
 
     const SNP_CATALOG = [
-        { rsid: "rs12913832", gene: "HERC2 (intron 86)", effect: "Primary Blue vs Brown Eye Master Switch", ref: "A", alt: "G" },
-        { rsid: "rs1800407", gene: "OCA2 (Arg419Gln)", effect: "Iris Melanin Secondary Modifier", ref: "T", alt: "C" },
-        { rsid: "rs16891982", gene: "SLC45A2 (Phe374Leu)", effect: "Skin & Hair Pigmentation Transport", ref: "C", alt: "G" },
-        { rsid: "rs1426654", gene: "SLC24A5 (Thr111Ala)", effect: "European vs African Skin Phototype", ref: "A", alt: "G" },
-        { rsid: "rs12203592", gene: "IRF4 (intron 4)", effect: "Red Hair & Ephelides (Freckling)", ref: "T", alt: "C" },
-        { rsid: "rs3827072", gene: "EDAR (Val370Ala)", effect: "Hair Fiber Thickness & Straight Morphology", ref: "T", alt: "C" },
+        {
+            rsid: "rs12913832",
+            gene: "HERC2 (intron 86)",
+            effect: isTr ? "Birincil Mavi vs Kahverengi Göz Ana Anahtarı" : "Primary Blue vs Brown Eye Master Switch",
+            ref: "A",
+            alt: "G"
+        },
+        {
+            rsid: "rs1800407",
+            gene: "OCA2 (Arg419Gln)",
+            effect: isTr ? "İris Melanin İkincil Modifiyeri" : "Iris Melanin Secondary Modifier",
+            ref: "T",
+            alt: "C"
+        },
+        {
+            rsid: "rs16891982",
+            gene: "SLC45A2 (Phe374Leu)",
+            effect: isTr ? "Ten & Saç Pigmentasyonu Taşıyıcısı" : "Skin & Hair Pigmentation Transport",
+            ref: "C",
+            alt: "G"
+        },
+        {
+            rsid: "rs1426654",
+            gene: "SLC24A5 (Thr111Ala)",
+            effect: isTr ? "Avrupa vs Afrika Cilt Fototipi Anahtarı" : "European vs African Skin Phototype",
+            ref: "A",
+            alt: "G"
+        },
+        {
+            rsid: "rs12203592",
+            gene: "IRF4 (intron 4)",
+            effect: isTr ? "Kızıl Saç & Çillenme (Efelid) Modifiyeri" : "Red Hair & Ephelides (Freckling)",
+            ref: "T",
+            alt: "C"
+        },
+        {
+            rsid: "rs3827072",
+            gene: "EDAR (Val370Ala)",
+            effect: isTr ? "Saç Teli Kalınlığı & Düz Morfoloji" : "Hair Fiber Thickness & Straight Morphology",
+            ref: "T",
+            alt: "C"
+        },
     ];
 
     // ── Validation badge helper ──────────────────────────────────────────────
     const ValidationBadge = ({ valid }: { valid: boolean }) => valid ? (
         <span className="flex items-center gap-1 text-[9px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-1.5 sm:px-2 py-0.5 rounded-md whitespace-nowrap shrink-0">
             <CheckCircle2 className="w-3 h-3 shrink-0" />
-            NORMALIZED
+            {isTr ? "NORMALIZE" : "NORMALIZED"}
         </span>
     ) : (
         <span className="flex items-center gap-1 text-[9px] font-bold text-rose-400 bg-rose-500/10 border border-rose-500/30 px-1.5 sm:px-2 py-0.5 rounded-md whitespace-nowrap shrink-0">
             <AlertTriangle className="w-3 h-3 shrink-0" />
-            DISTRIBUTION ERROR
+            {isTr ? "DAĞILIM HATASI" : "DISTRIBUTION ERROR"}
         </span>
     );
 
@@ -259,20 +298,22 @@ export default function HIrisPlexPanel() {
                     <div>
                         <div className="flex flex-wrap items-center gap-2">
                             <h2 className="text-xs sm:text-sm font-bold tracking-widest text-tactical-text uppercase">
-                                HIrisPlex-S DNA Phenotyping Engine
+                                {isTr ? "HIrisPlex-S DNA Fenotipleme Motoru" : "HIrisPlex-S DNA Phenotyping Engine"}
                             </h2>
                             <span className="px-2 py-0.5 rounded text-[8px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30 whitespace-nowrap">
                                 WALSH ET AL. (2018)
                             </span>
                         </div>
                         <p className="text-[9px] sm:text-[10px] text-zinc-400 mt-0.5">
-                            24-SNP Multinomial Logistic Regression Model for Eye Color, Hair Pigmentation &amp; Fitzpatrick Skin Phototype
+                            {isTr
+                                ? "Göz Rengi, Saç Pigmentasyonu ve Fitzpatrick Cilt Fototipi için 24-SNP Çok Terimli Lojistik Regresyon Modeli"
+                                : "24-SNP Multinomial Logistic Regression Model for Eye Color, Hair Pigmentation & Fitzpatrick Skin Phototype"}
                         </p>
                     </div>
                 </div>
 
                 <div className="flex items-center gap-2 text-[10px] text-zinc-400 bg-black/40 px-3 py-1.5 rounded-xl border border-tactical-border/60 shrink-0 self-start sm:self-auto">
-                    <span>Active Case:</span>
+                    <span>{isTr ? "Aktif Vaka:" : "Active Case:"}</span>
                     <strong className="text-purple-300">{activeCase.metadata.caseId}</strong>
                 </div>
             </div>
@@ -289,10 +330,12 @@ export default function HIrisPlexPanel() {
                         : <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5 sm:mt-0" />}
                     <div className="flex flex-col sm:flex-row sm:items-center gap-0.5 sm:gap-2 min-w-0">
                         <span className="font-bold uppercase tracking-wider text-tactical-text text-[10px] whitespace-nowrap">
-                            Multinomial Distribution Integrity:
+                            {isTr ? "Çok Terimli Dağılım Bütünlüğü:" : "Multinomial Distribution Integrity:"}
                         </span>
                         <span className={`text-[9px] sm:text-[10px] ${allValid ? "text-emerald-400" : "text-rose-400"}`}>
-                            {allValid ? "All 3 distributions validated (Σ = 100% ± 1%)" : "Distribution normalization error detected"}
+                            {allValid
+                                ? (isTr ? "3 dağılımın tümü doğrulandı (Σ = %100 ± %1)" : "All 3 distributions validated (Σ = 100% ± 1%)")
+                                : (isTr ? "Dağılım normalizasyon hatası tespit edildi" : "Distribution normalization error detected")}
                         </span>
                     </div>
                 </div>
@@ -300,15 +343,15 @@ export default function HIrisPlexPanel() {
                 {/* Badges Container */}
                 <div className="flex flex-wrap items-center gap-2 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-tactical-border/20">
                     <div className="flex items-center gap-1.5 bg-black/40 px-2 py-0.5 rounded-md border border-tactical-border/40">
-                        <span className="text-zinc-400 text-[9px] font-bold">Eye:</span>
+                        <span className="text-zinc-400 text-[9px] font-bold">{isTr ? "Göz:" : "Eye:"}</span>
                         <ValidationBadge valid={eyeValid} />
                     </div>
                     <div className="flex items-center gap-1.5 bg-black/40 px-2 py-0.5 rounded-md border border-tactical-border/40">
-                        <span className="text-zinc-400 text-[9px] font-bold">Hair:</span>
+                        <span className="text-zinc-400 text-[9px] font-bold">{isTr ? "Saç:" : "Hair:"}</span>
                         <ValidationBadge valid={hairValid} />
                     </div>
                     <div className="flex items-center gap-1.5 bg-black/40 px-2 py-0.5 rounded-md border border-tactical-border/40">
-                        <span className="text-zinc-400 text-[9px] font-bold">Skin:</span>
+                        <span className="text-zinc-400 text-[9px] font-bold">{isTr ? "Ten:" : "Skin:"}</span>
                         <ValidationBadge valid={skinValid} />
                     </div>
                 </div>
@@ -321,11 +364,17 @@ export default function HIrisPlexPanel() {
                     <div className="flex items-center justify-between border-b border-tactical-border/50 pb-2">
                         <div className="flex items-center gap-2">
                             <Eye className="w-4 h-4 text-blue-400" />
-                            <span className="text-xs font-bold text-white uppercase">Iris Colour (Eye)</span>
+                            <span className="text-xs font-bold text-white uppercase">
+                                {isTr ? "İris Rengi (Göz)" : "Iris Colour (Eye)"}
+                            </span>
                         </div>
                         <div className="flex items-center gap-2">
                             <span className="text-[10px] font-bold text-blue-400">
-                                {eyeProbs.blue > 50 ? "Blue" : eyeProbs.brown > 50 ? "Brown" : "Intermediate / Hazel"}
+                                {eyeProbs.blue > 50
+                                    ? (isTr ? "Mavi" : "Blue")
+                                    : eyeProbs.brown > 50
+                                    ? (isTr ? "Kahverengi" : "Brown")
+                                    : (isTr ? "Ela / Ara Renk" : "Intermediate / Hazel")}
                             </span>
                             <ValidationBadge valid={eyeValid} />
                         </div>
@@ -334,8 +383,8 @@ export default function HIrisPlexPanel() {
                     <div className="space-y-2">
                         <div>
                             <div className="flex justify-between text-[10px] mb-1">
-                                <span className="text-blue-300">Blue Eye</span>
-                                <span className="font-bold text-blue-400 font-mono">{eyeProbs.blue}%</span>
+                                <span className="text-blue-300">{isTr ? "Mavi Göz" : "Blue Eye"}</span>
+                                <span className="font-bold text-blue-400 font-mono">%{eyeProbs.blue}</span>
                             </div>
                             <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
                                 <div className="h-full bg-blue-500 transition-all duration-500" style={{ width: `${eyeProbs.blue}%` }} />
@@ -344,8 +393,8 @@ export default function HIrisPlexPanel() {
 
                         <div>
                             <div className="flex justify-between text-[10px] mb-1">
-                                <span className="text-amber-300">Intermediate / Hazel</span>
-                                <span className="font-bold text-amber-400 font-mono">{eyeProbs.intermediate}%</span>
+                                <span className="text-amber-300">{isTr ? "Ela / Ara Renk" : "Intermediate / Hazel"}</span>
+                                <span className="font-bold text-amber-400 font-mono">%{eyeProbs.intermediate}</span>
                             </div>
                             <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
                                 <div className="h-full bg-amber-500 transition-all duration-500" style={{ width: `${eyeProbs.intermediate}%` }} />
@@ -354,8 +403,8 @@ export default function HIrisPlexPanel() {
 
                         <div>
                             <div className="flex justify-between text-[10px] mb-1">
-                                <span className="text-amber-600">Brown Eye</span>
-                                <span className="font-bold text-amber-500 font-mono">{eyeProbs.brown}%</span>
+                                <span className="text-amber-600">{isTr ? "Kahverengi Göz" : "Brown Eye"}</span>
+                                <span className="font-bold text-amber-500 font-mono">%{eyeProbs.brown}</span>
                             </div>
                             <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
                                 <div className="h-full bg-amber-700 transition-all duration-500" style={{ width: `${eyeProbs.brown}%` }} />
@@ -364,7 +413,9 @@ export default function HIrisPlexPanel() {
                     </div>
 
                     <p className="text-[9px] text-zinc-400 pt-1 border-t border-tactical-border/30">
-                        HERC2 rs12913832 dosage {snpDosages.rs12913832}/2. P(Blue) + P(Hazel) + P(Brown) = 100.0%
+                        {isTr
+                            ? `HERC2 rs12913832 dozu ${snpDosages.rs12913832}/2. P(Mavi) + P(Ela) + P(Kahve) = %100,0`
+                            : `HERC2 rs12913832 dosage ${snpDosages.rs12913832}/2. P(Blue) + P(Hazel) + P(Brown) = 100.0%`}
                     </p>
                 </div>
 
@@ -373,11 +424,19 @@ export default function HIrisPlexPanel() {
                     <div className="flex items-center justify-between border-b border-tactical-border/50 pb-2">
                         <div className="flex items-center gap-2">
                             <Palette className="w-4 h-4 text-amber-400" />
-                            <span className="text-xs font-bold text-white uppercase">Hair Pigmentation</span>
+                            <span className="text-xs font-bold text-white uppercase">
+                                {isTr ? "Saç Pigmentasyonu" : "Hair Pigmentation"}
+                            </span>
                         </div>
                         <div className="flex items-center gap-2">
                             <span className="text-[10px] font-bold text-amber-400">
-                                {hairProbs.blond > 40 ? "Blond" : hairProbs.brown > 40 ? "Brown" : hairProbs.black > 40 ? "Black" : "Red"}
+                                {hairProbs.blond > 40
+                                    ? (isTr ? "Sarı" : "Blond")
+                                    : hairProbs.brown > 40
+                                    ? (isTr ? "Kahverengi" : "Brown")
+                                    : hairProbs.black > 40
+                                    ? (isTr ? "Siyah" : "Black")
+                                    : (isTr ? "Kızıl" : "Red")}
                             </span>
                             <ValidationBadge valid={hairValid} />
                         </div>
@@ -386,8 +445,8 @@ export default function HIrisPlexPanel() {
                     <div className="space-y-2">
                         <div>
                             <div className="flex justify-between text-[10px] mb-1">
-                                <span className="text-amber-200">Blond</span>
-                                <span className="font-bold text-amber-300 font-mono">{hairProbs.blond}%</span>
+                                <span className="text-amber-200">{isTr ? "Sarı" : "Blond"}</span>
+                                <span className="font-bold text-amber-300 font-mono">%{hairProbs.blond}</span>
                             </div>
                             <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
                                 <div className="h-full bg-amber-300 transition-all duration-500" style={{ width: `${hairProbs.blond}%` }} />
@@ -396,8 +455,8 @@ export default function HIrisPlexPanel() {
 
                         <div>
                             <div className="flex justify-between text-[10px] mb-1">
-                                <span className="text-amber-600">Brown</span>
-                                <span className="font-bold text-amber-500 font-mono">{hairProbs.brown}%</span>
+                                <span className="text-amber-600">{isTr ? "Kahverengi" : "Brown"}</span>
+                                <span className="font-bold text-amber-500 font-mono">%{hairProbs.brown}</span>
                             </div>
                             <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
                                 <div className="h-full bg-amber-600 transition-all duration-500" style={{ width: `${hairProbs.brown}%` }} />
@@ -406,8 +465,8 @@ export default function HIrisPlexPanel() {
 
                         <div>
                             <div className="flex justify-between text-[10px] mb-1">
-                                <span className="text-rose-400">Red</span>
-                                <span className="font-bold text-rose-400 font-mono">{hairProbs.red}%</span>
+                                <span className="text-rose-400">{isTr ? "Kızıl" : "Red"}</span>
+                                <span className="font-bold text-rose-400 font-mono">%{hairProbs.red}</span>
                             </div>
                             <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
                                 <div className="h-full bg-rose-500 transition-all duration-500" style={{ width: `${hairProbs.red}%` }} />
@@ -416,8 +475,8 @@ export default function HIrisPlexPanel() {
 
                         <div>
                             <div className="flex justify-between text-[10px] mb-1">
-                                <span className="text-zinc-400">Black</span>
-                                <span className="font-bold text-zinc-300 font-mono">{hairProbs.black}%</span>
+                                <span className="text-zinc-400">{isTr ? "Siyah" : "Black"}</span>
+                                <span className="font-bold text-zinc-300 font-mono">%{hairProbs.black}</span>
                             </div>
                             <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
                                 <div className="h-full bg-zinc-400 transition-all duration-500" style={{ width: `${hairProbs.black}%` }} />
@@ -426,7 +485,9 @@ export default function HIrisPlexPanel() {
                     </div>
 
                     <p className="text-[9px] text-zinc-400 pt-1 border-t border-tactical-border/30">
-                        IRF4 / TYR / SLC45A2 4-class multinomial logit normalized to 100%.
+                        {isTr
+                            ? "IRF4 / TYR / SLC45A2 4 sınıflı çok terimli logit %100'e normalize edildi."
+                            : "IRF4 / TYR / SLC45A2 4-class multinomial logit normalized to 100%."}
                     </p>
                 </div>
 
@@ -435,38 +496,44 @@ export default function HIrisPlexPanel() {
                     <div className="flex items-center justify-between border-b border-tactical-border/50 pb-2">
                         <div className="flex items-center gap-2">
                             <Sparkles className="w-4 h-4 text-emerald-400" />
-                            <span className="text-xs font-bold text-white uppercase">Fitzpatrick Skin Tone</span>
+                            <span className="text-xs font-bold text-white uppercase">
+                                {isTr ? "Fitzpatrick Cilt Tonu" : "Fitzpatrick Skin Tone"}
+                            </span>
                         </div>
                         <div className="flex items-center gap-2">
                             <span className={`text-[10px] font-bold ${skinTone.color}`}>
-                                {skinTone.conf}%
+                                %{skinTone.conf}
                             </span>
                             <ValidationBadge valid={skinValid} />
                         </div>
                     </div>
 
                     <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/60 space-y-1.5">
-                        <span className="text-[10px] text-zinc-400 uppercase">Predicted Classification:</span>
+                        <span className="text-[10px] text-zinc-400 uppercase">
+                            {isTr ? "Tahmin Edilen Sınıflandırma:" : "Predicted Classification:"}
+                        </span>
                         <p className={`text-xs font-bold font-mono ${skinTone.color}`}>{skinTone.type}</p>
                     </div>
 
                     <div className="space-y-1.5 text-[10px]">
                         <div className="flex justify-between">
-                            <span className="text-zinc-400">Type I / II (Pale/Fair):</span>
-                            <span className="font-bold text-amber-300 font-mono">{(skinTone.pVeryFair + skinTone.pFair).toFixed(1)}%</span>
+                            <span className="text-zinc-400">{isTr ? "Tip I / II (Açık/Beyaz):" : "Type I / II (Pale/Fair):"}</span>
+                            <span className="font-bold text-amber-300 font-mono">%{(skinTone.pVeryFair + skinTone.pFair).toFixed(1)}</span>
                         </div>
                         <div className="flex justify-between">
-                            <span className="text-zinc-400">Type III / IV (Medium/Olive):</span>
-                            <span className="font-bold text-amber-400 font-mono">{skinTone.pMedium.toFixed(1)}%</span>
+                            <span className="text-zinc-400">{isTr ? "Tip III / IV (Buğday/Zeytin):" : "Type III / IV (Medium/Olive):"}</span>
+                            <span className="font-bold text-amber-400 font-mono">%{skinTone.pMedium.toFixed(1)}</span>
                         </div>
                         <div className="flex justify-between">
-                            <span className="text-zinc-400">Type V / VI (Dark/Black):</span>
-                            <span className="font-bold text-amber-600 font-mono">{skinTone.pDark.toFixed(1)}%</span>
+                            <span className="text-zinc-400">{isTr ? "Tip V / VI (Koyu/Esmer):" : "Type V / VI (Dark/Black):"}</span>
+                            <span className="font-bold text-amber-600 font-mono">%{skinTone.pDark.toFixed(1)}</span>
                         </div>
                     </div>
 
                     <p className="text-[9px] text-zinc-400 pt-1 border-t border-tactical-border/30">
-                        Derived from SLC24A5 rs1426654 &amp; SLC45A2 rs16891982 dosages.
+                        {isTr
+                            ? "SLC24A5 rs1426654 ve SLC45A2 rs16891982 dozlarından türetilmiştir."
+                            : "Derived from SLC24A5 rs1426654 & SLC45A2 rs16891982 dosages."}
                     </p>
                 </div>
             </div>
@@ -476,10 +543,12 @@ export default function HIrisPlexPanel() {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-tactical-border/60 pb-3">
                     <div className="space-y-0.5">
                         <span className="text-xs font-bold text-white uppercase tracking-wider">
-                            Interactive HIrisPlex-S SNP Mutation Laboratory
+                            {isTr ? "İnteraktif HIrisPlex-S SNP Mutasyon Laboratuvarı" : "Interactive HIrisPlex-S SNP Mutation Laboratory"}
                         </span>
                         <p className="text-[10px] text-zinc-400">
-                            Click any SNP genotype pill to toggle dosage (0, 1, 2 derived alleles) or load Golden Test Vectors.
+                            {isTr
+                                ? "Dozajı değiştirmek için herhangi bir SNP hapına tıklayın (0, 1, 2 türemiş alel) veya Altın Test Vektörlerini yükleyin."
+                                : "Click any SNP genotype pill to toggle dosage (0, 1, 2 derived alleles) or load Golden Test Vectors."}
                         </p>
                     </div>
                     
@@ -497,9 +566,9 @@ export default function HIrisPlexPanel() {
                                 rs12203592: 1,
                                 rs3827072: 0,
                             })}
-                            className="px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase bg-blue-500/20 text-blue-300 border border-blue-500/40 hover:bg-blue-500/30 transition-all"
+                            className="px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase bg-blue-500/20 text-blue-300 border border-blue-500/40 hover:bg-blue-500/30 transition-all cursor-pointer"
                         >
-                            VECTOR_P3_01 (Fair EU)
+                            {isTr ? "VEKTÖR_P3_01 (Açık Tenli EU)" : "VECTOR_P3_01 (Fair EU)"}
                         </button>
                         <button
                             onClick={() => setSnpDosages({
@@ -514,9 +583,9 @@ export default function HIrisPlexPanel() {
                                 rs12203592: 0,
                                 rs3827072: 0,
                             })}
-                            className="px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 transition-all"
+                            className="px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 transition-all cursor-pointer"
                         >
-                            VECTOR_P3_02 (Dark AFR)
+                            {isTr ? "VEKTÖR_P3_02 (Koyu Tenli AFR)" : "VECTOR_P3_02 (Dark AFR)"}
                         </button>
                         <button
                             onClick={() => setSnpDosages({
@@ -531,9 +600,9 @@ export default function HIrisPlexPanel() {
                                 rs12203592: 2, // IRF4 Ephelides
                                 rs3827072: 0,
                             })}
-                            className="px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase bg-rose-500/20 text-rose-300 border border-rose-500/40 hover:bg-rose-500/30 transition-all"
+                            className="px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase bg-rose-500/20 text-rose-300 border border-rose-500/40 hover:bg-rose-500/30 transition-all cursor-pointer"
                         >
-                            MC1R Red Hair Preset
+                            {isTr ? "MC1R Kızıl Saç Önayarı" : "MC1R Red Hair Preset"}
                         </button>
                     </div>
                 </div>
@@ -562,6 +631,24 @@ export default function HIrisPlexPanel() {
                         );
                     })}
                 </div>
+            </div>
+
+            {/* ISFG 2018 Forensic DNA Phenotyping Judicial Reporting Shield Banner */}
+            <div className="p-3.5 rounded-xl bg-amber-950/20 border border-amber-500/40 text-[10px] text-amber-200/90 space-y-1 shadow-lg">
+                <div className="flex items-center gap-1.5 font-bold text-amber-300">
+                    <ShieldCheck className="w-4 h-4 text-amber-400 shrink-0" />
+                    <span>
+                        {isTr
+                            ? "ISFG (2018) Adli DNA Fenotipleme (FDP) Hukuki Bildirim Kalkanı"
+                            : "ISFG (2018) Forensic DNA Phenotyping (FDP) Legal Reporting Shield"}
+                    </span>
+                </div>
+                <p className="leading-relaxed">
+                    <strong>{isTr ? "Hukuki Bildirim:" : "Legal Notice:"}</strong>{" "}
+                    {isTr
+                        ? "Tahmin edilen fenotipik özellikler yalnızca adli soruşturma istihbaratı amaçlı olasılıksal tahminlerdir. DNA fenotipleme sonuçları, STR profillemesi yerine tek başına kimlik kanıtı olarak mahkemede doğrudan kullanılamaz."
+                        : "Predicted phenotypic traits are probabilistic estimations intended solely for investigative lead generation. DNA phenotyping results cannot replace STR profiling or serve as standalone identification evidence in judicial proceedings."}
+                </p>
             </div>
         </div>
     );

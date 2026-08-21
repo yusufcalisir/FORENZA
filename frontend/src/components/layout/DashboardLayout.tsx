@@ -23,6 +23,8 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import ForenzaLogoIcon from "@/components/common/ForenzaLogoIcon";
 import DnaProfileInspectorModal from "@/components/common/DnaProfileInspectorModal";
+import SaaSLanguageToggle from "@/components/landing/SaaSLanguageToggle";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 import { useIngestStore } from "@/store/ingestStore";
 import {
   SUBSYSTEM_CATEGORIES,
@@ -78,6 +80,47 @@ function SidebarContent({
   onCloseMobile?: () => void;
 }) {
   const pathname = usePathname();
+  const { t, lang } = useSaasLanguage();
+  const isTr = lang === "tr";
+
+  const executiveNav = useMemo(() => [
+    {
+      id: "analysis",
+      label: isTr ? "Çalışma Alanı" : "Workstation Hub",
+      href: "/analysis",
+      icon: FlaskConical,
+      color: "text-cyan-400",
+      bg: "bg-cyan-500/10",
+      border: "border-cyan-500/25",
+    },
+    {
+      id: "investigation",
+      label: isTr ? "Soruşturma Grafı" : "Investigation Graph",
+      href: "/investigation",
+      icon: GitGraph,
+      color: "text-purple-400",
+      bg: "bg-purple-500/10",
+      border: "border-purple-500/25",
+    },
+    {
+      id: "database",
+      label: isTr ? "Ağ ve Kütük" : "Network & Registry",
+      href: "/database",
+      icon: Database,
+      color: "text-blue-400",
+      bg: "bg-blue-500/10",
+      border: "border-blue-500/25",
+    },
+    {
+      id: "audit",
+      label: isTr ? "Uyumluluk Defteri" : "Compliance Ledger",
+      href: "/audit",
+      icon: ShieldCheck,
+      color: "text-amber-400",
+      bg: "bg-amber-500/10",
+      border: "border-amber-500/25",
+    },
+  ], [isTr]);
 
   // Extract active category and tab from URL path (e.g. /analysis/genotyping/str)
   const pathParts = pathname.split("/").filter(Boolean); // ["analysis", "genotyping", "str"]
@@ -154,7 +197,7 @@ function SidebarContent({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search 35 Subsystems..."
+              placeholder={t.sidebarNav?.searchPlaceholder || "Search 35 Subsystems..."}
               className="w-full pl-8 pr-7 py-1.5 bg-black/50 border border-tactical-border/70 rounded-xl text-[11px] text-white placeholder-zinc-500 focus:outline-none focus:border-cyan-500/60 transition-colors"
             />
             {searchQuery && (
@@ -175,10 +218,10 @@ function SidebarContent({
         <div className="space-y-1">
           {!collapsed && (
             <div className="px-2 py-1 flex items-center justify-between text-[9px] font-extrabold uppercase tracking-widest text-zinc-400">
-              <span>Operations</span>
+              <span>{t.sidebarNav?.operations || "Operations"}</span>
             </div>
           )}
-          {EXECUTIVE_NAV.map((item) => {
+          {executiveNav.map((item) => {
             const Icon = item.icon;
             const isActive =
               item.id === "analysis"
@@ -221,7 +264,7 @@ function SidebarContent({
         <div className="space-y-1">
           {!collapsed && (
             <div className="px-2 py-1 flex items-center justify-between text-[9px] font-extrabold uppercase tracking-widest text-zinc-400">
-              <span>Biocomputational Suites</span>
+              <span>{t.sidebarNav?.biocomputationalSuites || "Biocomputational Suites"}</span>
             </div>
           )}
 
@@ -346,7 +389,9 @@ function SidebarContent({
         >
           <Home className="w-3.5 h-3.5 shrink-0 text-zinc-500 group-hover:text-emerald-400 transition-colors" />
           {!collapsed && (
-            <span className="group-hover:text-emerald-300 transition-colors">Landing Page</span>
+            <span className="group-hover:text-emerald-300 transition-colors">
+              {t.sidebarNav?.landingPage || "Landing Page"}
+            </span>
           )}
         </Link>
       </div>
@@ -358,6 +403,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { setInspectorOpen } = useIngestStore();
+  const { t } = useSaasLanguage();
 
   return (
     <div className="flex min-h-screen lg:h-screen lg:overflow-hidden bg-[#080c14] text-tactical-text">
@@ -386,12 +432,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     FORENZA OS
                   </span>
                 </div>
-                <button
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="p-1 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
-                >
-                  <X className="w-4 h-4" />
-                </button>
+                <div className="flex items-center gap-2">
+                  <SaaSLanguageToggle />
+                  <button
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="p-1 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors cursor-pointer"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
 
               <div className="flex-1 overflow-hidden">
@@ -454,11 +503,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <div className="flex items-center gap-1.5">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
               <span className="font-mono text-[9px] font-bold text-emerald-400 uppercase tracking-wider truncate">
-                CASE-2026-FORENZA
+                {t.dashboardTopBar?.activeCase || "CASE-2026-FORENZA"}
               </span>
             </div>
             <p className="font-mono text-[8px] text-zinc-400 mt-0.5 truncate">
-              35 Biocomputational Modules
+              {t.dashboardTopBar?.subsystemsCount || "35 Subsystems"}
             </p>
           </div>
         )}
@@ -486,9 +535,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               FORENZA
             </span>
           </div>
-          <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-[8px] font-bold uppercase tracking-wider">
-            <Radio className="w-2.5 h-2.5 text-emerald-400 animate-pulse" />
-            <span>ONLINE</span>
+          <div className="flex items-center gap-2">
+            <SaaSLanguageToggle />
+            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-[8px] font-bold uppercase tracking-wider">
+              <Radio className="w-2.5 h-2.5 text-emerald-400 animate-pulse" />
+              <span>{t.dashboardTopBar?.onlineStatus || "ONLINE"}</span>
+            </div>
           </div>
         </header>
 
@@ -498,30 +550,39 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <div className="flex items-center gap-1.5">
               <Activity className="w-3 h-3 text-emerald-400" />
               <span className="font-mono text-[9px] text-zinc-500 uppercase tracking-wider">
-                35 Subsystems
+                {t.dashboardTopBar?.subsystemsCount || "35 Subsystems"}
               </span>
-              <span className="font-mono text-[9px] text-emerald-400 font-bold">ONLINE</span>
+              <span className="font-mono text-[9px] text-emerald-400 font-bold">
+                {t.dashboardTopBar?.subsystemsOnline || "ONLINE"}
+              </span>
             </div>
             <div className="h-3 w-px bg-tactical-border/60" />
             <div className="flex items-center gap-1.5">
-              <span className="font-mono text-[9px] text-zinc-500">Biocomputational Engine</span>
-              <span className="font-mono text-[9px] text-cyan-400 font-bold">FORENZA OS</span>
+              <span className="font-mono text-[9px] text-zinc-500">
+                {t.dashboardTopBar?.biocompEngine || "Biocomputational Engine"}
+              </span>
+              <span className="font-mono text-[9px] text-cyan-400 font-bold">
+                {t.dashboardTopBar?.engineName || "FORENZA OS"}
+              </span>
             </div>
             <div className="h-3 w-px bg-tactical-border/60" />
             <div className="flex items-center gap-1.5">
               <ShieldCheck className="w-3 h-3 text-amber-400" />
-              <span className="font-mono text-[9px] text-zinc-500">Accreditation</span>
+              <span className="font-mono text-[9px] text-zinc-500">
+                {t.dashboardTopBar?.accreditation || "Accreditation"}
+              </span>
               <span className="font-mono text-[9px] text-amber-400 font-bold">
-                ISO/IEC 17025:2017
+                {t.dashboardTopBar?.isoStandard || "ISO/IEC 17025:2017"}
               </span>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
+            <SaaSLanguageToggle />
             <div className="flex items-center gap-2 pl-2">
               <Radio className="w-3 h-3 text-emerald-400 animate-pulse" />
               <span className="font-mono text-[9px] text-emerald-400 font-bold uppercase tracking-widest">
-                CASE-2026-FORENZA
+                {t.dashboardTopBar?.activeCase || "CASE-2026-FORENZA"}
               </span>
             </div>
           </div>

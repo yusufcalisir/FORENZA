@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Dna, ShieldCheck, GitCommit, Compass, RefreshCw, CheckCircle2, ChevronRight, Binary } from "lucide-react";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 import PanelYSTR from "./PanelYSTR";
 
 export default function LineageDnaPanel({
@@ -10,6 +11,8 @@ export default function LineageDnaPanel({
 }: {
   initialTab?: "ystr" | "xstr" | "mtdna";
 }) {
+  const { lang } = useSaasLanguage();
+  const isTr = lang === "tr";
   const [selectedTab, setSelectedTab] = useState<"ystr" | "xstr" | "mtdna">(initialTab);
 
   useEffect(() => {
@@ -17,58 +20,6 @@ export default function LineageDnaPanel({
       setSelectedTab(initialTab);
     }
   }, [initialTab]);
-
-  // Complete 27-locus Y-FILER Plus Multiplex Panel with mutation classification
-  const ystrLoci = [
-    { locus: "DYS19", allele: "14.0", freq: "0.0032", rm: false, rate: "2.1e-3" },
-    { locus: "DYS389I", allele: "13.0", freq: "0.0450", rm: false, rate: "2.4e-3" },
-    { locus: "DYS389II", allele: "29.0", freq: "0.0180", rm: false, rate: "4.6e-3" },
-    { locus: "DYS390", allele: "24.0", freq: "0.0620", rm: false, rate: "2.0e-3" },
-    { locus: "DYS391", allele: "10.0", freq: "0.1200", rm: false, rate: "2.4e-3" },
-    { locus: "DYS392", allele: "13.0", freq: "0.0850", rm: false, rate: "5.2e-4" },
-    { locus: "DYS393", allele: "13.0", freq: "0.0910", rm: false, rate: "1.2e-3" },
-    { locus: "DYS385a", allele: "11.0", freq: "0.0120", rm: false, rate: "2.3e-3", multicopy: true },
-    { locus: "DYS385b", allele: "14.0", freq: "0.0084", rm: false, rate: "2.3e-3", multicopy: true },
-    { locus: "DYS437", allele: "15.0", freq: "0.1100", rm: false, rate: "1.3e-3" },
-    { locus: "DYS438", allele: "12.0", freq: "0.0780", rm: false, rate: "3.5e-4" },
-    { locus: "DYS439", allele: "12.0", freq: "0.0540", rm: false, rate: "5.1e-3" },
-    { locus: "DYS448", allele: "19.0", freq: "0.0340", rm: false, rate: "1.4e-3" },
-    { locus: "DYS456", allele: "16.0", freq: "0.0670", rm: false, rate: "4.8e-3" },
-    { locus: "DYS458", allele: "17.0", freq: "0.0430", rm: false, rate: "6.2e-3" },
-    { locus: "DYS635", allele: "23.0", freq: "0.0510", rm: false, rate: "4.3e-3" },
-    { locus: "YGATAH4", allele: "12.0", freq: "0.0890", rm: false, rate: "2.8e-3" },
-    { locus: "DYS460", allele: "11.0", freq: "0.0610", rm: false, rate: "3.1e-3" },
-    { locus: "DYS481", allele: "22.0", freq: "0.0290", rm: false, rate: "2.2e-3" },
-    { locus: "DYS533", allele: "12.0", freq: "0.0740", rm: false, rate: "2.5e-3" },
-    // 6 Rapidly Mutating (RM) Loci (7 targets)
-    { locus: "DYS570", allele: "17.0", freq: "0.0150", rm: true, rate: "1.2e-2" },
-    { locus: "DYS576", allele: "18.0", freq: "0.0110", rm: true, rate: "1.4e-2" },
-    { locus: "DYS627", allele: "21.0", freq: "0.0090", rm: true, rate: "1.1e-2" },
-    { locus: "DYS518", allele: "39.0", freq: "0.0060", rm: true, rate: "1.8e-2" },
-    { locus: "DYS449", allele: "29.0", freq: "0.0080", rm: true, rate: "1.2e-2" },
-    { locus: "DYF387S1a", allele: "37.0", freq: "0.0070", rm: true, rate: "1.6e-2", multicopy: true },
-    { locus: "DYF387S1b", allele: "38.0", freq: "0.0050", rm: true, rate: "1.6e-2", multicopy: true },
-  ];
-
-  const [dbK, setDbK] = useState<number>(0);
-  const [dbN, setDbN] = useState<number>(25000);
-  const [theta, setTheta] = useState<number>(0.03);
-
-  // Compute exact Clopper-Pearson for k=0 or normal approx for k>0
-  const cpUpper = dbK === 0 ? 1.0 - Math.pow(0.05, 1.0 / (dbN + 1)) : (dbK + 1.96 * Math.sqrt((dbK * (1 - dbK / dbN)) / dbN)) / dbN;
-  const cpLR = 1.0 / Math.max(cpUpper, 1e-12);
-  const cpLogLR = Math.log10(cpLR);
-  const brennerProb = (dbK + theta) / (dbN + theta);
-  const brennerLR = 1.0 / brennerProb;
-
-
-  // Mock mtDNA rCRS Variants (HV1/HV2)
-  const mtdnaVariants = [
-    { pos: 16189, ref: "C", alt: "T", region: "HV1", empop: "16189T" },
-    { pos: 16223, ref: "C", alt: "T", region: "HV1", empop: "16223T" },
-    { pos: 263, ref: "A", alt: "G", region: "HV2", empop: "263G" },
-    { pos: 315.1, ref: "-", alt: "C", region: "HV2", empop: "315.1C" },
-  ];
 
   return (
     <div className="space-y-6 font-mono">
@@ -80,10 +31,14 @@ export default function LineageDnaPanel({
           </div>
           <div className="min-w-0">
             <h2 className="text-xs sm:text-base font-bold tracking-widest text-tactical-text uppercase truncate">
-              Lineage DNA Analysis Hub (Y-STR • X-STR • mtDNA)
+              {isTr
+                ? "Soybağı DNA Analiz Merkezi (Y-STR • X-STR • mtDNA)"
+                : "Lineage DNA Analysis Hub (Y-STR • X-STR • mtDNA)"}
             </h2>
             <p className="text-[9px] sm:text-[10px] text-tactical-text-muted mt-0.5 truncate">
-              Paternal Haplotype Tracking • Complex X Kinship • Maternal rCRS Sequence Alignment
+              {isTr
+                ? "Baba Soyu Haplotip Takibi • Karmaşık X Akrabalığı • Anne Soyu rCRS Dizi Hizalaması"
+                : "Paternal Haplotype Tracking • Complex X Kinship • Maternal rCRS Sequence Alignment"}
             </p>
           </div>
         </div>
@@ -92,27 +47,27 @@ export default function LineageDnaPanel({
         <div className="flex items-center gap-1.5 p-1 rounded-xl bg-black/40 border border-tactical-border/60 overflow-x-auto max-w-full shrink-0">
           <button
             onClick={() => setSelectedTab("ystr")}
-            className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold uppercase transition-all whitespace-nowrap ${
+            className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold uppercase transition-all whitespace-nowrap cursor-pointer ${
               selectedTab === "ystr" ? "bg-indigo-500/20 text-indigo-300 border border-indigo-500/40" : "text-zinc-500 hover:text-zinc-300"
             }`}
           >
-            Y-STR Paternal
+            {isTr ? "Y-STR Baba Soyu" : "Y-STR Paternal"}
           </button>
           <button
             onClick={() => setSelectedTab("xstr")}
-            className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold uppercase transition-all whitespace-nowrap ${
+            className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold uppercase transition-all whitespace-nowrap cursor-pointer ${
               selectedTab === "xstr" ? "bg-indigo-500/20 text-indigo-300 border border-indigo-500/40" : "text-zinc-500 hover:text-zinc-300"
             }`}
           >
-            X-STR Kinship
+            {isTr ? "X-STR Akrabalık" : "X-STR Kinship"}
           </button>
           <button
             onClick={() => setSelectedTab("mtdna")}
-            className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold uppercase transition-all whitespace-nowrap ${
+            className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold uppercase transition-all whitespace-nowrap cursor-pointer ${
               selectedTab === "mtdna" ? "bg-indigo-500/20 text-indigo-300 border border-indigo-500/40" : "text-zinc-500 hover:text-zinc-300"
             }`}
           >
-            mtDNA Maternal
+            {isTr ? "mtDNA Anne Soyu" : "mtDNA Maternal"}
           </button>
         </div>
       </div>
@@ -125,66 +80,88 @@ export default function LineageDnaPanel({
         <div className="space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="rounded-xl border border-tactical-border/60 bg-tactical-surface/40 p-4 space-y-1">
-              <span className="text-[10px] text-zinc-500 font-bold uppercase">Relationship Hypothesis</span>
-              <p className="text-sm font-bold text-indigo-300">Paternal Half-Sisters (PHS)</p>
-              <p className="text-[9px] text-zinc-400">Shared paternal X without recombination</p>
+              <span className="text-[10px] text-zinc-500 font-bold uppercase">
+                {isTr ? "Akrabalık Hipotezi" : "Relationship Hypothesis"}
+              </span>
+              <p className="text-sm font-bold text-indigo-300">
+                {isTr ? "Baba Bir Üvey Kız Kardeşler (PHS)" : "Paternal Half-Sisters (PHS)"}
+              </p>
+              <p className="text-[9px] text-zinc-400">
+                {isTr ? "Rekombinasyonsuz paylaşılan baba X kromozomu" : "Shared paternal X without recombination"}
+              </p>
             </div>
             <div className="rounded-xl border border-tactical-border/60 bg-tactical-surface/40 p-4 space-y-1">
-              <span className="text-[10px] text-zinc-500 font-bold uppercase">Combined X-Kinship Index</span>
+              <span className="text-[10px] text-zinc-500 font-bold uppercase">
+                {isTr ? "Birleşik X-Akrabalık İndeksi" : "Combined X-Kinship Index"}
+              </span>
               <p className="text-base sm:text-lg font-bold text-emerald-400 font-mono">KI_X = 1.854 × 10⁵</p>
-              <p className="text-[9px] text-zinc-400">log₁₀(KI_X) = 5.268 (ISFG Standard)</p>
+              <p className="text-[9px] text-zinc-400">log₁₀(KI_X) = 5.268 ({isTr ? "ISFG Standardı" : "ISFG Standard"})</p>
             </div>
             <div className="rounded-xl border border-tactical-border/60 bg-tactical-surface/40 p-4 space-y-1">
-              <span className="text-[10px] text-zinc-500 font-bold uppercase">Evaluated Clusters</span>
-              <p className="text-base sm:text-lg font-bold text-cyan-400 font-mono">4 / 4 Linkage Groups</p>
-              <p className="text-[9px] text-zinc-400">12 Argus X-12 Loci Evaluated</p>
+              <span className="text-[10px] text-zinc-500 font-bold uppercase">
+                {isTr ? "Değerlendirilen Kümeler" : "Evaluated Clusters"}
+              </span>
+              <p className="text-base sm:text-lg font-bold text-cyan-400 font-mono">
+                {isTr ? "4 / 4 Bağlantı Grubu" : "4 / 4 Linkage Groups"}
+              </p>
+              <p className="text-[9px] text-zinc-400">
+                {isTr ? "12 Argus X-12 Lokusu Değerlendirildi" : "12 Argus X-12 Loci Evaluated"}
+              </p>
             </div>
             <div className="rounded-xl border border-tactical-border/60 bg-tactical-surface/40 p-4 space-y-1">
-              <span className="text-[10px] text-zinc-500 font-bold uppercase">ENFSI Verbal Scale</span>
-              <p className="text-sm font-bold text-emerald-400">Extremely Strong Support</p>
-              <p className="text-[9px] text-zinc-400">For common paternal ancestry</p>
+              <span className="text-[10px] text-zinc-500 font-bold uppercase">
+                {isTr ? "ENFSI Sözel Ölçeği" : "ENFSI Verbal Scale"}
+              </span>
+              <p className="text-sm font-bold text-emerald-400">
+                {isTr ? "Son Derece Güçlü Destek" : "Extremely Strong Support"}
+              </p>
+              <p className="text-[9px] text-zinc-400">
+                {isTr ? "Ortak baba soyu lehine" : "For common paternal ancestry"}
+              </p>
             </div>
           </div>
 
           <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-4 sm:p-5 space-y-4 shadow-lg overflow-hidden">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-4 border-b border-tactical-border/40 pb-3">
               <span className="text-xs font-bold text-tactical-text uppercase tracking-wider leading-snug">
-                Investigator Argus X-12 Linkage Clusters & Intra-Group Recombination (r)
+                {isTr
+                  ? "Investigator Argus X-12 Bağlantı Kümeleri & Grup İçi Rekombinasyon (r)"
+                  : "Investigator Argus X-12 Linkage Clusters & Intra-Group Recombination (r)"}
               </span>
               <span className="text-[9px] text-emerald-400 font-bold bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded shrink-0 whitespace-nowrap self-start sm:self-auto">
-                Kosambi Map Corrected
+                {isTr ? "Kosambi Harita Düzeltmeli" : "Kosambi Map Corrected"}
               </span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
               {[
                 {
-                  group: "Linkage Group 1 (LG1 — Xp22.2)",
+                  group: isTr ? "Bağlantı Grubu 1 (LG1 — Xp22.2)" : "Linkage Group 1 (LG1 — Xp22.2)",
                   loci: "DXS10148 (12.42 Mb) • DXS10135 (13.15 Mb) • DXS8378 (14.90 Mb)",
                   recomb: "r₁₋₂ = 0.003, r₂₋₃ = 0.022",
                   ki: "KI_LG1 = 20.75",
-                  status: "Paternal X Shared",
+                  status: isTr ? "Baba X Paylaşıldı" : "Paternal X Shared",
                 },
                 {
-                  group: "Linkage Group 2 (LG2 — Xq12)",
+                  group: isTr ? "Bağlantı Grubu 2 (LG2 — Xq12)" : "Linkage Group 2 (LG2 — Xq12)",
                   loci: "DXS7132 (68.10 Mb) • DXS10074 (70.80 Mb) • DXS10079 (71.35 Mb)",
                   recomb: "r₁₋₂ = 0.015, r₂₋₃ = 0.020",
                   ki: "KI_LG2 = 20.75",
-                  status: "Paternal X Shared",
+                  status: isTr ? "Baba X Paylaşıldı" : "Paternal X Shared",
                 },
                 {
-                  group: "Linkage Group 3 (LG3 — Xq26)",
+                  group: isTr ? "Bağlantı Grubu 3 (LG3 — Xq26)" : "Linkage Group 3 (LG3 — Xq26)",
                   loci: "DXS10103 (133.50 Mb) • HPRTB (133.90 Mb) • DXS10101 (134.60 Mb)",
                   recomb: "r₁₋₂ = 0.001, r₂₋₃ = 0.012",
                   ki: "KI_LG3 = 20.75",
-                  status: "Paternal X Shared",
+                  status: isTr ? "Baba X Paylaşıldı" : "Paternal X Shared",
                 },
                 {
-                  group: "Linkage Group 4 (LG4 — Xq28)",
+                  group: isTr ? "Bağlantı Grubu 4 (LG4 — Xq28)" : "Linkage Group 4 (LG4 — Xq28)",
                   loci: "DXS10146 (148.20 Mb) • DXS10134 (149.10 Mb) • DXS7423 (150.05 Mb)",
                   recomb: "r₁₋₂ = 0.005, r₂₋₃ = 0.008",
                   ki: "KI_LG4 = 20.75",
-                  status: "Paternal X Shared",
+                  status: isTr ? "Baba X Paylaşıldı" : "Paternal X Shared",
                 },
               ].map((item) => (
                 <div key={item.group} className="rounded-xl border border-tactical-border/50 bg-black/20 p-4 space-y-2">
@@ -209,24 +186,36 @@ export default function LineageDnaPanel({
         <div className="space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="rounded-xl border border-tactical-border/60 bg-tactical-surface/40 p-4 space-y-1">
-              <span className="text-[10px] text-zinc-500 font-bold uppercase">Maternal Lineage Verdict</span>
-              <p className="text-sm font-bold text-emerald-400">Cannot Be Excluded</p>
-              <p className="text-[9px] text-zinc-400">0 differences across HV1/HV2/HV3</p>
+              <span className="text-[10px] text-zinc-500 font-bold uppercase">
+                {isTr ? "Anne Soyu Kararı" : "Maternal Lineage Verdict"}
+              </span>
+              <p className="text-sm font-bold text-emerald-400">
+                {isTr ? "Dışlanamaz (Eşleşme)" : "Cannot Be Excluded"}
+              </p>
+              <p className="text-[9px] text-zinc-400">
+                {isTr ? "HV1/HV2/HV3 genelinde 0 fark" : "0 differences across HV1/HV2/HV3"}
+              </p>
             </div>
             <div className="rounded-xl border border-tactical-border/60 bg-tactical-surface/40 p-4 space-y-1">
-              <span className="text-[10px] text-zinc-500 font-bold uppercase">EMPOP Frequency Bound</span>
+              <span className="text-[10px] text-zinc-500 font-bold uppercase">
+                {isTr ? "EMPOP Frekans Üst Sınırı" : "EMPOP Frequency Bound"}
+              </span>
               <p className="text-base sm:text-lg font-bold text-cyan-400 font-mono">p̂_upper = 6.18 × 10⁻⁵</p>
-              <p className="text-[9px] text-zinc-400">N = 48,500 (k = 0 unobserved)</p>
+              <p className="text-[9px] text-zinc-400">N = 48,500 ({isTr ? "k = 0 gözlenmedi" : "k = 0 unobserved"})</p>
             </div>
             <div className="rounded-xl border border-tactical-border/60 bg-tactical-surface/40 p-4 space-y-1">
-              <span className="text-[10px] text-zinc-500 font-bold uppercase">Maternal Likelihood Ratio</span>
+              <span className="text-[10px] text-zinc-500 font-bold uppercase">
+                {isTr ? "Anne Soyu Olabilirlik Oranı" : "Maternal Likelihood Ratio"}
+              </span>
               <p className="text-base sm:text-lg font-bold text-emerald-400 font-mono">LR = 16,191.7</p>
               <p className="text-[9px] text-zinc-400">log₁₀(LR_mtDNA) = 4.209</p>
             </div>
             <div className="rounded-xl border border-tactical-border/60 bg-tactical-surface/40 p-4 space-y-1">
-              <span className="text-[10px] text-zinc-500 font-bold uppercase">Haplogroup Classification</span>
+              <span className="text-[10px] text-zinc-500 font-bold uppercase">
+                {isTr ? "Haplogrup Sınıflandırması" : "Haplogroup Classification"}
+              </span>
               <p className="text-sm font-bold text-indigo-300">Phylotree H1a</p>
-              <p className="text-[9px] text-zinc-400">rCRS (NC_012920.1) aligned</p>
+              <p className="text-[9px] text-zinc-400">rCRS (NC_012920.1) {isTr ? "hizalandı" : "aligned"}</p>
             </div>
           </div>
 
@@ -234,14 +223,16 @@ export default function LineageDnaPanel({
             {/* Header Block */}
             <div className="flex flex-col gap-2.5 sm:gap-3 border-b border-tactical-border/40 pb-3.5">
               <span className="text-xs sm:text-sm font-bold text-tactical-text uppercase tracking-wider leading-snug">
-                Mitochondrial Sequence Differences vs. rCRS Reference (ISFG 3' Right-Aligned)
+                {isTr
+                  ? "rCRS Referansına Göre Mitokondriyal Dizi Farkları (ISFG 3'-Sağa Hizalı)"
+                  : "Mitochondrial Sequence Differences vs. rCRS Reference (ISFG 3' Right-Aligned)"}
               </span>
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-[9px] sm:text-[10px] text-emerald-400 font-bold bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-lg whitespace-nowrap">
-                  ISFG Right-Aligned
+                  {isTr ? "ISFG Sağa Hizalı" : "ISFG Right-Aligned"}
                 </span>
                 <span className="text-[9px] sm:text-[10px] text-cyan-400 font-bold bg-cyan-500/10 border border-cyan-500/20 px-2.5 py-1 rounded-lg whitespace-nowrap">
-                  0 Differences (Maternal Match)
+                  {isTr ? "0 Fark (Anne Soyu Eşleşmesi)" : "0 Differences (Maternal Match)"}
                 </span>
               </div>
             </div>
@@ -249,13 +240,13 @@ export default function LineageDnaPanel({
             {/* Sequence Differences Card List */}
             <div className="space-y-2.5">
               {[
-                { pos: 73, ref: "A", alt: "G", region: "HV2", empop: "73G", note: "Transition" },
-                { pos: 263, ref: "A", alt: "G", region: "HV2", empop: "263G", note: "Transition" },
-                { pos: 309.1, ref: "-", alt: "C", region: "HV2", empop: "309.1C", note: "ISFG Poly-C Insertion" },
-                { pos: 315.1, ref: "-", alt: "C", region: "HV2", empop: "315.1C", note: "ISFG Poly-C Insertion" },
-                { pos: 522, ref: "CA", alt: "del", region: "HV3", empop: "522del", note: "Dinucleotide Deletion" },
-                { pos: 16189, ref: "T", alt: "Y (C/T)", region: "HV1", empop: "16189Y", note: "IUPAC Point Heteroplasmy" },
-                { pos: 16223, ref: "C", alt: "T", region: "HV1", empop: "16223T", note: "Transition" },
+                { pos: 73, ref: "A", alt: "G", region: "HV2", empop: "73G", note: isTr ? "Geçiş (Tr)" : "Transition" },
+                { pos: 263, ref: "A", alt: "G", region: "HV2", empop: "263G", note: isTr ? "Geçiş (Tr)" : "Transition" },
+                { pos: 309.1, ref: "-", alt: "C", region: "HV2", empop: "309.1C", note: isTr ? "ISFG Poli-C İnsersiyonu" : "ISFG Poly-C Insertion" },
+                { pos: 315.1, ref: "-", alt: "C", region: "HV2", empop: "315.1C", note: isTr ? "ISFG Poli-C İnsersiyonu" : "ISFG Poly-C Insertion" },
+                { pos: 522, ref: "CA", alt: "del", region: "HV3", empop: "522del", note: isTr ? "Dinükleotid Delesyonu" : "Dinucleotide Deletion" },
+                { pos: 16189, ref: "T", alt: "Y (C/T)", region: "HV1", empop: "16189Y", note: isTr ? "IUPAC Nokta Heteroplazmisi" : "IUPAC Point Heteroplasmy" },
+                { pos: 16223, ref: "C", alt: "T", region: "HV1", empop: "16223T", note: isTr ? "Geçiş (Tr)" : "Transition" },
               ].map((v) => (
                 <div
                   key={v.empop}
@@ -268,7 +259,7 @@ export default function LineageDnaPanel({
                         {v.empop}
                       </span>
                       <span className="text-[10px] sm:text-xs text-zinc-400 font-mono truncate">
-                        [{v.region}] Pos {v.pos}
+                        [{v.region}] {isTr ? `Poz ${v.pos}` : `Pos ${v.pos}`}
                       </span>
                     </div>
 
@@ -282,7 +273,7 @@ export default function LineageDnaPanel({
 
                   {/* Secondary Row: Mutation Classification Badge */}
                   <div className="flex items-center justify-between text-[9px] pt-1.5 border-t border-tactical-border/20">
-                    <span className="text-zinc-500 font-mono">Mutation Class</span>
+                    <span className="text-zinc-500 font-mono">{isTr ? "Mutasyon Sınıfı" : "Mutation Class"}</span>
                     <span className="text-[9px] text-indigo-300 font-semibold bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded whitespace-nowrap">
                       {v.note}
                     </span>

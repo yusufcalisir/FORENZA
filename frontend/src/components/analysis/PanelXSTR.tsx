@@ -25,6 +25,7 @@ import {
   GitPullRequest,
   Check,
 } from "lucide-react";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -197,6 +198,8 @@ const LINKAGE_GROUPS = [
 
 export default function PanelXSTR() {
   const [isPending, startTransition] = useTransition();
+  const { lang } = useSaasLanguage();
+  const isTr = lang === "tr";
 
   // State
   const [selectedCohort, setSelectedCohort] = useState<PresetCohort>(PRESET_COHORTS[0]);
@@ -320,7 +323,7 @@ export default function PanelXSTR() {
   }, [profileA, profileB, relationshipType, sexA, sexB]);
 
   return (
-    <div className="space-y-6 pb-12">
+    <div className="space-y-6 pb-12 font-mono">
       {/* ── Header & Governance Banner ───────────────────────────────────── */}
       <div className="relative overflow-hidden rounded-2xl border border-cyan-500/30 bg-gradient-to-r from-slate-900 via-cyan-950/20 to-slate-900 p-6 shadow-2xl backdrop-blur-xl">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
@@ -331,13 +334,17 @@ export default function PanelXSTR() {
               </span>
               <div>
                 <h1 className="text-xl font-bold tracking-wide text-white sm:text-2xl flex items-center gap-2">
-                  Investigator Argus X-12 Linkage & Kinship Engine
+                  {isTr
+                    ? "Investigator Argus X-12 Bağlantı & Akrabalık Motoru"
+                    : "Investigator Argus X-12 Linkage & Kinship Engine"}
                   <span className="rounded-full bg-cyan-500/20 px-2.5 py-0.5 text-xs font-semibold text-cyan-300 border border-cyan-500/40">
-                    MODULE 2.2
+                    {isTr ? "MODÜL 2.2" : "MODULE 2.2"}
                   </span>
                 </h1>
                 <p className="text-xs text-slate-400 sm:text-sm">
-                  X-Chromosomal 12-Locus Linkage Clusters (LG1–LG4) • Kosambi Mapping • PHS & Deficiency Kinship
+                  {isTr
+                    ? "X-Kromozomal 12-Lokus Bağlantı Kümeleri (LG1–LG4) • Kosambi Haritalaması • PHS & Eksiklik Akrabalığı"
+                    : "X-Chromosomal 12-Locus Linkage Clusters (LG1–LG4) • Kosambi Mapping • PHS & Deficiency Kinship"}
                 </p>
               </div>
             </div>
@@ -363,9 +370,13 @@ export default function PanelXSTR() {
         <div className="mb-3 flex items-center justify-between">
           <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-2">
             <Sparkles className="h-3.5 w-3.5 text-cyan-400" />
-            Certified Reference Casework Cohorts & Benchmarks
+            {isTr
+              ? "Sertifikalı Referans Vaka Kohortları & Doğrulama Kümeleri"
+              : "Certified Reference Casework Cohorts & Benchmarks"}
           </span>
-          <span className="text-[11px] font-mono text-slate-500">Tillmar et al. (2017) Frequency Calibration</span>
+          <span className="text-[11px] font-mono text-slate-500">
+            {isTr ? "Tillmar vd. (2017) Frekans Kalibrasyonu" : "Tillmar et al. (2017) Frequency Calibration"}
+          </span>
         </div>
 
         <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-4">
@@ -375,7 +386,7 @@ export default function PanelXSTR() {
               <button
                 key={cohort.id}
                 onClick={() => handleSelectCohort(cohort)}
-                className={`relative flex flex-col justify-between rounded-lg border p-3 text-left transition-all duration-200 ${
+                className={`relative flex flex-col justify-between rounded-lg border p-3 text-left transition-all duration-200 cursor-pointer ${
                   isSelected
                     ? "border-cyan-500/80 bg-cyan-950/30 shadow-lg shadow-cyan-950/50"
                     : "border-slate-800 bg-slate-900/40 hover:border-slate-700 hover:bg-slate-800/40"
@@ -388,8 +399,12 @@ export default function PanelXSTR() {
                     </span>
                     {isSelected && <Check className="h-3.5 w-3.5 text-cyan-400" />}
                   </div>
-                  <h4 className="text-xs font-semibold text-slate-200">{cohort.labelEn}</h4>
-                  <p className="mt-1 text-[11px] text-slate-400 line-clamp-2">{cohort.descriptionEn}</p>
+                  <h4 className="text-xs font-semibold text-slate-200">
+                    {isTr ? cohort.labelTr : cohort.labelEn}
+                  </h4>
+                  <p className="mt-1 text-[11px] text-slate-400 line-clamp-2">
+                    {isTr ? cohort.descriptionTr : cohort.descriptionEn}
+                  </p>
                 </div>
               </button>
             );
@@ -402,7 +417,9 @@ export default function PanelXSTR() {
         {/* Combined KI_X */}
         <div className="relative overflow-hidden rounded-xl border border-cyan-500/30 bg-slate-900/70 p-4 backdrop-blur-md">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-400">Combined Kinship Index (KI_X)</span>
+            <span className="text-xs font-medium text-slate-400">
+              {isTr ? "Birleşik Akrabalık İndeksi (KI_X)" : "Combined Kinship Index (KI_X)"}
+            </span>
             <Scale className="h-4 w-4 text-cyan-400" />
           </div>
           <div className="mt-2 flex items-baseline gap-2">
@@ -420,7 +437,9 @@ export default function PanelXSTR() {
         {/* Loci Evaluated */}
         <div className="relative overflow-hidden rounded-xl border border-slate-800 bg-slate-900/70 p-4 backdrop-blur-md">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-400">Argus X-12 Loci Concordance</span>
+            <span className="text-xs font-medium text-slate-400">
+              {isTr ? "Argus X-12 Lokus Uyumu" : "Argus X-12 Loci Concordance"}
+            </span>
             <Layers className="h-4 w-4 text-slate-400" />
           </div>
           <div className="mt-2 flex items-baseline gap-2">
@@ -429,14 +448,16 @@ export default function PanelXSTR() {
             </span>
           </div>
           <p className="mt-1 text-[11px] text-slate-400">
-            4 Independent Linkage Groups (LG1–LG4)
+            {isTr ? "4 Bağımsız Bağlantı Grubu (LG1–LG4)" : "4 Independent Linkage Groups (LG1–LG4)"}
           </p>
         </div>
 
         {/* Pedigree Hypothesis */}
         <div className="relative overflow-hidden rounded-xl border border-slate-800 bg-slate-900/70 p-4 backdrop-blur-md">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-400">Tested Kinship Hypothesis</span>
+            <span className="text-xs font-medium text-slate-400">
+              {isTr ? "Test Edilen Akrabalık Hipotezi" : "Tested Kinship Hypothesis"}
+            </span>
             <Users className="h-4 w-4 text-slate-400" />
           </div>
           <div className="mt-2">
@@ -445,7 +466,7 @@ export default function PanelXSTR() {
             </span>
           </div>
           <p className="mt-1 text-[11px] text-slate-400">
-            Person A ({sexA}) ↔ Person B ({sexB})
+            {isTr ? `Kişi A (${sexA === "FEMALE" ? "Kadın" : "Erkek"}) ↔ Kişi B (${sexB === "FEMALE" ? "Kadın" : "Erkek"})` : `Person A (${sexA}) ↔ Person B (${sexB})`}
           </p>
         </div>
 
@@ -456,7 +477,9 @@ export default function PanelXSTR() {
             : "border-rose-500/30 bg-rose-950/20 text-rose-300"
         }`}>
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-300">ENFSI (2017) Verdict</span>
+            <span className="text-xs font-medium text-slate-300">
+              {isTr ? "ENFSI (2017) Kararı" : "ENFSI (2017) Verdict"}
+            </span>
             {isKinshipSupported ? (
               <CheckCircle2 className="h-4 w-4 text-emerald-400" />
             ) : (
@@ -465,11 +488,13 @@ export default function PanelXSTR() {
           </div>
           <div className="mt-2">
             <span className="text-xs font-bold leading-tight block">
-              {isKinshipSupported ? "SUPPORT FOR KINSHIP" : "NON-KINSHIP / EXCLUSION"}
+              {isKinshipSupported
+                ? (isTr ? "AKRABALIK LEHİNE DESTEK" : "SUPPORT FOR KINSHIP")
+                : (isTr ? "AKRABA DEĞİL / DIŞLAMA" : "NON-KINSHIP / EXCLUSION")}
             </span>
           </div>
           <p className="mt-1 text-[10px] text-slate-400 line-clamp-2">
-            {verbalPredicateEn}
+            {isTr ? verbalPredicateTr : verbalPredicateEn}
           </p>
         </div>
       </div>
@@ -480,7 +505,9 @@ export default function PanelXSTR() {
           <div>
             <h3 className="text-sm font-bold text-white flex items-center gap-2">
               <Sliders className="h-4 w-4 text-cyan-400" />
-              Kosambi Mapping Function: Genetic Distance (d cM) ↔ Recombination Fraction (r)
+              {isTr
+                ? "Kosambi Haritalama Fonksiyonu: Genetik Mesafe (d cM) ↔ Rekombinasyon Oranı (r)"
+                : "Kosambi Mapping Function: Genetic Distance (d cM) ↔ Recombination Fraction (r)"}
             </h3>
             <p className="text-xs text-slate-400 mt-0.5">
               r = ½ · tanh(2d / 100) = ½ · (e^{"{4d/100}"} - 1) / (e^{"{4d/100}"} + 1)
@@ -488,11 +515,11 @@ export default function PanelXSTR() {
           </div>
           <div className="flex items-center gap-4">
             <div className="rounded-lg bg-slate-800/80 px-3 py-1.5 border border-slate-700">
-              <span className="text-[11px] text-slate-400">Map Distance d:</span>{" "}
+              <span className="text-[11px] text-slate-400">{isTr ? "Harita Mesafesi d:" : "Map Distance d:"}</span>{" "}
               <span className="font-mono font-bold text-cyan-300">{kosambiDistanceCm.toFixed(1)} cM</span>
             </div>
             <div className="rounded-lg bg-slate-800/80 px-3 py-1.5 border border-slate-700">
-              <span className="text-[11px] text-slate-400">Recombination r:</span>{" "}
+              <span className="text-[11px] text-slate-400">{isTr ? "Rekombinasyon r:" : "Recombination r:"}</span>{" "}
               <span className="font-mono font-bold text-emerald-300">{computedKosambiR.toFixed(5)}</span>
             </div>
           </div>
@@ -523,9 +550,13 @@ export default function PanelXSTR() {
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
             <Dna className="h-4 w-4 text-cyan-400" />
-            Argus X-12 Chromosomal Linkage Clusters (LG1–LG4)
+            {isTr
+              ? "Argus X-12 Kromozomal Bağlantı Kümeleri (LG1–LG4)"
+              : "Argus X-12 Chromosomal Linkage Clusters (LG1–LG4)"}
           </h3>
-          <span className="text-xs text-slate-500 font-mono">Total LR Product = ∏ KI_LG</span>
+          <span className="text-xs text-slate-500 font-mono">
+            {isTr ? "Toplam LR Çarpımı = ∏ KI_LG" : "Total LR Product = ∏ KI_LG"}
+          </span>
         </div>
 
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
@@ -539,13 +570,17 @@ export default function PanelXSTR() {
                 <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-white text-sm">{lg.name}</span>
+                      <span className="font-bold text-white text-sm">
+                        {isTr ? `Bağlantı Grubu ${lg.id.replace("LG", "")}` : lg.name}
+                      </span>
                       <span className="rounded bg-slate-800 px-2 py-0.5 text-[10px] font-mono text-cyan-300 border border-slate-700">
                         {lg.band}
                       </span>
                     </div>
                     <p className="text-[11px] text-slate-400 mt-0.5">
-                      Intra-cluster recombination: r₁₋₂ = {lg.r12}, r₂₋₃ = {lg.r23}
+                      {isTr
+                        ? `Küme içi rekombinasyon: r₁₋₂ = ${lg.r12}, r₂₋₃ = ${lg.r23}`
+                        : `Intra-cluster recombination: r₁₋₂ = ${lg.r12}, r₂₋₃ = ${lg.r23}`}
                     </p>
                   </div>
                   <div className="text-right">
@@ -581,7 +616,7 @@ export default function PanelXSTR() {
                             </span>
                           </div>
                           <span className="text-[10px] text-slate-400 font-mono mt-0.5 block">
-                            Motif: {meta.motif}
+                            {isTr ? "Motif:" : "Motif:"} {meta.motif}
                           </span>
                         </div>
 
@@ -623,14 +658,14 @@ export default function PanelXSTR() {
           <ShieldCheck className="h-5 w-5 text-amber-400 shrink-0 mt-0.5" />
           <div className="space-y-1">
             <h4 className="font-bold text-amber-300">
-              ISFG (2012) X-STR Evaluative Reporting Disclaimer & Judicial Fallacy Shield
+              {isTr
+                ? "ISFG (2012) X-STR Değerlendirici Raporlama Beyanı & Adli Yanılgı Kalkanı"
+                : "ISFG (2012) X-STR Evaluative Reporting Disclaimer & Judicial Fallacy Shield"}
             </h4>
             <p className="text-[11px] leading-relaxed text-amber-200/80">
-              X-chromosomal STR markers exhibit sex-linked inheritance dynamics. Because biological fathers transmit their
-              single X-chromosome intact without meiotic recombination to all daughters, paternal half-sisters inherit
-              identical haplotypes across tightly linked clusters (LG1–LG4). Statistical Likelihood Ratios (KI_X) assess
-              the probability of observed shared haplotypes under the alleged paternal relationship versus unrelated individuals,
-              but cannot distinguish between full sisters and paternal half-sisters sharing the same paternal line.
+              {isTr
+                ? "X-kromozomal STR belirteçleri cinsiyete bağlı kalıtım dinamikleri sergiler. Biyolojik babalar tek X-kromozomlarını mayotik rekombinasyon olmadan tüm kız çocuklarına tam olarak aktardığından, baba bir üvey kız kardeşler sıkı bağlantılı kümelerde (LG1–LG4) özdeş haplotipler miras alır. İstatistiki Olabilirlik Oranları (KI_X), iddia edilen akrabalık hipotezi altında paylaşılan haplotiplerin olasılığını akraba olmayan bireylere karşı değerlendirir."
+                : "X-chromosomal STR markers exhibit sex-linked inheritance dynamics. Because biological fathers transmit their single X-chromosome intact without meiotic recombination to all daughters, paternal half-sisters inherit identical haplotypes across tightly linked clusters (LG1–LG4). Statistical Likelihood Ratios (KI_X) assess the probability of observed shared haplotypes under the alleged paternal relationship versus unrelated individuals."}
             </p>
           </div>
         </div>

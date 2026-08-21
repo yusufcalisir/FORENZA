@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Clock,
@@ -26,15 +26,23 @@ import {
   predictAgeClientSide,
   VisagePredictionResult
 } from "@/utils/visageAgeEngine";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 type ModelMode = "VISAGE_5CPG_ELASTIC_NET" | "VISAGE_5CPG_MLR_POWER" | "EXTENDED_10CPG_CLOCK";
 
 export default function AgeEstimationPanel() {
+  const { lang } = useSaasLanguage();
+  const isTr = lang === "tr";
+
   const [modelMode, setModelMode] = useState<ModelMode>("VISAGE_5CPG_ELASTIC_NET");
   const [tissueType, setTissueType] = useState<string>("BLOOD");
   const [knownAge, setKnownAge] = useState<string>("25.0");
   const [activePreset, setActivePreset] = useState<string>("VECTOR_VISAGE_02");
-  const [langTab, setLangTab] = useState<"en" | "tr">("en");
+  const [langTab, setLangTab] = useState<"en" | "tr">(isTr ? "tr" : "en");
+
+  useEffect(() => {
+    setLangTab(isTr ? "tr" : "en");
+  }, [isTr]);
 
   // State for CpG Beta values
   const [cpgBetas, setCpgBetas] = useState<Record<string, number>>({
@@ -127,7 +135,7 @@ export default function AgeEstimationPanel() {
       return Object.entries(EXTENDED_10CPG_MARKERS).map(([id, meta]) => ({
         id,
         gene: meta.gene,
-        desc: `Legacy weight: ${meta.legacyWeight}`,
+        desc: isTr ? `Eski ağırlık: ${meta.legacyWeight}` : `Legacy weight: ${meta.legacyWeight}`,
         weight: meta.legacyWeight,
       }));
     }
@@ -137,7 +145,7 @@ export default function AgeEstimationPanel() {
       desc: `${meta.chrom} | ${meta.ampliconBp}bp | w=${modelMode === "VISAGE_5CPG_MLR_POWER" ? meta.mlrWeight : meta.elasticNetWeight}`,
       weight: modelMode === "VISAGE_5CPG_MLR_POWER" ? meta.mlrWeight : meta.elasticNetWeight,
     }));
-  }, [modelMode]);
+  }, [modelMode, isTr]);
 
   return (
     <div className="space-y-6 font-mono text-tactical-text">
@@ -150,14 +158,16 @@ export default function AgeEstimationPanel() {
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
               <h2 className="text-xs sm:text-sm font-bold tracking-widest text-tactical-text uppercase leading-snug">
-                VISAGE 5-CpG &amp; Epigenetic Aging Engine (Module 16)
+                {isTr ? "VISAGE 5-CpG & Epigenetik Yaşlandırma Motoru (Modül 16)" : "VISAGE 5-CpG & Epigenetic Aging Engine (Module 16)"}
               </h2>
               <span className="px-2.5 py-0.5 rounded-lg text-[9px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/40 whitespace-nowrap shrink-0">
-                VISAGE CONSORTIUM / HORVATH LINK
+                VISAGE KONSORSİYUMU / HORVATH BAĞI
               </span>
             </div>
             <p className="text-[10px] text-zinc-400 mt-0.5">
-              Multi-tissue DNA methylation age deconvolution with ISO/IEC 17025 metrological uncertainty budget
+              {isTr
+                ? "ISO/IEC 17025 metrolojik belirsizlik bütçesi ile çoklu doku DNA metilasyon yaşı dekonvolüsyonu"
+                : "Multi-tissue DNA methylation age deconvolution with ISO/IEC 17025 metrological uncertainty budget"}
             </p>
           </div>
         </div>
@@ -165,10 +175,14 @@ export default function AgeEstimationPanel() {
         <button
           onClick={runPrediction}
           disabled={loading}
-          className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 active:scale-95 text-white font-bold text-xs transition-all shadow-lg shadow-purple-500/25 disabled:opacity-50 shrink-0 whitespace-nowrap"
+          className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 active:scale-95 text-white font-bold text-xs transition-all shadow-lg shadow-purple-500/25 disabled:opacity-50 shrink-0 whitespace-nowrap cursor-pointer"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
-          <span>{loading ? "Synthesizing Model..." : "Run Epigenetic Estimation"}</span>
+          <span>
+            {loading
+              ? (isTr ? "Model Sentezleniyor..." : "Synthesizing Model...")
+              : (isTr ? "Epigenetik Tahmini Çalıştır" : "Run Epigenetic Estimation")}
+          </span>
         </button>
       </div>
 
@@ -178,13 +192,13 @@ export default function AgeEstimationPanel() {
         <div className="rounded-xl border border-tactical-border/70 bg-tactical-surface/50 p-3 space-y-2">
           <label className="text-[10px] font-bold uppercase text-zinc-400 flex items-center gap-1.5">
             <Layers className="w-3.5 h-3.5 text-purple-400" />
-            Model Architecture
+            {isTr ? "Model Mimarisi" : "Model Architecture"}
           </label>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5">
             {[
-              { id: "VISAGE_5CPG_ELASTIC_NET", label: "5-CpG Elastic Net", sub: "Horvath Link (y0=20)" },
-              { id: "VISAGE_5CPG_MLR_POWER", label: "5-CpG MLR Power", sub: "ELOVL2^2.366" },
-              { id: "EXTENDED_10CPG_CLOCK", label: "Extended 10-CpG", sub: "Pan-Tissue Clock" },
+              { id: "VISAGE_5CPG_ELASTIC_NET", label: "5-CpG Elastic Net", sub: isTr ? "Horvath Bağı (y0=20)" : "Horvath Link (y0=20)" },
+              { id: "VISAGE_5CPG_MLR_POWER", label: "5-CpG MLR Kuvvet", sub: "ELOVL2^2.366" },
+              { id: "EXTENDED_10CPG_CLOCK", label: isTr ? "Genişletilmiş 10-CpG" : "Extended 10-CpG", sub: isTr ? "Pan-Doku Saati" : "Pan-Tissue Clock" },
             ].map((m) => (
               <button
                 key={m.id}
@@ -193,7 +207,7 @@ export default function AgeEstimationPanel() {
                   const res = predictAgeClientSide(cpgBetas, tissueType, knownAge ? parseFloat(knownAge) : null, m.id as ModelMode);
                   setResult(res);
                 }}
-                className={`p-2 rounded-lg text-left transition-all border ${
+                className={`p-2 rounded-lg text-left transition-all border cursor-pointer ${
                   modelMode === m.id
                     ? "bg-purple-500/20 border-purple-500/60 text-purple-200 shadow-md"
                     : "bg-black/30 border-tactical-border/40 text-zinc-400 hover:border-purple-500/30"
@@ -210,14 +224,14 @@ export default function AgeEstimationPanel() {
         <div className="lg:col-span-2 rounded-xl border border-tactical-border/70 bg-tactical-surface/50 p-3 space-y-2">
           <label className="text-[10px] font-bold uppercase text-zinc-400 flex items-center gap-1.5">
             <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-            Golden Benchmark Calibration Vectors
+            {isTr ? "Altın Standart Kalibrasyon Vektörleri" : "Golden Benchmark Calibration Vectors"}
           </label>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-1.5">
             {VISAGE_PRESETS.map((p) => (
               <button
                 key={p.id}
                 onClick={() => handlePresetSelect(p.id)}
-                className={`p-2 rounded-lg text-left transition-all border ${
+                className={`p-2 rounded-lg text-left transition-all border cursor-pointer ${
                   activePreset === p.id
                     ? "bg-amber-500/20 border-amber-500/60 text-amber-200 shadow-md"
                     : "bg-black/30 border-tactical-border/40 text-zinc-400 hover:border-amber-500/30"
@@ -240,17 +254,19 @@ export default function AgeEstimationPanel() {
             <div className="flex items-center gap-2">
               <Sliders className="w-4 h-4 text-purple-400" />
               <span className="text-xs font-bold uppercase tracking-wider text-tactical-text">
-                CpG Methylation Ratios (Beta)
+                {isTr ? "CpG Metilasyon Oranları (Beta)" : "CpG Methylation Ratios (Beta)"}
               </span>
             </div>
             <span className="text-[9px] text-purple-300 font-bold px-2 py-0.5 rounded bg-purple-500/20">
-              {activeMarkers.length} Loci Active
+              {activeMarkers.length} {isTr ? "Aktif Lokus" : "Loci Active"}
             </span>
           </div>
 
           {/* Tissue Type Selection */}
           <div className="space-y-1.5">
-            <label className="text-[10px] text-zinc-400 block font-bold uppercase">Biological Matrix Calibration</label>
+            <label className="text-[10px] text-zinc-400 block font-bold uppercase">
+              {isTr ? "Biyolojik Matris Kalibrasyonu" : "Biological Matrix Calibration"}
+            </label>
             <select
               value={tissueType}
               onChange={(e) => {
@@ -258,18 +274,28 @@ export default function AgeEstimationPanel() {
                 const res = predictAgeClientSide(cpgBetas, e.target.value, knownAge ? parseFloat(knownAge) : null, modelMode);
                 setResult(res);
               }}
-              className="w-full bg-black/60 border border-tactical-border/70 rounded-xl p-2.5 font-mono text-xs text-purple-300 font-bold focus:outline-none focus:border-purple-500 shadow-inner"
+              className="w-full bg-black/60 border border-tactical-border/70 rounded-xl p-2.5 font-mono text-xs text-purple-300 font-bold focus:outline-none focus:border-purple-500 shadow-inner cursor-pointer"
             >
-              <option value="BLOOD">Whole Blood / Bloodstain (Offset: 0.00 yrs | RSE ±1.95)</option>
-              <option value="SALIVA_BUCCAL">Oral Saliva / Buccal Swab (Offset: +2.45 yrs | RSE ±2.25)</option>
-              <option value="SEMEN">Seminal Fluid / Semen (Offset: +18.60 yrs | RSE ±2.60)</option>
-              <option value="BONE">Skeletal Remains / Bone / Teeth (Offset: +1.15 yrs | RSE ±3.05)</option>
+              <option value="BLOOD">
+                {isTr ? "Tam Kan / Kan Lekesi (Öteleme: 0.00 yıl | RSE ±1.95)" : "Whole Blood / Bloodstain (Offset: 0.00 yrs | RSE ±1.95)"}
+              </option>
+              <option value="SALIVA_BUCCAL">
+                {isTr ? "Tükürük / Bukkal Sürüntü (Öteleme: +2.45 yıl | RSE ±2.25)" : "Oral Saliva / Buccal Swab (Offset: +2.45 yrs | RSE ±2.25)"}
+              </option>
+              <option value="SEMEN">
+                {isTr ? "Seminal Sıvı / Meni (Öteleme: +18.60 yıl | RSE ±2.60)" : "Seminal Fluid / Semen (Offset: +18.60 yrs | RSE ±2.60)"}
+              </option>
+              <option value="BONE">
+                {isTr ? "İskelet Kalıntısı / Kemik / Diş (Öteleme: +1.15 yıl | RSE ±3.05)" : "Skeletal Remains / Bone / Teeth (Offset: +1.15 yrs | RSE ±3.05)"}
+              </option>
             </select>
           </div>
 
           {/* Known Age Input for Acceleration Delta */}
           <div className="space-y-1.5 pt-2 border-t border-tactical-border/30">
-            <label className="text-[10px] text-zinc-400 block font-bold uppercase">Chronological Age of Subject (Optional Delta)</label>
+            <label className="text-[10px] text-zinc-400 block font-bold uppercase">
+              {isTr ? "Özneden Bilinen Kronolojik Yaş (Opsiyonel Fark)" : "Chronological Age of Subject (Optional Delta)"}
+            </label>
             <input
               type="number"
               placeholder="e.g. 25.0"
@@ -330,41 +356,56 @@ export default function AgeEstimationPanel() {
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="text-[10px] font-bold text-purple-300 uppercase tracking-widest">
-                        PREDICTED CHRONOLOGICAL AGE
+                        {isTr ? "TAHMİN EDİLEN KRONOLOJİK YAŞ" : "PREDICTED CHRONOLOGICAL AGE"}
                       </span>
                       <span className="px-2 py-0.5 rounded text-[8px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                        {result.developmental_stage}
+                        {isTr
+                          ? (result.developmental_stage === "ADULT" ? "YETİŞKİN"
+                            : result.developmental_stage === "JUVENILE / ADOLESCENT" ? "GENÇ / ERGEN"
+                            : result.developmental_stage === "SENIOR / ELDERLY" ? "YAŞLI"
+                            : result.developmental_stage)
+                          : result.developmental_stage}
                       </span>
                     </div>
                     <div className="flex items-baseline gap-3 mt-1">
                       <span className="text-4xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-200 via-teal-200 to-emerald-200 font-mono">
                         {result.estimated_age_years.toFixed(2)}
                       </span>
-                      <span className="text-sm font-bold text-zinc-400 uppercase">Years</span>
+                      <span className="text-sm font-bold text-zinc-400 uppercase">
+                        {isTr ? "Yaş" : "Years"}
+                      </span>
                     </div>
                   </div>
 
                   <div className="sm:text-right p-3 rounded-xl bg-black/40 border border-purple-500/20">
-                    <span className="text-[9px] text-zinc-400 block uppercase font-bold">ISO/IEC 17025 95% Prediction Interval</span>
-                    <span className="text-base sm:text-lg font-bold text-emerald-400 font-mono">
-                      [{result.prediction_interval_lower.toFixed(2)} – {result.prediction_interval_upper.toFixed(2)} yrs]
+                    <span className="text-[9px] text-zinc-400 block uppercase font-bold">
+                      {isTr ? "ISO/IEC 17025 %95 Tahmin Aralığı" : "ISO/IEC 17025 95% Prediction Interval"}
                     </span>
-                    <span className="text-[9px] text-zinc-500 block mt-0.5">Expanded Uncertainty U95% = ±{result.expanded_uncertainty_95.toFixed(2)} yrs</span>
+                    <span className="text-base sm:text-lg font-bold text-emerald-400 font-mono">
+                      [{result.prediction_interval_lower.toFixed(2)} – {result.prediction_interval_upper.toFixed(2)} {isTr ? "yaş" : "yrs"}]
+                    </span>
+                    <span className="text-[9px] text-zinc-500 block mt-0.5">
+                      {isTr ? "Genişletilmiş Belirsizlik" : "Expanded Uncertainty"} U95% = ±{result.expanded_uncertainty_95.toFixed(2)} {isTr ? "yaş" : "yrs"}
+                    </span>
                   </div>
                 </div>
 
                 {/* Telemetry Metrics Grid */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs pt-1">
                   <div className="p-3 rounded-xl bg-black/50 border border-tactical-border/50">
-                    <span className="text-[9px] text-zinc-400 block font-bold uppercase">Linear Score (x)</span>
+                    <span className="text-[9px] text-zinc-400 block font-bold uppercase">
+                      {isTr ? "Doğrusal Skor (x)" : "Linear Score (x)"}
+                    </span>
                     <span className="font-bold text-purple-300 font-mono text-xs">
                       x = {result.linear_predictor_x.toFixed(4)}
                     </span>
                   </div>
                   <div className="p-3 rounded-xl bg-black/50 border border-tactical-border/50">
-                    <span className="text-[9px] text-zinc-400 block font-bold uppercase">Tissue Offset</span>
+                    <span className="text-[9px] text-zinc-400 block font-bold uppercase">
+                      {isTr ? "Doku Ötelemesi" : "Tissue Offset"}
+                    </span>
                     <span className="font-bold text-cyan-300 font-mono text-xs">
-                      {result.tissue_offset_applied >= 0 ? "+" : ""}{result.tissue_offset_applied.toFixed(2)} yrs
+                      {result.tissue_offset_applied >= 0 ? "+" : ""}{result.tissue_offset_applied.toFixed(2)} {isTr ? "yaş" : "yrs"}
                     </span>
                   </div>
                   <div className="p-3 rounded-xl bg-black/50 border border-tactical-border/50">
@@ -374,7 +415,9 @@ export default function AgeEstimationPanel() {
                     </span>
                   </div>
                   <div className="p-3 rounded-xl bg-black/50 border border-tactical-border/50">
-                    <span className="text-[9px] text-zinc-400 block font-bold uppercase">Acceleration Delta</span>
+                    <span className="text-[9px] text-zinc-400 block font-bold uppercase">
+                      {isTr ? "Yaşlanma İvmesi" : "Acceleration Delta"}
+                    </span>
                     <span className={`font-bold font-mono text-xs ${
                       result.age_acceleration_delta !== null
                         ? result.age_acceleration_delta > 5
@@ -385,7 +428,7 @@ export default function AgeEstimationPanel() {
                         : "text-zinc-500"
                     }`}>
                       {result.age_acceleration_delta !== null
-                        ? `${result.age_acceleration_delta > 0 ? "+" : ""}${result.age_acceleration_delta.toFixed(2)} yrs`
+                        ? `${result.age_acceleration_delta > 0 ? "+" : ""}${result.age_acceleration_delta.toFixed(2)} ${isTr ? "yaş" : "yrs"}`
                         : "N/A"}
                     </span>
                   </div>
@@ -397,10 +440,10 @@ export default function AgeEstimationPanel() {
                 <div className="flex items-center justify-between border-b border-tactical-border/40 pb-3">
                   <h3 className="text-xs font-bold uppercase tracking-wider text-tactical-text flex items-center gap-2">
                     <Activity className="w-4 h-4 text-cyan-400" />
-                    CpG Locus Deconvolution Breakdown
+                    {isTr ? "CpG Lokus Katkı Ayrıştırması" : "CpG Locus Deconvolution Breakdown"}
                   </h3>
                   <span className="text-[9px] text-zinc-400">
-                    Horvath Multiplier = 21.0 | Pivot y0 = 20.0
+                    {isTr ? "Horvath Çarpanı = 21.0 | Pivot y0 = 20.0" : "Horvath Multiplier = 21.0 | Pivot y0 = 20.0"}
                   </span>
                 </div>
 
@@ -415,7 +458,7 @@ export default function AgeEstimationPanel() {
                         <span className="text-zinc-400 text-[10px]">β = {c.methylation_beta.toFixed(4)}</span>
                         <span className="text-zinc-500 text-[10px]">w = {c.weight.toFixed(2)}</span>
                         <span className={`font-bold min-w-[70px] ${c.contribution_years >= 0 ? "text-emerald-400" : "text-amber-400"}`}>
-                          {c.contribution_years >= 0 ? "+" : ""}{c.contribution_years.toFixed(2)} yrs
+                          {c.contribution_years >= 0 ? "+" : ""}{c.contribution_years.toFixed(2)} {isTr ? "yaş" : "yrs"}
                         </span>
                       </div>
                     </div>
@@ -429,13 +472,13 @@ export default function AgeEstimationPanel() {
                   <div className="flex items-center gap-2">
                     <Scale className="w-4 h-4 text-indigo-400" />
                     <span className="text-xs font-bold uppercase tracking-wider text-indigo-200">
-                      Standardized ENFSI Evaluative Court Statement
+                      {isTr ? "Standart ENFSI Değerlendirici Mahkeme İfadesi" : "Standardized ENFSI Evaluative Court Statement"}
                     </span>
                   </div>
                   <div className="flex items-center gap-1 bg-black/40 p-1 rounded-lg border border-indigo-500/30">
                     <button
                       onClick={() => setLangTab("en")}
-                      className={`px-2.5 py-0.5 rounded text-[9px] font-bold transition-all ${
+                      className={`px-2.5 py-0.5 rounded text-[9px] font-bold transition-all cursor-pointer ${
                         langTab === "en" ? "bg-indigo-500 text-white" : "text-zinc-400 hover:text-white"
                       }`}
                     >
@@ -443,7 +486,7 @@ export default function AgeEstimationPanel() {
                     </button>
                     <button
                       onClick={() => setLangTab("tr")}
-                      className={`px-2.5 py-0.5 rounded text-[9px] font-bold transition-all ${
+                      className={`px-2.5 py-0.5 rounded text-[9px] font-bold transition-all cursor-pointer ${
                         langTab === "tr" ? "bg-indigo-500 text-white" : "text-zinc-400 hover:text-white"
                       }`}
                     >
@@ -460,7 +503,9 @@ export default function AgeEstimationPanel() {
                 <div className="flex items-start gap-2.5 p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-[10px] text-amber-200/90 leading-normal">
                   <ShieldCheck className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                   <div>
-                    <span className="font-bold text-amber-300 uppercase block">Forensic Evaluative Reporting Shield:</span>
+                    <span className="font-bold text-amber-300 uppercase block">
+                      {isTr ? "Adli Değerlendirici Raporlama Kalkanı:" : "Forensic Evaluative Reporting Shield:"}
+                    </span>
                     {result.prosecutors_fallacy_shield}
                   </div>
                 </div>

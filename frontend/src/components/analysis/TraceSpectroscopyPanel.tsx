@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, Eye, ShieldCheck, RefreshCw, Layers, Activity, Zap, CheckCircle2, AlertTriangle, Filter, Cpu, Check } from "lucide-react";
 import { getApiBaseUrl } from "@/lib/api";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 interface MsiResponse {
   evidence_type: string;
@@ -38,13 +39,48 @@ interface SpectroscopyResponse {
 }
 
 const MSI_PRESETS = [
-  { id: "soret", name: "415 nm (Soret Band)", nm: 415, evidence: "Latent / Dilute Bloodstains", desc: "Maximum porphyrin ring absorption in hemoglobin." },
-  { id: "uva", name: "365 nm (UV-A)", nm: 365, evidence: "Semen, Saliva, Vaginal Fluids", desc: "Fluorescence excitation of endogenous flavins & lipids." },
-  { id: "blue", name: "450 nm (Blue Light)", nm: 450, evidence: "Latent Fingerprints & Trace Serology", desc: "530 nm long-pass filtered dye secondary fluorescence." },
-  { id: "nir", name: "850 nm (Near-IR)", nm: 850, evidence: "Blood & GSR on Dark Textiles", desc: "Substrate transmission; fabric dyes become transparent." },
+  {
+    id: "soret",
+    name: "415 nm (Soret Bandı / Band)",
+    nm: 415,
+    evidence: "Gizil / Seyreltik Kan Lekeleri (Latent Bloodstains)",
+    evidence_en: "Latent / Dilute Bloodstains",
+    desc: "Hemoglobindeki porfirin halkasının maksimum soğurması.",
+    desc_en: "Maximum porphyrin ring absorption in hemoglobin."
+  },
+  {
+    id: "uva",
+    name: "365 nm (UV-A)",
+    nm: 365,
+    evidence: "Meni, Tükürük, Vajinal Sıvılar (Body Fluids)",
+    evidence_en: "Semen, Saliva, Vaginal Fluids",
+    desc: "Endojen flavin ve lipitlerin floresans uyarılması.",
+    desc_en: "Fluorescence excitation of endogenous flavins & lipids."
+  },
+  {
+    id: "blue",
+    name: "450 nm (Mavi Işık / Blue Light)",
+    nm: 450,
+    evidence: "Gizil Parmak İzleri & Serolojik İzler",
+    evidence_en: "Latent Fingerprints & Trace Serology",
+    desc: "530 nm uzun-geçirgen filtreli boya ikincil floresansı.",
+    desc_en: "530 nm long-pass filtered dye secondary fluorescence."
+  },
+  {
+    id: "nir",
+    name: "850 nm (Yakın Kızılötesi / Near-IR)",
+    nm: 850,
+    evidence: "Koyu Kumaşlarda Kan & GSR (Blood on Dark Fabric)",
+    evidence_en: "Blood & GSR on Dark Textiles",
+    desc: "Yüzey geçirgenliği; kumaş boyaları şeffaflaşır.",
+    desc_en: "Substrate transmission; fabric dyes become transparent."
+  },
 ];
 
 export default function TraceSpectroscopyPanel() {
+  const { lang } = useSaasLanguage();
+  const isTr = lang === "tr";
+
   const [activeTab, setActiveTab] = useState<"ftir" | "msi">("ftir");
   const [selectedWavelength, setSelectedWavelength] = useState<number>(415);
   const [evidenceQuery, setEvidenceQuery] = useState<string>("Latent Bloodstain");
@@ -115,11 +151,11 @@ export default function TraceSpectroscopyPanel() {
   // Client-side fallback for FTIR / Raman normalized dot product HQI
   const solveClientHqi = (presetName: string): SpectroscopyResponse => {
     const fiberDB: Record<string, { polymer: string; type: string; peaks: number[] }> = {
-      "Polyester": { polymer: "Polyethylene Terephthalate (PET)", type: "Synthetic", peaks: [1715.0, 1240.0] },
-      "Nylon-6,6": { polymer: "Polyamide 6,6", type: "Synthetic", peaks: [1635.0, 1538.0] },
-      "Acrylic": { polymer: "Polyacrylonitrile (PAN)", type: "Synthetic", peaks: [2240.0, 1450.0] },
-      "Cotton": { polymer: "Cellulose", type: "Natural", peaks: [3330.0, 1030.0] },
-      "Wool": { polymer: "Keratin Protein", type: "Natural", peaks: [1650.0, 1520.0] }
+      "Polyester": { polymer: "Polyethylene Terephthalate (PET)", type: isTr ? "Sentetik" : "Synthetic", peaks: [1715.0, 1240.0] },
+      "Nylon-6,6": { polymer: "Polyamide 6,6", type: isTr ? "Sentetik" : "Synthetic", peaks: [1635.0, 1538.0] },
+      "Acrylic": { polymer: "Polyacrylonitrile (PAN)", type: isTr ? "Sentetik" : "Synthetic", peaks: [2240.0, 1450.0] },
+      "Cotton": { polymer: "Cellulose", type: isTr ? "Doğal" : "Natural", peaks: [3330.0, 1030.0] },
+      "Wool": { polymer: "Keratin Protein", type: isTr ? "Doğal" : "Natural", peaks: [1650.0, 1520.0] }
     };
 
     const target = fiberDB[presetName] || fiberDB["Polyester"];
@@ -132,7 +168,9 @@ export default function TraceSpectroscopyPanel() {
         material_name: fName,
         hqi_score_percent: score,
         classification: score >= 90.0 ? "POSITIVE_SPECTRAL_MATCH" : "NON_MATCH_EXCLUSION",
-        evidence_strength: score >= 90.0 ? "Definitive chemical identification (HQI >= 90.0%)" : "Excluded (HQI < 75.0%)",
+        evidence_strength: score >= 90.0
+          ? (isTr ? "Kesin kimyasal tanımlama (HQI ≥ %90.0)" : "Definitive chemical identification (HQI >= 90.0%)")
+          : (isTr ? "Hariç tutuldu (HQI < %75.0)" : "Excluded (HQI < 75.0%)"),
         polymer_name: info.polymer,
         fiber_type: info.type,
         diagnostic_peaks_cm_1: info.peaks
@@ -145,7 +183,9 @@ export default function TraceSpectroscopyPanel() {
       top_match: libMatches[0],
       library_matches: libMatches,
       points_evaluated: 100,
-      prosecutors_fallacy_shield: "An HQI >= 90.0% provides definitive chemical polymer identification. Synthetic fibers are mass-manufactured (SWGMAT / ASTM E2228)."
+      prosecutors_fallacy_shield: isTr
+        ? "HQI ≥ %90.0 skoru kesin kimyasal polimer tanımlaması sağlar. Sentetik lifler seri üretim ürünüdür (SWGMAT / ASTM E2228)."
+        : "An HQI >= 90.0% provides definitive chemical polymer identification. Synthetic fibers are mass-manufactured (SWGMAT / ASTM E2228)."
     };
   };
 
@@ -153,7 +193,11 @@ export default function TraceSpectroscopyPanel() {
     if (loading) return;
     setLoading(true);
     setProgress(20);
-    setStageText(`Simulating optical contrast response for ${nm} nm band...`);
+    setStageText(
+      isTr
+        ? `${nm} nm bandı için optik kontrast yanıtı simüle ediliyor...`
+        : `Simulating optical contrast response for ${nm} nm band...`
+    );
 
     const API_BASE = getApiBaseUrl();
 
@@ -177,7 +221,7 @@ export default function TraceSpectroscopyPanel() {
       setProgress(100);
       setTimeout(() => {
         setLoading(false);
-        setLastActionTime(`MSI ${nm}nm Evaluated`);
+        setLastActionTime(isTr ? `MSI ${nm}nm Değerlendirildi` : `MSI ${nm}nm Evaluated`);
       }, 300);
     }
   };
@@ -186,18 +230,30 @@ export default function TraceSpectroscopyPanel() {
     if (loading) return;
     setLoading(true);
     setProgress(15);
-    setStageText("Acquiring 100-point sample spectrum vector (400 - 4000 cm⁻¹)...");
+    setStageText(
+      isTr
+        ? "100 noktalı örnek spektrum vektörü (400 - 4000 cm⁻¹) alınıyor..."
+        : "Acquiring 100-point sample spectrum vector (400 - 4000 cm⁻¹)..."
+    );
 
     const API_BASE = getApiBaseUrl();
 
     const t1 = setTimeout(() => {
       setProgress(50);
-      setStageText("Computing normalized dot product (HQI = (S·L)² / (|S|²|L|²))...");
+      setStageText(
+        isTr
+          ? "Normalize skaler çarpım (HQI = (S·L)² / (|S|²|L|²)) hesaplanıyor..."
+          : "Computing normalized dot product (HQI = (S·L)² / (|S|²|L|²))..."
+      );
     }, 250);
 
     const t2 = setTimeout(() => {
       setProgress(85);
-      setStageText("Applying ASTM E2228 / SWGMAT decision thresholds (HQI ≥ 90.0%)...");
+      setStageText(
+        isTr
+          ? "ASTM E2228 / SWGMAT karar eşikleri (HQI ≥ %90.0) uygulanıyor..."
+          : "Applying ASTM E2228 / SWGMAT decision thresholds (HQI ≥ 90.0%)..."
+      );
     }, 550);
 
     try {
@@ -237,10 +293,10 @@ export default function TraceSpectroscopyPanel() {
         clearTimeout(t1);
         clearTimeout(t2);
         setProgress(100);
-        setStageText("Polymer identification complete.");
+        setStageText(isTr ? "Polimer tanımlaması tamamlandı." : "Polymer identification complete.");
         setTimeout(() => {
           setLoading(false);
-          setLastActionTime(`HQI Matched at ${new Date().toLocaleTimeString()}`);
+          setLastActionTime(isTr ? `HQI ${new Date().toLocaleTimeString()} eşleştirildi` : `HQI Matched at ${new Date().toLocaleTimeString()}`);
         }, 200);
       }, 850);
     }
@@ -257,14 +313,16 @@ export default function TraceSpectroscopyPanel() {
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
               <h2 className="text-sm sm:text-base font-bold tracking-widest text-tactical-text uppercase truncate">
-                Trace Micro-Spectroscopy & MSI Engine
+                {isTr ? "Mikro-Spektroskopi & Çoklu Spektral Görüntüleme (MSI)" : "Trace Micro-Spectroscopy & MSI Engine"}
               </h2>
               <span className="px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 shrink-0">
                 Pillar 5 §4 (SWGMAT / ASTM E2228)
               </span>
             </div>
             <p className="text-[10px] text-zinc-400 mt-0.5 truncate">
-              Multispectral Optical Imaging • ATR-FTIR & Raman Hit Quality Index (HQI ≥ 90%) Dot Product Matching
+              {isTr
+                ? "Çoklu Spektral Optik Görüntüleme • ATR-FTIR & Raman Eşleşme Kalite İndeksi (HQI ≥ %90) Karşılaştırması"
+                : "Multispectral Optical Imaging • ATR-FTIR & Raman Hit Quality Index (HQI ≥ 90%) Dot Product Matching"}
             </p>
           </div>
         </div>
@@ -285,7 +343,7 @@ export default function TraceSpectroscopyPanel() {
                 activeTab === "ftir" ? "bg-cyan-500 text-black shadow-md font-extrabold" : "text-zinc-400 hover:text-zinc-200"
               }`}
             >
-              ATR-FTIR & Raman (HQI)
+              {isTr ? "ATR-FTIR & Raman (HQI)" : "ATR-FTIR & Raman (HQI)"}
             </button>
             <button
               onClick={() => setActiveTab("msi")}
@@ -293,7 +351,7 @@ export default function TraceSpectroscopyPanel() {
                 activeTab === "msi" ? "bg-cyan-500 text-black shadow-md font-extrabold" : "text-zinc-400 hover:text-zinc-200"
               }`}
             >
-              Multispectral Optical (MSI)
+              {isTr ? "Çoklu Spektral Optik (MSI)" : "Multispectral Optical (MSI)"}
             </button>
           </div>
         </div>
@@ -313,7 +371,7 @@ export default function TraceSpectroscopyPanel() {
                 <Cpu className="w-4 h-4 animate-pulse text-cyan-400 shrink-0" />
                 {stageText}
               </span>
-              <span className="font-mono font-black tabular-nums text-sm">{progress}%</span>
+              <span className="font-mono font-black tabular-nums text-sm">%{progress}</span>
             </div>
             <div className="w-full bg-zinc-900 rounded-full h-2.5 overflow-hidden border border-cyan-500/20">
               <motion.div
@@ -334,7 +392,7 @@ export default function TraceSpectroscopyPanel() {
           <div className="space-y-4 rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-4 sm:p-5 shadow-xl">
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-tactical-border/40 pb-3">
               <span className="text-xs font-bold uppercase tracking-wider text-tactical-text">
-                Questioned Fiber Sample
+                {isTr ? "Şüpheli Lif / Madde Örneği" : "Questioned Fiber Sample"}
               </span>
               <button
                 onClick={() => runSpectroscopyMatch(selectedFiberPreset)}
@@ -342,13 +400,15 @@ export default function TraceSpectroscopyPanel() {
                 className="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-zinc-950 font-black text-xs uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_25px_rgba(6,182,212,0.5)] disabled:opacity-50 flex items-center gap-1.5 cursor-pointer active:scale-95"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
-                {loading ? `Matching ${progress}%...` : "Match HQI"}
+                {loading
+                  ? (isTr ? `Eşleştiriliyor %${progress}...` : `Matching ${progress}%...`)
+                  : (isTr ? "HQI Eşleştir" : "Match HQI")}
               </button>
             </div>
 
             <div className="space-y-2">
               <label className="text-[10px] text-zinc-400 uppercase font-bold block">
-                Load Standard Exemplar Spectrum:
+                {isTr ? "Standart Referans Spektrumu Yükle:" : "Load Standard Exemplar Spectrum:"}
               </label>
               <div className="grid grid-cols-1 gap-1.5 text-xs">
                 {["Polyester", "Nylon-6,6", "Acrylic", "Cotton", "Wool"].map((fName) => (
@@ -364,7 +424,9 @@ export default function TraceSpectroscopyPanel() {
                         : "border-tactical-border/40 bg-black/40 text-zinc-400 hover:text-zinc-200"
                     }`}
                   >
-                    <div className="font-bold">{fName}</div>
+                    <div className="font-bold">
+                      {fName === "Cotton" ? (isTr ? "Pamuk (Cotton)" : "Cotton") : fName === "Wool" ? (isTr ? "Yün (Wool)" : "Wool") : fName}
+                    </div>
                     <div className="text-[10px] text-zinc-500">
                       {fName === "Polyester" && "PET • 1715 cm⁻¹ (C=O), 1240 cm⁻¹ (C-O)"}
                       {fName === "Nylon-6,6" && "Polyamide • 1635 cm⁻¹ (Amide I), 1538 cm⁻¹ (Amide II)"}
@@ -386,35 +448,45 @@ export default function TraceSpectroscopyPanel() {
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-cyan-500/20 pb-3">
                     <div>
                       <span className="text-[10px] font-bold text-cyan-300 uppercase tracking-widest block">
-                        HIT QUALITY INDEX (HQI) TOP MATCH
+                        {isTr ? "EŞLEŞME KALİTE İNDEKSİ (HQI) EN İYİ EŞLEŞME" : "HIT QUALITY INDEX (HQI) TOP MATCH"}
                       </span>
                       <span className="text-xl sm:text-2xl font-black text-cyan-300 font-mono">
-                        {spectroResult.top_match.material_name} ({spectroResult.top_match.hqi_score_percent}%)
+                        {spectroResult.top_match.material_name} (%{spectroResult.top_match.hqi_score_percent})
                       </span>
                     </div>
                     <div className="flex flex-col items-start sm:items-end gap-1">
-                      <span className="text-[10px] text-zinc-400 block uppercase font-bold">Classification</span>
+                      <span className="text-[10px] text-zinc-400 block uppercase font-bold">
+                        {isTr ? "Sınıflandırma" : "Classification"}
+                      </span>
                       <span className={`text-[10px] sm:text-xs font-bold px-2.5 py-1 rounded border font-mono whitespace-nowrap ${
                         spectroResult.top_match.classification === "POSITIVE_SPECTRAL_MATCH"
                           ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
                           : "bg-amber-500/20 text-amber-300 border-amber-500/40"
                       }`}>
-                        {spectroResult.top_match.classification}
+                        {spectroResult.top_match.classification === "POSITIVE_SPECTRAL_MATCH"
+                          ? (isTr ? "POZİTİF SPEKTRAL EŞLEŞME" : "POSITIVE_SPECTRAL_MATCH")
+                          : (isTr ? "HARİÇ TUTULDU" : "NON_MATCH_EXCLUSION")}
                       </span>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 text-xs">
                     <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40 space-y-0.5">
-                      <span className="text-[10px] text-zinc-500 block">Polymer Name</span>
+                      <span className="text-[10px] text-zinc-500 block">
+                        {isTr ? "Polimer Adı" : "Polymer Name"}
+                      </span>
                       <span className="font-bold text-zinc-200">{spectroResult.top_match.polymer_name}</span>
                     </div>
                     <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40 space-y-0.5">
-                      <span className="text-[10px] text-zinc-500 block">Fiber Class</span>
+                      <span className="text-[10px] text-zinc-500 block">
+                        {isTr ? "Lif Sınıfı" : "Fiber Class"}
+                      </span>
                       <span className="font-bold text-zinc-200">{spectroResult.top_match.fiber_type}</span>
                     </div>
                     <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40 space-y-0.5">
-                      <span className="text-[10px] text-zinc-500 block">Diagnostic Wavenumbers</span>
+                      <span className="text-[10px] text-zinc-500 block">
+                        {isTr ? "Tanısal Dalga Sayıları" : "Diagnostic Wavenumbers"}
+                      </span>
                       <span className="font-bold text-cyan-400 font-mono text-[10px] block">
                         {spectroResult.top_match.diagnostic_peaks_cm_1?.join(", ")} cm⁻¹
                       </span>
@@ -424,7 +496,7 @@ export default function TraceSpectroscopyPanel() {
                   {/* Library Matches Table */}
                   <div className="space-y-1.5">
                     <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider block">
-                      Forensic Polymer Library Ranking:
+                      {isTr ? "Adli Polimer Kütüphanesi Sıralaması:" : "Forensic Polymer Library Ranking:"}
                     </span>
                     {spectroResult.library_matches.map((lm) => (
                       <div
@@ -439,14 +511,16 @@ export default function TraceSpectroscopyPanel() {
                           <span className={`text-xs font-bold font-mono ${
                             lm.hqi_score_percent >= 90.0 ? "text-emerald-400" : lm.hqi_score_percent >= 75.0 ? "text-amber-400" : "text-zinc-400"
                           }`}>
-                            HQI = {lm.hqi_score_percent.toFixed(1)}%
+                            HQI = %{lm.hqi_score_percent.toFixed(1)}
                           </span>
                           <span className={`text-[9px] font-bold px-2 py-0.5 rounded border whitespace-nowrap ${
                             lm.classification === "POSITIVE_SPECTRAL_MATCH"
                               ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/30"
                               : "bg-zinc-800/80 text-zinc-400 border-zinc-700/60"
                           }`}>
-                            {lm.classification === "POSITIVE_SPECTRAL_MATCH" ? "MATCH" : "EXCLUDED"}
+                            {lm.classification === "POSITIVE_SPECTRAL_MATCH"
+                              ? (isTr ? "EŞLEŞME" : "MATCH")
+                              : (isTr ? "HARİÇ" : "EXCLUDED")}
                           </span>
                         </div>
                       </div>
@@ -456,7 +530,7 @@ export default function TraceSpectroscopyPanel() {
                   <div className="p-3 rounded-xl bg-black/30 border border-tactical-border/30 text-[10px] text-zinc-400 font-mono">
                     <div className="flex items-center gap-1.5 text-cyan-400 font-bold mb-1">
                       <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
-                      SWGMAT / ASTM E2228 Legal Evaluative Shield
+                      {isTr ? "SWGMAT / ASTM E2228 Yasal Değerlendirme Kalkanı" : "SWGMAT / ASTM E2228 Legal Evaluative Shield"}
                     </div>
                     {spectroResult.prosecutors_fallacy_shield}
                   </div>
@@ -474,7 +548,7 @@ export default function TraceSpectroscopyPanel() {
           <div className="space-y-4 rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-4 sm:p-5 shadow-xl">
             <div className="border-b border-tactical-border/40 pb-3">
               <span className="text-xs font-bold uppercase tracking-wider text-tactical-text block">
-                Targeted Optical Wavelength Bands
+                {isTr ? "Hedeflenen Optik Dalga Boyu Bantları" : "Targeted Optical Wavelength Bands"}
               </span>
             </div>
 
@@ -484,8 +558,8 @@ export default function TraceSpectroscopyPanel() {
                   key={p.id}
                   onClick={() => {
                     setSelectedWavelength(p.nm);
-                    setEvidenceQuery(p.evidence);
-                    runMsiAnalysis(p.nm, p.evidence);
+                    setEvidenceQuery(isTr ? p.evidence : p.evidence_en);
+                    runMsiAnalysis(p.nm, isTr ? p.evidence : p.evidence_en);
                   }}
                   className={`p-3 rounded-xl border text-left w-full transition-all cursor-pointer ${
                     selectedWavelength === p.nm
@@ -497,8 +571,8 @@ export default function TraceSpectroscopyPanel() {
                     <span>{p.name}</span>
                     <span className="text-[10px] text-cyan-400">{p.nm} nm</span>
                   </div>
-                  <div className="text-[10px] text-zinc-300 font-normal">{p.evidence}</div>
-                  <div className="text-[9px] text-zinc-500 font-normal mt-0.5">{p.desc}</div>
+                  <div className="text-[10px] text-zinc-300 font-normal">{isTr ? p.evidence : p.evidence_en}</div>
+                  <div className="text-[9px] text-zinc-500 font-normal mt-0.5">{isTr ? p.desc : p.desc_en}</div>
                 </button>
               ))}
             </div>
@@ -512,27 +586,33 @@ export default function TraceSpectroscopyPanel() {
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-cyan-500/20 pb-3">
                     <div>
                       <span className="text-[10px] font-bold text-cyan-300 uppercase tracking-widest block">
-                        OPTICAL CONTRAST SIMULATION
+                        {isTr ? "OPTİK KONTRAST SİMÜLASYONU" : "OPTICAL CONTRAST SIMULATION"}
                       </span>
                       <span className="text-xl sm:text-2xl font-black text-cyan-300 font-mono">
                         {msiResult.band_info.band_name}
                       </span>
                     </div>
                     <div className="flex flex-col items-start sm:items-end">
-                      <span className="text-[10px] text-zinc-400 block uppercase font-bold">Predicted Contrast</span>
+                      <span className="text-[10px] text-zinc-400 block uppercase font-bold">
+                        {isTr ? "Tahmini Kontrast" : "Predicted Contrast"}
+                      </span>
                       <span className="text-xl sm:text-2xl font-black text-emerald-400 font-mono">
-                        {(msiResult.predicted_contrast_index * 100).toFixed(0)}%
+                        %{(msiResult.predicted_contrast_index * 100).toFixed(0)}
                       </span>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 text-xs">
                     <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40 space-y-0.5">
-                      <span className="text-[10px] text-zinc-500 block">Optical Phenomenon</span>
+                      <span className="text-[10px] text-zinc-500 block">
+                        {isTr ? "Optik Olgu" : "Optical Phenomenon"}
+                      </span>
                       <span className="font-bold text-zinc-200">{msiResult.band_info.phenomenon}</span>
                     </div>
                     <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40 space-y-0.5">
-                      <span className="text-[10px] text-zinc-500 block">Recommended Barrier Filter</span>
+                      <span className="text-[10px] text-zinc-500 block">
+                        {isTr ? "Önerilen Bariyer Filtresi" : "Recommended Barrier Filter"}
+                      </span>
                       <span className="font-bold text-amber-300 font-mono text-xs">
                         {msiResult.band_info.optimal_barrier_filter}
                       </span>
@@ -540,7 +620,9 @@ export default function TraceSpectroscopyPanel() {
                   </div>
 
                   <div className="p-3.5 rounded-xl bg-black/40 border border-tactical-border/40 text-xs font-mono space-y-1">
-                    <span className="text-[10px] text-zinc-500 block uppercase">Physical Contrast Mechanism:</span>
+                    <span className="text-[10px] text-zinc-500 block uppercase">
+                      {isTr ? "Fiziksel Kontrast Mekanizması:" : "Physical Contrast Mechanism:"}
+                    </span>
                     <p className="text-zinc-300 leading-relaxed">{msiResult.band_info.mechanism}</p>
                   </div>
                 </div>

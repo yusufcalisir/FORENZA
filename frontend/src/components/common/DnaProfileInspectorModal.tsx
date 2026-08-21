@@ -30,6 +30,7 @@ import {
   Play,
   TerminalSquare,
 } from "lucide-react";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 import { useIngestStore, ActiveProfileData } from "@/store/ingestStore";
 import { useForensicCaseStore } from "@/store/forensicCaseStore";
 import {
@@ -95,6 +96,9 @@ const GeoForensicPanel = dynamic(() => import("@/components/analysis/GeoForensic
 });
 
 export default function DnaProfileInspectorModal() {
+  const { lang } = useSaasLanguage();
+  const isTr = lang === "tr";
+
   const {
     isInspectorOpen,
     setInspectorOpen,
@@ -135,12 +139,12 @@ export default function DnaProfileInspectorModal() {
     {
       id: "init-4",
       type: "success",
-      text: "• Active Biocomputational Node: FORENSIC-LAB-ALPHA (Online)",
+      text: isTr ? "• Aktif Biyohesaplamalı Düğüm: FORENSIC-LAB-ALPHA (Çevrimiçi)" : "• Active Biocomputational Node: FORENSIC-LAB-ALPHA (Online)",
     },
     {
       id: "init-5",
       type: "info",
-      text: "• Type 'help' to list commands, or use quick action chips below.",
+      text: isTr ? "• Komut listesi için 'help' yazın veya aşağıdaki hızlı eylem çiplerini kullanın." : "• Type 'help' to list commands, or use quick action chips below.",
     },
   ]);
   const terminalEndRef = useRef<HTMLDivElement>(null);
@@ -1398,8 +1402,12 @@ export default function DnaProfileInspectorModal() {
           {isDragOver && (
             <div className="absolute inset-0 z-50 bg-cyan-950/80 backdrop-blur-sm border-2 border-dashed border-cyan-400 flex flex-col items-center justify-center gap-3 text-cyan-300">
               <Upload className="w-12 h-12 animate-bounce" />
-              <p className="text-sm font-bold uppercase tracking-wider">Drop Forensic File to Ingest</p>
-              <p className="text-xs text-zinc-400">Supports GeneMapper CSV/TSV, CODIS XML, NGS VCF 4.2, and LIMS JSON</p>
+              <p className="text-sm font-bold uppercase tracking-wider">
+                {isTr ? "İçe Aktarmak İçin Adli Dosyayı Bırakın" : "Drop Forensic File to Ingest"}
+              </p>
+              <p className="text-xs text-zinc-400">
+                {isTr ? "GeneMapper CSV/TSV, CODIS XML, NGS VCF 4.2 ve LIMS JSON formatlarını destekler" : "Supports GeneMapper CSV/TSV, CODIS XML, NGS VCF 4.2, and LIMS JSON"}
+              </p>
             </div>
           )}
 
@@ -1412,7 +1420,7 @@ export default function DnaProfileInspectorModal() {
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
                   <h2 className="text-xs sm:text-sm font-extrabold tracking-wider uppercase text-white font-mono">
-                    DNA &amp; SNP Terminal
+                    {isTr ? "DNA & SNP Terminali" : "DNA & SNP Terminal"}
                   </h2>
                   <span className="px-1.5 py-0.2 rounded text-[8px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
                     ISO/IEC 17025
@@ -1422,7 +1430,9 @@ export default function DnaProfileInspectorModal() {
                   </span>
                 </div>
                 <p className="text-[9px] sm:text-[10px] text-zinc-400 truncate">
-                  24-STR Multiplex • 55-SNP AIM • 41-SNP HIrisPlex-S • 5-Dye EPG Spectrum
+                  {isTr
+                    ? "24-STR Çoklu Lokus • 55-SNP AIM • 41-SNP HIrisPlex-S • 5-Boyalı EPG Spektrumu"
+                    : "24-STR Multiplex • 55-SNP AIM • 41-SNP HIrisPlex-S • 5-Dye EPG Spectrum"}
                 </p>
               </div>
             </div>
@@ -1432,10 +1442,10 @@ export default function DnaProfileInspectorModal() {
               <button
                 onClick={() => fileInputRef.current?.click()}
                 className="px-2.5 py-1.5 rounded-xl text-[10px] font-bold bg-zinc-800 border border-tactical-border/70 text-zinc-300 hover:text-white hover:bg-zinc-700 transition-all flex items-center gap-1.5 cursor-pointer"
-                title="Import File (CSV, TSV, XML, VCF, JSON)"
+                title={isTr ? "Dosya İçe Aktar (CSV, TSV, XML, VCF, JSON)" : "Import File (CSV, TSV, XML, VCF, JSON)"}
               >
                 <Upload className="w-3.5 h-3.5 text-cyan-400" />
-                <span className="hidden md:inline">Import File</span>
+                <span className="hidden md:inline">{isTr ? "Dosya İçe Aktar" : "Import File"}</span>
               </button>
 
               {/* Export Dropdown */}
@@ -1443,10 +1453,10 @@ export default function DnaProfileInspectorModal() {
                 <button
                   onClick={() => setExportDropdownOpen(!exportDropdownOpen)}
                   className="px-2.5 py-1.5 rounded-xl text-[10px] font-bold bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/25 transition-all flex items-center gap-1.5 cursor-pointer"
-                  title="Export Forensic Profile"
+                  title={isTr ? "Adli Profili Dışa Aktar" : "Export Forensic Profile"}
                 >
                   <Download className="w-3.5 h-3.5 text-emerald-400" />
-                  <span className="hidden md:inline">Export</span>
+                  <span className="hidden md:inline">{isTr ? "Dışa Aktar" : "Export"}</span>
                 </button>
 
                 {exportDropdownOpen && (
@@ -1480,7 +1490,7 @@ export default function DnaProfileInspectorModal() {
               <button
                 onClick={() => setInspectorOpen(false)}
                 className="p-1.5 rounded-xl text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors cursor-pointer"
-                title="Close Terminal"
+                title={isTr ? "Terminali Kapat" : "Close Terminal"}
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1491,7 +1501,7 @@ export default function DnaProfileInspectorModal() {
           <div className="flex items-center gap-1.5 px-3 py-1.5 border-b border-tactical-border/60 bg-black/50 overflow-x-auto shrink-0 scrollbar-none">
             <span className="text-[8px] sm:text-[9px] text-zinc-500 uppercase font-bold tracking-wider shrink-0 px-1 flex items-center gap-1">
               <ShieldCheck className="w-3 h-3 text-cyan-400" />
-              <span>Certified Standards:</span>
+              <span>{isTr ? "Sertifikalı Standartlar:" : "Certified Standards:"}</span>
             </span>
             {GOLDEN_CASEWORK_PRESETS.map((p) => {
               const isCurrent = profileId === p.presetId;
@@ -1528,13 +1538,13 @@ export default function DnaProfileInspectorModal() {
           <div className="flex flex-wrap items-center justify-between gap-2 px-3 sm:px-4 py-2 border-b border-tactical-border/70 bg-[#080d19] shrink-0">
             <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
               {[
-                { id: "inferred", label: "Inferred Telemetry & GIS", icon: Globe, badge: `${Math.round(bgaResult.dominantProbability * 100)}% BGA`, color: "text-emerald-400" },
-                { id: "str", label: "24-STR Multiplex", icon: Dna, badge: `${strList.length} Loci`, color: "text-cyan-400" },
-                { id: "ystr", label: "Y-STR (27 Loci)", icon: Dna, badge: `${ystrList.length} Loci`, color: "text-amber-400" },
-                { id: "mtdna", label: "mtDNA (D-Loop)", icon: Flame, badge: `${mtdnaMutations.length} Mut`, color: "text-rose-400" },
-                { id: "snp", label: "55-SNP AIM Matrix", icon: Sliders, badge: `${Object.keys(snpDosages).length} SNPs`, color: "text-purple-400" },
-                { id: "epg", label: "EPG Spectrum", icon: Activity, badge: `DI ${epgResult.degradationIndex.toFixed(2)}`, color: "text-teal-400" },
-                { id: "terminal", label: "CLI DNA Shell", icon: TerminalIcon, badge: "BASH v2.4", color: "text-cyan-400" },
+                { id: "inferred", label: isTr ? "Çıkarsanan Telemetri & GIS" : "Inferred Telemetry & GIS", icon: Globe, badge: `${Math.round(bgaResult.dominantProbability * 100)}% BGA`, color: "text-emerald-400" },
+                { id: "str", label: isTr ? "24-STR Çoklu Lokus" : "24-STR Multiplex", icon: Dna, badge: `${strList.length} ${isTr ? "Lokus" : "Loci"}`, color: "text-cyan-400" },
+                { id: "ystr", label: isTr ? "Y-STR Soyu (27 Lokus)" : "Y-STR (27 Loci)", icon: Dna, badge: `${ystrList.length} ${isTr ? "Lokus" : "Loci"}`, color: "text-amber-400" },
+                { id: "mtdna", label: isTr ? "mtDNA (D-Loop)" : "mtDNA (D-Loop)", icon: Flame, badge: `${mtdnaMutations.length} Mut`, color: "text-rose-400" },
+                { id: "snp", label: isTr ? "55-SNP AIM Matrisi" : "55-SNP AIM Matrix", icon: Sliders, badge: `${Object.keys(snpDosages).length} SNP`, color: "text-purple-400" },
+                { id: "epg", label: isTr ? "EPG Spektrumu" : "EPG Spectrum", icon: Activity, badge: `DI ${epgResult.degradationIndex.toFixed(2)}`, color: "text-teal-400" },
+                { id: "terminal", label: isTr ? "CLI DNA Kabuğu" : "CLI DNA Shell", icon: TerminalIcon, badge: "BASH v2.4", color: "text-cyan-400" },
               ].map((tItem) => {
                 const Icon = tItem.icon;
                 const isActive = tab === tItem.id;
@@ -1567,7 +1577,7 @@ export default function DnaProfileInspectorModal() {
             </div>
 
             <div className="hidden lg:flex items-center gap-3 text-[10px] text-zinc-400">
-              <span>Sample: <strong className="text-cyan-300">{profileId}</strong></span>
+              <span>{isTr ? "Numune:" : "Sample:"} <strong className="text-cyan-300">{profileId}</strong></span>
               <span className="h-3 w-px bg-tactical-border/60" />
               <span>Y-Hg: <strong className="text-amber-300">{liveYstrHaplogroup.predictedHaplogroup}</strong></span>
               <span className="h-3 w-px bg-tactical-border/60" />
@@ -1600,7 +1610,9 @@ export default function DnaProfileInspectorModal() {
               <div className="flex flex-col space-y-3">
                 {/* Quick Action Command Chips */}
                 <div className="flex items-center gap-1.5 overflow-x-auto pb-1 shrink-0 text-[9px] scrollbar-none">
-                  <span className="text-zinc-500 font-bold uppercase shrink-0">Quick Commands:</span>
+                  <span className="text-zinc-500 font-bold uppercase shrink-0">
+                    {isTr ? "Hızlı Komutlar:" : "Quick Commands:"}
+                  </span>
                   {[
                     { label: "preset load NA12878", cmd: "preset load NA12878" },
                     { label: "preset load HG002", cmd: "preset load HG002" },
@@ -1702,7 +1714,7 @@ export default function DnaProfileInspectorModal() {
                         }
                       }
                     }}
-                    placeholder="Type a forensic command (e.g. benchmark a, phenotype, ancestry, mcmc run, help)..."
+                    placeholder={isTr ? "Adli komut girin (örn. benchmark a, phenotype, ancestry, help)..." : "Type a forensic command (e.g. benchmark a, phenotype, ancestry, help)..."}
                     className="flex-1 bg-transparent text-white placeholder-zinc-500 text-[11px] font-mono focus:outline-none min-w-0"
                     autoFocus
                   />
@@ -1711,7 +1723,7 @@ export default function DnaProfileInspectorModal() {
                     className="px-3 py-1 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 rounded-lg text-[10px] font-bold uppercase transition-all cursor-pointer flex items-center gap-1 shrink-0"
                   >
                     <Play className="w-3 h-3" />
-                    <span>Run</span>
+                    <span>{isTr ? "Çalıştır" : "Run"}</span>
                   </button>
                 </form>
               </div>
@@ -1725,25 +1737,33 @@ export default function DnaProfileInspectorModal() {
                 {/* HUD Strip */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-2.5 sm:p-3 rounded-xl border border-tactical-border/70 bg-black/40 text-xs">
                   <div className="space-y-0.5">
-                    <span className="text-[8px] text-zinc-500 uppercase font-bold tracking-wider">Dominant Ancestry</span>
+                    <span className="text-[8px] text-zinc-500 uppercase font-bold tracking-wider">
+                      {isTr ? "Baskın Köken" : "Dominant Ancestry"}
+                    </span>
                     <p className="font-bold text-cyan-400 text-xs truncate">
                       {bgaResult.dominantAncestryLabel} ({Math.round(bgaResult.dominantProbability * 100)}%)
                     </p>
                   </div>
                   <div className="space-y-0.5">
-                    <span className="text-[8px] text-zinc-500 uppercase font-bold tracking-wider">HIrisPlex-S Iris</span>
+                    <span className="text-[8px] text-zinc-500 uppercase font-bold tracking-wider">
+                      {isTr ? "HIrisPlex-S İris" : "HIrisPlex-S Iris"}
+                    </span>
                     <p className="font-bold text-emerald-400 text-xs truncate">
-                      {hirisResult.predictedEyeColor} Eye (R_k {hirisResult.decisionRatios.eye.toFixed(1)})
+                      {hirisResult.predictedEyeColor} {isTr ? "Göz" : "Eye"} (R_k {hirisResult.decisionRatios.eye.toFixed(1)})
                     </p>
                   </div>
                   <div className="space-y-0.5">
-                    <span className="text-[8px] text-zinc-500 uppercase font-bold tracking-wider">WGS84 Centroid</span>
+                    <span className="text-[8px] text-zinc-500 uppercase font-bold tracking-wider">
+                      {isTr ? "WGS84 Sentroidi" : "WGS84 Centroid"}
+                    </span>
                     <p className="font-bold text-amber-400 text-xs truncate">
-                      {bgaResult.centroidLatitude.toFixed(2)}°N, {bgaResult.centroidLongitude.toFixed(2)}°E
+                      {bgaResult.centroidLatitude.toFixed(2)}°{isTr ? "K" : "N"}, {bgaResult.centroidLongitude.toFixed(2)}°{isTr ? "D" : "E"}
                     </p>
                   </div>
                   <div className="space-y-0.5">
-                    <span className="text-[8px] text-zinc-500 uppercase font-bold tracking-wider">R95% Radius / DI</span>
+                    <span className="text-[8px] text-zinc-500 uppercase font-bold tracking-wider">
+                      {isTr ? "R%95 Yarıçap / DI" : "R95% Radius / DI"}
+                    </span>
                     <p className="font-bold text-purple-400 text-xs truncate">
                       {Math.round(bgaResult.r95ConfidenceRadiusKm)} km • DI {epgResult.degradationIndex}
                     </p>
@@ -1758,10 +1778,10 @@ export default function DnaProfileInspectorModal() {
                       <div className="flex items-center justify-between border-b border-tactical-border/60 pb-2">
                         <div className="flex items-center gap-2 text-xs font-bold text-cyan-400">
                           <Globe className="w-4 h-4 shrink-0" />
-                          <span>7 Continental Ancestry (55-SNP AIM)</span>
+                          <span>{isTr ? "7 Kıtasal Köken (55-SNP AIM)" : "7 Continental Ancestry (55-SNP AIM)"}</span>
                         </div>
                         <span className="text-[8px] px-1.5 py-0.2 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 font-bold">
-                          Bayesian Posterior
+                          {isTr ? "Bayesyen Sonsal" : "Bayesian Posterior"}
                         </span>
                       </div>
 
@@ -1788,7 +1808,7 @@ export default function DnaProfileInspectorModal() {
                       <div className="flex items-center justify-between border-b border-tactical-border/60 pb-2">
                         <div className="flex items-center gap-2 text-xs font-bold text-emerald-400">
                           <Eye className="w-4 h-4 shrink-0" />
-                          <span>HIrisPlex-S &amp; Morphology (41-SNP)</span>
+                          <span>{isTr ? "HIrisPlex-S & Morfoloji (41-SNP)" : "HIrisPlex-S & Morphology (41-SNP)"}</span>
                         </div>
                         <span className="text-[8px] px-1.5 py-0.2 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-bold">
                           ISO 17025 R_k ≥ 3.0
@@ -1799,16 +1819,18 @@ export default function DnaProfileInspectorModal() {
                       {hirisResult.mc1rRedHairEpistasisFlag && (
                         <div className="px-2.5 py-1 rounded-lg bg-amber-500/15 border border-amber-500/40 text-amber-300 text-[9px] font-bold flex items-center gap-1.5 animate-pulse">
                           <Flame className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                          <span>MC1R Red Hair Epistasis Active (Loss-of-Function Allele)</span>
+                          <span>{isTr ? "MC1R Kızıl Saç Epistazı Aktif (İşlev Kaybı Aleli)" : "MC1R Red Hair Epistasis Active (Loss-of-Function Allele)"}</span>
                         </div>
                       )}
 
                       <div className="grid grid-cols-2 gap-2 text-[10px]">
                         <div className="p-2 rounded-lg bg-black/40 border border-tactical-border/40 space-y-1">
                           <div className="flex items-center justify-between">
-                            <span className="text-zinc-500 uppercase text-[8px] font-bold">Eye Color</span>
+                            <span className="text-zinc-500 uppercase text-[8px] font-bold">
+                              {isTr ? "Göz Rengi" : "Eye Color"}
+                            </span>
                             <span className={`text-[7px] px-1 rounded font-bold ${hirisResult.isConclusive.eye ? "bg-emerald-500/20 text-emerald-300" : "bg-zinc-700 text-zinc-400"}`}>
-                              {hirisResult.isConclusive.eye ? "DEFINITIVE" : "INCONCLUSIVE"}
+                              {hirisResult.isConclusive.eye ? (isTr ? "KESİN" : "DEFINITIVE") : (isTr ? "YETERSİZ" : "INCONCLUSIVE")}
                             </span>
                           </div>
                           <div className="flex items-baseline justify-between">
@@ -1819,9 +1841,11 @@ export default function DnaProfileInspectorModal() {
 
                         <div className="p-2 rounded-lg bg-black/40 border border-tactical-border/40 space-y-1">
                           <div className="flex items-center justify-between">
-                            <span className="text-zinc-500 uppercase text-[8px] font-bold">Hair Color</span>
+                            <span className="text-zinc-500 uppercase text-[8px] font-bold">
+                              {isTr ? "Saç Rengi" : "Hair Color"}
+                            </span>
                             <span className={`text-[7px] px-1 rounded font-bold ${hirisResult.isConclusive.hair ? "bg-emerald-500/20 text-emerald-300" : "bg-zinc-700 text-zinc-400"}`}>
-                              {hirisResult.isConclusive.hair ? "DEFINITIVE" : "INCONCLUSIVE"}
+                              {hirisResult.isConclusive.hair ? (isTr ? "KESİN" : "DEFINITIVE") : (isTr ? "YETERSİZ" : "INCONCLUSIVE")}
                             </span>
                           </div>
                           <div className="flex items-baseline justify-between">
@@ -1832,9 +1856,11 @@ export default function DnaProfileInspectorModal() {
 
                         <div className="p-2 rounded-lg bg-black/40 border border-tactical-border/40 space-y-1">
                           <div className="flex items-center justify-between">
-                            <span className="text-zinc-500 uppercase text-[8px] font-bold">Skin Phototype</span>
+                            <span className="text-zinc-500 uppercase text-[8px] font-bold">
+                              {isTr ? "Ten Tipi" : "Skin Phototype"}
+                            </span>
                             <span className={`text-[7px] px-1 rounded font-bold ${hirisResult.isConclusive.skin ? "bg-emerald-500/20 text-emerald-300" : "bg-zinc-700 text-zinc-400"}`}>
-                              {hirisResult.isConclusive.skin ? "DEFINITIVE" : "INCONCLUSIVE"}
+                              {hirisResult.isConclusive.skin ? (isTr ? "KESİN" : "DEFINITIVE") : (isTr ? "YETERSİZ" : "INCONCLUSIVE")}
                             </span>
                           </div>
                           <div className="flex items-baseline justify-between">
@@ -1845,9 +1871,11 @@ export default function DnaProfileInspectorModal() {
 
                         <div className="p-2 rounded-lg bg-black/40 border border-tactical-border/40 space-y-1">
                           <div className="flex items-center justify-between">
-                            <span className="text-zinc-500 uppercase text-[8px] font-bold">Hair Texture</span>
+                            <span className="text-zinc-500 uppercase text-[8px] font-bold">
+                              {isTr ? "Saç Dokusu" : "Hair Texture"}
+                            </span>
                             <span className={`text-[7px] px-1 rounded font-bold ${hirisResult.isConclusive.texture ? "bg-emerald-500/20 text-emerald-300" : "bg-zinc-700 text-zinc-400"}`}>
-                              {hirisResult.isConclusive.texture ? "DEFINITIVE" : "INCONCLUSIVE"}
+                              {hirisResult.isConclusive.texture ? (isTr ? "KESİN" : "DEFINITIVE") : (isTr ? "YETERSİZ" : "INCONCLUSIVE")}
                             </span>
                           </div>
                           <div className="flex items-baseline justify-between">
@@ -1865,10 +1893,10 @@ export default function DnaProfileInspectorModal() {
                       <div className="flex items-center justify-between text-xs font-bold text-cyan-400 pb-1">
                         <div className="flex items-center gap-1.5">
                           <MapPin className="w-3.5 h-3.5 text-cyan-400" />
-                          <span>WGS84 Centroid &amp; Geographic Profiling</span>
+                          <span>{isTr ? "WGS84 Sentroidi & Coğrafi Profilleme" : "WGS84 Centroid & Geographic Profiling"}</span>
                         </div>
                         <span className="text-[9px] text-zinc-400">
-                          {bgaResult.centroidLatitude.toFixed(4)}° N, {bgaResult.centroidLongitude.toFixed(4)}° E
+                          {bgaResult.centroidLatitude.toFixed(4)}° {isTr ? "K" : "N"}, {bgaResult.centroidLongitude.toFixed(4)}° {isTr ? "D" : "E"}
                         </span>
                       </div>
 
@@ -1894,25 +1922,25 @@ export default function DnaProfileInspectorModal() {
                   {/* Population Selector */}
                   <div className="flex flex-col justify-between p-2.5 rounded-xl bg-tactical-surface/50 border border-tactical-border/60">
                     <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider">
-                      Reference Population
+                      {isTr ? "Referans Popülasyonu" : "Reference Population"}
                     </span>
                     <select
                       value={selectedPop}
                       onChange={(e) => setSelectedPop(e.target.value as NistPopulation)}
                       className="mt-1 bg-black/80 border border-tactical-border/70 rounded-lg px-2 py-1 text-xs text-cyan-300 font-bold font-mono outline-none focus:border-cyan-400 cursor-pointer"
                     >
-                      <option value="Caucasian">Caucasian (N=361)</option>
-                      <option value="African American">African American (N=342)</option>
-                      <option value="Hispanic">Hispanic (N=236)</option>
-                      <option value="Asian">Asian (N=97)</option>
-                      <option value="Total">Total NIST 1036 (N=1036)</option>
+                      <option value="Caucasian">{isTr ? "Kafkas / Avrupa (N=361)" : "Caucasian (N=361)"}</option>
+                      <option value="African American">{isTr ? "Afro-Amerikan (N=342)" : "African American (N=342)"}</option>
+                      <option value="Hispanic">{isTr ? "Hispanik (N=236)" : "Hispanic (N=236)"}</option>
+                      <option value="Asian">{isTr ? "Asya (N=97)" : "Asian (N=97)"}</option>
+                      <option value="Total">{isTr ? "Toplam NIST 1036 (N=1036)" : "Total NIST 1036 (N=1036)"}</option>
                     </select>
                   </div>
 
                   {/* Combined LR */}
                   <div className="flex flex-col justify-between p-2.5 rounded-xl bg-tactical-surface/50 border border-tactical-border/60">
                     <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider">
-                      Combined Likelihood Ratio (LR)
+                      {isTr ? "Birleşik Olabilirlik Oranı (LR)" : "Combined Likelihood Ratio (LR)"}
                     </span>
                     <div className="mt-1 flex items-baseline gap-1.5">
                       <span className="text-base font-extrabold text-emerald-400 tabular-nums">
@@ -1924,7 +1952,7 @@ export default function DnaProfileInspectorModal() {
                   {/* Log10(LR) */}
                   <div className="flex flex-col justify-between p-2.5 rounded-xl bg-tactical-surface/50 border border-tactical-border/60">
                     <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider">
-                      Biometric Metric Log10(LR)
+                      {isTr ? "Biyometrik Metrik Log10(LR)" : "Biometric Metric Log10(LR)"}
                     </span>
                     <div className="mt-1 flex items-baseline gap-1.5">
                       <span className="text-base font-extrabold text-cyan-300 tabular-nums">
@@ -1937,11 +1965,11 @@ export default function DnaProfileInspectorModal() {
                   {/* ENFSI Verbal Scale */}
                   <div className="flex flex-col justify-between p-2.5 rounded-xl bg-tactical-surface/50 border border-tactical-border/60">
                     <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider">
-                      ENFSI 2017 Verbal Scale
+                      {isTr ? "ENFSI 2017 Sözel Ölçeği" : "ENFSI 2017 Verbal Scale"}
                     </span>
                     <div className="mt-1">
                       <span className="text-[10px] font-bold text-amber-300 leading-tight block truncate" title={livePopGen.enfsiVerbal}>
-                        {livePopGen.enfsiVerbal}
+                        {isTr ? "İddia Hipotezi (Hp) İçin Son Derece Güçlü Destek" : livePopGen.enfsiVerbal}
                       </span>
                     </div>
                   </div>
@@ -1953,7 +1981,7 @@ export default function DnaProfileInspectorModal() {
                     <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
                     <input
                       type="text"
-                      placeholder="Search locus name (e.g. D3S1358, TH01, SE33)..."
+                      placeholder={isTr ? "Lokus adı ara (örn. D3S1358, TH01, SE33)..." : "Search locus name (e.g. D3S1358, TH01, SE33)..."}
                       value={strSearch}
                       onChange={(e) => setStrSearch(e.target.value)}
                       className="w-full bg-black/60 border border-tactical-border/70 rounded-xl pl-9 pr-3 py-2 text-xs text-white outline-none focus:border-cyan-500 font-mono min-h-[44px]"
@@ -1967,7 +1995,7 @@ export default function DnaProfileInspectorModal() {
                     className="px-3.5 py-2 rounded-xl text-xs font-bold bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/25 transition-all flex items-center justify-center gap-1.5 cursor-pointer font-mono shrink-0 min-h-[44px]"
                   >
                     <Plus className="w-3.5 h-3.5" />
-                    <span>Add Custom Locus</span>
+                    <span>{isTr ? "Özel Lokus Ekle" : "Add Custom Locus"}</span>
                   </button>
                 </div>
 
@@ -1978,21 +2006,21 @@ export default function DnaProfileInspectorModal() {
                       <thead className="sticky top-0 bg-[#0a101d] border-b border-tactical-border/80 text-zinc-400 text-[10px] uppercase tracking-wider select-none z-10">
                         <tr>
                           <th className="py-2.5 px-3 w-10 text-center">#</th>
-                          <th className="py-2.5 px-3 w-32">Locus Marker</th>
-                          <th className="py-2.5 px-3 w-28">Repeat &amp; Band</th>
-                          <th className="py-2.5 px-3 w-28">Allele 1</th>
-                          <th className="py-2.5 px-3 w-28">Allele 2</th>
-                          <th className="py-2.5 px-3 w-28">CE Fragment Size</th>
-                          <th className="py-2.5 px-3 w-24">RFU 1 / 2</th>
-                          <th className="py-2.5 px-3 w-24 text-center">Status / Hb</th>
-                          <th className="py-2.5 px-3 w-12 text-right">Action</th>
+                          <th className="py-2.5 px-3 w-32">{isTr ? "Lokus Belirteci" : "Locus Marker"}</th>
+                          <th className="py-2.5 px-3 w-28">{isTr ? "Tekrar & Bant" : "Repeat & Band"}</th>
+                          <th className="py-2.5 px-3 w-28">{isTr ? "Alel 1" : "Allele 1"}</th>
+                          <th className="py-2.5 px-3 w-28">{isTr ? "Alel 2" : "Allele 2"}</th>
+                          <th className="py-2.5 px-3 w-28">{isTr ? "CE Parça Boyutu" : "CE Fragment Size"}</th>
+                          <th className="py-2.5 px-3 w-24">{isTr ? "RFU 1 / 2" : "RFU 1 / 2"}</th>
+                          <th className="py-2.5 px-3 w-24 text-center">{isTr ? "Durum / Hb" : "Status / Hb"}</th>
+                          <th className="py-2.5 px-3 w-12 text-right">{isTr ? "İşlem" : "Action"}</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-tactical-border/40 text-zinc-200">
                         {filteredStrList.length === 0 ? (
                           <tr>
                             <td colSpan={9} className="py-8 text-center text-zinc-500 text-xs">
-                              No STR loci matching "{strSearch}".
+                              {isTr ? `"${strSearch}" ile eşleşen STR lokusu bulunamadı.` : `No STR loci matching "${strSearch}".`}
                             </td>
                           </tr>
                         ) : (
@@ -2061,11 +2089,11 @@ export default function DnaProfileInspectorModal() {
                                 <td className="py-2 px-3 text-center">
                                   {isDropout ? (
                                     <span className="text-[8px] px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30 font-bold">
-                                      Dropout
+                                      {isTr ? "Alel Kaybı" : "Dropout"}
                                     </span>
                                   ) : isHomo ? (
                                     <span className="text-[8px] px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 font-bold">
-                                      Homozygous
+                                      {isTr ? "Homozigot" : "Homozygous"}
                                     </span>
                                   ) : hbWarning ? (
                                     <span className="text-[8px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 font-bold">
@@ -2108,10 +2136,10 @@ export default function DnaProfileInspectorModal() {
                   <div className="p-2.5 rounded-xl bg-tactical-surface/50 border border-tactical-border/60 space-y-1">
                     <div className="flex items-center justify-between">
                       <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider">
-                        Predicted Y-Haplogroup
+                        {isTr ? "Tahmini Y-Haplogrup" : "Predicted Y-Haplogroup"}
                       </span>
                       <span className="text-[8px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-extrabold">
-                        {(liveYstrHaplogroup.confidenceScore * 100).toFixed(1)}% Post.
+                        {(liveYstrHaplogroup.confidenceScore * 100).toFixed(1)}% {isTr ? "Sonsal" : "Post."}
                       </span>
                     </div>
                     <p className="text-base sm:text-lg font-extrabold text-amber-400 font-mono">
@@ -2125,26 +2153,26 @@ export default function DnaProfileInspectorModal() {
                   {/* Clopper-Pearson 95% Bound */}
                   <div className="p-2.5 rounded-xl bg-tactical-surface/50 border border-tactical-border/60 space-y-1">
                     <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider block">
-                      YHRD 95% Clopper-Pearson (p̂_upper)
+                      {isTr ? "YHRD %95 Clopper-Pearson (p̂_üst)" : "YHRD 95% Clopper-Pearson (p̂_upper)"}
                     </span>
                     <p className="text-base sm:text-lg font-extrabold text-cyan-300 font-mono">
                       {liveYstrStats.clopper.upperBound.toExponential(3)}
                     </p>
                     <p className="text-[9px] text-zinc-400 truncate">
-                      N = 35,000 World Database (k = 0)
+                      {isTr ? "N = 35.000 Küresel Veritabanı (k = 0)" : "N = 35,000 World Database (k = 0)"}
                     </p>
                   </div>
 
                   {/* Paternal Combined LR */}
                   <div className="p-2.5 rounded-xl bg-tactical-surface/50 border border-tactical-border/60 space-y-1">
                     <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider block">
-                      Paternal Likelihood Ratio (LR_YSTR)
+                      {isTr ? "Babasal Olabilirlik Oranı (LR_YSTR)" : "Paternal Likelihood Ratio (LR_YSTR)"}
                     </span>
                     <p className="text-base sm:text-lg font-extrabold text-emerald-400 font-mono">
                       {liveYstrStats.clopper.likelihoodRatio.toLocaleString()}
                     </p>
                     <p className="text-[9px] text-zinc-400 truncate">
-                      1 in {(1 / liveYstrStats.clopper.upperBound).toFixed(0)} Males
+                      {isTr ? `${(1 / liveYstrStats.clopper.upperBound).toFixed(0)} Erkekte 1` : `1 in ${(1 / liveYstrStats.clopper.upperBound).toFixed(0)} Males`}
                     </p>
                   </div>
 
@@ -2152,21 +2180,21 @@ export default function DnaProfileInspectorModal() {
                   <div className="p-2.5 rounded-xl bg-tactical-surface/50 border border-tactical-border/60 space-y-1">
                     <div className="flex items-center justify-between">
                       <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider">
-                        Male Donors (N_male)
+                        {isTr ? "Erkek Katkıcı (N_erkek)" : "Male Donors (N_male)"}
                       </span>
                       <span className={`text-[8px] px-1.5 py-0.5 rounded font-bold ${
                         liveYstrStats.mixture.isMixture
                           ? "bg-rose-500/20 text-rose-300 border border-rose-500/40"
                           : "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
                       }`}>
-                        {liveYstrStats.mixture.isMixture ? "MIXTURE" : "SINGLE SOURCE"}
+                        {liveYstrStats.mixture.isMixture ? (isTr ? "KARIŞIM" : "MIXTURE") : (isTr ? "TEK KAYNAK" : "SINGLE SOURCE")}
                       </span>
                     </div>
                     <p className="text-base sm:text-lg font-extrabold text-white font-mono">
-                      N ≥ {liveYstrStats.mixture.minimumMaleContributors} Male{liveYstrStats.mixture.minimumMaleContributors > 1 ? "s" : ""}
+                      N ≥ {liveYstrStats.mixture.minimumMaleContributors} {isTr ? "Erkek" : `Male${liveYstrStats.mixture.minimumMaleContributors > 1 ? "s" : ""}`}
                     </p>
                     <p className="text-[9px] text-zinc-400 truncate">
-                      7 RM Loci • {liveYstrStats.rmCount} RM Active
+                      {isTr ? `7 RM Lokusu • ${liveYstrStats.rmCount} RM Aktif` : `7 RM Loci • ${liveYstrStats.rmCount} RM Active`}
                     </p>
                   </div>
                 </div>
@@ -2177,7 +2205,9 @@ export default function DnaProfileInspectorModal() {
                     <div className="flex items-center gap-2">
                       <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
                       <span>
-                        Multi-Copy Locus Peak Imbalance detected at: <strong>{liveYstrStats.phrIssues.map(p => `${p.marker} (PHR ${(p.phr * 100).toFixed(0)}%)`).join(", ")}</strong>. Check potential somatic mutation or minor contributor.
+                        {isTr
+                          ? `Çok Kopyalı Lokus Tepe Dengesizliği tespit edildi: ${liveYstrStats.phrIssues.map(p => `${p.marker} (PHR %${(p.phr * 100).toFixed(0)})`).join(", ")}. Olası somatik mutasyon veya ikincil katkıcıyı inceleyin.`
+                          : `Multi-Copy Locus Peak Imbalance detected at: ${liveYstrStats.phrIssues.map(p => `${p.marker} (PHR ${(p.phr * 100).toFixed(0)}%)`).join(", ")}. Check potential somatic mutation or minor contributor.`}
                       </span>
                     </div>
                   </div>
@@ -2189,7 +2219,7 @@ export default function DnaProfileInspectorModal() {
                     <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
                     <input
                       type="text"
-                      placeholder="Search Y-STR locus (e.g. DYS19, DYS385, DYS570)..."
+                      placeholder={isTr ? "Y-STR lokusu ara (örn. DYS19, DYS385, DYS570)..." : "Search Y-STR locus (e.g. DYS19, DYS385, DYS570)..."}
                       value={ystrSearch}
                       onChange={(e) => setYstrSearch(e.target.value)}
                       className="w-full bg-black/60 border border-tactical-border/70 rounded-xl pl-9 pr-3 py-2 text-xs text-white outline-none focus:border-amber-500 font-mono min-h-[44px]"
@@ -2204,7 +2234,7 @@ export default function DnaProfileInspectorModal() {
                       className="px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-500/15 border border-amber-500/30 text-amber-300 hover:bg-amber-500/25 transition-all flex items-center justify-center gap-1.5 cursor-pointer font-mono shrink-0 min-h-[44px]"
                     >
                       <Plus className="w-3.5 h-3.5" />
-                      <span>Add Custom Y-Locus</span>
+                      <span>{isTr ? "Özel Y-Lokusu Ekle" : "Add Custom Y-Locus"}</span>
                     </button>
                   </div>
                 </div>
@@ -2216,21 +2246,21 @@ export default function DnaProfileInspectorModal() {
                       <thead className="sticky top-0 bg-[#0a101d] border-b border-tactical-border/80 text-zinc-400 text-[10px] uppercase tracking-wider select-none z-10">
                         <tr>
                           <th className="py-2.5 px-3 w-10 text-center">#</th>
-                          <th className="py-2.5 px-3 w-36">Y-STR Locus</th>
-                          <th className="py-2.5 px-3 w-28">CE Dye &amp; Band</th>
-                          <th className="py-2.5 px-3 w-24">Allele 1</th>
-                          <th className="py-2.5 px-3 w-24">Allele 2</th>
-                          <th className="py-2.5 px-3 w-28">RFU 1 / 2</th>
-                          <th className="py-2.5 px-3 w-28 text-center">PHR / Type</th>
-                          <th className="py-2.5 px-3 w-32 text-center">Mutation Rate (μ)</th>
-                          <th className="py-2.5 px-3 w-12 text-right">Action</th>
+                          <th className="py-2.5 px-3 w-36">{isTr ? "Y-STR Lokusu" : "Y-STR Locus"}</th>
+                          <th className="py-2.5 px-3 w-28">{isTr ? "CE Boyası & Bant" : "CE Dye & Band"}</th>
+                          <th className="py-2.5 px-3 w-24">{isTr ? "Alel 1" : "Allele 1"}</th>
+                          <th className="py-2.5 px-3 w-24">{isTr ? "Alel 2" : "Allele 2"}</th>
+                          <th className="py-2.5 px-3 w-28">{isTr ? "RFU 1 / 2" : "RFU 1 / 2"}</th>
+                          <th className="py-2.5 px-3 w-28 text-center">{isTr ? "PHR / Tip" : "PHR / Type"}</th>
+                          <th className="py-2.5 px-3 w-32 text-center">{isTr ? "Mutasyon Hızı (μ)" : "Mutation Rate (μ)"}</th>
+                          <th className="py-2.5 px-3 w-12 text-right">{isTr ? "İşlem" : "Action"}</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-tactical-border/40 text-zinc-200">
                         {filteredYstrList.length === 0 ? (
                           <tr>
                             <td colSpan={9} className="py-8 text-center text-zinc-500 text-xs">
-                              No Y-STR loci matching "{ystrSearch}".
+                              {isTr ? `"${ystrSearch}" ile eşleşen Y-STR lokusu bulunamadı.` : `No Y-STR loci matching "${ystrSearch}".`}
                             </td>
                           </tr>
                         ) : (
@@ -2296,11 +2326,11 @@ export default function DnaProfileInspectorModal() {
                                         ? "bg-rose-500/20 text-rose-300 border-rose-500/30"
                                         : "bg-purple-500/15 text-purple-300 border-purple-500/30"
                                     }`}>
-                                      PHR {(phr * 100).toFixed(0)}%
+                                      PHR %{(phr * 100).toFixed(0)}
                                     </span>
                                   ) : (
                                     <span className="text-[8px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-zinc-700">
-                                      Single-Copy
+                                      {isTr ? "Tek Kopya" : "Single-Copy"}
                                     </span>
                                   )}
                                 </td>
@@ -2347,10 +2377,10 @@ export default function DnaProfileInspectorModal() {
                   <div className="p-2.5 rounded-xl bg-tactical-surface/50 border border-tactical-border/60 space-y-1">
                     <div className="flex items-center justify-between">
                       <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider">
-                        Maternal Haplogroup
+                        {isTr ? "Anasal Haplogrup" : "Maternal Haplogroup"}
                       </span>
                       <span className="text-[8px] px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40 font-extrabold">
-                        Macro {liveMtdnaHaplogroup.macroHaplogroup}
+                        Makro {liveMtdnaHaplogroup.macroHaplogroup}
                       </span>
                     </div>
                     <p className="text-base sm:text-lg font-extrabold text-rose-400 font-mono">
@@ -2364,20 +2394,20 @@ export default function DnaProfileInspectorModal() {
                   {/* EMPOP Frequency Upper Bound */}
                   <div className="p-2.5 rounded-xl bg-tactical-surface/50 border border-tactical-border/60 space-y-1">
                     <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider block">
-                      EMPOP 95% Clopper-Pearson (p̂_upper)
+                      {isTr ? "EMPOP %95 Clopper-Pearson (p̂_üst)" : "EMPOP 95% Clopper-Pearson (p̂_upper)"}
                     </span>
                     <p className="text-base sm:text-lg font-extrabold text-cyan-300 font-mono">
                       {liveMtdnaStats.upperBound.toExponential(3)}
                     </p>
                     <p className="text-[9px] text-zinc-400 truncate">
-                      N = 48,200 Global Profiles (k = {liveMtdnaStats.observedMatches})
+                      {isTr ? `N = 48.200 Küresel Profil (k = ${liveMtdnaStats.observedMatches})` : `N = 48,200 Global Profiles (k = ${liveMtdnaStats.observedMatches})`}
                     </p>
                   </div>
 
                   {/* Likelihood Ratio */}
                   <div className="p-2.5 rounded-xl bg-tactical-surface/50 border border-tactical-border/60 space-y-1">
                     <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider block">
-                      mtDNA Likelihood Ratio (LR_mtDNA)
+                      {isTr ? "mtDNA Olabilirlik Oranı (LR_mtDNA)" : "mtDNA Likelihood Ratio (LR_mtDNA)"}
                     </span>
                     <p className="text-base sm:text-lg font-extrabold text-emerald-400 font-mono">
                       {liveMtdnaStats.likelihoodRatio.toFixed(1)}
@@ -2391,17 +2421,17 @@ export default function DnaProfileInspectorModal() {
                   <div className="p-2.5 rounded-xl bg-tactical-surface/50 border border-tactical-border/60 space-y-1">
                     <div className="flex items-center justify-between">
                       <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider">
-                        EMPOP Normalization
+                        {isTr ? "EMPOP Normalizasyonu" : "EMPOP Normalization"}
                       </span>
                       <span className="text-[8px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-bold">
                         ISFG 2020
                       </span>
                     </div>
                     <p className="text-base sm:text-lg font-extrabold text-white font-mono">
-                      {liveMtdnaAligned.length} Mutations
+                      {liveMtdnaAligned.length} {isTr ? "Mutasyon" : "Mutations"}
                     </p>
                     <p className="text-[9px] text-zinc-400 truncate">
-                      3'-Right-Aligned Light Strand
+                      {isTr ? "3'-Sağa Hizalı Hafif Zincir" : "3'-Right-Aligned Light Strand"}
                     </p>
                   </div>
                 </div>
@@ -2409,37 +2439,37 @@ export default function DnaProfileInspectorModal() {
                 {/* ── D-Loop Structural Domains Track ── */}
                 <div className="p-3 rounded-xl border border-tactical-border/70 bg-black/40 space-y-2">
                   <div className="flex items-center justify-between text-[10px] text-zinc-400 font-bold">
-                    <span className="text-white">mtDNA Control Region Structural Architecture (16024–16569 / 1–576)</span>
-                    <span className="text-zinc-500">Length: 1,122 bp</span>
+                    <span className="text-white">{isTr ? "mtDNA Kontrol Bölgesi Yapısal Mimarisi (16024–16569 / 1–576)" : "mtDNA Control Region Structural Architecture (16024–16569 / 1–576)"}</span>
+                    <span className="text-zinc-500">{isTr ? "Uzunluk: 1.122 bç" : "Length: 1,122 bp"}</span>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-5 gap-2 text-center text-xs">
                     <div className="p-2 rounded-lg bg-cyan-950/40 border border-cyan-500/30 space-y-1">
                       <span className="text-[9px] text-cyan-400 font-bold block">HV1 (16024–16365)</span>
                       <span className="text-sm font-extrabold text-white font-mono">
-                        {liveMtdnaAligned.filter(m => m.domain === "HV1").length} Mut
+                        {liveMtdnaAligned.filter(m => m.domain === "HV1").length} {isTr ? "Mut" : "Mut"}
                       </span>
                     </div>
                     <div className="p-2 rounded-lg bg-teal-950/40 border border-teal-500/30 space-y-1">
                       <span className="text-[9px] text-teal-400 font-bold block">HV2 (73–340)</span>
                       <span className="text-sm font-extrabold text-white font-mono">
-                        {liveMtdnaAligned.filter(m => m.domain === "HV2").length} Mut
+                        {liveMtdnaAligned.filter(m => m.domain === "HV2").length} {isTr ? "Mut" : "Mut"}
                       </span>
                     </div>
                     <div className="p-2 rounded-lg bg-purple-950/40 border border-purple-500/30 space-y-1">
                       <span className="text-[9px] text-purple-400 font-bold block">HV3 (438–574)</span>
                       <span className="text-sm font-extrabold text-white font-mono">
-                        {liveMtdnaAligned.filter(m => m.domain === "HV3").length} Mut
+                        {liveMtdnaAligned.filter(m => m.domain === "HV3").length} {isTr ? "Mut" : "Mut"}
                       </span>
                     </div>
                     <div className="p-2 rounded-lg bg-amber-950/40 border border-amber-500/30 space-y-1">
                       <span className="text-[9px] text-amber-400 font-bold block">CSB I/II/III</span>
                       <span className="text-sm font-extrabold text-white font-mono">
-                        {liveMtdnaAligned.filter(m => m.domain.includes("CSB")).length} Mut
+                        {liveMtdnaAligned.filter(m => m.domain.includes("CSB")).length} {isTr ? "Mut" : "Mut"}
                       </span>
                     </div>
                     <div className="p-2 rounded-lg bg-rose-950/40 border border-rose-500/30 space-y-1">
-                      <span className="text-[9px] text-rose-400 font-bold block">Point Heteroplasmy</span>
+                      <span className="text-[9px] text-rose-400 font-bold block">{isTr ? "Nokta Heteroplazmisi" : "Point Heteroplasmy"}</span>
                       <span className="text-sm font-extrabold text-rose-300 font-mono">
                         {liveMtdnaAligned.filter(m => m.isHeteroplasmy).length} Site{liveMtdnaAligned.filter(m => m.isHeteroplasmy).length !== 1 ? "s" : ""}
                       </span>
@@ -2488,7 +2518,7 @@ export default function DnaProfileInspectorModal() {
                     <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
                     <input
                       type="text"
-                      placeholder="Filter mutations..."
+                      placeholder={isTr ? "Mutasyonları filtrele..." : "Filter mutations..."}
                       value={mtdnaSearch}
                       onChange={(e) => setMtdnaSearch(e.target.value)}
                       className="w-full bg-black/60 border border-tactical-border/70 rounded-xl pl-9 pr-3 py-2 text-xs text-white outline-none focus:border-rose-500 font-mono min-h-[44px]"
@@ -2503,20 +2533,20 @@ export default function DnaProfileInspectorModal() {
                       <thead className="sticky top-0 bg-[#0a101d] border-b border-tactical-border/80 text-zinc-400 text-[10px] uppercase tracking-wider select-none z-10">
                         <tr>
                           <th className="py-2.5 px-3 w-10 text-center">#</th>
-                          <th className="py-2.5 px-3 w-28">Position</th>
-                          <th className="py-2.5 px-3 w-32">Raw Notation</th>
-                          <th className="py-2.5 px-3 w-36">EMPOP 3'-Normalized</th>
-                          <th className="py-2.5 px-3 w-28">D-Loop Domain</th>
-                          <th className="py-2.5 px-3 w-32">Mutation Type</th>
-                          <th className="py-2.5 px-3 text-center">Point Heteroplasmy</th>
-                          <th className="py-2.5 px-3 w-12 text-right">Action</th>
+                          <th className="py-2.5 px-3 w-28">{isTr ? "Pozisyon" : "Position"}</th>
+                          <th className="py-2.5 px-3 w-32">{isTr ? "Ham Notasyon" : "Raw Notation"}</th>
+                          <th className="py-2.5 px-3 w-36">{isTr ? "EMPOP 3'-Normalizeli" : "EMPOP 3'-Normalized"}</th>
+                          <th className="py-2.5 px-3 w-28">{isTr ? "D-Loop Bölgesi" : "D-Loop Domain"}</th>
+                          <th className="py-2.5 px-3 w-32">{isTr ? "Mutasyon Tipi" : "Mutation Type"}</th>
+                          <th className="py-2.5 px-3 text-center">{isTr ? "Nokta Heteroplazmisi" : "Point Heteroplasmy"}</th>
+                          <th className="py-2.5 px-3 w-12 text-right">{isTr ? "İşlem" : "Action"}</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-tactical-border/40 text-zinc-200">
                         {filteredMtdnaMutations.length === 0 ? (
                           <tr>
                             <td colSpan={8} className="py-8 text-center text-zinc-500 text-xs">
-                              No mtDNA mutations matching "{mtdnaSearch}".
+                              {isTr ? `"${mtdnaSearch}" ile eşleşen mtDNA mutasyonu bulunamadı.` : `No mtDNA mutations matching "${mtdnaSearch}".`}
                             </td>
                           </tr>
                         ) : (
@@ -2551,7 +2581,7 @@ export default function DnaProfileInspectorModal() {
                                     </span>
                                   ) : (
                                     <span className="text-[8px] text-zinc-500 font-mono">
-                                      Homoplasmic
+                                      {isTr ? "Homoplazmik" : "Homoplasmic"}
                                     </span>
                                   )}
                                 </td>
@@ -2585,7 +2615,7 @@ export default function DnaProfileInspectorModal() {
                     <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
                     <input
                       type="text"
-                      placeholder="Search rsID, gene, or trait..."
+                      placeholder={isTr ? "rsID, gen veya özellik ara..." : "Search rsID, gene, or trait..."}
                       value={snpSearch}
                       onChange={(e) => setSnpSearch(e.target.value)}
                       className="w-full bg-black/60 border border-tactical-border/70 rounded-xl pl-9 pr-3 py-2 text-xs text-white outline-none focus:border-purple-500 font-mono min-h-[44px]"
@@ -2593,7 +2623,7 @@ export default function DnaProfileInspectorModal() {
                   </div>
 
                   <div className="text-[10px] text-zinc-400 flex items-center gap-2">
-                    <span>Active Dosages: <strong className="text-purple-300">{Object.keys(snpDosages).length} SNPs</strong></span>
+                    <span>{isTr ? "Aktif Dozajlar:" : "Active Dosages:"} <strong className="text-purple-300">{Object.keys(snpDosages).length} SNP</strong></span>
                   </div>
                 </div>
 
@@ -2604,17 +2634,17 @@ export default function DnaProfileInspectorModal() {
                       <thead className="sticky top-0 bg-[#0a101d] border-b border-tactical-border/80 text-zinc-400 text-[10px] uppercase tracking-wider select-none z-10">
                         <tr>
                           <th className="py-2.5 px-3 w-12 text-center">#</th>
-                          <th className="py-2.5 px-3 w-32">rsID Marker</th>
-                          <th className="py-2.5 px-3 w-28">Gene</th>
-                          <th className="py-2.5 px-3">Phenotype / Ancestry Association</th>
-                          <th className="py-2.5 px-3 w-36 text-center">Genotype Dosage</th>
+                          <th className="py-2.5 px-3 w-32">{isTr ? "rsID Belirteci" : "rsID Marker"}</th>
+                          <th className="py-2.5 px-3 w-28">{isTr ? "Gen" : "Gene"}</th>
+                          <th className="py-2.5 px-3">{isTr ? "Fenotip / Köken İlişkisi" : "Phenotype / Ancestry Association"}</th>
+                          <th className="py-2.5 px-3 w-36 text-center">{isTr ? "Genotip Dozajı" : "Genotype Dosage"}</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-tactical-border/40 text-zinc-200">
                         {filteredSnpList.length === 0 ? (
                           <tr>
                             <td colSpan={5} className="py-8 text-center text-zinc-500 text-xs">
-                              No SNP markers matching "{snpSearch}".
+                              {isTr ? `"${snpSearch}" ile eşleşen SNP belirteci bulunamadı.` : `No SNP markers matching "${snpSearch}".`}
                             </td>
                           </tr>
                         ) : (
@@ -2677,7 +2707,7 @@ export default function DnaProfileInspectorModal() {
                   {/* Template Slider */}
                   <div className="space-y-1">
                     <div className="flex justify-between text-[10px] text-zinc-400 font-bold">
-                      <span>Template DNA:</span>
+                      <span>{isTr ? "Kalıp DNA:" : "Template DNA:"}</span>
                       <span className="text-cyan-300">{templateNg.toFixed(2)} ng</span>
                     </div>
                     <input
@@ -2694,7 +2724,7 @@ export default function DnaProfileInspectorModal() {
                   {/* Degradation Slider */}
                   <div className="space-y-1">
                     <div className="flex justify-between text-[10px] text-zinc-400 font-bold">
-                      <span>Degradation Rate (d):</span>
+                      <span>{isTr ? "Bozunma Hızı (d):" : "Degradation Rate (d):"}</span>
                       <span className={degradationRate > 0.005 ? "text-rose-400" : "text-amber-300"}>
                         {degradationRate.toFixed(4)}
                       </span>
@@ -2721,14 +2751,14 @@ export default function DnaProfileInspectorModal() {
                       }`}
                     >
                       <Activity className="w-3.5 h-3.5" />
-                      <span>{includeStutter ? "Stutter Artifacts: ON" : "Stutter Artifacts: OFF"}</span>
+                      <span>{includeStutter ? (isTr ? "Stutter Artifaktları: AÇIK" : "Stutter Artifacts: ON") : (isTr ? "Stutter Artifaktları: KAPALI" : "Stutter Artifacts: OFF")}</span>
                     </button>
                   </div>
                 </div>
 
                 {/* Dye Channel Selector Strip */}
                 <div className="flex items-center gap-2 flex-wrap text-xs">
-                  <span className="text-[9px] text-zinc-500 uppercase font-bold">Channels:</span>
+                  <span className="text-[9px] text-zinc-500 uppercase font-bold">{isTr ? "Kanallar:" : "Channels:"}</span>
                   {(["BLUE", "GREEN", "YELLOW", "RED", "PURPLE", "ORANGE"] as DyeChannelType[]).map((dye) => {
                     const active = activeDyes[dye];
                     const col = EPG_DYE_COLORS[dye];
@@ -2753,7 +2783,7 @@ export default function DnaProfileInspectorModal() {
                 {/* Continuous SVG Electropherogram Waveform */}
                 <div className="rounded-xl border border-tactical-border/70 bg-[#040810] p-3 space-y-2 overflow-hidden">
                   <div className="flex items-center justify-between text-[10px] text-zinc-400 border-b border-tactical-border/50 pb-1.5">
-                    <span className="font-bold text-white">Continuous RFU Electropherogram Waveform (50 bp – 500 bp)</span>
+                    <span className="font-bold text-white">{isTr ? "Sürekli RFU Elektroferogram Dalgası (50 bç – 500 bç)" : "Continuous RFU Electropherogram Waveform (50 bp – 500 bp)"}</span>
                     <span className="text-zinc-500 font-mono">AT: 50 RFU • ST: 200 RFU • SAT: 8000 RFU</span>
                   </div>
 
@@ -2821,24 +2851,24 @@ export default function DnaProfileInspectorModal() {
                 {/* EPG Peak Annotation Summary */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
                   <div className="p-2.5 rounded-xl bg-black/40 border border-tactical-border/60">
-                    <span className="text-[8px] text-zinc-500 uppercase block font-bold">Degradation Index</span>
+                    <span className="text-[8px] text-zinc-500 uppercase block font-bold">{isTr ? "Bozunma İndeksi" : "Degradation Index"}</span>
                     <p className={`font-bold text-xs ${epgResult.degradationIndex > 5.0 ? "text-rose-400" : "text-emerald-400"}`}>
                       {epgResult.degradationIndex.toFixed(2)} ({epgResult.degradationSeverity})
                     </p>
                   </div>
                   <div className="p-2.5 rounded-xl bg-black/40 border border-tactical-border/60">
-                    <span className="text-[8px] text-zinc-500 uppercase block font-bold">Total Analyzed Peaks</span>
-                    <p className="font-bold text-cyan-300 text-xs">{epgResult.allPeaks.length} Peaks</p>
+                    <span className="text-[8px] text-zinc-500 uppercase block font-bold">{isTr ? "Toplam Analiz Edilen Tepe" : "Total Analyzed Peaks"}</span>
+                    <p className="font-bold text-cyan-300 text-xs">{epgResult.allPeaks.length} {isTr ? "Tepe" : "Peaks"}</p>
                   </div>
                   <div className="p-2.5 rounded-xl bg-black/40 border border-tactical-border/60">
-                    <span className="text-[8px] text-zinc-500 uppercase block font-bold">QA/QC Status</span>
+                    <span className="text-[8px] text-zinc-500 uppercase block font-bold">{isTr ? "KG/KK Durumu" : "QA/QC Status"}</span>
                     <p className={`font-bold text-xs ${epgResult.overallPassedQc ? "text-emerald-400" : "text-amber-400"}`}>
-                      {epgResult.overallPassedQc ? "PASSED (ISO 17025)" : "STOCHASTIC WARNING"}
+                      {epgResult.overallPassedQc ? (isTr ? "GEÇTİ (ISO 17025)" : "PASSED (ISO 17025)") : (isTr ? "STOKASTİK UYARI" : "STOCHASTIC WARNING")}
                     </p>
                   </div>
                   <div className="p-2.5 rounded-xl bg-black/40 border border-tactical-border/60">
-                    <span className="text-[8px] text-zinc-500 uppercase block font-bold">Size Standard</span>
-                    <p className="font-bold text-amber-300 text-xs">LIZ 600 (30 Frags)</p>
+                    <span className="text-[8px] text-zinc-500 uppercase block font-bold">{isTr ? "Boyut Standardı" : "Size Standard"}</span>
+                    <p className="font-bold text-amber-300 text-xs">LIZ 600 ({isTr ? "30 Parça" : "30 Frags"})</p>
                   </div>
                 </div>
               </div>
@@ -2873,7 +2903,7 @@ export default function DnaProfileInspectorModal() {
               disabled={isCalculating}
               className="px-3 sm:px-4 py-2 rounded-xl text-xs font-bold text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors cursor-pointer font-mono min-h-[44px] disabled:opacity-50"
             >
-              Close
+              {isTr ? "Kapat" : "Close"}
             </button>
 
             <button
@@ -2884,12 +2914,12 @@ export default function DnaProfileInspectorModal() {
               {isCalculating ? (
                 <>
                   <RefreshCw className="w-4 h-4 shrink-0 animate-spin" />
-                  <span>Executing 35-Module DAG...</span>
+                  <span>{isTr ? "35-Modül DAG Yürütülüyor..." : "Executing 35-Module DAG..."}</span>
                 </>
               ) : (
                 <>
                   <CheckCircle2 className="w-4 h-4 shrink-0" />
-                  <span>Apply &amp; Recalculate 35 Modules</span>
+                  <span>{isTr ? "35 Modülü Uygula & Yeniden Hesapla" : "Apply & Recalculate 35 Modules"}</span>
                 </>
               )}
             </button>

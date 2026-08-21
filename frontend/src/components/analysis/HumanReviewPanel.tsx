@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { UserCheck, ShieldCheck, CheckCircle2, AlertTriangle, RefreshCw, FileText, User, Lock } from "lucide-react";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 interface ReviewRecord {
   review_id: string;
@@ -21,6 +22,9 @@ interface ReviewRecord {
 }
 
 export default function HumanReviewPanel() {
+  const { lang } = useSaasLanguage();
+  const isTr = lang === "tr";
+
   const [decisionType, setDecisionType] = useState<string>("APPROVE_AI_PREDICATE");
   const [primaryAnalyst, setPrimaryAnalyst] = useState<string>("ANALYST-01 (Dr. Sarah Connor)");
   const [technicalReviewer, setTechnicalReviewer] = useState<string>("PEER-REVIEWER-02 (Dr. James Vance)");
@@ -30,15 +34,19 @@ export default function HumanReviewPanel() {
   const [reviewResult, setReviewResult] = useState<ReviewRecord | null>({
     review_id: "REV-1786480000",
     sample_id: "SAMPLE-DNA-01",
-    ai_recommendation: "EXTREMELY_STRONG_SUPPORT_FOR_INCLUSION (LR = 10^26)",
+    ai_recommendation: isTr
+      ? "DAHİL ETME LEHİNE AŞIRI GÜÇLÜ DESTEK (LR = 10^26)"
+      : "EXTREMELY_STRONG_SUPPORT_FOR_INCLUSION (LR = 10^26)",
     human_decision: "APPROVE_AI_PREDICATE",
     is_override: false,
-    final_verdict: "EXTREMELY_STRONG_SUPPORT_FOR_INCLUSION",
+    final_verdict: isTr
+      ? "DAHİL ETME LEHİNE AŞIRI GÜÇLÜ DESTEK"
+      : "EXTREMELY_STRONG_SUPPORT_FOR_INCLUSION",
     primary_analyst_id: "ANALYST-01 (Dr. Sarah Connor)",
     technical_reviewer_id: "PEER-REVIEWER-02 (Dr. James Vance)",
     dual_sign_off_verified: true,
     timestamp: "2026-08-12T13:51:00Z",
-    court_admissibility_status: "CERTIFIED_COURT_ADMISSIBLE",
+    court_admissibility_status: isTr ? "MAHKEME_KABUL_EDİLEBİLİR_ONAYLANDI" : "CERTIFIED_COURT_ADMISSIBLE",
     hmac_signature: "7f8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b"
   });
 
@@ -82,14 +90,18 @@ export default function HumanReviewPanel() {
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-sm font-bold tracking-widest text-tactical-text uppercase">
-                Human Analyst Review & Dual-Sign-Off Decision Governance
+                {isTr
+                  ? "İnsan Analist İncelemesi & Çift İmzalı Karar Yönetişimi"
+                  : "Human Analyst Review & Dual-Sign-Off Decision Governance"}
               </h2>
               <span className="px-2 py-0.5 rounded text-[8px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                COURT ADMISSIBLE
+                {isTr ? "MAHKEME KABULÜ" : "COURT ADMISSIBLE"}
               </span>
             </div>
             <p className="text-[10px] text-zinc-400 mt-0.5">
-              Strict Human-in-the-Loop Dual Sign-Off & Analyst Override Audit Logging
+              {isTr
+                ? "Katı İnsan Döngüde (Human-in-the-Loop) Çift İmza & Analist Geçersiz Kılma Denetim Kaydı"
+                : "Strict Human-in-the-Loop Dual Sign-Off & Analyst Override Audit Logging"}
             </p>
           </div>
         </div>
@@ -100,7 +112,7 @@ export default function HumanReviewPanel() {
           className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
-          Sign & Authorize Verdict
+          {isTr ? "Kararı İmzala & Yetkilendir" : "Sign & Authorize Verdict"}
         </button>
       </div>
 
@@ -110,23 +122,43 @@ export default function HumanReviewPanel() {
         {/* Left: Computational Recommendation & Analyst Decision Controls */}
         <div className="space-y-4 rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 shadow-xl">
           <span className="text-xs font-bold uppercase tracking-wider text-tactical-text block border-b border-tactical-border/40 pb-3">
-            Primary Analyst & Secondary Reviewer Sign-Off Form
+            {isTr
+              ? "Birincil Uzman & İkincil Hakem İmza Formu"
+              : "Primary Analyst & Secondary Reviewer Sign-Off Form"}
           </span>
 
           <div className="p-3 rounded-xl border border-cyan-500/30 bg-cyan-500/10 space-y-1">
-            <span className="text-[9px] text-cyan-300 font-bold uppercase">Automated AI Recommendation</span>
+            <span className="text-[9px] text-cyan-300 font-bold uppercase">
+              {isTr ? "Otomatik AI Tavsiyesi" : "Automated AI Recommendation"}
+            </span>
             <p className="text-xs font-bold text-zinc-200">
-              EXTREMELY_STRONG_SUPPORT_FOR_INCLUSION (LR = 10^26)
+              {isTr
+                ? "DAHİL ETME LEHİNE AŞIRI GÜÇLÜ DESTEK (LR = 10^26)"
+                : "EXTREMELY_STRONG_SUPPORT_FOR_INCLUSION (LR = 10^26)"}
             </p>
           </div>
 
           <div className="space-y-2">
-            <span className="text-[10px] text-zinc-400 uppercase font-bold">Select Analyst Verdict</span>
+            <span className="text-[10px] text-zinc-400 uppercase font-bold">
+              {isTr ? "Uzman Kararını Seçin" : "Select Analyst Verdict"}
+            </span>
             <div className="grid grid-cols-1 gap-2">
               {[
-                { id: "APPROVE_AI_PREDICATE", label: "Approve AI Predicate (Concordant)", desc: "Accept computational LR & verdict" },
-                { id: "OVERRIDE_MODIFIED_PREDICATE", label: "Override & Modify Predicate", desc: "Requires mandatory technical justification" },
-                { id: "REJECT_RE_ANALYSIS", label: "Reject & Request Re-Analysis", desc: "Sends sample back for re-extraction" },
+                {
+                  id: "APPROVE_AI_PREDICATE",
+                  label: isTr ? "AI Kararını Onayla (Uyumlu)" : "Approve AI Predicate (Concordant)",
+                  desc: isTr ? "Hesaplamalı LR ve nihai kararı kabul et" : "Accept computational LR & verdict"
+                },
+                {
+                  id: "OVERRIDE_MODIFIED_PREDICATE",
+                  label: isTr ? "Geçersiz Kıl & Kararı Değiştir" : "Override & Modify Predicate",
+                  desc: isTr ? "Zorunlu teknik gerekçe gerektirir" : "Requires mandatory technical justification"
+                },
+                {
+                  id: "REJECT_RE_ANALYSIS",
+                  label: isTr ? "Reddet & Yeniden Analiz İste" : "Reject & Request Re-Analysis",
+                  desc: isTr ? "Numuneyi yeniden ekstraksiyona gönderir" : "Sends sample back for re-extraction"
+                },
               ].map((d) => (
                 <button
                   key={d.id}
@@ -146,10 +178,12 @@ export default function HumanReviewPanel() {
 
           {decisionType === "OVERRIDE_MODIFIED_PREDICATE" && (
             <div className="space-y-1">
-              <span className="text-[10px] text-amber-400 font-bold uppercase">Mandatory Analyst Override Justification</span>
+              <span className="text-[10px] text-amber-400 font-bold uppercase">
+                {isTr ? "Zorunlu Uzman Geçersiz Kılma Gerekçesi" : "Mandatory Analyst Override Justification"}
+              </span>
               <textarea
                 rows={3}
-                placeholder="Document technical reasoning (e.g. primer binding site mutation, stutter threshold anomaly)..."
+                placeholder={isTr ? "Teknik gerekçeyi belgeleyin (örn. primer bağlanma bölgesi mutasyonu, stutter eşik anomalisi)..." : "Document technical reasoning (e.g. primer binding site mutation, stutter threshold anomaly)..."}
                 value={overrideReason}
                 onChange={(e) => setOverrideReason(e.target.value)}
                 className="w-full p-2.5 rounded-xl border border-amber-500/40 bg-black/60 font-mono text-xs text-zinc-200 focus:outline-none"
@@ -159,7 +193,9 @@ export default function HumanReviewPanel() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
             <div className="space-y-1">
-              <span className="text-[9px] text-zinc-400 uppercase font-bold">Primary Forensic Analyst</span>
+              <span className="text-[9px] text-zinc-400 uppercase font-bold">
+                {isTr ? "Birincil Adli Uzman" : "Primary Forensic Analyst"}
+              </span>
               <input
                 type="text"
                 value={primaryAnalyst}
@@ -168,7 +204,9 @@ export default function HumanReviewPanel() {
               />
             </div>
             <div className="space-y-1">
-              <span className="text-[9px] text-zinc-400 uppercase font-bold">Secondary Peer Reviewer</span>
+              <span className="text-[9px] text-zinc-400 uppercase font-bold">
+                {isTr ? "İkincil Teknik Hakem" : "Secondary Peer Reviewer"}
+              </span>
               <input
                 type="text"
                 value={technicalReviewer}
@@ -190,7 +228,7 @@ export default function HumanReviewPanel() {
               <div className="flex items-center justify-between border-b border-amber-500/20 pb-3">
                 <span className="text-xs font-bold uppercase tracking-wider text-tactical-text flex items-center gap-2">
                   <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                  Dual Sign-Off Certification Audit
+                  {isTr ? "Çift İmza Onay Denetimi" : "Dual Sign-Off Certification Audit"}
                 </span>
                 <span className="px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold text-[9px] uppercase">
                   {reviewResult.court_admissibility_status}
@@ -199,30 +237,34 @@ export default function HumanReviewPanel() {
 
               <div className="space-y-2 text-xs font-mono">
                 <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40 space-y-1">
-                  <span className="text-[9px] text-zinc-500 block">Final Authorized Verdict</span>
+                  <span className="text-[9px] text-zinc-500 block">
+                    {isTr ? "Nihai Yetkili Karar" : "Final Authorized Verdict"}
+                  </span>
                   <span className="font-bold text-amber-300 text-sm">{reviewResult.final_verdict}</span>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 text-[10px]">
                   <div className="p-2.5 rounded-lg bg-black/30 border border-zinc-800">
-                    <span className="text-zinc-500 block">Primary Analyst</span>
+                    <span className="text-zinc-500 block">{isTr ? "Birincil Uzman" : "Primary Analyst"}</span>
                     <span className="font-bold text-zinc-200">{reviewResult.primary_analyst_id}</span>
                   </div>
                   <div className="p-2.5 rounded-lg bg-black/30 border border-zinc-800">
-                    <span className="text-zinc-500 block">Technical Reviewer</span>
+                    <span className="text-zinc-500 block">{isTr ? "Teknik Hakem" : "Technical Reviewer"}</span>
                     <span className="font-bold text-zinc-200">{reviewResult.technical_reviewer_id}</span>
                   </div>
                 </div>
 
                 {reviewResult.is_override && (
                   <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-[11px]">
-                    <span className="font-bold block text-[9px] uppercase">Analyst Override Rationale</span>
+                    <span className="font-bold block text-[9px] uppercase">
+                      {isTr ? "Uzman Geçersiz Kılma Gerekçesi" : "Analyst Override Rationale"}
+                    </span>
                     {reviewResult.override_reason}
                   </div>
                 )}
 
                 <div className="p-2.5 rounded-lg bg-black/60 border border-zinc-900 text-[8px] text-zinc-500 truncate">
-                  HMAC Court Admissibility Hash: {reviewResult.hmac_signature}
+                  HMAC {isTr ? "Mahkeme Kabul Edilebilirlik Hashi" : "Court Admissibility Hash"}: {reviewResult.hmac_signature}
                 </div>
               </div>
             </motion.div>

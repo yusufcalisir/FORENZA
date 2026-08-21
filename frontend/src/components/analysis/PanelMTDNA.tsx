@@ -27,6 +27,7 @@ import {
   Compass,
   Globe2,
 } from "lucide-react";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -43,8 +44,10 @@ export interface MtDnaVariantVisual {
 export interface CaseworkPreset {
   id: string;
   title: string;
+  titleTr: string;
   badge: string;
   description: string;
+  descriptionTr: string;
   relationship: string;
   variantsA: string[];
   variantsB: string[];
@@ -62,8 +65,10 @@ const MTDNA_PRESETS: CaseworkPreset[] = [
   {
     id: "BENCHMARK_LINEAGE_A_EUR",
     title: "Benchmark LINEAGE-A (European Reference / EUR)",
+    titleTr: "Doğrulama LINEAGE-A (Avrupa Referansı / EUR)",
     badge: "Haplogroup H1",
     description: "Common European H1 haplotype (263G, 315.1C, 750G, 16519C) with k=1,420 matches in EMPOP (N=48,200).",
+    descriptionTr: "EMPOP'ta k=1.420 eşleşmesi olan yaygın Avrupa H1 haplotipi (263G, 315.1C, 750G, 16519C, N=48.200).",
     relationship: "Maternal Lineage Match",
     variantsA: ["263G", "315.1C", "750G", "16519C"],
     variantsB: ["263G", "315.1C", "750G", "16519C"],
@@ -77,8 +82,10 @@ const MTDNA_PRESETS: CaseworkPreset[] = [
   {
     id: "BENCHMARK_LINEAGE_B_AFR",
     title: "Benchmark LINEAGE-B (African Diaspora / AFR)",
+    titleTr: "Doğrulama LINEAGE-B (Afrika Diasporası / AFR)",
     badge: "Haplogroup L2a1",
     description: "Sub-Saharan African L2a1 haplotype with 13 control region mutations and k=12 matches in EMPOP.",
+    descriptionTr: "EMPOP'ta k=12 eşleşmesi olan 13 kontrol bölgesi mutasyonlu Sahra-Altı Afrika L2a1 haplotipi.",
     relationship: "Maternal Lineage Match",
     variantsA: [
       "146C", "152C", "182C", "198C", "263G", "309.1C", "315.1C",
@@ -98,8 +105,10 @@ const MTDNA_PRESETS: CaseworkPreset[] = [
   {
     id: "COHORT_POINT_HETEROPLASMY_PAIR",
     title: "Point Heteroplasmy Pair (16189Y vs 16189C)",
+    titleTr: "Nokta Heteroplazmisi İkilisi (16189Y vs 16189C)",
     badge: "IUPAC Mixed Base",
     description: "Questioned sample with 16189Y (C/T) vs reference homoplasmic 16189C (cannot be excluded).",
+    descriptionTr: "16189Y (C/T) içeren sorgulanan örnek vs referans homoplazmik 16189C (dışlanamaz).",
     relationship: "Maternal Lineage Match",
     variantsA: ["263G", "315.1C", "16189Y", "16519C"],
     variantsB: ["263G", "315.1C", "16189C", "16519C"],
@@ -113,8 +122,10 @@ const MTDNA_PRESETS: CaseworkPreset[] = [
   {
     id: "COHORT_MATERNAL_DUO_UNOBSERVED",
     title: "Rare Unobserved Maternal Lineage Duo (k=0)",
+    titleTr: "Nadir Gözlenmemiş Anne Soyu İkilisi (k=0)",
     badge: "Exact k=0 Bound",
     description: "Mother-daughter exact match with rare dinucleotide insertion 524.1AC unobserved in EMPOP.",
+    descriptionTr: "EMPOP'ta gözlenmemiş nadir dinükleotid insersiyonu 524.1AC içeren anne-kız tam eşleşmesi.",
     relationship: "Maternal Lineage Match",
     variantsA: ["263G", "315.1C", "524.1AC", "16189C", "16278C", "16362C"],
     variantsB: ["263G", "315.1C", "524.1AC", "16189C", "16278C", "16362C"],
@@ -128,8 +139,10 @@ const MTDNA_PRESETS: CaseworkPreset[] = [
   {
     id: "COHORT_UNRELATED_EXCLUSION",
     title: "Unrelated Non-Kin Exclusion Pair (H1 vs L2a1)",
+    titleTr: "Akraba Olmayan Dışlama İkilisi (H1 vs L2a1)",
     badge: "SWGDAM Exclusion",
     description: "Two unrelated donors exhibiting 11 homoplasmic point differences yielding definitive exclusion.",
+    descriptionTr: "11 homoplazmik nokta farkı sergileyen ve kesin dışlama veren akraba olmayan iki donör.",
     relationship: "Unrelated Donors",
     variantsA: ["263G", "315.1C", "750G", "16519C"],
     variantsB: [
@@ -145,18 +158,9 @@ const MTDNA_PRESETS: CaseworkPreset[] = [
   },
 ];
 
-// ── IUPAC Ambiguity Map ────────────────────────────────────────────────────
-
-const IUPAC_LEGEND: Record<string, string> = {
-  R: "A or G (Purine)",
-  Y: "C or T (Pyrimidine)",
-  M: "A or C (Amino)",
-  K: "G or T (Keto)",
-  S: "G or C (Strong)",
-  W: "A or T (Weak)",
-};
-
 export default function PanelMTDNA() {
+  const { lang } = useSaasLanguage();
+  const isTr = lang === "tr";
   const [selectedPresetId, setSelectedPresetId] = useState<string>("BENCHMARK_LINEAGE_A_EUR");
   const [observedK, setObservedK] = useState<number>(1420);
   const [databaseN, setDatabaseN] = useState<number>(48200);
@@ -205,7 +209,7 @@ export default function PanelMTDNA() {
   const log10Lr = isExclusion ? -300.0 : Math.log10(maternalLr > 0 ? maternalLr : 1.0);
 
   return (
-    <div className="space-y-6 text-slate-100 font-sans pb-12">
+    <div className="space-y-6 text-slate-100 font-mono pb-12">
       {/* ── Header & Badges ────────────────────────────────────────────── */}
       <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-6 shadow-xl backdrop-blur">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
@@ -215,14 +219,18 @@ export default function PanelMTDNA() {
                 <Compass className="w-6 h-6 animate-spin-slow" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-white tracking-tight flex items-center gap-2">
-                  Mitochondrial DNA (mtDNA) EMPOP rCRS/RSRS Alignment Engine
+                <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight flex items-center gap-2">
+                  {isTr
+                    ? "Mitokondriyal DNA (mtDNA) EMPOP rCRS/RSRS Hizalama Motoru"
+                    : "Mitochondrial DNA (mtDNA) EMPOP rCRS/RSRS Alignment Engine"}
                   <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                    Pillar 2.3
+                    {isTr ? "Süit 2.3" : "Pillar 2.3"}
                   </span>
                 </h1>
                 <p className="text-xs text-slate-400 mt-0.5">
-                  Revised Cambridge Reference Sequence (NC_012920.1, 16,569 bp) • ISFG 3&apos;-Right Alignment Normalizer • PhyloTree Build 17
+                  {isTr
+                    ? "Revize Cambridge Referans Dizisi (NC_012920.1, 16.569 bp) • ISFG 3'-Sağa Hizalama Düzelticisi • PhyloTree Build 17"
+                    : "Revised Cambridge Reference Sequence (NC_012920.1, 16,569 bp) • ISFG 3'-Right Alignment Normalizer • PhyloTree Build 17"}
                 </p>
               </div>
             </div>
@@ -230,13 +238,13 @@ export default function PanelMTDNA() {
 
           <div className="flex flex-wrap items-center gap-2">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium bg-emerald-950/60 text-emerald-400 border border-emerald-800/60">
-              <ShieldCheck className="w-3.5 h-3.5" /> ISO/IEC 17025 Verified
+              <ShieldCheck className="w-3.5 h-3.5" /> {isTr ? "ISO/IEC 17025 Doğrulandı" : "ISO/IEC 17025 Verified"}
             </span>
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium bg-blue-950/60 text-blue-400 border border-blue-800/60">
-              <Database className="w-3.5 h-3.5" /> EMPOP Release 15 (N=48,500)
+              <Database className="w-3.5 h-3.5" /> {isTr ? "EMPOP Sürüm 15 (N=48.500)" : "EMPOP Release 15 (N=48,500)"}
             </span>
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium bg-purple-950/60 text-purple-400 border border-purple-800/60">
-              <Globe2 className="w-3.5 h-3.5" /> 5 Metapopulations
+              <Globe2 className="w-3.5 h-3.5" /> {isTr ? "5 Metapopülasyon" : "5 Metapopulations"}
             </span>
           </div>
         </div>
@@ -244,7 +252,9 @@ export default function PanelMTDNA() {
         {/* ── Casework Preset Selector ─────────────────────────────────── */}
         <div className="mt-6 pt-6 border-t border-slate-800/80">
           <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-3">
-            Select Certified Casework Benchmark / Lineage Cohort:
+            {isTr
+              ? "Sertifikalı Vaka Doğrulama / Soy Kohortu Seçin:"
+              : "Select Certified Casework Benchmark / Lineage Cohort:"}
           </label>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
             {MTDNA_PRESETS.map((preset) => {
@@ -255,7 +265,7 @@ export default function PanelMTDNA() {
                   onClick={() => {
                     startTransition(() => setSelectedPresetId(preset.id));
                   }}
-                  className={`p-3 rounded-lg text-left transition-all border ${
+                  className={`p-3 rounded-lg text-left transition-all border cursor-pointer ${
                     isSelected
                       ? "bg-emerald-950/40 border-emerald-500/60 text-white shadow-lg shadow-emerald-950/30"
                       : "bg-slate-800/40 border-slate-700/60 text-slate-400 hover:bg-slate-800/80 hover:text-slate-200"
@@ -267,8 +277,12 @@ export default function PanelMTDNA() {
                     </span>
                     {isSelected && <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />}
                   </div>
-                  <div className="text-xs font-semibold text-slate-200 line-clamp-1">{preset.title}</div>
-                  <div className="text-[11px] text-slate-400 line-clamp-2 mt-0.5">{preset.description}</div>
+                  <div className="text-xs font-semibold text-slate-200 line-clamp-1">
+                    {isTr ? preset.titleTr : preset.title}
+                  </div>
+                  <div className="text-[11px] text-slate-400 line-clamp-2 mt-0.5">
+                    {isTr ? preset.descriptionTr : preset.description}
+                  </div>
                 </button>
               );
             })}
@@ -284,7 +298,7 @@ export default function PanelMTDNA() {
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-sm font-bold text-white flex items-center gap-2">
                 <Dna className="w-4 h-4 text-emerald-400" />
-                Mitogenome Circular Map (16,569 bp)
+                {isTr ? "Dairesel Mitogenom Haritası (16.569 bp)" : "Mitogenome Circular Map (16,569 bp)"}
               </h2>
               <span className="text-xs font-mono text-slate-400">rCRS NC_012920.1</span>
             </div>
@@ -388,10 +402,14 @@ export default function PanelMTDNA() {
               <div>
                 <h2 className="text-sm font-bold text-white flex items-center gap-2">
                   <Layers className="w-4 h-4 text-cyan-400" />
-                  Pairwise Variant Comparison & ISFG Right-Alignment
+                  {isTr
+                    ? "İkili Varyant Karşılaştırması & ISFG Sağa Hizalama"
+                    : "Pairwise Variant Comparison & ISFG Right-Alignment"}
                 </h2>
                 <p className="text-xs text-slate-400">
-                  Questioned Sample vs Reference Standard relative to rCRS
+                  {isTr
+                    ? "rCRS'ye Göre Sorgulanan Örnek vs Referans Standart"
+                    : "Questioned Sample vs Reference Standard relative to rCRS"}
                 </p>
               </div>
 
@@ -401,13 +419,13 @@ export default function PanelMTDNA() {
                   <button
                     key={tab}
                     onClick={() => setActiveDomainTab(tab)}
-                    className={`px-2.5 py-1 rounded font-medium transition ${
+                    className={`px-2.5 py-1 rounded font-medium transition cursor-pointer ${
                       activeDomainTab === tab
                         ? "bg-emerald-500 text-slate-950 font-bold shadow"
                         : "text-slate-400 hover:text-slate-200"
                     }`}
                   >
-                    {tab}
+                    {tab === "ALL" && isTr ? "TÜMÜ" : tab}
                   </button>
                 ))}
               </div>
@@ -417,8 +435,12 @@ export default function PanelMTDNA() {
             <div className="space-y-3">
               <div>
                 <span className="text-xs font-semibold text-slate-400 block mb-1.5 flex items-center justify-between">
-                  <span>Questioned Sample A ({currentPreset.variantsA.length} Variants):</span>
-                  <span className="text-emerald-400 font-mono text-[11px]">Haplogroup {currentPreset.expectedHgA}</span>
+                  <span>
+                    {isTr ? "Sorgulanan Örnek A" : "Questioned Sample A"} ({currentPreset.variantsA.length} {isTr ? "Varyant" : "Variants"}):
+                  </span>
+                  <span className="text-emerald-400 font-mono text-[11px]">
+                    {isTr ? "Haplogrup" : "Haplogroup"} {currentPreset.expectedHgA}
+                  </span>
                 </span>
                 <div className="flex flex-wrap gap-1.5">
                   {currentPreset.variantsA.map((v) => {
@@ -444,8 +466,12 @@ export default function PanelMTDNA() {
 
               <div>
                 <span className="text-xs font-semibold text-slate-400 block mb-1.5 flex items-center justify-between">
-                  <span>Reference Sample B ({currentPreset.variantsB.length} Variants):</span>
-                  <span className="text-cyan-400 font-mono text-[11px]">Haplogroup {currentPreset.expectedHgB}</span>
+                  <span>
+                    {isTr ? "Referans Örnek B" : "Reference Sample B"} ({currentPreset.variantsB.length} {isTr ? "Varyant" : "Variants"}):
+                  </span>
+                  <span className="text-cyan-400 font-mono text-[11px]">
+                    {isTr ? "Haplogrup" : "Haplogroup"} {currentPreset.expectedHgB}
+                  </span>
                 </span>
                 <div className="flex flex-wrap gap-1.5">
                   {currentPreset.variantsB.map((v) => {
@@ -474,25 +500,33 @@ export default function PanelMTDNA() {
           {/* Quick Metrics Banner */}
           <div className="mt-4 pt-4 border-t border-slate-800 grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
             <div className="p-2.5 rounded bg-slate-800/40 border border-slate-700">
-              <span className="text-[10px] text-slate-400 block uppercase">Shared Mutations</span>
+              <span className="text-[10px] text-slate-400 block uppercase">
+                {isTr ? "Ortak Mutasyonlar" : "Shared Mutations"}
+              </span>
               <span className="text-base font-bold font-mono text-emerald-400">
                 {isPhpCompatible ? currentPreset.variantsA.length : shared.length}
               </span>
             </div>
             <div className="p-2.5 rounded bg-slate-800/40 border border-slate-700">
-              <span className="text-[10px] text-slate-400 block uppercase">Homoplasmic Diffs</span>
+              <span className="text-[10px] text-slate-400 block uppercase">
+                {isTr ? "Homoplazmik Farklar" : "Homoplasmic Diffs"}
+              </span>
               <span className={`text-base font-bold font-mono ${homoplasmicDiffCount >= 2 ? "text-rose-400" : "text-slate-200"}`}>
                 {homoplasmicDiffCount}
               </span>
             </div>
             <div className="p-2.5 rounded bg-slate-800/40 border border-slate-700">
-              <span className="text-[10px] text-slate-400 block uppercase">Point Heteroplasmies</span>
+              <span className="text-[10px] text-slate-400 block uppercase">
+                {isTr ? "Nokta Heteroplazmileri" : "Point Heteroplasmies"}
+              </span>
               <span className="text-base font-bold font-mono text-purple-400">
                 {isPhpCompatible ? 1 : 0}
               </span>
             </div>
             <div className="p-2.5 rounded bg-slate-800/40 border border-slate-700">
-              <span className="text-[10px] text-slate-400 block uppercase">SWGDAM Verdict</span>
+              <span className="text-[10px] text-slate-400 block uppercase">
+                {isTr ? "SWGDAM Kararı" : "SWGDAM Verdict"}
+              </span>
               <span
                 className={`text-xs font-bold px-2 py-0.5 rounded inline-block mt-0.5 ${
                   isExclusion
@@ -500,7 +534,9 @@ export default function PanelMTDNA() {
                     : "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
                 }`}
               >
-                {isExclusion ? "EXCLUSION" : "MATCH / INCLUSION"}
+                {isExclusion
+                  ? (isTr ? "DIŞLAMA" : "EXCLUSION")
+                  : (isTr ? "EŞLEŞME / DAHİL ETME" : "MATCH / INCLUSION")}
               </span>
             </div>
           </div>
@@ -513,16 +549,24 @@ export default function PanelMTDNA() {
           <div>
             <h2 className="text-base font-bold text-white flex items-center gap-2">
               <Database className="w-5 h-5 text-emerald-400" />
-              EMPOP Database Frequency & Maternal Likelihood Ratio
+              {isTr
+                ? "EMPOP Veritabanı Frekansı & Anne Soyu Olabilirlik Oranı"
+                : "EMPOP Database Frequency & Maternal Likelihood Ratio"}
             </h2>
             <p className="text-xs text-slate-400 font-mono">
-              Exact Clopper-Pearson 95% Upper Bound: p_upper = 1 - (0.05)^(1 / (N + 1))
+              {isTr
+                ? "Tam Clopper-Pearson %95 Üst Sınırı: p_upper = 1 - (0.05)^(1 / (N + 1))"
+                : "Exact Clopper-Pearson 95% Upper Bound: p_upper = 1 - (0.05)^(1 / (N + 1))"}
             </p>
           </div>
 
           <div className="text-right">
-            <span className="text-xs text-slate-400 block">Database Size (N)</span>
-            <span className="text-sm font-mono font-bold text-emerald-400">{databaseN.toLocaleString()} Mitogenomes</span>
+            <span className="text-xs text-slate-400 block">
+              {isTr ? "Veritabanı Boyutu (N)" : "Database Size (N)"}
+            </span>
+            <span className="text-sm font-mono font-bold text-emerald-400">
+              {databaseN.toLocaleString()} {isTr ? "Mitogenom" : "Mitogenomes"}
+            </span>
           </div>
         </div>
 
@@ -531,7 +575,9 @@ export default function PanelMTDNA() {
           <div className="space-y-4 bg-slate-800/40 p-4 rounded-xl border border-slate-700/60">
             <div>
               <div className="flex justify-between items-center text-xs mb-1.5">
-                <span className="font-semibold text-slate-300">Observed EMPOP Matches (k):</span>
+                <span className="font-semibold text-slate-300">
+                  {isTr ? "Gözlenen EMPOP Eşleşmeleri (k):" : "Observed EMPOP Matches (k):"}
+                </span>
                 <span className="font-mono text-emerald-400 font-bold">{observedK}</span>
               </div>
               <input
@@ -544,7 +590,7 @@ export default function PanelMTDNA() {
                 className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
               />
               <div className="flex justify-between text-[10px] text-slate-500 mt-1 font-mono">
-                <span>0 (Rare / Novel)</span>
+                <span>0 ({isTr ? "Nadir / Yeni" : "Rare / Novel"})</span>
                 <span>500</span>
                 <span>1,420 (H1)</span>
                 <span>2,000</span>
@@ -553,7 +599,9 @@ export default function PanelMTDNA() {
 
             <div>
               <div className="flex justify-between items-center text-xs mb-1.5">
-                <span className="font-semibold text-slate-300">Database Cohort Size (N):</span>
+                <span className="font-semibold text-slate-300">
+                  {isTr ? "Veritabanı Kohort Boyutu (N):" : "Database Cohort Size (N):"}
+                </span>
                 <span className="font-mono text-cyan-400 font-bold">{databaseN.toLocaleString()}</span>
               </div>
               <input
@@ -568,22 +616,26 @@ export default function PanelMTDNA() {
               <div className="flex justify-between text-[10px] text-slate-500 mt-1 font-mono">
                 <span>1,000</span>
                 <span>24,500 (EUR)</span>
-                <span>48,500 (Global)</span>
+                <span>48,500 ({isTr ? "Küresel" : "Global"})</span>
               </div>
             </div>
 
             <div className="p-3 bg-slate-900/80 rounded-lg border border-slate-800 text-[11px] text-slate-400 space-y-1">
               <div className="flex justify-between">
-                <span>Frequency Point Estimate (k/N):</span>
+                <span>{isTr ? "Frekans Nokta Tahmini (k/N):" : "Frequency Point Estimate (k/N):"}</span>
                 <span className="font-mono text-slate-200">{(observedK / databaseN).toExponential(4)}</span>
               </div>
               <div className="flex justify-between">
-                <span>Clopper-Pearson 95% Bound:</span>
+                <span>{isTr ? "Clopper-Pearson %95 Üst Sınırı:" : "Clopper-Pearson 95% Bound:"}</span>
                 <span className="font-mono text-emerald-400 font-bold">{pUpper.toExponential(4)}</span>
               </div>
               <div className="flex justify-between">
-                <span>Equivalent Match Ratio:</span>
-                <span className="font-mono text-cyan-400 font-bold">1 in {Math.round(1 / pUpper).toLocaleString()}</span>
+                <span>{isTr ? "Eşdeğer Eşleşme Oranı:" : "Equivalent Match Ratio:"}</span>
+                <span className="font-mono text-cyan-400 font-bold">
+                  {isTr
+                    ? `${Math.round(1 / pUpper).toLocaleString()} kişide 1`
+                    : `1 in ${Math.round(1 / pUpper).toLocaleString()}`}
+                </span>
               </div>
             </div>
           </div>
@@ -593,7 +645,7 @@ export default function PanelMTDNA() {
             <div className="p-5 rounded-xl bg-slate-800/40 border border-slate-700/80 flex flex-col justify-between">
               <div>
                 <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-1">
-                  Maternal Likelihood Ratio (LR_mtDNA)
+                  {isTr ? "Anne Soyu Olabilirlik Oranı (LR_mtDNA)" : "Maternal Likelihood Ratio (LR_mtDNA)"}
                 </span>
                 <div className="text-3xl font-extrabold font-mono text-white tracking-tight mt-2">
                   {isExclusion ? "0.00" : maternalLr.toLocaleString()}
@@ -604,17 +656,19 @@ export default function PanelMTDNA() {
               </div>
 
               <div className="mt-4 pt-3 border-t border-slate-700/60">
-                <span className="text-[11px] text-slate-400 block">ENFSI (2017) Verbal Equivalent:</span>
+                <span className="text-[11px] text-slate-400 block">
+                  {isTr ? "ENFSI (2017) Sözel İfade Karşılığı:" : "ENFSI (2017) Verbal Equivalent:"}
+                </span>
                 <span className="text-xs font-semibold text-emerald-400 mt-0.5 block">
                   {isExclusion
-                    ? "Definitive Exclusion of Maternal Lineage"
+                    ? (isTr ? "Anne Soyunun Kesin Olarak Dışlanması" : "Definitive Exclusion of Maternal Lineage")
                     : maternalLr >= 1e6
-                    ? "Extremely Strong Support for Same Maternal Lineage"
+                    ? (isTr ? "Ortak Anne Soyu Lehine Son Derece Güçlü Destek" : "Extremely Strong Support for Same Maternal Lineage")
                     : maternalLr >= 1e4
-                    ? "Very Strong Support for Same Maternal Lineage"
+                    ? (isTr ? "Ortak Anne Soyu Lehine Çok Güçlü Destek" : "Very Strong Support for Same Maternal Lineage")
                     : maternalLr >= 100
-                    ? "Moderately Strong Support for Same Maternal Lineage"
-                    : "Moderate / Limited Support for Same Maternal Lineage"}
+                    ? (isTr ? "Ortak Anne Soyu Lehine Orta-Güçlü Destek" : "Moderately Strong Support for Same Maternal Lineage")
+                    : (isTr ? "Ortak Anne Soyu Lehine Sınırlı / Orta Düzey Destek" : "Moderate / Limited Support for Same Maternal Lineage")}
                 </span>
               </div>
             </div>
@@ -623,23 +677,25 @@ export default function PanelMTDNA() {
             <div className="p-5 rounded-xl bg-slate-800/40 border border-slate-700/80 flex flex-col justify-between">
               <div>
                 <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-1">
-                  PhyloTree Build 17 Phylogeny
+                  {isTr ? "PhyloTree Sürüm 17 Filogenisi" : "PhyloTree Build 17 Phylogeny"}
                 </span>
                 <div className="flex items-center gap-3 mt-2">
                   <div className="p-2.5 bg-purple-500/10 border border-purple-500/30 rounded-lg text-purple-400 font-mono font-bold text-lg">
                     {currentPreset.expectedHgA}
                   </div>
                   <div>
-                    <div className="text-xs font-bold text-slate-200">Predicted Macro-Clade</div>
+                    <div className="text-xs font-bold text-slate-200">
+                      {isTr ? "Tahmin Edilen Makro-Klad" : "Predicted Macro-Clade"}
+                    </div>
                     <div className="text-[11px] text-slate-400">
-                      Branch: L0-L6 → L3 → {currentPreset.expectedHgA.startsWith("L") ? "African" : "N → R → " + currentPreset.expectedHgA}
+                      {isTr ? "Dal:" : "Branch:"} L0-L6 → L3 → {currentPreset.expectedHgA.startsWith("L") ? (isTr ? "Afrika" : "African") : "N → R → " + currentPreset.expectedHgA}
                     </div>
                   </div>
                 </div>
               </div>
 
               <div className="mt-4 pt-3 border-t border-slate-700/60 text-[11px] text-slate-400">
-                <span>Diagnostic Mutations Verified: </span>
+                <span>{isTr ? "Doğrulanan Tanısal Mutasyonlar: " : "Diagnostic Mutations Verified: "}</span>
                 <span className="font-mono text-purple-300 font-semibold">
                   {currentPreset.variantsA.slice(0, 3).join(", ")}
                   {currentPreset.variantsA.length > 3 ? "..." : ""}
@@ -654,14 +710,14 @@ export default function PanelMTDNA() {
           <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
           <div className="space-y-1">
             <span className="font-bold text-amber-300 uppercase tracking-wider block">
-              MANDATORY ISFG (2020) mtDNA EVALUATIVE REPORTING & LINEAGE DISCLAIMER (PROSECUTOR&apos;S FALLACY SHIELD)
+              {isTr
+                ? "ZORUNLU ISFG (2020) mtDNA DEĞERLENDİRİCİ RAPORLAMA & SOY BEYANI (ADLİ YANILGI KALKANI)"
+                : "MANDATORY ISFG (2020) mtDNA EVALUATIVE REPORTING & LINEAGE DISCLAIMER (PROSECUTOR'S FALLACY SHIELD)"}
             </span>
             <p className="leading-relaxed text-slate-300">
-              Mitochondrial DNA (mtDNA) is inherited strictly along the matrilineal lineage without meiotic
-              recombination. All maternally related relatives (brothers, sisters, mothers, maternal grandmothers,
-              maternal aunts, maternal cousins) share the identical control region haplotype. Likelihood Ratios (LR_mtDNA)
-              evaluate the probability of observing the sequence under the hypothesis of shared maternal lineage versus an
-              unrelated individual from the population, but <strong className="text-amber-200">cannot individualize a specific single person</strong>.
+              {isTr
+                ? "Mitokondriyal DNA (mtDNA), mayotik rekombinasyon olmaksızın sadece anne soyu üzerinden aktarılır. Anne tarafından akraba olan tüm bireyler (erkek kardeşler, kız kardeşler, anneler, anneanneler, teyzeler, teyze çocukları) birebir aynı kontrol bölgesi haplotipini paylaşır. Olabilirlik Oranları (LR_mtDNA), dizinin ortak bir anne soyu hipotezi altında gözlenme olasılığını değerlendirir ancak tek bir kişiyi kesin olarak bireyselleştiremez."
+                : "Mitochondrial DNA (mtDNA) is inherited strictly along the matrilineal lineage without meiotic recombination. All maternally related relatives (brothers, sisters, mothers, maternal grandmothers, maternal aunts, maternal cousins) share the identical control region haplotype. Likelihood Ratios (LR_mtDNA) evaluate the probability of observing the sequence under the hypothesis of shared maternal lineage versus an unrelated individual from the population, but cannot individualize a specific single person."}
             </p>
           </div>
         </div>

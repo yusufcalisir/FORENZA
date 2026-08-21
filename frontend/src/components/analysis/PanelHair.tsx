@@ -12,7 +12,9 @@ import {
     RefreshCw,
     Loader2,
     User,
+    ShieldCheck,
 } from "lucide-react";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // TYPES
@@ -46,6 +48,7 @@ interface HairAnalysisResult {
 
 interface PresetItem {
     label: string;
+    labelTr: string;
     desc: string;
     dosages: Record<string, number>;
 }
@@ -53,26 +56,31 @@ interface PresetItem {
 const PRESETS: PresetItem[] = [
     {
         label: "East Asian (EDAR=2)",
+        labelTr: "Doğu Asya (EDAR=2)",
         desc: "Thick Straight / VECTOR_P3_03",
         dosages: { rs3827072: 2, rs11803731: 0, rs7349332: 0, rs6152: 0, rs2180439: 0, rs1160312: 0, rs756853: 0 },
     },
     {
         label: "African (TCHH+WNT10A=2)",
+        labelTr: "Afrika (TCHH+WNT10A=2)",
         desc: "Kinky/Woolly C_curl=7.74",
         dosages: { rs3827072: 0, rs11803731: 2, rs7349332: 2, rs6152: 0, rs2180439: 0, rs1160312: 0, rs756853: 0 },
     },
     {
         label: "European Wavy (TCHH=1)",
+        labelTr: "Avrupa Dalgalı (TCHH=1)",
         desc: "Wavy C_curl=3.05",
         dosages: { rs3827072: 0, rs11803731: 1, rs7349332: 0, rs6152: 0, rs2180439: 0, rs1160312: 0, rs756853: 0 },
     },
     {
         label: "High AGA Risk",
+        labelTr: "Yüksek AGA Kellik Riski",
         desc: "AR+20p11 homozygous PRS=3.046",
         dosages: { rs3827072: 0, rs11803731: 0, rs7349332: 0, rs6152: 2, rs2180439: 2, rs1160312: 0, rs756853: 0 },
     },
     {
         label: "Baseline Reference",
+        labelTr: "Temel Referans",
         desc: "All zero dosage (3850 μm², Grade I/II)",
         dosages: { rs3827072: 0, rs11803731: 0, rs7349332: 0, rs6152: 0, rs2180439: 0, rs1160312: 0, rs756853: 0 },
     },
@@ -164,6 +172,9 @@ function HamiltonNorwoodScale({ grade }: { grade: string }) {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export default function PanelHair() {
+    const { lang } = useSaasLanguage();
+    const isTr = lang === "tr";
+
     const [dosages, setDosages] = useState<Record<string, number>>({
         rs3827072: 0, rs11803731: 0, rs7349332: 0,
         rs6152: 0, rs2180439: 0, rs1160312: 0, rs756853: 0,
@@ -172,14 +183,14 @@ export default function PanelHair() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const SNP_LABELS: Record<string, { gene: string; trait: string; group: "texture" | "balding" }> = {
-        rs3827072:  { gene: "EDAR (Val370Ala)",     trait: "Fiber Thickness & Straightening", group: "texture" },
-        rs11803731: { gene: "TCHH (Trichohyalin)",  trait: "Curl Induction",                  group: "texture" },
-        rs7349332:  { gene: "WNT10A",               trait: "Curl Induction (Wnt Pathway)",    group: "texture" },
-        rs6152:     { gene: "AR (Androgen Receptor)",trait: "Balding PRS (strongest locus)",   group: "balding" },
-        rs2180439:  { gene: "20p11 Locus",           trait: "Androgenetic Alopecia",           group: "balding" },
-        rs1160312:  { gene: "20p11 Locus",           trait: "Androgenetic Alopecia",           group: "balding" },
-        rs756853:   { gene: "HDAC9",                 trait: "Androgenetic Alopecia",           group: "balding" },
+    const SNP_LABELS: Record<string, { gene: string; trait: string; traitTr: string; group: "texture" | "balding" }> = {
+        rs3827072:  { gene: "EDAR (Val370Ala)",     trait: "Fiber Thickness & Straightening", traitTr: "Lif Kalınlığı & Düzleşme", group: "texture" },
+        rs11803731: { gene: "TCHH (Trichohyalin)",  trait: "Curl Induction",                  traitTr: "Kıvrılma İndüklemesi", group: "texture" },
+        rs7349332:  { gene: "WNT10A",               trait: "Curl Induction (Wnt Pathway)",    traitTr: "Kıvrılma İndüklemesi (Wnt)", group: "texture" },
+        rs6152:     { gene: "AR (Androgen Receptor)",trait: "Balding PRS (strongest locus)",   traitTr: "Kellik PRS (En Güçlü Lokus)", group: "balding" },
+        rs2180439:  { gene: "20p11 Locus",           trait: "Androgenetic Alopecia",           traitTr: "Androgenetik Alopesi", group: "balding" },
+        rs1160312:  { gene: "20p11 Locus",           trait: "Androgenetic Alopecia",           traitTr: "Androgenetik Alopesi", group: "balding" },
+        rs756853:   { gene: "HDAC9",                 trait: "Androgenetic Alopecia",           traitTr: "Androgenetik Alopesi", group: "balding" },
     };
 
     const applyPreset = (preset: typeof PRESETS[0]) => {
@@ -215,19 +226,33 @@ export default function PanelHair() {
             else if (curl >= 4.5) cat = "CURLY";
             else if (curl >= 2.0) cat = "WAVY";
 
-            let diam = "70.0 - 85.0 um (Fine / Medium Straight)";
-            if (cat === "STRAIGHT" && x_edar >= 1.5) diam = "85.0 - 110.0 um (Thick Straight / Asian Variant)";
-            else if (cat === "WAVY") diam = "65.0 - 80.0 um (Wavy Texture)";
-            else if (cat === "CURLY") diam = "55.0 - 70.0 um (Defined Curls)";
-            else if (cat === "KINKY_WOOLLY") diam = "45.0 - 60.0 um (Tight Coil / Afro-textured)";
+            let diam = isTr ? "70.0 - 85.0 μm (İnce / Orta Düz)" : "70.0 - 85.0 um (Fine / Medium Straight)";
+            if (cat === "STRAIGHT" && x_edar >= 1.5) diam = isTr ? "85.0 - 110.0 μm (Kalın Düz / Asya Varyantı)" : "85.0 - 110.0 um (Thick Straight / Asian Variant)";
+            else if (cat === "WAVY") diam = isTr ? "65.0 - 80.0 μm (Dalgalı Doku)" : "65.0 - 80.0 um (Wavy Texture)";
+            else if (cat === "CURLY") diam = isTr ? "55.0 - 70.0 μm (Belirgin Bukleler)" : "55.0 - 70.0 um (Defined Curls)";
+            else if (cat === "KINKY_WOOLLY") diam = isTr ? "45.0 - 60.0 μm (Sıkı Kıvrım / Afro Doku)" : "45.0 - 60.0 um (Tight Coil / Afro-textured)";
 
             const prs = 0.982 * (dosages.rs6152 ?? 0) + 0.541 * (dosages.rs2180439 ?? 0)
                       + 0.485 * (dosages.rs1160312 ?? 0) + 0.362 * (dosages.rs756853 ?? 0);
 
-            let grade = "GRADE_I_II", desc = "Hamilton-Norwood Grade I / II — Minimal or No Hair Loss", risk = "LOW_RISK";
-            if (prs >= 2.10) { grade = "GRADE_VI_VII"; desc = "Hamilton-Norwood Grade VI / VII — Severe / Extensive Balding"; risk = "HIGH_RISK"; }
-            else if (prs >= 1.20) { grade = "GRADE_IV_V"; desc = "Hamilton-Norwood Grade IV / V — Moderate Vertex Loss"; risk = "ELEVATED_RISK"; }
-            else if (prs >= 0.50) { grade = "GRADE_III"; desc = "Hamilton-Norwood Grade III — Slight Temporal / Vertex Recess"; risk = "MODERATE_RISK"; }
+            let grade = "GRADE_I_II",
+                desc = isTr
+                    ? "Hamilton-Norwood Evre I / II — Minimal veya Saç Dökülmesi Yok"
+                    : "Hamilton-Norwood Grade I / II — Minimal or No Hair Loss",
+                risk = "LOW_RISK";
+            if (prs >= 2.10) {
+                grade = "GRADE_VI_VII";
+                desc = isTr ? "Hamilton-Norwood Evre VI / VII — Şiddetli / İleri Derece Kellik" : "Hamilton-Norwood Grade VI / VII — Severe / Extensive Balding";
+                risk = "HIGH_RISK";
+            } else if (prs >= 1.20) {
+                grade = "GRADE_IV_V";
+                desc = isTr ? "Hamilton-Norwood Evre IV / V — Orta Derecede Tepe Dökülmesi" : "Hamilton-Norwood Grade IV / V — Moderate Vertex Loss";
+                risk = "ELEVATED_RISK";
+            } else if (prs >= 0.50) {
+                grade = "GRADE_III";
+                desc = isTr ? "Hamilton-Norwood Evre III — Hafif Şakak / Tepe Açılması" : "Hamilton-Norwood Grade III — Slight Temporal / Vertex Recess";
+                risk = "MODERATE_RISK";
+            }
 
             setResult({
                 texture: {
@@ -244,7 +269,9 @@ export default function PanelHair() {
                     risk_level: risk,
                     assayed_balding_snps: [dosages.rs6152, dosages.rs2180439, dosages.rs1160312, dosages.rs756853].filter(v => (v ?? 0) > 0).length,
                 },
-                prosecutors_fallacy_shield: "Client-side simulation (offline mode). Results are mathematically faithful to Research §4.",
+                prosecutors_fallacy_shield: isTr
+                    ? "İstemci tarafı matematiksel simülasyonu. Sonuçlar Araştırma §4 standartlarına uygundur."
+                    : "Client-side simulation (offline mode). Results are mathematically faithful to Research §4.",
             });
         } finally {
             setLoading(false);
@@ -255,7 +282,7 @@ export default function PanelHair() {
     const baldingLoci = Object.entries(SNP_LABELS).filter(([, v]) => v.group === "balding");
 
     return (
-        <div className="flex flex-col gap-4 w-full">
+        <div className="flex flex-col gap-4 w-full font-mono">
 
             {/* Header */}
             <div className="flex items-center gap-3">
@@ -264,14 +291,16 @@ export default function PanelHair() {
                 </div>
                 <div>
                     <h2 className="text-base font-semibold text-tactical-text-primary font-mono tracking-wide">
-                        HAIR-TEX: Module 3.4
+                        {isTr ? "SAÇ-DOKU: Modül 3.4" : "HAIR-TEX: Module 3.4"}
                     </h2>
                     <p className="text-xs text-tactical-text-secondary">
-                        Hair Morphology, Cross-Sectional Curvature & Balding PRS
+                        {isTr
+                            ? "Saç Morfolojisi, Kesit Eğriliği & Kellik Poligenik Risk Skoru (PRS)"
+                            : "Hair Morphology, Cross-Sectional Curvature & Balding PRS"}
                     </p>
                 </div>
                 <div className="ml-auto px-2 py-0.5 rounded text-[10px] font-mono border border-emerald-500/40 text-emerald-400 bg-emerald-500/10">
-                    VERIFIED
+                    {isTr ? "DOĞRULANDI" : "VERIFIED"}
                 </div>
             </div>
 
@@ -281,9 +310,9 @@ export default function PanelHair() {
                     <button
                         key={p.label}
                         onClick={() => applyPreset(p)}
-                        className="px-2 py-1 rounded text-[11px] font-mono border border-tactical-border/40 text-tactical-text-secondary hover:border-violet-500/60 hover:text-violet-300 transition-colors"
+                        className="px-2 py-1 rounded text-[11px] font-mono border border-tactical-border/40 text-tactical-text-secondary hover:border-violet-500/60 hover:text-violet-300 transition-colors cursor-pointer"
                     >
-                        {p.label}
+                        {isTr ? p.labelTr : p.label}
                     </button>
                 ))}
             </div>
@@ -293,7 +322,7 @@ export default function PanelHair() {
                 {/* LEFT: Texture SNP Inputs */}
                 <div className="flex flex-col gap-3">
                     <div className="text-xs font-mono text-violet-400 uppercase tracking-wider flex items-center gap-2">
-                        <Scissors className="w-3 h-3" /> Hair Texture Loci (§4.1)
+                        <Scissors className="w-3 h-3" /> {isTr ? "Saç Dokusu Lokusları (§4.1)" : "Hair Texture Loci (§4.1)"}
                     </div>
                     {textureLoci.map(([rsid, info]) => (
                         <div key={rsid} className="bg-tactical-surface/50 border border-tactical-border/40 rounded-lg p-3">
@@ -302,7 +331,7 @@ export default function PanelHair() {
                                     <span className="text-xs font-mono text-tactical-text-primary">{rsid}</span>
                                     <span className="text-xs text-tactical-text-secondary ml-2">· {info.gene}</span>
                                 </div>
-                                <span className="text-[10px] text-tactical-text-secondary">{info.trait}</span>
+                                <span className="text-[10px] text-tactical-text-secondary">{isTr ? info.traitTr : info.trait}</span>
                             </div>
                             <div className="flex gap-2">
                                 {[0, 1, 2].map(d => (
@@ -310,7 +339,7 @@ export default function PanelHair() {
                                         key={d}
                                         id={`${rsid}-dose-${d}`}
                                         onClick={() => setDosages(prev => ({ ...prev, [rsid]: d }))}
-                                        className={`flex-1 py-1.5 rounded text-sm font-mono border transition-all ${
+                                        className={`flex-1 py-1.5 rounded text-sm font-mono border transition-all cursor-pointer ${
                                             dosages[rsid] === d
                                                 ? "border-violet-500/80 bg-violet-500/20 text-violet-300"
                                                 : "border-tactical-border/40 text-tactical-text-secondary hover:border-tactical-border/70"
@@ -327,7 +356,7 @@ export default function PanelHair() {
                 {/* RIGHT: Balding PRS SNP Inputs */}
                 <div className="flex flex-col gap-3">
                     <div className="text-xs font-mono text-amber-400 uppercase tracking-wider flex items-center gap-2">
-                        <User className="w-3 h-3" /> Androgenetic Alopecia PRS Loci (§4.2)
+                        <User className="w-3 h-3" /> {isTr ? "Androgenetik Alopesi PRS Lokusları (§4.2)" : "Androgenetic Alopecia PRS Loci (§4.2)"}
                     </div>
                     {baldingLoci.map(([rsid, info]) => (
                         <div key={rsid} className="bg-tactical-surface/50 border border-tactical-border/40 rounded-lg p-3">
@@ -346,7 +375,7 @@ export default function PanelHair() {
                                         key={d}
                                         id={`${rsid}-dose-${d}`}
                                         onClick={() => setDosages(prev => ({ ...prev, [rsid]: d }))}
-                                        className={`flex-1 py-1.5 rounded text-sm font-mono border transition-all ${
+                                        className={`flex-1 py-1.5 rounded text-sm font-mono border transition-all cursor-pointer ${
                                             dosages[rsid] === d
                                                 ? "border-amber-500/80 bg-amber-500/20 text-amber-300"
                                                 : "border-tactical-border/40 text-tactical-text-secondary hover:border-tactical-border/70"
@@ -364,10 +393,10 @@ export default function PanelHair() {
                         id="hair-run-analysis-btn"
                         onClick={runAnalysis}
                         disabled={loading}
-                        className="mt-2 w-full py-2.5 rounded-lg border border-violet-500/60 bg-violet-500/15 text-violet-300 font-mono text-sm flex items-center justify-center gap-2 hover:bg-violet-500/25 transition-all disabled:opacity-50"
+                        className="mt-2 w-full py-2.5 rounded-lg border border-violet-500/60 bg-violet-500/15 text-violet-300 font-mono text-sm flex items-center justify-center gap-2 hover:bg-violet-500/25 transition-all disabled:opacity-50 cursor-pointer"
                     >
                         {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <BarChart3 className="w-4 h-4" />}
-                        {loading ? "Computing..." : "Execute Hair Analysis"}
+                        {loading ? (isTr ? "Hesaplanıyor..." : "Computing...") : (isTr ? "Saç Analizini Çalıştır" : "Execute Hair Analysis")}
                     </button>
                 </div>
             </div>
@@ -386,38 +415,50 @@ export default function PanelHair() {
                         <div className="bg-tactical-surface/50 border border-violet-500/30 rounded-xl p-4 flex flex-col gap-3">
                             <div className="flex items-center gap-2">
                                 <Scissors className="w-4 h-4 text-violet-400" />
-                                <span className="text-sm font-mono text-tactical-text-primary font-semibold">Hair Texture Analysis</span>
+                                <span className="text-sm font-mono text-tactical-text-primary font-semibold">
+                                    {isTr ? "Saç Dokusu Analizi" : "Hair Texture Analysis"}
+                                </span>
                             </div>
 
                             <div className="flex items-center justify-between">
-                                <span className="text-xs text-tactical-text-secondary">Texture Category</span>
+                                <span className="text-xs text-tactical-text-secondary">
+                                    {isTr ? "Doku Kategorisi" : "Texture Category"}
+                                </span>
                                 <span className={`text-sm font-mono font-bold ${TEXTURE_COLORS[result.texture.texture_category] ?? "text-tactical-text-primary"}`}>
-                                    {result.texture.texture_category.replace("_", "/")}
+                                    {isTr
+                                        ? (result.texture.texture_category === "STRAIGHT" ? "DÜZ"
+                                            : result.texture.texture_category === "WAVY" ? "DALGALI"
+                                            : result.texture.texture_category === "CURLY" ? "KIVIRCIK"
+                                            : "YÜNSÜ / AFRO")
+                                        : result.texture.texture_category.replace("_", "/")}
                                 </span>
                             </div>
 
                             <div>
                                 <div className="flex justify-between text-xs text-tactical-text-secondary mb-1">
-                                    <span>Curl Density Index (C_curl)</span>
+                                    <span>{isTr ? "Kıvrılma Yoğunluk İndeksi (C_curl)" : "Curl Density Index (C_curl)"}</span>
                                     <span className="font-mono text-tactical-text-primary">
                                         {result.texture.curl_density_index.toFixed(3)} / 10.0
                                     </span>
                                 </div>
                                 <CurlIndexBar value={result.texture.curl_density_index} />
                                 <div className="flex justify-between text-[9px] text-tactical-text-secondary mt-0.5 font-mono">
-                                    <span>STRAIGHT</span><span>WAVY</span><span>CURLY</span><span>KINKY</span>
+                                    <span>{isTr ? "DÜZ" : "STRAIGHT"}</span>
+                                    <span>{isTr ? "DALGALI" : "WAVY"}</span>
+                                    <span>{isTr ? "KIVIRCIK" : "CURLY"}</span>
+                                    <span>{isTr ? "YÜNSÜ" : "KINKY"}</span>
                                 </div>
                             </div>
 
                             <div className="grid grid-cols-2 gap-2">
                                 <div className="bg-tactical-bg/40 rounded p-2">
-                                    <div className="text-[10px] text-tactical-text-secondary">Fiber Area</div>
+                                    <div className="text-[10px] text-tactical-text-secondary">{isTr ? "Lif Alanı" : "Fiber Area"}</div>
                                     <div className="text-sm font-mono text-sky-300">
                                         {result.texture.fiber_cross_sectional_area_um2.toFixed(1)} μm²
                                     </div>
                                 </div>
                                 <div className="bg-tactical-bg/40 rounded p-2">
-                                    <div className="text-[10px] text-tactical-text-secondary">Assayed Loci</div>
+                                    <div className="text-[10px] text-tactical-text-secondary">{isTr ? "Taranan Lokuslar" : "Assayed Loci"}</div>
                                     <div className="text-sm font-mono text-tactical-text-primary">
                                         {result.texture.assayed_texture_snps}/3
                                     </div>
@@ -425,7 +466,7 @@ export default function PanelHair() {
                             </div>
 
                             <div className="bg-tactical-bg/40 rounded p-2">
-                                <div className="text-[10px] text-tactical-text-secondary mb-0.5">Fiber Diameter</div>
+                                <div className="text-[10px] text-tactical-text-secondary mb-0.5">{isTr ? "Lif Çapı" : "Fiber Diameter"}</div>
                                 <div className="text-xs font-mono text-tactical-text-primary break-words">
                                     {result.texture.estimated_fiber_diameter_um}
                                 </div>
@@ -436,26 +477,33 @@ export default function PanelHair() {
                         <div className="bg-tactical-surface/50 border border-amber-500/30 rounded-xl p-4 flex flex-col gap-3">
                             <div className="flex items-center gap-2">
                                 <User className="w-4 h-4 text-amber-400" />
-                                <span className="text-sm font-mono text-tactical-text-primary font-semibold">Androgenetic Alopecia PRS</span>
+                                <span className="text-sm font-mono text-tactical-text-primary font-semibold">
+                                    {isTr ? "Androgenetik Alopesi PRS" : "Androgenetic Alopecia PRS"}
+                                </span>
                             </div>
 
                             <div className="flex items-center justify-between">
-                                <span className="text-xs text-tactical-text-secondary">Risk Level</span>
+                                <span className="text-xs text-tactical-text-secondary">{isTr ? "Risk Seviyesi" : "Risk Level"}</span>
                                 <span className={`text-sm font-mono font-bold ${RISK_COLORS[result.balding.risk_level] ?? "text-tactical-text-primary"}`}>
-                                    {result.balding.risk_level.replace("_", " ")}
+                                    {isTr
+                                        ? (result.balding.risk_level === "LOW_RISK" ? "DÜŞÜK RİSK"
+                                            : result.balding.risk_level === "MODERATE_RISK" ? "ORTA RİSK"
+                                            : result.balding.risk_level === "ELEVATED_RISK" ? "YÜKSEK RİSK"
+                                            : "AŞIRI YÜKSEK RİSK")
+                                        : result.balding.risk_level.replace("_", " ")}
                                 </span>
                             </div>
 
                             <div className="grid grid-cols-2 gap-2">
                                 <div className="bg-tactical-bg/40 rounded p-2">
-                                    <div className="text-[10px] text-tactical-text-secondary">PRS Score</div>
+                                    <div className="text-[10px] text-tactical-text-secondary">{isTr ? "PRS Skoru" : "PRS Score"}</div>
                                     <div className="text-lg font-mono text-amber-300 tabular-nums">
                                         {result.balding.prs_score.toFixed(3)}
                                     </div>
-                                    <div className="text-[9px] text-tactical-text-secondary">max 4.740</div>
+                                    <div className="text-[9px] text-tactical-text-secondary">{isTr ? "maks 4.740" : "max 4.740"}</div>
                                 </div>
                                 <div className="bg-tactical-bg/40 rounded p-2">
-                                    <div className="text-[10px] text-tactical-text-secondary">HN Grade</div>
+                                    <div className="text-[10px] text-tactical-text-secondary">{isTr ? "HN Evresi" : "HN Grade"}</div>
                                     <div className="text-sm font-mono text-amber-300">
                                         {result.balding.hamilton_norwood_grade.replace("_", " ")}
                                     </div>
@@ -463,27 +511,31 @@ export default function PanelHair() {
                             </div>
 
                             <div>
-                                <div className="text-[10px] text-tactical-text-secondary mb-1.5">Hamilton-Norwood Scale</div>
+                                <div className="text-[10px] text-tactical-text-secondary mb-1.5">
+                                    {isTr ? "Hamilton-Norwood Ölçeği" : "Hamilton-Norwood Scale"}
+                                </div>
                                 <HamiltonNorwoodScale grade={result.balding.hamilton_norwood_grade} />
                             </div>
 
                             <div className="bg-tactical-bg/40 rounded p-2">
-                                <div className="text-[10px] text-tactical-text-secondary mb-0.5">Clinical Description</div>
+                                <div className="text-[10px] text-tactical-text-secondary mb-0.5">{isTr ? "Klinik Açıklama" : "Clinical Description"}</div>
                                 <div className="text-xs text-tactical-text-primary leading-relaxed">
                                     {result.balding.clinical_description}
                                 </div>
                             </div>
 
                             <div className="text-[10px] text-tactical-text-secondary font-mono">
-                                Assayed Balding Loci: {result.balding.assayed_balding_snps}/4
+                                {isTr ? "Taranan Kellik Lokusları:" : "Assayed Balding Loci:"} {result.balding.assayed_balding_snps}/4
                             </div>
                         </div>
 
                         {/* Legal Shield */}
                         <div className="lg:col-span-2 bg-amber-500/5 border border-amber-500/25 rounded-lg p-3 flex items-start gap-2">
-                            <AlertTriangle className="w-4 h-4 text-amber-400 mt-0.5 flex-shrink-0" />
+                            <ShieldCheck className="w-4 h-4 text-amber-400 mt-0.5 flex-shrink-0" />
                             <p className="text-[10px] text-tactical-text-secondary leading-relaxed">
-                                <span className="text-amber-400 font-semibold">Forensic Legal Shield: </span>
+                                <span className="text-amber-400 font-semibold">
+                                    {isTr ? "Adli Hukuki Bildirim Kalkanı: " : "Forensic Legal Shield: "}
+                                </span>
                                 {result.prosecutors_fallacy_shield}
                             </p>
                         </div>
@@ -494,10 +546,10 @@ export default function PanelHair() {
             {/* Methodology Footer */}
             <div className="bg-tactical-surface/30 border border-tactical-border/30 rounded-lg p-3 grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
                 {[
-                    { label: "Baseline Area", value: "3850 μm²" },
-                    { label: "EDAR Δ/allele", value: "+1420 μm²" },
-                    { label: "C_curl Range", value: "[0.0, 10.0]" },
-                    { label: "Max PRS", value: "4.740" },
+                    { label: isTr ? "Temel Alan" : "Baseline Area", value: "3850 μm²" },
+                    { label: isTr ? "EDAR Δ/alel" : "EDAR Δ/allele", value: "+1420 μm²" },
+                    { label: isTr ? "C_curl Aralığı" : "C_curl Range", value: "[0.0, 10.0]" },
+                    { label: isTr ? "Maks PRS" : "Max PRS", value: "4.740" },
                 ].map(m => (
                     <div key={m.label}>
                         <div className="text-[9px] text-tactical-text-secondary">{m.label}</div>

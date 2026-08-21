@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useForensicCaseStore } from "@/store/forensicCaseStore";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 import AncestryDataPanel from "@/components/analysis/AncestryDataPanel";
 import LineageDnaPanel from "@/components/analysis/LineageDnaPanel";
 import PanelYSTR from "@/components/analysis/PanelYSTR";
@@ -118,6 +119,8 @@ function computeBaldingNicholsGenotypeProb(
 
 export function PanelSTR() {
   const { activeCase } = useForensicCaseStore();
+  const { lang } = useSaasLanguage();
+  const isTr = lang === "tr";
   const [population, setPopulation] = useState<string>("Caucasian");
   const [theta, setTheta] = useState<number>(0.01);
   const [activeTab, setActiveTab] = useState<"table" | "uncertainty">("table");
@@ -166,20 +169,22 @@ export function PanelSTR() {
   const ci95Upper = totalLog10 + expandedUncertaintyU95;
 
   // ENFSI (2017) 7-Tier Standardized Verbal Reporting Scale
-  let enfsiScale = "Extremely Strong Support for Prosecution Hypothesis (Hp)";
-  let enfsiTier = "Tier 5 (log₁₀ LR ≥ 6.0)";
+  let enfsiScale = isTr
+    ? "İddia Makamı Hipotezi (Hp) Lehine Son Derece Güçlü Destek"
+    : "Extremely Strong Support for Prosecution Hypothesis (Hp)";
+  let enfsiTier = isTr ? "Kademe 5 (log₁₀ LR ≥ 6.0)" : "Tier 5 (log₁₀ LR ≥ 6.0)";
   if (totalLog10 < 1.0) {
-    enfsiScale = "Inconclusive / Neutral Support (1 ≤ LR < 10)";
-    enfsiTier = "Tier 0 (0 ≤ log₁₀ LR < 1.0)";
+    enfsiScale = isTr ? "Sonuçsuz / Nötr Destek (1 ≤ LR < 10)" : "Inconclusive / Neutral Support (1 ≤ LR < 10)";
+    enfsiTier = isTr ? "Kademe 0 (0 ≤ log₁₀ LR < 1.0)" : "Tier 0 (0 ≤ log₁₀ LR < 1.0)";
   } else if (totalLog10 < 2.0) {
-    enfsiScale = "Moderate Support for Prosecution Hypothesis (Hp)";
-    enfsiTier = "Tier 1 (1.0 ≤ log₁₀ LR < 2.0)";
+    enfsiScale = isTr ? "İddia Makamı Hipotezi (Hp) Lehine Orta Derecede Destek" : "Moderate Support for Prosecution Hypothesis (Hp)";
+    enfsiTier = isTr ? "Kademe 1 (1.0 ≤ log₁₀ LR < 2.0)" : "Tier 1 (1.0 ≤ log₁₀ LR < 2.0)";
   } else if (totalLog10 < 4.0) {
-    enfsiScale = "Moderately Strong Support for Prosecution Hypothesis (Hp)";
-    enfsiTier = "Tier 2 (2.0 ≤ log₁₀ LR < 4.0)";
+    enfsiScale = isTr ? "İddia Makamı Hipotezi (Hp) Lehine Orta-Güçlü Destek" : "Moderately Strong Support for Prosecution Hypothesis (Hp)";
+    enfsiTier = isTr ? "Kademe 2 (2.0 ≤ log₁₀ LR < 4.0)" : "Tier 2 (2.0 ≤ log₁₀ LR < 4.0)";
   } else if (totalLog10 < 6.0) {
-    enfsiScale = "Strong Support for Prosecution Hypothesis (Hp)";
-    enfsiTier = "Tier 3/4 (4.0 ≤ log₁₀ LR < 6.0)";
+    enfsiScale = isTr ? "İddia Makamı Hipotezi (Hp) Lehine Güçlü Destek" : "Strong Support for Prosecution Hypothesis (Hp)";
+    enfsiTier = isTr ? "Kademe 3/4 (4.0 ≤ log₁₀ LR < 6.0)" : "Tier 3/4 (4.0 ≤ log₁₀ LR < 6.0)";
   }
 
   return (
@@ -190,11 +195,15 @@ export function PanelSTR() {
           <div className="flex items-center gap-2">
             <span className="h-2 w-2 rounded-full bg-cyan-400" />
             <span className="text-xs font-bold text-white uppercase tracking-wider">
-              Balding-Nichols Subpopulation Coancestry Model (NRC II Rec 4.4)
+              {isTr
+                ? "Balding-Nichols Alt Popülasyon Akrabalık Modeli (NRC II Tavsiye 4.4)"
+                : "Balding-Nichols Subpopulation Coancestry Model (NRC II Rec 4.4)"}
             </span>
           </div>
           <p className="text-[10px] text-zinc-400">
-            NIST 1036 Allele Frequencies • Minimum Frequency Floor p_min = 5/(2N) = 0.00241 • ISO 17025 U_95%
+            {isTr
+              ? "NIST 1036 Alel Frekansları • Asgari Frekans Tabanı p_min = 5/(2N) = 0.00241 • ISO 17025 U_95%"
+              : "NIST 1036 Allele Frequencies • Minimum Frequency Floor p_min = 5/(2N) = 0.00241 • ISO 17025 U_95%"}
           </p>
         </div>
 
@@ -248,27 +257,37 @@ export function PanelSTR() {
       {/* Summary LR KPI Cards Deck */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <div className="p-3.5 rounded-xl border border-cyan-500/30 bg-cyan-950/20 space-y-1">
-          <span className="text-[9px] text-cyan-400 font-bold uppercase">Combined Match LR (Product)</span>
+          <span className="text-[9px] text-cyan-400 font-bold uppercase">
+            {isTr ? "Birleşik Eşleşme LR (Çarpım)" : "Combined Match LR (Product)"}
+          </span>
           <p className="text-xl font-mono font-extrabold text-white tabular-nums">
             {totalLR > 1e15 ? totalLR.toExponential(4) : totalLR.toLocaleString()}
           </p>
-          <p className="text-[9px] text-zinc-400">∏ LR_l across {computedLoci.length} loci</p>
+          <p className="text-[9px] text-zinc-400">
+            {isTr ? `${computedLoci.length} lokus üzerinden ∏ LR_l` : `∏ LR_l across ${computedLoci.length} loci`}
+          </p>
         </div>
 
         <div className="p-3.5 rounded-xl border border-emerald-500/30 bg-emerald-950/20 space-y-1">
-          <span className="text-[9px] text-emerald-400 font-bold uppercase">Log10 Likelihood Ratio</span>
+          <span className="text-[9px] text-emerald-400 font-bold uppercase">
+            {isTr ? "Log10 Olabilirlik Oranı" : "Log10 Likelihood Ratio"}
+          </span>
           <p className="text-xl font-mono font-extrabold text-emerald-300 tabular-nums">+{totalLog10.toFixed(4)}</p>
-          <p className="text-[9px] text-zinc-400">Additive log₁₀(LR) sum</p>
+          <p className="text-[9px] text-zinc-400">{isTr ? "Toplamsal log₁₀(LR) toplamı" : "Additive log₁₀(LR) sum"}</p>
         </div>
 
         <div className="p-3.5 rounded-xl border border-purple-500/30 bg-purple-950/20 space-y-1">
-          <span className="text-[9px] text-purple-400 font-bold uppercase">ISO 17025 Uncertainty (U_95%)</span>
+          <span className="text-[9px] text-purple-400 font-bold uppercase">
+            {isTr ? "ISO 17025 Belirsizlik (U_95%)" : "ISO 17025 Uncertainty (U_95%)"}
+          </span>
           <p className="text-xl font-mono font-extrabold text-purple-300 tabular-nums">±{expandedUncertaintyU95.toFixed(3)}</p>
-          <p className="text-[9px] text-zinc-400">95% CI: [{ci95Lower.toFixed(2)}, {ci95Upper.toFixed(2)}]</p>
+          <p className="text-[9px] text-zinc-400">%95 GA: [{ci95Lower.toFixed(2)}, {ci95Upper.toFixed(2)}]</p>
         </div>
 
         <div className="p-3.5 rounded-xl border border-tactical-border/60 bg-black/40 space-y-1">
-          <span className="text-[9px] text-zinc-400 font-bold uppercase">ENFSI (2017) Verbal Scale</span>
+          <span className="text-[9px] text-zinc-400 font-bold uppercase">
+            {isTr ? "ENFSI (2017) İfade Ölçeği" : "ENFSI (2017) Verbal Scale"}
+          </span>
           <p className="text-xs font-bold text-white uppercase mt-0.5 leading-snug line-clamp-2">{enfsiScale}</p>
           <p className="text-[9px] text-emerald-400">{enfsiTier}</p>
         </div>
@@ -278,11 +297,13 @@ export function PanelSTR() {
       <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs font-mono">
         <div className="flex items-center gap-2">
           <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="font-bold text-emerald-300">Biostatistical Additivity Invariant Verified:</span>
+          <span className="font-bold text-emerald-300">
+            {isTr ? "Biyoistatistiksel Toplamsallık İnvaryantı Doğrulandı:" : "Biostatistical Additivity Invariant Verified:"}
+          </span>
           <span className="text-zinc-300">log₁₀(LR_total) = ∑ log₁₀(LR_l) = +{totalLog10.toFixed(6)}</span>
         </div>
         <div className="text-[10px] text-zinc-400 font-mono">
-          Combined LR = ∏ LR_l = <strong className="text-emerald-300">{totalLR.toExponential(6)}</strong> (0.000% Deviation)
+          {isTr ? "Birleşik LR" : "Combined LR"} = ∏ LR_l = <strong className="text-emerald-300">{totalLR.toExponential(6)}</strong> ({isTr ? "%0.000 Sapma" : "0.000% Deviation"})
         </div>
       </div>
 
@@ -292,14 +313,14 @@ export function PanelSTR() {
           <table className="w-full text-left font-mono text-xs tabular-nums">
             <thead className="bg-tactical-surface/80 border-b border-tactical-border/60 text-[10px] text-zinc-400 uppercase tracking-wider">
               <tr>
-                <th className="p-3">STR Locus</th>
-                <th className="p-3">Evidence Call</th>
-                <th className="p-3">Reference Call</th>
-                <th className="p-3">Allele Frequencies ({population})</th>
+                <th className="p-3">{isTr ? "STR Lokusu" : "STR Locus"}</th>
+                <th className="p-3">{isTr ? "Delil Alelleri" : "Evidence Call"}</th>
+                <th className="p-3">{isTr ? "Referans Alelleri" : "Reference Call"}</th>
+                <th className="p-3">{isTr ? "Alel Frekansları" : "Allele Frequencies"} ({population})</th>
                 <th className="p-3">P(G | θ={theta})</th>
-                <th className="p-3">Locus LR</th>
+                <th className="p-3">{isTr ? "Lokus LR" : "Locus LR"}</th>
                 <th className="p-3">Log₁₀(LR)</th>
-                <th className="p-3">Cumulative</th>
+                <th className="p-3">{isTr ? "Kümülatif" : "Cumulative"}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-tactical-border/40 text-zinc-300">

@@ -22,15 +22,18 @@ import {
   Percent,
   Atom,
 } from "lucide-react";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
 export interface AdnaCaseworkPreset {
   id: string;
   title: string;
+  titleTr: string;
   badge: string;
   sampleType: string;
   description: string;
+  descriptionTr: string;
   delta0: number;
   decayAlpha: number;
   baseline: number;
@@ -46,9 +49,11 @@ const ADNA_PRESETS: AdnaCaseworkPreset[] = [
   {
     id: "BENCHMARK_COLUMBUS_SKELETAL",
     title: "Christopher Columbus Skeletal Remains Series",
+    titleTr: "Kristof Kolomb İskelet Kalıntıları Serisi",
     badge: "Historical aDNA",
     sampleType: "500-Year-Old Skeletal Remains",
     description: "High terminal deamination (delta_0=0.38) and severe fragmentation (52.4 bp).",
+    descriptionTr: "Yüksek uç deaminasyon (delta_0=0,38) ve ağır parçalanma (52,4 bp).",
     delta0: 0.38,
     decayAlpha: 0.14,
     baseline: 0.006,
@@ -62,9 +67,11 @@ const ADNA_PRESETS: AdnaCaseworkPreset[] = [
   {
     id: "BENCHMARK_BRIGGS_ANCIENT",
     title: "Briggs Ancient Bone Reference Standard",
+    titleTr: "Briggs Antik Kemik Referans Standardı",
     badge: "Neandertal Model",
     sampleType: "Archaeological Bone Specimen",
     description: "Classical exponential cytosine deamination gradient across first 20 bp (delta_0=0.28, alpha=0.12).",
+    descriptionTr: "İlk 20 bp boyunca klasik üstel sitozin deaminasyon gradyanı (delta_0=0,28, alpha=0,12).",
     delta0: 0.28,
     decayAlpha: 0.12,
     baseline: 0.005,
@@ -78,9 +85,11 @@ const ADNA_PRESETS: AdnaCaseworkPreset[] = [
   {
     id: "BENCHMARK_CONTAMINATED_ADNA",
     title: "Admixed Modern/Ancient Contaminated Specimen",
+    titleTr: "Karışık Modern/Antik Kontamine Örnek",
     badge: "12% Modern DNA",
     sampleType: "Handled Forensic Bone",
     description: "12% modern un-deaminated DNA contamination requiring mathematical culling to reveal true damage.",
+    descriptionTr: "Gerçek hasarı ortaya çıkarmak için matematiksel arındırma gerektiren %12 modern DNA kontaminasyonu.",
     delta0: 0.22,
     decayAlpha: 0.11,
     baseline: 0.005,
@@ -94,9 +103,11 @@ const ADNA_PRESETS: AdnaCaseworkPreset[] = [
   {
     id: "BENCHMARK_WELL_PRESERVED_COLD",
     title: "High-Latitude Cryo-Preserved Specimen",
+    titleTr: "Yüksek Enlem Kriyojenik Korunmuş Örnek",
     badge: "Permafrost Cave",
     sampleType: "Permafrost Skeletal Remains",
     description: "Well-preserved cold-climate specimen with moderate deamination (delta_0=0.08) and mean length 95.0 bp.",
+    descriptionTr: "Ilımlı deaminasyon (delta_0=0,08) ve ortalama 95,0 bp uzunluklu iyi korunmuş soğuk iklim örneği.",
     delta0: 0.08,
     decayAlpha: 0.08,
     baseline: 0.004,
@@ -110,9 +121,11 @@ const ADNA_PRESETS: AdnaCaseworkPreset[] = [
   {
     id: "BENCHMARK_MODERN_CONTROL_NEGATIVE",
     title: "Modern Pristine Blood Reference (Negative Control)",
+    titleTr: "Modern Bozulmamış Kan Referansı (Negatif Kontrol)",
     badge: "Modern Control",
     sampleType: "Pristine Whole Blood",
     description: "Modern un-deaminated negative control showing flat damage curve and intact high-molecular DNA.",
+    descriptionTr: "Düz hasar eğrisi ve bozulmamış yüksek moleküler DNA gösteren modern negatif kontrol.",
     delta0: 0.002,
     decayAlpha: 0.01,
     baseline: 0.002,
@@ -126,6 +139,8 @@ const ADNA_PRESETS: AdnaCaseworkPreset[] = [
 ];
 
 export default function PanelADNA() {
+  const { lang } = useSaasLanguage();
+  const isTr = lang === "tr";
   const [selectedPresetId, setSelectedPresetId] = useState<string>("BENCHMARK_COLUMBUS_SKELETAL");
   const [delta0, setDelta0] = useState<number>(0.38);
   const [decayAlpha, setDecayAlpha] = useState<number>(0.14);
@@ -179,20 +194,20 @@ export default function PanelADNA() {
   let tierLabel: string;
   if (meanLen < 60.0) {
     tierColor = "bg-rose-500/20 text-rose-300 border-rose-500/40";
-    tierLabel = "SEVERE DEGRADATION (Mean < 60 bp)";
+    tierLabel = isTr ? "AĞIR BOZULMA (Ortalama < 60 bp)" : "SEVERE DEGRADATION (Mean < 60 bp)";
   } else if (meanLen < 90.0) {
     tierColor = "bg-amber-500/20 text-amber-300 border-amber-500/40";
-    tierLabel = "MODERATE DEGRADATION (60 - 90 bp)";
+    tierLabel = isTr ? "ORTA DÜZEY BOZULMA (60 - 90 bp)" : "MODERATE DEGRADATION (60 - 90 bp)";
   } else if (meanLen < 150.0) {
     tierColor = "bg-cyan-500/20 text-cyan-300 border-cyan-500/40";
-    tierLabel = "LOW DEGRADATION (90 - 150 bp)";
+    tierLabel = isTr ? "DÜŞÜK BOZULMA (90 - 150 bp)" : "LOW DEGRADATION (90 - 150 bp)";
   } else {
     tierColor = "bg-emerald-500/20 text-emerald-300 border-emerald-500/40";
-    tierLabel = "PRISTINE MODERN DNA (> 150 bp)";
+    tierLabel = isTr ? "BOZULMAMIŞ MODERN DNA (> 150 bp)" : "PRISTINE MODERN DNA (> 150 bp)";
   }
 
   return (
-    <div className="space-y-6 text-slate-100 font-sans pb-12">
+    <div className="space-y-6 text-slate-100 font-mono pb-12">
       {/* ── Header & Badges ────────────────────────────────────────────── */}
       <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-6 shadow-xl backdrop-blur">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
@@ -202,14 +217,18 @@ export default function PanelADNA() {
                 <Dna className="w-6 h-6 animate-pulse" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-white tracking-tight flex items-center gap-2">
-                  Ancient & Degraded DNA Damage Kinetics Engine
+                <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight flex items-center gap-2">
+                  {isTr
+                    ? "Antik & Bozulmuş DNA Hasar Kinetiği Motoru"
+                    : "Ancient & Degraded DNA Damage Kinetics Engine"}
                   <span className="text-xs px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                    Pillar 2.5
+                    {isTr ? "Süit 2.5" : "Pillar 2.5"}
                   </span>
                 </h1>
                 <p className="text-xs text-slate-400 mt-0.5">
-                  Briggs Deamination Kinetics • MapDamage 2.0 • Fragment Length Modeling • Modern Contaminant Subtraction
+                  {isTr
+                    ? "Briggs Deaminasyon Kinetiği • MapDamage 2.0 • Fragman Uzunluk Modellemesi • Modern Kontaminant Arındırma"
+                    : "Briggs Deamination Kinetics • MapDamage 2.0 • Fragment Length Modeling • Modern Contaminant Subtraction"}
                 </p>
               </div>
             </div>
@@ -217,13 +236,13 @@ export default function PanelADNA() {
 
           <div className="flex flex-wrap items-center gap-2">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium bg-amber-950/60 text-amber-400 border border-amber-800/60">
-              <ShieldCheck className="w-3.5 h-3.5" /> ISFG Paleogenomics Standard
+              <ShieldCheck className="w-3.5 h-3.5" /> {isTr ? "ISFG Paleogenomik Standardı" : "ISFG Paleogenomics Standard"}
             </span>
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium bg-blue-950/60 text-blue-400 border border-blue-800/60">
-              <Activity className="w-3.5 h-3.5" /> MapDamage 2.0 Calibrated
+              <Activity className="w-3.5 h-3.5" /> {isTr ? "MapDamage 2.0 Kalibre" : "MapDamage 2.0 Calibrated"}
             </span>
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium bg-purple-950/60 text-purple-400 border border-purple-800/60">
-              <Scissors className="w-3.5 h-3.5" /> Depurination Pre-Break
+              <Scissors className="w-3.5 h-3.5" /> {isTr ? "Kırılma Öncesi Depürinasyon" : "Depurination Pre-Break"}
             </span>
           </div>
         </div>
@@ -231,7 +250,9 @@ export default function PanelADNA() {
         {/* ── Casework Benchmark Selector ─────────────────────────────────── */}
         <div className="mt-6 pt-6 border-t border-slate-800/80">
           <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-3">
-            Select Certified Ancient / Degraded Forensic DNA Benchmark:
+            {isTr
+              ? "Sertifikalı Antik / Bozulmuş Adli DNA Doğrulamasını Seçin:"
+              : "Select Certified Ancient / Degraded Forensic DNA Benchmark:"}
           </label>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
             {ADNA_PRESETS.map((preset) => {
@@ -242,7 +263,7 @@ export default function PanelADNA() {
                   onClick={() => {
                     startTransition(() => setSelectedPresetId(preset.id));
                   }}
-                  className={`p-3 rounded-lg text-left transition-all border ${
+                  className={`p-3 rounded-lg text-left transition-all border cursor-pointer ${
                     isSelected
                       ? "bg-amber-950/40 border-amber-500/60 text-white shadow-lg shadow-amber-950/30"
                       : "bg-slate-800/40 border-slate-700/60 text-slate-400 hover:bg-slate-800/80 hover:text-slate-200"
@@ -254,8 +275,12 @@ export default function PanelADNA() {
                     </span>
                     {isSelected && <Check className="w-3.5 h-3.5 text-amber-400 shrink-0" />}
                   </div>
-                  <div className="text-xs font-semibold text-slate-200 line-clamp-1">{preset.title}</div>
-                  <div className="text-[11px] text-slate-400 line-clamp-2 mt-0.5">{preset.description}</div>
+                  <div className="text-xs font-semibold text-slate-200 line-clamp-1">
+                    {isTr ? preset.titleTr : preset.title}
+                  </div>
+                  <div className="text-[11px] text-slate-400 line-clamp-2 mt-0.5">
+                    {isTr ? preset.descriptionTr : preset.description}
+                  </div>
                 </button>
               );
             })}
@@ -272,14 +297,14 @@ export default function PanelADNA() {
               <div>
                 <h2 className="text-sm font-bold text-white flex items-center gap-2">
                   <TrendingDown className="w-4 h-4 text-amber-400" />
-                  Briggs Cytosine Deamination Gradient
+                  {isTr ? "Briggs Sitozin Deaminasyon Gradyanı" : "Briggs Cytosine Deamination Gradient"}
                 </h2>
                 <p className="text-xs text-slate-400">
-                  δ_k = δ_0 × exp(-α × (k - 1)) + baseline error
+                  δ_k = δ_0 × exp(-α × (k - 1)) + {isTr ? "taban hatası" : "baseline error"}
                 </p>
               </div>
               <span className="text-xs font-mono px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-amber-300">
-                Positions 1 – 25 bp
+                {isTr ? "Pozisyonlar 1 – 25 bp" : "Positions 1 – 25 bp"}
               </span>
             </div>
 
@@ -336,18 +361,28 @@ export default function PanelADNA() {
             <div className="flex items-center justify-between text-xs mt-3 px-1">
               <div className="flex items-center gap-2">
                 <span className="w-3 h-1 bg-cyan-400 rounded-full inline-block"></span>
-                <span className="text-slate-300 font-mono text-[11px]">5&apos; C→T Deamination</span>
+                <span className="text-slate-300 font-mono text-[11px]">
+                  {isTr ? "5' C→T Deaminasyonu" : "5' C→T Deamination"}
+                </span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="w-3 h-1 bg-purple-400 rounded-full inline-block border-dashed"></span>
-                <span className="text-slate-300 font-mono text-[11px]">3&apos; G→A Complementary</span>
+                <span className="text-slate-300 font-mono text-[11px]">
+                  {isTr ? "3' G→A Tamamlayıcı" : "3' G→A Complementary"}
+                </span>
               </div>
             </div>
           </div>
 
           <div className="pt-3 border-t border-slate-800 flex justify-between text-xs text-slate-400">
-            <span>Terminal Damage (δ_0): <strong className="font-mono text-cyan-300">{delta0.toFixed(3)}</strong></span>
-            <span>Decay Rate (α): <strong className="font-mono text-amber-300">{decayAlpha.toFixed(3)}/bp</strong></span>
+            <span>
+              {isTr ? "Uç Hasar (δ_0): " : "Terminal Damage (δ_0): "}
+              <strong className="font-mono text-cyan-300">{delta0.toFixed(3)}</strong>
+            </span>
+            <span>
+              {isTr ? "Bozunma Oranı (α): " : "Decay Rate (α): "}
+              <strong className="font-mono text-amber-300">{decayAlpha.toFixed(3)}/bp</strong>
+            </span>
           </div>
         </div>
 
@@ -358,10 +393,10 @@ export default function PanelADNA() {
               <div>
                 <h2 className="text-sm font-bold text-white flex items-center gap-2">
                   <BarChart3 className="w-4 h-4 text-cyan-400" />
-                  Fragment Length Distribution & Dropout Risk
+                  {isTr ? "Fragman Uzunluk Dağılımı & Kayıp Riski" : "Fragment Length Distribution & Dropout Risk"}
                 </h2>
                 <p className="text-xs text-slate-400">
-                  P(L) = λ × exp(-λ × (L - L_min)) • Mean = {meanLen.toFixed(1)} bp
+                  P(L) = λ × exp(-λ × (L - L_min)) • {isTr ? "Ortalama" : "Mean"} = {meanLen.toFixed(1)} bp
                 </p>
               </div>
               <span className={`text-xs font-mono font-bold px-2 py-0.5 rounded border ${tierColor}`}>
@@ -372,36 +407,54 @@ export default function PanelADNA() {
             {/* Fragmentation Statistics Cards */}
             <div className="grid grid-cols-2 gap-3 mb-4">
               <div className="p-3 bg-slate-800/50 rounded-lg border border-slate-700">
-                <span className="text-[11px] text-slate-400 block">Mean Fragment Length:</span>
+                <span className="text-[11px] text-slate-400 block">
+                  {isTr ? "Ortalama Fragman Uzunluğu:" : "Mean Fragment Length:"}
+                </span>
                 <span className="text-xl font-bold font-mono text-white">{meanLen.toFixed(1)} bp</span>
-                <span className="text-[10px] text-slate-500 block font-mono">Median: {medianLen.toFixed(1)} bp</span>
+                <span className="text-[10px] text-slate-500 block font-mono">
+                  {isTr ? "Medyan:" : "Median:"} {medianLen.toFixed(1)} bp
+                </span>
               </div>
 
               <div className="p-3 bg-slate-800/50 rounded-lg border border-slate-700">
-                <span className="text-[11px] text-slate-400 block">Fragments &lt; 100 bp:</span>
+                <span className="text-[11px] text-slate-400 block">
+                  {isTr ? "100 bp Altı Fragmanlar:" : "Fragments < 100 bp:"}
+                </span>
                 <span className="text-xl font-bold font-mono text-rose-400">{(fracBelow100 * 100).toFixed(1)}%</span>
-                <span className="text-[10px] text-slate-500 block font-mono">Standard STR Dropout</span>
+                <span className="text-[10px] text-slate-500 block font-mono">
+                  {isTr ? "Standart STR Lokus Kaybı" : "Standard STR Dropout"}
+                </span>
               </div>
             </div>
 
             {/* Recommended Forensic Typing Protocol */}
             <div className="p-3.5 bg-slate-950/60 rounded-lg border border-slate-800 space-y-1.5 text-xs">
               <div className="flex justify-between">
-                <span className="text-slate-400">Recommended Modality:</span>
+                <span className="text-slate-400">{isTr ? "Önerilen Yöntem:" : "Recommended Modality:"}</span>
                 <span className="font-mono font-bold text-cyan-300">{currentPreset.tech}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-400">Standard STR Feasibility:</span>
+                <span className="text-slate-400">{isTr ? "Standart STR Uygulanabilirliği:" : "Standard STR Feasibility:"}</span>
                 <span className={`font-semibold ${meanLen < 60 ? "text-rose-400" : meanLen < 90 ? "text-amber-400" : "text-emerald-400"}`}>
-                  {meanLen < 60 ? "0% (Complete Dropout)" : meanLen < 90 ? "Partial (< 30% loci)" : "Feasible (Full Multiplex)"}
+                  {meanLen < 60
+                    ? (isTr ? "%0 (Tam Lokus Kaybı)" : "0% (Complete Dropout)")
+                    : meanLen < 90
+                    ? (isTr ? "Kısmi (< %30 lokus)" : "Partial (< 30% loci)")
+                    : (isTr ? "Uygulanabilir (Tam Çoklama)" : "Feasible (Full Multiplex)")}
                 </span>
               </div>
             </div>
           </div>
 
           <div className="pt-3 border-t border-slate-800 text-[11px] text-slate-400 flex justify-between">
-            <span>Rate Parameter (λ): <strong className="font-mono text-slate-200">{lambdaFrag.toFixed(4)}</strong></span>
-            <span>Min Detectable (L_min): <strong className="font-mono text-slate-200">30 bp</strong></span>
+            <span>
+              {isTr ? "Oran Parametresi (λ): " : "Rate Parameter (λ): "}
+              <strong className="font-mono text-slate-200">{lambdaFrag.toFixed(4)}</strong>
+            </span>
+            <span>
+              {isTr ? "Min Saptanabilir (L_min): " : "Min Detectable (L_min): "}
+              <strong className="font-mono text-slate-200">30 bp</strong>
+            </span>
           </div>
         </div>
       </div>
@@ -413,7 +466,9 @@ export default function PanelADNA() {
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-bold text-white flex items-center gap-2">
               <Percent className="w-4 h-4 text-purple-400" />
-              Modern DNA Contaminant Subtraction & Depurination
+              {isTr
+                ? "Modern DNA Kontaminant Arındırma & Depürinasyon"
+                : "Modern DNA Contaminant Subtraction & Depurination"}
             </h2>
             <span className="text-xs font-mono text-purple-300">
               c = {(contamination * 100).toFixed(0)}% Modern
@@ -423,7 +478,9 @@ export default function PanelADNA() {
           {/* Contamination Slider */}
           <div>
             <div className="flex justify-between items-center text-xs mb-1.5">
-              <span className="text-slate-300">Modern Contamination Fraction (c):</span>
+              <span className="text-slate-300">
+                {isTr ? "Modern Kontaminasyon Oranı (c):" : "Modern Contamination Fraction (c):"}
+              </span>
               <span className="font-mono text-purple-400 font-bold">{(contamination * 100).toFixed(1)}%</span>
             </div>
             <input
@@ -436,26 +493,32 @@ export default function PanelADNA() {
               className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-purple-500"
             />
             <div className="flex justify-between text-[10px] text-slate-500 mt-1 font-mono">
-              <span>0% (Pure aDNA)</span>
-              <span>20% (Typical Handled)</span>
-              <span>40% (Severe)</span>
+              <span>0% ({isTr ? "Saf aDNA" : "Pure aDNA"})</span>
+              <span>20% ({isTr ? "Tipik İşlenmiş" : "Typical Handled"})</span>
+              <span>40% ({isTr ? "Ağır" : "Severe"})</span>
             </div>
           </div>
 
           {/* Subtraction Comparison Result */}
           <div className="p-3.5 bg-slate-800/40 rounded-lg border border-slate-700/60 space-y-2 text-xs">
             <div className="flex justify-between">
-              <span className="text-slate-400">Observed Terminal Damage (δ_obs):</span>
+              <span className="text-slate-400">
+                {isTr ? "Gözlenen Uç Hasar (δ_obs):" : "Observed Terminal Damage (δ_obs):"}
+              </span>
               <span className="font-mono text-slate-200">{delta0.toFixed(3)}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-400">True Ancient Terminal Damage (δ_ancient):</span>
+              <span className="text-slate-400">
+                {isTr ? "Gerçek Antik Uç Hasar (δ_ancient):" : "True Ancient Terminal Damage (δ_ancient):"}
+              </span>
               <span className="font-mono font-bold text-emerald-400">{trueAncientDelta0.toFixed(3)}</span>
             </div>
             <div className="flex justify-between pt-2 border-t border-slate-700/60">
-              <span className="text-slate-400">Pre-Break Purine Excess (-1 Site):</span>
+              <span className="text-slate-400">
+                {isTr ? "Kırılma Öncesi Pürin Fazlalığı (-1 Bölgesi):" : "Pre-Break Purine Excess (-1 Site):"}
+              </span>
               <span className="font-mono font-bold text-amber-300">
-                {(purineRatio * 100).toFixed(1)}% {purineRatio >= 0.65 ? "✓ (Ancient Depurination)" : "✗ (Modern)"}
+                {(purineRatio * 100).toFixed(1)}% {purineRatio >= 0.65 ? (isTr ? "✓ (Antik Depürinasyon)" : "✓ (Ancient Depurination)") : (isTr ? "✗ (Modern)" : "✗ (Modern)")}
               </span>
             </div>
           </div>
@@ -467,9 +530,13 @@ export default function PanelADNA() {
             <div>
               <h2 className="text-sm font-bold text-white flex items-center gap-2">
                 <Atom className="w-4 h-4 text-cyan-400" />
-                Damage-Compensated Low-Coverage SNP Calling
+                {isTr
+                  ? "Hasar Dengeli Düşük Kapsamlı SNP Çağırma"
+                  : "Damage-Compensated Low-Coverage SNP Calling"}
               </h2>
-              <p className="text-xs text-slate-400">Ref: C • Observed 2 Reads of &apos;T&apos;</p>
+              <p className="text-xs text-slate-400">
+                {isTr ? "Ref: C • Gözlenen 2 Okuma 'T'" : "Ref: C • Observed 2 Reads of 'T'"}
+              </p>
             </div>
             <span className="text-xs font-mono text-cyan-300">MC1R / rs1800407</span>
           </div>
@@ -477,8 +544,12 @@ export default function PanelADNA() {
           {/* Read Position Selector */}
           <div>
             <div className="flex justify-between items-center text-xs mb-1.5">
-              <span className="text-slate-300">Observed Read Distance from 5&apos; Terminus (k):</span>
-              <span className="font-mono text-cyan-400 font-bold">Position {testPosition} bp</span>
+              <span className="text-slate-300">
+                {isTr ? "5' Ucundan Gözlenen Okuma Mesafesi (k):" : "Observed Read Distance from 5' Terminus (k):"}
+              </span>
+              <span className="font-mono text-cyan-400 font-bold">
+                {isTr ? `Pozisyon ${testPosition} bp` : `Position ${testPosition} bp`}
+              </span>
             </div>
             <input
               type="range"
@@ -490,9 +561,9 @@ export default function PanelADNA() {
               className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-cyan-500"
             />
             <div className="flex justify-between text-[10px] text-slate-500 mt-1 font-mono">
-              <span>Position 1 (Terminal, High Damage)</span>
-              <span>Position 20</span>
-              <span>Position 40 (Interior, True SNP)</span>
+              <span>{isTr ? "Pozisyon 1 (Uç, Yüksek Hasar)" : "Position 1 (Terminal, High Damage)"}</span>
+              <span>{isTr ? "Pozisyon 20" : "Position 20"}</span>
+              <span>{isTr ? "Pozisyon 40 (İç Bölge, Gerçek SNP)" : "Position 40 (Interior, True SNP)"}</span>
             </div>
           </div>
 
@@ -515,11 +586,15 @@ export default function PanelADNA() {
           <div className="text-[11px] text-slate-400 p-2.5 bg-slate-950/40 rounded-lg border border-slate-800">
             {testPosition === 1 ? (
               <span className="text-cyan-300 font-medium">
-                ✓ Damage Compensation Active: Terminal &apos;T&apos; calls are correctly recognized as deaminated &apos;C&apos; rather than false homozygous &apos;TT&apos;.
+                {isTr
+                  ? "✓ Hasar Dengelemesi Etkin: Uç 'T' okumaları sahte homozigot 'TT' yerine doğru şekilde deamine olmuş 'C' olarak tanındı."
+                  : "✓ Damage Compensation Active: Terminal 'T' calls are correctly recognized as deaminated 'C' rather than false homozygous 'TT'."}
               </span>
             ) : (
               <span className="text-slate-300">
-                Interior Reads (k &gt; 20 bp): Minimal deamination (δ_k &lt; 0.02) allows authentic homozygous &apos;TT&apos; variant calling.
+                {isTr
+                  ? "İç Okumalar (k > 20 bp): Minimal deaminasyon (δ_k < 0,02) otantik homozigot 'TT' varyant çağrısına izin verir."
+                  : "Interior Reads (k > 20 bp): Minimal deamination (δ_k < 0.02) allows authentic homozygous 'TT' variant calling."}
               </span>
             )}
           </div>
@@ -531,13 +606,14 @@ export default function PanelADNA() {
         <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
         <div className="space-y-1">
           <span className="font-bold text-amber-300 uppercase tracking-wider block">
-            MANDATORY ISFG (2021) PALEOGENOMICS & ANCIENT FORENSIC DNA EVALUATIVE REPORTING DISCLAIMER
+            {isTr
+              ? "ZORUNLU ISFG (2021) PALEOGENOMİK & ANTİK ADLİ DNA DEĞERLENDİRİCİ RAPORLAMA BEYANI"
+              : "MANDATORY ISFG (2021) PALEOGENOMICS & ANCIENT FORENSIC DNA EVALUATIVE REPORTING DISCLAIMER"}
           </span>
           <p className="leading-relaxed text-slate-300">
-            Post-mortem hydrolytic deamination of cytosine (5&apos; C→T transitions) creates false homozygous alternative alleles.
-            All reported genotype likelihoods and Likelihood Ratios are computed under position-dependent damage compensation.
-            Judicial identification from degraded skeletal remains requires <strong className="text-amber-200">cumulative LR &ge; 1,000,000</strong> and
-            mandatory verification of authentic damage kinetics (terminal deamination δ_0 &ge; 0.15, mean fragment size &lt; 75 bp).
+            {isTr
+              ? "Ölüm sonrası hidrolitik sitozin deaminasyonu (5' C→T geçişleri) sahte homozigot alternatif aleller üretir. Raporlanan tüm genotip olabilirlikleri ve Olabilirlik Oranları, konuma bağlı hasar telafisi altında hesaplanmaktadır. Bozulmuş iskelet kalıntılarından adli kimliklendirme, kümülatif LR ≥ 1.000.000 ve otantik hasar kinetiğinin (uç deaminasyon δ_0 ≥ 0,15, ortalama fragman boyutu < 75 bp) zorunlu doğrulamasını gerektirir."
+              : "Post-mortem hydrolytic deamination of cytosine (5' C→T transitions) creates false homozygous alternative alleles. All reported genotype likelihoods and Likelihood Ratios are computed under position-dependent damage compensation. Judicial identification from degraded skeletal remains requires cumulative LR >= 1,000,000 and mandatory verification of authentic damage kinetics (terminal deamination δ_0 >= 0.15, mean fragment size < 75 bp)."}
           </p>
         </div>
       </div>

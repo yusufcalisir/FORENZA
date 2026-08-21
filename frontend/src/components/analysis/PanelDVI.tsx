@@ -29,15 +29,18 @@ import {
   Split,
   FolderSync,
 } from "lucide-react";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
 export interface DviCaseworkPreset {
   id: string;
   title: string;
+  titleTr: string;
   badge: string;
   pedigreeType: "DIRECT_AM" | "TRIO_PARENTS" | "DEFICIENCY_DUO" | "FULL_SIBLINGS";
   description: string;
+  descriptionTr: string;
   autosomalLr: number;
   ystrPUpper: number;
   mtdnaPUpper: number;
@@ -55,9 +58,11 @@ const DVI_PRESETS: DviCaseworkPreset[] = [
   {
     id: "VECTOR_P2_03_DEGRADED_SKELETAL",
     title: "Golden Benchmark VECTOR_P2_03 (Degraded Remains)",
+    titleTr: "Altın Doğrulama VECTOR_P2_03 (Bozulmuş Kalıntılar)",
     badge: "Combined LR=2.6e11",
     pedigreeType: "DEFICIENCY_DUO",
     description: "Severely degraded PM skeletal sample with Autosomal LR=5.2e3, Y-STR LR=5,000, mtDNA LR=10,000.",
+    descriptionTr: "Otozomal LR=5,2e3, Y-STR LR=5.000, mtDNA LR=10.000 olan ileri derecede bozulmuş PM iskelet örneği.",
     autosomalLr: 5.2e3,
     ystrPUpper: 0.0002,
     mtdnaPUpper: 0.0001,
@@ -73,9 +78,11 @@ const DVI_PRESETS: DviCaseworkPreset[] = [
   {
     id: "BENCHMARK_DIRECT_AM_MATCH",
     title: "Direct Ante-Mortem Toothbrush Reference",
+    titleTr: "Doğrudan Ante-Mortem Diş Fırçası Referansı",
     badge: "LR > 10^18",
     pedigreeType: "DIRECT_AM",
     description: "Full 24-locus autosomal match to confirmed ante-mortem personal reference standard.",
+    descriptionTr: "Doğrulanmış ante-mortem kişisel referans standardına tam 24-lokus otozomal eşleşme.",
     autosomalLr: 4.5e18,
     ystrPUpper: 1.0,
     mtdnaPUpper: 1.0,
@@ -91,9 +98,11 @@ const DVI_PRESETS: DviCaseworkPreset[] = [
   {
     id: "BENCHMARK_TRIO_MISSING_CHILD",
     title: "Biological Parents Trio (Missing Child)",
+    titleTr: "Biyolojik Ebeveyn Üçlüsü (Kayıp Çocuk)",
     badge: "LR = 8.7e7",
     pedigreeType: "TRIO_PARENTS",
     description: "Biological Mother and Father typed to identify an unidentified child with high certainty.",
+    descriptionTr: "Kimliği belirsiz bir çocuğu yüksek kesinlikle tanımlamak için tiplenen anne ve baba.",
     autosomalLr: 8.7e7,
     ystrPUpper: 1.0,
     mtdnaPUpper: 1.0,
@@ -109,9 +118,11 @@ const DVI_PRESETS: DviCaseworkPreset[] = [
   {
     id: "BENCHMARK_DEGRADED_PM_3_DROPOUTS",
     title: "Degraded PM Sample with 3 Loci Dropout",
+    titleTr: "3 Lokus Kayıplı Bozulmuş PM Örneği",
     badge: "21 Loci Typed",
     pedigreeType: "DIRECT_AM",
     description: "Victim with 3 dropped loci (21 typed loci) resolved cleanly under Bayesian pedigree prior.",
+    descriptionTr: "3 kayıp lokuslu (21 tiplenen lokus) kurban Bayesyen soybağı önceliği altında çözüldü.",
     autosomalLr: 1.2e12,
     ystrPUpper: 1.0,
     mtdnaPUpper: 1.0,
@@ -127,9 +138,11 @@ const DVI_PRESETS: DviCaseworkPreset[] = [
   {
     id: "BENCHMARK_UNRELATED_EXCLUSION",
     title: "Unrelated Non-Kin Exclusion Pair",
+    titleTr: "Akraba Olmayan Dışlama İkilisi",
     badge: "LR <= 10^-8",
     pedigreeType: "TRIO_PARENTS",
     description: "Multiple Mendelian exclusions across 24 loci yielding definitive exclusion LR.",
+    descriptionTr: "24 lokusta çoklu Mendel dışlaması sergileyen ve kesin dışlama LR'ı veren çift.",
     autosomalLr: 1.0e-8,
     ystrPUpper: 1.0,
     mtdnaPUpper: 1.0,
@@ -145,6 +158,8 @@ const DVI_PRESETS: DviCaseworkPreset[] = [
 ];
 
 export default function PanelDVI() {
+  const { lang } = useSaasLanguage();
+  const isTr = lang === "tr";
   const [selectedPresetId, setSelectedPresetId] = useState<string>("VECTOR_P2_03_DEGRADED_SKELETAL");
   const [autoLr, setAutoLr] = useState<number>(5.2e3);
   const [hasYstr, setHasYstr] = useState<boolean>(true);
@@ -192,28 +207,32 @@ export default function PanelDVI() {
   if (jointLr >= 1.0e6) {
     tier = "DEFINITIVE_IDENTIFICATION";
     tierColor = "bg-emerald-500/20 text-emerald-300 border-emerald-500/40";
-    tierLabel = "DEFINITIVE IDENTIFICATION (LR >= 10^6)";
-    actionText = "Sufficient forensic proof for standalone legal identification.";
+    tierLabel = isTr ? "KESİN KİMLİKLENDİRME (LR ≥ 10⁶)" : "DEFINITIVE IDENTIFICATION (LR >= 10^6)";
+    actionText = isTr ? "Tek başına hukuki kimliklendirme için yeterli adli kanıt." : "Sufficient forensic proof for standalone legal identification.";
   } else if (jointLr >= 1.0e4) {
     tier = "PROBABLE_MATCH";
     tierColor = "bg-cyan-500/20 text-cyan-300 border-cyan-500/40";
-    tierLabel = "PROBABLE MATCH (10^4 <= LR < 10^6)";
-    actionText = "Requires secondary corroboration (forensic odontology, implants, tattoos).";
+    tierLabel = isTr ? "OLASI EŞLEŞME (10⁴ ≤ LR < 10⁶)" : "PROBABLE MATCH (10^4 <= LR < 10^6)";
+    actionText = isTr ? "İkincil doğrulama gerektirir (adli odontoloji, implantlar, dövmeler)." : "Requires secondary corroboration (forensic odontology, implants, tattoos).";
   } else if (jointLr > 1.0e-2) {
     tier = "INCONCLUSIVE";
     tierColor = "bg-amber-500/20 text-amber-300 border-amber-500/40";
-    tierLabel = "INCONCLUSIVE (10^-2 < LR < 10^4)";
-    actionText = "Insufficient data; requires additional STR or NGS SNP testing.";
+    tierLabel = isTr ? "SONUÇSUZ (10⁻² < LR < 10⁴)" : "INCONCLUSIVE (10^-2 < LR < 10^4)";
+    actionText = isTr ? "Yetersiz veri; ek STR veya NGS SNP testi gereklidir." : "Insufficient data; requires additional STR or NGS SNP testing.";
   } else {
     tier = "EXCLUSION";
     tierColor = "bg-rose-500/20 text-rose-300 border-rose-500/40";
-    tierLabel = "DEFINITIVE EXCLUSION (LR <= 10^-2)";
-    actionText = "Definite exclusion from missing person reference pedigree.";
+    tierLabel = isTr ? "KESİN DIŞLAMA (LR ≤ 10⁻²)" : "DEFINITIVE EXCLUSION (LR <= 10^-2)";
+    actionText = isTr ? "Kayıp şahıs referans soybağından kesin olarak dışlama." : "Definite exclusion from missing person reference pedigree.";
   }
 
   // Simulated 3x3 Mass Disaster Reconciliation Matrix
-  const simulatedPMs = ["PM-REMAIN-01 (Femur)", "PM-REMAIN-02 (Tooth)", "PM-REMAIN-03 (Rib)"];
-  const simulatedAMs = ["AM-FAM-101 (Child)", "AM-FAM-102 (Father)", "AM-FAM-103 (Mother)"];
+  const simulatedPMs = isTr
+    ? ["PM-CESET-01 (Femur)", "PM-CESET-02 (Diş)", "PM-CESET-03 (Kaburga)"]
+    : ["PM-REMAIN-01 (Femur)", "PM-REMAIN-02 (Tooth)", "PM-REMAIN-03 (Rib)"];
+  const simulatedAMs = isTr
+    ? ["AM-AİLE-101 (Çocuk)", "AM-AİLE-102 (Baba)", "AM-AİLE-103 (Anne)"]
+    : ["AM-FAM-101 (Child)", "AM-FAM-102 (Father)", "AM-FAM-103 (Mother)"];
 
   const matrixScores = [
     [jointLr, 1.2e2, 1.0e-4],
@@ -222,7 +241,7 @@ export default function PanelDVI() {
   ];
 
   return (
-    <div className="space-y-6 text-slate-100 font-sans pb-12">
+    <div className="space-y-6 text-slate-100 font-mono pb-12">
       {/* ── Header & Badges ────────────────────────────────────────────── */}
       <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-6 shadow-xl backdrop-blur">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
@@ -232,14 +251,18 @@ export default function PanelDVI() {
                 <Users className="w-6 h-6 animate-pulse" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-white tracking-tight flex items-center gap-2">
-                  Interpol Disaster Victim Identification & Pedigree Reconciler
+                <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight flex items-center gap-2">
+                  {isTr
+                    ? "Interpol Afet Kurbanlarını Kimliklendirme & Soybağı Eşleştirici"
+                    : "Interpol Disaster Victim Identification & Pedigree Reconciler"}
                   <span className="text-xs px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
-                    Pillar 2.4
+                    {isTr ? "Süit 2.4" : "Pillar 2.4"}
                   </span>
                 </h1>
                 <p className="text-xs text-slate-400 mt-0.5">
-                  Interpol DVI Guide Section 4 (2018/2023) • Multi-Omic Evidence Fusion • Bayesian Posterior Odds • Hungarian 1-to-1 Solver
+                  {isTr
+                    ? "Interpol DVI Kılavuzu Bölüm 4 (2018/2023) • Çoklu-Omik Kanıt Birleştirme • Bayesyen Sonsal Oranlar • Macar 1-e-1 Çözücü"
+                    : "Interpol DVI Guide Section 4 (2018/2023) • Multi-Omic Evidence Fusion • Bayesian Posterior Odds • Hungarian 1-to-1 Solver"}
                 </p>
               </div>
             </div>
@@ -247,13 +270,13 @@ export default function PanelDVI() {
 
           <div className="flex flex-wrap items-center gap-2">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium bg-emerald-950/60 text-emerald-400 border border-emerald-800/60">
-              <ShieldCheck className="w-3.5 h-3.5" /> Interpol DVI Standard
+              <ShieldCheck className="w-3.5 h-3.5" /> {isTr ? "Interpol DVI Standardı" : "Interpol DVI Standard"}
             </span>
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium bg-blue-950/60 text-blue-400 border border-blue-800/60">
-              <Scale className="w-3.5 h-3.5" /> ENFSI 2017 Calibrated
+              <Scale className="w-3.5 h-3.5" /> {isTr ? "ENFSI 2017 Kalibre" : "ENFSI 2017 Calibrated"}
             </span>
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium bg-purple-950/60 text-purple-400 border border-purple-800/60">
-              <FolderSync className="w-3.5 h-3.5" /> Hungarian 1-to-1 Munkres
+              <FolderSync className="w-3.5 h-3.5" /> {isTr ? "Macar 1-e-1 Munkres" : "Hungarian 1-to-1 Munkres"}
             </span>
           </div>
         </div>
@@ -261,7 +284,9 @@ export default function PanelDVI() {
         {/* ── Casework Preset Selector ─────────────────────────────────── */}
         <div className="mt-6 pt-6 border-t border-slate-800/80">
           <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-3">
-            Select Certified Mass Disaster / Kinship Casework Benchmark:
+            {isTr
+              ? "Sertifikalı Toplu Afet / Akrabalık Vaka Doğrulamasını Seçin:"
+              : "Select Certified Mass Disaster / Kinship Casework Benchmark:"}
           </label>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
             {DVI_PRESETS.map((preset) => {
@@ -272,7 +297,7 @@ export default function PanelDVI() {
                   onClick={() => {
                     startTransition(() => setSelectedPresetId(preset.id));
                   }}
-                  className={`p-3 rounded-lg text-left transition-all border ${
+                  className={`p-3 rounded-lg text-left transition-all border cursor-pointer ${
                     isSelected
                       ? "bg-cyan-950/40 border-cyan-500/60 text-white shadow-lg shadow-cyan-950/30"
                       : "bg-slate-800/40 border-slate-700/60 text-slate-400 hover:bg-slate-800/80 hover:text-slate-200"
@@ -284,8 +309,12 @@ export default function PanelDVI() {
                     </span>
                     {isSelected && <Check className="w-3.5 h-3.5 text-cyan-400 shrink-0" />}
                   </div>
-                  <div className="text-xs font-semibold text-slate-200 line-clamp-1">{preset.title}</div>
-                  <div className="text-[11px] text-slate-400 line-clamp-2 mt-0.5">{preset.description}</div>
+                  <div className="text-xs font-semibold text-slate-200 line-clamp-1">
+                    {isTr ? preset.titleTr : preset.title}
+                  </div>
+                  <div className="text-[11px] text-slate-400 line-clamp-2 mt-0.5">
+                    {isTr ? preset.descriptionTr : preset.description}
+                  </div>
                 </button>
               );
             })}
@@ -301,7 +330,7 @@ export default function PanelDVI() {
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-sm font-bold text-white flex items-center gap-2">
                 <Network className="w-4 h-4 text-cyan-400" />
-                Pedigree Model Topology
+                {isTr ? "Soybağı Model Topolojisi" : "Pedigree Model Topology"}
               </h2>
               <span className="text-xs font-mono text-slate-400">{currentPreset.pedigreeType}</span>
             </div>
@@ -313,11 +342,15 @@ export default function PanelDVI() {
                   <>
                     {/* Father (Square) */}
                     <rect x="30" y="20" width="40" height="40" fill="#1e293b" stroke="#06b6d4" strokeWidth="2" rx="4" />
-                    <text x="50" y="44" textAnchor="middle" fill="#94a3b8" fontSize="10" fontWeight="bold">Father</text>
+                    <text x="50" y="44" textAnchor="middle" fill="#94a3b8" fontSize="10" fontWeight="bold">
+                      {isTr ? "Baba" : "Father"}
+                    </text>
 
                     {/* Mother (Circle) */}
                     <circle cx="190" cy="40" r="20" fill="#1e293b" stroke="#ec4899" strokeWidth="2" />
-                    <text x="190" y="44" textAnchor="middle" fill="#94a3b8" fontSize="10" fontWeight="bold">Mother</text>
+                    <text x="190" y="44" textAnchor="middle" fill="#94a3b8" fontSize="10" fontWeight="bold">
+                      {isTr ? "Anne" : "Mother"}
+                    </text>
 
                     {/* Mating Line */}
                     <line x1="70" y1="40" x2="170" y2="40" stroke="#64748b" strokeWidth="2" />
@@ -325,7 +358,9 @@ export default function PanelDVI() {
 
                     {/* Child (Questioned PM Victim) */}
                     <circle cx="120" cy="130" r="22" fill="#065f46" stroke="#10b981" strokeWidth="2.5" />
-                    <text x="120" y="134" textAnchor="middle" fill="#ffffff" fontSize="9" fontWeight="bold">PM Victim</text>
+                    <text x="120" y="134" textAnchor="middle" fill="#ffffff" fontSize="9" fontWeight="bold">
+                      {isTr ? "PM Kurban" : "PM Victim"}
+                    </text>
                   </>
                 )}
 
@@ -333,17 +368,23 @@ export default function PanelDVI() {
                   <>
                     {/* Mother (Circle) */}
                     <circle cx="60" cy="40" r="20" fill="#1e293b" stroke="#ec4899" strokeWidth="2" />
-                    <text x="60" y="44" textAnchor="middle" fill="#94a3b8" fontSize="10" fontWeight="bold">Mother</text>
+                    <text x="60" y="44" textAnchor="middle" fill="#94a3b8" fontSize="10" fontWeight="bold">
+                      {isTr ? "Anne" : "Mother"}
+                    </text>
 
                     {/* Missing Father (Dashed Square) */}
                     <rect x="140" y="20" width="40" height="40" fill="#065f46" stroke="#10b981" strokeWidth="2" strokeDasharray="4 4" rx="4" />
-                    <text x="160" y="44" textAnchor="middle" fill="#10b981" fontSize="9" fontWeight="bold">PM Father</text>
+                    <text x="160" y="44" textAnchor="middle" fill="#10b981" fontSize="9" fontWeight="bold">
+                      {isTr ? "PM Baba" : "PM Father"}
+                    </text>
 
                     {/* Child */}
                     <line x1="80" y1="40" x2="140" y2="40" stroke="#64748b" strokeWidth="2" />
                     <line x1="110" y1="40" x2="110" y2="100" stroke="#64748b" strokeWidth="2" />
                     <circle cx="110" cy="130" r="20" fill="#1e293b" stroke="#06b6d4" strokeWidth="2" />
-                    <text x="110" y="134" textAnchor="middle" fill="#94a3b8" fontSize="10" fontWeight="bold">Child</text>
+                    <text x="110" y="134" textAnchor="middle" fill="#94a3b8" fontSize="10" fontWeight="bold">
+                      {isTr ? "Çocuk" : "Child"}
+                    </text>
                   </>
                 )}
 
@@ -351,8 +392,12 @@ export default function PanelDVI() {
                   <>
                     {/* AM Personal Item */}
                     <rect x="40" y="60" width="60" height="50" fill="#1e293b" stroke="#06b6d4" strokeWidth="2" rx="6" />
-                    <text x="70" y="85" textAnchor="middle" fill="#06b6d4" fontSize="10" fontWeight="bold">AM Item</text>
-                    <text x="70" y="98" textAnchor="middle" fill="#64748b" fontSize="8">Toothbrush</text>
+                    <text x="70" y="85" textAnchor="middle" fill="#06b6d4" fontSize="10" fontWeight="bold">
+                      {isTr ? "AM Eşya" : "AM Item"}
+                    </text>
+                    <text x="70" y="98" textAnchor="middle" fill="#64748b" fontSize="8">
+                      {isTr ? "Diş Fırçası" : "Toothbrush"}
+                    </text>
 
                     {/* Match Double Arrow */}
                     <path d="M 105 85 L 135 85" stroke="#10b981" strokeWidth="3" strokeDasharray="3 3" />
@@ -360,8 +405,12 @@ export default function PanelDVI() {
 
                     {/* PM Victim Remains */}
                     <rect x="150" y="60" width="60" height="50" fill="#065f46" stroke="#10b981" strokeWidth="2.5" rx="6" />
-                    <text x="180" y="85" textAnchor="middle" fill="#ffffff" fontSize="10" fontWeight="bold">PM Body</text>
-                    <text x="180" y="98" textAnchor="middle" fill="#a7f3d0" fontSize="8">Victim #01</text>
+                    <text x="180" y="85" textAnchor="middle" fill="#ffffff" fontSize="10" fontWeight="bold">
+                      {isTr ? "PM Ceset" : "PM Body"}
+                    </text>
+                    <text x="180" y="98" textAnchor="middle" fill="#a7f3d0" fontSize="8">
+                      {isTr ? "Kurban #01" : "Victim #01"}
+                    </text>
                   </>
                 )}
               </svg>
@@ -370,11 +419,11 @@ export default function PanelDVI() {
 
           <div className="pt-3 border-t border-slate-800 text-xs text-slate-400 space-y-1">
             <div className="flex justify-between">
-              <span>Standard:</span>
+              <span>{isTr ? "Standart:" : "Standard:"}</span>
               <span className="font-mono text-slate-200">Interpol DVI Guide §4</span>
             </div>
             <div className="flex justify-between">
-              <span>Pedigree Kinship Model:</span>
+              <span>{isTr ? "Soybağı Modeli:" : "Pedigree Kinship Model:"}</span>
               <span className="font-mono text-cyan-400 font-bold">{currentPreset.pedigreeType}</span>
             </div>
           </div>
@@ -387,14 +436,14 @@ export default function PanelDVI() {
               <div>
                 <h2 className="text-sm font-bold text-white flex items-center gap-2">
                   <Layers className="w-4 h-4 text-cyan-400" />
-                  Multi-Omic Evidence Fusion Engine
+                  {isTr ? "Çoklu-Omik Kanıt Birleştirme Motoru" : "Multi-Omic Evidence Fusion Engine"}
                 </h2>
                 <p className="text-xs text-slate-400">
                   LR_Joint = LR_Autosomal × (1 / p_Y)^δ_y × (1 / p_mtDNA)^δ_m × (LR_SNP)^δ_s
                 </p>
               </div>
               <span className="text-xs font-mono px-2.5 py-1 rounded bg-slate-800 border border-slate-700 text-cyan-300">
-                Log-Additive Product Rule
+                {isTr ? "Log-Toplamsal Çarpım Kuralı" : "Log-Additive Product Rule"}
               </span>
             </div>
 
@@ -403,8 +452,10 @@ export default function PanelDVI() {
               {/* Autosomal STR */}
               <div className="p-3 rounded-lg bg-slate-800/40 border border-slate-700">
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs font-bold text-slate-200">Autosomal STR (24 Loci)</span>
-                  <span className="text-[10px] text-emerald-400 font-mono font-bold">Active</span>
+                  <span className="text-xs font-bold text-slate-200">
+                    {isTr ? "Otozomal STR (24 Lokus)" : "Autosomal STR (24 Loci)"}
+                  </span>
+                  <span className="text-[10px] text-emerald-400 font-mono font-bold">{isTr ? "Aktif" : "Active"}</span>
                 </div>
                 <div className="flex justify-between items-baseline mt-2">
                   <span className="text-[11px] text-slate-400">LR_Autosomal:</span>
@@ -418,16 +469,20 @@ export default function PanelDVI() {
               {/* Y-STR (27 Loci) */}
               <div className={`p-3 rounded-lg border transition ${hasYstr ? "bg-slate-800/40 border-cyan-500/40" : "bg-slate-900/40 border-slate-800 opacity-60"}`}>
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs font-bold text-slate-200">Y-STR 27-Locus Multiplex</span>
+                  <span className="text-xs font-bold text-slate-200">
+                    {isTr ? "Y-STR 27-Lokus Çoklaması" : "Y-STR 27-Locus Multiplex"}
+                  </span>
                   <button
                     onClick={() => setHasYstr(!hasYstr)}
-                    className={`text-[10px] px-2 py-0.5 rounded font-mono font-bold ${hasYstr ? "bg-cyan-500/20 text-cyan-300" : "bg-slate-800 text-slate-500"}`}
+                    className={`text-[10px] px-2 py-0.5 rounded font-mono font-bold cursor-pointer ${hasYstr ? "bg-cyan-500/20 text-cyan-300" : "bg-slate-800 text-slate-500"}`}
                   >
-                    {hasYstr ? "ENABLED (δ_y=1)" : "DISABLED (δ_y=0)"}
+                    {hasYstr ? (isTr ? "ETKİN (δ_y=1)" : "ENABLED (δ_y=1)") : (isTr ? "DEVRE DIŞI (δ_y=0)" : "DISABLED (δ_y=0)")}
                   </button>
                 </div>
                 <div className="flex justify-between items-baseline mt-2">
-                  <span className="text-[11px] text-slate-400">YHRD Frequency (p_Y):</span>
+                  <span className="text-[11px] text-slate-400">
+                    {isTr ? "YHRD Frekansı (p_Y):" : "YHRD Frequency (p_Y):"}
+                  </span>
                   <span className="text-sm font-bold font-mono text-cyan-300">{hasYstr ? ystrPUpper.toExponential(1) : "—"}</span>
                 </div>
                 <div className="text-[10px] font-mono text-slate-400 text-right">
@@ -438,16 +493,20 @@ export default function PanelDVI() {
               {/* mtDNA Control Region */}
               <div className={`p-3 rounded-lg border transition ${hasMtdna ? "bg-slate-800/40 border-purple-500/40" : "bg-slate-900/40 border-slate-800 opacity-60"}`}>
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs font-bold text-slate-200">mtDNA Control Region</span>
+                  <span className="text-xs font-bold text-slate-200">
+                    {isTr ? "mtDNA Kontrol Bölgesi" : "mtDNA Control Region"}
+                  </span>
                   <button
                     onClick={() => setHasMtdna(!hasMtdna)}
-                    className={`text-[10px] px-2 py-0.5 rounded font-mono font-bold ${hasMtdna ? "bg-purple-500/20 text-purple-300" : "bg-slate-800 text-slate-500"}`}
+                    className={`text-[10px] px-2 py-0.5 rounded font-mono font-bold cursor-pointer ${hasMtdna ? "bg-purple-500/20 text-purple-300" : "bg-slate-800 text-slate-500"}`}
                   >
-                    {hasMtdna ? "ENABLED (δ_m=1)" : "DISABLED (δ_m=0)"}
+                    {hasMtdna ? (isTr ? "ETKİN (δ_m=1)" : "ENABLED (δ_m=1)") : (isTr ? "DEVRE DIŞI (δ_m=0)" : "DISABLED (δ_m=0)")}
                   </button>
                 </div>
                 <div className="flex justify-between items-baseline mt-2">
-                  <span className="text-[11px] text-slate-400">EMPOP Frequency (p_M):</span>
+                  <span className="text-[11px] text-slate-400">
+                    {isTr ? "EMPOP Frekansı (p_M):" : "EMPOP Frequency (p_M):"}
+                  </span>
                   <span className="text-sm font-bold font-mono text-purple-300">{hasMtdna ? mtdnaPUpper.toExponential(1) : "—"}</span>
                 </div>
                 <div className="text-[10px] font-mono text-slate-400 text-right">
@@ -458,12 +517,14 @@ export default function PanelDVI() {
               {/* Autosomal SNP Panel */}
               <div className={`p-3 rounded-lg border transition ${hasSnp ? "bg-slate-800/40 border-amber-500/40" : "bg-slate-900/40 border-slate-800 opacity-60"}`}>
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs font-bold text-slate-200">SNP Micro-Multiplex</span>
+                  <span className="text-xs font-bold text-slate-200">
+                    {isTr ? "SNP Mikro-Çoklaması" : "SNP Micro-Multiplex"}
+                  </span>
                   <button
                     onClick={() => setHasSnp(!hasSnp)}
-                    className={`text-[10px] px-2 py-0.5 rounded font-mono font-bold ${hasSnp ? "bg-amber-500/20 text-amber-300" : "bg-slate-800 text-slate-500"}`}
+                    className={`text-[10px] px-2 py-0.5 rounded font-mono font-bold cursor-pointer ${hasSnp ? "bg-amber-500/20 text-amber-300" : "bg-slate-800 text-slate-500"}`}
                   >
-                    {hasSnp ? "ENABLED (δ_s=1)" : "DISABLED (δ_s=0)"}
+                    {hasSnp ? (isTr ? "ETKİN (δ_s=1)" : "ENABLED (δ_s=1)") : (isTr ? "DEVRE DIŞI (δ_s=0)" : "DISABLED (δ_s=0)")}
                   </button>
                 </div>
                 <div className="flex justify-between items-baseline mt-2">
@@ -480,7 +541,9 @@ export default function PanelDVI() {
           {/* Combined Joint LR & Bayesian Posterior Banner */}
           <div className="mt-4 pt-4 border-t border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-slate-950/40 p-3 rounded-lg border border-slate-800">
             <div>
-              <span className="text-[11px] text-slate-400 block uppercase">Combined Multi-Omic Joint LR:</span>
+              <span className="text-[11px] text-slate-400 block uppercase">
+                {isTr ? "Birleşik Çoklu-Omik Ortak LR:" : "Combined Multi-Omic Joint LR:"}
+              </span>
               <span className="text-xl font-extrabold font-mono text-cyan-400">
                 {jointLr.toExponential(4)}
               </span>
@@ -488,7 +551,9 @@ export default function PanelDVI() {
             </div>
 
             <div className="text-right">
-              <span className="text-[11px] text-slate-400 block uppercase">Posterior Probability (W):</span>
+              <span className="text-[11px] text-slate-400 block uppercase">
+                {isTr ? "Sonsal Olasılık (W):" : "Posterior Probability (W):"}
+              </span>
               <span className="text-xl font-extrabold font-mono text-emerald-400">
                 {(posteriorW * 100).toFixed(6)}%
               </span>
@@ -503,10 +568,14 @@ export default function PanelDVI() {
           <div>
             <h2 className="text-base font-bold text-white flex items-center gap-2">
               <Scale className="w-5 h-5 text-cyan-400" />
-              Interpol Standing Committee 4-Tier Decision Protocol
+              {isTr
+                ? "Interpol Daimi Komitesi 4-Kademeli Karar Protokolü"
+                : "Interpol Standing Committee 4-Tier Decision Protocol"}
             </h2>
             <p className="text-xs text-slate-400">
-              Interpol DVI Guide Section 4.2 Legal Action Criteria & Prior Updating
+              {isTr
+                ? "Interpol DVI Kılavuzu Bölüm 4.2 Hukuki Eylem Kriterleri & Önsel Güncelleme"
+                : "Interpol DVI Guide Section 4.2 Legal Action Criteria & Prior Updating"}
             </p>
           </div>
 
@@ -520,7 +589,9 @@ export default function PanelDVI() {
           <div className="space-y-4 bg-slate-800/40 p-4 rounded-xl border border-slate-700/60">
             <div>
               <div className="flex justify-between items-center text-xs mb-1.5">
-                <span className="font-semibold text-slate-300">Bayesian Prior P(H1):</span>
+                <span className="font-semibold text-slate-300">
+                  {isTr ? "Bayesyen Önsel P(H1):" : "Bayesian Prior P(H1):"}
+                </span>
                 <span className="font-mono text-cyan-400 font-bold">{priorProb}</span>
               </div>
               <input
@@ -533,23 +604,23 @@ export default function PanelDVI() {
                 className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-cyan-500"
               />
               <div className="flex justify-between text-[10px] text-slate-500 mt-1 font-mono">
-                <span>0.0001 (1 in 10k)</span>
-                <span>0.001 (Default DVI)</span>
-                <span>0.01 (1 in 100)</span>
+                <span>0.0001 (10 binde 1)</span>
+                <span>0.001 ({isTr ? "Varsayılan DVI" : "Default DVI"})</span>
+                <span>0.01 (100'de 1)</span>
               </div>
             </div>
 
             <div className="p-3 bg-slate-900/80 rounded-lg border border-slate-800 text-[11px] text-slate-400 space-y-1.5">
               <div className="flex justify-between">
-                <span>Prior Odds:</span>
+                <span>{isTr ? "Önsel Oran:" : "Prior Odds:"}</span>
                 <span className="font-mono text-slate-200">{(priorProb / (1 - priorProb)).toExponential(3)}</span>
               </div>
               <div className="flex justify-between">
-                <span>Posterior Odds:</span>
+                <span>{isTr ? "Sonsal Oran:" : "Posterior Odds:"}</span>
                 <span className="font-mono text-cyan-300 font-bold">{(jointLr * (priorProb / (1 - priorProb))).toExponential(3)}</span>
               </div>
               <div className="flex justify-between">
-                <span>Judicial Action:</span>
+                <span>{isTr ? "Hukuki Eylem:" : "Judicial Action:"}</span>
                 <span className="text-emerald-400 font-semibold">{actionText}</span>
               </div>
             </div>
@@ -561,9 +632,13 @@ export default function PanelDVI() {
               <div className="flex items-center justify-between mb-3">
                 <span className="text-xs font-bold text-slate-200 flex items-center gap-1.5">
                   <FileSpreadsheet className="w-4 h-4 text-cyan-400" />
-                  N × M Disaster Reconciliation Matrix (Hungarian 1-to-1 Solver)
+                  {isTr
+                    ? "N × M Afet Eşleştirme Matrisi (Macar 1-e-1 Çözücü)"
+                    : "N × M Disaster Reconciliation Matrix (Hungarian 1-to-1 Solver)"}
                 </span>
-                <span className="text-[11px] text-slate-400 font-mono">3 PM Remains × 3 AM Families</span>
+                <span className="text-[11px] text-slate-400 font-mono">
+                  {isTr ? "3 PM Ceset × 3 AM Aile" : "3 PM Remains × 3 AM Families"}
+                </span>
               </div>
 
               {/* Table Matrix */}
@@ -571,7 +646,7 @@ export default function PanelDVI() {
                 <table className="w-full text-xs text-left">
                   <thead>
                     <tr className="border-b border-slate-700 text-[10px] uppercase text-slate-400 font-mono">
-                      <th className="py-1.5 px-2">PM Remain</th>
+                      <th className="py-1.5 px-2">{isTr ? "PM Ceset" : "PM Remain"}</th>
                       {simulatedAMs.map((am) => (
                         <th key={am} className="py-1.5 px-2 text-right">{am}</th>
                       ))}
@@ -580,7 +655,7 @@ export default function PanelDVI() {
                   <tbody className="divide-y divide-slate-800/80 font-mono">
                     {simulatedPMs.map((pm, rIdx) => (
                       <tr key={pm} className="hover:bg-slate-800/30">
-                        <td className="py-2 px-2 text-slate-300 font-sans text-[11px]">{pm}</td>
+                        <td className="py-2 px-2 text-slate-300 font-mono text-[11px]">{pm}</td>
                         {matrixScores[rIdx].map((score, cIdx) => {
                           const isOptimal = rIdx === cIdx; // Diagonal 1-to-1 match in simulation
                           return (
@@ -610,8 +685,16 @@ export default function PanelDVI() {
             </div>
 
             <div className="mt-3 pt-3 border-t border-slate-700/60 flex items-center justify-between text-[11px] text-slate-400">
-              <span>Hungarian Solver: <strong className="text-emerald-400">100% Mutual Exclusivity Preserved</strong></span>
-              <span>Optimal Match Rate: <strong className="text-cyan-300">3 / 3 (100%)</strong></span>
+              <span>
+                {isTr ? "Macar Çözücü: " : "Hungarian Solver: "}
+                <strong className="text-emerald-400">
+                  {isTr ? "%100 Karşılıklı Dışlayıcılık Korundu" : "100% Mutual Exclusivity Preserved"}
+                </strong>
+              </span>
+              <span>
+                {isTr ? "Optimal Eşleşme Oranı: " : "Optimal Match Rate: "}
+                <strong className="text-cyan-300">3 / 3 (%100)</strong>
+              </span>
             </div>
           </div>
         </div>
@@ -621,13 +704,14 @@ export default function PanelDVI() {
           <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
           <div className="space-y-1">
             <span className="font-bold text-amber-300 uppercase tracking-wider block">
-              MANDATORY INTERPOL DVI & ENFSI (2017) EVALUATIVE REPORTING DISCLAIMER (PROSECUTOR&apos;S FALLACY SHIELD)
+              {isTr
+                ? "ZORUNLU INTERPOL DVI & ENFSI (2017) DEĞERLENDİRİCİ RAPORLAMA BEYANI (ADLİ YANILGI KALKANI)"
+                : "MANDATORY INTERPOL DVI & ENFSI (2017) EVALUATIVE REPORTING DISCLAIMER (PROSECUTOR'S FALLACY SHIELD)"}
             </span>
             <p className="leading-relaxed text-slate-300">
-              Standalone judicial identification requires <strong className="text-amber-200">LR_Joint &ge; 1,000,000 (log10 &ge; 6.0, Posterior Probability W &ge; 0.999999)</strong>.
-              Values between 10,000 and 1,000,000 represent probable identifications that legally mandate secondary corroboration
-              by forensic odontology, surgical serial numbers, or physical distinguishing marks. Likelihood Ratios evaluate
-              evidence under specified mutually exclusive propositions and must never be transposed into direct assertions of guilt or identity.
+              {isTr
+                ? "Tek başına adli kimliklendirme LR_Ortak ≥ 1.000.000 (log10 ≥ 6.0, Sonsal Olasılık W ≥ 0.999999) gerektirir. 10.000 ile 1.000.000 arasındaki değerler olası kimliklendirmeyi temsil eder ve yasal olarak adli odontoloji veya fiziki ayırt edici işaretlerle ikincil doğrulamayı zorunlu kılar. Olabilirlik Oranları, kanıtı belirli hipotezler altında değerlendirir ve asla doğrudan suç veya kimlik iddiasına dönüştürülmemelidir."
+                : "Standalone judicial identification requires LR_Joint >= 1,000,000 (log10 >= 6.0, Posterior Probability W >= 0.999999). Values between 10,000 and 1,000,000 represent probable identifications that legally mandate secondary corroboration by forensic odontology, surgical serial numbers, or physical distinguishing marks."}
             </p>
           </div>
         </div>

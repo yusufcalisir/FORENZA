@@ -20,6 +20,7 @@ import {
 } from "@/config/subsystems";
 import { renderPanel } from "@/components/analysis/PanelRouter";
 import { useIngestStore } from "@/store/ingestStore";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 export default function ModulePage({
   params,
@@ -30,6 +31,8 @@ export default function ModulePage({
   const categoryId = resolvedParams.category as CategoryId;
   const tabId = resolvedParams.tab;
   const { setInspectorOpen } = useIngestStore();
+  const { lang } = useSaasLanguage();
+  const isTr = lang === "tr";
 
   const category = getSubsystemCategory(categoryId) || SUBSYSTEM_CATEGORIES[0];
   const currentTab = category.tabs.find((t) => t.id === tabId) || category.tabs[0];
@@ -54,7 +57,7 @@ export default function ModulePage({
                   href="/analysis"
                   className="text-[10px] text-zinc-500 hover:text-zinc-300 font-bold uppercase tracking-wider transition-colors"
                 >
-                  Workstation Hub
+                  {isTr ? "İstasyon Merkezi" : "Workstation Hub"}
                 </Link>
                 <span className="text-zinc-600">/</span>
                 <Link

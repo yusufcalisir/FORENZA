@@ -2,14 +2,45 @@
 
 import { useState } from "react";
 import { Sparkles, Dna, ShieldCheck, Microscope, ArrowUpRight, Scissors } from "lucide-react";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 export default function MicroscopyPanel() {
+  const { lang } = useSaasLanguage();
+  const isTr = lang === "tr";
+
   const [selectedSample, setSelectedSample] = useState<string>("HAIR-SAMPLE-501");
 
   const samples = [
-    { id: "HAIR-SAMPLE-501", diameter: "80.0 µm", medulla: "15.0 µm", index: "0.188", origin: "HUMAN", root: "ANAGEN (WITH SHEATH)", routing: "NUCLEAR STR OPTIMAL", badge: "nDNA STR" },
-    { id: "HAIR-SAMPLE-502", diameter: "80.0 µm", medulla: "50.0 µm", index: "0.625", origin: "NON_HUMAN_ANIMAL", root: "TELOGEN (NO SHEATH)", routing: "MITOCHONDRIAL HV1/HV2", badge: "mtDNA HV1/2" },
-    { id: "SPERM-CELL-901", diameter: "4.5 x 2.8 µm", medulla: "N/A", index: "N/A", origin: "HUMAN SPERMATOZOA", root: "NORMAL MORPHOLOGY", routing: "DIFFERENTIAL EXTRACTION STR", badge: "DIFF-STR" },
+    {
+      id: "HAIR-SAMPLE-501",
+      diameter: "80.0 µm",
+      medulla: "15.0 µm",
+      index: "0.188",
+      origin: isTr ? "İNSAN" : "HUMAN",
+      root: isTr ? "ANAGEN (KILIFLI KÖK)" : "ANAGEN (WITH SHEATH)",
+      routing: isTr ? "ÇEKİRDEK STR OPTİMAL" : "NUCLEAR STR OPTIMAL",
+      badge: "nDNA STR"
+    },
+    {
+      id: "HAIR-SAMPLE-502",
+      diameter: "80.0 µm",
+      medulla: "50.0 µm",
+      index: "0.625",
+      origin: isTr ? "İNSAN DIŞI HAYVAN" : "NON_HUMAN_ANIMAL",
+      root: isTr ? "TELOGEN (KILIFSIZ)" : "TELOGEN (NO SHEATH)",
+      routing: isTr ? "MİTOKONDRİYAL HV1/HV2" : "MITOCHONDRIAL HV1/HV2",
+      badge: "mtDNA HV1/2"
+    },
+    {
+      id: "SPERM-CELL-901",
+      diameter: "4.5 x 2.8 µm",
+      medulla: "N/A",
+      index: "N/A",
+      origin: isTr ? "İNSAN SPERMATOZONU" : "HUMAN SPERMATOZOA",
+      root: isTr ? "NORMAL MORFOLOJİ" : "NORMAL MORPHOLOGY",
+      routing: isTr ? "DİFERANSİYEL EKSTRAKSİYON STR" : "DIFFERENTIAL EXTRACTION STR",
+      badge: "DIFF-STR"
+    },
   ];
 
   return (
@@ -22,16 +53,18 @@ export default function MicroscopyPanel() {
           </div>
           <div>
             <h2 className="text-sm sm:text-base font-bold tracking-widest text-tactical-text uppercase">
-              Microscopy Intelligence & Hair Analysis Hub
+              {isTr ? "Mikroskopi Zekası & Kıl Analizi Merkezi" : "Microscopy Intelligence & Hair Analysis Hub"}
             </h2>
             <p className="text-[10px] text-tactical-text-muted mt-0.5">
-              Microscopic Cell Morphometry • Hair Medullary Index (I_medulla) • Follicular Root nDNA vs. mtDNA Routing
+              {isTr
+                ? "Mikroskobik Hücre Morfometrisi • Kıl Medüller İndeksi (I_medulla) • Foliküler Kök nDNA / mtDNA Yönlendirmesi"
+                : "Microscopic Cell Morphometry • Hair Medullary Index (I_medulla) • Follicular Root nDNA vs. mtDNA Routing"}
             </p>
           </div>
         </div>
 
         <span className="text-xs font-bold text-purple-400 bg-purple-500/10 border border-purple-500/20 px-3 py-1 rounded-lg">
-          SWGMAT Standard Microscopy
+          {isTr ? "SWGMAT Standart Mikroskopi" : "SWGMAT Standard Microscopy"}
         </span>
       </div>
 
@@ -40,7 +73,7 @@ export default function MicroscopyPanel() {
         {/* Left 2 Cols: Sample Inventory */}
         <div className="md:col-span-2 rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-4 sm:p-5 space-y-4 shadow-lg overflow-hidden">
           <span className="text-xs sm:text-sm font-bold text-tactical-text uppercase tracking-wider block border-b border-tactical-border/40 pb-2.5 leading-snug">
-            Microscopic Morphometry &amp; Hair Evidence Inventory
+            {isTr ? "Mikroskobik Morfometri & Kıl Kanıtı Envanteri" : "Microscopic Morphometry & Hair Evidence Inventory"}
           </span>
 
           <div className="space-y-3">
@@ -67,15 +100,21 @@ export default function MicroscopyPanel() {
                 {/* Measurements Grid */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-[10px] font-mono">
                   <div className="bg-black/40 p-2 rounded-lg border border-tactical-border/30">
-                    <span className="text-zinc-500 text-[9px] block">Hair Diameter</span>
+                    <span className="text-zinc-500 text-[9px] block">
+                      {isTr ? "Kıl Çapı" : "Hair Diameter"}
+                    </span>
                     <span className="text-zinc-200 font-bold">{s.diameter}</span>
                   </div>
                   <div className="bg-black/40 p-2 rounded-lg border border-tactical-border/30">
-                    <span className="text-zinc-500 text-[9px] block">Medulla Diameter</span>
+                    <span className="text-zinc-500 text-[9px] block">
+                      {isTr ? "Medulla Çapı" : "Medulla Diameter"}
+                    </span>
                     <span className="text-zinc-200 font-bold">{s.medulla}</span>
                   </div>
                   <div className="col-span-2 sm:col-span-1 bg-black/40 p-2 rounded-lg border border-tactical-border/30">
-                    <span className="text-zinc-500 text-[9px] block">Root Morphology</span>
+                    <span className="text-zinc-500 text-[9px] block">
+                      {isTr ? "Kök Morfolojisi" : "Root Morphology"}
+                    </span>
                     <span className="text-zinc-200 font-bold truncate block">{s.root}</span>
                   </div>
                 </div>
@@ -83,7 +122,9 @@ export default function MicroscopyPanel() {
                 {/* Footer: Medullary Index & Routing Badge */}
                 <div className="flex items-center justify-between pt-2 border-t border-tactical-border/20 text-xs font-mono">
                   <div className="flex items-center gap-2">
-                    <span className="text-zinc-400 text-[10px]">Medullary Index (I):</span>
+                    <span className="text-zinc-400 text-[10px]">
+                      {isTr ? "Medüller İndeks (I):" : "Medullary Index (I):"}
+                    </span>
                     <span className="text-purple-300 font-bold">{s.index}</span>
                   </div>
                   <span className="px-2.5 py-0.5 rounded text-[9px] font-bold bg-purple-500/20 border border-purple-500/40 text-purple-300 uppercase whitespace-nowrap">
@@ -98,29 +139,35 @@ export default function MicroscopyPanel() {
         {/* Right Col: DNA Extraction Routing Inspector */}
         <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 space-y-4 shadow-lg">
           <span className="text-xs font-bold text-tactical-text uppercase tracking-wider block border-b border-tactical-border/40 pb-2">
-            DNA Strategy Decision Engine
+            {isTr ? "DNA Strateji Karar Motoru" : "DNA Strategy Decision Engine"}
           </span>
 
           <div className="space-y-3 text-xs">
             <div className="p-3 rounded-xl bg-black/20 border border-tactical-border/40 space-y-1">
-              <span className="text-zinc-500 block">Selected Specimen</span>
+              <span className="text-zinc-500 block">
+                {isTr ? "Seçilen Numune" : "Selected Specimen"}
+              </span>
               <p className="font-bold text-purple-300 font-mono">{selectedSample}</p>
             </div>
 
             <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-300 space-y-1">
               <div className="flex items-center gap-1.5 font-bold">
                 <Dna className="w-4 h-4 text-purple-400" />
-                <span>Recommended DNA Strategy</span>
+                <span>{isTr ? "Önerilen DNA Stratejisi" : "Recommended DNA Strategy"}</span>
               </div>
               <p className="text-[11px] font-bold text-emerald-400 font-mono">
-                {samples.find((s) => s.id === selectedSample)?.routing || "NUCLEAR STR OPTIMAL"}
+                {samples.find((s) => s.id === selectedSample)?.routing || (isTr ? "ÇEKİRDEK STR OPTİMAL" : "NUCLEAR STR OPTIMAL")}
               </p>
             </div>
 
             <div className="p-3 rounded-xl bg-black/30 border border-tactical-border/40 space-y-1 text-[10px] text-zinc-400">
-              <p className="font-bold text-zinc-300">Routing Rationale:</p>
+              <p className="font-bold text-zinc-300">
+                {isTr ? "Yönlendirme Gerekçesi:" : "Routing Rationale:"}
+              </p>
               <p>
-                Anagen/Catagen follicular root sheath presence provides high-yield nuclear genomic DNA suitable for 24-locus CODIS STR amplification. Telogen/shaft hair relies on mtDNA HV1/HV2.
+                {isTr
+                  ? "Anagen/Katagen foliküler kök kılıfı varlığı, 24 lokuslu CODIS STR amplifikasyonuna uygun yüksek verimli nükleer genomik DNA sağlar. Telogen/şaft kılı ise mtDNA HV1/HV2 sekanslamasına yönlendirilir."
+                  : "Anagen/Catagen follicular root sheath presence provides high-yield nuclear genomic DNA suitable for 24-locus CODIS STR amplification. Telogen/shaft hair relies on mtDNA HV1/HV2."}
               </p>
             </div>
           </div>

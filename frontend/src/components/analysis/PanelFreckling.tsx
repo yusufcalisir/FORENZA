@@ -5,13 +5,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
     Sun,
     FlaskConical,
-    Shield,
     AlertTriangle,
-    BarChart3,
     Loader2,
-    ChevronRight,
     Dna,
+    ShieldCheck,
 } from "lucide-react";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // TYPES
@@ -32,7 +31,7 @@ interface FrecklingResult {
     epistatic_modifiers_applied: Record<string, number>;
 }
 
-interface UVResult {
+interface UVSensitivityResult {
     minimal_erythema_dose_category: string;
     tanning_capacity: string;
     photoprotection_guidance: string;
@@ -41,7 +40,7 @@ interface UVResult {
 interface FrecklingAndUVResponse {
     mc1r: MC1RResult;
     freckling: FrecklingResult;
-    uv_sensitivity: UVResult;
+    uv_sensitivity: UVSensitivityResult;
     assayed_snps_count: number;
     prosecutors_fallacy_shield: string;
 }
@@ -71,6 +70,7 @@ const MODIFIER_LOCI = [
 
 interface PresetItem {
     label: string;
+    labelTr: string;
     desc: string;
     dosages: Record<string, number>;
 }
@@ -78,26 +78,31 @@ interface PresetItem {
 const PRESETS: PresetItem[] = [
     {
         label: "Wild-Type",
+        labelTr: "Yabanıl Tip (wt/wt)",
         desc: "wt/wt — F_score=7.59%",
         dosages: {},
     },
     {
         label: "R151C Hom",
+        labelTr: "R151C Homozigot (R/R)",
         desc: "R/R — Dense Freckles / MED<20",
         dosages: { rs1805007: 2 },
     },
     {
         label: "R/r Compound",
+        labelTr: "R/r Birleşik Heterozigot",
         desc: "R151C + V60L — F_score=94.44%",
         dosages: { rs1805007: 1, rs1805005: 1 },
     },
     {
         label: "V60L Hom",
+        labelTr: "V60L Homozigot (r/r)",
         desc: "r/r — Moderate / MED 35-50",
         dosages: { rs1805005: 2 },
     },
     {
         label: "ASIP+BNC2 Max",
+        labelTr: "ASIP+BNC2 Epistatik Maksimum",
         desc: "Epistatic boost — F_score=62.25%",
         dosages: { rs1015362: 2, rs10756819: 2 },
     },
@@ -137,7 +142,7 @@ function getMedColor(medCat: string): string {
     return "text-tactical-text-primary";
 }
 
-function FrecklingGauge({ value }: { value: number }) {
+function FrecklingGauge({ value, labelText }: { value: number; labelText: string }) {
     const pct = Math.min(100, Math.max(0, value));
     const color =
         pct >= 75 ? "#f43f5e"
@@ -145,15 +150,13 @@ function FrecklingGauge({ value }: { value: number }) {
         : pct >= 20 ? "#fbbf24"
         : "#34d399";
 
-    // SVG arc gauge
     const r = 52;
-    const circumference = Math.PI * r;  // half circle
+    const circumference = Math.PI * r;
     const offset = circumference * (1 - pct / 100);
 
     return (
         <div className="flex flex-col items-center gap-2">
             <svg width="120" height="70" viewBox="0 0 120 70">
-                {/* Background arc */}
                 <path
                     d={`M 8 64 A ${r} ${r} 0 0 1 112 64`}
                     fill="none"
@@ -161,7 +164,6 @@ function FrecklingGauge({ value }: { value: number }) {
                     strokeWidth="10"
                     strokeLinecap="round"
                 />
-                {/* Value arc */}
                 <motion.path
                     d={`M 8 64 A ${r} ${r} 0 0 1 112 64`}
                     fill="none"
@@ -173,13 +175,12 @@ function FrecklingGauge({ value }: { value: number }) {
                     animate={{ strokeDashoffset: offset }}
                     transition={{ duration: 0.9, ease: "easeOut" }}
                 />
-                {/* Center value */}
                 <text x="60" y="56" textAnchor="middle" fontSize="16" fontFamily="monospace" fill={color} fontWeight="bold">
                     {pct.toFixed(1)}%
                 </text>
             </svg>
             <div className="text-[10px] text-tactical-text-secondary font-mono">
-                F_score (Freckling Index)
+                {labelText}
             </div>
         </div>
     );
@@ -220,6 +221,9 @@ function UVSensitivityBar({ medCategory }: { medCategory: string }) {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export default function PanelFreckling() {
+    const { lang } = useSaasLanguage();
+    const isTr = lang === "tr";
+
     const [dosages, setDosages] = useState<Record<string, number>>({});
     const [result, setResult] = useState<FrecklingAndUVResponse | null>(null);
     const [loading, setLoading] = useState(false);
@@ -247,7 +251,6 @@ export default function PanelFreckling() {
             if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
             setResult(await resp.json());
         } catch {
-            // Client-side simulation using verbatim research §5 formulas
             const R_WEIGHTS: Record<string, number> = {
                 rs1805006: 2.50, rs75570604: 2.40, rs1805007: 2.85, rs1805008: 2.75, rs1805009: 2.60,
             };
@@ -279,26 +282,26 @@ export default function PanelFreckling() {
             const logit = -2.50 + 1.35 * w + 0.85 * xAsip + 0.65 * xBnc2;
             const fScore = Math.min(100, 100 / (1 + Math.exp(-logit)));
 
-            let intensity = "MINIMAL (Rare / No Visible Ephelides)";
-            if (fScore >= 75) intensity = "DENSE (Extensive Ephelides)";
-            else if (fScore >= 45) intensity = "MODERATE (Moderate Facial / Body Ephelides)";
-            else if (fScore >= 20) intensity = "MILD (Few Ephelides Upon Sun Exposure)";
+            let intensity = isTr ? "MİNİMAL (Nadir / Görünür Efelid Yok)" : "MINIMAL (Rare / No Visible Ephelides)";
+            if (fScore >= 75) intensity = isTr ? "YOĞUN (Yaygın Efelidler)" : "DENSE (Extensive Ephelides)";
+            else if (fScore >= 45) intensity = isTr ? "ORTA (Orta Derecede Yüz / Vücut Efelidleri)" : "MODERATE (Moderate Facial / Body Ephelides)";
+            else if (fScore >= 20) intensity = isTr ? "HAFİF (Güneş Temasında Az Sayıda Efelid)" : "MILD (Few Ephelides Upon Sun Exposure)";
 
-            let medCat = "> 50 mJ/cm2 (High MED / Normal Erythema Tolerance)";
-            let tanning = "NORMAL_TAN_RARE_BURN";
-            let guidance = "Low photosensitivity. Normal melanin synthesis and high MED UV tolerance.";
+            let medCat = isTr ? "> 50 mJ/cm² (Yüksek MED / Normal Eritem Toleransı)" : "> 50 mJ/cm2 (High MED / Normal Erythema Tolerance)";
+            let tanning = isTr ? "NORMAL BRONZLAŞMA, NADİREN YANMA" : "NORMAL_TAN_RARE_BURN";
+            let guidance = isTr ? "Düşük ışığa duyarlılık. Normal melanin sentezi ve yüksek MED UV toleransı." : "Low photosensitivity. Normal melanin synthesis and high MED UV tolerance.";
             if (diplotype === "R/R") {
-                medCat = "< 20 mJ/cm2 (Extremely Low MED / Severe Erythema Risk)";
-                tanning = "NEVER_TANS_ALWAYS_BURNS";
-                guidance = "Extremely high photosensitivity. High melanoma and basal cell carcinoma relative risk.";
+                medCat = isTr ? "< 20 mJ/cm² (Aşırı Düşük MED / Şiddetli Eritem Riski)" : "< 20 mJ/cm2 (Extremely Low MED / Severe Erythema Risk)";
+                tanning = isTr ? "ASLA BRONZLAŞMAZ, HER ZAMAN YANAR" : "NEVER_TANS_ALWAYS_BURNS";
+                guidance = isTr ? "Aşırı yüksek ışığa duyarlılık. Yüksek melanom ve bazal hücreli karsinom göreceli riski." : "Extremely high photosensitivity. High melanoma and basal cell carcinoma relative risk.";
             } else if (diplotype === "R/r" || diplotype === "R/wt") {
-                medCat = "20 - 35 mJ/cm2 (Low MED / Frequent Erythema Risk)";
-                tanning = "RARE_TAN_FREQUENT_BURN";
-                guidance = "Elevated photosensitivity. Tanning occurs rarely; burning is frequent under UV index >= 4.";
+                medCat = isTr ? "20 - 35 mJ/cm² (Düşük MED / Sık Eritem Riski)" : "20 - 35 mJ/cm2 (Low MED / Frequent Erythema Risk)";
+                tanning = isTr ? "NADİREN BRONZLAŞMA, SIK YANMA" : "RARE_TAN_FREQUENT_BURN";
+                guidance = isTr ? "Yüksek ışığa duyarlılık. Bronzlaşma nadir görülür; UV indeksi >= 4 altında hızla yanar." : "Elevated photosensitivity. Tanning occurs rarely; burning is frequent under UV index >= 4.";
             } else if (diplotype === "r/r" || diplotype === "r/wt") {
-                medCat = "35 - 50 mJ/cm2 (Moderate MED / Moderate Erythema Risk)";
-                tanning = "MILD_TAN_OCCASIONAL_BURN";
-                guidance = "Moderate photosensitivity. Gradual tanning occurs with occasional erythema.";
+                medCat = isTr ? "35 - 50 mJ/cm² (Orta MED / Orta Eritem Riski)" : "35 - 50 mJ/cm2 (Moderate MED / Moderate Erythema Risk)";
+                tanning = isTr ? "HAFİF BRONZLAŞMA, BAZEN YANMA" : "MILD_TAN_OCCASIONAL_BURN";
+                guidance = isTr ? "Orta derecede ışığa duyarlılık. Kademeli bronzlaşma ve ara sıra eritem oluşur." : "Moderate photosensitivity. Gradual tanning occurs with occasional erythema.";
             }
 
             setResult({
@@ -319,7 +322,9 @@ export default function PanelFreckling() {
                     photoprotection_guidance: guidance,
                 },
                 assayed_snps_count: Object.values(dosages).filter(d => d > 0).length,
-                prosecutors_fallacy_shield: "Client-side simulation (offline mode). Results are mathematically faithful to Research §5.",
+                prosecutors_fallacy_shield: isTr
+                    ? "İstemci tarafı simülasyonu. Sonuçlar Araştırma §5 MC1R epistaz modeline uygundur."
+                    : "Client-side simulation (offline mode). Results are mathematically faithful to Research §5.",
             });
         } finally {
             setLoading(false);
@@ -327,7 +332,7 @@ export default function PanelFreckling() {
     };
 
     return (
-        <div className="flex flex-col gap-4 w-full">
+        <div className="flex flex-col gap-4 w-full font-mono">
 
             {/* Header */}
             <div className="flex items-center gap-3">
@@ -336,14 +341,16 @@ export default function PanelFreckling() {
                 </div>
                 <div>
                     <h2 className="text-base font-semibold text-tactical-text-primary font-mono tracking-wide">
-                        MC1R-UV: Module 3.5
+                        {isTr ? "MC1R-UV: Modül 3.5" : "MC1R-UV: Module 3.5"}
                     </h2>
                     <p className="text-xs text-tactical-text-secondary">
-                        MC1R Epistasis, Ephelides (Freckling) & UV Sensitivity Index
+                        {isTr
+                            ? "MC1R Epistazı, Efelid (Çillenme) & UV Hassasiyet İndeksi"
+                            : "MC1R Epistasis, Ephelides (Freckling) & UV Sensitivity Index"}
                     </p>
                 </div>
                 <div className="ml-auto px-2 py-0.5 rounded text-[10px] font-mono border border-emerald-500/40 text-emerald-400 bg-emerald-500/10">
-                    VERIFIED
+                    {isTr ? "DOĞRULANDI" : "VERIFIED"}
                 </div>
             </div>
 
@@ -353,9 +360,9 @@ export default function PanelFreckling() {
                     <button
                         key={p.label}
                         onClick={() => applyPreset(p)}
-                        className="px-2 py-1 rounded text-[11px] font-mono border border-tactical-border/40 text-tactical-text-secondary hover:border-rose-500/60 hover:text-rose-300 transition-colors"
+                        className="px-2 py-1 rounded text-[11px] font-mono border border-tactical-border/40 text-tactical-text-secondary hover:border-rose-500/60 hover:text-rose-300 transition-colors cursor-pointer"
                     >
-                        {p.label}
+                        {isTr ? p.labelTr : p.label}
                     </button>
                 ))}
             </div>
@@ -365,7 +372,7 @@ export default function PanelFreckling() {
                 {/* LEFT: MC1R R + r Loci */}
                 <div className="flex flex-col gap-3">
                     <div className="text-xs font-mono text-rose-400 uppercase tracking-wider">
-                        MC1R 'R' High-Risk Variants (§5.1)
+                        {isTr ? "MC1R 'R' Yüksek Riskli Varyantları (§5.1)" : "MC1R 'R' High-Risk Variants (§5.1)"}
                     </div>
                     {MC1R_R_LOCI.map(locus => (
                         <div key={locus.rsid} className="bg-tactical-surface/50 border border-tactical-border/40 rounded-lg p-3">
@@ -383,7 +390,7 @@ export default function PanelFreckling() {
                                         key={d}
                                         id={`${locus.rsid}-dose-${d}`}
                                         onClick={() => setDosage(locus.rsid, d)}
-                                        className={`flex-1 py-1.5 rounded text-sm font-mono border transition-all ${
+                                        className={`flex-1 py-1.5 rounded text-sm font-mono border transition-all cursor-pointer ${
                                             getDosage(locus.rsid) === d
                                                 ? "border-rose-500/80 bg-rose-500/20 text-rose-300"
                                                 : "border-tactical-border/40 text-tactical-text-secondary hover:border-tactical-border/70"
@@ -397,7 +404,7 @@ export default function PanelFreckling() {
                     ))}
 
                     <div className="text-xs font-mono text-amber-400 uppercase tracking-wider mt-1">
-                        MC1R 'r' Low-Risk Variants
+                        {isTr ? "MC1R 'r' Düşük Riskli Varyantları" : "MC1R 'r' Low-Risk Variants"}
                     </div>
                     {MC1R_r_LOCI.map(locus => (
                         <div key={locus.rsid} className="bg-tactical-surface/50 border border-tactical-border/30 rounded-lg p-3">
@@ -415,7 +422,7 @@ export default function PanelFreckling() {
                                         key={d}
                                         id={`${locus.rsid}-dose-${d}`}
                                         onClick={() => setDosage(locus.rsid, d)}
-                                        className={`flex-1 py-1.5 rounded text-sm font-mono border transition-all ${
+                                        className={`flex-1 py-1.5 rounded text-sm font-mono border transition-all cursor-pointer ${
                                             getDosage(locus.rsid) === d
                                                 ? "border-amber-500/80 bg-amber-500/20 text-amber-300"
                                                 : "border-tactical-border/40 text-tactical-text-secondary hover:border-tactical-border/70"
@@ -432,7 +439,7 @@ export default function PanelFreckling() {
                 {/* RIGHT: Modifier Loci + Run */}
                 <div className="flex flex-col gap-3">
                     <div className="text-xs font-mono text-violet-400 uppercase tracking-wider">
-                        Epistatic Modifier Loci (ASIP, BNC2)
+                        {isTr ? "Epistatik Modifiyer Lokusları (ASIP, BNC2)" : "Epistatic Modifier Loci (ASIP, BNC2)"}
                     </div>
                     {MODIFIER_LOCI.map(locus => (
                         <div key={locus.rsid} className="bg-tactical-surface/50 border border-tactical-border/30 rounded-lg p-3">
@@ -449,7 +456,7 @@ export default function PanelFreckling() {
                                         key={d}
                                         id={`${locus.rsid}-dose-${d}`}
                                         onClick={() => setDosage(locus.rsid, d)}
-                                        className={`flex-1 py-1.5 rounded text-sm font-mono border transition-all ${
+                                        className={`flex-1 py-1.5 rounded text-sm font-mono border transition-all cursor-pointer ${
                                             getDosage(locus.rsid) === d
                                                 ? "border-violet-500/80 bg-violet-500/20 text-violet-300"
                                                 : "border-tactical-border/40 text-tactical-text-secondary hover:border-tactical-border/70"
@@ -462,9 +469,8 @@ export default function PanelFreckling() {
                         </div>
                     ))}
 
-                    {/* Formula Preview */}
                     <div className="bg-tactical-surface/30 border border-tactical-border/20 rounded-lg p-3 font-mono text-[10px] text-tactical-text-secondary leading-relaxed">
-                        <div className="text-violet-300 mb-1">Research §5.2 Formula:</div>
+                        <div className="text-violet-300 mb-1">{isTr ? "Araştırma §5.2 Formülü:" : "Research §5.2 Formula:"}</div>
                         <div>logit = <span className="text-rose-300">-2.50</span> + <span className="text-amber-300">1.35</span>×W_MC1R + <span className="text-violet-300">0.85</span>×X_ASIP + <span className="text-sky-300">0.65</span>×X_BNC2</div>
                         <div>F_score = 100 / (1 + e<sup>-logit</sup>)</div>
                     </div>
@@ -473,10 +479,10 @@ export default function PanelFreckling() {
                         id="freckling-run-analysis-btn"
                         onClick={runAnalysis}
                         disabled={loading}
-                        className="mt-auto w-full py-2.5 rounded-lg border border-rose-500/60 bg-rose-500/15 text-rose-300 font-mono text-sm flex items-center justify-center gap-2 hover:bg-rose-500/25 transition-all disabled:opacity-50"
+                        className="mt-auto w-full py-2.5 rounded-lg border border-rose-500/60 bg-rose-500/15 text-rose-300 font-mono text-sm flex items-center justify-center gap-2 hover:bg-rose-500/25 transition-all disabled:opacity-50 cursor-pointer"
                     >
                         {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sun className="w-4 h-4" />}
-                        {loading ? "Computing..." : "Execute MC1R Analysis"}
+                        {loading ? (isTr ? "Hesaplanıyor..." : "Computing...") : (isTr ? "MC1R Analizini Çalıştır" : "Execute MC1R Analysis")}
                     </button>
                 </div>
             </div>
@@ -491,23 +497,29 @@ export default function PanelFreckling() {
                         transition={{ duration: 0.35 }}
                         className="grid grid-cols-1 lg:grid-cols-3 gap-4"
                     >
-                        {/* MC1R Diplotype */}
                         <div className="bg-tactical-surface/50 border border-rose-500/30 rounded-xl p-4 flex flex-col gap-3">
                             <div className="flex items-center gap-2">
                                 <Dna className="w-4 h-4 text-rose-400" />
-                                <span className="text-sm font-mono text-tactical-text-primary font-semibold">MC1R Diplotype</span>
+                                <span className="text-sm font-mono text-tactical-text-primary font-semibold">
+                                    {isTr ? "MC1R Diplotipi" : "MC1R Diplotype"}
+                                </span>
                             </div>
                             <div className="text-center">
                                 <div className={`text-3xl font-mono font-bold ${DIPLOTYPE_COLORS[result.mc1r.diplotype] ?? "text-tactical-text-primary"}`}>
                                     {result.mc1r.diplotype}
                                 </div>
                                 <div className={`text-xs font-mono mt-1 ${CLASS_COLORS[result.mc1r.functional_classification] ?? ""}`}>
-                                    {result.mc1r.functional_classification.replace("_", " ")}
+                                    {isTr
+                                        ? (result.mc1r.functional_classification === "WILD_TYPE" ? "YABANIL TİP"
+                                            : result.mc1r.functional_classification === "MILD_LOSS" ? "HAFİF FONKSİYON KAYBI"
+                                            : result.mc1r.functional_classification === "MODERATE_LOSS" ? "ORTA FONKSİYON KAYBI"
+                                            : "AĞIR FONKSİYON KAYBI")
+                                        : result.mc1r.functional_classification.replace("_", " ")}
                                 </div>
                             </div>
                             <div className="grid grid-cols-2 gap-2">
                                 <div className="bg-tactical-bg/40 rounded p-2 text-center">
-                                    <div className="text-[10px] text-tactical-text-secondary">W_MC1R</div>
+                                    <div className="text-[10px] text-tactical-text-secondary">{isTr ? "Toplam Kayıp (W_MC1R)" : "W_MC1R"}</div>
                                     <div className="text-lg font-mono text-rose-300 tabular-nums">{result.mc1r.total_mc1r_loss_weight.toFixed(3)}</div>
                                 </div>
                                 <div className="bg-tactical-bg/40 rounded p-2 text-center">
@@ -519,7 +531,9 @@ export default function PanelFreckling() {
                             </div>
                             {result.mc1r.detected_variants.length > 0 && (
                                 <div className="bg-tactical-bg/40 rounded p-2">
-                                    <div className="text-[10px] text-tactical-text-secondary mb-1">Detected Variants</div>
+                                    <div className="text-[10px] text-tactical-text-secondary mb-1">
+                                        {isTr ? "Tespit Edilen Varyantlar" : "Detected Variants"}
+                                    </div>
                                     {result.mc1r.detected_variants.map((v, i) => (
                                         <div key={i} className="text-[10px] font-mono text-tactical-text-primary leading-relaxed">{v}</div>
                                     ))}
@@ -527,17 +541,21 @@ export default function PanelFreckling() {
                             )}
                         </div>
 
-                        {/* Freckling Score */}
                         <div className="bg-tactical-surface/50 border border-amber-500/30 rounded-xl p-4 flex flex-col gap-3">
                             <div className="flex items-center gap-2">
                                 <FlaskConical className="w-4 h-4 text-amber-400" />
-                                <span className="text-sm font-mono text-tactical-text-primary font-semibold">Ephelides Score</span>
+                                <span className="text-sm font-mono text-tactical-text-primary font-semibold">
+                                    {isTr ? "Efelid (Çillenme) Skoru" : "Ephelides Score"}
+                                </span>
                             </div>
                             <div className="flex justify-center">
-                                <FrecklingGauge value={result.freckling.freckling_score_pct} />
+                                <FrecklingGauge
+                                    value={result.freckling.freckling_score_pct}
+                                    labelText={isTr ? "F_score (Çillenme İndeksi)" : "F_score (Freckling Index)"}
+                                />
                             </div>
                             <div className="bg-tactical-bg/40 rounded p-2 text-center">
-                                <div className="text-[10px] text-tactical-text-secondary mb-0.5">Intensity</div>
+                                <div className="text-[10px] text-tactical-text-secondary mb-0.5">{isTr ? "Yoğunluk" : "Intensity"}</div>
                                 <div className="text-xs font-mono text-amber-300 leading-tight">
                                     {result.freckling.freckling_intensity}
                                 </div>
@@ -552,38 +570,46 @@ export default function PanelFreckling() {
                             </div>
                         </div>
 
-                        {/* UV Sensitivity */}
                         <div className="bg-tactical-surface/50 border border-sky-500/30 rounded-xl p-4 flex flex-col gap-3">
                             <div className="flex items-center gap-2">
                                 <Sun className="w-4 h-4 text-sky-400" />
-                                <span className="text-sm font-mono text-tactical-text-primary font-semibold">UV Sensitivity</span>
+                                <span className="text-sm font-mono text-tactical-text-primary font-semibold">
+                                    {isTr ? "UV Hassasiyeti" : "UV Sensitivity"}
+                                </span>
                             </div>
                             <div>
-                                <div className="text-[10px] text-tactical-text-secondary mb-1.5">Minimal Erythema Dose</div>
+                                <div className="text-[10px] text-tactical-text-secondary mb-1.5">
+                                    {isTr ? "Minimal Eritem Dozu" : "Minimal Erythema Dose"}
+                                </div>
                                 <UVSensitivityBar medCategory={result.uv_sensitivity.minimal_erythema_dose_category} />
                             </div>
                             <div className={`text-center text-sm font-mono font-bold ${getMedColor(result.uv_sensitivity.minimal_erythema_dose_category)}`}>
                                 {result.uv_sensitivity.minimal_erythema_dose_category.split("(")[0].trim()}
                             </div>
                             <div className="bg-tactical-bg/40 rounded p-2">
-                                <div className="text-[10px] text-tactical-text-secondary mb-0.5">Tanning Capacity</div>
+                                <div className="text-[10px] text-tactical-text-secondary mb-0.5">
+                                    {isTr ? "Bronzlaşma Kapasitesi" : "Tanning Capacity"}
+                                </div>
                                 <div className="text-xs font-mono text-sky-300">
                                     {result.uv_sensitivity.tanning_capacity.replace(/_/g, " ")}
                                 </div>
                             </div>
                             <div className="bg-tactical-bg/40 rounded p-2">
-                                <div className="text-[10px] text-tactical-text-secondary mb-0.5">Clinical Guidance</div>
+                                <div className="text-[10px] text-tactical-text-secondary mb-0.5">
+                                    {isTr ? "Klinik Kılavuz / Foto-koruma" : "Clinical Guidance"}
+                                </div>
                                 <div className="text-[10px] text-tactical-text-primary leading-relaxed">
                                     {result.uv_sensitivity.photoprotection_guidance}
                                 </div>
                             </div>
                         </div>
 
-                        {/* Legal Shield */}
                         <div className="lg:col-span-3 bg-amber-500/5 border border-amber-500/25 rounded-lg p-3 flex items-start gap-2">
-                            <AlertTriangle className="w-4 h-4 text-amber-400 mt-0.5 flex-shrink-0" />
+                            <ShieldCheck className="w-4 h-4 text-amber-400 mt-0.5 flex-shrink-0" />
                             <p className="text-[10px] text-tactical-text-secondary leading-relaxed">
-                                <span className="text-amber-400 font-semibold">Forensic Legal Shield: </span>
+                                <span className="text-amber-400 font-semibold">
+                                    {isTr ? "Adli Hukuki Bildirim Kalkanı: " : "Forensic Legal Shield: "}
+                                </span>
                                 {result.prosecutors_fallacy_shield}
                             </p>
                         </div>

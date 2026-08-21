@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Lock, ShieldCheck, Eye, EyeOff, KeyRound, Cpu, CheckCircle2, AlertTriangle, RefreshCw, Layers } from "lucide-react";
+import { useForensicCaseStore } from "@/store/forensicCaseStore";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 const DEFAULT_SUSPECT_LOCI: Record<string, number[]> = {
   D3S1358: [15.0, 16.0],
@@ -60,9 +62,10 @@ interface VerifyResponse {
   prosecutors_fallacy_shield: string;
 }
 
-import { useForensicCaseStore } from "@/store/forensicCaseStore";
-
 export default function ZkpAuditorPanel() {
+  const { lang } = useSaasLanguage();
+  const isTr = lang === "tr";
+
   const { activeCase } = useForensicCaseStore();
   const [hidePrivateWitness, setHidePrivateWitness] = useState<boolean>(true);
   const [matchThreshold, setMatchThreshold] = useState<number>(44);
@@ -136,14 +139,16 @@ export default function ZkpAuditorPanel() {
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
               <h2 className="text-xs sm:text-sm font-bold tracking-widest text-tactical-text uppercase">
-                ZKP Blind Forensic Auditor (Pillar 6 §2)
+                {isTr ? "ZKP Kör Adli Denetçi (Pillar 6 §2)" : "ZKP Blind Forensic Auditor (Pillar 6 §2)"}
               </h2>
               <span className="px-2.5 py-0.5 rounded-lg text-[8px] sm:text-[9px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 whitespace-nowrap shrink-0">
                 Groth16 • BN254 • GDPR Art. 9
               </span>
             </div>
             <p className="text-[9px] sm:text-[10px] text-zinc-400 mt-0.5 truncate">
-              Zero-Knowledge Privacy-Preserving STR Verification Circuit • Poseidon Commitment • Bilinear Multi-Pairings
+              {isTr
+                ? "Sıfır Bilgi Gizlilik Korumalı STR Doğrulama Devresi • Poseidon Taahhüdü • Çift Doğrusal Eşleşmeler"
+                : "Zero-Knowledge Privacy-Preserving STR Verification Circuit • Poseidon Commitment • Bilinear Multi-Pairings"}
             </p>
           </div>
         </div>
@@ -155,7 +160,7 @@ export default function ZkpAuditorPanel() {
             className="px-3 py-1.5 rounded-xl border border-tactical-border/60 bg-black/60 text-[10px] sm:text-xs font-bold text-zinc-300 hover:text-white flex items-center justify-center gap-1.5 cursor-pointer transition-all whitespace-nowrap"
           >
             {hidePrivateWitness ? <EyeOff className="w-3.5 h-3.5 text-amber-400 shrink-0" /> : <Eye className="w-3.5 h-3.5 text-emerald-400 shrink-0" />}
-            <span>{hidePrivateWitness ? "Private Witness (Masked)" : "Witness Revealed"}</span>
+            <span>{hidePrivateWitness ? (isTr ? "Özel Tanık (Gizli)" : "Private Witness (Masked)") : (isTr ? "Tanık Açık" : "Witness Revealed")}</span>
           </button>
 
           <div className="flex items-center justify-center gap-1 p-1 rounded-xl bg-black/60 border border-tactical-border/60">
@@ -165,7 +170,7 @@ export default function ZkpAuditorPanel() {
                 activeTab === "comparator" ? "bg-indigo-500 text-white shadow-md font-extrabold" : "text-zinc-400 hover:text-zinc-200"
               }`}
             >
-              STR Circuit
+              {isTr ? "STR Devresi" : "STR Circuit"}
             </button>
             <button
               onClick={() => {
@@ -176,7 +181,7 @@ export default function ZkpAuditorPanel() {
                 activeTab === "pairing" ? "bg-indigo-500 text-white shadow-md font-extrabold" : "text-zinc-400 hover:text-zinc-200"
               }`}
             >
-              Pairing Verifier
+              {isTr ? "Eşleşme Doğrulayıcı" : "Pairing Verifier"}
             </button>
           </div>
         </div>
@@ -189,7 +194,7 @@ export default function ZkpAuditorPanel() {
           <div className="space-y-4 rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 shadow-xl">
             <div className="flex items-center justify-between border-b border-tactical-border/40 pb-3">
               <span className="text-xs font-bold uppercase tracking-wider text-tactical-text">
-                Circuit Constraints Configuration
+                {isTr ? "Devre Kısıtlamaları Konfigürasyonu" : "Circuit Constraints Configuration"}
               </span>
               <span className="text-[10px] text-indigo-400 font-bold">24 STR Loci</span>
             </div>
@@ -197,8 +202,8 @@ export default function ZkpAuditorPanel() {
             {/* Threshold Slider */}
             <div className="space-y-2">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-zinc-400">Match Threshold (M_thresh):</span>
-                <span className="font-bold text-indigo-300">{matchThreshold} / 48 Alleles</span>
+                <span className="text-zinc-400">{isTr ? "Eşleşme Eşiği (M_esik):" : "Match Threshold (M_thresh):"}</span>
+                <span className="font-bold text-indigo-300">{matchThreshold} / 48 {isTr ? "Alel" : "Alleles"}</span>
               </div>
               <input
                 type="range"
@@ -216,10 +221,10 @@ export default function ZkpAuditorPanel() {
               <div className="flex items-center justify-between text-[11px]">
                 <span className="font-bold text-zinc-300 flex items-center gap-1.5">
                   <KeyRound className="w-3.5 h-3.5 text-amber-400" />
-                  Private Witness Genotype (G_S)
+                  {isTr ? "Özel Tanık Genotipi (G_S)" : "Private Witness Genotype (G_S)"}
                 </span>
                 <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                  {hidePrivateWitness ? "ZERO-KNOWLEDGE HIDDEN" : "EXPOSED"}
+                  {hidePrivateWitness ? (isTr ? "SIFIR-BİLGİ GİZLİ" : "ZERO-KNOWLEDGE HIDDEN") : (isTr ? "GÖRÜNÜR" : "EXPOSED")}
                 </span>
               </div>
 
@@ -241,7 +246,7 @@ export default function ZkpAuditorPanel() {
               className="w-full py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
             >
               <Cpu className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
-              Synthesize Groth16 Proof
+              {isTr ? "Groth16 İspatını Sentezle" : "Synthesize Groth16 Proof"}
             </button>
           </div>
 
@@ -252,16 +257,18 @@ export default function ZkpAuditorPanel() {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-indigo-500/20 pb-3.5">
                   <div>
                     <span className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest block">
-                      R1CS EQUALITY GADGET &amp; POSEIDON COMMITMENTS
+                      {isTr ? "R1CS EŞİTLİK GADGET'I & POSEIDON TAAHHÜTLERİ" : "R1CS EQUALITY GADGET & POSEIDON COMMITMENTS"}
                     </span>
                     <span className="text-sm sm:text-base font-black text-indigo-300 font-mono">
                       (a_lm - e_lm) · b_lm = 1 - m_lm (mod p)
                     </span>
                   </div>
                   <div className="flex flex-col items-start sm:items-end gap-1">
-                    <span className="text-[10px] text-zinc-400 block uppercase font-bold">Circuit Verdict</span>
+                    <span className="text-[10px] text-zinc-400 block uppercase font-bold">
+                      {isTr ? "Devre Kararı" : "Circuit Verdict"}
+                    </span>
                     <span className="text-[10px] sm:text-xs font-bold px-2.5 py-1 rounded-lg border font-mono bg-emerald-500/20 text-emerald-300 border-emerald-500/40 whitespace-nowrap">
-                      R1CS SATISFIED (48/48 Matches)
+                      {isTr ? "R1CS SAĞLANDI (48/48 Eşleşme)" : "R1CS SATISFIED (48/48 Matches)"}
                     </span>
                   </div>
                 </div>
@@ -271,11 +278,15 @@ export default function ZkpAuditorPanel() {
                   <div className="space-y-2">
                     <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40 text-[10px] font-mono space-y-1.5">
                       <div className="flex flex-col sm:flex-row sm:justify-between gap-1">
-                        <span className="text-zinc-500 whitespace-nowrap">Public Evidence Commitment H(G_E):</span>
+                        <span className="text-zinc-500 whitespace-nowrap">
+                          {isTr ? "Genel Delil Taahhüdü H(G_E):" : "Public Evidence Commitment H(G_E):"}
+                        </span>
                         <span className="text-indigo-300 break-all sm:truncate sm:max-w-md">{proofData.evidence_commitment}</span>
                       </div>
                       <div className="flex flex-col sm:flex-row sm:justify-between gap-1">
-                        <span className="text-zinc-500 whitespace-nowrap">Suspect Poseidon Commitment H(G_S):</span>
+                        <span className="text-zinc-500 whitespace-nowrap">
+                          {isTr ? "Şüpheli Poseidon Taahhüdü H(G_S):" : "Suspect Poseidon Commitment H(G_S):"}
+                        </span>
                         <span className="text-amber-300 break-all sm:truncate sm:max-w-md">{proofData.suspect_commitment}</span>
                       </div>
                     </div>
@@ -285,10 +296,11 @@ export default function ZkpAuditorPanel() {
                 <div className="p-3 rounded-xl bg-black/30 border border-tactical-border/30 text-[10px] text-zinc-400 font-mono">
                   <div className="flex items-center gap-1.5 text-indigo-400 font-bold mb-1">
                     <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
-                    GDPR Article 9 &amp; FRE 702 Genomic Privacy Safeguard
+                    {isTr ? "GDPR Madde 9 & Hukuki Genomik Gizlilik Koruması" : "GDPR Article 9 & FRE 702 Genomic Privacy Safeguard"}
                   </div>
-                  Zero-Knowledge Proofs allow public court verification of DNA matches while completely suppressing suspect STR alleles.
-                  Raw genotype sequences are never transmitted, serialized, or stored in public courtroom dockets.
+                  {isTr
+                    ? "Sıfır Bilgi İspatları (ZKP), şüphelinin STR alellerini tamamen gizli tutarken mahkemede DNA eşleşmesinin doğrulanmasını sağlar. Ham genotip dizileri mahkeme tutanaklarında asla aktarılmaz, serileştirilmez veya saklanmaz."
+                    : "Zero-Knowledge Proofs allow public court verification of DNA matches while completely suppressing suspect STR alleles. Raw genotype sequences are never transmitted, serialized, or stored in public courtroom dockets."}
                 </div>
               </div>
             </motion.div>
@@ -303,27 +315,35 @@ export default function ZkpAuditorPanel() {
           <div className="space-y-4 rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 shadow-xl">
             <div className="border-b border-tactical-border/40 pb-3">
               <span className="text-xs font-bold uppercase tracking-wider text-tactical-text block">
-                Public Signals Vector x
+                {isTr ? "Genel Sinyaller Vektörü x" : "Public Signals Vector x"}
               </span>
             </div>
 
             {proofData ? (
               <div className="space-y-2 text-[10px] font-mono">
                 <div className="p-2.5 rounded-lg bg-black/40 border border-tactical-border/40">
-                  <span className="text-zinc-500 block">x₀ (Evidence Hash):</span>
+                  <span className="text-zinc-500 block">
+                    {isTr ? "x₀ (Delil Hashi):" : "x₀ (Evidence Hash):"}
+                  </span>
                   <span className="text-indigo-300 break-all">{proofData.public_signals[0]}</span>
                 </div>
                 <div className="p-2.5 rounded-lg bg-black/40 border border-tactical-border/40">
-                  <span className="text-zinc-500 block">x₁ (Match Threshold):</span>
+                  <span className="text-zinc-500 block">
+                    {isTr ? "x₁ (Eşleşme Eşiği):" : "x₁ (Match Threshold):"}
+                  </span>
                   <span className="text-emerald-300">{proofData.public_signals[1]}</span>
                 </div>
                 <div className="p-2.5 rounded-lg bg-black/40 border border-tactical-border/40">
-                  <span className="text-zinc-500 block">x₂ (Suspect Commitment):</span>
+                  <span className="text-zinc-500 block">
+                    {isTr ? "x₂ (Şüpheli Taahhüdü):" : "x₂ (Suspect Commitment):"}
+                  </span>
                   <span className="text-amber-300 break-all">{proofData.public_signals[2]}</span>
                 </div>
               </div>
             ) : (
-              <div className="text-xs text-zinc-500">Synthesize a proof first.</div>
+              <div className="text-xs text-zinc-500">
+                {isTr ? "Önce bir ispat sentezleyin." : "Synthesize a proof first."}
+              </div>
             )}
           </div>
 
@@ -335,14 +355,16 @@ export default function ZkpAuditorPanel() {
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-indigo-500/20 pb-3.5">
                     <div>
                       <span className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest block">
-                        BN254 BILINEAR MULTI-PAIRING EQUATION
+                        {isTr ? "BN254 ÇİFT DOĞRUSAL ÇOKLU EŞLEŞME DENKLEMİ" : "BN254 BILINEAR MULTI-PAIRING EQUATION"}
                       </span>
                       <span className="text-xs sm:text-sm font-black text-indigo-300 font-mono break-all">
                         e(A, B) · e(-α, β) · e(-∑ xᵢ Kᵢ, γ) · e(-C, δ) = 1_GT
                       </span>
                     </div>
                     <div className="flex flex-col items-start sm:items-end gap-1">
-                      <span className="text-[10px] text-zinc-400 block uppercase font-bold">Pairing Status</span>
+                      <span className="text-[10px] text-zinc-400 block uppercase font-bold">
+                        {isTr ? "Eşleşme Durumu" : "Pairing Status"}
+                      </span>
                       <span className="text-[10px] sm:text-xs font-bold px-2.5 py-1 rounded-lg border font-mono bg-emerald-500/20 text-emerald-300 border-emerald-500/40 whitespace-nowrap">
                         {verifyResult.verdict}
                       </span>
@@ -351,11 +373,11 @@ export default function ZkpAuditorPanel() {
 
                   <div className="p-3.5 rounded-xl bg-black/40 border border-tactical-border/40 text-xs font-mono space-y-1.5">
                     <div className="flex justify-between text-[10px]">
-                      <span className="text-zinc-500">Elliptic Curve Protocol:</span>
+                      <span className="text-zinc-500">{isTr ? "Eliptik Eğri Protokolü:" : "Elliptic Curve Protocol:"}</span>
                       <span className="text-zinc-300">Groth16 on alt_bn128 (BN254)</span>
                     </div>
                     <div className="flex justify-between text-[10px]">
-                      <span className="text-zinc-500">Soundness Error Bound (ε):</span>
+                      <span className="text-zinc-500">{isTr ? "Doğruluk Hata Sınırı (ε):" : "Soundness Error Bound (ε):"}</span>
                       <span className="text-emerald-400 font-bold">{verifyResult.soundness_bound}</span>
                     </div>
                   </div>
@@ -363,7 +385,7 @@ export default function ZkpAuditorPanel() {
                   <div className="p-3 rounded-xl bg-black/30 border border-tactical-border/30 text-[10px] text-zinc-400 font-mono">
                     <div className="flex items-center gap-1.5 text-indigo-400 font-bold mb-1">
                       <ShieldCheck className="w-3.5 h-3.5" />
-                      Cryptographic Evidence Non-Repudiation
+                      {isTr ? "Kriptografik Delil İnkar Edilemezliği" : "Cryptographic Evidence Non-Repudiation"}
                     </div>
                     {verifyResult.prosecutors_fallacy_shield}
                   </div>

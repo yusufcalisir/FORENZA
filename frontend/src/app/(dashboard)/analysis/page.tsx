@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import ActiveProfileBanner from "@/components/common/ActiveProfileBanner";
 import { useIngestStore } from "@/store/ingestStore";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 import {
   SUBSYSTEM_CATEGORIES,
   COLOR_CLASSES,
@@ -18,6 +19,8 @@ import {
 
 export default function AnalysisPage() {
   const { setInspectorOpen } = useIngestStore();
+  const { lang } = useSaasLanguage();
+  const isTr = lang === "tr";
 
   return (
     <div className="space-y-6 font-mono max-w-full overflow-hidden">
@@ -30,14 +33,16 @@ export default function AnalysisPage() {
           <div className="flex items-center gap-2">
             <Cpu className="w-4 h-4 text-cyan-400" />
             <h2 className="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-white">
-              Forensic Biocomputational Suites
+              {isTr ? "Adli Biyobilişimsel Süitler" : "Forensic Biocomputational Suites"}
             </h2>
             <span className="text-[9px] font-bold text-cyan-400 bg-cyan-500/10 border border-cyan-500/30 px-2 py-0.5 rounded uppercase">
-              Inference Matrix
+              {isTr ? "Çıkarım Matrisi" : "Inference Matrix"}
             </span>
           </div>
           <p className="text-[10px] text-zinc-400 mt-1">
-            Select a research suite to access calibrated multilocus biocomputational models, 3D spatial visualizers, and ISO 17025 validation engines.
+            {isTr
+              ? "Kalibre edilmiş çok lokuslu biyobilişimsel modellere, 3D uzamsal görselleştiricilere ve ISO 17025 doğrulama motorlarına erişmek için bir araştırma süiti seçin."
+              : "Select a research suite to access calibrated multilocus biocomputational models, 3D spatial visualizers, and ISO 17025 validation engines."}
           </p>
         </div>
 
@@ -63,7 +68,7 @@ export default function AnalysisPage() {
                       </div>
                       <div>
                         <span className="text-[8px] font-bold text-zinc-500 uppercase tracking-widest block">
-                          Pillar {cat.pillarNumber}
+                          {isTr ? `Süit ${cat.pillarNumber}` : `Pillar ${cat.pillarNumber}`}
                         </span>
                         <h3 className="text-xs font-bold text-white uppercase tracking-wider group-hover:text-cyan-300 transition-colors">
                           {cat.label}
@@ -71,7 +76,7 @@ export default function AnalysisPage() {
                       </div>
                     </div>
                     <span className="text-[8px] font-bold px-2 py-0.5 rounded-md bg-black/60 text-zinc-400 border border-tactical-border/60">
-                      5 Modules
+                      {isTr ? "5 Modül" : "5 Modules"}
                     </span>
                   </div>
 

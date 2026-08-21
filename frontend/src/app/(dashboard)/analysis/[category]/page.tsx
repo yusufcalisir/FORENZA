@@ -19,6 +19,7 @@ import {
   CategoryId,
 } from "@/config/subsystems";
 import { useIngestStore } from "@/store/ingestStore";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 export default function CategoryPage({
   params,
@@ -29,6 +30,8 @@ export default function CategoryPage({
   const categoryId = resolvedParams.category as CategoryId;
   const category = getSubsystemCategory(categoryId) || SUBSYSTEM_CATEGORIES[0];
   const { setInspectorOpen } = useIngestStore();
+  const { lang } = useSaasLanguage();
+  const isTr = lang === "tr";
 
   const CatIcon = category.icon;
   const cc = COLOR_CLASSES[category.color] || COLOR_CLASSES.cyan;
@@ -48,11 +51,11 @@ export default function CategoryPage({
                   href="/analysis"
                   className="text-[10px] text-zinc-400 hover:text-cyan-300 transition-colors flex items-center gap-1 font-bold uppercase"
                 >
-                  <ArrowLeft className="w-3 h-3" /> Workstation Hub
+                  <ArrowLeft className="w-3 h-3" /> {isTr ? "İstasyon Merkezi" : "Workstation Hub"}
                 </Link>
                 <span className="text-zinc-600">/</span>
                 <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest">
-                  Pillar {category.pillarNumber}
+                  {isTr ? `Süit ${category.pillarNumber}` : `Pillar ${category.pillarNumber}`}
                 </span>
               </div>
               <h1 className="text-base sm:text-xl font-extrabold text-white tracking-tight mt-0.5">
@@ -63,7 +66,7 @@ export default function CategoryPage({
 
           <div className="flex items-center gap-2 flex-wrap shrink-0">
             <span className="text-[9px] font-bold text-cyan-400 bg-cyan-500/10 border border-cyan-500/30 px-3 py-1.5 rounded-xl uppercase">
-              5 Calibrated Modules
+              {isTr ? "5 Kalibre Modül" : "5 Calibrated Modules"}
             </span>
           </div>
         </div>
@@ -75,7 +78,7 @@ export default function CategoryPage({
         <div className="flex items-center gap-2 text-[9px] text-zinc-500 font-mono pt-1">
           <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
           <span>
-            Research Foundation: <strong className="text-zinc-400">{category.researchFile}</strong>
+            {isTr ? "Araştırma Temeli:" : "Research Foundation:"} <strong className="text-zinc-400">{category.researchFile}</strong>
           </span>
         </div>
       </div>
@@ -84,9 +87,11 @@ export default function CategoryPage({
       <div className="space-y-3">
         <div className="flex items-center justify-between px-1">
           <span className="text-[10px] font-extrabold uppercase tracking-widest text-zinc-400">
-            Available Modules in this Suite
+            {isTr ? "Bu Süitteki Mevcut Modüller" : "Available Modules in this Suite"}
           </span>
-          <span className="text-[9px] text-zinc-500">Click to launch dedicated viewport</span>
+          <span className="text-[9px] text-zinc-500">
+            {isTr ? "Özel çalışma alanını başlatmak için tıklayın" : "Click to launch dedicated viewport"}
+          </span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">

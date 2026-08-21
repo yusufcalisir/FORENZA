@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ShieldCheck, CheckCircle2, AlertTriangle, XCircle, RefreshCw, Activity, Layers } from "lucide-react";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 interface InspectionDimension {
   dimension: string;
@@ -33,6 +34,9 @@ interface QcResult {
 }
 
 export default function QualityAssurancePanel() {
+  const { lang } = useSaasLanguage();
+  const isTr = lang === "tr";
+
   const [ncRfu, setNcRfu] = useState<number>(0.0);
   const [pcMatch, setPcMatch] = useState<boolean>(true);
   const [loading, setLoading] = useState(false);
@@ -40,13 +44,13 @@ export default function QualityAssurancePanel() {
   const [result, setResult] = useState<QcResult | null>({
     sample_id: "SAMPLE-DNA-01",
     overall_qc_verdict: "QC_PASSED",
-    action_recommendation: "PROCEED_TO_STATISTICAL_INTERPRETATION",
+    action_recommendation: isTr ? "İSTATİSTİKSEL_DEĞERLENDİRMEYE_GEÇİN" : "PROCEED_TO_STATISTICAL_INTERPRETATION",
     quality_inspection_matrix: [
-      { dimension: "NEGATIVE_CONTROL_INTEGRITY", status: "PASS", metric: "Max NC RFU: 0.0", threshold: "< 50.0 RFU" },
-      { dimension: "POSITIVE_CONTROL_CONCORDANCE", status: "PASS", metric: "100% Match (9947A)", threshold: "100% Concordance" },
-      { dimension: "HETEROZYGOTE_ALLELE_BALANCE", status: "PASS", metric: "0 Imbalanced Loci (Hb >= 0.60)", threshold: "Hb >= 0.60" },
-      { dimension: "STOCHASTIC_THRESHOLDING", status: "PASS", metric: "0 Loci below ST (150.0 RFU)", threshold: ">= 150.0 RFU" },
-      { dimension: "LOCUS_COMPLETION_RATE", status: "PASS", metric: "Completion: 100.0% (4 Loci)", threshold: ">= 90%" },
+      { dimension: isTr ? "NEGATİF_KONTROL_BÜTÜNLÜĞÜ" : "NEGATIVE_CONTROL_INTEGRITY", status: "PASS", metric: "Max NC RFU: 0.0", threshold: "< 50.0 RFU" },
+      { dimension: isTr ? "POZİTİF_KONTROL_UYUMU" : "POSITIVE_CONTROL_CONCORDANCE", status: "PASS", metric: isTr ? "%100 Eşleşme (9947A)" : "100% Match (9947A)", threshold: isTr ? "%100 Uyum" : "100% Concordance" },
+      { dimension: isTr ? "HETEROZİGOT_ALEL_DENGESİ" : "HETEROZYGOTE_ALLELE_BALANCE", status: "PASS", metric: isTr ? "0 Dengesiz Lokus (Hb >= 0.60)" : "0 Imbalanced Loci (Hb >= 0.60)", threshold: "Hb >= 0.60" },
+      { dimension: isTr ? "STOKASTİK_EŞİK_DEĞERLENDİRMESİ" : "STOCHASTIC_THRESHOLDING", status: "PASS", metric: isTr ? "ST Altında 0 Lokus (150.0 RFU)" : "0 Loci below ST (150.0 RFU)", threshold: ">= 150.0 RFU" },
+      { dimension: isTr ? "LOKUS_TAMAMLANMA_ORANI" : "LOCUS_COMPLETION_RATE", status: "PASS", metric: isTr ? "Tamamlanma: %100.0 (4 Lokus)" : "Completion: 100.0% (4 Loci)", threshold: ">= 90%" },
     ],
     locus_qc_details: [
       { locus: "D3S1358", alleles: ["15", "16"], peak_heights_rfu: [1200, 1150], heterozygote_balance_hb: 0.958, min_rfu: 1150, locus_status: "PASS" },
@@ -96,14 +100,18 @@ export default function QualityAssurancePanel() {
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-sm font-bold tracking-widest text-tactical-text uppercase">
-                Forensic Quality Assurance & Quality Control (QA/QC) Gatekeeper
+                {isTr
+                  ? "Adli Kalite Güvence & Kalite Kontrol (QA/QC) Denetçisi"
+                  : "Forensic Quality Assurance & Quality Control (QA/QC) Gatekeeper"}
               </h2>
               <span className="px-2 py-0.5 rounded text-[8px] font-bold bg-teal-500/20 text-teal-300 border border-teal-500/30">
-                ISO 17025 GATEKEEPER
+                {isTr ? "ISO 17025 DENETÇİ" : "ISO 17025 GATEKEEPER"}
               </span>
             </div>
             <p className="text-[10px] text-zinc-400 mt-0.5">
-              7-Point Quality Inspection Matrix, Heterozygote Balance (Hb) & Control Verification
+              {isTr
+                ? "7 Noktalı Kalite Denetim Matrisi, Heterozigot Dengesi (Hb) & Kontrol Doğrulaması"
+                : "7-Point Quality Inspection Matrix, Heterozygote Balance (Hb) & Control Verification"}
             </p>
           </div>
         </div>
@@ -114,19 +122,19 @@ export default function QualityAssurancePanel() {
           className="px-4 py-2 rounded-xl bg-teal-500 hover:bg-teal-400 text-black font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
-          Run QA/QC Inspection
+          {isTr ? "QA/QC Denetimini Çalıştır" : "Run QA/QC Inspection"}
         </button>
       </div>
 
       {/* ── Control Input & Simulation Settings ── */}
       <div className="p-4 rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 space-y-3">
         <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider block">
-          Control Sample Integrity Controls
+          {isTr ? "Kontrol Numunesi Bütünlük Ayarları" : "Control Sample Integrity Controls"}
         </span>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-1">
             <div className="flex justify-between text-xs">
-              <span className="text-zinc-300 font-bold">Negative Control Peak RFU</span>
+              <span className="text-zinc-300 font-bold">{isTr ? "Negatif Kontrol Tepe RFU" : "Negative Control Peak RFU"}</span>
               <span className="text-teal-400 font-bold">{ncRfu} RFU</span>
             </div>
             <input
@@ -141,14 +149,14 @@ export default function QualityAssurancePanel() {
           </div>
 
           <div className="flex items-center justify-between p-3 rounded-xl border border-tactical-border/40 bg-black/40 text-xs">
-            <span className="font-bold text-zinc-300">Positive Control Concordance (9947A)</span>
+            <span className="font-bold text-zinc-300">{isTr ? "Pozitif Kontrol Uyumu (9947A)" : "Positive Control Concordance (9947A)"}</span>
             <button
               onClick={() => setPcMatch(!pcMatch)}
               className={`px-3 py-1 rounded-lg font-bold text-xs transition-all ${
                 pcMatch ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40" : "bg-red-500/20 text-red-300 border border-red-500/40"
               }`}
             >
-              {pcMatch ? "MATCH (100%)" : "DISCORDANCE (FAIL)"}
+              {pcMatch ? (isTr ? "UYUMLU (%100)" : "MATCH (100%)") : (isTr ? "UYUMSUZ (BAŞARISIZ)" : "DISCORDANCE (FAIL)")}
             </button>
           </div>
         </div>
@@ -174,8 +182,16 @@ export default function QualityAssurancePanel() {
                 <XCircle className="w-8 h-8 text-red-400" />
               )}
               <div>
-                <span className="text-xs uppercase font-bold tracking-widest block opacity-70">ISO 17025 VERDICT</span>
-                <span className="text-xl font-black tracking-wider">{result.overall_qc_verdict.replace(/_/g, " ")}</span>
+                <span className="text-xs uppercase font-bold tracking-widest block opacity-70">
+                  {isTr ? "ISO 17025 KARARI" : "ISO 17025 VERDICT"}
+                </span>
+                <span className="text-xl font-black tracking-wider">
+                  {result.overall_qc_verdict === "QC_PASSED"
+                    ? (isTr ? "QC GEÇTİ" : "QC PASSED")
+                    : result.overall_qc_verdict === "REVIEW_REQUIRED"
+                    ? (isTr ? "İNCELEME GEREKLİ" : "REVIEW REQUIRED")
+                    : (isTr ? "QC BAŞARISIZ" : "QC FAILED")}
+                </span>
               </div>
             </div>
             <span className="text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-lg bg-black/40 border border-current">
@@ -186,7 +202,7 @@ export default function QualityAssurancePanel() {
           {/* 7-Point Inspection Matrix */}
           <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 space-y-3 shadow-xl">
             <h3 className="text-xs font-bold uppercase tracking-wider text-tactical-text border-b border-tactical-border/40 pb-3">
-              Quality Inspection Matrix (7 Dimensions)
+              {isTr ? "Kalite Denetim Matrisi (7 Boyut)" : "Quality Inspection Matrix (7 Dimensions)"}
             </h3>
             <div className="divide-y divide-tactical-border/30">
               {result.quality_inspection_matrix.map((item, i) => (
@@ -199,7 +215,7 @@ export default function QualityAssurancePanel() {
                         ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
                         : "bg-red-500/20 text-red-300 border border-red-500/30"
                     }`}>
-                      {item.status}
+                      {item.status === "PASS" ? (isTr ? "GEÇTİ" : "PASS") : (isTr ? "KALDI" : "FAIL")}
                     </span>
                   </div>
                 </div>

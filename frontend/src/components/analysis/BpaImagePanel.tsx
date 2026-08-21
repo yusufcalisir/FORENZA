@@ -2,8 +2,12 @@
 
 import { useState } from "react";
 import { Eye, UserCheck, ShieldAlert, Target, Compass, FileCheck } from "lucide-react";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 export default function BpaImagePanel() {
+  const { lang } = useSaasLanguage();
+  const isTr = lang === "tr";
+
   const [reviewStatus, setReviewStatus] = useState<"PENDING_HUMAN_REVIEW" | "VERIFIED_BY_ANALYST">("PENDING_HUMAN_REVIEW");
 
   const handleSignOff = () => {
@@ -20,10 +24,12 @@ export default function BpaImagePanel() {
           </div>
           <div>
             <h2 className="text-sm sm:text-base font-bold tracking-widest text-tactical-text uppercase">
-              Evidence Image Analysis & BPA Morphometry Hub
+              {isTr ? "Kanıt Görüntü Analizi & BPA Morfometri Merkezi" : "Evidence Image Analysis & BPA Morphometry Hub"}
             </h2>
             <p className="text-[10px] text-tactical-text-muted mt-0.5">
-              Bloodstain Ellipse Fitting • Trigonometric Impact Angle ($\arcsin(W/L)$) • Human-in-the-Loop Analyst Review Protocol
+              {isTr
+                ? "Kan Lekesi Elips Uydurma • Trigonometrik Çarpma Açısı (arcsin(W/L)) • İnsan Denetimli Uzman İnceleme Protokolü"
+                : "Bloodstain Ellipse Fitting • Trigonometric Impact Angle (arcsin(W/L)) • Human-in-the-Loop Analyst Review Protocol"}
             </p>
           </div>
         </div>
@@ -33,7 +39,9 @@ export default function BpaImagePanel() {
             ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
             : "bg-amber-500/10 border-amber-500/30 text-amber-400"
         }`}>
-          {reviewStatus}
+          {reviewStatus === "VERIFIED_BY_ANALYST"
+            ? (isTr ? "UZMAN TARAFINDAN DOĞRULANDI" : "VERIFIED_BY_ANALYST")
+            : (isTr ? "UZMAN İNCELEMESİ BEKLENİYOR" : "PENDING_HUMAN_REVIEW")}
         </span>
       </div>
 
@@ -43,38 +51,48 @@ export default function BpaImagePanel() {
         <div className="md:col-span-2 rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 space-y-4 shadow-lg">
           <div className="flex items-center justify-between border-b border-tactical-border/40 pb-3">
             <span className="text-xs font-bold text-tactical-text uppercase tracking-wider">
-              Computer Vision Stain Morphometry & Ellipse Fitting
+              {isTr ? "Bilgisayarlı Görü Leke Morfometrisi & Elips Uydurma" : "Computer Vision Stain Morphometry & Ellipse Fitting"}
             </span>
             <span className="text-[9px] text-cyan-400 font-bold bg-cyan-500/10 border border-cyan-500/20 px-2 py-0.5 rounded">
-              IABPA Standard Morphometry
+              {isTr ? "IABPA Standart Morfometrisi" : "IABPA Standard Morphometry"}
             </span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
             <div className="p-4 rounded-xl bg-black/20 border border-tactical-border/40 space-y-1">
-              <span className="text-zinc-500 block">Stain Minor Axis (W)</span>
+              <span className="text-zinc-500 block">
+                {isTr ? "Leke Kısa Ekseni (W)" : "Stain Minor Axis (W)"}
+              </span>
               <p className="text-base font-bold text-cyan-300 font-mono">5.20 mm</p>
             </div>
 
             <div className="p-4 rounded-xl bg-black/20 border border-tactical-border/40 space-y-1">
-              <span className="text-zinc-500 block">Stain Major Axis (L)</span>
+              <span className="text-zinc-500 block">
+                {isTr ? "Leke Uzun Ekseni (L)" : "Stain Major Axis (L)"}
+              </span>
               <p className="text-base font-bold text-indigo-300 font-mono">10.40 mm</p>
             </div>
 
             <div className="p-4 rounded-xl bg-black/20 border border-tactical-border/40 space-y-1">
-              <span className="text-zinc-500 block">Impact Angle ($\alpha$)</span>
+              <span className="text-zinc-500 block">
+                {isTr ? "Çarpma Açısı (α)" : "Impact Angle (α)"}
+              </span>
               <p className="text-base font-bold text-emerald-400 font-mono">30.00°</p>
-              <p className="text-[9px] text-zinc-400">$\alpha = \arcsin(5.2 / 10.4)$</p>
+              <p className="text-[9px] text-zinc-400">α = arcsin(5.2 / 10.4)</p>
             </div>
           </div>
 
           <div className="p-4 rounded-xl bg-black/30 border border-tactical-border/40 flex items-center justify-between">
             <div>
-              <span className="text-[10px] text-zinc-500 uppercase block font-bold">Computer Vision Pattern Classification</span>
-              <p className="text-sm font-bold text-amber-300 font-mono mt-0.5">MEDIUM / HIGH VELOCITY SPATTER</p>
+              <span className="text-[10px] text-zinc-500 uppercase block font-bold">
+                {isTr ? "Bilgisayarlı Görü Örüntü Sınıflandırması" : "Computer Vision Pattern Classification"}
+              </span>
+              <p className="text-sm font-bold text-amber-300 font-mono mt-0.5">
+                {isTr ? "ORTA / YÜKSEK HIZLI SIÇRAMA (SPATTER)" : "MEDIUM / HIGH VELOCITY SPATTER"}
+              </p>
             </div>
             <span className="text-[10px] text-zinc-400 bg-black/40 px-3 py-1.5 rounded-lg border border-tactical-border/60">
-              Aspect Ratio W/L = 0.50
+              {isTr ? "En/Boy Oranı W/L = 0.50" : "Aspect Ratio W/L = 0.50"}
             </span>
           </div>
         </div>
@@ -82,37 +100,47 @@ export default function BpaImagePanel() {
         {/* Right Col: Human-in-the-Loop Analyst Verification Drawer */}
         <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 space-y-4 shadow-lg">
           <span className="text-xs font-bold text-tactical-text uppercase tracking-wider block border-b border-tactical-border/40 pb-2">
-            Human Analyst Review Protocol
+            {isTr ? "İnsan Uzman İnceleme Protokolü" : "Human Analyst Review Protocol"}
           </span>
 
           <div className="space-y-3 text-xs">
             <div className="p-3 rounded-xl bg-black/20 border border-tactical-border/40 space-y-1">
-              <span className="text-zinc-500 block">Assigned Analyst</span>
-              <p className="font-bold text-tactical-text font-mono">ANALYST-BPA-09 (IABPA Certified)</p>
+              <span className="text-zinc-500 block">
+                {isTr ? "Atanan Uzman" : "Assigned Analyst"}
+              </span>
+              <p className="font-bold text-tactical-text font-mono">
+                {isTr ? "UZMAN-BPA-09 (IABPA Sertifikalı)" : "ANALYST-BPA-09 (IABPA Certified)"}
+              </p>
             </div>
 
             <div className="p-3 rounded-xl bg-black/20 border border-tactical-border/40 space-y-1">
-              <span className="text-zinc-500 block">Mandatory Guideline Notice</span>
+              <span className="text-zinc-500 block">
+                {isTr ? "Zorunlu Kılavuz Bildirimi" : "Mandatory Guideline Notice"}
+              </span>
               <p className="text-[10px] text-zinc-300">
-                AI morphometry measurements serve as advisory quantitative aids. Final reconstruction requires certified human analyst sign-off.
+                {isTr
+                  ? "Yapay zeka morfometrik ölçümleri tavsiye niteliğinde kantitatif yardımcılardır. Nihai olay yeri rekonstrüksiyonu sertifikalı insan uzman onayı gerektirir."
+                  : "AI morphometry measurements serve as advisory quantitative aids. Final reconstruction requires certified human analyst sign-off."}
               </p>
             </div>
 
             {reviewStatus === "PENDING_HUMAN_REVIEW" ? (
               <button
                 onClick={handleSignOff}
-                className="w-full py-2.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 font-bold uppercase text-xs transition-all flex items-center justify-center gap-2"
+                className="w-full py-2.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 font-bold uppercase text-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <UserCheck className="w-4 h-4" />
-                Sign-Off & Certify Analysis
+                {isTr ? "İncele & Analizi Onayla" : "Sign-Off & Certify Analysis"}
               </button>
             ) : (
               <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 space-y-1">
                 <div className="flex items-center gap-1.5 font-bold">
                   <FileCheck className="w-4 h-4 text-emerald-400" />
-                  <span>Certified by Analyst ANALYST-BPA-09</span>
+                  <span>{isTr ? "Uzman ANALYST-BPA-09 Tarafından Onaylandı" : "Certified by Analyst ANALYST-BPA-09"}</span>
                 </div>
-                <p className="text-[10px] text-zinc-300">Digital signature & timestamp recorded.</p>
+                <p className="text-[10px] text-zinc-300">
+                  {isTr ? "Dijital imza & zaman damgası kaydedildi." : "Digital signature & timestamp recorded."}
+                </p>
               </div>
             )}
           </div>

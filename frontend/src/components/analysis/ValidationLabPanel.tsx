@@ -28,6 +28,7 @@ import {
   Check,
 } from "lucide-react";
 import { getApiBaseUrl } from "@/lib/api";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 // ── Preset Casework Benchmark Vectors ──────────────────────────────────────────
 
@@ -102,6 +103,9 @@ interface TippettPoint {
 }
 
 export default function ValidationLabPanel() {
+  const { lang, setLang } = useSaasLanguage();
+  const isTr = lang === "tr";
+
   const [activeTab, setActiveTab] = useState<ActiveTab>("tippett");
   const [selectedPreset, setSelectedPreset] = useState<string>("VECTOR_05_TIPPETT_A");
   const [population, setPopulation] = useState<string>("Caucasian");
@@ -110,8 +114,7 @@ export default function ValidationLabPanel() {
   const [pDropout, setPDropout] = useState<number>(0.40);
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [progress, setProgress] = useState<number>(100);
-  const [stageText, setStageText] = useState<string>("Ready");
-  const [language, setLanguage] = useState<"en" | "tr">("en");
+  const [stageText, setStageText] = useState<string>(isTr ? "Hazır" : "Ready");
 
   // Interactive Hover State for SVG Curve
   const [hoverThreshold, setHoverThreshold] = useState<number | null>(null);
@@ -234,21 +237,33 @@ export default function ValidationLabPanel() {
   const handleExecuteSimulation = async () => {
     setIsRunning(true);
     setProgress(0);
-    setStageText("Initializing NIST 1036 Population Matrix...");
+    setStageText(isTr ? "NIST 1036 Popülasyon Matrisi Başlatılıyor..." : "Initializing NIST 1036 Population Matrix...");
 
     try {
       // Step 1: Simulate Monte Carlo Progress
       await new Promise((r) => setTimeout(r, 200));
       setProgress(25);
-      setStageText(`Generating ${nPairs.toLocaleString()} True Donor Pairs (Hp)...`);
+      setStageText(
+        isTr
+          ? `${nPairs.toLocaleString()} Gerçek Donör Çifti (Hp) Üretiliyor...`
+          : `Generating ${nPairs.toLocaleString()} True Donor Pairs (Hp)...`
+      );
 
       await new Promise((r) => setTimeout(r, 250));
       setProgress(60);
-      setStageText(`Generating ${nPairs.toLocaleString()} Non-Donor Pairs (Hd, θ=${theta})...`);
+      setStageText(
+        isTr
+          ? `${nPairs.toLocaleString()} Donör-Dışı Çift (Hd, θ=${theta}) Üretiliyor...`
+          : `Generating ${nPairs.toLocaleString()} Non-Donor Pairs (Hd, θ=${theta})...`
+      );
 
       await new Promise((r) => setTimeout(r, 250));
       setProgress(85);
-      setStageText("Computing Mann-Whitney ROC AUC & Cllr Decomposition...");
+      setStageText(
+        isTr
+          ? "Mann-Whitney ROC AUC & Cllr Ayrışımı Hesaplanıyor..."
+          : "Computing Mann-Whitney ROC AUC & Cllr Decomposition..."
+      );
 
       // Attempt live backend API call
       try {
@@ -275,7 +290,7 @@ export default function ValidationLabPanel() {
       }
 
       setProgress(100);
-      setStageText("Simulation Complete & Calibrated");
+      setStageText(isTr ? "Simülasyon Tamamlandı & Kalibre Edildi" : "Simulation Complete & Calibrated");
     } finally {
       setIsRunning(false);
     }
@@ -291,22 +306,22 @@ export default function ValidationLabPanel() {
               <div className="flex items-center gap-2 rounded-lg bg-emerald-500/10 px-2.5 py-1 border border-emerald-500/30">
                 <ShieldCheck className="h-4 w-4 text-emerald-400" />
                 <span className="text-[11px] font-bold tracking-wider text-emerald-300 uppercase">
-                  ISO/IEC 17025 • ENFSI 2017 VALIDATION LAB
+                  {isTr ? "ISO/IEC 17025 • ENFSI 2017 DOĞRULAMA LABORATUVARI" : "ISO/IEC 17025 • ENFSI 2017 VALIDATION LAB"}
                 </span>
               </div>
               <span className="text-xs text-zinc-500">•</span>
               <span className="text-xs font-semibold text-zinc-400">
-                Module 05: Tippett Plot ROC Calibration & Misleading Evidence
+                {isTr ? "Modül 05: Tippett Grafiği ROC Kalibrasyonu & Yanıltıcı Delil" : "Module 05: Tippett Plot ROC Calibration & Misleading Evidence"}
               </span>
             </div>
             <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white flex items-center gap-2">
               <Scale className="h-6 w-6 text-emerald-400" />
-              Tippett Calibration & Misleading Evidence Lab
+              {isTr ? "Tippett Kalibrasyonu & Yanıltıcı Delil Doğrulama Laboratuvarı" : "Tippett Calibration & Misleading Evidence Lab"}
             </h1>
             <p className="text-xs text-zinc-400 max-w-3xl">
-              Empirical validation of continuous probabilistic genotyping models against ground-truth
-              true donors (H_p) and non-donors (H_d). Evaluates Tippett complementary CDFs, ROC AUC,
-              Log-Likelihood-Ratio Cost (Cllr), and ENFSI 2017 evaluative reporting scales.
+              {isTr
+                ? "Sürekli olasılıksal genotipleme modellerinin gerçek donörler (H_p) ve donör-dışı bireyler (H_d) karşısında ampirik doğrulaması. Tippett tamamlayıcı CDF'leri, ROC AUC, Log-Likelihood-Ratio Maliyeti (Cllr) ve ENFSI 2017 değerlendirici raporlama ölçekleri değerlendirilir."
+                : "Empirical validation of continuous probabilistic genotyping models against ground-truth true donors (H_p) and non-donors (H_d). Evaluates Tippett complementary CDFs, ROC AUC, Log-Likelihood-Ratio Cost (Cllr), and ENFSI 2017 evaluative reporting scales."}
             </p>
           </div>
 
@@ -318,7 +333,7 @@ export default function ValidationLabPanel() {
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-xs font-bold uppercase tracking-wider shadow-lg shadow-emerald-900/30 hover:brightness-110 active:scale-95 transition-all cursor-pointer disabled:opacity-50"
             >
               <Play className={`h-4 w-4 ${isRunning ? "animate-spin" : ""}`} />
-              {isRunning ? "Running MCMC..." : "Execute Simulation"}
+              {isRunning ? (isTr ? "MCMC Çalıştırılıyor..." : "Running MCMC...") : (isTr ? "Simülasyonu Başlat" : "Execute Simulation")}
             </button>
           </div>
         </div>
@@ -328,7 +343,7 @@ export default function ValidationLabPanel() {
           <div className="mt-4 space-y-1.5">
             <div className="flex justify-between text-[10px] text-zinc-400">
               <span className="text-emerald-400 font-bold">{stageText}</span>
-              <span className="font-bold">{progress}%</span>
+              <span className="font-bold">%{progress}</span>
             </div>
             <div className="h-1.5 w-full rounded-full bg-black/60 overflow-hidden">
               <motion.div
@@ -374,7 +389,7 @@ export default function ValidationLabPanel() {
         <div className="flex flex-wrap items-center gap-3">
           {/* Population Group */}
           <div className="flex items-center gap-1.5">
-            <span className="text-[10px] text-zinc-500 uppercase font-bold">PopGen:</span>
+            <span className="text-[10px] text-zinc-500 uppercase font-bold">{isTr ? "Popülasyon:" : "PopGen:"}</span>
             <div className="flex items-center gap-1 bg-black/60 p-1 rounded-lg border border-tactical-border/50">
               {["Caucasian", "AfricanAmerican", "Hispanic", "Asian"].map((pop) => (
                 <button
@@ -414,19 +429,19 @@ export default function ValidationLabPanel() {
 
           {/* Language Toggle for Court Reporting */}
           <div className="flex items-center gap-1.5">
-            <span className="text-[10px] text-zinc-500 uppercase font-bold">ENFSI Lang:</span>
+            <span className="text-[10px] text-zinc-500 uppercase font-bold">{isTr ? "ENFSI Dili:" : "ENFSI Lang:"}</span>
             <div className="flex items-center gap-1 bg-black/60 p-1 rounded-lg border border-tactical-border/50">
-              {(["en", "tr"] as const).map((lang) => (
+              {(["en", "tr"] as const).map((targetLang) => (
                 <button
-                  key={lang}
-                  onClick={() => setLanguage(lang)}
+                  key={targetLang}
+                  onClick={() => setLang(targetLang)}
                   className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase transition-all cursor-pointer ${
-                    language === lang
+                    lang === targetLang
                       ? "bg-purple-500/20 text-purple-300 border border-purple-500/40"
                       : "text-zinc-500 hover:text-zinc-300"
                   }`}
                 >
-                  {lang.toUpperCase()}
+                  {targetLang.toUpperCase()}
                 </button>
               ))}
             </div>
@@ -436,48 +451,64 @@ export default function ValidationLabPanel() {
         {/* Telemetry Status */}
         <div className="flex items-center gap-2 text-[10px] text-zinc-400">
           <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span>Status: Verified (N={calculations.n_hp} H_p vs N={calculations.n_hd} H_d)</span>
+          <span>
+            {isTr
+              ? `Durum: Doğrulandı (N=${calculations.n_hp} H_p vs N=${calculations.n_hd} H_d)`
+              : `Status: Verified (N=${calculations.n_hp} H_p vs N=${calculations.n_hd} H_d)`}
+          </span>
         </div>
       </div>
 
       {/* ── KPI Deck ── */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         <div className="p-3.5 rounded-xl border border-emerald-500/30 bg-emerald-950/20 space-y-1">
-          <span className="text-[9px] text-emerald-400 font-bold uppercase tracking-wider">Median log10(LR) [H_p]</span>
+          <span className="text-[9px] text-emerald-400 font-bold uppercase tracking-wider">
+            {isTr ? "Medyan log10(LR) [H_p]" : "Median log10(LR) [H_p]"}
+          </span>
           <p className="text-xl font-bold text-white tabular-nums">+{calculations.meanHp.toFixed(2)}</p>
-          <span className="text-[9px] text-zinc-500">True Contributor Peak</span>
+          <span className="text-[9px] text-zinc-500">{isTr ? "Gerçek Donör Zirvesi" : "True Contributor Peak"}</span>
         </div>
 
         <div className="p-3.5 rounded-xl border border-rose-500/30 bg-rose-950/20 space-y-1">
-          <span className="text-[9px] text-rose-400 font-bold uppercase tracking-wider">Median log10(LR) [H_d]</span>
+          <span className="text-[9px] text-rose-400 font-bold uppercase tracking-wider">
+            {isTr ? "Medyan log10(LR) [H_d]" : "Median log10(LR) [H_d]"}
+          </span>
           <p className="text-xl font-bold text-white tabular-nums">{calculations.medianHd.toFixed(2)}</p>
-          <span className="text-[9px] text-zinc-500">Non-Contributor Peak</span>
+          <span className="text-[9px] text-zinc-500">{isTr ? "Donör-Dışı Zirvesi" : "Non-Contributor Peak"}</span>
         </div>
 
         <div className="p-3.5 rounded-xl border border-cyan-500/30 bg-cyan-950/20 space-y-1">
-          <span className="text-[9px] text-cyan-400 font-bold uppercase tracking-wider">ROC Area (AUC)</span>
+          <span className="text-[9px] text-cyan-400 font-bold uppercase tracking-wider">
+            {isTr ? "ROC Alanı (AUC)" : "ROC Area (AUC)"}
+          </span>
           <p className="text-xl font-bold text-white tabular-nums">{calculations.auc.toFixed(4)}</p>
           <span className="text-[9px] text-cyan-400/80 font-semibold">
-            {calculations.auc >= 0.999 ? "Perfect (≥ 0.999)" : "High Separation"}
+            {calculations.auc >= 0.999 ? (isTr ? "Kusursuz (≥ 0.999)" : "Perfect (≥ 0.999)") : (isTr ? "Yüksek Ayrım" : "High Separation")}
           </span>
         </div>
 
         <div className="p-3.5 rounded-xl border border-purple-500/30 bg-purple-950/20 space-y-1">
-          <span className="text-[9px] text-purple-400 font-bold uppercase tracking-wider">Cllr Cost Metric</span>
+          <span className="text-[9px] text-purple-400 font-bold uppercase tracking-wider">
+            {isTr ? "Cllr Maliyet Metriği" : "Cllr Cost Metric"}
+          </span>
           <p className="text-xl font-bold text-white tabular-nums">{calculations.cllr_raw.toFixed(4)}</p>
           <span className="text-[9px] text-purple-400/80 font-semibold">
-            {calculations.cllr_raw < 0.05 ? "Excellent (< 0.05)" : "Acceptable"}
+            {calculations.cllr_raw < 0.05 ? (isTr ? "Mükemmel (< 0.05)" : "Excellent (< 0.05)") : (isTr ? "Kabul Edilebilir" : "Acceptable")}
           </span>
         </div>
 
         <div className="p-3.5 rounded-xl border border-amber-500/30 bg-amber-950/20 space-y-1">
-          <span className="text-[9px] text-amber-400 font-bold uppercase tracking-wider">95% HPD Lower Bound</span>
+          <span className="text-[9px] text-amber-400 font-bold uppercase tracking-wider">
+            {isTr ? "%95 HPD Alt Sınırı" : "95% HPD Lower Bound"}
+          </span>
           <p className="text-xl font-bold text-white tabular-nums">+{calculations.log10_lower.toFixed(2)}</p>
-          <span className="text-[9px] text-zinc-500">LR_court (5th %ile)</span>
+          <span className="text-[9px] text-zinc-500">{isTr ? "LR_mahkeme (5. yüzdelik)" : "LR_court (5th %ile)"}</span>
         </div>
 
         <div className="p-3.5 rounded-xl border border-teal-500/30 bg-teal-950/20 space-y-1">
-          <span className="text-[9px] text-teal-400 font-bold uppercase tracking-wider">Discrimination Power</span>
+          <span className="text-[9px] text-teal-400 font-bold uppercase tracking-wider">
+            {isTr ? "Ayrım Gücü" : "Discrimination Power"}
+          </span>
           <p className="text-xl font-bold text-white tabular-nums">{(calculations.d_power * 100).toFixed(1)}%</p>
           <span className="text-[9px] text-zinc-500">1 - FPR - FNR</span>
         </div>
@@ -486,11 +517,11 @@ export default function ValidationLabPanel() {
       {/* ── Navigation Tabs ── */}
       <div className="flex border-b border-tactical-border/60 bg-black/40 rounded-t-xl p-1 gap-1 overflow-x-auto">
         {[
-          { id: "tippett", label: "Tippett Calibration Curves (ECCDF)", icon: TrendingUp },
-          { id: "roc", label: "Empirical ROC & AUC Analysis", icon: Target },
-          { id: "cllr", label: "Cllr Information Cost & PAV", icon: BarChart },
-          { id: "hpd", label: "95% HPD Lower Bound (Court LR)", icon: ShieldCheck },
-          { id: "enfsi", label: "ENFSI (2017) Evaluative Scale", icon: FileText },
+          { id: "tippett", label: isTr ? "Tippett Kalibrasyon Eğrileri (ECCDF)" : "Tippett Calibration Curves (ECCDF)", icon: TrendingUp },
+          { id: "roc", label: isTr ? "Ampirik ROC & AUC Analizi" : "Empirical ROC & AUC Analysis", icon: Target },
+          { id: "cllr", label: isTr ? "Cllr Bilgi Maliyeti & PAV" : "Cllr Information Cost & PAV", icon: BarChart },
+          { id: "hpd", label: isTr ? "%95 HPD Alt Sınırı (Mahkeme LR)" : "95% HPD Lower Bound (Court LR)", icon: ShieldCheck },
+          { id: "enfsi", label: isTr ? "ENFSI (2017) Değerlendirici Ölçek" : "ENFSI (2017) Evaluative Scale", icon: FileText },
         ].map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -520,11 +551,12 @@ export default function ValidationLabPanel() {
               <div>
                 <h3 className="text-sm font-bold text-white flex items-center gap-2">
                   <TrendingUp className="h-4 w-4 text-emerald-400" />
-                  Dual Empirical Complementary CDF Curves [P(log₁₀ LR ≥ x | H)]
+                  {isTr ? "İkili Ampirik Tamamlayıcı CDF Eğrileri [P(log₁₀ LR ≥ x | H)]" : "Dual Empirical Complementary CDF Curves [P(log₁₀ LR ≥ x | H)]"}
                 </h3>
                 <p className="text-xs text-zinc-400">
-                  Green curve: Prosecution (H_p true donor). Red curve: Defense (H_d non-donor).
-                  Hover over the curve to inspect exact exceedance probabilities.
+                  {isTr
+                    ? "Yeşil eğri: İddia makamı (H_p gerçek donör). Kırmızı eğri: Savunma makamı (H_d donör-dışı). Kesin aşım olasılıklarını incelemek için eğrinin üzerine gelin."
+                    : "Green curve: Prosecution (H_p true donor). Red curve: Defense (H_d non-donor). Hover over the curve to inspect exact exceedance probabilities."}
                 </p>
               </div>
 
@@ -565,7 +597,7 @@ export default function ValidationLabPanel() {
                     <g>
                       <line x1={xZero} y1="20" x2={xZero} y2="280" stroke="#eab308" strokeWidth="1.5" strokeDasharray="4 4" />
                       <text x={xZero} y="15" fill="#eab308" fontSize="10" textAnchor="middle" fontWeight="bold">
-                        Neutral (x=0, LR=1)
+                        {isTr ? "Nötr (x=0, LR=1)" : "Neutral (x=0, LR=1)"}
                       </text>
                     </g>
                   );
@@ -611,7 +643,7 @@ export default function ValidationLabPanel() {
               {/* X-Axis Labels */}
               <div className="flex justify-between text-[10px] text-zinc-500 mt-2 px-8">
                 <span>{calculations.minVal} (log₁₀ LR)</span>
-                <span>0.0 (Neutral Boundary)</span>
+                <span>0.0 ({isTr ? "Nötr Sınır" : "Neutral Boundary"})</span>
                 <span>+{calculations.maxVal} (log₁₀ LR)</span>
               </div>
             </div>
@@ -619,25 +651,39 @@ export default function ValidationLabPanel() {
             {/* Diagnostic Interpretation Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
               <div className="p-3.5 rounded-xl bg-black/40 border border-tactical-border/60 space-y-1">
-                <span className="text-zinc-400 font-bold uppercase text-[10px]">False Positive Rate (FPR)</span>
+                <span className="text-zinc-400 font-bold uppercase text-[10px]">
+                  {isTr ? "Yanlış Pozitif Oranı (FPR)" : "False Positive Rate (FPR)"}
+                </span>
                 <p className="text-base font-bold text-rose-400">
-                  {calculations.fpr_at_zero === 0 ? "0.0000 (Zero False Positives)" : calculations.fpr_at_zero.toFixed(6)}
+                  {calculations.fpr_at_zero === 0
+                    ? (isTr ? "0.0000 (Sıfır Yanlış Pozitif)" : "0.0000 (Zero False Positives)")
+                    : calculations.fpr_at_zero.toFixed(6)}
                 </p>
-                <p className="text-[10px] text-zinc-500">P(log₁₀ LR &gt; 0 | H_d) — Misleading evidence rate vs defense</p>
+                <p className="text-[10px] text-zinc-500">
+                  {isTr ? "P(log₁₀ LR > 0 | H_d) — Savunma aleyhine yanıltıcı delil oranı" : "P(log₁₀ LR > 0 | H_d) — Misleading evidence rate vs defense"}
+                </p>
               </div>
 
               <div className="p-3.5 rounded-xl bg-black/40 border border-tactical-border/60 space-y-1">
-                <span className="text-zinc-400 font-bold uppercase text-[10px]">False Negative Rate (FNR)</span>
+                <span className="text-zinc-400 font-bold uppercase text-[10px]">
+                  {isTr ? "Yanlış Negatif Oranı (FNR)" : "False Negative Rate (FNR)"}
+                </span>
                 <p className="text-base font-bold text-amber-400">
-                  {calculations.fnr_at_zero === 0 ? "0.0000 (Zero False Negatives)" : calculations.fnr_at_zero.toFixed(6)}
+                  {calculations.fnr_at_zero === 0
+                    ? (isTr ? "0.0000 (Sıfır Yanlış Negatif)" : "0.0000 (Zero False Negatives)")
+                    : calculations.fnr_at_zero.toFixed(6)}
                 </p>
-                <p className="text-[10px] text-zinc-500">P(log₁₀ LR &lt; 0 | H_p) — Misleading evidence rate vs prosecution</p>
+                <p className="text-[10px] text-zinc-500">
+                  {isTr ? "P(log₁₀ LR < 0 | H_p) — İddia aleyhine yanıltıcı delil oranı" : "P(log₁₀ LR < 0 | H_p) — Misleading evidence rate vs prosecution"}
+                </p>
               </div>
 
               <div className="p-3.5 rounded-xl bg-black/40 border border-tactical-border/60 space-y-1">
-                <span className="text-zinc-400 font-bold uppercase text-[10px]">Monotonicity Audit</span>
+                <span className="text-zinc-400 font-bold uppercase text-[10px]">
+                  {isTr ? "Monotonluk Denetimi" : "Monotonicity Audit"}
+                </span>
                 <p className="text-base font-bold text-emerald-400 flex items-center gap-1.5">
-                  <CheckCircle2 className="h-4 w-4" /> Strictly Verified (Non-Increasing)
+                  <CheckCircle2 className="h-4 w-4" /> {isTr ? "Kesinlikle Doğrulandı (Artmayan)" : "Strictly Verified (Non-Increasing)"}
                 </p>
                 <p className="text-[10px] text-zinc-500">∀ x₁ &lt; x₂: P(LR ≥ x₁) ≥ P(LR ≥ x₂)</p>
               </div>
@@ -652,10 +698,12 @@ export default function ValidationLabPanel() {
               <div>
                 <h3 className="text-sm font-bold text-white flex items-center gap-2">
                   <Target className="h-4 w-4 text-cyan-400" />
-                  Receiver Operating Characteristic (ROC) & Mann-Whitney AUC
+                  {isTr ? "Alıcı İşletim Karakteristiği (ROC) & Mann-Whitney AUC" : "Receiver Operating Characteristic (ROC) & Mann-Whitney AUC"}
                 </h3>
                 <p className="text-xs text-zinc-400">
-                  Non-parametric discrimination curve plotting Sensitivity (TPR) vs 1 - Specificity (FPR).
+                  {isTr
+                    ? "Duyarlılık (TPR) ile 1 - Özgüllük (FPR) arasındaki parametrik olmayan ayrım eğrisi."
+                    : "Non-parametric discrimination curve plotting Sensitivity (TPR) vs 1 - Specificity (FPR)."}
                 </p>
               </div>
 
@@ -699,30 +747,42 @@ export default function ValidationLabPanel() {
               </svg>
 
               <div className="flex justify-between text-[10px] text-zinc-500 mt-2 px-8">
-                <span>0.0 (FPR: 1 - Specificity)</span>
+                <span>0.0 ({isTr ? "FPR: 1 - Özgüllük" : "FPR: 1 - Specificity"})</span>
                 <span>1.0</span>
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
               <div className="p-3.5 rounded-xl bg-black/40 border border-tactical-border/60 space-y-1">
-                <span className="text-zinc-400 font-bold uppercase text-[10px]">Separation Index</span>
+                <span className="text-zinc-400 font-bold uppercase text-[10px]">
+                  {isTr ? "Ayrım İndeksi" : "Separation Index"}
+                </span>
                 <p className="text-base font-bold text-cyan-400">{(calculations.auc - 0.5).toFixed(4)}</p>
-                <p className="text-[10px] text-zinc-500">Scaled separation above chance [0, 0.5]</p>
-              </div>
-
-              <div className="p-3.5 rounded-xl bg-black/40 border border-tactical-border/60 space-y-1">
-                <span className="text-zinc-400 font-bold uppercase text-[10px]">SWGDAM 2020 Compliance</span>
-                <p className="text-base font-bold text-emerald-400 flex items-center gap-1">
-                  <CheckCircle2 className="h-4 w-4" /> Fully Admissible (AUC ≥ 0.999)
+                <p className="text-[10px] text-zinc-500">
+                  {isTr ? "Rastlantı üzeri ölçeklendirilmiş ayrım [0, 0.5]" : "Scaled separation above chance [0, 0.5]"}
                 </p>
-                <p className="text-[10px] text-zinc-500">Meets mandatory developmental validation standard</p>
               </div>
 
               <div className="p-3.5 rounded-xl bg-black/40 border border-tactical-border/60 space-y-1">
-                <span className="text-zinc-400 font-bold uppercase text-[10px]">Misleading Evidence Upper Bound</span>
+                <span className="text-zinc-400 font-bold uppercase text-[10px]">
+                  {isTr ? "SWGDAM 2020 Uyumluluğu" : "SWGDAM 2020 Compliance"}
+                </span>
+                <p className="text-base font-bold text-emerald-400 flex items-center gap-1">
+                  <CheckCircle2 className="h-4 w-4" /> {isTr ? "Tamamen Kabul Edilebilir (AUC ≥ 0.999)" : "Fully Admissible (AUC ≥ 0.999)"}
+                </p>
+                <p className="text-[10px] text-zinc-500">
+                  {isTr ? "Zorunlu gelişimsel doğrulama standardını karşılar" : "Meets mandatory developmental validation standard"}
+                </p>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-black/40 border border-tactical-border/60 space-y-1">
+                <span className="text-zinc-400 font-bold uppercase text-[10px]">
+                  {isTr ? "Yanıltıcı Delil Üst Sınırı" : "Misleading Evidence Upper Bound"}
+                </span>
                 <p className="text-base font-bold text-white">≤ 10⁻⁶ (Royall 1997)</p>
-                <p className="text-[10px] text-zinc-500">P(LR ≥ 10⁶ | H_d) satisfies 1/k theoretical limit</p>
+                <p className="text-[10px] text-zinc-500">
+                  {isTr ? "P(LR ≥ 10⁶ | H_d) 1/k teorik sınırını sağlar" : "P(LR ≥ 10⁶ | H_d) satisfies 1/k theoretical limit"}
+                </p>
               </div>
             </div>
           </div>
@@ -734,41 +794,63 @@ export default function ValidationLabPanel() {
             <div>
               <h3 className="text-sm font-bold text-white flex items-center gap-2">
                 <BarChart className="h-4 w-4 text-purple-400" />
-                Log-Likelihood-Ratio Cost (Cllr) Information-Theoretic Decomposition
+                {isTr
+                  ? "Log-Likelihood-Ratio Maliyeti (Cllr) Bilgi-Teorik Ayrışımı"
+                  : "Log-Likelihood-Ratio Cost (Cllr) Information-Theoretic Decomposition"}
               </h3>
               <p className="text-xs text-zinc-400">
-                Measures the overall information penalty of probabilistic genotyping outputs (Brümmer & du Preez 2006).
+                {isTr
+                  ? "Olasılıksal genotipleme çıktılarının genel bilgi kaybını ölçer (Brümmer & du Preez 2006)."
+                  : "Measures the overall information penalty of probabilistic genotyping outputs (Brümmer & du Preez 2006)."}
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="p-4 rounded-xl border border-purple-500/30 bg-purple-950/20 space-y-2">
-                <span className="text-[10px] text-purple-400 font-bold uppercase tracking-wider">Raw Empirical Cllr</span>
+                <span className="text-[10px] text-purple-400 font-bold uppercase tracking-wider">
+                  {isTr ? "Ham Ampirik Cllr" : "Raw Empirical Cllr"}
+                </span>
                 <p className="text-2xl font-bold text-white tabular-nums">{calculations.cllr_raw.toFixed(6)}</p>
                 <div className="flex items-center gap-1.5 text-xs text-emerald-400 font-bold">
-                  <CheckCircle2 className="h-4 w-4" /> EXCELLENT (&lt; 0.05)
+                  <CheckCircle2 className="h-4 w-4" /> {isTr ? "MÜKEMMEL (< 0.05)" : "EXCELLENT (< 0.05)"}
                 </div>
-                <p className="text-[10px] text-zinc-400">Combined discrimination and calibration loss.</p>
+                <p className="text-[10px] text-zinc-400">
+                  {isTr ? "Kombine ayrım ve kalibrasyon kaybı." : "Combined discrimination and calibration loss."}
+                </p>
               </div>
 
               <div className="p-4 rounded-xl border border-cyan-500/30 bg-cyan-950/20 space-y-2">
-                <span className="text-[10px] text-cyan-400 font-bold uppercase tracking-wider">Cllr_min (Discrimination Loss)</span>
+                <span className="text-[10px] text-cyan-400 font-bold uppercase tracking-wider">
+                  {isTr ? "Cllr_min (Ayrım Kaybı)" : "Cllr_min (Discrimination Loss)"}
+                </span>
                 <p className="text-2xl font-bold text-white tabular-nums">{calculations.cllr_min.toFixed(6)}</p>
-                <span className="text-xs text-zinc-400 font-semibold">PAV Isotonic Optimal Calibration</span>
-                <p className="text-[10px] text-zinc-400">Minimum achievable cost after perfect non-parametric mapping.</p>
+                <span className="text-xs text-zinc-400 font-semibold">
+                  {isTr ? "PAV İzotonik Optimal Kalibrasyon" : "PAV Isotonic Optimal Calibration"}
+                </span>
+                <p className="text-[10px] text-zinc-400">
+                  {isTr ? "Kusursuz parametrik olmayan eşlemeden sonra elde edilebilecek minimum maliyet." : "Minimum achievable cost after perfect non-parametric mapping."}
+                </p>
               </div>
 
               <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-950/20 space-y-2">
-                <span className="text-[10px] text-amber-400 font-bold uppercase tracking-wider">Cllr_cal (Calibration Loss)</span>
+                <span className="text-[10px] text-amber-400 font-bold uppercase tracking-wider">
+                  {isTr ? "Cllr_cal (Kalibrasyon Kaybı)" : "Cllr_cal (Calibration Loss)"}
+                </span>
                 <p className="text-2xl font-bold text-white tabular-nums">{calculations.cllr_cal.toFixed(6)}</p>
-                <span className="text-xs text-zinc-400 font-semibold">Entropy Penalty (Cllr - Cllr_min)</span>
-                <p className="text-[10px] text-zinc-400">Loss strictly due to probabilistic score miscalibration.</p>
+                <span className="text-xs text-zinc-400 font-semibold">
+                  {isTr ? "Entropi Cezası (Cllr - Cllr_min)" : "Entropy Penalty (Cllr - Cllr_min)"}
+                </span>
+                <p className="text-[10px] text-zinc-400">
+                  {isTr ? "Yalnızca olasılıksal skor kalibrasyon hatasından kaynaklanan kayıp." : "Loss strictly due to probabilistic score miscalibration."}
+                </p>
               </div>
             </div>
 
             {/* Formula Callout */}
             <div className="p-4 rounded-xl bg-black/50 border border-tactical-border/60 text-xs font-mono space-y-1">
-              <span className="text-[10px] text-zinc-500 uppercase font-bold">Brümmer & Ramos Formal Formulation:</span>
+              <span className="text-[10px] text-zinc-500 uppercase font-bold">
+                {isTr ? "Brümmer & Ramos Resmi Formülasyonu:" : "Brümmer & Ramos Formal Formulation:"}
+              </span>
               <p className="text-zinc-300">
                 C_llr = (1 / 2N_Hp) ∑ log₂(1 + 10^(-log₁₀ LR_i)) + (1 / 2N_Hd) ∑ log₂(1 + 10^(+log₁₀ LR_j))
               </p>
@@ -782,33 +864,49 @@ export default function ValidationLabPanel() {
             <div>
               <h3 className="text-sm font-bold text-white flex items-center gap-2">
                 <ShieldCheck className="h-4 w-4 text-emerald-400" />
-                Conservative 95% HPD Lower Bound for Court Admissibility (LR_court)
+                {isTr
+                  ? "Mahkeme Kabul Edilebilirliği İçin Muhafazakar %95 HPD Alt Sınırı (LR_mahkeme)"
+                  : "Conservative 95% HPD Lower Bound for Court Admissibility (LR_court)"}
               </h3>
               <p className="text-xs text-zinc-400">
-                Protects against MCMC posterior sampling variance by taking the 5th percentile lower bound (Research §5.4).
+                {isTr
+                  ? "5. yüzdelik alt sınırını alarak MCMC sonsal örnekleme varyansına karşı koruma sağlar (Araştırma §5.4)."
+                  : "Protects against MCMC posterior sampling variance by taking the 5th percentile lower bound (Research §5.4)."}
               </p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="p-4 rounded-xl border border-emerald-500/40 bg-emerald-950/20 space-y-2">
-                <span className="text-[10px] text-emerald-400 font-bold uppercase">Court Admissible LR_court</span>
+                <span className="text-[10px] text-emerald-400 font-bold uppercase">
+                  {isTr ? "Mahkemede Geçerli LR_mahkeme" : "Court Admissible LR_court"}
+                </span>
                 <p className="text-2xl font-bold text-white tabular-nums">+{calculations.log10_lower.toFixed(2)}</p>
-                <span className="text-xs text-zinc-400">5th Percentile Lower Bound</span>
-                <p className="text-[10px] text-zinc-500">Expressed in court testimony as conservative figure.</p>
+                <span className="text-xs text-zinc-400">{isTr ? "5. Yüzdelik Alt Sınırı" : "5th Percentile Lower Bound"}</span>
+                <p className="text-[10px] text-zinc-500">
+                  {isTr ? "Mahkeme ifadesinde muhafazakar rakam olarak sunulur." : "Expressed in court testimony as conservative figure."}
+                </p>
               </div>
 
               <div className="p-4 rounded-xl border border-tactical-border/60 bg-black/40 space-y-2">
-                <span className="text-[10px] text-zinc-400 font-bold uppercase">Median Posterior log10(LR)</span>
+                <span className="text-[10px] text-zinc-400 font-bold uppercase">
+                  {isTr ? "Medyan Sonsal log10(LR)" : "Median Posterior log10(LR)"}
+                </span>
                 <p className="text-2xl font-bold text-white tabular-nums">+{calculations.log10_median.toFixed(2)}</p>
-                <span className="text-xs text-zinc-400">50th Percentile MCMC Posterior</span>
-                <p className="text-[10px] text-zinc-500">Central tendency of deconvolution sampler.</p>
+                <span className="text-xs text-zinc-400">{isTr ? "50. Yüzdelik MCMC Sonsalı" : "50th Percentile MCMC Posterior"}</span>
+                <p className="text-[10px] text-zinc-500">
+                  {isTr ? "Ayrıştırma örnekleyicisinin merkezi eğilimi." : "Central tendency of deconvolution sampler."}
+                </p>
               </div>
 
               <div className="p-4 rounded-xl border border-tactical-border/60 bg-black/40 space-y-2">
-                <span className="text-[10px] text-zinc-400 font-bold uppercase">95th Percentile Upper Bound</span>
+                <span className="text-[10px] text-zinc-400 font-bold uppercase">
+                  {isTr ? "95. Yüzdelik Üst Sınırı" : "95th Percentile Upper Bound"}
+                </span>
                 <p className="text-2xl font-bold text-white tabular-nums">+{calculations.log10_upper.toFixed(2)}</p>
-                <span className="text-xs text-zinc-400">Upper Credible Limit</span>
-                <p className="text-[10px] text-zinc-500">Total 90% credible interval span: {(calculations.log10_upper - calculations.log10_lower).toFixed(2)}</p>
+                <span className="text-xs text-zinc-400">{isTr ? "Üst Güvenilir Sınır" : "Upper Credible Limit"}</span>
+                <p className="text-[10px] text-zinc-500">
+                  {isTr ? "Toplam %90 güven aralığı genişliği:" : "Total 90% credible interval span:"} {(calculations.log10_upper - calculations.log10_lower).toFixed(2)}
+                </p>
               </div>
             </div>
 
@@ -816,12 +914,12 @@ export default function ValidationLabPanel() {
             <div className="p-4 rounded-xl bg-amber-950/20 border border-amber-500/40 text-xs text-amber-200/90 space-y-1">
               <div className="flex items-center gap-2 font-bold text-amber-400">
                 <AlertTriangle className="h-4 w-4" />
-                SWGDAM 2020 Legal Admissibility Mandate:
+                {isTr ? "SWGDAM 2020 Hukuki Kabul Edilebilirlik Talimatı:" : "SWGDAM 2020 Legal Admissibility Mandate:"}
               </div>
               <p className="text-[11px] text-amber-300/80 leading-relaxed">
-                When presenting probabilistic genotyping results in court, the 5th percentile lower bound
-                (LR_court) MUST be reported rather than the point estimate or mean, ensuring that statistical
-                uncertainty from finite MCMC sampling is resolved in favor of the defense.
+                {isTr
+                  ? "Mahkemede olasılıksal genotipleme sonuçları sunulurken, nokta tahmini veya ortalama yerine ZORUNLU OLARAK 5. yüzdelik alt sınırı (LR_mahkeme) raporlanmalıdır. Böylece sonlu MCMC örneklemesinden kaynaklanan istatistiksel belirsizlik savunma lehine çözümlenmiş olur."
+                  : "When presenting probabilistic genotyping results in court, the 5th percentile lower bound (LR_court) MUST be reported rather than the point estimate or mean, ensuring that statistical uncertainty from finite MCMC sampling is resolved in favor of the defense."}
               </p>
             </div>
           </div>
@@ -833,10 +931,14 @@ export default function ValidationLabPanel() {
             <div>
               <h3 className="text-sm font-bold text-white flex items-center gap-2">
                 <Scale className="h-4 w-4 text-purple-400" />
-                ENFSI (2017) Dynamic 7-Tier Verbal Reporting Scale & Prosecutor's Fallacy Shield
+                {isTr
+                  ? "ENFSI (2017) Dinamik 7 Düzeyli Sözlü Raporlama Ölçeği & Savcılık Safsatası Kalkanı"
+                  : "ENFSI (2017) Dynamic 7-Tier Verbal Reporting Scale & Prosecutor's Fallacy Shield"}
               </h3>
               <p className="text-xs text-zinc-400">
-                Standardized bilingual translation of likelihood ratios into evaluative statements.
+                {isTr
+                  ? "Olasılık oranlarının değerlendirici ifadelere standart iki dilli çevirisi."
+                  : "Standardized bilingual translation of likelihood ratios into evaluative statements."}
               </p>
             </div>
 
@@ -845,11 +947,11 @@ export default function ValidationLabPanel() {
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
                   <tr className="border-b border-tactical-border/60 bg-tactical-surface/50 text-[10px] uppercase text-zinc-400">
-                    <th className="p-3">Tier</th>
-                    <th className="p-3">LR Range</th>
+                    <th className="p-3">{isTr ? "Düzey" : "Tier"}</th>
+                    <th className="p-3">{isTr ? "LR Aralığı" : "LR Range"}</th>
                     <th className="p-3">log₁₀ LR</th>
-                    <th className="p-3">ENFSI English Predicate</th>
-                    <th className="p-3">ENFSI Türkçe İfade</th>
+                    <th className="p-3">{isTr ? "ENFSI İngilizce İfade" : "ENFSI English Predicate"}</th>
+                    <th className="p-3">{isTr ? "ENFSI Türkçe İfade" : "ENFSI Türkçe İfade"}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-tactical-border/40 text-[11px]">
@@ -870,7 +972,7 @@ export default function ValidationLabPanel() {
                       <tr key={row.tier} className={isCurrent ? "bg-emerald-950/40 font-bold text-white" : "text-zinc-300"}>
                         <td className="p-3">
                           <span className={`px-2 py-0.5 rounded text-[10px] ${isCurrent ? "bg-emerald-500 text-black font-extrabold" : "bg-black/60 text-zinc-400"}`}>
-                            Tier {row.tier}
+                            {isTr ? `Düzey ${row.tier}` : `Tier ${row.tier}`}
                           </span>
                         </td>
                         <td className="p-3 font-mono">{row.range}</td>
@@ -888,10 +990,10 @@ export default function ValidationLabPanel() {
             <div className="p-4 rounded-xl bg-purple-950/20 border border-purple-500/40 space-y-2">
               <div className="flex items-center gap-2 text-xs font-bold text-purple-300 uppercase">
                 <ShieldCheck className="h-4 w-4 text-purple-400" />
-                Active Prosecutor's Fallacy Shield (Transposed Conditional Protection)
+                {isTr ? "Aktif Savcılık Safsatası Kalkanı (Transposed Conditional Koruması)" : "Active Prosecutor's Fallacy Shield (Transposed Conditional Protection)"}
               </div>
               <p className="text-[11px] text-zinc-300 leading-relaxed">
-                {language === "tr"
+                {isTr
                   ? "ÖNEMLİ: Bu Likelihood Ratio (Olasılık Oranı) değeri, delilin hipotezler altındaki şartlı olasılığını P(Delil | Hipotez) ifade eder. Kesinlikle şüphelinin suçlu veya masum olma olasılığını P(Hipotez | Delil) İFADE ETMEZ. Bu iki kavramın karıştırılması mahkemelerde kabul edilemez olan 'Savcılık Safsatası'na (Transposed Conditional) yol açar."
                   : "IMPORTANT: The Likelihood Ratio (LR) measures P(Evidence | Hypothesis), NOT P(Hypothesis | Evidence). This value does NOT represent the probability that the person of interest is guilty or innocent. Conflating P(E|Hp) with P(Hp|E) constitutes the Transposed Conditional Fallacy (Prosecutor's Fallacy), which is strictly inadmissible in court."}
               </p>

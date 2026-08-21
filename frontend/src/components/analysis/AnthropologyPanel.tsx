@@ -3,11 +3,15 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Bone, UserCheck, ShieldAlert, FileText, CheckCircle2, ChevronRight, Activity, Cpu, Compass } from "lucide-react";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 export default function AnthropologyPanel() {
+  const { lang } = useSaasLanguage();
+  const isTr = lang === "tr";
+
   const [activeSubTab, setActiveSubTab] = useState<"profile" | "trauma">("profile");
 
-  // Mock Morphometrics & Profile Data
+  // Morphometrics & Profile Data
   const [femurLength, setFemurLength] = useState<number>(445.0);
   const [subpubicAngle, setSubpubicAngle] = useState<number>(95.0);
   const [symphysisPhase, setSymphysisPhase] = useState<number>(3);
@@ -18,14 +22,40 @@ export default function AnthropologyPanel() {
   const minStature = (parseFloat(estimatedStature) - 3.27).toFixed(1);
   const maxStature = (parseFloat(estimatedStature) + 3.27).toFixed(1);
 
-  const estimatedSex = subpubicAngle > 85.0 ? "FEMALE (Subpubic Angle > 85°)" : "MALE (Subpubic Angle < 75°)";
-  const ageRange = symphysisPhase === 1 ? "15–19 yrs" : symphysisPhase === 2 ? "20–24 yrs" : symphysisPhase === 3 ? "25–34 yrs" : symphysisPhase === 4 ? "35–45 yrs" : "46+ yrs";
+  const estimatedSex = subpubicAngle > 85.0
+    ? (isTr ? "KADIN (Subpubik Açı > 85°)" : "FEMALE (Subpubic Angle > 85°)")
+    : (isTr ? "ERKEK (Subpubik Açı < 75°)" : "MALE (Subpubic Angle < 75°)");
 
-  // Mock Trauma Observations
+  const ageRange = symphysisPhase === 1
+    ? (isTr ? "15–19 yaş" : "15–19 yrs")
+    : symphysisPhase === 2
+    ? (isTr ? "20–24 yaş" : "20–24 yrs")
+    : symphysisPhase === 3
+    ? (isTr ? "25–34 yaş" : "25–34 yrs")
+    : symphysisPhase === 4
+    ? (isTr ? "35–45 yaş" : "35–45 yrs")
+    : (isTr ? "46+ yaş" : "46+ yrs");
+
+  // Trauma Observations
   const traumaList = [
-    { element: "Left Femur", mechanism: "BLUNT_FORCE", timing: "PERIMORTEM", desc: "Radiating linear fracture on distal shaft with sharp unhealed margins" },
-    { element: "Right Tibia", mechanism: "TAPHONOMIC", timing: "POSTMORTEM", desc: "Sun bleaching, cortical flaking, and soil mineral staining" },
-    { element: "Frontal Bone", mechanism: "BALLISTIC", timing: "PERIMORTEM", desc: "Circular entry defect with internal beveling" },
+    {
+      element: isTr ? "Sol Femur" : "Left Femur",
+      mechanism: isTr ? "KÜNT_TRAVMA" : "BLUNT_FORCE",
+      timing: isTr ? "PERİMORTEM" : "PERIMORTEM",
+      desc: isTr ? "Distal şaftta iyileşmemiş keskin kenarlı ışınsal lineer kırık" : "Radiating linear fracture on distal shaft with sharp unhealed margins"
+    },
+    {
+      element: isTr ? "Sağ Tibia" : "Right Tibia",
+      mechanism: isTr ? "TAFONOMİK" : "TAPHONOMIC",
+      timing: isTr ? "POSTMORTEM" : "POSTMORTEM",
+      desc: isTr ? "Güneş ağarması, kortikal pullanma ve toprak mineral lekelenmesi" : "Sun bleaching, cortical flaking, and soil mineral staining"
+    },
+    {
+      element: isTr ? "Frontal Kemik" : "Frontal Bone",
+      mechanism: isTr ? "BALİSTİK" : "BALLISTIC",
+      timing: isTr ? "PERİMORTEM" : "PERIMORTEM",
+      desc: isTr ? "İç pahlanmalı dairesel giriş defekti" : "Circular entry defect with internal beveling"
+    },
   ];
 
   return (
@@ -38,10 +68,12 @@ export default function AnthropologyPanel() {
           </div>
           <div>
             <h2 className="text-sm sm:text-base font-bold tracking-widest text-tactical-text uppercase">
-              Forensic Anthropology & Biological Profiling Hub
+              {isTr ? "Adli Antropoloji & Biyolojik Profil Merkezi" : "Forensic Anthropology & Biological Profiling Hub"}
             </h2>
             <p className="text-[10px] text-tactical-text-muted mt-0.5">
-              Osteological Morphometrics • Trotter-Gleser Stature • Suchey-Brooks Age • Perimortem Trauma Audit
+              {isTr
+                ? "Osteolojik Morfometri • Trotter-Gleser Boy Tahmini • Suchey-Brooks Yaş • Perimortem Travma Denetimi"
+                : "Osteological Morphometrics • Trotter-Gleser Stature • Suchey-Brooks Age • Perimortem Trauma Audit"}
             </p>
           </div>
         </div>
@@ -54,7 +86,7 @@ export default function AnthropologyPanel() {
               activeSubTab === "profile" ? "bg-purple-500/20 text-purple-300 border border-purple-500/40" : "text-zinc-500 hover:text-zinc-300"
             }`}
           >
-            Biological Profile
+            {isTr ? "Biyolojik Profil" : "Biological Profile"}
           </button>
           <button
             onClick={() => setActiveSubTab("trauma")}
@@ -62,7 +94,7 @@ export default function AnthropologyPanel() {
               activeSubTab === "trauma" ? "bg-purple-500/20 text-purple-300 border border-purple-500/40" : "text-zinc-500 hover:text-zinc-300"
             }`}
           >
-            Trauma & Taphonomy
+            {isTr ? "Travma & Tafonomi" : "Trauma & Taphonomy"}
           </button>
         </div>
       </div>
@@ -74,10 +106,10 @@ export default function AnthropologyPanel() {
           <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 space-y-5 shadow-lg">
             <div className="flex items-center justify-between border-b border-tactical-border/40 pb-3">
               <span className="text-xs font-bold text-tactical-text uppercase tracking-wider">
-                Osteological Morphometrics Input Panel
+                {isTr ? "Osteolojik Morfometrik Girdi Paneli" : "Osteological Morphometrics Input Panel"}
               </span>
               <span className="text-[9px] text-purple-400 font-bold bg-purple-500/10 border border-purple-500/20 px-2 py-0.5 rounded">
-                Trotter-Gleser Active
+                {isTr ? "Trotter-Gleser Aktif" : "Trotter-Gleser Active"}
               </span>
             </div>
 
@@ -85,7 +117,9 @@ export default function AnthropologyPanel() {
               {/* Femur Slider */}
               <div className="space-y-2">
                 <div className="flex justify-between text-xs font-mono">
-                  <span className="text-zinc-400">Femur Length (mm):</span>
+                  <span className="text-zinc-400">
+                    {isTr ? "Femur Uzunluğu (mm):" : "Femur Length (mm):"}
+                  </span>
                   <span className="text-purple-400 font-bold">{femurLength} mm</span>
                 </div>
                 <input
@@ -102,7 +136,9 @@ export default function AnthropologyPanel() {
               {/* Subpubic Angle Slider */}
               <div className="space-y-2">
                 <div className="flex justify-between text-xs font-mono">
-                  <span className="text-zinc-400">Subpubic Angle (°):</span>
+                  <span className="text-zinc-400">
+                    {isTr ? "Subpubik Açı (°):" : "Subpubic Angle (°):"}
+                  </span>
                   <span className="text-purple-400 font-bold">{subpubicAngle}°</span>
                 </div>
                 <input
@@ -119,8 +155,10 @@ export default function AnthropologyPanel() {
               {/* Pubic Symphysis Phase */}
               <div className="space-y-2">
                 <div className="flex justify-between text-xs font-mono">
-                  <span className="text-zinc-400">Suchey-Brooks Phase:</span>
-                  <span className="text-purple-400 font-bold">Phase {symphysisPhase}</span>
+                  <span className="text-zinc-400">
+                    {isTr ? "Suchey-Brooks Evresi:" : "Suchey-Brooks Phase:"}
+                  </span>
+                  <span className="text-purple-400 font-bold">{isTr ? `Evre ${symphysisPhase}` : `Phase ${symphysisPhase}`}</span>
                 </div>
                 <input
                   type="range"
@@ -138,24 +176,32 @@ export default function AnthropologyPanel() {
           {/* Biological Profile Summary Result Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="rounded-xl border border-tactical-border/60 bg-tactical-surface/40 p-4 space-y-1">
-              <span className="text-[10px] text-zinc-500 font-bold uppercase">Sex Estimation</span>
+              <span className="text-[10px] text-zinc-500 font-bold uppercase">
+                {isTr ? "Cinsiyet Tahmini" : "Sex Estimation"}
+              </span>
               <p className="text-sm font-bold text-purple-400 font-mono">{estimatedSex}</p>
-              <p className="text-[9px] text-zinc-400">Morphometric pelvic metric</p>
+              <p className="text-[9px] text-zinc-400">{isTr ? "Pelvik morfometrik metrik" : "Morphometric pelvic metric"}</p>
             </div>
             <div className="rounded-xl border border-tactical-border/60 bg-tactical-surface/40 p-4 space-y-1">
-              <span className="text-[10px] text-zinc-500 font-bold uppercase">Suchey-Brooks Age</span>
+              <span className="text-[10px] text-zinc-500 font-bold uppercase">
+                {isTr ? "Suchey-Brooks Yaşı" : "Suchey-Brooks Age"}
+              </span>
               <p className="text-sm font-bold text-amber-400 font-mono">{ageRange}</p>
-              <p className="text-[9px] text-zinc-400">Pubic symphysis metamorphology</p>
+              <p className="text-[9px] text-zinc-400">{isTr ? "Pubik simfiz metamorfolojisi" : "Pubic symphysis metamorphology"}</p>
             </div>
             <div className="rounded-xl border border-tactical-border/60 bg-tactical-surface/40 p-4 space-y-1">
-              <span className="text-[10px] text-zinc-500 font-bold uppercase">Estimated Stature</span>
+              <span className="text-[10px] text-zinc-500 font-bold uppercase">
+                {isTr ? "Tahmini Boy" : "Estimated Stature"}
+              </span>
               <p className="text-sm font-bold text-emerald-400 font-mono">{estimatedStature} cm</p>
-              <p className="text-[9px] text-zinc-400">Range: {minStature} – {maxStature} cm (95% CI)</p>
+              <p className="text-[9px] text-zinc-400">{isTr ? "Aralık:" : "Range:"} {minStature} – {maxStature} cm (%95 GA)</p>
             </div>
             <div className="rounded-xl border border-tactical-border/60 bg-tactical-surface/40 p-4 space-y-1">
-              <span className="text-[10px] text-zinc-500 font-bold uppercase">Population Affinity</span>
-              <p className="text-sm font-bold text-cyan-400 font-mono">European / Mesocephalic</p>
-              <p className="text-[9px] text-zinc-400">Craniometric Index: 76.5</p>
+              <span className="text-[10px] text-zinc-500 font-bold uppercase">
+                {isTr ? "Popülasyon Yakınlığı" : "Population Affinity"}
+              </span>
+              <p className="text-sm font-bold text-cyan-400 font-mono">{isTr ? "Avrupa / Mezozefal" : "European / Mesocephalic"}</p>
+              <p className="text-[9px] text-zinc-400">{isTr ? "Kraniyometrik İndeks: 76.5" : "Craniometric Index: 76.5"}</p>
             </div>
           </div>
         </div>
@@ -167,10 +213,10 @@ export default function AnthropologyPanel() {
           <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 space-y-4 shadow-lg">
             <div className="flex items-center justify-between border-b border-tactical-border/40 pb-3">
               <span className="text-xs font-bold text-tactical-text uppercase tracking-wider">
-                Skeletal Trauma & Perimortem Lesion Audit Log
+                {isTr ? "İskelet Travması & Perimortem Lezyon Denetim Günlüğü" : "Skeletal Trauma & Perimortem Lesion Audit Log"}
               </span>
               <span className="text-[9px] text-red-400 font-bold bg-red-500/10 border border-red-500/20 px-2 py-0.5 rounded">
-                2 Perimortem Fractures Documented
+                {isTr ? "2 Perimortem Kırık Belgelendi" : "2 Perimortem Fractures Documented"}
               </span>
             </div>
 
@@ -188,7 +234,7 @@ export default function AnthropologyPanel() {
 
                   <div>
                     <span className={`px-3 py-1 rounded text-[9px] font-bold uppercase font-mono ${
-                      t.timing === "PERIMORTEM"
+                      t.timing === "PERIMORTEM" || t.timing === "PERİMORTEM"
                         ? "bg-red-500/20 text-red-400 border border-red-500/30"
                         : "bg-zinc-500/20 text-zinc-400 border border-zinc-500/30"
                     }`}>

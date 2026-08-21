@@ -215,6 +215,34 @@ export interface SaasTranslation {
       isoNote: string;
     };
   };
+  transition: {
+    steps: string[];
+    subtitle: string;
+    badges: {
+      strEngine: string;
+      mcmcGenotyping: string;
+      hirisplexEvc: string;
+      isoLedger: string;
+    };
+  };
+  dashboardTopBar: {
+    subsystemsCount: string;
+    subsystemsOnline: string;
+    biocompEngine: string;
+    engineName: string;
+    accreditation: string;
+    isoStandard: string;
+    activeCase: string;
+    onlineStatus: string;
+  };
+  sidebarNav: {
+    operations: string;
+    biocomputationalSuites: string;
+    searchPlaceholder: string;
+    landingPage: string;
+    activeEngine: string;
+    demoSimulator: string;
+  };
 }
 
 export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
@@ -605,6 +633,40 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
         isoNote: "ISO/IEC 17025 alignment denotes compliance with SWGDAM/ENFSI biostatistical reporting format guidelines and does not constitute formal laboratory accreditation."
       }
     },
+    transition: {
+      steps: [
+        "INITIALIZING FORENZA BIOLOGICAL KERNEL...",
+        "CALIBRATING 24 CODIS CORE STR LOCI...",
+        "LOADING HIrisPlex-S & BGA POPULATION PRIORS...",
+        "VERIFYING ISO-21043 CHAIN OF CUSTODY LEDGER...",
+        "SYSTEM OPERATIONAL — FORENSIC WORKSPACE READY"
+      ],
+      subtitle: "Forensic Biology & DNA Intelligence Operating System",
+      badges: {
+        strEngine: "Autosomal STR Engine",
+        mcmcGenotyping: "MCMC Genotyping",
+        hirisplexEvc: "HIrisPlex-S EVC",
+        isoLedger: "ISO 21043 Ledger"
+      }
+    },
+    dashboardTopBar: {
+      subsystemsCount: "35 Subsystems",
+      subsystemsOnline: "ONLINE",
+      biocompEngine: "Biocomputational Engine",
+      engineName: "FORENZA OS",
+      accreditation: "Accreditation",
+      isoStandard: "ISO/IEC 17025:2017",
+      activeCase: "CASE-2026-FORENZA",
+      onlineStatus: "ONLINE"
+    },
+    sidebarNav: {
+      operations: "Operations",
+      biocomputationalSuites: "Biocomputational Suites",
+      searchPlaceholder: "Search 35 Subsystems...",
+      landingPage: "Landing Page",
+      activeEngine: "ACTIVE ENGINE",
+      demoSimulator: "DEMO SIMULATOR"
+    }
   },
   tr: {
     header: {
@@ -993,5 +1055,39 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
         isoNote: "ISO/IEC 17025 uyumluluğu, SWGDAM/ENFSI biyoistatistiksel raporlama standartlarına uygunluk anlamına gelir ve laboratuvarın kurumsal akreditasyonu yerine geçmez."
       }
     },
+    transition: {
+      steps: [
+        "FORENZA BİYOLOJİK ÇEKİRDEĞİ BAŞLATILIYOR...",
+        "24 CODIS ÇEKİRDEK STR LOKUSU KALİBRE EDİLİYOR...",
+        "HIrisPlex-S VE BGA POPÜLASYON DAĞILIMLARI YÜKLENİYOR...",
+        "ISO-21043 DELİL ZİNCİRİ DEFTERİ DOĞRULANIYOR...",
+        "SİSTEM FAAL — ADLİ ÇALIŞMA ALANI HAZIR"
+      ],
+      subtitle: "Adli Biyoloji ve DNA İstihbarat İşletim Sistemi",
+      badges: {
+        strEngine: "Otozomal STR Motoru",
+        mcmcGenotyping: "MCMC Genotipleme",
+        hirisplexEvc: "HIrisPlex-S EVC Fenotip",
+        isoLedger: "ISO 21043 Delil Defteri"
+      }
+    },
+    dashboardTopBar: {
+      subsystemsCount: "35 Alt Sistem",
+      subsystemsOnline: "ÇEVRİMİÇİ",
+      biocompEngine: "Biyobilişimsel Motor",
+      engineName: "FORENZA OS",
+      accreditation: "Akreditasyon",
+      isoStandard: "ISO/IEC 17025:2017",
+      activeCase: "VAKA-2026-FORENZA",
+      onlineStatus: "ÇEVRİMİÇİ"
+    },
+    sidebarNav: {
+      operations: "İşlem Merkezleri",
+      biocomputationalSuites: "Biyobilişimsel Süitler",
+      searchPlaceholder: "35 Alt Sistemi Ara...",
+      landingPage: "Ana Sayfa",
+      activeEngine: "AKTİF MOTOR",
+      demoSimulator: "DEMO SİMÜLATÖR"
+    }
   },
 };

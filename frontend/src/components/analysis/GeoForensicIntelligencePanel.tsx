@@ -31,6 +31,7 @@ import {
     Scale,
 } from "lucide-react";
 import { getApiBaseUrl } from "@/lib/api";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 // ── Types & Interfaces ────────────────────────────────────────────────────────
 
@@ -44,6 +45,7 @@ export type GeoSubsystemMode =
 interface CrimeSite {
     id: string;
     label: string;
+    labelTr?: string;
     x: number;
     y: number;
     weight: number;
@@ -52,14 +54,40 @@ interface CrimeSite {
 interface TelemetryPhase {
     step: number;
     label: string;
+    labelTr: string;
     description: string;
+    descriptionTr: string;
 }
 
 const TELEMETRY_PHASES: TelemetryPhase[] = [
-    { step: 1, label: "Ingesting Input Matrix", description: "Normalizing multi-tissue spectrometry & spatial coordinate traces" },
-    { step: 2, label: "Evaluating Isoscapes & CLR", description: "Continuous Gaussian likelihoods & Aitchison centered log-ratio transforms" },
-    { step: 3, label: "Rossmo & 2D Adaptive KDE", description: "Targeted hunting grid integration & Silverman bandwidth smoothing" },
-    { step: 4, label: "ENFSI Courtroom Synthesis", description: "Calculating Search Efficiency Index (SEI) & ISO 17025 fallacy shields" },
+    {
+        step: 1,
+        label: "Ingesting Input Matrix",
+        labelTr: "Girdi Matrisi Aktarılıyor",
+        description: "Normalizing multi-tissue spectrometry & spatial coordinate traces",
+        descriptionTr: "Çoklu doku spektrometrisi ve uzamsal koordinat izleri normalize ediliyor"
+    },
+    {
+        step: 2,
+        label: "Evaluating Isoscapes & CLR",
+        labelTr: "İzoskaplar & CLR Değerlendiriliyor",
+        description: "Continuous Gaussian likelihoods & Aitchison centered log-ratio transforms",
+        descriptionTr: "Sürekli Gauss olabilirlikleri & Aitchison merkezlenmiş log-oran dönüşümleri"
+    },
+    {
+        step: 3,
+        label: "Rossmo & 2D Adaptive KDE",
+        labelTr: "Rossmo & 2D Adaptif KDE",
+        description: "Targeted hunting grid integration & Silverman bandwidth smoothing",
+        descriptionTr: "Hedefli avlanma ızgara entegrasyonu & Silverman bant genişliği yumuşatması"
+    },
+    {
+        step: 4,
+        label: "ENFSI Courtroom Synthesis",
+        labelTr: "ENFSI Mahkeme Sentezi",
+        description: "Calculating Search Efficiency Index (SEI) & ISO 17025 fallacy shields",
+        descriptionTr: "Arama Verimlilik İndeksi (SEI) & ISO 17025 safsata kalkanları hesaplanıyor"
+    },
 ];
 
 // ── Canonical Golden Benchmark Presets ────────────────────────────────────────
@@ -76,6 +104,7 @@ const GOLDEN_VECTOR_01 = {
     expectedRadius: 48.5,
     expectedLR: 32500,
     region: "Swiss Prealps / Central Alps (Cantons Uri/Schwyz)",
+    regionTr: "İsviçre Ön Alpleri / Orta Alpler (Uri/Schwyz Kantonları)",
 };
 
 const GOLDEN_VECTOR_02 = {
@@ -111,11 +140,11 @@ const GOLDEN_VECTOR_02 = {
 };
 
 const GOLDEN_VECTOR_03: CrimeSite[] = [
-    { id: "C1", label: "Incident #1 (River Trail)", x: 4.0, y: 12.0, weight: 1.0 },
-    { id: "C2", label: "Incident #2 (Industrial Park)", x: 6.5, y: 14.2, weight: 1.0 },
-    { id: "C3", label: "Incident #3 (Underpass Ave)", x: 8.0, y: 9.5, weight: 1.0 },
-    { id: "C4", label: "Incident #4 (Suburban Mall)", x: 11.2, y: 13.0, weight: 1.0 },
-    { id: "C5", label: "Incident #5 (Forest Border)", x: 5.8, y: 8.1, weight: 1.0 },
+    { id: "C1", label: "Incident #1 (River Trail)", labelTr: "Olay #1 (Nehir Yolu)", x: 4.0, y: 12.0, weight: 1.0 },
+    { id: "C2", label: "Incident #2 (Industrial Park)", labelTr: "Olay #2 (Sanayi Parkı)", x: 6.5, y: 14.2, weight: 1.0 },
+    { id: "C3", label: "Incident #3 (Underpass Ave)", labelTr: "Olay #3 (Altgeçit Cad.)", x: 8.0, y: 9.5, weight: 1.0 },
+    { id: "C4", label: "Incident #4 (Suburban Mall)", labelTr: "Olay #4 (Banliyö AVM)", x: 11.2, y: 13.0, weight: 1.0 },
+    { id: "C5", label: "Incident #5 (Forest Border)", labelTr: "Olay #5 (Orman Sınırı)", x: 5.8, y: 8.1, weight: 1.0 },
 ];
 
 // ── Main Component ────────────────────────────────────────────────────────────
@@ -127,6 +156,9 @@ export default function GeoForensicIntelligencePanel({
     initialMode?: GeoSubsystemMode;
     hideHeaderTabs?: boolean;
 }) {
+    const { lang } = useSaasLanguage();
+    const isTr = lang === "tr";
+
     const [mode, setMode] = useState<GeoSubsystemMode>(initialMode);
     const [isExecuting, setIsExecuting] = useState(false);
     const [executionProgress, setExecutionProgress] = useState(100);
@@ -193,9 +225,9 @@ export default function GeoForensicIntelligencePanel({
                 fStat: 14.82,
                 pValue: 0.0001,
                 ztr: 1.2,
-                verdict: "EXCLUSION_NON_MATCH",
+                verdict: isTr ? "DIŞLAMA_EŞLEŞMİYOR" : "EXCLUSION_NON_MATCH",
                 lr: 0.001,
-                tier: "TIER_6_EXTREMELY_STRONG_EXCLUSION",
+                tier: isTr ? "KADEME_6_AŞIRI_GÜÇLÜ_DIŞLAMA" : "TIER_6_EXTREMELY_STRONG_EXCLUSION",
             };
         }
         return {
@@ -203,11 +235,11 @@ export default function GeoForensicIntelligencePanel({
             fStat: 0.056,
             pValue: 0.999,
             ztr: 9.5,
-            verdict: "DEFINITIVE_INCLUSION",
+            verdict: isTr ? "KESİN_DAHİL_ETME" : "DEFINITIVE_INCLUSION",
             lr: 4500,
-            tier: "TIER_4_STRONG",
+            tier: isTr ? "KADEME_4_GÜÇLÜ" : "TIER_4_STRONG",
         };
-    }, [isDivergentSoil]);
+    }, [isDivergentSoil, isTr]);
 
     // ── Computed Rossmo Profile
     const rossmoResult = useMemo(() => {
@@ -234,10 +266,10 @@ export default function GeoForensicIntelligencePanel({
             totalArea: 400.0,
             sei,
             canterDiameter: parseFloat(maxD.toFixed(2)),
-            typology: "MARAUDER",
+            typology: isTr ? "YAĞMACI" : "MARAUDER",
             lr: 28.2,
         };
-    }, [crimeSites]);
+    }, [crimeSites, isTr]);
 
     // ── Combined Bayesian Fusion LR
     const fusedLR = useMemo(() => {
@@ -336,9 +368,13 @@ export default function GeoForensicIntelligencePanel({
                 });
             }
         } catch {
-            setApiErrorNotice("Live backend offline; client biocomputational solver active.");
+            setApiErrorNotice(
+                isTr
+                    ? "Canlı arka uç çevrimdışı; istemci biyohesaplamalı çözücü devrede."
+                    : "Live backend offline; client biocomputational solver active."
+            );
         }
-    }, [mode, enamelD18O, enamelSr, soilQ, crimeSites, bufferB, exponentF, exponentG]);
+    }, [mode, enamelD18O, enamelSr, soilQ, crimeSites, bufferB, exponentF, exponentG, isTr]);
 
     return (
         <div className="w-full space-y-4 sm:space-y-6 text-zinc-100 font-sans">
@@ -352,10 +388,10 @@ export default function GeoForensicIntelligencePanel({
                         <div className="flex items-center gap-2 text-xs font-mono min-w-0">
                             <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shrink-0" />
                             <span className="text-zinc-300 font-bold truncate">
-                                {TELEMETRY_PHASES[currentPhaseIndex].label}
+                                {isTr ? TELEMETRY_PHASES[currentPhaseIndex].labelTr : TELEMETRY_PHASES[currentPhaseIndex].label}
                             </span>
                             <span className="text-zinc-500 hidden md:inline truncate">
-                                — {TELEMETRY_PHASES[currentPhaseIndex].description}
+                                — {isTr ? TELEMETRY_PHASES[currentPhaseIndex].descriptionTr : TELEMETRY_PHASES[currentPhaseIndex].description}
                             </span>
                         </div>
 
@@ -376,7 +412,7 @@ export default function GeoForensicIntelligencePanel({
                                 className="min-h-[38px] px-3 py-1.5 rounded-xl border border-zinc-700/60 bg-zinc-900/80 hover:bg-zinc-800 active:scale-95 text-xs font-mono text-zinc-300 transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
                             >
                                 <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                                <span>Load Benchmarks</span>
+                                <span>{isTr ? "Referansları Yükle" : "Load Benchmarks"}</span>
                             </button>
                             <button
                                 onClick={handleRunAnalysis}
@@ -384,7 +420,11 @@ export default function GeoForensicIntelligencePanel({
                                 className="min-h-[38px] px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 active:scale-95 text-white font-mono text-xs font-bold tracking-wide shadow-md shadow-cyan-900/20 transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
                             >
                                 <RefreshCw className={`w-3.5 h-3.5 ${isExecuting ? "animate-spin" : ""}`} />
-                                <span>{isExecuting ? `Solving (${executionProgress}%)` : "Execute Solver"}</span>
+                                <span>
+                                    {isExecuting
+                                        ? (isTr ? `Hesaplanıyor (%${executionProgress})` : `Solving (${executionProgress}%)`)
+                                        : (isTr ? "Çözücüyü Çalıştır" : "Execute Solver")}
+                                </span>
                             </button>
                         </div>
                     </div>
@@ -409,18 +449,21 @@ export default function GeoForensicIntelligencePanel({
                             <div className="flex items-center gap-2.5 flex-wrap">
                                 <div className="px-2.5 py-1 rounded-md bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-mono text-[10px] font-bold tracking-wider uppercase flex items-center gap-1.5 min-h-[28px]">
                                     <Globe className="w-3.5 h-3.5" />
-                                    PILLAR 7: GEO-FORENSIC INTELLIGENCE
+                                    {isTr ? "PILLAR 7: JEO-ADLİ İSTİHBARAT" : "PILLAR 7: GEO-FORENSIC INTELLIGENCE"}
                                 </div>
                                 <span className="text-[10px] font-mono text-zinc-400 bg-zinc-800/80 px-2 py-0.5 rounded border border-zinc-700/50 min-h-[24px] flex items-center">
                                     ISO/IEC 17025:2017 & ASTM E3272-21
                                 </span>
                             </div>
                             <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white flex items-center gap-2 break-words">
-                                Spatial Biogeochemistry & Bayesian GIS Platform
+                                {isTr
+                                    ? "Uzamsal Biyojeokimya & Bayesyen CBS Platformu"
+                                    : "Spatial Biogeochemistry & Bayesian GIS Platform"}
                             </h2>
                             <p className="text-xs text-zinc-400 max-w-2xl leading-relaxed">
-                                Continuous multi-isotope isoscape mapping, forensic soil QXRD pedology, botanical palynology,
-                                and Rossmo targeted hunting geographic crime profiling.
+                                {isTr
+                                    ? "Sürekli çoklu izotop izoskap haritalama, adli toprak QXRD pedolojisi, botanik palinoloji ve Rossmo hedefli avlanma coğrafi suç profillemesi."
+                                    : "Continuous multi-isotope isoscape mapping, forensic soil QXRD pedology, botanical palynology, and Rossmo targeted hunting geographic crime profiling."}
                             </p>
                         </div>
 
@@ -441,7 +484,7 @@ export default function GeoForensicIntelligencePanel({
                                 className="min-h-[44px] px-3.5 py-2.5 rounded-xl border border-zinc-700/60 bg-zinc-900/60 hover:bg-zinc-800 active:scale-95 text-xs font-mono text-zinc-300 transition-all flex items-center gap-2 cursor-pointer"
                             >
                                 <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                                Load Golden Benchmarks
+                                {isTr ? "Referansları Yükle" : "Load Golden Benchmarks"}
                             </button>
                             <button
                                 onClick={handleRunAnalysis}
@@ -449,7 +492,9 @@ export default function GeoForensicIntelligencePanel({
                                 className="min-h-[44px] px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 active:scale-95 text-white font-mono text-xs font-bold tracking-wide shadow-lg shadow-cyan-900/20 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
                             >
                                 <RefreshCw className={`w-3.5 h-3.5 ${isExecuting ? "animate-spin" : ""}`} />
-                                {isExecuting ? `Solving Engine (${executionProgress}%)` : "Execute Solver"}
+                                {isExecuting
+                                    ? (isTr ? `Hesaplanıyor (%${executionProgress})` : `Solving Engine (${executionProgress}%)`)
+                                    : (isTr ? "Çözücüyü Çalıştır" : "Execute Solver")}
                             </button>
                         </div>
                     </div>
@@ -460,14 +505,14 @@ export default function GeoForensicIntelligencePanel({
                             <div className="flex items-center gap-2">
                                 <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
                                 <span className="text-zinc-300 font-bold">
-                                    {TELEMETRY_PHASES[currentPhaseIndex].label}
+                                    {isTr ? TELEMETRY_PHASES[currentPhaseIndex].labelTr : TELEMETRY_PHASES[currentPhaseIndex].label}
                                 </span>
                                 <span className="text-zinc-500 hidden sm:inline">
-                                    — {TELEMETRY_PHASES[currentPhaseIndex].description}
+                                    — {isTr ? TELEMETRY_PHASES[currentPhaseIndex].descriptionTr : TELEMETRY_PHASES[currentPhaseIndex].description}
                                 </span>
                             </div>
                             <span className="text-cyan-400 font-bold tabular-nums">
-                                {executionProgress}%
+                                %{executionProgress}
                             </span>
                         </div>
 
@@ -485,11 +530,11 @@ export default function GeoForensicIntelligencePanel({
                     {/* Subsystem Mode Navigation Tabs (Responsive & Touch-Friendly >= 44px) */}
                     <div className="mt-4 pt-3 border-t border-tactical-border/40 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
                         {[
-                            { id: "ISOSCAPES", label: "1. Isoscapes (H/O/Sr)", icon: Globe, badge: "GMWL" },
-                            { id: "SOIL_CODA", label: "2. Soil Pedology", icon: Mountain, badge: "QXRD" },
-                            { id: "PALYNOLOGY_EDNA", label: "3. Palynology & eDNA", icon: TreePine, badge: "16S/ITS" },
-                            { id: "ROSSMO_GEO", label: "4. Rossmo Profiling", icon: Crosshair, badge: "SEI 96%" },
-                            { id: "BAYESIAN_FUSION", label: "5. Bayesian Fusion", icon: Layers, badge: "Raster" },
+                            { id: "ISOSCAPES", label: "1. Isoscapes (H/O/Sr)", labelTr: "1. İzotop Haritaları (H/O/Sr)", icon: Globe, badge: "GMWL" },
+                            { id: "SOIL_CODA", label: "2. Soil Pedology", labelTr: "2. Toprak Pedolojisi", icon: Mountain, badge: "QXRD" },
+                            { id: "PALYNOLOGY_EDNA", label: "3. Palynology & eDNA", labelTr: "3. Palinoloji & eDNA", icon: TreePine, badge: "16S/ITS" },
+                            { id: "ROSSMO_GEO", label: "4. Rossmo Profiling", labelTr: "4. Rossmo Profilleme", icon: Crosshair, badge: "SEI 96%" },
+                            { id: "BAYESIAN_FUSION", label: "5. Bayesian Fusion", labelTr: "5. Bayesyen Füzyon", icon: Layers, badge: "Raster" },
                         ].map((tab) => {
                             const active = mode === tab.id;
                             const Icon = tab.icon;
@@ -498,9 +543,9 @@ export default function GeoForensicIntelligencePanel({
                                     key={tab.id}
                                     onClick={() => setMode(tab.id as GeoSubsystemMode)}
                                     className={`min-h-[48px] p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-1.5 ${active
-                                            ? "bg-cyan-500/15 border-cyan-500/50 shadow-md shadow-cyan-950/40"
-                                            : "bg-zinc-900/40 border-zinc-800/60 hover:border-zinc-700 text-zinc-400 hover:text-zinc-200"
-                                        }`}
+                                        ? "bg-cyan-500/15 border-cyan-500/50 shadow-md shadow-cyan-950/40"
+                                        : "bg-zinc-900/40 border-zinc-800/60 hover:border-zinc-700 text-zinc-400 hover:text-zinc-200"
+                                    }`}
                                 >
                                     <div className="flex items-center justify-between w-full">
                                         <Icon className={`w-4 h-4 ${active ? "text-cyan-400" : "text-zinc-500"}`} />
@@ -509,7 +554,7 @@ export default function GeoForensicIntelligencePanel({
                                         </span>
                                     </div>
                                     <span className={`text-xs font-bold truncate ${active ? "text-white" : ""}`}>
-                                        {tab.label}
+                                        {isTr ? tab.labelTr : tab.label}
                                     </span>
                                 </button>
                             );
@@ -535,13 +580,13 @@ export default function GeoForensicIntelligencePanel({
                         <div className="lg:col-span-1 p-4 sm:p-5 rounded-2xl border border-tactical-border/60 bg-tactical-surface/50 space-y-4">
                             <h3 className="text-sm font-bold text-white flex items-center gap-2">
                                 <Radio className="w-4 h-4 text-cyan-400" />
-                                Isotope Spectrometry Inputs
+                                {isTr ? "İzotop Spektrometri Girdileri" : "Isotope Spectrometry Inputs"}
                             </h3>
 
                             <div className="space-y-3.5">
                                 <div>
                                     <div className="flex justify-between text-xs font-mono text-zinc-400 mb-1">
-                                        <span>Tooth Enamel Bioapatite δ¹⁸O (‰ VSMOW)</span>
+                                        <span>{isTr ? "Diş Minesi Biyoapatit δ¹⁸O (‰ VSMOW)" : "Tooth Enamel Bioapatite δ¹⁸O (‰ VSMOW)"}</span>
                                         <span className="text-cyan-400 font-bold">{enamelD18O.toFixed(2)}</span>
                                     </div>
                                     <input
@@ -557,7 +602,7 @@ export default function GeoForensicIntelligencePanel({
 
                                 <div>
                                     <div className="flex justify-between text-xs font-mono text-zinc-400 mb-1">
-                                        <span>Bioavailable Strontium ⁸⁷Sr/⁸⁶Sr</span>
+                                        <span>{isTr ? "Biyoyararlanılabilir Stronsiyum ⁸⁷Sr/⁸⁶Sr" : "Bioavailable Strontium ⁸⁷Sr/⁸⁶Sr"}</span>
                                         <span className="text-emerald-400 font-bold">{enamelSr.toFixed(5)}</span>
                                     </div>
                                     <input
@@ -573,7 +618,7 @@ export default function GeoForensicIntelligencePanel({
 
                                 <div>
                                     <div className="flex justify-between text-xs font-mono text-zinc-400 mb-1">
-                                        <span>Hair Keratin δ²H (‰ VSMOW)</span>
+                                        <span>{isTr ? "Saç Keratini δ²H (‰ VSMOW)" : "Hair Keratin δ²H (‰ VSMOW)"}</span>
                                         <span className="text-purple-400 font-bold">{hairD2H.toFixed(1)}</span>
                                     </div>
                                     <input
@@ -590,15 +635,15 @@ export default function GeoForensicIntelligencePanel({
 
                             <div className="p-3.5 rounded-xl border border-zinc-800 bg-black/40 space-y-2 text-xs font-mono">
                                 <div className="flex justify-between">
-                                    <span className="text-zinc-400">Inferred Water δ¹⁸O:</span>
+                                    <span className="text-zinc-400">{isTr ? "Çıkarsanan Su δ¹⁸O:" : "Inferred Water δ¹⁸O:"}</span>
                                     <span className="text-cyan-300 font-bold">{computedWaterD18O} ‰</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-zinc-400">Inferred Water δ²H:</span>
+                                    <span className="text-zinc-400">{isTr ? "Çıkarsanan Su δ²H:" : "Inferred Water δ²H:"}</span>
                                     <span className="text-purple-300 font-bold">{computedWaterD2H} ‰</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-zinc-400">Deuterium Excess (d):</span>
+                                    <span className="text-zinc-400">{isTr ? "Döteryum Fazlalığı (d):" : "Deuterium Excess (d):"}</span>
                                     <span className="text-amber-300 font-bold">+{computedDeuteriumExcess} ‰</span>
                                 </div>
                             </div>
@@ -610,14 +655,14 @@ export default function GeoForensicIntelligencePanel({
                                 <div>
                                     <h3 className="text-sm font-bold text-white flex items-center gap-2">
                                         <Crosshair className="w-4 h-4 text-emerald-400" />
-                                        Resolved Origin Centroid & 95% Confidence Radius
+                                        {isTr ? "Çözümlenen Köken Sentroidi & %95 Güven Yarıçapı" : "Resolved Origin Centroid & 95% Confidence Radius"}
                                     </h3>
                                     <p className="text-xs text-zinc-400 font-mono">
-                                        Terzer-Wassenaar Global Precipitation & Bataille Sr Model
+                                        {isTr ? "Terzer-Wassenaar Küresel Yağış & Bataille Sr Modeli" : "Terzer-Wassenaar Global Precipitation & Bataille Sr Model"}
                                     </p>
                                 </div>
                                 <span className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono text-xs font-bold w-fit">
-                                    LR = {(32500).toExponential(2)} (TIER 4 STRONG)
+                                    {isTr ? `LR = ${(32500).toExponential(2)} (DÜZEY 4 GÜÇLÜ)` : `LR = ${(32500).toExponential(2)} (TIER 4 STRONG)`}
                                 </span>
                             </div>
 
@@ -636,30 +681,32 @@ export default function GeoForensicIntelligencePanel({
 
                                     {/* Text Annotations */}
                                     <text x="210" y="95" fill="#22c55e" fontSize="10" fontFamily="monospace" fontWeight="bold">
-                                        Centroid: {resolvedLat.toFixed(2)}°N, {resolvedLon.toFixed(2)}°E (R95% = {resolvedRadius.toFixed(1)} km)
+                                        {isTr
+                                            ? `Sentroid: ${resolvedLat.toFixed(2)}°K, ${resolvedLon.toFixed(2)}°D (R95% = ${resolvedRadius.toFixed(1)} km)`
+                                            : `Centroid: ${resolvedLat.toFixed(2)}°N, ${resolvedLon.toFixed(2)}°E (R95% = ${resolvedRadius.toFixed(1)} km)`}
                                     </text>
                                     <text x="210" y="112" fill="#a1a1aa" fontSize="9" fontFamily="monospace">
-                                        Swiss Prealps (Cantons Uri/Schwyz)
+                                        {isTr ? "İsviçre Ön Alpleri (Uri/Schwyz Kantonları)" : "Swiss Prealps (Cantons Uri/Schwyz)"}
                                     </text>
                                 </svg>
                             </div>
 
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
                                 <div className="p-2.5 rounded-lg bg-zinc-900/60 border border-zinc-800">
-                                    <p className="text-[9px] text-zinc-500 uppercase font-mono">Latitude</p>
-                                    <p className="text-xs font-bold font-mono text-white">{resolvedLat.toFixed(2)}° N</p>
+                                    <p className="text-[9px] text-zinc-500 uppercase font-mono">{isTr ? "Enlem" : "Latitude"}</p>
+                                    <p className="text-xs font-bold font-mono text-white">{resolvedLat.toFixed(2)}° {isTr ? "K" : "N"}</p>
                                 </div>
                                 <div className="p-2.5 rounded-lg bg-zinc-900/60 border border-zinc-800">
-                                    <p className="text-[9px] text-zinc-500 uppercase font-mono">Longitude</p>
-                                    <p className="text-xs font-bold font-mono text-white">{resolvedLon.toFixed(2)}° E</p>
+                                    <p className="text-[9px] text-zinc-500 uppercase font-mono">{isTr ? "Boylam" : "Longitude"}</p>
+                                    <p className="text-xs font-bold font-mono text-white">{resolvedLon.toFixed(2)}° {isTr ? "D" : "E"}</p>
                                 </div>
                                 <div className="p-2.5 rounded-lg bg-zinc-900/60 border border-zinc-800">
-                                    <p className="text-[9px] text-zinc-500 uppercase font-mono">R95% Bound</p>
+                                    <p className="text-[9px] text-zinc-500 uppercase font-mono">{isTr ? "R95% Sınırı" : "R95% Bound"}</p>
                                     <p className="text-xs font-bold font-mono text-emerald-400">{resolvedRadius.toFixed(1)} km</p>
                                 </div>
                                 <div className="p-2.5 rounded-lg bg-zinc-900/60 border border-zinc-800">
-                                    <p className="text-[9px] text-zinc-500 uppercase font-mono">Top Candidate</p>
-                                    <p className="text-xs font-bold font-mono text-cyan-400 truncate">Swiss Alps</p>
+                                    <p className="text-[9px] text-zinc-500 uppercase font-mono">{isTr ? "En Güçlü Aday" : "Top Candidate"}</p>
+                                    <p className="text-xs font-bold font-mono text-cyan-400 truncate">{isTr ? "İsviçre Alpleri" : "Swiss Alps"}</p>
                                 </div>
                             </div>
                         </div>
@@ -680,7 +727,7 @@ export default function GeoForensicIntelligencePanel({
                             <div className="flex items-center justify-between">
                                 <h3 className="text-sm font-bold text-white flex items-center gap-2">
                                     <Mountain className="w-4 h-4 text-amber-400" />
-                                    Soil QXRD Minerals (wt%)
+                                    {isTr ? "Toprak QXRD Mineralleri (% ağırlık)" : "Soil QXRD Minerals (wt%)"}
                                 </h3>
                                 <button
                                     onClick={() => setIsDivergentSoil(!isDivergentSoil)}
@@ -689,23 +736,25 @@ export default function GeoForensicIntelligencePanel({
                                             : "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
                                         }`}
                                 >
-                                    {isDivergentSoil ? "Divergent Sample (H2)" : "Known Match (H1)"}
+                                    {isDivergentSoil
+                                        ? (isTr ? "Uyuşmayan Örnek (H2)" : "Divergent Sample (H2)")
+                                        : (isTr ? "Bilinen Eşleşme (H1)" : "Known Match (H1)")}
                                 </button>
                             </div>
 
                             <div className="space-y-2.5 text-xs font-mono">
                                 {[
-                                    { label: "Quartz", val: isDivergentSoil ? 22.0 : soilQ.qQuartz, ctrl: soilQ.cQuartz },
-                                    { label: "K-Feldspar", val: isDivergentSoil ? 4.0 : soilQ.qKFeldspar, ctrl: soilQ.cKFeldspar },
-                                    { label: "Plagioclase", val: isDivergentSoil ? 3.5 : soilQ.qPlagioclase, ctrl: soilQ.cPlagioclase },
-                                    { label: "Calcite", val: isDivergentSoil ? 42.0 : soilQ.qCalcite, ctrl: soilQ.cCalcite },
-                                    { label: "Kaolinite Clay", val: isDivergentSoil ? 12.0 : soilQ.qKaolinite, ctrl: soilQ.cKaolinite },
-                                    { label: "Heavy Minerals (ZTR)", val: isDivergentSoil ? 1.2 : soilQ.qHeavyTotal, ctrl: soilQ.cHeavyTotal },
+                                    { label: isTr ? "Kuvars" : "Quartz", val: isDivergentSoil ? 22.0 : soilQ.qQuartz, ctrl: soilQ.cQuartz },
+                                    { label: isTr ? "K-Feldispat" : "K-Feldspar", val: isDivergentSoil ? 4.0 : soilQ.qKFeldspar, ctrl: soilQ.cKFeldspar },
+                                    { label: isTr ? "Plajiyoklaz" : "Plagioclase", val: isDivergentSoil ? 3.5 : soilQ.qPlagioclase, ctrl: soilQ.cPlagioclase },
+                                    { label: isTr ? "Kalsit" : "Calcite", val: isDivergentSoil ? 42.0 : soilQ.qCalcite, ctrl: soilQ.cCalcite },
+                                    { label: isTr ? "Kaolinit Kil" : "Kaolinite Clay", val: isDivergentSoil ? 12.0 : soilQ.qKaolinite, ctrl: soilQ.cKaolinite },
+                                    { label: isTr ? "Ağır Mineraller (ZTR)" : "Heavy Minerals (ZTR)", val: isDivergentSoil ? 1.2 : soilQ.qHeavyTotal, ctrl: soilQ.cHeavyTotal },
                                 ].map((m) => (
                                     <div key={m.label} className="p-2 rounded bg-black/40 border border-zinc-800/80 flex justify-between">
                                         <span className="text-zinc-400">{m.label}:</span>
                                         <span>
-                                            <strong className="text-amber-400">{m.val}%</strong> vs{" "}
+                                            <strong className="text-amber-400">{m.val}%</strong> {isTr ? "vs" : "vs"}{" "}
                                             <span className="text-zinc-500">{m.ctrl}%</span>
                                         </span>
                                     </div>
@@ -719,14 +768,16 @@ export default function GeoForensicIntelligencePanel({
                                 <div>
                                     <h3 className="text-sm font-bold text-white flex items-center gap-2">
                                         <Activity className="w-4 h-4 text-emerald-400" />
-                                        ASTM E3272-21 Hotelling T² & MCD Robust Distance
+                                        {isTr ? "ASTM E3272-21 Hotelling T² & MCD Sağlam Mesafe" : "ASTM E3272-21 Hotelling T² & MCD Robust Distance"}
                                     </h3>
                                     <p className="text-xs text-zinc-400 font-mono">
-                                        Centered Log-Ratio (CLR) Transform & CIEDE2000 Colorimetry
+                                        {isTr
+                                            ? "Merkezlenmiş Log-Oran (CLR) Dönüşümü & CIEDE2000 Kolorimetrisi"
+                                            : "Centered Log-Ratio (CLR) Transform & CIEDE2000 Colorimetry"}
                                     </p>
                                 </div>
                                 <span
-                                    className={`px-3 py-1 rounded-full border font-mono text-xs font-bold w-fit ${soilAnalysis.verdict === "DEFINITIVE_INCLUSION"
+                                    className={`px-3 py-1 rounded-full border font-mono text-xs font-bold w-fit ${soilAnalysis.verdict === "DEFINITIVE_INCLUSION" || soilAnalysis.verdict === "KESİN_DAHİL_ETME"
                                             ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
                                             : "bg-rose-500/10 text-rose-400 border-rose-500/30"
                                         }`}
@@ -738,28 +789,32 @@ export default function GeoForensicIntelligencePanel({
                             {/* Quantitative Metric Badges */}
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                                 <div className="p-3 rounded-xl bg-zinc-900/60 border border-zinc-800 text-center">
-                                    <p className="text-[9px] font-mono text-zinc-500 uppercase">MCD Distance (DM)</p>
+                                    <p className="text-[9px] font-mono text-zinc-500 uppercase">{isTr ? "MCD Mesafesi (DM)" : "MCD Distance (DM)"}</p>
                                     <p className="text-sm font-bold font-mono text-amber-400">{soilAnalysis.dM.toFixed(4)}</p>
                                 </div>
                                 <div className="p-3 rounded-xl bg-zinc-900/60 border border-zinc-800 text-center">
-                                    <p className="text-[9px] font-mono text-zinc-500 uppercase">Hotelling F-Stat</p>
+                                    <p className="text-[9px] font-mono text-zinc-500 uppercase">{isTr ? "Hotelling F-İstatistiği" : "Hotelling F-Stat"}</p>
                                     <p className="text-sm font-bold font-mono text-white">{soilAnalysis.fStat.toFixed(4)}</p>
                                 </div>
                                 <div className="p-3 rounded-xl bg-zinc-900/60 border border-zinc-800 text-center">
-                                    <p className="text-[9px] font-mono text-zinc-500 uppercase">p-Value (H0)</p>
+                                    <p className="text-[9px] font-mono text-zinc-500 uppercase">{isTr ? "p-Değeri (H0)" : "p-Value (H0)"}</p>
                                     <p className="text-sm font-bold font-mono text-emerald-400">{soilAnalysis.pValue.toFixed(4)}</p>
                                 </div>
                                 <div className="p-3 rounded-xl bg-zinc-900/60 border border-zinc-800 text-center">
-                                    <p className="text-[9px] font-mono text-zinc-500 uppercase">ZTR Index</p>
+                                    <p className="text-[9px] font-mono text-zinc-500 uppercase">{isTr ? "ZTR İndeksi" : "ZTR Index"}</p>
                                     <p className="text-sm font-bold font-mono text-cyan-400">{soilAnalysis.ztr.toFixed(2)}%</p>
                                 </div>
                             </div>
 
                             <div className="p-4 rounded-xl border border-zinc-800 bg-black/40 text-xs font-mono leading-relaxed text-zinc-300">
-                                <strong>ISO 17025 ASTM E3272 Finding: </strong>
-                                {soilAnalysis.verdict === "DEFINITIVE_INCLUSION"
-                                    ? "Questioned soil trace and reference crime scene control are compositionally indistinguishable across 16 major/trace minerals and CIEDE2000 colorimetry (ΔE*00 = 0.00)."
-                                    : "Significant geochemical and lithological divergence observed between questioned specimen and crime scene control. Exclusion supported."}
+                                <strong>{isTr ? "ISO 17025 ASTM E3272 Bulgusu: " : "ISO 17025 ASTM E3272 Finding: "}</strong>
+                                {soilAnalysis.verdict === "DEFINITIVE_INCLUSION" || soilAnalysis.verdict === "KESİN_DAHİL_ETME"
+                                    ? (isTr
+                                        ? "İncelenen toprak izi ve referans suç mahalli kontrolü, 16 ana/iz mineral ve CIEDE2000 kolorimetrisi (ΔE*00 = 0.00) boyunca bileşimsel olarak ayırt edilemezdir."
+                                        : "Questioned soil trace and reference crime scene control are compositionally indistinguishable across 16 major/trace minerals and CIEDE2000 colorimetry (ΔE*00 = 0.00).")
+                                    : (isTr
+                                        ? "İncelenen örnek ile suç mahalli kontrolü arasında belirgin jeokimyasal ve litolojik farklılık gözlemlenmiştir. Dışlama desteklenmektedir."
+                                        : "Significant geochemical and lithological divergence observed between questioned specimen and crime scene control. Exclusion supported.")}
                             </div>
                         </div>
                     </motion.div>
@@ -777,13 +832,13 @@ export default function GeoForensicIntelligencePanel({
                         <div className="lg:col-span-1 p-4 sm:p-5 rounded-2xl border border-tactical-border/60 bg-tactical-surface/50 space-y-4">
                             <h3 className="text-sm font-bold text-white flex items-center gap-2">
                                 <TreePine className="w-4 h-4 text-emerald-400" />
-                                Relative Pollen Frequencies (RPF)
+                                {isTr ? "Göreceli Polen Frekansları (RPF)" : "Relative Pollen Frequencies (RPF)"}
                             </h3>
 
                             <div className="space-y-3">
                                 <div>
                                     <div className="flex justify-between text-xs font-mono text-zinc-400 mb-1">
-                                        <span>Quercus (Oak): {quercusCount}</span>
+                                        <span>{isTr ? `Meşe (Quercus): ${quercusCount}` : `Quercus (Oak): ${quercusCount}`}</span>
                                         <span className="text-emerald-400 font-bold">{((quercusCount / 310) * 100).toFixed(1)}%</span>
                                     </div>
                                     <input
@@ -798,7 +853,7 @@ export default function GeoForensicIntelligencePanel({
 
                                 <div>
                                     <div className="flex justify-between text-xs font-mono text-zinc-400 mb-1">
-                                        <span>Fagus (Beech): {fagusCount}</span>
+                                        <span>{isTr ? `Kayın (Fagus): ${fagusCount}` : `Fagus (Beech): ${fagusCount}`}</span>
                                         <span className="text-cyan-400 font-bold">{((fagusCount / 310) * 100).toFixed(1)}%</span>
                                     </div>
                                     <input
@@ -813,7 +868,7 @@ export default function GeoForensicIntelligencePanel({
 
                                 <div>
                                     <div className="flex justify-between text-xs font-mono text-zinc-400 mb-1">
-                                        <span>Carpinus (Hornbeam): {carpinusCount}</span>
+                                        <span>{isTr ? `Gürgen (Carpinus): ${carpinusCount}` : `Carpinus (Hornbeam): ${carpinusCount}`}</span>
                                         <span className="text-purple-400 font-bold">{((carpinusCount / 310) * 100).toFixed(1)}%</span>
                                     </div>
                                     <input
@@ -833,14 +888,18 @@ export default function GeoForensicIntelligencePanel({
                                 <div>
                                     <h3 className="text-sm font-bold text-white flex items-center gap-2">
                                         <Dna className="w-4 h-4 text-cyan-400" />
-                                        6-Biome Ecological Classifier & 16S/ITS eDNA Regression
+                                        {isTr
+                                            ? "6 Biyomlu Ekolojik Sınıflandırıcı & 16S/ITS eDNA Regresyonu"
+                                            : "6-Biome Ecological Classifier & 16S/ITS eDNA Regression"}
                                     </h3>
                                     <p className="text-xs text-zinc-400 font-mono">
-                                        Bray-Curtis Metric: dBC = 0.023 | Cosine: 0.9995
+                                        {isTr
+                                            ? "Bray-Curtis Metriği: dBC = 0.023 | Kosinüs: 0.9995"
+                                            : "Bray-Curtis Metric: dBC = 0.023 | Cosine: 0.9995"}
                                     </p>
                                 </div>
                                 <span className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono text-xs font-bold w-fit">
-                                    DECIDUOUS_FOREST (93.3% Conf.)
+                                    {isTr ? "YAPRAK DÖKEN ORMAN (%93.3 Güven)" : "DECIDUOUS_FOREST (93.3% Conf.)"}
                                 </span>
                             </div>
 
@@ -850,19 +909,21 @@ export default function GeoForensicIntelligencePanel({
                                     <p className="text-sm font-bold font-mono text-emerald-400">0.023</p>
                                 </div>
                                 <div className="p-3 rounded-xl bg-zinc-900/60 border border-zinc-800 text-center">
-                                    <p className="text-[9px] font-mono text-zinc-500 uppercase">Canopy Coverage</p>
+                                    <p className="text-[9px] font-mono text-zinc-500 uppercase">{isTr ? "Taç Kapalılığı" : "Canopy Coverage"}</p>
                                     <p className="text-sm font-bold font-mono text-cyan-400">93.3%</p>
                                 </div>
                                 <div className="p-3 rounded-xl bg-zinc-900/60 border border-zinc-800 text-center col-span-2 sm:col-span-1">
-                                    <p className="text-[9px] font-mono text-zinc-500 uppercase">eDNA Predicted Lat/Lon</p>
+                                    <p className="text-[9px] font-mono text-zinc-500 uppercase">{isTr ? "eDNA Tahmini Enlem/Boylam" : "eDNA Predicted Lat/Lon"}</p>
                                     <p className="text-sm font-bold font-mono text-amber-400">49.15°N, 9.30°E</p>
                                 </div>
                             </div>
 
                             <div className="p-4 rounded-xl border border-zinc-800 bg-black/40 text-xs font-mono text-zinc-300">
-                                <strong>Diagnostic Indicator Taxa: </strong>
-                                <em>Quercus robur</em>, <em>Fagus sylvatica</em>, <em>Carpinus betulus</em>. Strongly correlates
-                                with temperate European broadleaf forest soil horizons.
+                                <strong>{isTr ? "Diyagnostik İndikatör Taksonlar: " : "Diagnostic Indicator Taxa: "}</strong>
+                                <em>Quercus robur</em>, <em>Fagus sylvatica</em>, <em>Carpinus betulus</em>.{" "}
+                                {isTr
+                                    ? "Ilıman Avrupa geniş yapraklı orman toprak horizonlarıyla kuvvetli korelasyon göstermektedir."
+                                    : "Strongly correlates with temperate European broadleaf forest soil horizons."}
                             </div>
                         </div>
                     </motion.div>
@@ -881,15 +942,17 @@ export default function GeoForensicIntelligencePanel({
                         <div className="lg:col-span-1 p-4 sm:p-5 rounded-2xl border border-tactical-border/60 bg-tactical-surface/50 space-y-4">
                             <h3 className="text-sm font-bold text-white flex items-center gap-2">
                                 <Crosshair className="w-4 h-4 text-rose-400" />
-                                Serial Crime Incident Coordinates
+                                {isTr ? "Seri Suç Olay Koordinatları" : "Serial Crime Incident Coordinates"}
                             </h3>
 
                             <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
                                 {crimeSites.map((c) => (
                                     <div key={c.id} className="p-2.5 rounded-xl bg-black/40 border border-zinc-800 text-xs font-mono flex justify-between items-center">
                                         <div>
-                                            <p className="font-bold text-white">{c.label}</p>
-                                            <p className="text-[10px] text-zinc-500">Coord: ({c.x.toFixed(1)} km, {c.y.toFixed(1)} km)</p>
+                                            <p className="font-bold text-white">{isTr && c.labelTr ? c.labelTr : c.label}</p>
+                                            <p className="text-[10px] text-zinc-500">
+                                                {isTr ? "Koord:" : "Coord:"} ({c.x.toFixed(1)} km, {c.y.toFixed(1)} km)
+                                            </p>
                                         </div>
                                         <span className="px-2 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/20 text-[10px] font-bold">
                                             {c.id}
@@ -900,11 +963,11 @@ export default function GeoForensicIntelligencePanel({
 
                             <div className="pt-2 border-t border-zinc-800 space-y-2 text-xs font-mono">
                                 <div className="flex justify-between">
-                                    <span className="text-zinc-400">Buffer Zone (B):</span>
+                                    <span className="text-zinc-400">{isTr ? "Tampon Bölge (B):" : "Buffer Zone (B):"}</span>
                                     <span className="text-amber-400 font-bold">{bufferB} km</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-zinc-400">Decay Exponents:</span>
+                                    <span className="text-zinc-400">{isTr ? "Azalma Üsleri:" : "Decay Exponents:"}</span>
                                     <span className="text-cyan-400 font-bold">f={exponentF}, g={exponentG}</span>
                                 </div>
                             </div>
@@ -916,14 +979,18 @@ export default function GeoForensicIntelligencePanel({
                                 <div>
                                     <h3 className="text-sm font-bold text-white flex items-center gap-2">
                                         <Activity className="w-4 h-4 text-cyan-400" />
-                                        Rossmo Targeted Hunting Surface (SEI = {rossmoResult.sei}%)
+                                        {isTr
+                                            ? `Rossmo Hedefli Avlanma Yüzeyi (SEI = %${rossmoResult.sei})`
+                                            : `Rossmo Targeted Hunting Surface (SEI = ${rossmoResult.sei}%)`}
                                     </h3>
                                     <p className="text-xs text-zinc-400 font-mono">
-                                        Peak Operational Anchor: ({rossmoResult.peakX} km, {rossmoResult.peakY} km) | Top 5% Area: {rossmoResult.s5Area} km²
+                                        {isTr
+                                            ? `Tepe Operasyonel Çapa: (${rossmoResult.peakX} km, ${rossmoResult.peakY} km) | İlk %5 Alan: ${rossmoResult.s5Area} km²`
+                                            : `Peak Operational Anchor: (${rossmoResult.peakX} km, ${rossmoResult.peakY} km) | Top 5% Area: ${rossmoResult.s5Area} km²`}
                                     </p>
                                 </div>
                                 <span className="px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-400 font-mono text-xs font-bold w-fit">
-                                    {rossmoResult.typology} OFFENDER
+                                    {isTr ? `${rossmoResult.typology} FAİL` : `${rossmoResult.typology} OFFENDER`}
                                 </span>
                             </div>
 
@@ -940,7 +1007,7 @@ export default function GeoForensicIntelligencePanel({
                                     <ellipse cx="68" cy="114" rx="25" ry="18" fill="rgba(6,182,212,0.25)" stroke="#06b6d4" strokeWidth="1.5" />
                                     <circle cx="68" cy="114" r="3" fill="#38bdf8" />
                                     <text x="75" y="117" fill="#38bdf8" fontSize="8" fontFamily="monospace" fontWeight="bold">
-                                        Anchor (6.8, 11.4)
+                                        {isTr ? "Çapa (6.8, 11.4)" : "Anchor (6.8, 11.4)"}
                                     </text>
 
                                     {/* Crime Site Markers */}
@@ -957,19 +1024,19 @@ export default function GeoForensicIntelligencePanel({
 
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
                                 <div className="p-2.5 rounded-lg bg-zinc-900/60 border border-zinc-800">
-                                    <p className="text-[9px] text-zinc-500 uppercase font-mono">SEI Index</p>
+                                    <p className="text-[9px] text-zinc-500 uppercase font-mono">{isTr ? "SEI İndeksi" : "SEI Index"}</p>
                                     <p className="text-xs font-bold font-mono text-emerald-400">{rossmoResult.sei}%</p>
                                 </div>
                                 <div className="p-2.5 rounded-lg bg-zinc-900/60 border border-zinc-800">
-                                    <p className="text-[9px] text-zinc-500 uppercase font-mono">Priority Area (S5%)</p>
+                                    <p className="text-[9px] text-zinc-500 uppercase font-mono">{isTr ? "Öncelikli Alan (S5%)" : "Priority Area (S5%)"}</p>
                                     <p className="text-xs font-bold font-mono text-amber-400">{rossmoResult.s5Area} km²</p>
                                 </div>
                                 <div className="p-2.5 rounded-lg bg-zinc-900/60 border border-zinc-800">
-                                    <p className="text-[9px] text-zinc-500 uppercase font-mono">Canter Diameter</p>
+                                    <p className="text-[9px] text-zinc-500 uppercase font-mono">{isTr ? "Canter Çapı" : "Canter Diameter"}</p>
                                     <p className="text-xs font-bold font-mono text-white">{rossmoResult.canterDiameter} km</p>
                                 </div>
                                 <div className="p-2.5 rounded-lg bg-zinc-900/60 border border-zinc-800">
-                                    <p className="text-[9px] text-zinc-500 uppercase font-mono">Mobility Type</p>
+                                    <p className="text-[9px] text-zinc-500 uppercase font-mono">{isTr ? "Hareketlilik Tipi" : "Mobility Type"}</p>
                                     <p className="text-xs font-bold font-mono text-rose-400">{rossmoResult.typology}</p>
                                 </div>
                             </div>
@@ -990,15 +1057,15 @@ export default function GeoForensicIntelligencePanel({
                         <div className="lg:col-span-1 p-4 sm:p-5 rounded-2xl border border-tactical-border/60 bg-tactical-surface/50 space-y-4">
                             <h3 className="text-sm font-bold text-white flex items-center gap-2">
                                 <Sliders className="w-4 h-4 text-cyan-400" />
-                                Bayesian Modality Weights (w_k)
+                                {isTr ? "Bayesyen Modalite Ağırlıkları (w_k)" : "Bayesian Modality Weights (w_k)"}
                             </h3>
 
                             <div className="space-y-3.5">
                                 {[
-                                    { label: "Isotopes (H/O/Sr)", val: weightIso, set: setWeightIso, color: "text-cyan-400", bg: "accent-cyan-500" },
-                                    { label: "Soil Pedology (QXRD/CoDa)", val: weightSoil, set: setWeightSoil, color: "text-amber-400", bg: "accent-amber-500" },
-                                    { label: "Palynology / eDNA", val: weightPalyno, set: setWeightPalyno, color: "text-emerald-400", bg: "accent-emerald-500" },
-                                    { label: "Rossmo Geographic Profile", val: weightRossmo, set: setWeightRossmo, color: "text-rose-400", bg: "accent-rose-500" },
+                                    { label: isTr ? "İzotoplar (H/O/Sr)" : "Isotopes (H/O/Sr)", val: weightIso, set: setWeightIso, color: "text-cyan-400", bg: "accent-cyan-500" },
+                                    { label: isTr ? "Toprak Pedolojisi (QXRD/CoDa)" : "Soil Pedology (QXRD/CoDa)", val: weightSoil, set: setWeightSoil, color: "text-amber-400", bg: "accent-amber-500" },
+                                    { label: isTr ? "Palinoloji / eDNA" : "Palynology / eDNA", val: weightPalyno, set: setWeightPalyno, color: "text-emerald-400", bg: "accent-emerald-500" },
+                                    { label: isTr ? "Rossmo Coğrafi Profili" : "Rossmo Geographic Profile", val: weightRossmo, set: setWeightRossmo, color: "text-rose-400", bg: "accent-rose-500" },
                                 ].map((w) => (
                                     <div key={w.label}>
                                         <div className="flex justify-between text-xs font-mono text-zinc-400 mb-1">
@@ -1020,15 +1087,15 @@ export default function GeoForensicIntelligencePanel({
 
                             <div className="p-3.5 rounded-xl border border-zinc-800 bg-black/40 space-y-2 text-xs font-mono">
                                 <div className="flex justify-between">
-                                    <span className="text-zinc-400">Search Efficiency (SEI):</span>
+                                    <span className="text-zinc-400">{isTr ? "Arama Verimliliği (SEI):" : "Search Efficiency (SEI):"}</span>
                                     <span className="text-emerald-400 font-bold">96.45%</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-zinc-400">S50% Search Core:</span>
+                                    <span className="text-zinc-400">{isTr ? "S50% Arama Çekirdeği:" : "S50% Search Core:"}</span>
                                     <span className="text-cyan-400 font-bold">4.50 km²</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-zinc-400">Fused Likelihood Ratio:</span>
+                                    <span className="text-zinc-400">{isTr ? "Birleşik Olabilirlik Oranı:" : "Fused Likelihood Ratio:"}</span>
                                     <span className="text-amber-300 font-bold font-mono">{fusedLR.toExponential(2)}</span>
                                 </div>
                             </div>
@@ -1040,14 +1107,16 @@ export default function GeoForensicIntelligencePanel({
                                 <div>
                                     <h3 className="text-sm font-bold text-white flex items-center gap-2">
                                         <Layers className="w-4 h-4 text-emerald-400" />
-                                        Joint Posterior Heatmap & 2D Adaptive KDE Surface
+                                        {isTr ? "Ortak Sonsal Isı Haritası & 2D Adaptif KDE Yüzeyi" : "Joint Posterior Heatmap & 2D Adaptive KDE Surface"}
                                     </h3>
                                     <p className="text-xs text-zinc-400 font-mono">
-                                        P(θ, λ | E) ∝ P₀ · ∏ L_k^(w_k) with Silverman Bandwidth Smoothing
+                                        {isTr
+                                            ? "Silverman Bant Genişliği Yumuşatması ile P(θ, λ | E) ∝ P₀ · ∏ L_k^(w_k)"
+                                            : "P(θ, λ | E) ∝ P₀ · ∏ L_k^(w_k) with Silverman Bandwidth Smoothing"}
                                     </p>
                                 </div>
                                 <span className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono text-xs font-bold w-fit">
-                                    TIER 6 EXTREMELY STRONG
+                                    {isTr ? "DÜZEY 6 AŞIRI GÜÇLÜ" : "TIER 6 EXTREMELY STRONG"}
                                 </span>
                             </div>
 
@@ -1059,7 +1128,7 @@ export default function GeoForensicIntelligencePanel({
                                     <ellipse cx="200" cy="100" rx="50" ry="25" fill="rgba(34,197,94,0.25)" stroke="#22c55e" strokeWidth="2" />
                                     <circle cx="200" cy="100" r="5" fill="#38bdf8" />
                                     <text x="212" y="104" fill="#38bdf8" fontSize="10" fontFamily="monospace" fontWeight="bold">
-                                        Joint Bayesian Focal Center (SEI 96.45%)
+                                        {isTr ? "Ortak Bayesyen Odak Merkezi (SEI %96.45)" : "Joint Bayesian Focal Center (SEI 96.45%)"}
                                     </text>
                                 </svg>
                             </div>
@@ -1068,7 +1137,9 @@ export default function GeoForensicIntelligencePanel({
                             <div className="p-4 rounded-xl border border-zinc-800 bg-black/40 space-y-2 text-xs font-mono text-zinc-300">
                                 <div className="flex items-center gap-2 text-cyan-400 font-bold">
                                     <FileText className="w-3.5 h-3.5" />
-                                    ENFSI 2017 Courtroom Evaluative Statement (Bilingual EN / TR)
+                                    {isTr
+                                        ? "ENFSI 2017 Mahkeme Değerlendirici Beyanı (İki Dilli EN / TR)"
+                                        : "ENFSI 2017 Courtroom Evaluative Statement (Bilingual EN / TR)"}
                                 </div>
                                 <p className="text-zinc-200 leading-relaxed">
                                     <strong>EN:</strong> Multi-criteria geo-forensic fusion provides extremely strong support for source inclusion (H1 over H2) with a Fused Likelihood Ratio of {fusedLR.toExponential(2)}.
@@ -1078,7 +1149,10 @@ export default function GeoForensicIntelligencePanel({
                                 </p>
                                 <div className="pt-2 border-t border-zinc-800 text-[10px] text-zinc-500 leading-tight">
                                     <Shield className="w-3 h-3 inline mr-1 text-emerald-400" />
-                                    <strong>PROSECUTOR'S FALLACY SHIELD (ISO 17025):</strong> The Likelihood Ratio assesses evidence probability under hypotheses P(E|H1)/P(E|H2). Prior guilt probabilities remain solely within the court's jurisdiction.
+                                    <strong>{isTr ? "SAVCILIK SAFSATASI KALKANI (ISO 17025): " : "PROSECUTOR'S FALLACY SHIELD (ISO 17025): "}</strong>
+                                    {isTr
+                                        ? "Olabilirlik Oranı, delillerin hipotezler altındaki olasılığını değerlendirir P(E|H1)/P(E|H2). Suçluluk öncül olasılıkları münhasıran mahkemenin takdir yetkisindedir."
+                                        : "The Likelihood Ratio assesses evidence probability under hypotheses P(E|H1)/P(E|H2). Prior guilt probabilities remain solely within the court's jurisdiction."}
                                 </div>
                             </div>
                         </div>

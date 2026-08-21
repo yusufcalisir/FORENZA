@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Cpu, Upload, FileCode, CheckCircle2, AlertTriangle, RefreshCw, Layers } from "lucide-react";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 interface ParsedPeak {
   sample_id: string;
@@ -28,6 +29,9 @@ interface IngestResult {
 }
 
 export default function InstrumentIngestionPanel() {
+  const { lang } = useSaasLanguage();
+  const isTr = lang === "tr";
+
   const [instType, setInstType] = useState<string>("CE");
   const [rawText, setRawText] = useState<string>(
     "Sample Name,Locus,Allele 1,Allele 2,Height 1,Height 2\nSAMPLE-01,D3S1358,15,16,1200,1150\nSAMPLE-01,vWA,16,17,950,980\nSAMPLE-01,FGA,21,24,1400,1380"
@@ -85,14 +89,16 @@ export default function InstrumentIngestionPanel() {
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-sm font-bold tracking-widest text-tactical-text uppercase">
-                Automated Analytical Instrument Gateway
+                {isTr ? "Otomatik Analitik Cihaz Ağ Geçidi" : "Automated Analytical Instrument Gateway"}
               </h2>
               <span className="px-2 py-0.5 rounded text-[8px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                RAW FILE INGESTION
+                {isTr ? "HAM DOSYA AKTARIMI" : "RAW FILE INGESTION"}
               </span>
             </div>
             <p className="text-[10px] text-zinc-400 mt-0.5">
-              Direct Parsers for CE GeneMapper, qPCR Quantifiler, NGS MiSeq VCF, LC-MS/MS & Microscopy
+              {isTr
+                ? "CE GeneMapper, qPCR Quantifiler, NGS MiSeq VCF, LC-MS/MS & Mikroskopi İçin Doğrudan Ayrıştırıcılar"
+                : "Direct Parsers for CE GeneMapper, qPCR Quantifiler, NGS MiSeq VCF, LC-MS/MS & Microscopy"}
             </p>
           </div>
         </div>
@@ -103,7 +109,7 @@ export default function InstrumentIngestionPanel() {
           className="px-4 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-black font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
-          Parse Instrument Output
+          {isTr ? "Cihaz Çıktısını Ayrıştır" : "Parse Instrument Output"}
         </button>
       </div>
 
@@ -113,7 +119,7 @@ export default function InstrumentIngestionPanel() {
         {/* Left: Input Selector & Textarea */}
         <div className="space-y-4 rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 shadow-xl">
           <span className="text-xs font-bold uppercase tracking-wider text-tactical-text block border-b border-tactical-border/40 pb-3">
-            Select Analytical Instrument Source
+            {isTr ? "Analitik Cihaz Kaynağını Seçin" : "Select Analytical Instrument Source"}
           </span>
 
           <div className="grid grid-cols-3 gap-2">
@@ -137,7 +143,9 @@ export default function InstrumentIngestionPanel() {
           </div>
 
           <div className="space-y-1">
-            <span className="text-[10px] text-zinc-400 uppercase font-bold">Raw Output File Content (CSV / VCF)</span>
+            <span className="text-[10px] text-zinc-400 uppercase font-bold">
+              {isTr ? "Ham Çıktı Dosya İçeriği (CSV / VCF)" : "Raw Output File Content (CSV / VCF)"}
+            </span>
             <textarea
               rows={8}
               value={rawText}
@@ -158,25 +166,33 @@ export default function InstrumentIngestionPanel() {
               <div className="flex items-center justify-between border-b border-indigo-500/20 pb-3">
                 <span className="text-xs font-bold uppercase tracking-wider text-tactical-text flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                  Parsed Normalized Evidence Output ({result.instrument_type})
+                  {isTr
+                    ? `Ayrıştırılmış Normalize Delil Çıktısı (${result.instrument_type})`
+                    : `Parsed Normalized Evidence Output (${result.instrument_type})`}
                 </span>
                 <span className="px-2 py-0.5 rounded text-[8px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                  INGESTED
+                  {isTr ? "AKTARIŞ TAMAM" : "INGESTED"}
                 </span>
               </div>
 
               {result.parsed_data.parsed_peaks && (
                 <div className="space-y-2">
-                  <span className="text-[10px] text-zinc-400 uppercase font-bold">Extracted Allelic Peak Table</span>
+                  <span className="text-[10px] text-zinc-400 uppercase font-bold">
+                    {isTr ? "Ayrıştırılmış Alelik Tepe Tablosu" : "Extracted Allelic Peak Table"}
+                  </span>
                   <div className="divide-y divide-tactical-border/30 rounded-xl border border-tactical-border/40 bg-black/40 overflow-hidden">
                     {result.parsed_data.parsed_peaks.map((p, i) => (
                       <div key={i} className="p-3 flex items-center justify-between text-xs font-mono">
                         <div>
                           <span className="font-bold text-indigo-300">{p.locus}</span>
-                          <span className="text-zinc-500 text-[10px] ml-2">Sample: {p.sample_id}</span>
+                          <span className="text-zinc-500 text-[10px] ml-2">
+                            {isTr ? "Numune" : "Sample"}: {p.sample_id}
+                          </span>
                         </div>
                         <div className="flex items-center gap-4">
-                          <span className="text-emerald-400 font-bold">Alleles: [{p.alleles.join(", ")}]</span>
+                          <span className="text-emerald-400 font-bold">
+                            {isTr ? "Aleller" : "Alleles"}: [{p.alleles.join(", ")}]
+                          </span>
                           <span className="text-cyan-400 text-[10px]">RFU: {p.mean_rfu}</span>
                         </div>
                       </div>

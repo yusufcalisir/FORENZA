@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Target, Sparkles, ShieldCheck, RefreshCw, Layers, Grid, Flame, CheckCircle2, AlertTriangle, Cpu, Check } from "lucide-react";
 import { getApiBaseUrl } from "@/lib/api";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 interface GsrParticle {
   particle_id: string;
@@ -74,6 +75,9 @@ const DEFAULT_CMC_CELLS: CmcCell[] = [
 ];
 
 export default function BallisticsGsrPanel() {
+  const { lang } = useSaasLanguage();
+  const isTr = lang === "tr";
+
   const [activeSubTab, setActiveSubTab] = useState<"gsr" | "cmc">("gsr");
   const [particles, setParticles] = useState<GsrParticle[]>(DEFAULT_GSR_PARTICLES);
   const [cmcCells, setCmcCells] = useState<CmcCell[]>(DEFAULT_CMC_CELLS);
@@ -141,9 +145,13 @@ export default function BallisticsGsrPanel() {
       consistent_particles: consCount,
       commonly_associated_particles: commCount,
       likelihood_ratio: lr,
-      evidence_strength: lr >= 10000 ? "Extremely Strong Support for Firearm Discharge (LR > 10,000)" : "Strong Support for Discharge",
+      evidence_strength: isTr
+        ? (lr >= 10000 ? "Ateşli Silah Atışına Son Derece Güçlü Kanıt Desteği (LR > 10.000)" : "Atışa Güçlü Kanıt Desteği")
+        : (lr >= 10000 ? "Extremely Strong Support for Firearm Discharge (LR > 10,000)" : "Strong Support for Discharge"),
       classified_particles: classified,
-      prosecutors_fallacy_shield: "Finding characteristic Pb-Ba-Sb particles indicates proximity to a firearm discharge event (ASTM E1588-20)."
+      prosecutors_fallacy_shield: isTr
+        ? "Karakteristik Pb-Ba-Sb parçacıklarının saptanması, bir ateşli silah patlamasına yakınlığı gösterir (ASTM E1588-20)."
+        : "Finding characteristic Pb-Ba-Sb particles indicates proximity to a firearm discharge event (ASTM E1588-20)."
     };
   };
 
@@ -163,9 +171,13 @@ export default function BallisticsGsrPanel() {
       cmc_count: cmcK,
       identification_verdict: verdict,
       false_match_probability: cmcK >= 6 ? "< 1e-6" : "0.024",
-      ballistic_conclusion: cmcK >= 6 ? "Definitive ballistic match to questioned firearm (K >= 6 CMC, P_false < 10^-6)." : "Insufficient congruent cells.",
+      ballistic_conclusion: isTr
+        ? (cmcK >= 6 ? "Şüpheli ateşli silaha kesin balistik eşleşme (K >= 6 CMC, P_yanlış < 10^-6)." : "Yetersiz uyumlu hücre sayısı.")
+        : (cmcK >= 6 ? "Definitive ballistic match to questioned firearm (K >= 6 CMC, P_false < 10^-6)." : "Insufficient congruent cells."),
       evaluated_cells: evaluated,
-      prosecutors_fallacy_shield: "Identification is established when K >= 6 congruent matching cells satisfy cross-correlation (CCF >= 0.55), translation (+/-15 um), and rotation (+/-1.0 deg) tolerances."
+      prosecutors_fallacy_shield: isTr
+        ? "Tanımlama, K >= 6 uyumlu eşleşen hücrenin çapraz korelasyon (CCF >= 0.55), öteleme (+/-15 um) ve dönme (+/-1.0 deg) toleranslarını karşılamasıyla sağlanır."
+        : "Identification is established when K >= 6 congruent matching cells satisfy cross-correlation (CCF >= 0.55), translation (+/-15 um), and rotation (+/-1.0 deg) tolerances."
     };
   };
 
@@ -173,18 +185,30 @@ export default function BallisticsGsrPanel() {
     if (loading) return;
     setLoading(true);
     setProgress(15);
-    setStageText("Scanning SEM-EDX elemental spectra for tri-element Pb-Ba-Sb particles...");
+    setStageText(
+      isTr
+        ? "SEM-EDX elementel spektrumları üçlü Pb-Ba-Sb parçacıkları için taranıyor..."
+        : "Scanning SEM-EDX elemental spectra for tri-element Pb-Ba-Sb particles..."
+    );
 
     const API_BASE = getApiBaseUrl();
 
     const t1 = setTimeout(() => {
       setProgress(50);
-      setStageText("Applying ASTM E1588-20 Characteristic & Consistent classification filters...");
+      setStageText(
+        isTr
+          ? "ASTM E1588-20 Karakteristik & Uyumlu sınıflandırma filtreleri uygulanıyor..."
+          : "Applying ASTM E1588-20 Characteristic & Consistent classification filters..."
+      );
     }, 250);
 
     const t2 = setTimeout(() => {
       setProgress(85);
-      setStageText("Calculating forensic likelihood ratio against environmental backgrounds...");
+      setStageText(
+        isTr
+          ? "Çevresel arka plana karşı adli olabilirlik oranı (LR) hesaplanıyor..."
+          : "Calculating forensic likelihood ratio against environmental backgrounds..."
+      );
     }, 550);
 
     try {
@@ -207,10 +231,10 @@ export default function BallisticsGsrPanel() {
         clearTimeout(t1);
         clearTimeout(t2);
         setProgress(100);
-        setStageText("ASTM E1588-20 particle evaluation complete.");
+        setStageText(isTr ? "ASTM E1588-20 parçacık değerlendirmesi tamamlandı." : "ASTM E1588-20 particle evaluation complete.");
         setTimeout(() => {
           setLoading(false);
-          setLastActionTime(`GSR Evaluated at ${new Date().toLocaleTimeString()}`);
+          setLastActionTime(isTr ? `GSR ${new Date().toLocaleTimeString()} değerlendirildi` : `GSR Evaluated at ${new Date().toLocaleTimeString()}`);
         }, 200);
       }, 850);
     }
@@ -220,18 +244,30 @@ export default function BallisticsGsrPanel() {
     if (loading) return;
     setLoading(true);
     setProgress(15);
-    setStageText("Rasterizing 3D topography striation cells...");
+    setStageText(
+      isTr
+        ? "3D topoğrafik yiv-set hücreleri rasterize ediliyor..."
+        : "Rasterizing 3D topography striation cells..."
+    );
 
     const API_BASE = getApiBaseUrl();
 
     const t1 = setTimeout(() => {
       setProgress(50);
-      setStageText("Executing CCF cross-correlation and spatial translation (±15 μm) tests...");
+      setStageText(
+        isTr
+          ? "CCF çapraz korelasyon ve uzamsal öteleme (±15 μm) testleri yürütülüyor..."
+          : "Executing CCF cross-correlation and spatial translation (±15 μm) tests..."
+      );
     }, 250);
 
     const t2 = setTimeout(() => {
       setProgress(85);
-      setStageText("Evaluating angular rotation convergence (±1.0°) & CMC count K...");
+      setStageText(
+        isTr
+          ? "Açısal rotasyon yakınsaması (±1.0°) & CMC sayısı K değerlendiriliyor..."
+          : "Evaluating angular rotation convergence (±1.0°) & CMC count K..."
+      );
     }, 550);
 
     try {
@@ -259,12 +295,23 @@ export default function BallisticsGsrPanel() {
         clearTimeout(t1);
         clearTimeout(t2);
         setProgress(100);
-        setStageText("3D CMC toolmark matching complete.");
+        setStageText(isTr ? "3D CMC alet izi eşleştirmesi tamamlandı." : "3D CMC toolmark matching complete.");
         setTimeout(() => {
           setLoading(false);
-          setLastActionTime(`CMC Evaluated at ${new Date().toLocaleTimeString()}`);
+          setLastActionTime(isTr ? `CMC ${new Date().toLocaleTimeString()} değerlendirildi` : `CMC Evaluated at ${new Date().toLocaleTimeString()}`);
         }, 200);
       }, 850);
+    }
+  };
+
+  const getTierBadge = (tier: string) => {
+    if (!isTr) return tier.replace(/_/g, " ");
+    switch (tier) {
+      case "CHARACTERISTIC_GSR": return "KARAKTERİSTİK GSR";
+      case "CONSISTENT_WITH_GSR": return "GSR İLE UYUMLU";
+      case "COMMONLY_ASSOCIATED": return "İLİŞKİLİ PARÇACIK";
+      case "ENVIRONMENTAL_BACKGROUND": return "ÇEVRESEL ARKA PLAN";
+      default: return tier.replace(/_/g, " ");
     }
   };
 
@@ -279,14 +326,16 @@ export default function BallisticsGsrPanel() {
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
               <h2 className="text-sm sm:text-base font-bold tracking-widest text-tactical-text uppercase truncate">
-                Forensic Ballistics & SEM-EDX GSR Analysis
+                {isTr ? "Adli Balistik & SEM-EDX GSR Analizi" : "Forensic Ballistics & SEM-EDX GSR Analysis"}
               </h2>
               <span className="px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-bold bg-orange-500/20 text-orange-300 border border-orange-500/30 shrink-0">
                 Pillar 5 §2 (ASTM E1588 / NIST 3D CMC)
               </span>
             </div>
             <p className="text-[10px] text-zinc-400 mt-0.5 truncate">
-              SEM-EDX Pb-Ba-Sb Particle Tiers • 3D Congruent Matching Cells (CMC) Striation Toolmark Comparison
+              {isTr
+                ? "SEM-EDX Pb-Ba-Sb Parçacık Sınıfları • 3D Uyumlu Eşleşen Hücreler (CMC) Yiv-Set Karşılaştırması"
+                : "SEM-EDX Pb-Ba-Sb Particle Tiers • 3D Congruent Matching Cells (CMC) Striation Toolmark Comparison"}
             </p>
           </div>
         </div>
@@ -314,7 +363,7 @@ export default function BallisticsGsrPanel() {
                 activeSubTab === "cmc" ? "bg-orange-500 text-black shadow-md" : "text-zinc-400 hover:text-zinc-200"
               }`}
             >
-              3D CMC Ballistics
+              3D CMC Balistik
             </button>
           </div>
         </div>
@@ -334,7 +383,7 @@ export default function BallisticsGsrPanel() {
                 <Cpu className="w-4 h-4 animate-pulse text-orange-400 shrink-0" />
                 {stageText}
               </span>
-              <span className="font-mono font-black tabular-nums text-sm">{progress}%</span>
+              <span className="font-mono font-black tabular-nums text-sm">%{progress}</span>
             </div>
             <div className="w-full bg-zinc-900 rounded-full h-2.5 overflow-hidden border border-orange-500/20">
               <motion.div
@@ -356,7 +405,7 @@ export default function BallisticsGsrPanel() {
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-tactical-border/40 pb-3">
               <span className="text-xs font-bold uppercase tracking-wider text-tactical-text flex items-center gap-2">
                 <Flame className="w-4 h-4 text-orange-400" />
-                Automated SEM-EDX Elemental Spectra (N={particles.length})
+                {isTr ? `Otomatik SEM-EDX Elementel Spektrumları (N=${particles.length})` : `Automated SEM-EDX Elemental Spectra (N=${particles.length})`}
               </span>
               <button
                 onClick={runGsrAnalysis}
@@ -364,7 +413,9 @@ export default function BallisticsGsrPanel() {
                 className="px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-400 text-zinc-950 font-black text-xs uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_25px_rgba(249,115,22,0.5)] disabled:opacity-50 flex items-center gap-1.5 cursor-pointer active:scale-95"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
-                {loading ? `Evaluating ${progress}%...` : "Evaluate GSR"}
+                {loading
+                  ? (isTr ? `Değerlendiriliyor %${progress}...` : `Evaluating ${progress}%...`)
+                  : (isTr ? "GSR Değerlendir" : "Evaluate GSR")}
               </button>
             </div>
 
@@ -372,21 +423,21 @@ export default function BallisticsGsrPanel() {
               <table className="w-full text-left text-xs">
                 <thead className="bg-black/40 text-zinc-400 uppercase text-[9px] border-b border-tactical-border/40">
                   <tr>
-                    <th className="py-2 px-3">ID</th>
-                    <th className="py-2 px-2">Pb (% wt)</th>
-                    <th className="py-2 px-2">Ba (% wt)</th>
-                    <th className="py-2 px-2">Sb (% wt)</th>
-                    <th className="py-2 px-2">Aspect</th>
-                    <th className="py-2 px-2 text-right">ASTM E1588 Classification</th>
+                    <th className="py-2 px-3">{isTr ? "Kimlik" : "ID"}</th>
+                    <th className="py-2 px-2">Pb (% ağ)</th>
+                    <th className="py-2 px-2">Ba (% ağ)</th>
+                    <th className="py-2 px-2">Sb (% ağ)</th>
+                    <th className="py-2 px-2">{isTr ? "En-Boy" : "Aspect"}</th>
+                    <th className="py-2 px-2 text-right">{isTr ? "ASTM E1588 Sınıflandırması" : "ASTM E1588 Classification"}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-tactical-border/20 text-zinc-300 font-mono">
                   {gsrResult?.classified_particles.map((p) => (
                     <tr key={p.particle_id} className="hover:bg-orange-500/5 transition-all">
                       <td className="py-2 px-3 font-bold text-orange-300">{p.particle_id}</td>
-                      <td className="py-2 px-2 tabular-nums">{p.pb_percent}%</td>
-                      <td className="py-2 px-2 tabular-nums">{p.ba_percent}%</td>
-                      <td className="py-2 px-2 tabular-nums">{p.sb_percent}%</td>
+                      <td className="py-2 px-2 tabular-nums">%{p.pb_percent}</td>
+                      <td className="py-2 px-2 tabular-nums">%{p.ba_percent}</td>
+                      <td className="py-2 px-2 tabular-nums">%{p.sb_percent}</td>
                       <td className="py-2 px-2 tabular-nums">{p.aspect_ratio}</td>
                       <td className="py-2 px-2 text-right">
                         <span
@@ -396,7 +447,7 @@ export default function BallisticsGsrPanel() {
                               : "bg-amber-500/20 text-amber-300 border border-amber-500/30"
                           }`}
                         >
-                          {p.classification_tier.replace("_", " ")}
+                          {getTierBadge(p.classification_tier)}
                         </span>
                       </td>
                     </tr>
@@ -417,7 +468,7 @@ export default function BallisticsGsrPanel() {
                 <div className="flex items-center justify-between border-b border-orange-500/20 pb-3">
                   <span className="text-xs font-bold uppercase tracking-wider text-tactical-text flex items-center gap-2">
                     <Sparkles className="w-4 h-4 text-orange-400" />
-                    ASTM E1588-20 Evidentiary Score
+                    {isTr ? "ASTM E1588-20 Delil Skoru" : "ASTM E1588-20 Evidentiary Score"}
                   </span>
                   <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[9px] font-bold">
                     LR: 10^{Math.log10(gsrResult.likelihood_ratio).toFixed(1)}
@@ -426,17 +477,23 @@ export default function BallisticsGsrPanel() {
 
                 <div className="grid grid-cols-2 gap-2 text-center">
                   <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40 space-y-1">
-                    <span className="text-[9px] text-zinc-500 block">Characteristic (Pb-Ba-Sb)</span>
+                    <span className="text-[9px] text-zinc-500 block">
+                      {isTr ? "Karakteristik (Pb-Ba-Sb)" : "Characteristic (Pb-Ba-Sb)"}
+                    </span>
                     <span className="text-xl font-black text-rose-400 tabular-nums">{gsrResult.characteristic_particles}</span>
                   </div>
                   <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40 space-y-1">
-                    <span className="text-[9px] text-zinc-500 block">Consistent (2 Elements)</span>
+                    <span className="text-[9px] text-zinc-500 block">
+                      {isTr ? "Uyumlu (2 Element)" : "Consistent (2 Elements)"}
+                    </span>
                     <span className="text-xl font-black text-amber-400 tabular-nums">{gsrResult.consistent_particles}</span>
                   </div>
                 </div>
 
                 <div className="p-3 rounded-xl bg-black/30 border border-tactical-border/30 space-y-1.5 text-xs">
-                  <span className="text-zinc-400 text-[10px] uppercase font-bold block">Conclusion:</span>
+                  <span className="text-zinc-400 text-[10px] uppercase font-bold block">
+                    {isTr ? "Sonuç:" : "Conclusion:"}
+                  </span>
                   <p className="text-zinc-200 font-bold leading-relaxed">{gsrResult.evidence_strength}</p>
                 </div>
 
@@ -460,7 +517,7 @@ export default function BallisticsGsrPanel() {
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-tactical-border/40 pb-3">
               <span className="text-xs font-bold uppercase tracking-wider text-tactical-text flex items-center gap-2">
                 <Grid className="w-4 h-4 text-orange-400" />
-                3D Topography Cross-Correlation Cells (N={cmcCells.length})
+                {isTr ? `3D Topografik Çapraz Korelasyon Hücreleri (N=${cmcCells.length})` : `3D Topography Cross-Correlation Cells (N=${cmcCells.length})`}
               </span>
               <button
                 onClick={runCmcAnalysis}
@@ -468,7 +525,9 @@ export default function BallisticsGsrPanel() {
                 className="px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-400 text-zinc-950 font-black text-xs uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_25px_rgba(249,115,22,0.5)] disabled:opacity-50 flex items-center gap-1.5 cursor-pointer active:scale-95"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
-                {loading ? `Matching ${progress}%...` : "Run 3D CMC"}
+                {loading
+                  ? (isTr ? `Eşleştiriliyor %${progress}...` : `Matching ${progress}%...`)
+                  : (isTr ? "3D CMC Çalıştır" : "Run 3D CMC")}
               </button>
             </div>
 
@@ -476,12 +535,12 @@ export default function BallisticsGsrPanel() {
               <table className="w-full text-left text-xs">
                 <thead className="bg-black/40 text-zinc-400 uppercase text-[9px] border-b border-tactical-border/40">
                   <tr>
-                    <th className="py-2 px-3">Cell</th>
+                    <th className="py-2 px-3">{isTr ? "Hücre" : "Cell"}</th>
                     <th className="py-2 px-2">CCF_max (≥0.55)</th>
                     <th className="py-2 px-2">Δx (±15 μm)</th>
                     <th className="py-2 px-2">Δy (±15 μm)</th>
                     <th className="py-2 px-2">Δθ (±1.0°)</th>
-                    <th className="py-2 px-2 text-right">CMC Decision</th>
+                    <th className="py-2 px-2 text-right">{isTr ? "CMC Kararı" : "CMC Decision"}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-tactical-border/20 text-zinc-300 font-mono">
@@ -500,7 +559,9 @@ export default function BallisticsGsrPanel() {
                               : "bg-red-500/20 text-red-300 border border-red-500/30"
                           }`}
                         >
-                          {c.is_congruent_matching_cell ? "CONGRUENT (CMC)" : "NON-CONGRUENT"}
+                          {c.is_congruent_matching_cell
+                            ? (isTr ? "UYUMLU (CMC)" : "CONGRUENT (CMC)")
+                            : (isTr ? "UYUMSUZ" : "NON-CONGRUENT")}
                         </span>
                       </td>
                     </tr>
@@ -521,7 +582,7 @@ export default function BallisticsGsrPanel() {
                 <div className="flex items-center justify-between border-b border-orange-500/20 pb-3">
                   <span className="text-xs font-bold uppercase tracking-wider text-tactical-text flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                    NIST 3D CMC Verdict
+                    {isTr ? "NIST 3D CMC Kararı" : "NIST 3D CMC Verdict"}
                   </span>
                   <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[9px] font-bold">
                     K = {cmcResult.cmc_count} / {cmcResult.total_cells_evaluated}
@@ -529,13 +590,19 @@ export default function BallisticsGsrPanel() {
                 </div>
 
                 <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40 text-center space-y-1">
-                  <span className="text-[9px] text-zinc-500 block uppercase">False Match Probability</span>
+                  <span className="text-[9px] text-zinc-500 block uppercase">
+                    {isTr ? "Yanlış Eşleşme Olasılığı" : "False Match Probability"}
+                  </span>
                   <span className="text-lg font-black text-emerald-400 tabular-nums">{cmcResult.false_match_probability}</span>
-                  <span className="text-[8px] text-zinc-500 block">K ≥ 6 Threshold Satisfied</span>
+                  <span className="text-[8px] text-zinc-500 block">
+                    {isTr ? "K ≥ 6 Eşiği Karşılandı" : "K ≥ 6 Threshold Satisfied"}
+                  </span>
                 </div>
 
                 <div className="p-3 rounded-xl bg-black/30 border border-tactical-border/30 space-y-1.5 text-xs">
-                  <span className="text-zinc-400 text-[10px] uppercase font-bold block">Ballistic Conclusion:</span>
+                  <span className="text-zinc-400 text-[10px] uppercase font-bold block">
+                    {isTr ? "Balistik Sonuç:" : "Ballistic Conclusion:"}
+                  </span>
                   <p className="text-zinc-200 font-bold leading-relaxed">{cmcResult.ballistic_conclusion}</p>
                 </div>
 

@@ -6,6 +6,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Activity, CheckCircle2 } from "lucide-react";
 import ForenzaLogoIcon from "@/components/common/ForenzaLogoIcon";
 
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
+
 interface DnaLaunchTransitionProps {
   onComplete?: () => void;
   autoStart?: boolean;
@@ -15,12 +17,13 @@ export default function DnaLaunchTransition({ onComplete, autoStart = true }: Dn
   const [isVisible, setIsVisible] = useState(autoStart);
   const [step, setStep] = useState(0);
   const [mounted, setMounted] = useState(false);
+  const { t } = useSaasLanguage();
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  const steps = [
+  const steps = t.transition?.steps || [
     "INITIALIZING FORENZA BIOLOGICAL KERNEL...",
     "CALIBRATING 24 CODIS CORE STR LOCI...",
     "LOADING HIrisPlex-S & BGA POPULATION PRIORS...",
@@ -95,7 +98,7 @@ export default function DnaLaunchTransition({ onComplete, autoStart = true }: Dn
               FORENZA OS
             </h1>
             <p className="text-[10px] text-zinc-400 uppercase tracking-widest font-bold">
-              Forensic Biology &amp; DNA Intelligence Operating System
+              {t.transition?.subtitle || "Forensic Biology & DNA Intelligence Operating System"}
             </p>
           </div>
 
@@ -123,19 +126,19 @@ export default function DnaLaunchTransition({ onComplete, autoStart = true }: Dn
           <div className="grid grid-cols-2 gap-2.5 text-[10px] w-full text-left pt-3 border-t border-tactical-border/50">
             <div className="flex items-center gap-1.5 text-zinc-300 font-medium">
               <CheckCircle2 className={`w-3.5 h-3.5 ${step >= 0 ? "text-emerald-400" : "text-zinc-700"}`} />
-              <span>Autosomal STR Engine</span>
+              <span>{t.transition?.badges?.strEngine || "Autosomal STR Engine"}</span>
             </div>
             <div className="flex items-center gap-1.5 text-zinc-300 font-medium">
               <CheckCircle2 className={`w-3.5 h-3.5 ${step >= 1 ? "text-emerald-400" : "text-zinc-700"}`} />
-              <span>MCMC Genotyping</span>
+              <span>{t.transition?.badges?.mcmcGenotyping || "MCMC Genotyping"}</span>
             </div>
             <div className="flex items-center gap-1.5 text-zinc-300 font-medium">
               <CheckCircle2 className={`w-3.5 h-3.5 ${step >= 2 ? "text-emerald-400" : "text-zinc-700"}`} />
-              <span>HIrisPlex-S EVC</span>
+              <span>{t.transition?.badges?.hirisplexEvc || "HIrisPlex-S EVC"}</span>
             </div>
             <div className="flex items-center gap-1.5 text-zinc-300 font-medium">
               <CheckCircle2 className={`w-3.5 h-3.5 ${step >= 3 ? "text-emerald-400" : "text-zinc-700"}`} />
-              <span>ISO 21043 Ledger</span>
+              <span>{t.transition?.badges?.isoLedger || "ISO 21043 Ledger"}</span>
             </div>
           </div>
         </div>

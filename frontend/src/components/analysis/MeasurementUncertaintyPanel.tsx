@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ShieldCheck, Scale, BarChart3, AlertTriangle, CheckCircle2, RefreshCw, Layers, Calculator, Activity } from "lucide-react";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 interface ComponentDetail {
   component_name: string;
@@ -42,8 +43,10 @@ interface ProficiencyResponse {
   is_compliant: boolean;
 }
 
-
 export default function MeasurementUncertaintyPanel() {
+  const { lang } = useSaasLanguage();
+  const isTr = lang === "tr";
+
   const [activeTab, setActiveTab] = useState<"budget" | "proficiency">("budget");
   const [nominalConc, setNominalConc] = useState<number>(1.45);
   const [coverageFactor, setCoverageFactor] = useState<number>(2.0);
@@ -119,14 +122,18 @@ export default function MeasurementUncertaintyPanel() {
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-sm font-bold tracking-widest text-tactical-text uppercase">
-                ISO/IEC 17025:2017 Measurement Uncertainty & Calibration (Pillar 6 §3)
+                {isTr
+                  ? "ISO/IEC 17025:2017 Ölçüm Belirsizliği & Kalibrasyon (Pillar 6 §3)"
+                  : "ISO/IEC 17025:2017 Measurement Uncertainty & Calibration (Pillar 6 §3)"}
               </h2>
               <span className="px-2 py-0.5 rounded text-[8px] font-bold bg-sky-500/20 text-sky-300 border border-sky-500/30">
                 GUM • JCGM 100:2008 • k=2.00
               </span>
             </div>
             <p className="text-[10px] text-zinc-400 mt-0.5">
-              Quantitative DNA Concentration Metrological Budget • Combined Standard Uncertainty u_c • Proficiency z-Scores
+              {isTr
+                ? "Kantitatif DNA Konsantrasyonu Metrolojik Bütçesi • Birleşik Standart Belirsizlik u_c • Yeterlilik z-Skorları"
+                : "Quantitative DNA Concentration Metrological Budget • Combined Standard Uncertainty u_c • Proficiency z-Scores"}
             </p>
           </div>
         </div>
@@ -136,10 +143,10 @@ export default function MeasurementUncertaintyPanel() {
           <button
             onClick={() => setActiveTab("budget")}
             className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-              activeTab === "budget" ? "bg-sky-500 text-white shadow-md" : "text-zinc-400 hover:text-zinc-200"
+              activeTab === "budget" ? "bg-sky-500 text-white shadow-md font-extrabold" : "text-zinc-400 hover:text-zinc-200"
             }`}
           >
-            Uncertainty Budget
+            {isTr ? "Belirsizlik Bütçesi" : "Uncertainty Budget"}
           </button>
           <button
             onClick={() => {
@@ -147,10 +154,10 @@ export default function MeasurementUncertaintyPanel() {
               if (!proficiencyData) handleEvaluateProficiency();
             }}
             className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-              activeTab === "proficiency" ? "bg-sky-500 text-white shadow-md" : "text-zinc-400 hover:text-zinc-200"
+              activeTab === "proficiency" ? "bg-sky-500 text-white shadow-md font-extrabold" : "text-zinc-400 hover:text-zinc-200"
             }`}
           >
-            Proficiency z-Score
+            {isTr ? "Yeterlilik z-Skoru" : "Proficiency z-Score"}
           </button>
         </div>
       </div>
@@ -162,13 +169,15 @@ export default function MeasurementUncertaintyPanel() {
           <div className="space-y-4 rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 shadow-xl">
             <div className="border-b border-tactical-border/40 pb-3">
               <span className="text-xs font-bold uppercase tracking-wider text-tactical-text block">
-                Quantification Parameters
+                {isTr ? "Kantifikasyon Parametreleri" : "Quantification Parameters"}
               </span>
             </div>
 
             <div className="space-y-3 text-xs">
               <div>
-                <label className="text-zinc-400 block mb-1">Measured DNA Concentration (y in ng/μL):</label>
+                <label className="text-zinc-400 block mb-1">
+                  {isTr ? "Ölçülen DNA Konsantrasyonu (y, ng/μL):" : "Measured DNA Concentration (y in ng/μL):"}
+                </label>
                 <input
                   type="number"
                   step="0.05"
@@ -181,15 +190,17 @@ export default function MeasurementUncertaintyPanel() {
               </div>
 
               <div>
-                <label className="text-zinc-400 block mb-1">Coverage Factor k (95.45% CI):</label>
+                <label className="text-zinc-400 block mb-1">
+                  {isTr ? "Kapsama Faktörü k (%95.45 GA):" : "Coverage Factor k (95.45% CI):"}
+                </label>
                 <select
                   value={coverageFactor}
                   onChange={(e) => setCoverageFactor(parseFloat(e.target.value))}
                   className="w-full px-3 py-2 rounded-xl bg-black/50 border border-tactical-border/60 text-tactical-text font-mono"
                 >
-                  <option value={2.0}>k = 2.00 (95.45% Expanded Standard)</option>
-                  <option value={1.0}>k = 1.00 (68.27% Standard u_c)</option>
-                  <option value={3.0}>k = 3.00 (99.73% Conservative)</option>
+                  <option value={2.0}>{isTr ? "k = 2.00 (%95.45 Genişletilmiş Standart)" : "k = 2.00 (95.45% Expanded Standard)"}</option>
+                  <option value={1.0}>{isTr ? "k = 1.00 (%68.27 Standart u_c)" : "k = 1.00 (68.27% Standard u_c)"}</option>
+                  <option value={3.0}>{isTr ? "k = 3.00 (%99.73 Muhafazakar)" : "k = 3.00 (99.73% Conservative)"}</option>
                 </select>
               </div>
             </div>
@@ -200,7 +211,7 @@ export default function MeasurementUncertaintyPanel() {
               className="w-full py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
             >
               <Calculator className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
-              Recalculate Budget
+              {isTr ? "Bütçeyi Yeniden Hesapla" : "Recalculate Budget"}
             </button>
           </div>
 
@@ -212,14 +223,16 @@ export default function MeasurementUncertaintyPanel() {
                   <div className="flex items-center justify-between border-b border-sky-500/20 pb-3">
                     <div>
                       <span className="text-[10px] font-bold text-sky-300 uppercase tracking-widest block">
-                        GUM JCGM 100:2008 EXPANDED UNCERTAINTY INTERVAL
+                        {isTr ? "GUM JCGM 100:2008 GENİŞLETİLMİŞ BELİRSİZLİK ARALIĞI" : "GUM JCGM 100:2008 EXPANDED UNCERTAINTY INTERVAL"}
                       </span>
                       <span className="text-xl font-black text-sky-300 font-mono">
                         {budgetData.reported_interval.formatted_interval}
                       </span>
                     </div>
                     <div className="text-right">
-                      <span className="text-[10px] text-zinc-400 block uppercase font-bold">95% Confidence Bounds</span>
+                      <span className="text-[10px] text-zinc-400 block uppercase font-bold">
+                        {isTr ? "%95 Güven Sınırları" : "95% Confidence Bounds"}
+                      </span>
                       <span className="text-xs font-bold text-emerald-400 font-mono">
                         [{budgetData.reported_interval.lower_bound.toFixed(4)}, {budgetData.reported_interval.upper_bound.toFixed(4)}] ng/μL
                       </span>
@@ -229,15 +242,15 @@ export default function MeasurementUncertaintyPanel() {
                   {/* Summary Metrics */}
                   <div className="grid grid-cols-3 gap-2 text-center text-xs font-mono">
                     <div className="p-2.5 rounded-xl bg-black/40 border border-tactical-border/40">
-                      <span className="text-[10px] text-zinc-500 block">Combined u_c</span>
+                      <span className="text-[10px] text-zinc-500 block">{isTr ? "Birleşik u_c" : "Combined u_c"}</span>
                       <span className="font-bold text-sky-300">{budgetData.combined_standard_uncertainty.toFixed(5)} ng/μL</span>
                     </div>
                     <div className="p-2.5 rounded-xl bg-black/40 border border-tactical-border/40">
-                      <span className="text-[10px] text-zinc-500 block">Expanded U_95%</span>
+                      <span className="text-[10px] text-zinc-500 block">{isTr ? "Genişletilmiş U_%95" : "Expanded U_95%"}</span>
                       <span className="font-bold text-emerald-300">± {budgetData.expanded_uncertainty.toFixed(5)} ng/μL</span>
                     </div>
                     <div className="p-2.5 rounded-xl bg-black/40 border border-tactical-border/40">
-                      <span className="text-[10px] text-zinc-500 block">Total Variance u_c²</span>
+                      <span className="text-[10px] text-zinc-500 block">{isTr ? "Toplam Varyans u_c²" : "Total Variance u_c²"}</span>
                       <span className="font-bold text-amber-300">{budgetData.total_variance.toFixed(6)}</span>
                     </div>
                   </div>
@@ -245,17 +258,17 @@ export default function MeasurementUncertaintyPanel() {
                   {/* Component Table */}
                   <div className="space-y-2">
                     <span className="text-xs font-bold uppercase tracking-wider text-zinc-300 block">
-                      Calibration Uncertainty Budget Breakdown
+                      {isTr ? "Kalibrasyon Belirsizlik Bütçesi Dağılımı" : "Calibration Uncertainty Budget Breakdown"}
                     </span>
                     <div className="overflow-x-auto">
                       <table className="w-full text-[11px] font-mono text-left">
                         <thead>
                           <tr className="border-b border-tactical-border/40 text-zinc-500">
-                            <th className="pb-1.5">Quantity (x_i)</th>
+                            <th className="pb-1.5">{isTr ? "Büyüklük (x_i)" : "Quantity (x_i)"}</th>
                             <th className="pb-1.5">u_i (ng/μL)</th>
-                            <th className="pb-1.5">Dist.</th>
-                            <th className="pb-1.5 text-right">Variance (c_i u_i)²</th>
-                            <th className="pb-1.5 text-right">% Contrib</th>
+                            <th className="pb-1.5">{isTr ? "Dağılım" : "Dist."}</th>
+                            <th className="pb-1.5 text-right">{isTr ? "Varyans (c_i u_i)²" : "Variance (c_i u_i)²"}</th>
+                            <th className="pb-1.5 text-right">{isTr ? "% Katkı" : "% Contrib"}</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-tactical-border/20">
@@ -265,7 +278,7 @@ export default function MeasurementUncertaintyPanel() {
                               <td className="py-1.5 text-sky-300">{comp.standard_uncertainty.toFixed(4)}</td>
                               <td className="py-1.5 text-zinc-400">{comp.probability_distribution}</td>
                               <td className="py-1.5 text-right text-amber-300">{comp.variance_contribution.toFixed(6)}</td>
-                              <td className="py-1.5 text-right text-emerald-400 font-bold">{comp.percentage_contribution}%</td>
+                              <td className="py-1.5 text-right text-emerald-400 font-bold">%{comp.percentage_contribution}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -276,7 +289,7 @@ export default function MeasurementUncertaintyPanel() {
                   <div className="p-3 rounded-xl bg-black/30 border border-tactical-border/30 text-[10px] text-zinc-400 font-mono">
                     <div className="flex items-center gap-1.5 text-sky-400 font-bold mb-1">
                       <ShieldCheck className="w-3.5 h-3.5" />
-                      ISO/IEC 17025:2017 Clause 7.6 Metrological Uncertainty Shield
+                      {isTr ? "ISO/IEC 17025:2017 Madde 7.6 Metrolojik Belirsizlik Kalkanı" : "ISO/IEC 17025:2017 Clause 7.6 Metrological Uncertainty Shield"}
                     </div>
                     {budgetData.prosecutors_fallacy_shield}
                   </div>
@@ -294,13 +307,15 @@ export default function MeasurementUncertaintyPanel() {
           <div className="space-y-4 rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 shadow-xl">
             <div className="border-b border-tactical-border/40 pb-3">
               <span className="text-xs font-bold uppercase tracking-wider text-tactical-text block">
-                Proficiency Test Consensus Inputs
+                {isTr ? "Yeterlilik Testi Konsensüs Verileri" : "Proficiency Test Consensus Inputs"}
               </span>
             </div>
 
             <div className="space-y-3 text-xs">
               <div>
-                <label className="text-zinc-400 block mb-1">Lab Measured Value (x_lab in ng/μL):</label>
+                <label className="text-zinc-400 block mb-1">
+                  {isTr ? "Laboratuvar Ölçüm Değeri (x_lab, ng/μL):" : "Lab Measured Value (x_lab in ng/μL):"}
+                </label>
                 <input
                   type="number"
                   step="0.01"
@@ -311,7 +326,9 @@ export default function MeasurementUncertaintyPanel() {
               </div>
 
               <div>
-                <label className="text-zinc-400 block mb-1">Consensus Round Mean (μ in ng/μL):</label>
+                <label className="text-zinc-400 block mb-1">
+                  {isTr ? "Konsensüs Tur Ortalaması (μ, ng/μL):" : "Consensus Round Mean (μ in ng/μL):"}
+                </label>
                 <input
                   type="number"
                   step="0.01"
@@ -322,7 +339,9 @@ export default function MeasurementUncertaintyPanel() {
               </div>
 
               <div>
-                <label className="text-zinc-400 block mb-1">Consensus Standard Deviation (σ):</label>
+                <label className="text-zinc-400 block mb-1">
+                  {isTr ? "Konsensüs Standart Sapması (σ):" : "Consensus Standard Deviation (σ):"}
+                </label>
                 <input
                   type="number"
                   step="0.005"
@@ -340,7 +359,7 @@ export default function MeasurementUncertaintyPanel() {
               className="w-full py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
             >
               <Activity className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
-              Evaluate z-Score
+              {isTr ? "z-Skorunu Değerlendir" : "Evaluate z-Score"}
             </button>
           </div>
 
@@ -352,14 +371,16 @@ export default function MeasurementUncertaintyPanel() {
                   <div className="flex items-center justify-between border-b border-sky-500/20 pb-3">
                     <div>
                       <span className="text-[10px] font-bold text-sky-300 uppercase tracking-widest block">
-                        PROFICIENCY TESTING CONSENSUS z-SCORE
+                        {isTr ? "YETERLİLİK TESTİ KONSENSÜS z-SKORU" : "PROFICIENCY TESTING CONSENSUS z-SCORE"}
                       </span>
                       <span className="text-2xl font-black text-sky-300 font-mono">
                         z = {proficiencyData.z_score >= 0 ? `+${proficiencyData.z_score.toFixed(3)}` : proficiencyData.z_score.toFixed(3)}
                       </span>
                     </div>
                     <div className="text-right">
-                      <span className="text-[10px] text-zinc-400 block uppercase font-bold">Performance Tier</span>
+                      <span className="text-[10px] text-zinc-400 block uppercase font-bold">
+                        {isTr ? "Performans Düzeyi" : "Performance Tier"}
+                      </span>
                       <span
                         className={`text-xs font-bold px-2.5 py-1 rounded border font-mono ${
                           proficiencyData.performance_tier === "SATISFACTORY"
@@ -369,18 +390,26 @@ export default function MeasurementUncertaintyPanel() {
                             : "bg-rose-500/20 text-rose-300 border-rose-500/40"
                         }`}
                       >
-                        {proficiencyData.performance_tier}
+                        {proficiencyData.performance_tier === "SATISFACTORY"
+                          ? (isTr ? "TATMIN EDİCİ" : "SATISFACTORY")
+                          : proficiencyData.performance_tier === "QUESTIONABLE"
+                          ? (isTr ? "ŞÜPHELİ / UYARI" : "QUESTIONABLE")
+                          : (isTr ? "YETERSİZ / DÜZELTİCİ FAALİYET" : "UNSATISFACTORY")}
                       </span>
                     </div>
                   </div>
 
                   <div className="p-3.5 rounded-xl bg-black/40 border border-tactical-border/40 text-xs font-mono space-y-1.5">
                     <div className="flex justify-between text-[11px]">
-                      <span className="text-zinc-500">ISO/IEC 17025 Compliance Verdict:</span>
+                      <span className="text-zinc-500">
+                        {isTr ? "ISO/IEC 17025 Uyumluluk Kararı:" : "ISO/IEC 17025 Compliance Verdict:"}
+                      </span>
                       <span className="text-zinc-200 font-bold">{proficiencyData.verdict}</span>
                     </div>
                     <div className="flex justify-between text-[11px]">
-                      <span className="text-zinc-500">Absolute Deviation (|z|):</span>
+                      <span className="text-zinc-500">
+                        {isTr ? "Mutlak Sapma (|z|):" : "Absolute Deviation (|z|):"}
+                      </span>
                       <span className="text-sky-300 font-bold">{proficiencyData.absolute_z_score.toFixed(3)} σ</span>
                     </div>
                   </div>
@@ -389,15 +418,15 @@ export default function MeasurementUncertaintyPanel() {
                   <div className="grid grid-cols-3 gap-2 text-center text-[10px] font-mono">
                     <div className={`p-2 rounded-lg border ${proficiencyData.absolute_z_score <= 2.0 ? "border-emerald-500/60 bg-emerald-500/10" : "border-tactical-border/40 bg-black/30"}`}>
                       <span className="font-bold text-emerald-400 block">|z| ≤ 2.0</span>
-                      <span className="text-zinc-400">Satisfactory / Calibrated</span>
+                      <span className="text-zinc-400">{isTr ? "Tatmin Edici / Kalibre" : "Satisfactory / Calibrated"}</span>
                     </div>
                     <div className={`p-2 rounded-lg border ${proficiencyData.absolute_z_score > 2.0 && proficiencyData.absolute_z_score < 3.0 ? "border-amber-500/60 bg-amber-500/10" : "border-tactical-border/40 bg-black/30"}`}>
                       <span className="font-bold text-amber-400 block">2.0 &lt; |z| &lt; 3.0</span>
-                      <span className="text-zinc-400">Questionable / Warning</span>
+                      <span className="text-zinc-400">{isTr ? "Şüpheli / Uyarı" : "Questionable / Warning"}</span>
                     </div>
                     <div className={`p-2 rounded-lg border ${proficiencyData.absolute_z_score >= 3.0 ? "border-rose-500/60 bg-rose-500/10" : "border-tactical-border/40 bg-black/30"}`}>
                       <span className="font-bold text-rose-400 block">|z| ≥ 3.0</span>
-                      <span className="text-zinc-400">Unsatisfactory Action</span>
+                      <span className="text-zinc-400">{isTr ? "Yetersiz Eylem" : "Unsatisfactory Action"}</span>
                     </div>
                   </div>
                 </div>

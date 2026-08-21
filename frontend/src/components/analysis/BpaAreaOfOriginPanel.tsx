@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Crosshair, ShieldCheck, RefreshCw, Layers, Compass, Wind, Cpu, Check, AlertCircle } from "lucide-react";
 import { getApiBaseUrl } from "@/lib/api";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 interface BloodstainRow {
   stain_id: string;
@@ -38,6 +39,9 @@ const VECTOR_P5_01_STAINS: BloodstainRow[] = [
 ];
 
 export default function BpaAreaOfOriginPanel() {
+  const { lang } = useSaasLanguage();
+  const isTr = lang === "tr";
+
   const [stains, setStains] = useState<BloodstainRow[]>(VECTOR_P5_01_STAINS);
   const [applyGravity, setApplyGravity] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -99,7 +103,9 @@ export default function BpaAreaOfOriginPanel() {
       mean_impact_angle_deg: meanAngle,
       gravity_correction_applied: withGrav,
       orthogonal_residuals_cm: residuals,
-      prosecutors_fallacy_shield: "3D Area of Origin calculations provide probabilistic spatial convergence ellipsoids under straight-line projection (SWGSTAIN / IABPA Standards)."
+      prosecutors_fallacy_shield: isTr
+        ? "3D Çıkış Noktası hesaplamaları, doğrusal izdüşüm altında olasılıksal uzamsal yakınsama elipsoidleri sağlar (SWGSTAIN / IABPA Standartları)."
+        : "3D Area of Origin calculations provide probabilistic spatial convergence ellipsoids under straight-line projection (SWGSTAIN / IABPA Standards)."
     };
   };
 
@@ -107,18 +113,30 @@ export default function BpaAreaOfOriginPanel() {
     if (loading) return;
     setLoading(true);
     setProgress(10);
-    setStageText("Calculating elliptical impact angles (sin α = W/L) & directional cosines...");
+    setStageText(
+      isTr
+        ? "Eliptik çarpma açıları (sin α = W/L) & yönelim kosinüsleri hesaplanıyor..."
+        : "Calculating elliptical impact angles (sin α = W/L) & directional cosines..."
+    );
 
     const API_BASE = getApiBaseUrl();
 
     const t1 = setTimeout(() => {
       setProgress(40);
-      setStageText("Constructing orthogonal projection matrix M = Σ(I - u u^T)...");
+      setStageText(
+        isTr
+          ? "Ortogonal izdüşüm matrisi M = Σ(I - u u^T) inşa ediliyor..."
+          : "Constructing orthogonal projection matrix M = Σ(I - u u^T)..."
+      );
     }, 250);
 
     const t2 = setTimeout(() => {
       setProgress(75);
-      setStageText("Solving closed-form point of convergence r₀ = M⁻¹b...");
+      setStageText(
+        isTr
+          ? "Kapalı form yakınsama noktası r₀ = M⁻¹b çözülüyor..."
+          : "Solving closed-form point of convergence r₀ = M⁻¹b..."
+      );
     }, 550);
 
     try {
@@ -145,7 +163,7 @@ export default function BpaAreaOfOriginPanel() {
         clearTimeout(t1);
         clearTimeout(t2);
         setProgress(100);
-        setStageText("Optimization converged. 3D coordinates resolved.");
+        setStageText(isTr ? "Optimizasyon yakınsadı. 3D koordinatlar çözümlendi." : "Optimization converged. 3D coordinates resolved.");
         setTimeout(() => {
           setLoading(false);
           setLastSolvedTime(new Date().toLocaleTimeString());
@@ -165,14 +183,16 @@ export default function BpaAreaOfOriginPanel() {
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
               <h2 className="text-sm sm:text-base font-bold tracking-widest text-tactical-text uppercase truncate">
-                3D Bloodstain Pattern Analysis & Area of Origin
+                {isTr ? "3D Kan Lekesi Deseni Analizi & Çıkış Noktası" : "3D Bloodstain Pattern Analysis & Area of Origin"}
               </h2>
               <span className="px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30 shrink-0">
                 Pillar 5 §1 (SWGSTAIN / IABPA)
               </span>
             </div>
             <p className="text-[10px] text-zinc-400 mt-0.5 truncate">
-              Elliptical Impact Dynamics (sin α = W/L) • Least-Squares Orthogonal Convergence • Schiller-Naumann Drag
+              {isTr
+                ? "Eliptik Çarpma Dinamiği (sin α = W/L) • En Küçük Kareler Ortogonal Yakınsama • Schiller-Naumann Sürüklenmesi"
+                : "Elliptical Impact Dynamics (sin α = W/L) • Least-Squares Orthogonal Convergence • Schiller-Naumann Drag"}
             </p>
           </div>
         </div>
@@ -181,7 +201,7 @@ export default function BpaAreaOfOriginPanel() {
           {lastSolvedTime && (
             <span className="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-1 rounded hidden md:flex items-center gap-1">
               <Check className="w-3 h-3" />
-              Solved at {lastSolvedTime}
+              {isTr ? `${lastSolvedTime} çözümlendi` : `Solved at ${lastSolvedTime}`}
             </span>
           )}
 
@@ -192,7 +212,7 @@ export default function BpaAreaOfOriginPanel() {
             }}
             className="px-3 py-2 rounded-xl bg-black/60 hover:bg-black/80 border border-tactical-border/60 text-zinc-300 text-xs font-bold transition-all cursor-pointer"
           >
-            Load VECTOR_P5_01
+            {isTr ? "VECTOR_P5_01 Yükle" : "Load VECTOR_P5_01"}
           </button>
           <button
             onClick={runBpaSolver}
@@ -200,7 +220,9 @@ export default function BpaAreaOfOriginPanel() {
             className="px-5 py-2 rounded-xl bg-rose-500 hover:bg-rose-400 text-zinc-950 font-black text-xs uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(244,63,94,0.3)] hover:shadow-[0_0_25px_rgba(244,63,94,0.5)] disabled:opacity-50 flex items-center gap-2 cursor-pointer active:scale-95"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
-            {loading ? `Solving ${progress}%...` : "Solve 3D Origin"}
+            {loading
+              ? (isTr ? `Çözülüyor %${progress}...` : `Solving ${progress}%...`)
+              : (isTr ? "3D Çıkış Noktasını Çöz" : "Solve 3D Origin")}
           </button>
         </div>
       </div>
@@ -219,7 +241,7 @@ export default function BpaAreaOfOriginPanel() {
                 <Cpu className="w-4 h-4 animate-pulse text-rose-400 shrink-0" />
                 {stageText}
               </span>
-              <span className="font-mono font-black tabular-nums text-sm">{progress}%</span>
+              <span className="font-mono font-black tabular-nums text-sm">%{progress}</span>
             </div>
             <div className="w-full bg-zinc-900 rounded-full h-2.5 overflow-hidden border border-rose-500/20">
               <motion.div
@@ -239,7 +261,7 @@ export default function BpaAreaOfOriginPanel() {
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-tactical-border/40 pb-3">
             <span className="text-xs font-bold uppercase tracking-wider text-tactical-text flex items-center gap-2">
               <Layers className="w-4 h-4 text-rose-400" />
-              Measured Bloodstain Coordinate Matrix (N={stains.length})
+              {isTr ? `Ölçülen Kan Lekesi Koordinat Matrisi (N=${stains.length})` : `Measured Bloodstain Coordinate Matrix (N=${stains.length})`}
             </span>
             <div className="flex items-center gap-3">
               <label className="flex items-center gap-2 text-xs text-zinc-300 cursor-pointer select-none">
@@ -251,14 +273,14 @@ export default function BpaAreaOfOriginPanel() {
                 />
                 <span className="flex items-center gap-1 text-[11px]">
                   <Wind className="w-3.5 h-3.5 text-zinc-400" />
-                  Drag & Gravity Parabolic Curvature
+                  {isTr ? "Sürüklenme & Yerçekimi Parabolik Eğriliği" : "Drag & Gravity Parabolic Curvature"}
                 </span>
               </label>
               <button
                 onClick={handleAddStain}
                 className="px-2.5 py-1 rounded bg-zinc-800 hover:bg-zinc-700 text-[10px] text-zinc-200 font-bold border border-tactical-border cursor-pointer"
               >
-                + Add Stain
+                {isTr ? "+ Leke Ekle" : "+ Add Stain"}
               </button>
             </div>
           </div>
@@ -267,14 +289,14 @@ export default function BpaAreaOfOriginPanel() {
             <table className="w-full text-left text-xs">
               <thead className="bg-black/40 text-zinc-400 uppercase text-[9px] border-b border-tactical-border/40">
                 <tr>
-                  <th className="py-2 px-3">Stain ID</th>
+                  <th className="py-2 px-3">{isTr ? "Leke No" : "Stain ID"}</th>
                   <th className="py-2 px-2">X (cm)</th>
                   <th className="py-2 px-2">Y (cm)</th>
                   <th className="py-2 px-2">Z (cm)</th>
-                  <th className="py-2 px-2">Width (mm)</th>
-                  <th className="py-2 px-2">Length (mm)</th>
+                  <th className="py-2 px-2">{isTr ? "Genişlik (mm)" : "Width (mm)"}</th>
+                  <th className="py-2 px-2">{isTr ? "Uzunluk (mm)" : "Length (mm)"}</th>
                   <th className="py-2 px-2">Gamma (°)</th>
-                  <th className="py-2 px-2 text-right">Action</th>
+                  <th className="py-2 px-2 text-right">{isTr ? "İşlem" : "Action"}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-tactical-border/20 text-zinc-300 font-mono">
@@ -339,7 +361,7 @@ export default function BpaAreaOfOriginPanel() {
                       <button
                         onClick={() => handleRemoveStain(idx)}
                         disabled={stains.length <= 2}
-                        className="text-red-400 hover:text-red-300 disabled:opacity-30 text-xs px-2 py-0.5"
+                        className="text-red-400 hover:text-red-300 disabled:opacity-30 text-xs px-2 py-0.5 cursor-pointer"
                       >
                         ✕
                       </button>
@@ -362,10 +384,10 @@ export default function BpaAreaOfOriginPanel() {
               <div className="flex items-center justify-between border-b border-rose-500/20 pb-3">
                 <span className="text-xs font-bold uppercase tracking-wider text-tactical-text flex items-center gap-2">
                   <Compass className="w-4 h-4 text-rose-400" />
-                  Calculated Point of Origin (r₀)
+                  {isTr ? "Hesaplanan Çıkış Noktası (r₀)" : "Calculated Point of Origin (r₀)"}
                 </span>
                 <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[9px] font-bold">
-                  CONVERGED
+                  {isTr ? "YAKINSADI" : "CONVERGED"}
                 </span>
               </div>
 
@@ -386,21 +408,33 @@ export default function BpaAreaOfOriginPanel() {
 
               <div className="p-3 rounded-xl bg-black/30 border border-tactical-border/30 space-y-2 text-xs">
                 <div className="flex justify-between">
-                  <span className="text-zinc-400">95% Spatial Error Radius:</span>
+                  <span className="text-zinc-400">
+                    {isTr ? "%95 Uzamsal Hata Yarıçapı:" : "95% Spatial Error Radius:"}
+                  </span>
                   <span className="text-emerald-400 font-bold tabular-nums">±{result.spatial_error_radius_cm} cm</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-zinc-400">Stains Converged:</span>
-                  <span className="text-zinc-200 font-bold tabular-nums">{result.stains_analyzed} of {stains.length}</span>
+                  <span className="text-zinc-400">
+                    {isTr ? "Yakınsayan Lekeler:" : "Stains Converged:"}
+                  </span>
+                  <span className="text-zinc-200 font-bold tabular-nums">
+                    {result.stains_analyzed} / {stains.length}
+                  </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-zinc-400">Mean Impact Angle:</span>
+                  <span className="text-zinc-400">
+                    {isTr ? "Ortalama Çarpma Açısı:" : "Mean Impact Angle:"}
+                  </span>
                   <span className="text-zinc-200 font-bold tabular-nums">{result.mean_impact_angle_deg}°</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-zinc-400">Drag & Gravity Model:</span>
+                  <span className="text-zinc-400">
+                    {isTr ? "Sürüklenme & Yerçekimi Modeli:" : "Drag & Gravity Model:"}
+                  </span>
                   <span className={`font-bold ${result.gravity_correction_applied ? "text-amber-400" : "text-zinc-500"}`}>
-                    {result.gravity_correction_applied ? "Schiller-Naumann Drag" : "Straight-Line (SWGSTAIN)"}
+                    {result.gravity_correction_applied
+                      ? (isTr ? "Schiller-Naumann Sürüklenmesi" : "Schiller-Naumann Drag")
+                      : (isTr ? "Doğrusal İzdüşüm (SWGSTAIN)" : "Straight-Line (SWGSTAIN)")}
                   </span>
                 </div>
               </div>
@@ -435,10 +469,14 @@ export default function BpaAreaOfOriginPanel() {
             <ShieldCheck className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
             <div className="space-y-1 text-xs">
               <span className="font-bold text-rose-300 uppercase tracking-wider block">
-                SWGSTAIN / IABPA Area of Origin Statement
+                {isTr ? "SWGSTAIN / IABPA Çıkış Noktası Beyanı" : "SWGSTAIN / IABPA Area of Origin Statement"}
               </span>
               <p className="text-zinc-400 text-[11px] leading-relaxed">
-                The calculated point of convergence represents the primary bloodletting event location within a 95% spatial confidence radius of <strong className="text-rose-300">±{result?.spatial_error_radius_cm} cm</strong>.
+                {isTr
+                  ? `Hesaplanan yakınsama noktası, birincil kanama olayının konumunu %95 uzamsal güven yarıçapı olan `
+                  : `The calculated point of convergence represents the primary bloodletting event location within a 95% spatial confidence radius of `}
+                <strong className="text-rose-300">±{result?.spatial_error_radius_cm} cm</strong>
+                {isTr ? ` içerisinde temsil eder.` : `.`}
               </p>
             </div>
           </div>

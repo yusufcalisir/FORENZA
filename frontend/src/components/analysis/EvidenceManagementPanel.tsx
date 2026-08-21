@@ -5,6 +5,7 @@ import {
   ShieldCheck, MapPin, PackageCheck, Crosshair, Layers,
   RotateCw, Move3d, Eye, ChevronDown, ChevronUp, Circle,
 } from "lucide-react";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface EvidenceItem {
@@ -69,6 +70,9 @@ function worldToCanvas(
 
 // ── Main Component ────────────────────────────────────────────────────────────
 export default function EvidenceManagementPanel() {
+  const { lang } = useSaasLanguage();
+  const isTr = lang === "tr";
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [selectedId, setSelectedId] = useState<string>("EVID-BLOOD-101");
   const [viewMode, setViewMode] = useState<"top" | "side" | "isometric">("isometric");
@@ -269,14 +273,16 @@ export default function EvidenceManagementPanel() {
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
               <h2 className="text-xs sm:text-sm font-bold tracking-widest text-tactical-text uppercase">
-                3D Spatial Crime Scene Reconstruction
+                {isTr ? "3B Mekânsal Olay Yeri Rekonstrüksiyonu" : "3D Spatial Crime Scene Reconstruction"}
               </h2>
               <span className="text-[8px] sm:text-[9px] font-bold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-2.5 py-0.5 rounded-lg whitespace-nowrap shrink-0">
-                §5.1–5.2 Compliant
+                {isTr ? "§5.1–5.2 Uyumlu" : "§5.1–5.2 Compliant"}
               </span>
             </div>
             <p className="text-[9px] sm:text-[10px] text-tactical-text-muted mt-0.5">
-              SE(3) Coordinate Registration • 95% CI Ellipsoid (χ²₃ = 7.815) • Multi-Sensor Fusion • Juror Visualizer
+              {isTr
+                ? "SE(3) Koordinat Tescili • %95 GA Elipsoidi (χ²₃ = 7.815) • Çok Sensörlü Füzyon • Jüri Görselleştiricisi"
+                : "SE(3) Coordinate Registration • 95% CI Ellipsoid (χ²₃ = 7.815) • Multi-Sensor Fusion • Juror Visualizer"}
             </p>
           </div>
         </div>
@@ -303,7 +309,11 @@ export default function EvidenceManagementPanel() {
                   }`}
                 >
                   <Eye className="w-3 h-3 inline mr-1 mb-0.5 shrink-0" />
-                  {v === "isometric" ? "Isometric" : v === "top" ? "Jury Top" : "Witness Side"}
+                  {v === "isometric"
+                    ? (isTr ? "İzometrik" : "Isometric")
+                    : v === "top"
+                    ? (isTr ? "Jüri Üstten" : "Jury Top")
+                    : (isTr ? "Tanık Yandan" : "Witness Side")}
                 </button>
               ))}
             </div>
@@ -319,7 +329,7 @@ export default function EvidenceManagementPanel() {
                     : "border-tactical-border/30 text-zinc-500 bg-black/30"
                 }`}
               >
-                95% CI
+                {isTr ? "%95 GA" : "95% CI"}
               </button>
               <button
                 id="toggle-bpa"
@@ -341,7 +351,7 @@ export default function EvidenceManagementPanel() {
                     : "border-tactical-border/30 text-zinc-500 bg-black/30"
                 }`}
               >
-                Ballistic
+                {isTr ? "Balistik" : "Ballistic"}
               </button>
             </div>
           </div>
@@ -368,14 +378,16 @@ export default function EvidenceManagementPanel() {
             <div className="flex items-center gap-2 border-b border-tactical-border/30 pb-2">
               <RotateCw className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
               <span className="text-[10px] font-bold text-tactical-text uppercase tracking-wider">
-                SE(3) Transform — R = R_z(ψ)·R_y(θ)·R_x(φ)
+                {isTr
+                  ? "SE(3) Dönüşümü — R = R_z(ψ)·R_y(θ)·R_x(φ)"
+                  : "SE(3) Transform — R = R_z(ψ)·R_y(θ)·R_x(φ)"}
               </span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {[
-                { label: "Roll φ", val: rollDeg, set: setRollDeg, color: "text-rose-400" },
-                { label: "Pitch θ", val: pitchDeg, set: setPitchDeg, color: "text-amber-400" },
-                { label: "Yaw ψ", val: yawDeg, set: setYawDeg, color: "text-cyan-400" },
+                { label: isTr ? "Yalpalama φ (Roll)" : "Roll φ", val: rollDeg, set: setRollDeg, color: "text-rose-400" },
+                { label: isTr ? "Yunuslama θ (Pitch)" : "Pitch θ", val: pitchDeg, set: setPitchDeg, color: "text-amber-400" },
+                { label: isTr ? "Sapma ψ (Yaw)" : "Yaw ψ", val: yawDeg, set: setYawDeg, color: "text-cyan-400" },
               ].map(({ label, val, set, color }) => (
                 <div key={label} className="space-y-1">
                   <div className="flex justify-between">
@@ -413,7 +425,7 @@ export default function EvidenceManagementPanel() {
           {/* Evidence List */}
           <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-4 space-y-2 shadow-lg">
             <span className="text-[10px] font-bold text-tactical-text uppercase tracking-wider block border-b border-tactical-border/40 pb-2">
-              Multi-Sensor Evidence Registry
+              {isTr ? "Çok Sensörlü Delil Envanteri" : "Multi-Sensor Evidence Registry"}
             </span>
             <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
               {ITEMS.map((item) => {
@@ -448,7 +460,7 @@ export default function EvidenceManagementPanel() {
             <button id="toggle-ellipsoid-detail" onClick={() => setDetailsOpen(!detailsOpen)}
               className="w-full flex items-center justify-between border-b border-tactical-border/40 pb-2 mb-3">
               <span className="text-[10px] font-bold text-tactical-text uppercase tracking-wider">
-                95% Ellipsoid Inspector (§5.2)
+                {isTr ? "%95 Elipsoit Denetçisi (§5.2)" : "95% Ellipsoid Inspector (§5.2)"}
               </span>
               {detailsOpen ? <ChevronUp className="w-3.5 h-3.5 text-zinc-500" /> : <ChevronDown className="w-3.5 h-3.5 text-zinc-500" />}
             </button>
@@ -462,9 +474,9 @@ export default function EvidenceManagementPanel() {
                 </div>
                 {/* Semi-axes */}
                 {[
-                  { label: "Semi-axis a", val: axisPx, unit: "m" },
-                  { label: "Semi-axis b", val: axisPx * 0.9, unit: "m" },
-                  { label: "Semi-axis c", val: axisPx * 0.75, unit: "m" },
+                  { label: isTr ? "Yarı-eksen a" : "Semi-axis a", val: axisPx, unit: "m" },
+                  { label: isTr ? "Yarı-eksen b" : "Semi-axis b", val: axisPx * 0.9, unit: "m" },
+                  { label: isTr ? "Yarı-eksen c" : "Semi-axis c", val: axisPx * 0.75, unit: "m" },
                 ].map(({ label, val, unit }) => (
                   <div key={label} className="flex justify-between p-2 rounded-lg bg-black/20 border border-tactical-border/30">
                     <span className="text-zinc-400">{label}</span>
@@ -472,12 +484,12 @@ export default function EvidenceManagementPanel() {
                   </div>
                 ))}
                 <div className="flex justify-between p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-                  <span className="text-emerald-300 font-bold">Volume V = 4π/3·a·b·c</span>
+                  <span className="text-emerald-300 font-bold">{isTr ? "Hacim V = 4π/3·a·b·c" : "Volume V = 4π/3·a·b·c"}</span>
                   <span className="text-emerald-200 font-bold">{volume.toFixed(4)} m³</span>
                 </div>
                 {/* Sensor precision */}
                 <div className="mt-2 p-2 rounded-lg bg-black/20 border border-tactical-border/30 space-y-1">
-                  <p className="text-zinc-500 text-[9px] uppercase font-bold">Sensor Precision (§5.1)</p>
+                  <p className="text-zinc-500 text-[9px] uppercase font-bold">{isTr ? "Sensör Hassasiyeti (§5.1)" : "Sensor Precision (§5.1)"}</p>
                   <p className="text-zinc-300">σ = ±{selectedItem.precision_m * 1000} mm → ±{selectedItem.precision_m} m</p>
                 </div>
 
@@ -485,10 +497,12 @@ export default function EvidenceManagementPanel() {
                 <div className="mt-2 p-2 rounded-lg bg-emerald-500/8 border border-emerald-500/20">
                   <div className="flex items-center gap-1.5 mb-1">
                     <ShieldCheck className="w-3 h-3 text-emerald-400" />
-                    <span className="text-emerald-300 font-bold text-[9px]">Chain of Custody Intact</span>
+                    <span className="text-emerald-300 font-bold text-[9px]">
+                      {isTr ? "Delil Zinciri Bozulmamış" : "Chain of Custody Intact"}
+                    </span>
                   </div>
                   <p className="text-zinc-500 text-[9px]">SHA-256: {selectedItem.hash}</p>
-                  <p className="text-zinc-600 text-[9px]">ISO 21043 · Seal: {selectedItem.seal}</p>
+                  <p className="text-zinc-600 text-[9px]">{isTr ? `ISO 21043 · Mühür: ${selectedItem.seal}` : `ISO 21043 · Seal: ${selectedItem.seal}`}</p>
                 </div>
               </div>
             )}
@@ -501,7 +515,9 @@ export default function EvidenceManagementPanel() {
         <div className="flex items-center gap-2 mb-3 border-b border-tactical-border/30 pb-2">
           <Move3d className="w-3.5 h-3.5 text-indigo-400" />
           <span className="text-[10px] font-bold text-tactical-text uppercase tracking-wider">
-            Scene Fusion Summary — {ITEMS.length} Evidence Points Registered
+            {isTr
+              ? `Olay Yeri Füzyon Özeti — ${ITEMS.length} Delil Noktası Kayıtlı`
+              : `Scene Fusion Summary — ${ITEMS.length} Evidence Points Registered`}
           </span>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -517,7 +533,9 @@ export default function EvidenceManagementPanel() {
           })}
         </div>
         <p className="text-[9px] text-zinc-600 mt-3 text-center font-mono">
-          Research: Pillar 6 §5.1–§5.2 • SE(3) Registration • 95% CI Volumetric Ellipsoid χ²₃=7.815 • LiDAR±2mm | BPA±12mm | Ballistics±5mm | DNA±8mm
+          {isTr
+            ? "Araştırma: Pillar 6 §5.1–§5.2 • SE(3) Tescili • %95 GA Hacimsel Elipsoidi χ²₃=7.815 • LiDAR±2mm | BPA±12mm | Balistik±5mm | DNA±8mm"
+            : "Research: Pillar 6 §5.1–§5.2 • SE(3) Registration • 95% CI Volumetric Ellipsoid χ²₃=7.815 • LiDAR±2mm | BPA±12mm | Ballistics±5mm | DNA±8mm"}
         </p>
       </div>
     </div>

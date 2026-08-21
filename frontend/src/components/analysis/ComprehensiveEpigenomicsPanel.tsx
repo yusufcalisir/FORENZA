@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Clock, Dna, Activity, Sliders, Layers, RefreshCw, Flame, Sun, Droplets, ShieldCheck, CheckCircle2 } from "lucide-react";
 import AgeEstimationPanel from "./AgeEstimationPanel";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 interface TissueDeconvResult {
   top_predicted_tissue: string;
@@ -88,8 +89,10 @@ interface BisulfiteQcApiResult {
 }
 
 export default function ComprehensiveEpigenomicsPanel() {
-  const [activeResearchTab, setActiveResearchTab] = useState<"clock" | "tissue" | "lifestyle" | "telomere_pmi" | "bisulfite_qc">("clock");
+  const { lang } = useSaasLanguage();
+  const isTr = lang === "tr";
 
+  const [activeResearchTab, setActiveResearchTab] = useState<"clock" | "tissue" | "lifestyle" | "telomere_pmi" | "bisulfite_qc">("clock");
 
   // Tissue Deconvolution State (12 Diagnostic tDMR CpG Markers)
   const [tdmrBetas, setTdmrBetas] = useState<Record<string, number>>({
@@ -108,18 +111,18 @@ export default function ComprehensiveEpigenomicsPanel() {
   });
 
   const tdmrLabels: Record<string, string> = {
-    cg09652652: "Endothelial (cg09652652)",
-    cg19406367: "Hematopoietic (cg19406367)",
-    cg17610929: "Germ Cell (cg17610929)",
+    cg09652652: isTr ? "Endotelyal (cg09652652)" : "Endothelial (cg09652652)",
+    cg19406367: isTr ? "Hematopoietik (cg19406367)" : "Hematopoietic (cg19406367)",
+    cg17610929: isTr ? "Germ Hücresi (cg17610929)" : "Germ Cell (cg17610929)",
     cg23521140: "DACT1 (cg23521140)",
     cg26763284: "PRMT12 (cg26763284)",
-    cg23576855: "Oral Epithelial (cg23576855)",
-    cg00399818: "Salivary Gland (cg00399818)",
-    cg04382942: "Cervicovaginal (cg04382942)",
+    cg23576855: isTr ? "Oral Epitelyal (cg23576855)" : "Oral Epithelial (cg23576855)",
+    cg00399818: isTr ? "Tükürük Bezi (cg00399818)" : "Salivary Gland (cg00399818)",
+    cg04382942: isTr ? "Servikovajinal (cg04382942)" : "Cervicovaginal (cg04382942)",
     cg11624633: "MYO1G (cg11624633)",
-    cg00854446: "Endometrial (cg00854446)",
-    cg18063373: "Endometrial Stroma (cg18063373)",
-    cg07823520: "Epidermis (cg07823520)",
+    cg00854446: isTr ? "Endometriyal (cg00854446)" : "Endometrial (cg00854446)",
+    cg18063373: isTr ? "Endometriyal Stroma (cg18063373)" : "Endometrial Stroma (cg18063373)",
+    cg07823520: isTr ? "Epidermis (cg07823520)" : "Epidermis (cg07823520)",
   };
 
   const [deconvLoading, setDeconvLoading] = useState(false);
@@ -334,6 +337,51 @@ export default function ComprehensiveEpigenomicsPanel() {
     }
   };
 
+  const getTissueLabel = (tissue: string) => {
+    if (!isTr) return tissue;
+    switch (tissue) {
+      case "BLOOD": return "KAN";
+      case "MENSTRUAL": return "MENSTRÜEL";
+      case "SALIVA": return "TÜKÜRÜK";
+      case "VAGINAL": return "VAJİNAL";
+      case "SKIN": return "DERİ";
+      case "SEMEN": return "MENİ";
+      default: return tissue;
+    }
+  };
+
+  const getSmokingLabel = (status: string) => {
+    if (!isTr) return status.replace(/_/g, " ");
+    switch (status) {
+      case "CURRENT_HEAVY_SMOKER": return "AKTİF AĞIR SİGARA KULLANICISI";
+      case "CURRENT_MODERATE_SMOKER": return "AKTİF ORTA DÜZEY SİGARA KULLANICISI";
+      case "FORMER_SMOKER": return "ESKİ SİGARA KULLANICISI";
+      case "NEVER_SMOKER": return "HİÇ SİGARA KULLANMAMIŞ";
+      default: return status.replace(/_/g, " ");
+    }
+  };
+
+  const getBmiLabel = (cat?: string) => {
+    if (!cat) return "NORMAL";
+    if (!isTr) return cat;
+    switch (cat) {
+      case "NORMAL_WEIGHT": return "NORMAL KİLO";
+      case "OVERWEIGHT": return "FAZLA KİLOLU";
+      case "OBESE": return "OBEZ";
+      case "UNDERWEIGHT": return "DÜŞÜK KİLO";
+      default: return cat;
+    }
+  };
+
+  const getAlcoholLabel = (level: string) => {
+    if (!isTr) return level;
+    switch (level) {
+      case "LOW_OR_ABSTAINER": return "DÜŞÜK VEYA KULLANMAYAN";
+      case "MODERATE": return "ORTA DÜZEY";
+      case "HIGH_EXPOSURE": return "YÜKSEK MARUZİYET";
+      default: return level;
+    }
+  };
 
   return (
     <div className="space-y-6 font-mono text-tactical-text">
@@ -346,14 +394,16 @@ export default function ComprehensiveEpigenomicsPanel() {
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
               <h2 className="text-xs sm:text-sm font-bold tracking-widest text-tactical-text uppercase">
-                Forensic Epigenomics &amp; Biological State Intelligence
+                {isTr ? "Adli Epigenomik & Biyolojik Durum İstihbaratı" : "Forensic Epigenomics & Biological State Intelligence"}
               </h2>
               <span className="px-2 py-0.5 rounded text-[8px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30 whitespace-nowrap">
-                MULTI-OMICS EPIGENETICS
+                {isTr ? "ÇOKLU OMİK EPİGENETİK" : "MULTI-OMICS EPIGENETICS"}
               </span>
             </div>
             <p className="text-[9px] sm:text-[10px] text-zinc-400 mt-0.5 truncate">
-              DNA Methylation • Epigenetic Clock • Tissue Deconvolution • AHRR Lifestyle Profiling
+              {isTr
+                ? "DNA Metilasyonu • Epigenetik Yaş Saati • Doku Dekonvolüsyonu • AHRR Yaşam Tarzı Profili"
+                : "DNA Methylation • Epigenetic Clock • Tissue Deconvolution • AHRR Lifestyle Profiling"}
             </p>
           </div>
         </div>
@@ -362,58 +412,56 @@ export default function ComprehensiveEpigenomicsPanel() {
         <div className="flex items-center gap-1.5 p-1 rounded-xl bg-black/60 border border-tactical-border/60 overflow-x-auto max-w-full shrink-0">
           <button
             onClick={() => setActiveResearchTab("clock")}
-            className={`px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold transition-all whitespace-nowrap ${
+            className={`px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
               activeResearchTab === "clock"
                 ? "bg-purple-500 text-black shadow-md font-extrabold"
                 : "text-zinc-400 hover:text-zinc-200"
             }`}
           >
-            Epigenetic Clock
+            {isTr ? "Epigenetik Yaş Saati" : "Epigenetic Clock"}
           </button>
           <button
             onClick={() => setActiveResearchTab("tissue")}
-            className={`px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold transition-all whitespace-nowrap ${
+            className={`px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
               activeResearchTab === "tissue"
                 ? "bg-purple-500 text-black shadow-md font-extrabold"
                 : "text-zinc-400 hover:text-zinc-200"
             }`}
           >
-            Tissue Deconvolution
+            {isTr ? "Doku Dekonvolüsyonu" : "Tissue Deconvolution"}
           </button>
           <button
             onClick={() => setActiveResearchTab("lifestyle")}
-            className={`px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold transition-all whitespace-nowrap ${
+            className={`px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
               activeResearchTab === "lifestyle"
                 ? "bg-purple-500 text-black shadow-md font-extrabold"
                 : "text-zinc-400 hover:text-zinc-200"
             }`}
           >
-            Lifestyle &amp; Environment
+            {isTr ? "Yaşam Tarzı & Çevre" : "Lifestyle & Environment"}
           </button>
           <button
             onClick={() => setActiveResearchTab("telomere_pmi")}
-            className={`px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold transition-all whitespace-nowrap ${
+            className={`px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
               activeResearchTab === "telomere_pmi"
                 ? "bg-purple-500 text-black shadow-md font-extrabold"
                 : "text-zinc-400 hover:text-zinc-200"
             }`}
           >
-            Telomere &amp; PMI Decay
+            {isTr ? "Telomer & PMI Bozunumu" : "Telomere & PMI Decay"}
           </button>
           <button
             onClick={() => setActiveResearchTab("bisulfite_qc")}
-            className={`px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold transition-all whitespace-nowrap ${
+            className={`px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
               activeResearchTab === "bisulfite_qc"
                 ? "bg-purple-500 text-black shadow-md font-extrabold"
                 : "text-zinc-400 hover:text-zinc-200"
             }`}
           >
-            Bisulfite QC
+            {isTr ? "Bisülfit Kalite Kontrol" : "Bisulfite QC"}
           </button>
         </div>
       </div>
-
-
 
       {/* ── Tab Content ── */}
       {activeResearchTab === "clock" && <AgeEstimationPanel />}
@@ -426,7 +474,7 @@ export default function ComprehensiveEpigenomicsPanel() {
               <div className="flex items-center gap-2">
                 <Sliders className="w-4 h-4 text-purple-400" />
                 <span className="text-xs font-bold uppercase tracking-wider text-tactical-text">
-                  tDMR Methylation Beta Inputs
+                  {isTr ? "tDMR Metilasyon Beta Değerleri" : "tDMR Methylation Beta Inputs"}
                 </span>
               </div>
               <button
@@ -435,7 +483,7 @@ export default function ComprehensiveEpigenomicsPanel() {
                 className="px-3 py-1 rounded-lg bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 font-bold text-[10px] uppercase transition-all flex items-center gap-1 cursor-pointer"
               >
                 <RefreshCw className={`w-3 h-3 ${deconvLoading ? "animate-spin" : ""}`} />
-                Deconvolve
+                {isTr ? "Dekonvolüe Et" : "Deconvolve"}
               </button>
             </div>
 
@@ -460,7 +508,6 @@ export default function ComprehensiveEpigenomicsPanel() {
             </div>
           </div>
 
-
           {/* Results Display */}
           <div className="lg:col-span-2 space-y-6">
             {deconvResult && (
@@ -470,14 +517,16 @@ export default function ComprehensiveEpigenomicsPanel() {
                   <div className="flex items-center justify-between border-b border-purple-500/20 pb-4">
                     <div>
                       <span className="text-[10px] font-bold text-purple-300 uppercase tracking-widest block">
-                        PREDICTED TISSUE ORIGIN
+                        {isTr ? "TAHMİN EDİLEN DOKU KÖKENİ" : "PREDICTED TISSUE ORIGIN"}
                       </span>
                       <span className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-300 via-teal-300 to-emerald-300 font-mono">
-                        {deconvResult.top_predicted_tissue}
+                        {getTissueLabel(deconvResult.top_predicted_tissue)}
                       </span>
                     </div>
                     <div className="text-right">
-                      <span className="text-[10px] text-zinc-400 block uppercase font-bold">Tissue LR (LR_tissue)</span>
+                      <span className="text-[10px] text-zinc-400 block uppercase font-bold">
+                        {isTr ? "Doku Olabilirlik Oranı (LR)" : "Tissue LR (LR_tissue)"}
+                      </span>
                       <span className="text-xl font-bold text-emerald-400 font-mono">
                         {deconvResult.lr_tissue} (10^{deconvResult.log10_lr_tissue})
                       </span>
@@ -487,13 +536,13 @@ export default function ComprehensiveEpigenomicsPanel() {
                   {/* Probability Distribution Bar */}
                   <div className="space-y-3 pt-2">
                     <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block">
-                      Dirichlet Mixture Tissue Distribution
+                      {isTr ? "Dirichlet Karışım Doku Dağılımı" : "Dirichlet Mixture Tissue Distribution"}
                     </span>
                     <div className="space-y-2">
                       {Object.entries(deconvResult.tissue_probabilities).map(([tissue, prob]) => (
                         <div key={tissue} className="space-y-1">
                           <div className="flex items-center justify-between text-xs font-mono">
-                            <span className="font-bold text-zinc-300">{tissue}</span>
+                            <span className="font-bold text-zinc-300">{getTissueLabel(tissue)}</span>
                             <span className="text-purple-300 font-bold">{(prob * 100).toFixed(1)}%</span>
                           </div>
                           <div className="h-2 w-full rounded-full bg-black/60 overflow-hidden border border-tactical-border/40">
@@ -521,7 +570,7 @@ export default function ComprehensiveEpigenomicsPanel() {
               <div className="flex items-center gap-2">
                 <Flame className="w-4 h-4 text-amber-400" />
                 <span className="text-xs font-bold uppercase tracking-wider text-tactical-text">
-                  Lifestyle & BMI Biomarkers
+                  {isTr ? "Yaşam Tarzı & VKİ Biyobelirteçleri" : "Lifestyle & BMI Biomarkers"}
                 </span>
               </div>
               <button
@@ -530,14 +579,14 @@ export default function ComprehensiveEpigenomicsPanel() {
                 className="px-3 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-bold text-[10px] uppercase transition-all flex items-center gap-1 cursor-pointer"
               >
                 <RefreshCw className={`w-3 h-3 ${lifestyleLoading ? "animate-spin" : ""}`} />
-                Analyze
+                {isTr ? "Analiz Et" : "Analyze"}
               </button>
             </div>
 
             <div className="space-y-3 max-h-[380px] overflow-y-auto pr-1">
               {/* Smoking Section */}
               <div className="text-[10px] font-bold text-amber-400 uppercase border-b border-tactical-border/30 pb-1">
-                Smoking Markers (AHRR / F2RL3 / ALPPL2)
+                {isTr ? "Sigara Belirteçleri (AHRR / F2RL3 / ALPPL2)" : "Smoking Markers (AHRR / F2RL3 / ALPPL2)"}
               </div>
               <div className="space-y-1">
                 <div className="flex items-center justify-between text-[10px]">
@@ -587,7 +636,7 @@ export default function ComprehensiveEpigenomicsPanel() {
 
               {/* BMI Section */}
               <div className="text-[10px] font-bold text-teal-400 uppercase border-b border-tactical-border/30 pb-1 pt-2">
-                Epigenetic BMI (ABCG1 / CPT1A / SREBF1)
+                {isTr ? "Epigenetik VKİ (ABCG1 / CPT1A / SREBF1)" : "Epigenetic BMI (ABCG1 / CPT1A / SREBF1)"}
               </div>
               <div className="space-y-1">
                 <div className="flex items-center justify-between text-[10px]">
@@ -645,14 +694,16 @@ export default function ComprehensiveEpigenomicsPanel() {
                   <div className="flex items-center justify-between border-b border-amber-500/20 pb-4">
                     <div>
                       <span className="text-[10px] font-bold text-amber-300 uppercase tracking-widest block">
-                        EPIGENETIC SMOKING BIOMARKER STATUS
+                        {isTr ? "EPİGENETİK SİGARA BİYOBELİRTEÇ DURUMU" : "EPIGENETIC SMOKING BIOMARKER STATUS"}
                       </span>
                       <span className="text-2xl font-black text-amber-300 font-mono">
-                        {lifestyleResult.smoking_status.replace(/_/g, " ")}
+                        {getSmokingLabel(lifestyleResult.smoking_status)}
                       </span>
                     </div>
                     <div className="text-right">
-                      <span className="text-[10px] text-zinc-400 block uppercase font-bold">Probability</span>
+                      <span className="text-[10px] text-zinc-400 block uppercase font-bold">
+                        {isTr ? "Olasılık" : "Probability"}
+                      </span>
                       <span className="text-lg font-bold text-emerald-400 font-mono">
                         {(lifestyleResult.smoking_probability * 100).toFixed(0)}%
                       </span>
@@ -661,30 +712,42 @@ export default function ComprehensiveEpigenomicsPanel() {
 
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs pt-2">
                     <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40">
-                      <span className="text-[10px] text-zinc-500 block">Smoking Score</span>
+                      <span className="text-[10px] text-zinc-500 block">
+                        {isTr ? "Sigara Skoru" : "Smoking Score"}
+                      </span>
                       <span className="font-bold text-amber-300 font-mono">{lifestyleResult.smoking_score ?? "N/A"}</span>
                     </div>
                     <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40">
-                      <span className="text-[10px] text-zinc-500 block">Est. Pack Years</span>
-                      <span className="font-bold text-amber-300 font-mono">{lifestyleResult.estimated_pack_years} Yrs</span>
+                      <span className="text-[10px] text-zinc-500 block">
+                        {isTr ? "Tahmini Paket-Yıl" : "Est. Pack Years"}
+                      </span>
+                      <span className="font-bold text-amber-300 font-mono">{lifestyleResult.estimated_pack_years} {isTr ? "Yıl" : "Yrs"}</span>
                     </div>
                     <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40">
-                      <span className="text-[10px] text-zinc-500 block">Epigenetic BMI</span>
+                      <span className="text-[10px] text-zinc-500 block">
+                        {isTr ? "Epigenetik VKİ" : "Epigenetic BMI"}
+                      </span>
                       <span className="font-bold text-teal-300 font-mono">{lifestyleResult.estimated_bmi ?? 24.4} kg/m²</span>
                     </div>
                     <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40">
-                      <span className="text-[10px] text-zinc-500 block">BMI Category</span>
-                      <span className="font-bold text-teal-300 font-mono">{lifestyleResult.bmi_category ?? "NORMAL"}</span>
+                      <span className="text-[10px] text-zinc-500 block">
+                        {isTr ? "VKİ Kategorisi" : "BMI Category"}
+                      </span>
+                      <span className="font-bold text-teal-300 font-mono">{getBmiLabel(lifestyleResult.bmi_category)}</span>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs pt-2">
                     <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40">
-                      <span className="text-[10px] text-zinc-500 block">Alcohol Exposure Level</span>
-                      <span className="font-bold text-cyan-300 font-mono">{lifestyleResult.alcohol_exposure_level}</span>
+                      <span className="text-[10px] text-zinc-500 block">
+                        {isTr ? "Alkol Maruziyet Düzeyi" : "Alcohol Exposure Level"}
+                      </span>
+                      <span className="font-bold text-cyan-300 font-mono">{getAlcoholLabel(lifestyleResult.alcohol_exposure_level)}</span>
                     </div>
                     <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40">
-                      <span className="text-[10px] text-zinc-500 block">Circadian TOD Window</span>
+                      <span className="text-[10px] text-zinc-500 block">
+                        {isTr ? "Sirkadiyen Zaman Penceresi" : "Circadian TOD Window"}
+                      </span>
                       <span className="font-bold text-purple-300 font-mono">{lifestyleResult.estimated_tod_window}</span>
                     </div>
                   </div>
@@ -696,7 +759,6 @@ export default function ComprehensiveEpigenomicsPanel() {
       )}
 
       {activeResearchTab === "telomere_pmi" && (
-
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Controls */}
           <div className="space-y-4 rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 shadow-xl">
@@ -704,7 +766,7 @@ export default function ComprehensiveEpigenomicsPanel() {
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4 text-cyan-400" />
                 <span className="text-xs font-bold uppercase tracking-wider text-tactical-text">
-                  Telomere & PMI Kinetics
+                  {isTr ? "Telomer & PMI Kinetiği" : "Telomere & PMI Kinetics"}
                 </span>
               </div>
               <button
@@ -713,7 +775,7 @@ export default function ComprehensiveEpigenomicsPanel() {
                 className="px-3 py-1 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 font-bold text-[10px] uppercase transition-all flex items-center gap-1 cursor-pointer"
               >
                 <RefreshCw className={`w-3 h-3 ${telomereLoading ? "animate-spin" : ""}`} />
-                Analyze
+                {isTr ? "Analiz Et" : "Analyze"}
               </button>
             </div>
 
@@ -721,7 +783,9 @@ export default function ComprehensiveEpigenomicsPanel() {
               {/* Telomere Section */}
               <div className="space-y-1">
                 <div className="flex items-center justify-between text-[10px]">
-                  <span className="font-bold text-zinc-300">Relative Telomere Length (T/S)</span>
+                  <span className="font-bold text-zinc-300">
+                    {isTr ? "Göreceli Telomer Uzunluğu (T/S)" : "Relative Telomere Length (T/S)"}
+                  </span>
                   <span className="font-mono text-cyan-400 font-bold">{tsRatio.toFixed(2)}</span>
                 </div>
                 <input
@@ -734,14 +798,18 @@ export default function ComprehensiveEpigenomicsPanel() {
                   className="w-full accent-cyan-500 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
                 />
                 <span className="text-[9px] text-zinc-500 block">
-                  T/S = 1.420 - 0.0085 • Age (Birth: ~1.42, 50 Yrs: ~1.00)
+                  {isTr
+                    ? "T/S = 1.420 - 0.0085 • Yaş (Doğum: ~1.42, 50 Yaş: ~1.00)"
+                    : "T/S = 1.420 - 0.0085 • Age (Birth: ~1.42, 50 Yrs: ~1.00)"}
                 </span>
               </div>
 
               {/* PMI Section */}
               <div className="space-y-1 pt-2 border-t border-tactical-border/30">
                 <div className="flex items-center justify-between text-[10px]">
-                  <span className="font-bold text-zinc-300">Residual CpG Methylation (β)</span>
+                  <span className="font-bold text-zinc-300">
+                    {isTr ? "Artık CpG Metilasyonu (β)" : "Residual CpG Methylation (β)"}
+                  </span>
                   <span className="font-mono text-cyan-400 font-bold">{observedPmiBeta.toFixed(2)}</span>
                 </div>
                 <input
@@ -757,7 +825,9 @@ export default function ComprehensiveEpigenomicsPanel() {
 
               <div className="space-y-1">
                 <div className="flex items-center justify-between text-[10px]">
-                  <span className="font-bold text-zinc-300">Ambient Temperature</span>
+                  <span className="font-bold text-zinc-300">
+                    {isTr ? "Ortam Sıcaklığı" : "Ambient Temperature"}
+                  </span>
                   <span className="font-mono text-cyan-400 font-bold">{ambientTemp.toFixed(1)} °C</span>
                 </div>
                 <input
@@ -781,16 +851,23 @@ export default function ComprehensiveEpigenomicsPanel() {
                   <div className="flex items-center justify-between border-b border-cyan-500/20 pb-4">
                     <div>
                       <span className="text-[10px] font-bold text-cyan-300 uppercase tracking-widest block">
-                        ESTIMATED TELOMERE BIOLOGICAL AGE
+                        {isTr ? "TAHMİN EDİLEN TELOMER BİYOLOJİK YAŞI" : "ESTIMATED TELOMERE BIOLOGICAL AGE"}
                       </span>
                       <span className="text-2xl font-black text-cyan-300 font-mono">
-                        {telomereResult.telomere?.estimated_telomere_age_years.toFixed(1)} Years
+                        {telomereResult.telomere?.estimated_telomere_age_years.toFixed(1)} {isTr ? "Yaş" : "Years"}
                       </span>
                     </div>
                     <div className="text-right">
-                      <span className="text-[10px] text-zinc-400 block uppercase font-bold">Age Group</span>
+                      <span className="text-[10px] text-zinc-400 block uppercase font-bold">
+                        {isTr ? "Yaş Grubu" : "Age Group"}
+                      </span>
                       <span className="text-sm font-bold text-emerald-400 font-mono">
-                        {telomereResult.telomere?.telomere_age_group}
+                        {isTr
+                          ? (telomereResult.telomere?.telomere_age_group === "MIDDLE_AGED" ? "ORTA YAŞLI"
+                            : telomereResult.telomere?.telomere_age_group === "YOUNG_ADULT" ? "GENÇ YETİŞKİN"
+                            : telomereResult.telomere?.telomere_age_group === "ELDERLY" ? "YAŞLI"
+                            : telomereResult.telomere?.telomere_age_group)
+                          : telomereResult.telomere?.telomere_age_group}
                       </span>
                     </div>
                   </div>
@@ -798,25 +875,39 @@ export default function ComprehensiveEpigenomicsPanel() {
                   {/* PMI Card */}
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs pt-2">
                     <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40">
-                      <span className="text-[10px] text-zinc-500 block">Est. PMI</span>
-                      <span className="font-bold text-cyan-300 font-mono">{telomereResult.pmi?.estimated_pmi_hours} Hrs</span>
+                      <span className="text-[10px] text-zinc-500 block">
+                        {isTr ? "Tahmini PMI" : "Est. PMI"}
+                      </span>
+                      <span className="font-bold text-cyan-300 font-mono">{telomereResult.pmi?.estimated_pmi_hours} {isTr ? "Saat" : "Hrs"}</span>
                     </div>
                     <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40">
-                      <span className="text-[10px] text-zinc-500 block">PMI (Days)</span>
-                      <span className="font-bold text-cyan-300 font-mono">{telomereResult.pmi?.estimated_pmi_days} Days</span>
+                      <span className="text-[10px] text-zinc-500 block">
+                        {isTr ? "PMI (Gün)" : "PMI (Days)"}
+                      </span>
+                      <span className="font-bold text-cyan-300 font-mono">{telomereResult.pmi?.estimated_pmi_days} {isTr ? "Gün" : "Days"}</span>
                     </div>
                     <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40">
-                      <span className="text-[10px] text-zinc-500 block">Accumulated ADH</span>
+                      <span className="text-[10px] text-zinc-500 block">
+                        {isTr ? "Birikmiş ADH" : "Accumulated ADH"}
+                      </span>
                       <span className="font-bold text-amber-300 font-mono">{telomereResult.pmi?.accumulated_degree_hours} ADH</span>
                     </div>
                     <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40">
-                      <span className="text-[10px] text-zinc-500 block">Somatic Mosaicism</span>
-                      <span className="font-bold text-purple-300 font-mono">{telomereResult.mosaicism?.mosaicism_classification}</span>
+                      <span className="text-[10px] text-zinc-500 block">
+                        {isTr ? "Somatik Mozaiklik" : "Somatic Mosaicism"}
+                      </span>
+                      <span className="font-bold text-purple-300 font-mono">
+                        {isTr && telomereResult.mosaicism?.mosaicism_classification === "CLONAL_HOMOGENEITY"
+                          ? "KLONAL HOMOJENLİK"
+                          : telomereResult.mosaicism?.mosaicism_classification}
+                      </span>
                     </div>
                   </div>
 
                   <div className="p-3 rounded-xl bg-black/30 border border-tactical-border/30 text-[10px] text-zinc-400 font-mono">
-                    {telomereResult.prosecutors_fallacy_shield}
+                    {isTr
+                      ? "Telomer ve PMI tahminleri fizyolojik yaşlanmayı ve ölüm sonrası termal maruziyeti (ADH) ölçer."
+                      : telomereResult.prosecutors_fallacy_shield}
                   </div>
                 </div>
               </motion.div>
@@ -826,7 +917,6 @@ export default function ComprehensiveEpigenomicsPanel() {
       )}
 
       {activeResearchTab === "bisulfite_qc" && (
-
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Controls */}
           <div className="space-y-4 rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 shadow-xl">
@@ -834,7 +924,7 @@ export default function ComprehensiveEpigenomicsPanel() {
               <div className="flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-emerald-400" />
                 <span className="text-xs font-bold uppercase tracking-wider text-tactical-text">
-                  Bisulfite QC & BMIQ Controls
+                  {isTr ? "Bisülfit Kalite Kontrol & BMIQ Kontrolleri" : "Bisulfite QC & BMIQ Controls"}
                 </span>
               </div>
               <button
@@ -843,17 +933,19 @@ export default function ComprehensiveEpigenomicsPanel() {
                 className="px-3 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 font-bold text-[10px] uppercase transition-all flex items-center gap-1 cursor-pointer"
               >
                 <RefreshCw className={`w-3 h-3 ${bisulfiteLoading ? "animate-spin" : ""}`} />
-                Run QC
+                {isTr ? "Kaliteyi Çalıştır" : "Run QC"}
               </button>
             </div>
 
             <div className="space-y-3">
               <div className="text-[10px] font-bold text-emerald-400 uppercase border-b border-tactical-border/30 pb-1">
-                Non-CpG Cytosine Control Signals
+                {isTr ? "CpG-Dışı Sitozin Kontrol Sinyalleri" : "Non-CpG Cytosine Control Signals"}
               </div>
               <div className="space-y-1">
                 <div className="flex items-center justify-between text-[10px]">
-                  <span className="font-bold text-zinc-300">Unmethylated Intensity (U)</span>
+                  <span className="font-bold text-zinc-300">
+                    {isTr ? "Metillenmemiş Şiddet (U)" : "Unmethylated Intensity (U)"}
+                  </span>
                   <span className="font-mono text-emerald-400 font-bold">{nonCpgUnmethylated.toFixed(1)}</span>
                 </div>
                 <input
@@ -868,7 +960,9 @@ export default function ComprehensiveEpigenomicsPanel() {
               </div>
               <div className="space-y-1">
                 <div className="flex items-center justify-between text-[10px]">
-                  <span className="font-bold text-zinc-300">Methylated Intensity (M - Unconverted)</span>
+                  <span className="font-bold text-zinc-300">
+                    {isTr ? "Metillenmiş Şiddet (M - Dönüştürülmemiş)" : "Methylated Intensity (M - Unconverted)"}
+                  </span>
                   <span className="font-mono text-rose-400 font-bold">{nonCpgMethylated.toFixed(1)}</span>
                 </div>
                 <input
@@ -881,16 +975,18 @@ export default function ComprehensiveEpigenomicsPanel() {
                   className="w-full accent-rose-500 cursor-pointer h-1.5 bg-zinc-800 rounded-lg"
                 />
                 <span className="text-[9px] text-zinc-500 block">
-                  C_conv = (1 - M/(M+U)) * 100% (Forensic threshold &ge; 99.0%)
+                  C_conv = (1 - M/(M+U)) * 100% ({isTr ? "Adli eşik" : "Forensic threshold"} &ge; 99.0%)
                 </span>
               </div>
 
               <div className="text-[10px] font-bold text-purple-400 uppercase border-b border-tactical-border/30 pb-1 pt-2">
-                Probe Calibration & Probe Design Type
+                {isTr ? "Prob Kalibrasyonu & Prob Tasarım Türü" : "Probe Calibration & Probe Design Type"}
               </div>
               <div className="space-y-1">
                 <div className="flex items-center justify-between text-[10px]">
-                  <span className="font-bold text-zinc-300">Sample CpG Raw Beta</span>
+                  <span className="font-bold text-zinc-300">
+                    {isTr ? "Örnek CpG Ham Beta" : "Sample CpG Raw Beta"}
+                  </span>
                   <span className="font-mono text-purple-400 font-bold">{qcRawBeta.toFixed(2)}</span>
                 </div>
                 <input
@@ -906,19 +1002,19 @@ export default function ComprehensiveEpigenomicsPanel() {
               <div className="flex items-center gap-2 pt-1">
                 <button
                   onClick={() => setQcProbeType("TYPE_I")}
-                  className={`flex-1 py-1 rounded text-[10px] font-bold ${
+                  className={`flex-1 py-1 rounded text-[10px] font-bold cursor-pointer ${
                     qcProbeType === "TYPE_I" ? "bg-purple-500 text-black" : "bg-black/40 text-zinc-400 border border-tactical-border/40"
                   }`}
                 >
-                  Type I (Reference)
+                  {isTr ? "Tip I (Referans)" : "Type I (Reference)"}
                 </button>
                 <button
                   onClick={() => setQcProbeType("TYPE_II")}
-                  className={`flex-1 py-1 rounded text-[10px] font-bold ${
+                  className={`flex-1 py-1 rounded text-[10px] font-bold cursor-pointer ${
                     qcProbeType === "TYPE_II" ? "bg-purple-500 text-black" : "bg-black/40 text-zinc-400 border border-tactical-border/40"
                   }`}
                 >
-                  Type II (BMIQ Target)
+                  {isTr ? "Tip II (BMIQ Hedef)" : "Type II (BMIQ Target)"}
                 </button>
               </div>
             </div>
@@ -932,20 +1028,22 @@ export default function ComprehensiveEpigenomicsPanel() {
                   <div className="flex items-center justify-between border-b border-emerald-500/20 pb-4">
                     <div>
                       <span className="text-[10px] font-bold text-emerald-300 uppercase tracking-widest block">
-                        BISULFITE CONVERSION EFFICIENCY QUALITY CONTROL
+                        {isTr ? "BİSÜLFİT DÖNÜŞÜM VERİMLİLİĞİ KALİTE KONTROLÜ" : "BISULFITE CONVERSION EFFICIENCY QUALITY CONTROL"}
                       </span>
                       <span className="text-2xl font-black text-emerald-300 font-mono">
                         {bisulfiteResult.bisulfite_conversion_qc?.conversion_efficiency_percent.toFixed(2)}%
                       </span>
                     </div>
                     <div className="text-right">
-                      <span className="text-[10px] text-zinc-400 block uppercase font-bold">Forensic QC Status</span>
+                      <span className="text-[10px] text-zinc-400 block uppercase font-bold">
+                        {isTr ? "Adli Kalite Kontrol Durumu" : "Forensic QC Status"}
+                      </span>
                       <span className={`text-sm font-bold font-mono px-2 py-0.5 rounded border ${
                         bisulfiteResult.bisulfite_conversion_qc?.qc_status === "PASSED_QC"
                           ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
                           : "bg-rose-500/20 text-rose-300 border-rose-500/40"
                       }`}>
-                        {bisulfiteResult.bisulfite_conversion_qc?.qc_status}
+                        {isTr && bisulfiteResult.bisulfite_conversion_qc?.qc_status === "PASSED_QC" ? "KK GEÇTİ" : bisulfiteResult.bisulfite_conversion_qc?.qc_status}
                       </span>
                     </div>
                   </div>
@@ -953,7 +1051,7 @@ export default function ComprehensiveEpigenomicsPanel() {
                   {/* Calibration Grid */}
                   <div className="space-y-2 pt-2">
                     <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block">
-                      BMIQ Calibrated CpG Probes & M-Value Transformations
+                      {isTr ? "BMIQ Kalibre Edilmiş CpG Probları & M-Değeri Dönüşümleri" : "BMIQ Calibrated CpG Probes & M-Value Transformations"}
                     </span>
                     <div className="space-y-1.5 max-h-[160px] overflow-y-auto pr-1">
                       {bisulfiteResult.probe_calibration?.calibrated_probes.map((probe) => (
@@ -963,8 +1061,8 @@ export default function ComprehensiveEpigenomicsPanel() {
                             <span className="ml-2 text-[9px] text-zinc-500">{probe.probe_design_type}</span>
                           </div>
                           <div className="flex items-center gap-4">
-                            <span className="text-zinc-400">Raw β: {probe.raw_beta.toFixed(2)}</span>
-                            <span className="text-emerald-300 font-bold">Calibrated β: {probe.calibrated_beta.toFixed(3)}</span>
+                            <span className="text-zinc-400">{isTr ? "Ham" : "Raw"} β: {probe.raw_beta.toFixed(2)}</span>
+                            <span className="text-emerald-300 font-bold">{isTr ? "Kalibre" : "Calibrated"} β: {probe.calibrated_beta.toFixed(3)}</span>
                             <span className="text-purple-300">M: {probe.m_value.toFixed(2)}</span>
                           </div>
                         </div>
@@ -973,7 +1071,9 @@ export default function ComprehensiveEpigenomicsPanel() {
                   </div>
 
                   <div className="p-3 rounded-xl bg-black/30 border border-tactical-border/30 text-[10px] text-zinc-400 font-mono">
-                    {bisulfiteResult.prosecutors_fallacy_shield}
+                    {isTr
+                      ? "Tam bisülfit dönüşümü (C_conv >= %99.0) ve saptama P-değeri filtrelemesi (P_det <= 0.01), ISO/IEC 17025 kapsamında zorunlu adli kalite kontrolleridir."
+                      : bisulfiteResult.prosecutors_fallacy_shield}
                   </div>
                 </div>
               </motion.div>
@@ -983,6 +1083,5 @@ export default function ComprehensiveEpigenomicsPanel() {
       )}
     </div>
   );
-
 }
 

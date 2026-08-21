@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { PackageCheck, ShieldCheck, CheckCircle2, AlertTriangle, RefreshCw, FileText, User, Tag, Clock } from "lucide-react";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 interface WorkflowStep {
   step_name: string;
@@ -18,6 +19,9 @@ interface WorkflowStep {
 }
 
 export default function LimsWorkflowPanel() {
+  const { lang } = useSaasLanguage();
+  const isTr = lang === "tr";
+
   const [caseId, setCaseId] = useState("CASE-2026-LIMS-01");
   const [sampleId, setSampleId] = useState("SAMPLE-DNA-101");
   const [evidenceType, setEvidenceType] = useState("Blood Stain");
@@ -94,6 +98,18 @@ export default function LimsWorkflowPanel() {
     }
   };
 
+  const phases = [
+    { en: "Case Reg", tr: "Vaka Kayıt" },
+    { en: "Evidence", tr: "Delil Kabul" },
+    { en: "Accession", tr: "Numune Kayıt" },
+    { en: "Extraction", tr: "Ekstraksiyon" },
+    { en: "Quant qPCR", tr: "Kant qPCR" },
+    { en: "PCR Amp", tr: "PCR Çoğaltım" },
+    { en: "CE / NGS", tr: "CE / NGS" },
+    { en: "Biocomp", tr: "Biyohesap" },
+    { en: "ISO Report", tr: "ISO Rapor" },
+  ];
+
   return (
     <div className="space-y-6 font-mono text-tactical-text">
       {/* ── Header ── */}
@@ -105,14 +121,18 @@ export default function LimsWorkflowPanel() {
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-sm font-bold tracking-widest text-tactical-text uppercase">
-                LIMS-Lite Sample Accessioning & Workflow Tracking
+                {isTr
+                  ? "LIMS-Lite Numune Kabulü & İş Akışı Takibi"
+                  : "LIMS-Lite Sample Accessioning & Workflow Tracking"}
               </h2>
               <span className="px-2 py-0.5 rounded text-[8px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                ISO 17025 CHAIN
+                {isTr ? "ISO 17025 ZİNCİRİ" : "ISO 17025 CHAIN"}
               </span>
             </div>
             <p className="text-[10px] text-zinc-400 mt-0.5">
-              9-Step Forensic SOP Chain-of-Custody & Reagent Lot Audit Trail
+              {isTr
+                ? "9 Aşamalı Adli SOP Delil Zinciri & Reaktif Parti Denetim Kaydı"
+                : "9-Step Forensic SOP Chain-of-Custody & Reagent Lot Audit Trail"}
             </p>
           </div>
         </div>
@@ -121,22 +141,22 @@ export default function LimsWorkflowPanel() {
       {/* ── 9-Step SOP Stepper ── */}
       <div className="p-4 rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 space-y-3">
         <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider block">
-          9-Phase Standard Operating Protocol (SOP) Progression
+          {isTr
+            ? "9 Aşamalı Standart Operasyon Prosedürü (SOP) İlerlemesi"
+            : "9-Phase Standard Operating Protocol (SOP) Progression"}
         </span>
         <div className="grid grid-cols-3 sm:grid-cols-9 gap-2 text-center text-[9px] font-bold font-mono">
-          {[
-            "Case Reg", "Evidence", "Accession", "Extraction", "Quant qPCR", "PCR Amp", "CE / NGS", "Biocomp", "ISO Report"
-          ].map((name, idx) => {
+          {phases.map((phase, idx) => {
             const isDone = idx < auditChain.length + 1;
             return (
               <div
-                key={name}
+                key={phase.en}
                 className={`p-2 rounded-lg border flex flex-col items-center justify-center gap-1 ${
                   isDone ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-300" : "border-tactical-border/40 bg-black/30 text-zinc-600"
                 }`}
               >
                 <span className="text-[8px] text-zinc-500">P{idx + 1}</span>
-                <span>{name}</span>
+                <span>{isTr ? phase.tr : phase.en}</span>
               </div>
             );
           })}
@@ -145,10 +165,12 @@ export default function LimsWorkflowPanel() {
 
       {/* ── Audit Chain List ── */}
       <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 space-y-4 shadow-xl">
-        <div className="flex items-center justify-between border-b border-tactical-border/40 pb-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-tactical-border/40 pb-3">
           <span className="text-xs font-bold uppercase tracking-wider text-tactical-text flex items-center gap-2">
             <ShieldCheck className="w-4 h-4 text-emerald-400" />
-            HMAC-SHA256 Chained Chain-of-Custody Log ({auditChain.length} Steps Recorded)
+            {isTr
+              ? `HMAC-SHA256 Bağlantılı Delil Zinciri Günlüğü (${auditChain.length} Adım Kaydedildi)`
+              : `HMAC-SHA256 Chained Chain-of-Custody Log (${auditChain.length} Steps Recorded)`}
           </span>
           <button
             onClick={() => recordNextStep("PCR_AMPLIFICATION")}
@@ -156,7 +178,7 @@ export default function LimsWorkflowPanel() {
             className="px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 transition-all cursor-pointer disabled:opacity-50"
           >
             <RefreshCw className={`w-3 h-3 ${loading ? "animate-spin" : ""}`} />
-            Record PCR Amplification Step
+            {isTr ? "PCR Çoğaltım Adımını Kaydet" : "Record PCR Amplification Step"}
           </button>
         </div>
 
@@ -171,7 +193,7 @@ export default function LimsWorkflowPanel() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-800 pb-2">
                 <div className="flex items-center gap-2">
                   <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                    STEP {step?.step_index}: {step?.step_name}
+                    {isTr ? `ADIM ${step?.step_index}: ${step?.step_name}` : `STEP ${step?.step_index}: ${step?.step_name}`}
                   </span>
                   <span className="text-zinc-400 text-[10px] flex items-center gap-1">
                     <User className="w-3 h-3 text-zinc-500" /> {step?.operator}
@@ -183,17 +205,17 @@ export default function LimsWorkflowPanel() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[10px] text-zinc-400">
-                <div>Instrument: <span className="text-zinc-200 font-bold">{step.instrument_id}</span></div>
-                <div>Reagent Lot: <span className="text-cyan-400 font-bold">{step.reagent_lot}</span></div>
-                <div>SOP Protocol: <span className="text-purple-300 font-bold">{step.protocol_version}</span></div>
+                <div>{isTr ? "Cihaz:" : "Instrument:"} <span className="text-zinc-200 font-bold">{step.instrument_id}</span></div>
+                <div>{isTr ? "Reaktif Partisi:" : "Reagent Lot:"} <span className="text-cyan-400 font-bold">{step.reagent_lot}</span></div>
+                <div>{isTr ? "SOP Protokolü:" : "SOP Protocol:"} <span className="text-purple-300 font-bold">{step.protocol_version}</span></div>
               </div>
 
               <div className="text-zinc-300 text-[11px] pt-1">
-                Result: <span className="text-emerald-300">{step.step_result}</span>
+                {isTr ? "Sonuç:" : "Result:"} <span className="text-emerald-300">{step.step_result}</span>
               </div>
 
               <div className="text-[8px] text-zinc-600 font-mono truncate pt-1 border-t border-zinc-900">
-                HMAC SHA256 Signature: {step.hmac_signature}
+                HMAC SHA256 {isTr ? "İmzası" : "Signature"}: {step.hmac_signature}
               </div>
             </motion.div>
           ))}

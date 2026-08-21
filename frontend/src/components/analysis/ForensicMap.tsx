@@ -4,9 +4,11 @@ import { useMemo, useState, useEffect, useRef, useCallback } from "react";
 import { MapContainer, TileLayer, Circle, CircleMarker, Tooltip, Pane, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 export interface GeoProbability {
     region: string;
+    regionTr?: string;
     lat: number;
     lng: number;
     probability: number;
@@ -217,9 +219,12 @@ function ConfidenceRing({
 
     const isLocked = phase === "locked";
     const isActive = phase === "scanning" || phase === "calculating";
+    const { lang } = useSaasLanguage();
+    const isTr = lang === "tr";
 
     // Clean region display name (e.g. "East Asian" or "Sub-Saharan African")
-    const cleanRegionName = region.region.replace(/\s*\(.*?\)\s*/g, "").trim() || region.region;
+    const rawRegionName = isTr && region.regionTr ? region.regionTr : region.region;
+    const cleanRegionName = rawRegionName.replace(/\s*\(.*?\)\s*/g, "").trim() || rawRegionName;
 
     return (
         <>
@@ -299,6 +304,8 @@ export default function ForensicMap({
     onScanPhaseChange?: (phase: ScanPhase) => void;
     onRegionHover?: (region: string | null) => void;
 }) {
+    const { lang } = useSaasLanguage();
+    const isTr = lang === "tr";
     const [phase, setPhase] = useState<ScanPhase>("idle");
 
     const center = useMemo<[number, number]>(() => {
@@ -370,31 +377,34 @@ export default function ForensicMap({
             )}
 
             {/* 6. Secondary Continental Reference Anchors */}
-            {data.slice(1, 4).map((region) => (
-                <CircleMarker
-                    key={region.region}
-                    center={[region.lat, region.lng]}
-                    radius={5}
-                    eventHandlers={{
-                        mouseover: () => onRegionHover?.(region.region),
-                        mouseout: () => onRegionHover?.(null),
-                        click: () => onRegionHover?.(region.region),
-                    }}
-                    pathOptions={{
-                        fillColor: region.color,
-                        fillOpacity: 0.7,
-                        color: "#ffffff",
-                        weight: 1,
-                        opacity: 0.85,
-                    }}
-                >
-                    <Tooltip direction="bottom" offset={[0, 8]} className="tactical-centroid-tooltip">
-                        <div className="bg-[#080d14]/90 backdrop-blur-md border border-zinc-700/80 text-zinc-300 font-mono text-[8px] px-1.5 py-0.5 rounded whitespace-nowrap">
-                            {region.region.split("(")[0].trim()} ({(region.probability * 100).toFixed(0)}%)
-                        </div>
-                    </Tooltip>
-                </CircleMarker>
-            ))}
+            {data.slice(1, 4).map((region) => {
+                const markerLabel = isTr && region.regionTr ? region.regionTr : region.region;
+                return (
+                    <CircleMarker
+                        key={region.region}
+                        center={[region.lat, region.lng]}
+                        radius={5}
+                        eventHandlers={{
+                            mouseover: () => onRegionHover?.(region.region),
+                            mouseout: () => onRegionHover?.(null),
+                            click: () => onRegionHover?.(region.region),
+                        }}
+                        pathOptions={{
+                            fillColor: region.color,
+                            fillOpacity: 0.7,
+                            color: "#ffffff",
+                            weight: 1,
+                            opacity: 0.85,
+                        }}
+                    >
+                        <Tooltip direction="bottom" offset={[0, 8]} className="tactical-centroid-tooltip">
+                            <div className="bg-[#080d14]/90 backdrop-blur-md border border-zinc-700/80 text-zinc-300 font-mono text-[8px] px-1.5 py-0.5 rounded whitespace-nowrap">
+                                {markerLabel.split("(")[0].trim()} ({(region.probability * 100).toFixed(0)}%)
+                            </div>
+                        </Tooltip>
+                    </CircleMarker>
+                );
+            })}
         </MapContainer>
     );
 }

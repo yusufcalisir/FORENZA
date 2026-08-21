@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef, useCallback } from "react";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 import {
     Activity,
     Shield,
@@ -268,6 +269,9 @@ function RTTSparkline({ values, color }: { values: number[]; color: string }) {
 // ─── Main Component ──────────────────────────────────────────────────────────
 
 export default function GlobalPulse() {
+    const { lang } = useSaasLanguage();
+    const isTr = lang === "tr";
+
     const [nodes, setNodes] = useState<NodePulse[]>(NODES);
     const [waves, setWaves] = useState<BroadcastWave[]>([]);
     const [stats, setStats] = useState<PulseStats>({
@@ -377,13 +381,13 @@ export default function GlobalPulse() {
             {/* ── Telemetry Bar ── */}
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2">
                 {[
-                    { label: "Avg Response", value: `${stats.avgGlobalRtt}ms`, icon: Clock, accent: "text-tactical-primary" },
-                    { label: "Active Tunnels", value: stats.activeTunnels.toString(), icon: Lock, accent: "text-emerald-400" },
-                    { label: "Total Pings", value: stats.totalPings.toLocaleString(), icon: Radio, accent: "text-cyan-400" },
-                    { label: "Failures", value: stats.totalFailures.toString(), icon: AlertTriangle, accent: "text-red-400" },
-                    { label: "Bottlenecks", value: stats.bottleneckCount.toString(), icon: TrendingUp, accent: "text-orange-400" },
-                    { label: "Fastest Node", value: stats.healthiestNode, icon: Zap, accent: "text-emerald-400" },
-                    { label: "Slowest Node", value: stats.slowestNode, icon: WifiOff, accent: "text-amber-400" },
+                    { label: isTr ? "Ort. Yanıt" : "Avg Response", value: `${stats.avgGlobalRtt}ms`, icon: Clock, accent: "text-tactical-primary" },
+                    { label: isTr ? "Aktif Tüneller" : "Active Tunnels", value: stats.activeTunnels.toString(), icon: Lock, accent: "text-emerald-400" },
+                    { label: isTr ? "Toplam Ping" : "Total Pings", value: stats.totalPings.toLocaleString(), icon: Radio, accent: "text-cyan-400" },
+                    { label: isTr ? "Hatalar" : "Failures", value: stats.totalFailures.toString(), icon: AlertTriangle, accent: "text-red-400" },
+                    { label: isTr ? "Darboğazlar" : "Bottlenecks", value: stats.bottleneckCount.toString(), icon: TrendingUp, accent: "text-orange-400" },
+                    { label: isTr ? "En Hızlı Düğüm" : "Fastest Node", value: stats.healthiestNode, icon: Zap, accent: "text-emerald-400" },
+                    { label: isTr ? "En Yavaş Düğüm" : "Slowest Node", value: stats.slowestNode, icon: WifiOff, accent: "text-amber-400" },
                 ].map((s) => (
                     <div key={s.label} className="flex flex-col gap-0.5 bg-tactical-surface border border-tactical-border rounded px-2.5 py-2">
                         <div className="flex items-center gap-1">
@@ -409,7 +413,7 @@ export default function GlobalPulse() {
                                 <span className="relative inline-flex h-2 w-2 rounded-full bg-tactical-primary" />
                             </span>
                             <span className="font-data text-[9px] font-bold uppercase tracking-wider text-tactical-primary">
-                                Broadcasting Query
+                                {isTr ? "Sorgu Yayınlanıyor" : "Broadcasting Query"}
                             </span>
                         </div>
                     )}
@@ -427,7 +431,7 @@ export default function GlobalPulse() {
                         <div className="flex items-center gap-2">
                             <Wifi className="w-3.5 h-3.5 text-tactical-primary" />
                             <span className="font-data text-[10px] font-bold tracking-[0.15em] uppercase text-tactical-text-muted">
-                                Node Latency
+                                {isTr ? "Düğüm Gecikmesi" : "Node Latency"}
                             </span>
                         </div>
                         <span className="font-data text-[8px] text-tactical-text-dim">
@@ -460,7 +464,7 @@ export default function GlobalPulse() {
                                                 <span className="text-zinc-600 ml-1">{node.countryCode}</span>
                                             </p>
                                             <p className="font-data text-[7px] text-zinc-600">
-                                                loss: {node.packetLoss}%
+                                                {isTr ? "kayıp:" : "loss:"} {node.packetLoss}%
                                             </p>
                                         </div>
                                     </div>
@@ -491,11 +495,11 @@ export default function GlobalPulse() {
                         <div className="flex items-center gap-1.5">
                             <Globe className="w-3 h-3 text-tactical-primary" />
                             <span className="font-data text-[8px] text-zinc-500">
-                                {stats.activeTunnels} encrypted tunnels active
+                                {isTr ? `${stats.activeTunnels} şifreli tünel aktif` : `${stats.activeTunnels} encrypted tunnels active`}
                             </span>
                         </div>
                         <span className="font-data text-[8px] text-zinc-500">
-                            avg {stats.avgGlobalRtt}ms
+                            {isTr ? "ort." : "avg"} {stats.avgGlobalRtt}ms
                         </span>
                     </div>
                 </div>

@@ -22,6 +22,7 @@ import {
   Activity,
   Layers,
 } from "lucide-react";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 // Standard 25-system / 27-locus Y-FILER Plus Registry Metadata
 export interface YStrLocusVisual {
@@ -217,6 +218,8 @@ const LOCUS_ORDER: Array<{
 ];
 
 export default function PanelYSTR() {
+  const { lang } = useSaasLanguage();
+  const isTr = lang === "tr";
   const [selectedCohort, setSelectedCohort] = useState<PresetCohort>(PRESET_COHORTS[0]);
   const [selectedPop, setSelectedPop] = useState(YHRD_METAPOPULATIONS[0]);
   const [meioses, setMeioses] = useState<number>(1);
@@ -394,17 +397,21 @@ export default function PanelYSTR() {
           <div className="min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               <h2 className="text-sm sm:text-lg font-bold tracking-widest text-tactical-text uppercase truncate">
-                Y-STR 27-Locus Paternal Lineage & Kinship Engine
+                {isTr
+                  ? "Y-STR 27-Lokus Baba Soyu & Akrabalık Motoru"
+                  : "Y-STR 27-Locus Paternal Lineage & Kinship Engine"}
               </h2>
               <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-500/10 border border-indigo-500/30 text-indigo-300">
                 Y-FILER PLUS
               </span>
               <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-pink-500/10 border border-pink-500/30 text-pink-300">
-                7 RM LOCI
+                {isTr ? "7 RM LOKUSU" : "7 RM LOCI"}
               </span>
             </div>
             <p className="text-[10px] sm:text-xs text-tactical-text-muted mt-0.5 truncate">
-              Continuous Lineage Modeling • SMM Meiotic Drift • YHRD R68 Population Database • Bayesian Clades
+              {isTr
+                ? "Sürekli Soy Modellemesi • SMM Mayotik Kayma • YHRD R68 Popülasyon Veritabanı • Bayes Kladları"
+                : "Continuous Lineage Modeling • SMM Meiotic Drift • YHRD R68 Population Database • Bayesian Clades"}
             </p>
           </div>
         </div>
@@ -414,10 +421,14 @@ export default function PanelYSTR() {
           <button
             onClick={() => runLiveAnalysis(selectedCohort, selectedPop.size, theta, meioses, observedK)}
             disabled={isAnalyzing}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/40 text-indigo-200 text-xs font-bold transition-all disabled:opacity-50"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/40 text-indigo-200 text-xs font-bold transition-all disabled:opacity-50 cursor-pointer"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isAnalyzing ? "animate-spin" : ""}`} />
-            <span>{isAnalyzing ? "Computing Likelihoods..." : "Re-Calculate Engine"}</span>
+            <span>
+              {isAnalyzing
+                ? (isTr ? "Olabilirlikler Hesaplanıyor..." : "Computing Likelihoods...")
+                : (isTr ? "Motoru Yeniden Hesapla" : "Re-Calculate Engine")}
+            </span>
           </button>
         </div>
       </div>
@@ -439,9 +450,13 @@ export default function PanelYSTR() {
         <div className="flex items-center justify-between">
           <span className="text-xs font-bold text-tactical-text uppercase tracking-wider flex items-center gap-1.5">
             <Layers className="w-3.5 h-3.5 text-indigo-400" />
-            Certified Casework & Reference Cohorts (Pillar 2 §1)
+            {isTr
+              ? "Sertifikalı Vaka & Referans Kohortları (Pillar 2 §1)"
+              : "Certified Casework & Reference Cohorts (Pillar 2 §1)"}
           </span>
-          <span className="text-[10px] text-zinc-500">ISO/IEC 17025:2017 Gold Standards</span>
+          <span className="text-[10px] text-zinc-500">
+            {isTr ? "ISO/IEC 17025:2017 Altın Standartlar" : "ISO/IEC 17025:2017 Gold Standards"}
+          </span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -451,7 +466,7 @@ export default function PanelYSTR() {
               <button
                 key={cohort.id}
                 onClick={() => setSelectedCohort(cohort)}
-                className={`p-3.5 rounded-xl border text-left transition-all relative overflow-hidden flex flex-col justify-between ${
+                className={`p-3.5 rounded-xl border text-left transition-all relative overflow-hidden flex flex-col justify-between cursor-pointer ${
                   isSelected
                     ? "bg-indigo-950/40 border-indigo-500 shadow-[0_0_20px_rgba(99,102,241,0.15)] ring-1 ring-indigo-500/50"
                     : "bg-tactical-surface/40 border-tactical-border/60 hover:border-zinc-500 hover:bg-black/30"
@@ -459,17 +474,27 @@ export default function PanelYSTR() {
               >
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs font-bold text-tactical-text truncate">{cohort.labelEn}</span>
+                    <span className="text-xs font-bold text-tactical-text truncate">
+                      {isTr ? cohort.labelTr : cohort.labelEn}
+                    </span>
                     <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded border whitespace-nowrap ${cohort.badgeColor}`}>
                       {cohort.badge}
                     </span>
                   </div>
-                  <p className="text-[10px] text-tactical-text-muted line-clamp-2">{cohort.descriptionEn}</p>
+                  <p className="text-[10px] text-tactical-text-muted line-clamp-2">
+                    {isTr ? cohort.descriptionTr : cohort.descriptionEn}
+                  </p>
                 </div>
 
                 <div className="mt-2.5 pt-2 border-t border-tactical-border/40 flex items-center justify-between text-[9px]">
-                  <span className="text-zinc-500 font-bold">{cohort.meioses} Meiosis Depth</span>
-                  {isSelected && <span className="text-indigo-400 font-bold flex items-center gap-1">ACTIVE COHORT</span>}
+                  <span className="text-zinc-500 font-bold">
+                    {cohort.meioses} {isTr ? "Mayoz Derinliği" : "Meiosis Depth"}
+                  </span>
+                  {isSelected && (
+                    <span className="text-indigo-400 font-bold flex items-center gap-1">
+                      {isTr ? "AKTİF KOHORT" : "ACTIVE COHORT"}
+                    </span>
+                  )}
                 </div>
               </button>
             );
@@ -484,7 +509,7 @@ export default function PanelYSTR() {
           kinshipResult.isExcluded ? "border-rose-500/50 shadow-[0_0_15px_rgba(244,63,94,0.1)]" : "border-emerald-500/50 shadow-[0_0_15px_rgba(16,185,129,0.1)]"
         }`}>
           <div className="flex items-center justify-between text-[10px] font-bold text-zinc-400 uppercase">
-            <span>Paternal Likelihood Ratio (LR)</span>
+            <span>{isTr ? "Baba Soyu Olabilirlik Oranı (LR)" : "Paternal Likelihood Ratio (LR)"}</span>
             <Scale className="w-3.5 h-3.5 text-indigo-400" />
           </div>
           <div className="flex items-baseline gap-2">
@@ -500,49 +525,51 @@ export default function PanelYSTR() {
           <p className={`text-[10px] font-bold truncate ${
             kinshipResult.isExcluded ? "text-rose-300" : "text-emerald-300"
           }`}>
-            {kinshipResult.verbalEn}
+            {isTr ? kinshipResult.verbalTr : kinshipResult.verbalEn}
           </p>
         </div>
 
         {/* 2. Clopper-Pearson 95% Exact Upper Bound */}
         <div className="rounded-xl border border-tactical-border/60 bg-tactical-surface/50 p-4 space-y-1.5">
           <div className="flex items-center justify-between text-[10px] font-bold text-zinc-400 uppercase">
-            <span>Clopper-Pearson 95% Bound</span>
+            <span>{isTr ? "Clopper-Pearson %95 Üst Sınırı" : "Clopper-Pearson 95% Bound"}</span>
             <Database className="w-3.5 h-3.5 text-cyan-400" />
           </div>
           <p className="text-xl sm:text-2xl font-bold font-mono tabular-nums text-cyan-300">
             p &lt; {kinshipResult.pUpper.toExponential(4)}
           </p>
           <p className="text-[10px] text-zinc-400">
-            1 in {Math.round(1.0 / kinshipResult.pUpper).toLocaleString()} males (N={selectedPop.size.toLocaleString()})
+            {isTr
+              ? `${Math.round(1.0 / kinshipResult.pUpper).toLocaleString()} erkekte 1 (N=${selectedPop.size.toLocaleString()})`
+              : `1 in ${Math.round(1.0 / kinshipResult.pUpper).toLocaleString()} males (N=${selectedPop.size.toLocaleString()})`}
           </p>
         </div>
 
         {/* 3. Brenner Subpopulation Coancestry */}
         <div className="rounded-xl border border-tactical-border/60 bg-tactical-surface/50 p-4 space-y-1.5">
           <div className="flex items-center justify-between text-[10px] font-bold text-zinc-400 uppercase">
-            <span>Brenner Subpopulation (θ={theta})</span>
+            <span>{isTr ? `Brenner Alt Popülasyonu (θ=${theta})` : `Brenner Subpopulation (θ=${theta})`}</span>
             <Sliders className="w-3.5 h-3.5 text-amber-400" />
           </div>
           <p className="text-xl sm:text-2xl font-bold font-mono tabular-nums text-amber-300">
             p = {kinshipResult.brennerProb.toExponential(4)}
           </p>
           <p className="text-[10px] text-zinc-400">
-            Fst Correction • {selectedPop.code} Partition
+            {isTr ? `Fst Düzeltmesi • ${selectedPop.code} Bölümü` : `Fst Correction • ${selectedPop.code} Partition`}
           </p>
         </div>
 
         {/* 4. Minimum Male Contributor Inference */}
         <div className="rounded-xl border border-tactical-border/60 bg-tactical-surface/50 p-4 space-y-1.5">
           <div className="flex items-center justify-between text-[10px] font-bold text-zinc-400 uppercase">
-            <span>Mixture Deconvolution</span>
+            <span>{isTr ? "Karışım Ayrıştırma" : "Mixture Deconvolution"}</span>
             <Users className="w-3.5 h-3.5 text-fuchsia-400" />
           </div>
           <p className="text-xl sm:text-2xl font-bold font-mono tabular-nums text-fuchsia-300">
             N_male = 1
           </p>
           <p className="text-[10px] text-zinc-400">
-            Single-Source Male Donor • PHR &ge; 0.85
+            {isTr ? "Tek Erkek Katkıcı • Tekli Pikler" : "Single Male Contributor • Clean Peaks"}
           </p>
         </div>
       </div>
@@ -553,7 +580,9 @@ export default function PanelYSTR() {
           <div className="flex flex-wrap items-center gap-3">
             {/* Metapopulation Selector */}
             <div className="flex items-center gap-2 bg-black/60 px-3 py-1.5 rounded-lg border border-tactical-border/50">
-              <span className="text-zinc-400 font-bold whitespace-nowrap">YHRD Partition:</span>
+              <span className="text-zinc-400 font-bold whitespace-nowrap">
+                {isTr ? "YHRD Popülasyonu:" : "YHRD Partition:"}
+              </span>
               <select
                 value={selectedPop.code}
                 onChange={(e) => {
@@ -573,7 +602,9 @@ export default function PanelYSTR() {
 
             {/* Meioses Depth */}
             <div className="flex items-center gap-2 bg-black/60 px-3 py-1.5 rounded-lg border border-tactical-border/50">
-              <span className="text-zinc-400 font-bold whitespace-nowrap">Meioses (m):</span>
+              <span className="text-zinc-400 font-bold whitespace-nowrap">
+                {isTr ? "Mayoz (m):" : "Meioses (m):"}
+              </span>
               <input
                 type="number"
                 min={1}
@@ -592,16 +623,26 @@ export default function PanelYSTR() {
                 onChange={(e) => setTheta(parseFloat(e.target.value))}
                 className="bg-transparent text-amber-300 font-bold outline-none cursor-pointer"
               >
-                <option value={0.01} className="bg-zinc-900 text-zinc-200">0.01 (General European)</option>
-                <option value={0.02} className="bg-zinc-900 text-zinc-200">0.02 (East Asian)</option>
-                <option value={0.03} className="bg-zinc-900 text-zinc-200">0.03 (SWGDAM Standard)</option>
-                <option value={0.05} className="bg-zinc-900 text-zinc-200">0.05 (Endogamous / Isolated)</option>
+                <option value={0.01} className="bg-zinc-900 text-zinc-200">
+                  0.01 ({isTr ? "Genel Avrupa" : "General European"})
+                </option>
+                <option value={0.02} className="bg-zinc-900 text-zinc-200">
+                  0.02 ({isTr ? "Doğu Asya" : "East Asian"})
+                </option>
+                <option value={0.03} className="bg-zinc-900 text-zinc-200">
+                  0.03 ({isTr ? "SWGDAM Standardı" : "SWGDAM Standard"})
+                </option>
+                <option value={0.05} className="bg-zinc-900 text-zinc-200">
+                  0.05 ({isTr ? "Endogam / İzole" : "Endogamous / Isolated"})
+                </option>
               </select>
             </div>
 
             {/* Observed Matches k */}
             <div className="flex items-center gap-2 bg-black/60 px-3 py-1.5 rounded-lg border border-tactical-border/50">
-              <span className="text-zinc-400 font-bold whitespace-nowrap">Observed (k):</span>
+              <span className="text-zinc-400 font-bold whitespace-nowrap">
+                {isTr ? "Gözlenen (k):" : "Observed (k):"}
+              </span>
               <input
                 type="number"
                 min={0}
@@ -615,7 +656,9 @@ export default function PanelYSTR() {
 
           <div className="text-[10px] text-zinc-500 font-bold flex items-center gap-1.5">
             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-            YHRD Release 68 Standard Counting Method Active
+            {isTr
+              ? "YHRD Sürüm 68 Standart Sayım Yöntemi Aktif"
+              : "YHRD Release 68 Standard Counting Method Active"}
           </div>
         </div>
       </div>
@@ -625,28 +668,32 @@ export default function PanelYSTR() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-tactical-border/40 pb-3">
           <div>
             <h3 className="text-xs sm:text-sm font-bold text-tactical-text uppercase tracking-wider">
-              Y-FILER Plus 27-Locus Haplotype Matrix (25 Systems)
+              {isTr
+                ? "Y-FILER Plus 27-Lokus Haplotipleri Matrisi (25 Sistem)"
+                : "Y-FILER Plus 27-Locus Haplotype Matrix (25 Systems)"}
             </h3>
             <p className="text-[10px] text-tactical-text-muted mt-0.5">
-              CE Dye Chemistry Multiplex • 7 Rapidly Mutating Loci (RM) • Stepwise Mutation Model
+              {isTr
+                ? "CE Boya Kimyası Çoklaması • 7 Hızlı Mutasyona Uğrayan Lokus (RM) • Kademeli Mutasyon Modeli"
+                : "CE Dye Chemistry Multiplex • 7 Rapidly Mutating Loci (RM) • Stepwise Mutation Model"}
             </p>
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 text-blue-300">
-              6-FAM (Blue)
+              6-FAM ({isTr ? "Mavi" : "Blue"})
             </span>
             <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-300">
-              VIC (Green)
+              VIC ({isTr ? "Yeşil" : "Green"})
             </span>
             <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/30 text-amber-300">
-              NED (Yellow)
+              NED ({isTr ? "Sarı" : "Yellow"})
             </span>
             <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-rose-500/10 border border-rose-500/30 text-rose-300">
-              TAZ (Red)
+              TAZ ({isTr ? "Kırmızı" : "Red"})
             </span>
             <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-fuchsia-500/10 border border-fuchsia-500/30 text-fuchsia-300">
-              SID (Purple / RM)
+              SID ({isTr ? "Mor / RM" : "Purple / RM"})
             </span>
           </div>
         </div>
@@ -703,11 +750,11 @@ export default function PanelYSTR() {
                 {/* Evidence vs Suspect Alleles */}
                 <div className="space-y-1 bg-black/40 p-1.5 rounded-lg border border-tactical-border/30 text-[10px]">
                   <div className="flex items-center justify-between">
-                    <span className="text-zinc-500 font-bold">Evid:</span>
+                    <span className="text-zinc-500 font-bold">{isTr ? "Delil:" : "Evid:"}</span>
                     <span className="font-bold text-zinc-200 font-mono">{strA}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-zinc-500 font-bold">Susp:</span>
+                    <span className="text-zinc-500 font-bold">{isTr ? "Şüpheli:" : "Susp:"}</span>
                     <span className={`font-bold font-mono ${!isMatch ? (loc.isRm ? "text-amber-400" : "text-rose-400") : "text-emerald-400"}`}>
                       {strB}
                     </span>
@@ -719,7 +766,7 @@ export default function PanelYSTR() {
                   <span className="text-zinc-500">μ = {loc.mu}</span>
                   {isMatch ? (
                     <span className="text-emerald-400 font-bold flex items-center gap-0.5">
-                      <CheckCircle2 className="w-2.5 h-2.5" /> Match
+                      <CheckCircle2 className="w-2.5 h-2.5" /> {isTr ? "Uyum" : "Match"}
                     </span>
                   ) : (
                     <span className={`font-bold flex items-center gap-0.5 ${loc.isRm ? "text-amber-400" : "text-rose-400"}`}>
@@ -741,16 +788,20 @@ export default function PanelYSTR() {
             <div>
               <h3 className="text-xs sm:text-sm font-bold text-tactical-text uppercase tracking-wider flex items-center gap-1.5">
                 <GitCommit className="w-4 h-4 text-indigo-400" />
-                Bayesian Y-DNA Haplogroup Clade Predictor
+                {isTr
+                  ? "Bayesyen Y-DNA Haplogrup Kladı Tahmincisi"
+                  : "Bayesian Y-DNA Haplogroup Clade Predictor"}
               </h3>
               <p className="text-[10px] text-tactical-text-muted mt-0.5">
-                ISOGG 2020 Modal Vectors • Softmax Posterior Probability Simplex
+                {isTr
+                  ? "ISOGG 2020 Modal Vektörleri • Softmax Sonsal Olasılık Simpleksi"
+                  : "ISOGG 2020 Modal Vectors • Softmax Posterior Probability Simplex"}
               </p>
             </div>
             <div className="text-right">
               <span className="text-sm font-bold text-indigo-300 font-mono">{kinshipResult.predictedHaplogroup}</span>
               <p className="text-[9px] text-emerald-400 font-bold">
-                {(kinshipResult.haplogroupConfidence * 100).toFixed(1)}% Confidence
+                %{(kinshipResult.haplogroupConfidence * 100).toFixed(1)} {isTr ? "Güven" : "Confidence"}
               </p>
             </div>
           </div>
@@ -763,7 +814,7 @@ export default function PanelYSTR() {
                     {idx + 1}. {item.clade}
                   </span>
                   <span className="font-mono font-bold text-zinc-300 tabular-nums">
-                    {(item.prob * 100).toFixed(1)}%
+                    %{(item.prob * 100).toFixed(1)}
                   </span>
                 </div>
                 <div className="w-full bg-black/40 rounded-full h-2 overflow-hidden border border-tactical-border/40">
@@ -783,11 +834,17 @@ export default function PanelYSTR() {
           </div>
 
           <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40 text-[10px] text-zinc-400 space-y-1">
-            <span className="text-indigo-300 font-bold">Phylogenetic Annotation:</span>
+            <span className="text-indigo-300 font-bold">
+              {isTr ? "Filogenetik Not:" : "Phylogenetic Annotation:"}
+            </span>
             <p>
-              Clade {kinshipResult.predictedHaplogroup} defined by primary basal SNP marker{" "}
-              <strong className="text-zinc-200">{kinshipResult.primarySnp}</strong>. High concordance with YHRD
-              phylogeographic continental distributions.
+              {isTr
+                ? `Klad ${kinshipResult.predictedHaplogroup}, birincil bazal SNP belirteci `
+                : `Clade ${kinshipResult.predictedHaplogroup} defined by primary basal SNP marker `}
+              <strong className="text-zinc-200">{kinshipResult.primarySnp}</strong>
+              {isTr
+                ? " ile tanımlanmıştır. YHRD filocoğrafi kıtasal dağılımları ile yüksek uyum."
+                : ". High concordance with YHRD phylogeographic continental distributions."}
             </p>
           </div>
         </div>
@@ -798,45 +855,57 @@ export default function PanelYSTR() {
             <div className="border-b border-tactical-border/40 pb-3">
               <h3 className="text-xs sm:text-sm font-bold text-tactical-text uppercase tracking-wider flex items-center gap-1.5">
                 <Activity className="w-4 h-4 text-cyan-400" />
-                Decoupled Nested Repeat System (DYS389I & DYS389II)
+                {isTr
+                  ? "Ayrıştırılmış İçiçe Tekrar Sistemi (DYS389I & DYS389II)"
+                  : "Decoupled Nested Repeat System (DYS389I & DYS389II)"}
               </h3>
               <p className="text-[10px] text-tactical-text-muted mt-0.5">
-                Physical Amplicon Enclosure • DYS389.2_pure = DYS389II_total - DYS389I
+                {isTr
+                  ? "Fiziksel Amplikon Çevrelemesi • DYS389.2_saf = DYS389II_toplam - DYS389I"
+                  : "Physical Amplicon Enclosure • DYS389.2_pure = DYS389II_total - DYS389I"}
               </p>
             </div>
 
             <div className="grid grid-cols-3 gap-3 text-center">
               <div className="p-3 rounded-xl bg-black/40 border border-blue-500/30 space-y-1">
-                <span className="text-[9px] text-zinc-400 font-bold uppercase">DYS389I (Nested)</span>
+                <span className="text-[9px] text-zinc-400 font-bold uppercase">
+                  {isTr ? "DYS389I (İçiçe)" : "DYS389I (Nested)"}
+                </span>
                 <p className="text-lg font-bold font-mono text-blue-300">
                   {selectedCohort.profileA.DYS389I ?? 13}
                 </p>
-                <p className="text-[8px] text-zinc-500">Proximal Repeat</p>
+                <p className="text-[8px] text-zinc-500">{isTr ? "Proksimal Tekrar" : "Proximal Repeat"}</p>
               </div>
 
               <div className="p-3 rounded-xl bg-black/40 border border-indigo-500/30 space-y-1">
-                <span className="text-[9px] text-zinc-400 font-bold uppercase">DYS389II (Total)</span>
+                <span className="text-[9px] text-zinc-400 font-bold uppercase">
+                  {isTr ? "DYS389II (Toplam)" : "DYS389II (Total)"}
+                </span>
                 <p className="text-lg font-bold font-mono text-indigo-300">
                   {selectedCohort.profileA.DYS389II ?? 29}
                 </p>
-                <p className="text-[8px] text-zinc-500">Full Amplicon</p>
+                <p className="text-[8px] text-zinc-500">{isTr ? "Tam Amplikon" : "Full Amplicon"}</p>
               </div>
 
               <div className="p-3 rounded-xl bg-cyan-950/30 border border-cyan-500/50 space-y-1 shadow-[0_0_10px_rgba(6,182,212,0.1)]">
-                <span className="text-[9px] text-cyan-300 font-bold uppercase">DYS389.2 (Pure)</span>
+                <span className="text-[9px] text-cyan-300 font-bold uppercase">
+                  {isTr ? "DYS389.2 (Saf)" : "DYS389.2 (Pure)"}
+                </span>
                 <p className="text-lg font-bold font-mono text-cyan-300">
                   {(selectedCohort.profileA.DYS389II ?? 29) - (selectedCohort.profileA.DYS389I ?? 13)}
                 </p>
-                <p className="text-[8px] text-emerald-400 font-bold">Decoupled</p>
+                <p className="text-[8px] text-emerald-400 font-bold">{isTr ? "Ayrıştırıldı" : "Decoupled"}</p>
               </div>
             </div>
 
             <div className="p-3.5 rounded-xl bg-black/40 border border-tactical-border/40 text-[10px] text-zinc-400 space-y-1.5">
-              <span className="text-cyan-300 font-bold">Biophysical Mutation Attribution Rule:</span>
+              <span className="text-cyan-300 font-bold">
+                {isTr ? "Biyofiziksel Mutasyon Atfetme Kuralı:" : "Biophysical Mutation Attribution Rule:"}
+              </span>
               <p>
-                A single mutation event at DYS389I physically increases the total amplicon repeat count of DYS389II.
-                The FORENZA engine decouples the variable repeat component to prevent false double-counting of
-                mutations in SMM likelihood ratio calculations.
+                {isTr
+                  ? "DYS389I'deki tek bir mutasyon olayı, DYS389II'nin toplam amplikon tekrar sayısını fiziksel olarak artırır. FORENZA motoru, SMM olabilirlik oranı hesaplamalarında mutasyonların hatalı çift sayılmasını önlemek için değişken tekrar bileşenini ayrıştırır."
+                  : "A single mutation event at DYS389I physically increases the total amplicon repeat count of DYS389II. The FORENZA engine decouples the variable repeat component to prevent false double-counting of mutations in SMM likelihood ratio calculations."}
               </p>
             </div>
           </div>
@@ -845,12 +914,17 @@ export default function PanelYSTR() {
           <div className="p-3.5 rounded-xl bg-amber-950/20 border border-amber-500/40 text-[10px] text-amber-200/90 space-y-1 shadow-lg">
             <div className="flex items-center gap-1.5 font-bold text-amber-300">
               <ShieldCheck className="w-4 h-4 text-amber-400" />
-              <span>ISFG (2020) Patrilineal Lineage Reporting Shield</span>
+              <span>
+                {isTr
+                  ? "ISFG (2020) Baba Soyu Raporlama & Mahkeme Kalkanı"
+                  : "ISFG (2020) Patrilineal Lineage Reporting Shield"}
+              </span>
             </div>
             <p className="leading-relaxed">
-              <strong>Legal Note:</strong> Y-STR haplotypes are transmitted patrilineally without recombination.
-              A match indicates that the evidence DNA originates from the suspect <em>or any of his patrilineal male
-              relatives</em> sharing the same common paternal lineage.
+              <strong>{isTr ? "Hukuki Not:" : "Legal Note:"}</strong>{" "}
+              {isTr
+                ? "Y-STR haplotipleri rekombinasyonsuz olarak baba soyu üzerinden aktarılır. Bir eşleşme, delil DNA'sının şüpheliden veya aynı ortak baba soyunu paylaşan herhangi bir erkek akrabasından kaynaklandığını gösterir."
+                : "Y-STR haplotypes are transmitted patrilineally without recombination. A match indicates that the evidence DNA originates from the suspect or any of his patrilineal male relatives sharing the same common paternal lineage."}
             </p>
           </div>
         </div>

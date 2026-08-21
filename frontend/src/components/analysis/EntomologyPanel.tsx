@@ -3,8 +3,12 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Bug, Thermometer, Clock, Activity, ChevronRight, AlertCircle, ShieldCheck } from "lucide-react";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 export default function EntomologyPanel() {
+  const { lang } = useSaasLanguage();
+  const isTr = lang === "tr";
+
   const [activeSubTab, setActiveSubTab] = useState<"pmi" | "succession">("pmi");
 
   // Interactive Form State
@@ -34,12 +38,32 @@ export default function EntomologyPanel() {
   const minDays = (parseFloat(pmiDays) * 0.9).toFixed(1);
   const maxDays = (parseFloat(pmiDays) * 1.1).toFixed(1);
 
-  // Mock Succession Data
+  // Succession Data
   const successionWaves = [
-    { wave: "Fresh Stage Wave", period: "1–3 Days", families: ["Calliphoridae (Blowflies)", "Muscidae (Houseflies)"], status: "PRESENT" },
-    { wave: "Bloated Stage Wave", period: "3–7 Days", families: ["Silphidae (Carrion Beetles)", "Histeridae (Clown Beetles)"], status: "ACTIVE" },
-    { wave: "Active Decay Wave", period: "8–20 Days", families: ["Piophilidae (Cheese Skippers)", "Staphylinidae (Rove Beetles)"], status: "EMERGING" },
-    { wave: "Advanced / Dry Decay", period: "25–50+ Days", families: ["Dermestidae (Skin Beetles)", "Tineidae (Moths)"], status: "ABSENT" },
+    {
+      wave: isTr ? "Taze Evre Dalgası" : "Fresh Stage Wave",
+      period: isTr ? "1–3 Gün" : "1–3 Days",
+      families: isTr ? ["Calliphoridae (Leş Sinekleri)", "Muscidae (Karasinekler)"] : ["Calliphoridae (Blowflies)", "Muscidae (Houseflies)"],
+      status: isTr ? "MEVCUT" : "PRESENT"
+    },
+    {
+      wave: isTr ? "Şişme Evresi Dalgası" : "Bloated Stage Wave",
+      period: isTr ? "3–7 Gün" : "3–7 Days",
+      families: isTr ? ["Silphidae (Leş Böcekleri)", "Histeridae (Palyaço Böcekleri)"] : ["Silphidae (Carrion Beetles)", "Histeridae (Clown Beetles)"],
+      status: isTr ? "AKTİF" : "ACTIVE"
+    },
+    {
+      wave: isTr ? "Aktif Çürüme Dalgası" : "Active Decay Wave",
+      period: isTr ? "8–20 Gün" : "8–20 Days",
+      families: isTr ? ["Piophilidae (Peynir Sinekleri)", "Staphylinidae (Kısa Kanatlılar)"] : ["Piophilidae (Cheese Skippers)", "Staphylinidae (Rove Beetles)"],
+      status: isTr ? "BELİREN" : "EMERGING"
+    },
+    {
+      wave: isTr ? "İleri / Kuru Çürüme" : "Advanced / Dry Decay",
+      period: isTr ? "25–50+ Gün" : "25–50+ Days",
+      families: isTr ? ["Dermestidae (Deri Böcekleri)", "Tineidae (Güveler)"] : ["Dermestidae (Skin Beetles)", "Tineidae (Moths)"],
+      status: isTr ? "YOK" : "ABSENT"
+    },
   ];
 
   return (
@@ -52,10 +76,12 @@ export default function EntomologyPanel() {
           </div>
           <div>
             <h2 className="text-sm sm:text-base font-bold tracking-widest text-tactical-text uppercase">
-              Forensic Entomology & PMI_min Estimator Hub
+              {isTr ? "Adli Entomoloji & PMI_min Tahmin Merkezi" : "Forensic Entomology & PMI_min Estimator Hub"}
             </h2>
             <p className="text-[10px] text-tactical-text-muted mt-0.5">
-              Accumulated Degree Hours (ADH) Thermal Models • Diptera Larval Development • Ecological Succession Waves
+              {isTr
+                ? "Birikimli Derece Saat (ADH) Termal Modelleri • Diptera Larva Gelişimi • Ekolojik Süksesyon Dalgaları"
+                : "Accumulated Degree Hours (ADH) Thermal Models • Diptera Larval Development • Ecological Succession Waves"}
             </p>
           </div>
         </div>
@@ -68,7 +94,7 @@ export default function EntomologyPanel() {
               activeSubTab === "pmi" ? "bg-lime-500/20 text-lime-300 border border-lime-500/40" : "text-zinc-500 hover:text-zinc-300"
             }`}
           >
-            ADH PMI_min Estimator
+            {isTr ? "ADH PMI_min Hesaplayıcı" : "ADH PMI_min Estimator"}
           </button>
           <button
             onClick={() => setActiveSubTab("succession")}
@@ -76,7 +102,7 @@ export default function EntomologyPanel() {
               activeSubTab === "succession" ? "bg-lime-500/20 text-lime-300 border border-lime-500/40" : "text-zinc-500 hover:text-zinc-300"
             }`}
           >
-            Succession Waves
+            {isTr ? "Süksesyon Dalgaları" : "Succession Waves"}
           </button>
         </div>
       </div>
@@ -87,47 +113,57 @@ export default function EntomologyPanel() {
           <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 space-y-5 shadow-lg">
             <div className="flex items-center justify-between border-b border-tactical-border/40 pb-3">
               <span className="text-xs font-bold text-tactical-text uppercase tracking-wider">
-                Insect Specimen & Thermal Data Input
+                {isTr ? "Böcek Numunesi & Termal Veri Girişi" : "Insect Specimen & Thermal Data Input"}
               </span>
               <span className="text-[9px] text-lime-400 font-bold bg-lime-500/10 border border-lime-500/20 px-2 py-0.5 rounded">
-                EAFE Standard Active
+                {isTr ? "EAFE Standardı Aktif" : "EAFE Standard Active"}
               </span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Species Selector */}
               <div className="space-y-2">
-                <label className="text-xs font-bold text-zinc-400 uppercase">Diptera Species</label>
+                <label className="text-xs font-bold text-zinc-400 uppercase">
+                  {isTr ? "Diptera Türü" : "Diptera Species"}
+                </label>
                 <select
                   value={species}
                   onChange={(e) => setSpecies(e.target.value)}
                   className="w-full bg-black/50 border border-tactical-border/60 rounded-xl p-2 text-xs font-mono text-lime-400 focus:outline-none focus:border-lime-500"
                 >
-                  <option value="Calliphora vicina">Calliphora vicina (Blue Blowfly)</option>
-                  <option value="Lucilia sericata">Lucilia sericata (Green Bottle Fly)</option>
-                  <option value="Sarcophaga carnaria">Sarcophaga carnaria (Flesh Fly)</option>
+                  <option value="Calliphora vicina">
+                    Calliphora vicina ({isTr ? "Mavi Leş Sineği" : "Blue Blowfly"})
+                  </option>
+                  <option value="Lucilia sericata">
+                    Lucilia sericata ({isTr ? "Yeşil Leş Sineği" : "Green Bottle Fly"})
+                  </option>
+                  <option value="Sarcophaga carnaria">
+                    Sarcophaga carnaria ({isTr ? "Et Sineği" : "Flesh Fly"})
+                  </option>
                 </select>
               </div>
 
               {/* Development Stage */}
               <div className="space-y-2">
-                <label className="text-xs font-bold text-zinc-400 uppercase">Development Stage</label>
+                <label className="text-xs font-bold text-zinc-400 uppercase">
+                  {isTr ? "Gelişim Evresi" : "Development Stage"}
+                </label>
                 <select
                   value={stage}
                   onChange={(e) => setStage(e.target.value)}
                   className="w-full bg-black/50 border border-tactical-border/60 rounded-xl p-2 text-xs font-mono text-lime-400 focus:outline-none focus:border-lime-500"
                 >
-                  <option value="INSTAR_1">1st Instar Larva</option>
-                  <option value="INSTAR_2">2nd Instar Larva</option>
-                  <option value="INSTAR_3">3rd Instar Larva</option>
-                  <option value="PUPA">Puparium Stage</option>
+                  <option value="INSTAR_1">{isTr ? "1. İnstar Larva (L1)" : "1st Instar Larva"}</option>
+                  <option value="INSTAR_2">{isTr ? "2. İnstar Larva (L2)" : "2nd Instar Larva"}</option>
+                  <option value="INSTAR_3">{isTr ? "3. İnstar Larva (L3)" : "3rd Instar Larva"}</option>
+                  <option value="PUPA">{isTr ? "Puparyum Evresi (Pupa)" : "Puparium Stage"}</option>
                 </select>
               </div>
 
               {/* Ambient Temp Slider */}
               <div className="space-y-2">
                 <div className="flex justify-between text-xs font-mono">
-                  <span className="text-zinc-400">Ambient Temp (°C):</span>
+                  <span className="text-zinc-400">{isTr ? "Ortam Sıcaklığı (°C):" : "Ambient Temp (°C):"}</span>
                   <span className="text-lime-400 font-bold">{ambientTemp}°C</span>
                 </div>
                 <input
@@ -146,24 +182,32 @@ export default function EntomologyPanel() {
           {/* PMI Output Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="rounded-xl border border-tactical-border/60 bg-tactical-surface/40 p-4 space-y-1">
-              <span className="text-[10px] text-zinc-500 font-bold uppercase">Required ADH</span>
+              <span className="text-[10px] text-zinc-500 font-bold uppercase">
+                {isTr ? "Gerekli ADH" : "Required ADH"}
+              </span>
               <p className="text-base font-bold text-lime-400 font-mono">{reqAdh} ADH</p>
-              <p className="text-[9px] text-zinc-400">Threshold for {stage}</p>
+              <p className="text-[9px] text-zinc-400">{stage} {isTr ? "için eşik değer" : "threshold"}</p>
             </div>
             <div className="rounded-xl border border-tactical-border/60 bg-tactical-surface/40 p-4 space-y-1">
-              <span className="text-[10px] text-zinc-500 font-bold uppercase">Effective Temp (T_eff)</span>
+              <span className="text-[10px] text-zinc-500 font-bold uppercase">
+                {isTr ? "Etkin Sıcaklık (T_eff)" : "Effective Temp (T_eff)"}
+              </span>
               <p className="text-base font-bold text-tactical-text font-mono">{effectiveTemp.toFixed(1)} °C</p>
-              <p className="text-[9px] text-zinc-400">T_ambient - T_base ({baseTemp}°C)</p>
+              <p className="text-[9px] text-zinc-400">T_ortam - T_taban ({baseTemp}°C)</p>
             </div>
             <div className="rounded-xl border border-tactical-border/60 bg-tactical-surface/40 p-4 space-y-1">
-              <span className="text-[10px] text-zinc-500 font-bold uppercase">Minimum PMI (Hours)</span>
-              <p className="text-base font-bold text-amber-400 font-mono">{pmiHours} Hours</p>
-              <p className="text-[9px] text-zinc-400">Elapsed colonization time</p>
+              <span className="text-[10px] text-zinc-500 font-bold uppercase">
+                {isTr ? "Minimum PMI (Saat)" : "Minimum PMI (Hours)"}
+              </span>
+              <p className="text-base font-bold text-amber-400 font-mono">{pmiHours} {isTr ? "Saat" : "Hours"}</p>
+              <p className="text-[9px] text-zinc-400">{isTr ? "Geçen kolonizasyon süresi" : "Elapsed colonization time"}</p>
             </div>
             <div className="rounded-xl border border-tactical-border/60 bg-tactical-surface/40 p-4 space-y-1">
-              <span className="text-[10px] text-zinc-500 font-bold uppercase">PMI_min Range (Days)</span>
-              <p className="text-base font-bold text-emerald-400 font-mono">{minDays} – {maxDays} Days</p>
-              <p className="text-[9px] text-zinc-400">90% – 110% thermal confidence interval</p>
+              <span className="text-[10px] text-zinc-500 font-bold uppercase">
+                {isTr ? "PMI_min Aralığı (Gün)" : "PMI_min Range (Days)"}
+              </span>
+              <p className="text-base font-bold text-emerald-400 font-mono">{minDays} – {maxDays} {isTr ? "Gün" : "Days"}</p>
+              <p className="text-[9px] text-zinc-400">{isTr ? "%90 – %110 termal güven aralığı" : "90% – 110% thermal confidence interval"}</p>
             </div>
           </div>
         </div>
@@ -175,10 +219,10 @@ export default function EntomologyPanel() {
           <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 space-y-4 shadow-lg">
             <div className="flex items-center justify-between border-b border-tactical-border/40 pb-3">
               <span className="text-xs font-bold text-tactical-text uppercase tracking-wider">
-                Ecological Arthropod Succession Wave Audit
+                {isTr ? "Ekolojik Eklembacaklı Süksesyon Dalgası Denetimi" : "Ecological Arthropod Succession Wave Audit"}
               </span>
               <span className="text-[9px] text-lime-400 font-bold bg-lime-500/10 border border-lime-500/20 px-2 py-0.5 rounded">
-                Active Decay Stage Matched
+                {isTr ? "Aktif Çürüme Evresi Eşleşti" : "Active Decay Stage Matched"}
               </span>
             </div>
 
@@ -191,14 +235,16 @@ export default function EntomologyPanel() {
                       <span className="text-zinc-600">•</span>
                       <span className="text-amber-300">{w.period}</span>
                     </div>
-                    <p className="text-[10px] text-zinc-400">Key Families: {w.families.join(", ")}</p>
+                    <p className="text-[10px] text-zinc-400">
+                      {isTr ? "Anahtar Familyalar:" : "Key Families:"} {w.families.join(", ")}
+                    </p>
                   </div>
 
                   <div>
                     <span className={`px-3 py-1 rounded text-[9px] font-bold uppercase font-mono ${
-                      w.status === "ACTIVE"
+                      w.status === "ACTIVE" || w.status === "AKTİF"
                         ? "bg-lime-500/20 text-lime-400 border border-lime-500/30"
-                        : w.status === "PRESENT"
+                        : w.status === "PRESENT" || w.status === "MEVCUT"
                         ? "bg-indigo-500/20 text-indigo-300 border border-indigo-500/30"
                         : "bg-zinc-500/20 text-zinc-500 border border-zinc-500/30"
                     }`}>

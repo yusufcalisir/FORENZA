@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Dna, RefreshCw, CheckCircle2, Play, Activity, Sparkles, Cpu, ShieldCheck, Layers, FileText } from "lucide-react";
 import { getApiBaseUrl } from "@/lib/api";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 interface BenchmarkResult {
   synthetic_case_id: string;
@@ -41,6 +42,8 @@ interface CaseData {
 }
 
 export default function SyntheticCaseGeneratorPanel() {
+  const { lang } = useSaasLanguage();
+  const isTr = lang === "tr";
   const [scenarioType, setScenarioType] = useState<string>("3_PERSON_STR_MIXTURE");
   const [numContributors, setNumContributors] = useState<number>(3);
   const [degradation, setDegradation] = useState<number>(0.3);
@@ -221,14 +224,16 @@ export default function SyntheticCaseGeneratorPanel() {
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
               <h2 className="text-sm sm:text-base font-bold tracking-widest text-tactical-text uppercase truncate">
-                Synthetic Forensic Case Generator & Academic Validation
+                {isTr ? "Sentetik Adli Vaka Üreteci & Akademik Doğrulama" : "Synthetic Forensic Case Generator & Academic Validation"}
               </h2>
               <span className="px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-bold bg-pink-500/20 text-pink-300 border border-pink-500/30 shrink-0">
-                100% GROUND TRUTH
+                {isTr ? "%100 GERÇEK DURUM" : "100% GROUND TRUTH"}
               </span>
             </div>
             <p className="text-[10px] text-zinc-400 mt-0.5 truncate">
-              Stochastic Case Synthesis, Ground-Truth Matrix & Self-Validation Engine (Pillar 1)
+              {isTr
+                ? "Stokastik Vaka Sentezi, Gerçek Durum Matrisi & Kendi Kendini Doğrulama Motoru (Pillar 1)"
+                : "Stochastic Case Synthesis, Ground-Truth Matrix & Self-Validation Engine (Pillar 1)"}
             </p>
           </div>
         </div>
@@ -246,7 +251,9 @@ export default function SyntheticCaseGeneratorPanel() {
             className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-pink-500 hover:bg-pink-400 text-zinc-950 font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_20px_rgba(236,72,153,0.3)] hover:shadow-[0_0_25px_rgba(236,72,153,0.5)] disabled:opacity-50 active:scale-95"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
-            {loading ? `Synthesizing ${synthProgress}%...` : "Synthesize New Case"}
+            {loading
+              ? (isTr ? `Sentezleniyor %${synthProgress}...` : `Synthesizing ${synthProgress}%...`)
+              : (isTr ? "Yeni Vaka Sentezle" : "Synthesize New Case")}
           </button>
         </div>
       </div>
@@ -263,7 +270,9 @@ export default function SyntheticCaseGeneratorPanel() {
             <div className="flex items-center justify-between text-xs text-pink-300">
               <span className="flex items-center gap-2 font-bold truncate">
                 <Cpu className="w-4 h-4 animate-pulse text-pink-400 shrink-0" />
-                Synthesizing 24-Locus Autosomal Ground Truth & Multi-Contributor Peak Intensities...
+                {isTr
+                  ? "24-Lokus Otozomal Gerçek Durum ve Çoklu-Katkı Pik Şiddetleri Sentezleniyor..."
+                  : "Synthesizing 24-Locus Autosomal Ground Truth & Multi-Contributor Peak Intensities..."}
               </span>
               <span className="font-mono font-black">{synthProgress}%</span>
             </div>
@@ -286,7 +295,9 @@ export default function SyntheticCaseGeneratorPanel() {
             <div className="flex items-center justify-between text-xs text-emerald-300">
               <span className="flex items-center gap-2 font-bold truncate">
                 <ShieldCheck className="w-4 h-4 animate-pulse text-emerald-400 shrink-0" />
-                Executing Self-Validation Benchmark Harness against Known Ground Truth Matrix...
+                {isTr
+                  ? "Bilinen Gerçek Durum Matrisine Karşı Doğrulama Testi Yürütülüyor..."
+                  : "Executing Self-Validation Benchmark Harness against Known Ground Truth Matrix..."}
               </span>
               <span className="font-mono font-black">{evalProgress}%</span>
             </div>
@@ -306,27 +317,37 @@ export default function SyntheticCaseGeneratorPanel() {
         {/* Left: Stochastic Case Parameter Controls */}
         <div className="space-y-4 rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-4 sm:p-5 shadow-xl flex flex-col justify-between">
           <span className="text-xs font-bold uppercase tracking-wider text-tactical-text block border-b border-tactical-border/40 pb-3">
-            Synthetic Case Generator Controls
+            {isTr ? "Sentetik Vaka Üreteci Kontrolleri" : "Synthetic Case Generator Controls"}
           </span>
 
           <div className="space-y-1.5">
-            <span className="text-[10px] text-zinc-400 font-bold uppercase">Scenario Type</span>
+            <span className="text-[10px] text-zinc-400 font-bold uppercase">{isTr ? "Senaryo Türü" : "Scenario Type"}</span>
             <select
               value={scenarioType}
               onChange={(e) => setScenarioType(e.target.value)}
               className="w-full p-2.5 rounded-xl border border-tactical-border/60 bg-black/60 text-xs text-zinc-200 cursor-pointer outline-none focus:border-pink-500"
             >
-              <option value="3_PERSON_STR_MIXTURE">3-Person Complex STR Mixture</option>
-              <option value="KINSHIP_DVI">Mass Disaster Kinship DVI Tree</option>
-              <option value="TOUCH_LTDNA">Touch DNA Low-Mass Template (LTDNA)</option>
-              <option value="PHENOTYPE_PROFILE">HIrisPlex-S Extended Phenotyping</option>
+              <option value="3_PERSON_STR_MIXTURE">
+                {isTr ? "3 Kişilik Karmaşık STR Karışımı" : "3-Person Complex STR Mixture"}
+              </option>
+              <option value="KINSHIP_DVI">
+                {isTr ? "Toplu Felaket Akrabalık DVI Ağacı" : "Mass Disaster Kinship DVI Tree"}
+              </option>
+              <option value="TOUCH_LTDNA">
+                {isTr ? "Temas DNA Düşük Miktarlı Şablon (LT-DNA)" : "Touch DNA Low-Mass Template (LTDNA)"}
+              </option>
+              <option value="PHENOTYPE_PROFILE">
+                {isTr ? "HIrisPlex-S Genişletilmiş Fenotipleme" : "HIrisPlex-S Extended Phenotyping"}
+              </option>
             </select>
           </div>
 
           <div className="space-y-1.5">
             <div className="flex justify-between text-[10px]">
-              <span className="text-zinc-400 font-bold uppercase">Contributors</span>
-              <span className="text-pink-300 font-bold tabular-nums">{numContributors} Persons</span>
+              <span className="text-zinc-400 font-bold uppercase">{isTr ? "Katkı Veren Sayısı" : "Contributors"}</span>
+              <span className="text-pink-300 font-bold tabular-nums">
+                {numContributors} {isTr ? "Kişi" : "Persons"}
+              </span>
             </div>
             <input
               type="range"
@@ -340,7 +361,7 @@ export default function SyntheticCaseGeneratorPanel() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1">
-              <span className="text-[9px] text-zinc-400 font-bold uppercase">Degradation Factor</span>
+              <span className="text-[9px] text-zinc-400 font-bold uppercase">{isTr ? "Bozunma Faktörü" : "Degradation Factor"}</span>
               <input
                 type="number"
                 step={0.1}
@@ -352,7 +373,7 @@ export default function SyntheticCaseGeneratorPanel() {
               />
             </div>
             <div className="space-y-1">
-              <span className="text-[9px] text-zinc-400 font-bold uppercase">Dropout Rate (P_D)</span>
+              <span className="text-[9px] text-zinc-400 font-bold uppercase">{isTr ? "Alel Kaybı Oranı (P_D)" : "Dropout Rate (P_D)"}</span>
               <input
                 type="number"
                 step={0.01}
@@ -367,7 +388,9 @@ export default function SyntheticCaseGeneratorPanel() {
 
           {/* Contributors summary pill list */}
           <div className="p-3 rounded-xl bg-black/30 border border-tactical-border/30 space-y-1.5">
-            <span className="text-[9px] text-zinc-400 uppercase font-bold block">Synthesized Contributors</span>
+            <span className="text-[9px] text-zinc-400 uppercase font-bold block">
+              {isTr ? "Sentezlenen Katkı Verenler" : "Synthesized Contributors"}
+            </span>
             <div className="flex flex-wrap gap-2">
               {caseData.ground_truth_contributors.map((c) => (
                 <span
@@ -392,20 +415,20 @@ export default function SyntheticCaseGeneratorPanel() {
             <div className="flex items-center justify-between border-b border-pink-500/20 pb-3">
               <span className="text-xs font-bold uppercase tracking-wider text-tactical-text flex items-center gap-2">
                 <Dna className="w-4 h-4 text-pink-400 shrink-0" />
-                Ground-Truth Target Matrix
+                {isTr ? "Gerçek Durum Hedef Matrisi" : "Ground-Truth Target Matrix"}
               </span>
               <span className="px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold text-[9px] uppercase shrink-0">
-                100% VALIDATED
+                {isTr ? "%100 DOĞRULANDI" : "100% VALIDATED"}
               </span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono">
               <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40 space-y-1">
-                <span className="text-[9px] text-zinc-500 block uppercase">Case ID</span>
+                <span className="text-[9px] text-zinc-500 block uppercase">{isTr ? "Vaka Kimliği" : "Case ID"}</span>
                 <span className="font-bold text-pink-300 text-xs truncate block">{caseData.synthetic_case_id}</span>
               </div>
               <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40 space-y-1">
-                <span className="text-[9px] text-zinc-500 block uppercase">True Ground-Truth LR</span>
+                <span className="text-[9px] text-zinc-500 block uppercase">{isTr ? "Gerçek Olabilirlik Oranı (LR)" : "True Ground-Truth LR"}</span>
                 <span className="font-bold text-emerald-300 text-xs block tabular-nums">
                   10^{caseData.ground_truth_metrics.true_log10_lr}
                 </span>
@@ -419,7 +442,9 @@ export default function SyntheticCaseGeneratorPanel() {
               className="w-full py-3 rounded-xl border border-pink-500/40 bg-pink-500/20 hover:bg-pink-500/30 text-pink-200 font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer transition-all shadow-[0_0_15px_rgba(236,72,153,0.15)] disabled:opacity-50 active:scale-95"
             >
               <Play className={`w-3.5 h-3.5 fill-current ${evaluating ? "animate-spin" : ""}`} />
-              {evaluating ? `Evaluating ${evalProgress}%...` : "Run Self-Validation Benchmark Harness"}
+              {evaluating
+                ? (isTr ? `Değerlendiriliyor %${evalProgress}...` : `Evaluating ${evalProgress}%...`)
+                : (isTr ? "Kendi Kendini Doğrulama Testini Çalıştır" : "Run Self-Validation Benchmark Harness")}
             </button>
 
             {/* Benchmark Results */}
@@ -431,7 +456,7 @@ export default function SyntheticCaseGeneratorPanel() {
               >
                 <div className="flex flex-wrap items-center justify-between gap-2 border-b border-tactical-border/30 pb-2">
                   <span className="text-[9px] text-pink-300 font-bold uppercase">
-                    Academic Validation Scorecard
+                    {isTr ? "Akademik Doğrulama Karnesi" : "Academic Validation Scorecard"}
                   </span>
                   <span className="px-2 py-0.5 rounded text-[8px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
                     {benchmark.self_validation_verdict}

@@ -84,7 +84,11 @@ class ClopperPearsonResponse(BaseModel):
     alpha: float
     point_estimate: float
     p_upper_bound: float
-    equivalent_match_ratio: float
+    p_upper: float = 0.0
+    p_lower: float = 0.0
+    lr_upper_bound: float = 0.0
+    log10_lr_upper_bound: float = 0.0
+    equivalent_match_ratio: float = 0.0
     method: str
 
 
@@ -104,7 +108,9 @@ class BrennerFrequencyResponse(BaseModel):
     database_size_n: int
     theta: float
     p_brenner: float
-    equivalent_match_ratio: float
+    lr_brenner: float = 0.0
+    log10_lr_brenner: float = 0.0
+    equivalent_match_ratio: float = 0.0
 
 
 # ── 3. Haplogroup Prediction ────────────────────────────────────────────────
@@ -154,10 +160,15 @@ class MixtureContributorsRequest(BaseModel):
     """Request to estimate minimum male contributors from multi-allele mixture."""
     model_config = ConfigDict(protected_namespaces=())
 
-    locus_allele_counts: Dict[str, int] = Field(
-        ...,
+    locus_allele_counts: Optional[Dict[str, int]] = Field(
+        None,
         description="Observed peak/allele counts per locus.",
         examples=[{"DYS19": 2, "DYS389I": 2, "DYS385a/b": 3, "DYF387S1a/b": 4}],
+    )
+    locus_alleles: Optional[Dict[str, List[float]]] = Field(
+        None,
+        description="Observed allele lists per locus.",
+        examples=[{"DYS19": [14.0, 15.0], "DYS389I": [13.0, 14.0, 15.0]}],
     )
 
 
@@ -165,11 +176,73 @@ class MixtureContributorsResponse(BaseModel):
     model_config = ConfigDict(protected_namespaces=())
 
     minimum_male_contributors: int
-    locus_allele_counts: Dict[str, int]
-    methodology: str
+    multi_copy_locus_flag: bool = False
+    locus_allele_counts: Dict[str, int] = Field(default_factory=dict)
+    methodology: str = ""
 
 
-# ── 5. Reference Catalogs & Cohorts ─────────────────────────────────────────
+# ── 5. SMM & Legacy Match Schemas ───────────────────────────────────────────
+
+class SMMTransitionRequest(BaseModel):
+    """Request to compute SMM paternity transmission probability."""
+    model_config = ConfigDict(protected_namespaces=())
+
+    father_allele: float
+    son_allele: float
+    locus_name: str
+    p_step: float = 0.10
+    mutation_rate: Optional[float] = None
+
+
+class SMMTransitionResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
+    locus_name: str
+    father_allele: float
+    son_allele: float
+    step_distance_m: int
+    is_mutation: bool
+    mutation_rate: float
+    transition_probability: float
+    log10_transition_probability: float
+    mutation_classification: str
+
+
+class YSTRMatchRequest(BaseModel):
+    """Request for Y-STR paternal match evaluation."""
+    model_config = ConfigDict(protected_namespaces=())
+
+    evidence_id: str = "EVID-01"
+    suspect_id: str = "SUSP-01"
+    evidence_markers: Dict[str, Any]
+    suspect_markers: Dict[str, Any]
+    database_count_k: int = 0
+    database_size_n: int = 25000
+    theta: float = 0.03
+    alpha: float = 0.05
+
+
+class YSTRMatchResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
+    evidence_id: str
+    suspect_id: str
+    match_status: str
+    matching_loci_count: int
+    total_evaluated_loci: int
+    mismatch_loci_count: int
+    database_count_k: int
+    database_size_n: int
+    theta: float
+    clopper_pearson: Dict[str, Any]
+    brenner: Optional[Dict[str, Any]] = None
+    brenner_correction: Optional[Dict[str, Any]] = None
+    smm_mutations: List[Dict[str, Any]] = Field(default_factory=list)
+    paternal_lineage_verdict: str
+    prosecutors_fallacy_shield: str
+
+
+# ── 6. Reference Catalogs & Cohorts ─────────────────────────────────────────
 
 class YStrLocusMetadataSchema(BaseModel):
     model_config = ConfigDict(protected_namespaces=())
@@ -188,6 +261,15 @@ class YStrLocusMetadataSchema(BaseModel):
     mutation_class: str
     is_rapidly_mutating: bool
     is_multi_copy: bool
+
+
+class PanelMetadataResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
+    total_loci: int = 27
+    rapidly_mutating_loci_count: int = 7
+    standard_loci_count: int = 20
+    loci: List[YStrLocusMetadataSchema] = Field(default_factory=list)
 
 
 class YhrdMetapopulationSchema(BaseModel):
@@ -228,3 +310,4 @@ class CaseworkCohortSchema(BaseModel):
     expected_min_lr: float
     profile_a: Dict[str, Any]
     profile_b: Dict[str, Any]
+

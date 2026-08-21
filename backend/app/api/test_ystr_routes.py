@@ -123,8 +123,11 @@ class TestYStrApiEndpoints:
         res = client.get("/api/v1/forensic/lineage/ystr/panel-metadata")
         assert res.status_code == 200
         data = res.json()
-        assert len(data) == 25
-        loci_names = [d["locus_name"] for d in data]
+        assert data["total_loci"] == 27
+        assert data["rapidly_mutating_loci_count"] == 7
+        assert data["standard_loci_count"] == 20
+        assert len(data["loci"]) == 25
+        loci_names = [d["locus_name"] for d in data["loci"]]
         assert "DYS19" in loci_names
         assert "DYS385a/b" in loci_names
         assert "DYS518" in loci_names

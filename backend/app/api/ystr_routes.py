@@ -17,6 +17,7 @@ Endpoints:
   GET  /forensic/lineage/ystr/patrilineal-disclaimer    — ISFG (2020) Patrilineal Evaluative Disclaimer
 """
 
+import math
 from typing import List, Dict, Any
 from fastapi import APIRouter, HTTPException, status
 
@@ -45,7 +46,12 @@ from .ystr_schemas import (
     DecoupleDys389Response,
     MixtureContributorsRequest,
     MixtureContributorsResponse,
+    SMMTransitionRequest,
+    SMMTransitionResponse,
+    YSTRMatchRequest,
+    YSTRMatchResponse,
     YStrLocusMetadataSchema,
+    PanelMetadataResponse,
     YhrdMetapopulationSchema,
     GoldStandardIndividualSchema,
     CaseworkCohortSchema,
@@ -143,12 +149,20 @@ async def get_clopper_pearson_bound(body: ClopperPearsonRequest) -> ClopperPears
             detail=f"Clopper-Pearson parameter validation error: {str(exc)}",
         )
 
+    p_up = res.p_upper_bound
+    lr_up = 1.0 / p_up if p_up > 0 else float("inf")
+    log10_lr = math.log10(lr_up) if lr_up > 0 else 0.0
+
     return ClopperPearsonResponse(
         database_size_n=res.database_size_n,
         observed_matches_k=res.observed_matches_k,
         alpha=res.alpha,
         point_estimate=res.point_estimate,
         p_upper_bound=res.p_upper_bound,
+        p_upper=res.p_upper_bound,
+        p_lower=0.0,
+        lr_upper_bound=round(lr_up, 4),
+        log10_lr_upper_bound=round(log10_lr, 5),
         equivalent_match_ratio=res.equivalent_match_ratio,
         method=res.method,
     )
@@ -174,12 +188,17 @@ async def get_brenner_frequency(body: BrennerFrequencyRequest) -> BrennerFrequen
             detail=f"Brenner parameter validation error: {str(exc)}",
         )
 
+    lr_b = 1.0 / p_b if p_b > 0 else float("inf")
+    log10_lr_b = math.log10(lr_b) if lr_b > 0 else 0.0
+
     return BrennerFrequencyResponse(
         observed_count_k=body.observed_count_k,
         database_size_n=body.database_size_n,
         theta=body.theta,
         p_brenner=p_b,
-        equivalent_match_ratio=1.0 / p_b if p_b > 0 else float("inf"),
+        lr_brenner=round(lr_b, 4),
+        log10_lr_brenner=round(log10_lr_b, 5),
+        equivalent_match_ratio=round(lr_b, 2),
     )
 
 
@@ -246,30 +265,175 @@ async def decouple_dys389_endpoint(body: DecoupleDys389Request) -> DecoupleDys38
 )
 async def get_mixture_contributors(body: MixtureContributorsRequest) -> MixtureContributorsResponse:
     try:
-        n_male = YStrMathematicalFormulation.estimate_minimum_male_contributors(body.locus_allele_counts)
+        if body.locus_alleles:
+            counts = {k: len(set(v)) for k, v in body.locus_alleles.items()}
+            has_mc_flag = any(
+                (k in ["DYS385a", "DYS385b", "DYF387S1a", "DYF387S1b", "DYS385a_b", "DYF387S1a_b", "DYS385a/b", "DYF387S1a/b"]) and len(set(v)) > 4
+                for k, v in body.locus_alleles.items()
+            )
+            n_male = YStrMathematicalFormulation.estimate_minimum_male_contributors(counts)
+            if has_mc_flag and n_male < 3:
+                n_male = 3
+            return MixtureContributorsResponse(
+                minimum_male_contributors=n_male,
+                multi_copy_locus_flag=has_mc_flag,
+                locus_allele_counts=counts,
+                methodology="N_male = max_l ceil(n_alleles / 2) with multi-copy locus discrimination",
+            )
+        elif body.locus_allele_counts:
+            n_male = YStrMathematicalFormulation.estimate_minimum_male_contributors(body.locus_allele_counts)
+            has_mc = any(
+                (k in ["DYS385a", "DYS385b", "DYF387S1a", "DYF387S1b", "DYS385a_b", "DYF387S1a_b", "DYS385a/b", "DYF387S1a/b"]) and v > 4
+                for k, v in body.locus_allele_counts.items()
+            )
+            if has_mc and n_male < 3:
+                n_male = 3
+            return MixtureContributorsResponse(
+                minimum_male_contributors=n_male,
+                multi_copy_locus_flag=has_mc,
+                locus_allele_counts=body.locus_allele_counts,
+                methodology="N_male = max_l ceil(n_alleles / 2) with multi-copy locus discrimination",
+            )
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="Either locus_allele_counts or locus_alleles must be provided.",
+            )
+    except HTTPException:
+        raise
     except Exception as exc:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Mixture contributor estimation error: {str(exc)}",
         )
 
-    return MixtureContributorsResponse(
-        minimum_male_contributors=n_male,
-        locus_allele_counts=body.locus_allele_counts,
-        methodology="N_male = max_l ceil(n_alleles / 2) with multi-copy locus discrimination",
+
+# ── 5. SMM & Legacy Match Endpoints ─────────────────────────────────────────
+
+@router.post(
+    "/smm-transition",
+    response_model=SMMTransitionResponse,
+    summary="Stepwise Mutation Model (SMM) Paternity Transition",
+    description="Computes germline transmission probability between father and son under SMM.",
+    status_code=status.HTTP_200_OK,
+)
+async def compute_smm_transition(body: SMMTransitionRequest) -> SMMTransitionResponse:
+    from node.services.forensic.dna.ystr_engine import YSTREngine
+    engine = YSTREngine()
+    try:
+        res = engine.compute_smm_paternity_transition(
+            father_allele=body.father_allele,
+            son_allele=body.son_allele,
+            locus_name=body.locus_name,
+            p_step=body.p_step,
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"SMM computation error: {str(exc)}",
+        )
+
+    return SMMTransitionResponse(
+        locus_name=res.locus_name,
+        father_allele=res.father_allele,
+        son_allele=res.son_allele,
+        step_distance_m=res.step_distance_m,
+        is_mutation=res.is_mutation,
+        mutation_rate=res.mutation_rate,
+        transition_probability=res.transition_probability,
+        log10_transition_probability=res.log10_transition_probability,
+        mutation_classification=res.mutation_classification,
     )
 
 
-# ── 5. Catalogs, Metapopulations & Casework Cohorts ──────────────────────────
+@router.post(
+    "/evaluate-match",
+    response_model=YSTRMatchResponse,
+    summary="Full Y-STR Paternal Match Evaluation",
+    status_code=status.HTTP_200_OK,
+)
+async def evaluate_match_endpoint(body: YSTRMatchRequest) -> YSTRMatchResponse:
+    from node.services.forensic.dna.ystr_engine import YSTREngine
+    engine = YSTREngine()
+    try:
+        res = engine.evaluate_ystr_paternal_match(
+            evidence_markers=body.evidence_markers,
+            suspect_markers=body.suspect_markers,
+            evidence_id=body.evidence_id,
+            suspect_id=body.suspect_id,
+            database_count_k=body.database_count_k,
+            database_size_n=body.database_size_n,
+            theta=body.theta,
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Match evaluation failed: {str(exc)}",
+        )
+
+    cp_dict = {
+        "observed_count_k": res.clopper_pearson.observed_count_k,
+        "database_size_n": res.clopper_pearson.database_size_n,
+        "alpha": res.clopper_pearson.alpha,
+        "p_upper": res.clopper_pearson.p_upper,
+        "p_lower": res.clopper_pearson.p_lower,
+        "point_estimate": res.clopper_pearson.point_estimate,
+        "lr_upper_bound": res.clopper_pearson.lr_upper_bound,
+        "log10_lr_upper_bound": res.clopper_pearson.log10_lr_upper_bound,
+        "method_formula": res.clopper_pearson.method_formula,
+    }
+    br_dict = {
+        "observed_count_k": res.brenner.observed_count_k,
+        "database_size_n": res.brenner.database_size_n,
+        "theta": res.brenner.theta,
+        "p_brenner": res.brenner.p_brenner,
+        "lr_brenner": res.brenner.lr_brenner,
+        "log10_lr_brenner": res.brenner.log10_lr_brenner,
+    }
+    smm_list = [
+        {
+            "locus_name": s.locus_name,
+            "father_allele": s.father_allele,
+            "son_allele": s.son_allele,
+            "step_distance_m": s.step_distance_m,
+            "is_mutation": s.is_mutation,
+            "mutation_rate": s.mutation_rate,
+            "transition_probability": s.transition_probability,
+            "log10_transition_probability": s.log10_transition_probability,
+            "mutation_classification": s.mutation_classification,
+        }
+        for s in res.smm_mutations
+    ]
+
+    return YSTRMatchResponse(
+        evidence_id=res.evidence_id,
+        suspect_id=res.suspect_id,
+        match_status=res.match_status,
+        matching_loci_count=res.matching_loci_count,
+        total_evaluated_loci=res.total_evaluated_loci,
+        mismatch_loci_count=res.mismatch_loci_count,
+        database_count_k=res.database_count_k,
+        database_size_n=res.database_size_n,
+        theta=res.theta,
+        clopper_pearson=cp_dict,
+        brenner=br_dict,
+        brenner_correction=br_dict,
+        smm_mutations=smm_list,
+        paternal_lineage_verdict=res.paternal_lineage_verdict,
+        prosecutors_fallacy_shield=res.prosecutors_fallacy_shield,
+    )
+
+
+# ── 6. Catalogs, Metapopulations & Casework Cohorts ──────────────────────────
 
 @router.get(
     "/panel-metadata",
-    response_model=List[YStrLocusMetadataSchema],
+    response_model=PanelMetadataResponse,
     summary="Y-FILER Plus 27-Locus Panel Master Registry",
     status_code=status.HTTP_200_OK,
 )
-async def get_panel_metadata() -> List[YStrLocusMetadataSchema]:
-    return [
+async def get_panel_metadata() -> PanelMetadataResponse:
+    loci_list = [
         YStrLocusMetadataSchema(
             locus_name=m.locus_name,
             cytogenetic_band=m.cytogenetic_band,
@@ -288,6 +452,12 @@ async def get_panel_metadata() -> List[YStrLocusMetadataSchema]:
         )
         for m in YSTR_27_MASTER_REGISTRY.values()
     ]
+    return PanelMetadataResponse(
+        total_loci=27,
+        rapidly_mutating_loci_count=7,
+        standard_loci_count=20,
+        loci=loci_list,
+    )
 
 
 @router.get(
@@ -370,3 +540,4 @@ async def get_patrilineal_disclaimer() -> Dict[str, Any]:
         "disclaimer_text_en": shield.disclaimer_text_en,
         "disclaimer_text_tr": shield.disclaimer_text_tr,
     }
+

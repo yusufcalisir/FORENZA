@@ -8,6 +8,7 @@ import PanelYSTR from "@/components/analysis/PanelYSTR";
 import PanelXSTR from "@/components/analysis/PanelXSTR";
 import PanelMTDNA from "@/components/analysis/PanelMTDNA";
 import PanelDVI from "@/components/analysis/PanelDVI";
+import PanelADNA from "@/components/analysis/PanelADNA";
 import DviPanel from "@/components/analysis/DviPanel";
 import HumanIdPanel from "@/components/analysis/HumanIdPanel";
 import ProbabilisticGenotypingPanel from "@/components/analysis/ProbabilisticGenotypingPanel";
@@ -454,6 +455,10 @@ export function renderPanel(tabId: string) {
     case "dvi":
     case "dvi_ped":
       return <PanelDVI />;
+    case "adna":
+    case "adna_snp":
+    case "ancient_dna":
+      return <PanelADNA />;
     case "humanid":
       return <HumanIdPanel />;
 

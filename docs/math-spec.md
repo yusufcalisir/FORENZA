@@ -2835,6 +2835,57 @@ subject to:
 $$\sum_{j=1}^M x_{i,j} \le 1 \quad \forall i \in \{1, \dots, N\}, \quad \sum_{i=1}^N x_{i,j} \le 1 \quad \forall j \in \{1, \dots, M\}, \quad x_{i,j} \in \{0, 1\}$$
 guaranteeing strict 1-to-1 mutual exclusivity across all reconciled victims.
 
+---
 
+## 83. Ancient & Degraded Forensic DNA Damage Kinetics Engine (Module 2.5)
 
+### 83.1 Briggs Post-Mortem Deamination Kinetics & Exponential Gradient
+Post-mortem hydrolytic deamination of cytosine into uracil (observed as thymine after PCR amplification) is concentrated at single-stranded overhang termini:
+$$\delta_k(i) = \delta_0 \cdot \exp\left(-\alpha \cdot (i - 1)\right) + \delta_{\text{baseline}}, \quad \text{for nucleotide distance } i \in [1, 25]$$
+where $\delta_0$ is the terminal $5'$ deamination probability ($\ge 0.35$ in ancient remains), $\alpha$ is the exponential decay rate per nucleotide ($\sim 0.10 - 0.18/\text{bp}$), and $\delta_{\text{baseline}}$ is the interior sequencing noise floor ($0.005$).
+
+---
+
+### 83.2 Complementary Strand Damage Symmetry
+Due to 5'-to-3' complementary strand symmetry in double-stranded DNA libraries, cytosine deamination on the opposite strand produces an identical $3' \text{ G}\to\text{A}$ gradient:
+$$\delta_{G\to A}(j) = \delta_0 \cdot \exp\left(-\alpha \cdot (j - 1)\right) + \delta_{\text{baseline}}$$
+with empirical divergence $|\delta_{C\to T}(k) - \delta_{G\to A}(k)| < 0.015$.
+
+---
+
+### 83.3 Exponential Fragment Length Distribution & Degradation Classification
+Post-mortem phosphodiester backbone cleavage follows an exponential length distribution:
+$$P(L) = \lambda_L \cdot \exp\left(-\lambda_L \cdot (L - L_{\min})\right), \quad L \ge L_{\min}$$
+$$\bar{L} = \frac{1}{\lambda_L} + L_{\min}, \quad \text{Median} = \frac{\ln 2}{\lambda_L} + L_{\min}, \quad \text{CDF}(100) = 1 - \exp\left(-\lambda_L \cdot (100 - L_{\min})\right)$$
+
+| Degradation Tier | Mean Fragment Length ($\bar{L}$) | Dropout Fraction ($< 100\text{ bp}$) | Recommended Forensic Typing Modality |
+| :--- | :--- | :--- | :--- |
+| **SEVERE** | $\bar{L} < 60.0\text{ bp}$ | $> 90\%$ | Micro-SNP capture panel ($40\text{--}70\text{ bp}$) |
+| **MODERATE** | $60.0 \le \bar{L} < 90.0\text{ bp}$ | $60\% - 90\%$ | Mini-STRs or targeted NGS amplicons |
+| **LOW** | $90.0 \le \bar{L} < 150.0\text{ bp}$ | $30\% - 60\%$ | Standard STR multiplexing |
+| **PRISTINE** | $\bar{L} \ge 150.0\text{ bp}$ | $< 30\%$ | High-molecular weight WGS / Expanded CODIS |
+
+---
+
+### 83.4 Damage-Compensated Low-Coverage SNP Genotype Likelihoods
+For sequencing read base $b_r$ observed at distance $k_r$ from fragment terminus on reference $C$ and alternative $T$:
+$$P(b_r = C \mid CC) = (1 - \delta_{k_r})(1 - e_r), \quad P(b_r = T \mid CC) = \delta_{k_r}(1 - e_r) + (1 - \delta_{k_r})\frac{e_r}{3}$$
+$$P(b_r = T \mid TT) = 1 - e_r, \quad P(b_r = C \mid TT) = \frac{e_r}{3}$$
+$$P(b_r \mid CT) = 0.50 \cdot P(b_r \mid CC) + 0.50 \cdot P(b_r \mid TT)$$
+
+Bayesian posterior genotype probabilities:
+$$P(G \mid D) = \frac{\left( \prod_{r=1}^R P(b_r \mid G, k_r) \right) P(G)}{\sum_{G' \in \{CC, CT, TT\}} \left( \prod_{r=1}^R P(b_r \mid G', k_r) \right) P(G')}$$
+
+---
+
+### 83.5 Modern Contaminant Subtraction Filter
+Given observed damage curve $D_{\text{obs}}(i)$ and estimated modern contamination proportion $c \in [0.0, 0.50]$:
+$$D_{\text{ancient}}(i) = \frac{D_{\text{obs}}(i) - c \cdot D_{\text{modern}}}{1 - c}$$
+
+---
+
+### 83.6 Depurination Pre-Break Purine Excess Criterion
+Depurination at $5'$ break sites leads to purine enrichment at position $-1$:
+$$\text{Purine Fraction}_{-1} = \frac{\text{Count}(A_{-1}) + \text{Count}(G_{-1})}{\text{Total Reads}} \ge 0.65$$
+confirming authentic ancient DNA depurination kinetics versus modern contaminant artifacts.
 

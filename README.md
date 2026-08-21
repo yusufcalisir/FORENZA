@@ -262,6 +262,14 @@ str-analysis/
 │           │   ├── test_mtdna_reference_datasets.py # Global Metapopulations & Gold Standards Tests
 │           │   ├── test_mtdna_cross_validation.py # External Concordance & ISFG Reporting Tests
 │           │   └── test_mtdna_edge_cases.py # 6 Empirical Edge-Case Tests (EC-MT-01 to 06)
+│           ├── adna/                      # 34. Ancient DNA & Degraded Forensic SNP Damage Kinetics Engine
+│           │   ├── adna_mathematical_formulation.py # Briggs 5' C->T & 3' G->A, Exponential Fragmentation, Genotype GL
+│           │   ├── adna_reference_datasets.py # Columbus Validation Cohort, Briggs Neandertal, 5 Casework Presets
+│           │   ├── adna_cross_validation.py # mapDamage 2.0 Concordance, ISFG (2021) Reporting Shield
+│           │   ├── test_adna_mathematical_formulation.py # Pure Kinetics & Fragmentation Tests
+│           │   ├── test_adna_reference_datasets.py # Reference Datasets & Casework Cohort Tests
+│           │   ├── test_adna_cross_validation.py # External Concordance & ISFG Shield Tests
+│           │   └── test_adna_edge_cases.py # 6 Empirical Edge-Case Tests (EC-ADNA-01 to 06)
 │           └── tests/                     # Automated Test Suite (1100+ Tests Passing)
 │
 ├── frontend/                              # Next.js 16 Workstation Dashboard

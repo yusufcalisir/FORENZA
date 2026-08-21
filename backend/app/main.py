@@ -488,6 +488,14 @@ try:
 except Exception as _mtdna_import_err:
     logger.warning(f"[boot] mtDNA router not loaded: {_mtdna_import_err}")
 
+# --- Ancient DNA & Degraded SNP Damage Kinetics Router (Module 2.5) ---
+try:
+    from app.api.adna_routes import router as adna_router
+    app.include_router(adna_router, prefix="/api/v1")
+    logger.info("[boot] aDNA Damage Kinetics API router registered at /api/v1/forensic/adna")
+except Exception as _adna_import_err:
+    logger.warning(f"[boot] aDNA router not loaded: {_adna_import_err}")
+
 
 
 

@@ -33,6 +33,7 @@ import MeasurementUncertaintyPanel from "@/components/analysis/MeasurementUncert
 import EvidenceManagementPanel from "@/components/analysis/EvidenceManagementPanel";
 import PedigreeTree from "@/components/analysis/PedigreeTree";
 import HIrisPlexPanel from "@/components/analysis/HIrisPlexPanel";
+import SuspectVisualizer from "@/components/analysis/SuspectVisualizer";
 import GeoForensicIntelligencePanel from "@/components/analysis/GeoForensicIntelligencePanel";
 
 // ─── NIST 1036 Multi-Ethnic Reference Allele Frequency Matrix ─────────────────
@@ -474,7 +475,10 @@ export function renderPanel(tabId: string) {
     case "aims":
       return <AncestryDataPanel />;
     case "craniofacial":
-      return <SyntheticCaseGeneratorPanel />;
+    case "morphometrics":
+    case "cranio":
+    case "suspect":
+      return <SuspectVisualizer />;
     case "hair":
       return <MicroscopyPanel />;
     case "freckling":

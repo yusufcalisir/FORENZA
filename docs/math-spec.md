@@ -3015,4 +3015,86 @@ $$a = \sqrt{5.991 \cdot \lambda_1} \cdot 111.32\text{ km/deg}, \quad b = \sqrt{5
 
 $$\theta_{\text{tilt}} = \frac{1}{2} \text{atan2}\left(2 \sigma_{\text{Lat,Lng}}, \sigma_{\text{Lat}}^2 - \sigma_{\text{Lng}}^2\right)$$
 
+---
+
+## 86. 3D Craniofacial Morphometry & Anthropological Landmarks (Module 3.3)
+
+### 86.1 Cephalometric Baseline Coordinates & Additive Genetic Modulation
+The 3D craniofacial engine models human facial morphology via 7 primary cephalometric landmarks $(N, Prn, Sn, Al, Ls, Me, Zy)$ referenced in a 3D coordinate system (sagittal $X$, coronal $Y$, vertical $Z$ in millimeters):
+1. **Nasion ($N$):** $(0.0, 12.40, 45.20)$ — Nasofrontal suture midline anchor.
+2. **Pronasale ($Prn$):** $(0.0, 48.50, 12.10)$ — Anterior tip of the nasal cartilage.
+3. **Subnasale ($Sn$):** $(0.0, 38.20, -2.50)$ — Nasolabial junction base of columella.
+4. **Alare ($Al_L, Al_R$):** $(\pm 18.50, 36.10, 2.40)$ — Lateralmost alar wing boundaries.
+5. **Labiale Superius ($Ls$):** $(0.0, 34.50, -12.40)$ — Superior vermilion midpoint.
+6. **Menton ($Me$):** $(0.0, 18.20, -68.50)$ — Inferiormost chin soft tissue boundary.
+7. **Zygion ($Zy_L, Zy_R$):** $(\pm 67.50, 15.20, 10.50)$ — Lateralmost zygomatic arch points.
+8. **Cheilion ($Ch_L, Ch_R$):** $(\pm 25.40, 28.60, -18.20)$ — Oral commissure angles.
+
+Additive genetic modulation across morphometric SNP effect dosages $X_s \in \{0, 1, 2\}$ modifies 3D coordinates:
+
+$$\mathbf{L}_k = \left( \mathbf{L}_{k, \text{base}} + \sum_{s=1}^P \mathbf{w}_{k, s} X_s \right) \cdot S_{\text{sex}}$$
+
+- *PAX3* (`rs974448`): Increases Nasion prominence and vertical projection ($\Delta N_y = +1.25 X, \Delta N_z = +0.85 X$).
+- *PAX9* (`rs12882923`): Modulates alar width expansion and bizygomatic breadth ($\Delta Al_{x} = +0.95 X, \Delta Zy_x = +1.60 X$).
+- *PRDM16* (`rs11130635`): Elevates Pronasale projection ($\Delta Prn_y = +2.10 X, \Delta Prn_z = +1.15 X$).
+- *DCHS2* (`rs13289`): Modulates Subnasale protrusion and columellar base ($\Delta Sn_y = -1.10 X, \Delta Sn_z = -0.65 X$).
+- *PCDH15* (`rs7559252`): Influences lower facial height and Menton position ($\Delta Me_y = +1.85 X, \Delta Me_z = -1.20 X$).
+
+---
+
+### 86.2 Sexual Dimorphism & Allometric Scaling
+Biological sex induces an allometric facial scale factor:
+
+$$S_{\text{sex}} = \begin{cases} 1.055, & \text{Male (5.5\% overall robusticity expansion)} \\ 1.000, & \text{Female (Baseline)} \end{cases}$$
+
+---
+
+### 86.3 Standard Anthropological Indices & Facial Typology
+1. **Nasal Height ($H_{\text{nasal}}$) & Alar Breadth ($W_{\text{alar}}$):**
+   $$H_{\text{nasal}} = \|\mathbf{L}_N - \mathbf{L}_{Sn}\| = \sqrt{(N_y - Sn_y)^2 + (N_z - Sn_z)^2}$$
+   $$W_{\text{alar}} = \|\mathbf{L}_{Al_L} - \mathbf{L}_{Al_R}\| = 2 \cdot |Al_x|$$
+
+2. **Nasal Index ($NI$) & Typology Classification:**
+   $$NI = \frac{W_{\text{alar}}}{H_{\text{nasal}}} \times 100$$
+   - $NI < 70.0$: **Leptorrhine** (Narrow nose, European / North Eurasian profile).
+   - $70.0 \le NI \le 84.9$: **Mesorrhine** (Medium nose, East Asian / Indigenous American profile).
+   - $NI \ge 85.0$: **Platyrrhine** (Broad nose, Sub-Saharan African / Oceanic profile).
+
+3. **Morphological Facial Index ($I_F$) & Prosopic Classification:**
+   $$I_F = \frac{\|\mathbf{L}_N - \mathbf{L}_{Me}\|}{\|\mathbf{L}_{Zy_L} - \mathbf{L}_{Zy_R}\|} \times 100$$
+   - $I_F < 79.9$: **Hypereuryprosopic** (Very broad face).
+   - $80.0 \le I_F \le 84.9$: **Euryprosopic** (Broad face).
+   - $85.0 \le I_F \le 89.9$: **Mesoprosopic** (Medium face).
+   - $90.0 \le I_F \le 94.9$: **Leptoprosopic** (Long/narrow face).
+   - $I_F \ge 95.0$: **Hyperleptoprosopic** (Very long/narrow face).
+
+4. **Nasal Bridge Elevation Index ($NBEI$):**
+   $$NBEI = \frac{Prn_y - Sn_y}{H_{\text{nasal}}} \times 100$$
+
+5. **Facial Convexity Angle ($\theta_{\text{convexity}}$):**
+   $$\theta_{\text{convexity}} = \arccos\left(\frac{\mathbf{v}_1 \cdot \mathbf{v}_2}{\|\mathbf{v}_1\| \|\mathbf{v}_2\|}\right) \times \frac{180^\circ}{\pi}, \quad \mathbf{v}_1 = \mathbf{L}_N - \mathbf{L}_{Sn}, \; \mathbf{v}_2 = \mathbf{L}_{Me} - \mathbf{L}_{Sn}$$
+
+---
+
+### 86.4 3D Generalized Orthogonal Procrustes Superposition (GPA)
+Given target landmark matrix $\mathbf{X}_1 \in \mathbb{R}^{K \times 3}$ and source matrix $\mathbf{X}_2 \in \mathbb{R}^{K \times 3}$:
+
+1. **Centroid Translation & Centroid Size Normalization:**
+   $$\mathbf{\bar{x}} = \frac{1}{K} \sum_{i=1}^K \mathbf{x}_i, \quad \mathbf{X}_c = \mathbf{X} - \mathbf{1} \mathbf{\bar{x}}^T$$
+   $$S = \text{CS}(\mathbf{X}) = \sqrt{\sum_{i=1}^K \|\mathbf{x}_{c, i}\|^2} = \|\mathbf{X}_c\|_F, \quad \mathbf{Z} = \frac{\mathbf{X}_c}{S}$$
+
+2. **Optimal Rotation via Singular Value Decomposition (SVD):**
+   $$\mathbf{H} = \mathbf{Z}_2^T \mathbf{Z}_1 = \mathbf{U} \mathbf{\Sigma} \mathbf{V}^T$$
+   $$\mathbf{R} = \mathbf{V} \begin{pmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & \det(\mathbf{V} \mathbf{U}^T) \end{pmatrix} \mathbf{U}^T$$
+
+3. **Procrustes Distance ($d_F$) & Root Mean Square Deviation ($RMSD$):**
+   $$d_F(\mathbf{X}_1, \mathbf{X}_2) = \|\mathbf{Z}_1 - \mathbf{Z}_2 \mathbf{R}\|_F$$
+   $$\text{RMSD} = \sqrt{\frac{1}{K} \sum_{i=1}^K \|\mathbf{x}_{1, i} - (\mathbf{x}_{2, i} \mathbf{R} + \mathbf{t})\|^2}$$
+
+---
+
+### 86.5 ENFSI (2017) Evaluative Reporting & Investigative Intelligence Shield
+In accordance with ENFSI (2017) evaluative reporting standards, 3D craniofacial morphometrics produce population-level biometric approximations and are classified strictly as investigative intelligence to aid case screening. They must not be presented in judicial testimony as facial recognition composites.
+
+
 

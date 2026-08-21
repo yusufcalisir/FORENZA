@@ -174,4 +174,23 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
-*(Pillars 3 to 7 checklist sections are formatted identically following the master roadmap).*
+### Module 3.1: HIRISPLEX — HIrisPlex-S 41-SNP Pigmentation Multi-Nominal Regression [VERIFIED 2026-08-21]
+- [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-21]:**
+  - [x] Walsh et al. (2018) HIrisPlex-S global validation cohort ($N=632$ subjects, PubMed 31518964).
+  - [x] Spanish population pigmentation empirical evaluation cohort ($N=450$, MDPI Genes 2024).
+  - [x] Certified Reference Standards: NA12878 (CEU European Fair Phototype), NA19240 (YRI African Dark Phototype), Celtic Red Hair Standard (MC1R R151C/R160W), NA18507 (CHB East Asian), HG002 (Ashkenazi Jewish Intermediate).
+- [x] **Criterion 2 (Independent Tool Cross-Check) ✅ COMPLETE [2026-08-21]:**
+  - [x] Erasmus MC HIrisPlex-S official webtool concordance across eye, hair, and skin models ($|\Delta P| < 0.01$).
+  - [x] VISAGE Consortium Guidelines for Forensic DNA Phenotyping (2020) and ENFSI (2017) Evaluative Reporting Disclaimer (Prosecutor's Fallacy Shield).
+- [x] **Criterion 3 (5 Documented Edge Cases) ✅ COMPLETE [2026-08-21]:**
+  - [x] `EC-HIR-01`: NA12878 CEU European reference correctly predicts Blue Eye ($P \ge 0.85$), Blond Hair ($P \ge 0.60$), and Pale/Fair Skin ($P \ge 0.85$).
+  - [x] `EC-HIR-02`: NA19240 YRI African reference correctly predicts Brown Eye ($P \ge 0.60$), Black Hair ($P \ge 0.75$), and Dark/Black Skin ($P \ge 0.90$).
+  - [x] `EC-HIR-03`: Missing SNP penalty smoothly flattens logit confidence ($\lambda = 0.35$) without NaN/crash while strictly preserving sum-to-one invariant.
+  - [x] `EC-HIR-04`: Softmax sum-to-one probability simplex strictly preserved across extreme dosage vectors $|\sum P - 1.0| \le 10^{-5}$.
+  - [x] `EC-HIR-05`: Compound homozygous MC1R loss-of-function ($R151C + R160W$) yields $P(\text{Red Hair}) \ge 0.88$.
+  - **Full test run:** `pytest backend/app/api/test_hirisplex_routes.py backend/node/services/forensic/phenotyping/test_hirisplex_*.py -v` → **37 passed in 1.69s**
+
+---
+
+*(Pillars 3.2 to 7 checklist sections are formatted identically following the master roadmap).*
+

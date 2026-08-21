@@ -496,6 +496,14 @@ try:
 except Exception as _adna_import_err:
     logger.warning(f"[boot] aDNA router not loaded: {_adna_import_err}")
 
+# --- HIrisPlex-S DNA Pigmentation Forensics Router (Module 3.1) ---
+try:
+    from app.api.hirisplex_routes import router as hirisplex_router
+    app.include_router(hirisplex_router, prefix="/api/v1")
+    logger.info("[boot] HIrisPlex-S Pigmentation Forensics API router registered at /api/v1/forensic/phenotyping/hirisplex")
+except Exception as _hirisplex_import_err:
+    logger.warning(f"[boot] HIrisPlex-S router not loaded: {_hirisplex_import_err}")
+
 
 
 

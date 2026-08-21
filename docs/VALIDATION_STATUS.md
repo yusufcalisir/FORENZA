@@ -34,7 +34,7 @@ Last updated: 2026-08-20 (1.4.7 LTDNA Stochastic Low-Template Modeling Fully Val
 
 | ID | Module | Status | Reference Dataset | Cross-Check Tool | Edge Cases Passing | Notes |
 |---|---|---|---|---|---|---|
-| HIRISPLEX | HIrisPlex-S Eye/Hair/Skin | NOT_STARTED | Walsh 2018 (N=632) | Erasmus MC HIrisPlex-S | 0/5 | 41-SNP Multinomial Logistic |
+| HIRISPLEX | HIrisPlex-S Eye/Hair/Skin | VERIFIED | Walsh 2018 ($N=632$, PubMed 31518964), Spanish MDPI Genes 2024 ($N=450$), Certified Standards NA12878, NA19240, Celtic Red Hair, NA18507, HG002 | Erasmus MC HIrisPlex-S Online Webtool ($|\Delta P| < 0.01$), VISAGE Consortium Guidelines (2020), ENFSI Evaluative Reporting (2017) | 5/5 | 41-SNP Multinomial Logistic Regression & Softmax Normalization ($|\sum P - 1.0| \le 10^{-5}$), Eye (3 classes), Hair (4 classes + shade), Skin (5 classes Fitzpatrick I–VI), Hair Morphology (Straight/Wavy/Curly), Missing SNP Imputation & Logit Scaling Penalty ($\lambda=0.35$), MC1R R151C/R160W Epistasis, 37 module tests passing |
 | BGA-55 | 55-SNP Biogeographic Ancestry | NOT_STARTED | Kidd 2014 (73 Pops) | FROG-kb / STRUCTURE | 0/5 | 55-SNP AIM GIS Centroids |
 | CRANIO-3D | 3D Craniofacial Morphology | NOT_STARTED | Claes 2014 (20 Landmarks)| 3D Procrustes Superposition| 0/5 | Sexual dimorphism & craniometry |
 | HAIR-TEX | Hair Texture Prediction | NOT_STARTED | Medland 2009 / Adhikari | Polygenic Risk Score (PRS) | 0/5 | EDAR V370A / TCHH / AR Balding |

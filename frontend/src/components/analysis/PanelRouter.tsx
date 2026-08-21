@@ -464,6 +464,9 @@ export function renderPanel(tabId: string) {
 
     // Pillar 3: Phenotyping & Ancestry
     case "hirisplex":
+    case "hirisplex_s":
+    case "phenotyping":
+    case "pigmentation":
       return <HIrisPlexPanel />;
     case "ancestry":
       return <AncestryDataPanel />;

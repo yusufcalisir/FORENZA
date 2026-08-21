@@ -2889,3 +2889,63 @@ Depurination at $5'$ break sites leads to purine enrichment at position $-1$:
 $$\text{Purine Fraction}_{-1} = \frac{\text{Count}(A_{-1}) + \text{Count}(G_{-1})}{\text{Total Reads}} \ge 0.65$$
 confirming authentic ancient DNA depurination kinetics versus modern contaminant artifacts.
 
+---
+
+## 84. HIrisPlex-S 41-SNP Forensic DNA Pigmentation & Morphology Architecture (Module 3.1)
+
+### 84.1 Multinomial Logistic Regression & Softmax Architecture
+For a categorical phenotype $Y$ with $K$ discrete classes and baseline reference category $K$, the conditional log-odds for class $k \in \{1, 2, \dots, K-1\}$ given additive genotype dosage vector $\mathbf{X} = (X_1, X_2, \dots, X_p)^T \in \{0, 1, 2\}^p$ is:
+
+$$\ln\left(\frac{P(Y = k \mid \mathbf{X})}{P(Y = K \mid \mathbf{X})}\right) = \beta_{k0} + \sum_{i=1}^p \beta_{ki} X_i$$
+
+where $\beta_{k0}$ is the class-specific intercept and $\beta_{ki}$ is the effect slope for SNP locus $i$.
+
+The normalized posterior probabilities for target classes $k \in \{1, \dots, K-1\}$ and reference class $K$ are computed via the **Softmax transformation**:
+
+$$P(Y = k \mid \mathbf{X}) = \frac{\exp\left(\beta_{k0} + \sum_{i=1}^p \beta_{ki} X_i\right)}{1 + \sum_{l=1}^{K-1} \exp\left(\beta_{l0} + \sum_{i=1}^p \beta_{li} X_i\right)}$$
+
+$$P(Y = K \mid \mathbf{X}) = \frac{1}{1 + \sum_{l=1}^{K-1} \exp\left(\beta_{l0} + \sum_{i=1}^p \beta_{li} X_i\right)}$$
+
+#### Probability Simplex Invariant:
+$$\left| \sum_{k=1}^K P(Y = k \mid \mathbf{X}) - 1.0 \right| \le 1.0 \times 10^{-5}$$
+
+---
+
+### 84.2 Trait Models & Baseline Parameters
+
+#### 1. Eye Color Subsystem (IrisPlex 6-Loci):
+- **Classes:** Blue ($k=1$), Intermediate/Hazel ($k=2$), Brown (Reference $K=3$).
+- **Baseline Intercepts:** $\beta_{\text{Blue}, 0} = -2.815, \; \beta_{\text{Interm}, 0} = -1.412$.
+- **Dominant Marker:** $HERC2\text{ rs12913832 (C/C)} \implies \beta_{\text{Blue}} = +4.512, \; \beta_{\text{Interm}} = +1.895$.
+
+#### 2. Hair Color & Shade Subsystem (HIrisPlex 22-Loci):
+- **Classes:** Blond ($k=1$), Red ($k=2$), Black ($k=3$), Brown (Reference $K=4$).
+- **Baseline Intercepts:** $\beta_{\text{Blond}, 0} = -1.920, \; \beta_{\text{Red}, 0} = -3.450, \; \beta_{\text{Black}, 0} = -2.110$.
+- **Hair Shade Logit (Light vs Dark):**
+  $$P(\text{Light}) = \frac{1}{1 + \exp\left(-\left(0.125 + \sum_{i=1}^p \beta_{\text{Shade}, i} X_i\right)\right)}, \quad P(\text{Dark}) = 1 - P(\text{Light})$$
+
+#### 3. Skin Phototype Subsystem (HIrisPlex-S 36-Loci):
+- **Classes (Fitzpatrick Scale):** Very Pale / Type I ($k=1$), Pale / Type II ($k=2$), Dark / Type V ($k=3$), Dark-to-Black / Type VI ($k=4$), Intermediate / Type III/IV (Reference $K=5$).
+- **Baseline Intercepts:** $\beta_{\text{VP}, 0} = -2.150, \; \beta_{\text{P}, 0} = -1.100, \; \beta_{\text{D}, 0} = -2.850, \; \beta_{\text{DB}, 0} = -5.200$.
+- **Major Effect Loci:** $SLC24A5\text{ rs1426654}$ ($\beta_{\text{VP}} = +2.450, \beta_{\text{DB}} = -7.850$), $MFSD12\text{ rs10424031}$ ($\beta_{\text{DB}} = +4.850$).
+
+#### 4. Hair Morphology Subsystem:
+- **Classes:** Straight, Wavy, Curly/Coily.
+- **Biocomputational Logit Dynamics:**
+  $$\text{Logit}(\text{Straight}) = 0.50 + 2.854 X_{\text{EDAR}} - 1.200 X_{\text{TCHH}}$$
+  $$\text{Logit}(\text{Curly}) = -1.20 - 1.800 X_{\text{EDAR}} + 2.105 X_{\text{TCHH}}$$
+
+---
+
+### 84.3 Missing SNP Imputation & Logit Uncertainty Scaling
+When degraded forensic evidence lacks $N_{\text{missing}}$ SNPs from the full multiplex, unobserved loci are imputed using population reference mean dosages $X_i^* = 2 \cdot p_i$. An uncertainty damping penalty scales raw logits proportional to the missingness fraction $M = \frac{N_{\text{missing}} + N_{\text{imputed}}}{N_{\text{total}}}$:
+
+$$P_{\text{adjusted}}(Y = k) = \frac{\exp\left(\frac{\hat{L}_k}{\sqrt{1 + \lambda \cdot M}}\right)}{1 + \sum_{l=1}^{K-1} \exp\left(\frac{\hat{L}_l}{\sqrt{1 + \lambda \cdot M}}\right)}, \quad \lambda = 0.35$$
+
+This ensures extreme predictive confidence degrades gracefully toward uninformative equal priors without risk of mathematical breakdown.
+
+---
+
+### 84.4 VISAGE & ENFSI Evaluative Reporting Shield
+In accordance with ENFSI (2017) and VISAGE Consortium Guidelines (2020), predicted externally visible characteristics (EVCs) are classified strictly as investigative intelligence and accompanied by mandatory bilingual reporting disclaimers protecting against Prosecutor's Fallacy misattribution in court testimony.
+

@@ -2731,14 +2731,52 @@ $$\left| \log_{10} KI_{X, \text{Total}} - \sum_{g=1}^4 \log_{10} KI_{X, \text{LG
 
 ---
 
-### 80.5 ISFG (2012) & ENFSI (2017) Evaluative Reporting Statements
-Likelihood Ratios are mapped onto the 7-tier ENFSI (2017) scale with active Prosecutor's Fallacy shields:
-- $KI_X \ge 10^6$: Extremely Strong Support for Paternal Kinship.
-- $10^4 \le KI_X < 10^6$: Very Strong Support for Paternal Kinship.
-- $10^2 \le KI_X < 10^4$: Moderately Strong Support for Paternal Kinship.
-- $1 \le KI_X < 10^2$: Limited / Inconclusive Support for Paternal Kinship.
-- $0 < KI_X < 1$: Support for Defense / Non-Kinship Hypothesis.
-- $KI_X = 0$: Definitive Exclusion of Biological Kinship.
+## 81. Mitochondrial DNA (mtDNA) EMPOP rCRS/RSRS Alignment & Lineage Engine (Module 2.3)
+
+Mitochondrial DNA (mtDNA) analysis provides essential maternal lineage forensics for degraded biological specimens (hair shafts, bones, teeth, and historical human remains) due to its high copy number ($10^2$–$10^4$ per cell), maternal transmission, and lack of meiotic recombination.
+
+### 81.1 Control Region (D-Loop) Reference Architecture & Domains
+All sequence variants are aligned and reported relative to the Revised Cambridge Reference Sequence (**rCRS, GenBank NC_012920.1**, 16,569 bp) or Reconstructed Sapiens Reference Sequence (**RSRS**):
+
+| Structural Domain | Coordinate Boundaries (rCRS) | Biological Role & Diagnostic Forensic Value |
+| :--- | :--- | :--- |
+| **HV1 (Hypervariable 1)** | 16024–16365 | High mutational rate; diagnostic for major global macro-haplogroups. |
+| **HV2 (Hypervariable 2)** | 73–340 | Contains primary homopolymeric C-tracts (303–315) and insertion hotspots. |
+| **HV3 (Hypervariable 3)** | 438–574 | Contains variable dinucleotide AC repeat elements (522–524). |
+| **OHR** | 110–441 | Heavy-strand replication origin spanning Conserved Sequence Blocks. |
+| **CSB I / II / III** | 214–232 / 299–315 / 346–363 | Transcription termination and replication initiation regulatory sites. |
+
+---
+
+### 81.2 ISFG (2014, 2020) & EMPOP 3'-Right Alignment Normalization
+To prevent artificial sequence discrepancies caused by 5'-shifted alignments, the FORENZA engine enforces 3'-most right-alignment on the light strand ($5' \to 3'$):
+- **HV2 Poly-C Tract (303–315):** Insertions in the 303–308 tract shift to `309.1C, 309.2C`. Insertions in the 311–314 tract shift to `315.1C`.
+- **HV1 Poly-C Tract (16184–16193):** Insertions in the 16184–16188 tract shift to `16189.1C, 16189.2C`.
+- **HV3 Dinucleotide Repeat (522–524):** Insertions at 522/523 shift to `524.1AC` (or `524.1A, 524.2C`).
+
+---
+
+### 81.3 Point Heteroplasmy (PHP) & SWGDAM Maternal Kinship Decision Rules
+Point heteroplasmies are modeled using IUPAC multi-base ambiguity codes ($R=\text{A/G}, Y=\text{C/T}, M=\text{A/C}, K=\text{G/T}, S=\text{G/C}, W=\text{A/T}$).
+- **Heteroplasmy Concordance:** A shared point heteroplasmy (`16189Y` vs `16189Y`) or a heteroplasmy-to-homoplasmy pair (`16189Y` vs `16189C`) is consistent with shared maternal ancestry and cannot be excluded.
+- **SWGDAM Exclusion Rule:** $\ge 2$ homoplasmic point differences between questioned and reference profiles triggers a definitive exclusion ($LR_{\text{mtDNA}} = 0.0, \log_{10} LR = -300.0$).
+- **Inconclusive Boundary:** 1 homoplasmic point difference is interpreted as inconclusive due to potential germline single-base transition events.
+
+---
+
+### 81.4 Exact Clopper-Pearson 95% Frequency Upper Bounds & Maternal LR
+For unobserved mitogenome haplotypes ($k=0$) in a database of size $N$ (e.g. EMPOP Release 15 $N=48,500$):
+$$\hat{p}_{\text{upper}} = 1 - (0.05)^{\frac{1}{N+1}}$$
+
+For observed haplotypes where $k > 0$:
+$$\hat{p}_{\text{upper}} = \frac{k + \frac{1}{2} z^2 + z \sqrt{\frac{k(N-k)}{N} + \frac{1}{4} z^2}}{N + z^2} \quad (z = 1.95996)$$
+
+The Maternal Likelihood Ratio ($LR_{\text{mtDNA}}$) comparing $H_1$ (Shared maternal lineage) vs $H_2$ (Unrelated donor) is:
+$$LR_{\text{mtDNA}} = \frac{1}{\hat{p}_{\text{upper}}}$$
+
+For $N = 48,500$ and $k=0$:
+$$\hat{p}_{\text{upper}} = 1 - (0.05)^{1/48501} \approx 6.1764 \times 10^{-5} \implies LR_{\text{mtDNA}} \approx 16,190.7$$
+
 
 
 

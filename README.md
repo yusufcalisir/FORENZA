@@ -251,7 +251,15 @@ str-analysis/
 │           │   ├── test_xstr_reference_datasets.py # Population Datasets & Gold Standards Tests
 │           │   ├── test_xstr_cross_validation.py # External Cross-Validation & ISFG Shield Tests
 │           │   └── test_xstr_edge_cases.py # 6 Empirical Edge-Case Tests (EC-XSTR-01 to 06)
-│           └── tests/                     # Automated Test Suite (1050+ Tests Passing)
+│           ├── mtdna/                     # 33. Mitochondrial DNA EMPOP rCRS/RSRS Alignment & Lineage Engine
+│           │   ├── mtdna_mathematical_formulation.py # rCRS/RSRS, ISFG 3'-Right Alignment, IUPAC PHP, Clopper-Pearson
+│           │   ├── mtdna_reference_datasets.py # EMPOP R15 (N=48.5k), SRM 2391d, NA12878, NA19240, HG002, NA18507
+│           │   ├── mtdna_cross_validation.py # EMPOP SAM 2, HaploSearch, PhyloTree 17, ISFG Shield Concordance
+│           │   ├── test_mtdna_mathematical_formulation.py # Pure Formulation & 3'-Right Alignment Tests
+│           │   ├── test_mtdna_reference_datasets.py # Global Metapopulations & Gold Standards Tests
+│           │   ├── test_mtdna_cross_validation.py # External Concordance & ISFG Reporting Tests
+│           │   └── test_mtdna_edge_cases.py # 6 Empirical Edge-Case Tests (EC-MT-01 to 06)
+│           └── tests/                     # Automated Test Suite (1100+ Tests Passing)
 │
 ├── frontend/                              # Next.js 16 Workstation Dashboard
 │   ├── public/                            # Static Assets, Icons, Favicons

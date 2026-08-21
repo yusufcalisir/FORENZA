@@ -119,5 +119,26 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
-*(Pillars 2.3 to 7 checklist sections are formatted identically following the master roadmap).*
+### Module 2.3: mtDNA — Mitochondrial DNA EMPOP rCRS/RSRS Alignment & Lineage Engine [VERIFIED 2026-08-21]
+- [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-21]:**
+  - [x] EMPOP (EDNAP Mitochondrial DNA Population Database) Release 15 ($N=48,500$ mitogenomes across 5 regional metapopulations: West Eurasian $N=24,500$, East Asian $N=11,200$, African $N=6,400$, Admixed American $N=4,300$, South Asian $N=2,100$).
+  - [x] Certified Multi-Omic Reference Standards: NA12878 (H1 CEU Female), NA19240 (L2a1 YRI Female), HG002 / NA24385 (T2b Ashkenazi Male), NA18507 / HG005 (D4a1 Han Chinese), and NIST SRM 2391d Component A (H1a1).
+  - [x] Casework Benchmark Cohorts: Benchmark LINEAGE-A European H1 ($k=1,420, N=48,200 \implies LR \approx 32.89$), Benchmark LINEAGE-B African L2a1 ($k=12 \implies LR \approx 2,518.8$), Point Heteroplasmy Pair (`16189Y` vs `16189C` match), Rare Unobserved Duo ($k=0, N=48,500 \implies LR \approx 16,190.7$), and Unrelated Non-Kin Exclusion Pair (11 homoplasmic differences $\implies LR = 0.0$).
+- [x] **Criterion 2 (Independent Tool Cross-Check) ✅ COMPLETE [2026-08-21]:**
+  - [x] EMPOP SAM 2 (Sequence Alignment and Mutation Specifier) & HaploSearch concordance for 3'-right-alignment on homopolymeric tracts (`309.1C`, `315.1C`, `16189.1C`, `524.1AC`).
+  - [x] HaploGrep 3 / PhyloTree Build 17 diagnostic mutation motif concordance across major macro-clades (`L0-L6`, `M`, `N`, `R`, `H`, `U`, `K`, `J`, `T`, `V`, `W`, `X`, `A`, `B`, `C`, `D`).
+  - [x] ISFG (2014, 2020) & SWGDAM Interpretation Guidelines with active Matrilineal Lineage Evaluative Reporting Disclaimer (Prosecutor's Fallacy Shield).
+- [x] **Criterion 3 (5 Documented Edge Cases) ✅ COMPLETE [2026-08-21]:**
+  - [x] `EC-MT-01`: rCRS placeholder position 3107 (`3107del`) correctly parsed and aligned without coordinate shifting downstream.
+  - [x] `EC-MT-02`: HVS-I/II poly-C stretch insertions `308.1C` and `314.1C` right-shifted to `309.1C` and `315.1C` according to IUPAC forensic conventions.
+  - [x] `EC-MT-03`: Mixed base IUPAC point heteroplasmy codes (`16189R`, `16189Y`, `16189M`, `16189K`, `16189S`, `16189W`) parsed without character rejection.
+  - [x] `EC-MT-04`: Ground truth vectors for `H1` and `L2a1` correctly classified via PhyloTree 17 diagnostic motifs.
+  - [x] `EC-MT-05`: Zero-count in EMPOP ($N=48,500, k=0$) yields exact Clopper-Pearson 95% upper bound $p_{\text{upper}} = 1 - 0.05^{1/48501} = 6.1764 \times 10^{-5}$ ($1 \text{ in } 16,190.7$).
+  - [x] `EC-MT-06`: $\ge 2$ homoplasmic point differences triggers definitive SWGDAM maternal exclusion ($LR = 0.0, \log_{10} LR = -300.0$).
+  - **Full test run:** `pytest backend/app/api/test_mtdna_routes.py backend/node/services/forensic/mtdna/ backend/node/services/forensic/dna/test_mtdna_forensics.py -v` → **56 passed in 9.36s**
+
+---
+
+*(Pillars 2.4 to 7 checklist sections are formatted identically following the master roadmap).*
+
 

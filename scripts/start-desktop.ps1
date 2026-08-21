@@ -59,6 +59,7 @@ try {
     $frontendNeeded = $true
 }
 
+$frontendJob = $null
 if ($frontendNeeded) {
     Write-Host "  Starting local Next.js rendering engine in background..." -ForegroundColor Yellow
     $frontendJob = Start-Job -ScriptBlock {
@@ -72,5 +73,10 @@ if ($frontendNeeded) {
 Write-Host "  Starting native Electron window with Python FastAPI sidecar..." -ForegroundColor Green
 Set-Location $DesktopDir
 & npx electron .
+
+if ($frontendJob) {
+    Stop-Job $frontendJob -ErrorAction SilentlyContinue | Out-Null
+    Remove-Job $frontendJob -ErrorAction SilentlyContinue | Out-Null
+}
 
 Write-Host "`nFORENZA Desktop session ended cleanly." -ForegroundColor Gray

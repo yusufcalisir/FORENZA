@@ -30,7 +30,6 @@ if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
     exit 1
 }
 
-$composeCmd = "docker compose"
 try {
     $null = docker compose version
 } catch {

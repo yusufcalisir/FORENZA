@@ -80,6 +80,7 @@ export default function RootLayout({
     <html lang="en" className="dark" suppressHydrationWarning>
       <body
         className="font-sans antialiased"
+        suppressHydrationWarning
       >
         <Providers>{children}</Providers>
       </body>

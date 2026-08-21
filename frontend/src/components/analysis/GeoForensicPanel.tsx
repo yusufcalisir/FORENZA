@@ -121,7 +121,7 @@ function ScanningMapLoader() {
                     >
                         <div className="w-1 h-1 bg-tactical-primary/50" />
                         <span className="font-mono text-[7px] text-zinc-600">
-                            COORD_X: {(Math.random() * 100).toFixed(4)}
+                            COORD_X: {(i * 31.4159).toFixed(4)}
                         </span>
                     </motion.div>
                 ))}

@@ -295,7 +295,7 @@ export default function LocalNodeStatus() {
                                         </p>
                                     </div>
                                 </div>
-                                <span className="font-data text-[9px] text-tactical-text-dim tabular-nums flex-shrink-0">
+                                <span className="font-data text-[9px] text-tactical-text-dim tabular-nums flex-shrink-0" suppressHydrationWarning>
                                     {timeAgo(q.timestamp)}
                                 </span>
                             </div>

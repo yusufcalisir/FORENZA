@@ -1,0 +1,24 @@
+{
+  "name": "forenza-desktop",
+  "version": "2.0.0",
+  "description": "FORENZA Forensic Evidence Operating System - Native Desktop Workstation",
+  "main": "main.js",
+  "author": "FORENZA Biocomputational Intelligence Team <forenza@yusufcalisir.dev>",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "dev": "cross-env NODE_ENV=development electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "dist:win": "electron-builder --win",
+    "dist:linux": "electron-builder --linux",
+    "dist:mac": "electron-builder --mac"
+  },
+  "dependencies": {
+    "cross-env": "^7.0.3"
+  },
+  "devDependencies": {
+    "electron": "^34.0.0",
+    "electron-builder": "^25.1.8"
+  }
+}

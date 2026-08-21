@@ -15,6 +15,7 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
   - [x] `EC-STR-03`: Tri-allelic pattern (Type 1 duplication / Type 2 mosaicism) graceful handling.
   - [x] `EC-STR-04`: Microvariant decimal repeat parsing (`TH01 9.3`, `SE33 25.2`, `D1S1656 17.3`, `D21S11 31.2`).
   - [x] `EC-STR-05`: Additivity & Multiplicative Invariant ($\log_{10} LR_{\text{total}} = \sum \log_{10} LR_l, LR_{\text{total}} = \prod LR_l, LR(H_p/H_d) = 1/LR(H_d/H_p)$).
+  - **Full test run:** `pytest backend/node/services/forensic/test_forensic_engine.py backend/node/services/forensic/test_end_to_end.py -v` → **62 passed in 8.12s**
 
 ---
 

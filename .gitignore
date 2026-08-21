@@ -16,13 +16,17 @@ desktop.ini
 .env.test.local
 .env.production.local
 !.env.example
+!.env.airgap
+!infra/airgap/.env.airgap
 *.pem
 *.key
 *.cert
+infra/airgap/certs/
 
 # Node.js & Next.js Build Artifacts
 node_modules/
 frontend/node_modules/
+desktop/node_modules/
 contracts/node_modules/
 .next/
 frontend/.next/
@@ -30,6 +34,7 @@ out/
 frontend/out/
 dist/
 build/
+src-tauri/target/
 .npm
 .turbo
 *.tsbuildinfo

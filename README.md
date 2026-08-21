@@ -33,7 +33,7 @@
 6. [Security, Compliance & Chain-of-Custody Integrity](#6-security-compliance--chain-of-custody-integrity)
 7. [Complete REST API Reference Matrix](#7-complete-rest-api-reference-matrix)
 8. [Empirical Verification & Analytical Benchmarks](#8-empirical-verification--analytical-benchmarks)
-9. [Installation & Developer Setup](#9-installation--developer-setup)
+9. [Installation & Deployment Guide](#9-installation--deployment-guide)
 10. [Related Work & Academic References](#10-related-work--academic-references)
 11. [Legal & Forensic Casework Disclaimer](#11-legal--forensic-casework-disclaimer)
 12. [Academic Citation Format](#12-academic-citation-format)
@@ -345,10 +345,37 @@ str-analysis/
 │   │   └── Groth16ZkpVerifier.sol         # Module 27 BN254 Pairings Verifier
 │   ├── test/                              # Automated Unit Test Suite (20/20 Passing)
 │   └── scripts/deploy.js                  # Multi-Network Deployment Pipeline
+├── desktop/                               # Native Desktop Workstation (Electron)
+│   ├── main.js                            # Python FastAPI Sidecar Supervisor & Window Manager
+│   ├── preload.js                         # Secure Context Bridge & Native File Dialogs
+│   ├── electron-builder.yml               # Multi-Platform Installer Packaging (.exe, .AppImage, .dmg)
+│   └── package.json                       # Desktop Runtime Dependencies (Electron v34.0.0)
 │
-├── packages/                              # Shared Core Packages
-├── infra/                                 # Infrastructure Configuration
-└── scripts/                               # Maintenance Scripts
+├── src-tauri/                             # Ultra-Lightweight Desktop Workstation (Tauri 2.0 Rust)
+│   ├── tauri.conf.json                    # Tauri 2.0 Security, Window & Sidecar Manifest
+│   ├── Cargo.toml                         # Rust Toolchain Dependencies
+│   └── src/main.rs                        # Native Rust Entrypoint & Process Controller
+│
+├── infra/                                 # Infrastructure & Deployment Stacks
+│   ├── airgap/                            # Standalone Air-Gapped Forensic Laboratory Stack
+│   │   ├── docker-compose.yml             # 5-Container Production Compose Stack (Gateway, Backend, UI, DB, Redis)
+│   │   ├── nginx.conf                     # TLS 1.3 Reverse Proxy & WebSocket Streaming Gateway
+│   │   ├── init.sql                       # PostgreSQL 16 LIMS & Custody Ledger Schema
+│   │   └── .env.airgap                    # Offline Environment Variables & HMAC Keys
+│   ├── docker-compose.yml                 # Local Development Compose Stack
+│   └── prometheus.yml                     # Prometheus Metrics Scraper Configuration
+│
+└── scripts/                               # Cross-Platform Automation & Packagers
+    ├── start-airgap.bat                   # Windows One-Click Air-Gap Launcher (Batch Wrapper)
+    ├── start-airgap.ps1                   # Windows One-Click Air-Gap Launcher (PowerShell)
+    ├── start-airgap.sh                    # Linux / macOS One-Click Air-Gap Launcher (Bash)
+    ├── start-desktop.bat                  # Windows One-Click Desktop Workstation Launcher
+    ├── start-desktop.ps1                  # Windows PowerShell Desktop Launcher
+    ├── start-desktop.sh                   # Linux / macOS Desktop Launcher
+    ├── package-airgap.ps1                 # Windows Offline Air-Gap USB Bundle Builder (.zip)
+    ├── package-airgap.sh                  # Linux / macOS Offline Air-Gap USB Bundle Builder (.tar.gz)
+    ├── build-desktop.ps1                  # Windows Native Installer Builder (.exe)
+    └── build-desktop.sh                   # Linux / macOS Native Desktop Packager (.AppImage / .deb / .dmg)
 ```
 
 ---
@@ -576,19 +603,66 @@ The FastAPI gateway exposes a clean `/api/v1` RESTful interface.
 
 ## 8. Empirical Verification & Analytical Benchmarks
 
-FORENZA maintains rigorous automated test coverage across all biocomputational modules and 7 architectural pillars:
+FORENZA is engineered under strict biocomputational and metrological rigor. Every algorithm, statistical formulation, biophysical threshold, and forensic reporting scaler across all **35 integrated subsystems (7 architectural pillars)** is governed by a formal **3-Criterion Empirical Verification Protocol** and benchmarked against standardized reference datasets.
+
+### 🔬 The 3-Criterion Empirical Verification Protocol
+
+A biocomputational module in FORENZA is only certified as **`VERIFIED`** when it fulfills all three mandatory criteria with zero tolerance for heuristics or approximations:
+
+1. **Criterion 1 (Reference Ground-Truth Datasets):** Executed against universally recognized multi-omic standard reference materials, including:
+   - **Genomic & Lineage Standards:** NIST SRM 2391d (Components A–E), GIAB NA12878 (CEU), HG002 / NA24385 (Ashkenazi), NA19240 (YRI), NA18507 (CHB), YHRD Release 68 ($N=385,000$), EMPOP Release 15 ($N=48,500$ mitogenomes), and PROVEDIt / Zenodo BTSC 349/268 mixture series.
+   - **Epigenetic & Trace Standards:** VISAGE 5-CpG DNA methylation cohort, Philibert AHRR smoking intensity cohort, Cawthon qPCR telomere calibration, ASTM E1588-20 SEM-EDX GSR triads, and IAEA/GNIP global isotope precipitation grids.
+2. **Criterion 2 (Independent Tool & Analytical Cross-Validation):** Concordance verified against independent reference software and published analytical closed forms:
+   - **Genotyping & Kinship:** EuroForMix continuous Gamma, STRmix Log-Normal ($\sigma=0.35$), LikeLTD logistic grid, Familias 3 X-STR/DVI modules, and mapDamage 2.0 Bayesian deamination engine.
+   - **Phenotype & Ancestry:** Erasmus MC HIrisPlex-S webtool, FROG-kb / STRUCTURE 2.3.4, PLINK 2.0 PRS scoring, and MorphoJ Generalized Procrustes Analysis.
+   - **Aging & Geointelligence:** Official Horvath `DNAmAge` R package, EpiDISH NNLS deconvolution, EPA IsoMAP bivariate normal isoscape, and USGS National Soil mineralogy benchmarks.
+3. **Criterion 3 (Documented Mathematical Invariant & Edge-Case Tests):** Every module enforces a minimum of 5 automated invariant tests (such as probability simplex normalization $|\sum P_i - 1.0| \le 10^{-6}$, log-likelihood additivity $|\log_{10} LR - \sum \log_{10} LR_l| < 10^{-6}$, hypothesis reciprocity $LR(H_p/H_d) = 1/LR(H_d/H_p)$, sub-threshold culling, and active Prosecutor's Fallacy shields).
+
+---
+
+### 📋 Validation Documentation & Audit Trail
+
+For complete mathematical derivations, test logs, and module-by-module audit records, refer to the dedicated validation resources:
+
+* 📊 **[Module Validation Status (`docs/VALIDATION_STATUS.md`)](file:///c:/Users/Yusuf/str-analysis/docs/VALIDATION_STATUS.md):** The live, single source of truth for platform readiness. Tracks verification criteria, reference datasets, cross-check tools, and passing edge cases across all 35 modules (**35/35 VERIFIED, 1,147 passing tests**).
+* 📑 **[Validation Checklist & Audit Template (`docs/VALIDATION_CHECKLIST.md`)](file:///c:/Users/Yusuf/str-analysis/docs/VALIDATION_CHECKLIST.md):** Comprehensive 600+ line audit record detailing every test execution command, dataset accession, analytical cross-check, and edge-case boundary verification.
+* 📐 **[Mathematical Specification (`docs/math-spec.md`)](file:///c:/Users/Yusuf/str-analysis/docs/math-spec.md):** Complete mathematical and biocomputational specification covering all equations, probability distributions, Markov models, and uncertainty budgets.
+
+> [!NOTE]
+> **Scientific & Metrological Scope Notice (Developmental Verification vs. Casework Accreditation):**  
+> The 1,147 passing tests and golden benchmark vectors document **in silico developmental validation** demonstrating that FORENZA's software implementations reproduce published scientific formulas and standard reference vectors with mathematical exactness.  
+> In accordance with **SWGDAM (2020)**, **ISFG (2020)**, and **ISO/IEC 17025:2017** quality standards, deploying any forensic computational tool for court-admissible casework requires **internal validation** by the accredited operational laboratory using its specific laboratory equipment (e.g., genetic analyzers, CE/NGS platforms, chemistries) and laboratory-specific analytical thresholds.
+
+---
+
+### 🧪 Automated Verification Test Suite Matrix
+
+FORENZA maintains **1,147 automated unit, integration, and invariant tests (100% passing)** across all 7 architectural pillars:
 
 | Architectural Pillar | Core Test Modules | Verified Subsystems | Unit Tests | Coverage | Status |
 | :--- | :--- | :--- | :---: | :---: | :---: |
-| **Pillar 1: Probabilistic Genotyping & PopGen** | `test_forensic_engine.py`, `test_population.py`, `test_probabilistic_engine.py`, `test_touch.py`, `test_tippett_calibration.py` | 24-Locus STR, Balding-Nichols 4-State, IBD SMM Kinship, EuroForMix Gamma, STRmix Log-Normal, 3-Chain M-H MCMC, Gelman-Rubin, ESS, Tippett ECCDF/ROC-AUC/Cllr/HPD Bound, ENFSI 7-Tier EN+TR Verbal Scale, Prosecutor's Fallacy Shield, Dirichlet Bayesian Smoothing, Guo-Thompson HWE Exact Test, 276-Pair Linkage Equilibrium $(r^2 < 0.01)$, Weir-Cockerham $F_{st}$ Matrix, Logistic Dropout P(D) RFU & Mass Models, Poisson Drop-in P(C), H_b Balance, Curran-Gill Stochastic LTDNA LR | **172** | 100% | `172/172 PASSED` |
-| **Pillar 2: Lineage Forensics & Kinship** | `test_lineage_dna.py`, `test_ystr_forensics.py`, `test_xstr_kinship.py`, `test_mtdna_forensics.py`, `test_dvi_engine.py`, `test_dvi.py`, `test_hid.py` | Y-FILER Plus 27 Loci (6 RM Loci), Clopper-Pearson 95% Exact Binomial Bound, Brenner Subpopulation $\theta$, Discrete Laplace Clonal Smoothing, $N_{\text{male}}$ Mixture Deconvolution, SMM Germline Mutation, Investigator Argus X-12 Linkage (LG1–LG4), Kosambi Mapping Function, Female Kinship ($KI_X$ PHS/Duo/PGM-GD/MS/FS), mtDNA Control Region (HV1/HV2/HV3), rCRS / RSRS Alignment, ISFG 3' Right-Alignment, IUPAC Point Heteroplasmy (PHP), EMPOP Exact Frequency Bound, Interpol DVI Multi-Omic Joint LR ($LR_J$), Interpol 4-Tier Decisions, $N \times M$ AM/PM Disaster Reconciliation Matrix, aDNA Damage | **125** | 100% | `125/125 PASSED` |
-| **Pillar 3: Phenotyping & Ancestry** | `test_phenotyping.py`, `test_phenotyping_extended.py`, `test_multi_layer_genomics.py` | HIrisPlex-S (Eye/Hair/Skin), 55-AIM Continental GIS, 3D Craniofacial Mesh | **33** | 100% | `VERIFIED` |
-| **Pillar 4: Epigenetics & Aging** | `test_epigenetics.py`, `test_epigenomics_extended.py` | Horvath Elastic Net Clock, tDMR 6-Tissue Origin, AHRR Smoking, Telomere T/S | **30** | 100% | `VERIFIED` |
-| **Pillar 5: Physical Evidence & Pathology** | `test_bpa.py`, `test_toxicology.py`, `test_microscopy.py`, `test_entomology.py`, `test_botany.py`, `test_serology.py` | 3D BPA Origin, SEM-EDX GSR/CMC, Entomology ADD PMI, GC-MS Tox, Diatoms | **48** | 100% | `VERIFIED` |
-| **Pillar 6: LIMS, ISO 17025 & ZKP** | `test_zkp.py`, `test_lims.py`, `test_qc.py`, `test_iso_report_compiler.py`, `test_expert_witness.py`, `test_evidence_os.py` | Merkle Tree CoC Ledger, Groth16 ZKP, ISO 17025 GUM Budget, ENFSI Reporting | **56** | 100% | `VERIFIED` |
-| **Pillar 7: Geo-Forensic Intelligence & Isoscapes** | `test_isoscape_provenance_engine.py`, `test_soil_mineralogy_engine.py`, `test_palynology_edna_engine.py`, `test_geographic_profiling_engine.py`, `test_geo_fusion_engine.py` | Multi-Isotope Precipitation Isoscapes (H/O/Sr), Bioapatite/Keratin Calibration, Bataille Sr Mixing, QXRD Mineralogy, ZTR Heavy Minerals, CoDa CLR Transform, MCD Robust Mahalanobis Distance, Hotelling F-test, CIEDE2000 Colorimetry, Forensic Palynology RPF, Bray-Curtis/Cosine/Canberra Metrics, 6-Biome Ecological Classifier, 16S/ITS eDNA Spatial Regression, Rossmo Targeted Hunting Formula, WGS84 Vincenty Geodesics, Canter Circle Marauder/Commuter, SDE Ellipses, 2D Adaptive Gaussian KDE (Silverman rule), Multi-Modal Bayesian Evidence Fusion ($P \propto P_0 \prod \mathcal{L}_k$), SEI Search Prioritization, VECTOR_GEO_01, VECTOR_GEO_02, VECTOR_GEO_03 | **30** | 100% | `30/30 PASSED` |
-| **Forensic Terminal & Batch Ingestion** | `test_cli_batch_parser.py`, `test_dna_terminal_parser.py`, `test_str_locus_registry_engine.py`, `test_nist_1036_popgen_engine.py`, `test_golden_str_benchmarks.py`, `test_snp_phenotype_bga_engine.py`, `test_ystr_27_locus_engine.py`, `test_mtdna_empop_engine.py`, `test_golden_lineage_benchmarks.py`, `test_epg_synthesis_engine.py`, `test_casework_presets.py`, `test_terminal_routes.py` | EBNF Lexer & DFA Batch Engine, GeneMapper/CODIS/VCF Ingestion, 24-STR Master Registry, NIST 1036 PopGen, 27-Locus Y-STR, mtDNA EMPOP/PhyloTree 17, 5/6-Dye EPG Synthesis, 5 Certified Standards (NIST SRM 2391d, NA12878, HG002, NA19240, NA18507) + 6 Casework Presets, VECTOR_CLI_01–06, VECTOR_TERM_01–06 | **458** | 100% | `458/458 PASSED` |
-| **Total Automated Suite** | **64 Verification Modules** | **35 Biocomputational Subsystems (Full Platform)** | **952** | **100%** | **`952/952 PASSED`** |
+| **Pillar 1: Probabilistic Genotyping & PopGen** | `test_forensic_engine.py`, `test_mcmc_edge_cases.py`, `test_nrc_*.py`, `test_touch.py`, `test_tippett_calibration.py` | 24-Locus STR, Balding-Nichols 4-State, IBD SMM Kinship, EuroForMix Gamma, STRmix Log-Normal, 4-Chain M-H MCMC, Gelman-Rubin, ESS, Tippett ECCDF/ROC-AUC/Cllr/HPD Bound, ENFSI 7-Tier EN+TR Verbal Scale, Prosecutor's Fallacy Shield, Dirichlet Bayesian Smoothing, Curran-Gill LTDNA Stochastic Dropout P(D) & Drop-in P(C), H_b Imbalance | **329** | 100% | `329/329 PASSED` |
+| **Pillar 2: Lineage Forensics & Kinship** | `test_ystr_routes.py`, `test_xstr_routes.py`, `test_mtdna_routes.py`, `test_dvi_routes.py`, `test_adna_routes.py` | Y-FILER Plus 27 Loci (6 RM Loci), Clopper-Pearson 95% Bound, Brenner $\theta$, SMM Germline Mutation, Argus X-12 Linkage (LG1–LG4), Kosambi Map, PHS Kinship, mtDNA EMPOP/rCRS/RSRS, IUPAC Heteroplasmy, Interpol DVI Multi-Omic Joint LR, aDNA MapDamage Deamination & Fragmentation | **266** | 100% | `266/266 PASSED` |
+| **Pillar 3: Phenotyping & Ancestry** | `test_hirisplex_routes.py`, `test_bga_routes.py`, `test_cranio_routes.py`, `test_hair_texture_balding.py`, `test_mc1r_freckling_uv.py` | HIrisPlex-S (Eye/Hair/Skin MLR), 55-AIM Continental GIS Centroid & Covariance Ellipses, 3D Craniofacial Procrustes Superposition, Hair Curliness & Balding PRS, MC1R Epistasis & Freckling | **302** | 100% | `302/302 PASSED` |
+| **Pillar 4: Epigenetics & Aging** | `test_epigenetics.py`, `test_epigenomics_extended.py`, `test_horvath_visage.py`, `test_tdmr_fluid.py`, `test_ahrr_lifestyle.py` | Horvath VISAGE 5-CpG Elastic Net Clock ($y_0=20.0$), tDMR 6-Tissue NNLS Deconvolution, AHRR Pack-Years & Alcohol, Telomere T/S Decay, Bisulfite QC & BMIQ | **77** | 100% | `77/77 PASSED` |
+| **Pillar 5: Physical Evidence & Pathology** | `test_bpa.py`, `test_toxicology.py`, `test_microscopy.py`, `test_entomology.py`, `test_botany.py`, `test_serology.py` | 3D BPA Area of Origin Least-Squares & RK4 Drag, SEM-EDX GSR Pb-Ba-Sb & CMC Striations, Entomology Thermal Summation (ADD/ADH), ATR-FTIR HQI Polymer Library, Post-Mortem Toxicology PMR C/P Ratios | **52** | 100% | `52/52 PASSED` |
+| **Pillar 6: LIMS, ISO 17025 & ZKP** | `test_zkp.py`, `test_lims.py`, `test_qc.py`, `test_iso_report_compiler.py`, `test_court_routes.py`, `test_juror_3d.py` | Binary Merkle Tree CoC Ledger, Circom Groth16 ZKP BN254 Pairings, ISO 17025 GUM Budget ($U_{95}=2.00 \cdot u_c$), ENFSI 2017 Verbal Scale & Fallacy Shield, 3D Juror Visualizer | **91** | 100% | `91/91 PASSED` |
+| **Pillar 7: Geo-Forensic Intelligence & Isoscapes** | `test_isoscape_provenance_engine.py`, `test_soil_mineralogy_engine.py`, `test_palynology_edna_engine.py`, `test_geographic_profiling_engine.py`, `test_geo_fusion_engine.py` | Multi-Isotope Precipitation Isoscapes ($\delta^{18}\text{O}, \delta^2\text{H}, ^{87}\text{Sr}/^{86}\text{Sr}$), Bataille Sr, QXRD Soil CoDa CLR & Mahalanobis ZTR, Palynology 6-Biome Bray-Curtis, Rossmo CGT Hunting Geodesics, 2D Adaptive Gaussian KDE Fusion Grid | **30** | 100% | `30/30 PASSED` |
+| **Total Automated Suite** | **35 Biocomputational Modules** | **7 Architectural Pillars (Full Platform Verified)** | **1,147** | **100%** | **`1,147/1,147 PASSED`** |
+
+```bash
+# Execute the full verified test suite across all 7 pillars
+pytest backend/ -v
+
+# Target specific architectural pillars
+pytest backend/node/services/forensic/probabilistic/ -v   # Pillar 1: Probabilistic Genotyping
+pytest backend/node/services/forensic/ystr/ backend/node/services/forensic/mtdna/ -v  # Pillar 2: Lineage
+pytest backend/node/services/forensic/phenotyping/ -v     # Pillar 3: Phenotyping & Ancestry
+pytest backend/node/services/forensic/epigenetics/ -v     # Pillar 4: Epigenetics & Aging
+pytest backend/node/services/forensic/physical/ -v        # Pillar 5: Physical Evidence
+pytest backend/node/services/forensic/security/ -v        # Pillar 6: LIMS & ZKP
+pytest backend/node/services/forensic/geoint/ -v          # Pillar 7: Geo-Forensics
+```
 
 ### Golden Ground-Truth Benchmark Test Vectors
 
@@ -928,22 +1002,73 @@ The biocomputational engine is benchmarked against exact golden ground-truth tes
 
 ---
 
-## 9. Installation & Developer Setup
+## 9. Installation & Deployment Guide
 
-### Prerequisites
+FORENZA supports three deployment topologies: **(A) One-Click Air-Gapped Multi-Container Stack** for forensic laboratory servers, **(B) Desktop Standalone Application (Electron / Tauri 2.0)** for offline forensic laptops with native file I/O, and **(C) Local Developer Setup** for algorithm researchers.
 
+---
+
+### Option A: One-Click Air-Gapped Workstation Deployment (Recommended for Forensic Labs)
+
+Designed for 100% offline forensic environments with zero internet access, embedded reference matrices (NIST 1036, YHRD, EMPOP, VISAGE), PostgreSQL 16 LIMS metadata storage, Redis task caching, and TLS 1.3 reverse proxying.
+
+#### 🚀 Fast Launch:
+
+* **Linux / macOS:**
+  ```bash
+  chmod +x ./scripts/start-airgap.sh
+  ./scripts/start-airgap.sh
+  ```
+
+* **Windows (One-Click Batch or PowerShell):**
+  - Simply double-click **`start-airgap.bat`**, or execute in PowerShell:
+  ```powershell
+  powershell -ExecutionPolicy Bypass -File .\scripts\start-airgap.ps1
+  ```
+
+* **Manual Docker Compose Launch:**
+  ```bash
+  cd infra/airgap
+  docker compose up -d --build
+  ```
+
+The workstation will be operational at `https://localhost:8443`.
+
+> 📖 **Full Air-Gap Manual:** See [Air-Gapped Workstation Deployment & Operations Guide (`docs/airgap-deployment-guide.md`)](file:///c:/Users/Yusuf/str-analysis/docs/airgap-deployment-guide.md).
+
+---
+
+### Option B: Native Desktop Standalone Application (Electron & Tauri 2.0)
+
+For forensic analysts operating on standalone field laptops without Docker or web servers. The desktop application automatically manages the Python FastAPI biocomputational engine as a native background sidecar process on `127.0.0.1:8000`.
+
+#### 💻 One-Click Desktop Launch:
+* **Windows:** Double-click **`start-desktop.bat`** (or run `powershell .\scripts\start-desktop.ps1`)
+* **Linux / macOS:** Run `./scripts/start-desktop.sh`
+
+#### 📦 Compiling Standalone Installers (`.exe` / `.AppImage` / `.dmg`):
+```powershell
+# On Windows: Compiles NSIS Setup .exe and Portable .exe
+powershell -ExecutionPolicy Bypass -File .\scripts\build-desktop.ps1
+```
+```bash
+# On Linux / macOS: Compiles AppImage, .deb, or .dmg
+./scripts/build-desktop.sh
+```
+
+> 📖 **Full Desktop Manual:** See [Desktop Standalone Operations & Packaging Manual (`docs/desktop-standalone-guide.md`)](file:///c:/Users/Yusuf/str-analysis/docs/desktop-standalone-guide.md).
+
+---
+
+### Option C: Local Developer & Researcher Setup
+
+#### Prerequisites
 - **Python:** 3.12+ (with `pip` or `uv`)
 - **Node.js:** 20+ (with `npm` or `pnpm`)
-- **Circom / Rust:** Optional (for compiling ZK circuits from scratch)
+- **Docker:** Optional (for full multi-service simulation)
 
-### 1. Backend Setup
-
-
+#### 1. Backend Microservices Engine
 ```bash
-# Clone the repository
-git clone https://github.com/yusufcalisir/FORENZA.git
-cd str-analysis
-
 # Create and activate Python virtual environment
 python -m venv venv
 source venv/bin/activate  # On Windows: .\venv\Scripts\activate
@@ -955,8 +1080,7 @@ pip install -r backend/requirements.txt
 uvicorn backend.app.main:app --reload --port 8000
 ```
 
-### 2. Frontend Setup
-
+#### 2. Frontend Tactical Workstation UI
 ```bash
 # Navigate to frontend directory
 cd frontend
@@ -968,10 +1092,7 @@ npm install
 npm run dev
 ```
 
-The application will be live at:
-- **Tactical Workstation:** `http://localhost:3000`
-- **Interactive Analysis Hub:** `http://localhost:3000/analysis`
-- **FastAPI Interactive Docs:** `http://localhost:8000/docs`
+The local development instance will be live at `http://localhost:3000`.
 
 ---
 

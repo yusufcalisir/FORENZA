@@ -63,12 +63,40 @@ $keyFile = Join-Path $CertsDir "server.key"
 
 if (-not (Test-Path $certFile) -or -not (Test-Path $keyFile)) {
     Write-Host "  Synthesizing self-signed forensic TLS 1.3 certificate..." -ForegroundColor Yellow
+    $certCreated = $false
     if (Get-Command openssl -ErrorAction SilentlyContinue) {
-        & openssl req -x509 -nodes -days 1825 -newkey rsa:2048 `
-            -keyout $keyFile `
-            -out $certFile `
-            -subj "/C=TR/ST=Ankara/L=Forensic/O=FORENZA/OU=AirGapEvidenceOS/CN=localhost" 2>$null
-    } else {
+        try {
+            $tempCnf = Join-Path $env:TEMP "forenza_openssl.cnf"
+            $cnfLines = @(
+                "[req]",
+                "distinguished_name = req_dn",
+                "prompt = no",
+                "[req_dn]",
+                "C = TR",
+                "ST = Ankara",
+                "L = Forensic",
+                "O = FORENZA",
+                "OU = AirGapEvidenceOS",
+                "CN = localhost"
+            )
+            [System.IO.File]::WriteAllLines($tempCnf, $cnfLines)
+            $prevEA = $ErrorActionPreference
+            $ErrorActionPreference = "Continue"
+            & openssl req -x509 -nodes -days 1825 -newkey rsa:2048 `
+                -keyout $keyFile `
+                -out $certFile `
+                -config $tempCnf 2>$null
+            $ErrorActionPreference = $prevEA
+            if (Test-Path $tempCnf) { Remove-Item $tempCnf -Force -ErrorAction SilentlyContinue }
+            if ((Test-Path $certFile) -and (Test-Path $keyFile)) {
+                $certCreated = $true
+            }
+        } catch {
+            $certCreated = $false
+        }
+    }
+
+    if (-not $certCreated) {
         # Fallback via PowerShell PKI
         $cert = New-SelfSignedCertificate -DnsName "localhost", "forenza.local" -CertStoreLocation "cert:\CurrentUser\My" -NotAfter (Get-Date).AddYears(5)
         $certBytes = $cert.Export([System.Security.Cryptography.X509Certificates.X509ContentType]::Cert)

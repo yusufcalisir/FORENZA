@@ -2777,31 +2777,63 @@ $$LR_{\text{mtDNA}} = \frac{1}{\hat{p}_{\text{upper}}}$$
 For $N = 48,500$ and $k=0$:
 $$\hat{p}_{\text{upper}} = 1 - (0.05)^{1/48501} \approx 6.1764 \times 10^{-5} \implies LR_{\text{mtDNA}} \approx 16,190.7$$
 
+---
 
+## 82. Interpol Disaster Victim Identification (DVI) & Complex Pedigree Reconciler (Module 2.4)
 
+### 82.1 Direct Ante-Mortem Reference Standard Likelihood Ratio
+When a Post-Mortem (PM) human remain is directly compared against an Ante-Mortem (AM) personal reference standard (e.g. toothbrush, comb, biopsy):
+- **Genotypic Concordance:**
+  $$LR_{\text{direct}, l} = \begin{cases} \frac{1}{2 p_i p_j + 2 \theta p_i (1 - p_i)} & \text{if heterozygous } (A_i A_j) \\ \frac{1}{p_i^2 + \theta p_i (1 - p_i)} & \text{if homozygous } (A_i A_i) \end{cases}$$
+- **Mendelian Non-Concordance:** If $G_{\text{PM}} \neq G_{\text{AM}}$, $LR_l = 0.0$ ($\log_{10} LR_l = -300.0$).
 
+---
 
+### 82.2 Complex Kinship Pedigree Likelihood Calculations
+1. **Trio Paternity (Missing Child vs Mother & Father):**
+   $$LR_{\text{trio}, l} = \frac{P(G_C \mid G_M, G_F, H_1)}{P(G_C \mid G_M, H_2)}$$
+   Under $H_1$ (True Biological Parents), alleles transmit with Mendelian probability $0.5$. Under $H_2$ (Random Male), paternal allele frequency $p_{\text{pat}}$ governs transmission.
+2. **Deficiency Duo (Single Parent & Child):**
+   $$LR_{\text{duo}, l} = \frac{P(G_C \mid G_P, H_1)}{P(G_C \mid H_2)}$$
+3. **Full Siblings Kinship Hypothesis:**
+   $$LR_{\text{sib}, l} = \frac{k_0 + k_1 \cdot \text{IBS}_1 + k_2 \cdot \text{IBS}_2}{P(G_{S2})}$$
+   where $(k_0, k_1, k_2) = (0.25, 0.50, 0.25)$ for full siblings.
 
+---
 
+### 82.3 Multi-Omic Evidence Fusion & Product Rule
+Combining autosomal, lineage, and SNP markers under independent transmission:
+$$LR_{\text{Joint}} = LR_{\text{Autosomal STR}} \times \left(\frac{1}{\hat{p}_{\text{Y-STR, upper}}}\right)^{\delta_y} \times \left(\frac{1}{\hat{p}_{\text{mtDNA, upper}}}\right)^{\delta_m} \times (LR_{\text{SNP}})^{\delta_s}$$
 
+Log-space additivity invariant:
+$$\log_{10} LR_{\text{Joint}} = \log_{10} LR_{\text{Autosomal}} + \delta_y \log_{10}\left(\frac{1}{\hat{p}_Y}\right) + \delta_m \log_{10}\left(\frac{1}{\hat{p}_M}\right) + \delta_s \log_{10}(LR_{\text{SNP}})$$
 
+---
 
+### 82.4 Bayesian Posterior Probability ($W$) & Prior Odds Updating
+Given a prior probability of identity $P(H_1)$ (default $0.001$ in mass disaster scenarios):
+$$\text{Prior Odds} = \frac{P(H_1)}{1 - P(H_1)}$$
+$$\text{Posterior Odds} = LR_{\text{Joint}} \times \text{Prior Odds}$$
+$$W = P(H_1 \mid E) = \frac{\text{Posterior Odds}}{1 + \text{Posterior Odds}} = \frac{LR_{\text{Joint}} \cdot P(H_1)}{LR_{\text{Joint}} \cdot P(H_1) + (1 - P(H_1))}$$
 
+---
 
+### 82.5 Interpol Standing Committee 4-Tier Decision Protocol
+| Decision Tier | Likelihood Ratio ($LR_{\text{Joint}}$) | $\log_{10} LR$ | Judicial Action Criterion | Secondary Corroboration |
+| :--- | :--- | :--- | :--- | :--- |
+| **DEFINITIVE_IDENTIFICATION** | $LR \ge 10^6$ | $\ge 6.00$ | Standalone judicial identification | Not legally required |
+| **PROBABLE_MATCH** | $10^4 \le LR < 10^6$ | $4.00 \le \log_{10} < 6.00$ | Probable match | Mandates odontology/surgical marks |
+| **INCONCLUSIVE** | $10^{-2} < LR < 10^4$ | $-2.00 < \log_{10} < 4.00$ | Insufficient biostatistical proof | Additional STR / SNP testing |
+| **EXCLUSION** | $LR \le 10^{-2}$ | $\le -2.00$ | Definite exclusion | Excluded from reference pedigree |
 
+---
 
-
-
-
-
-
-
-
-
-
-
-
-
+### 82.6 Bipartite Hungarian / Munkres Mutual Exclusivity Solver
+In an $N \times M$ mass disaster reconciliation matrix ($N$ PM remains vs $M$ AM missing person families), the assignment optimization solves:
+$$\max \sum_{i=1}^N \sum_{j=1}^M x_{i,j} \cdot \log_{10}(LR_{i,j})$$
+subject to:
+$$\sum_{j=1}^M x_{i,j} \le 1 \quad \forall i \in \{1, \dots, N\}, \quad \sum_{i=1}^N x_{i,j} \le 1 \quad \forall j \in \{1, \dots, M\}, \quad x_{i,j} \in \{0, 1\}$$
+guaranteeing strict 1-to-1 mutual exclusivity across all reconciled victims.
 
 
 

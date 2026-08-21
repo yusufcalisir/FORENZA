@@ -183,7 +183,10 @@ str-analysis/
 │           ├── zkp/                       # 9. Zero-Knowledge Proof Privacy Matcher
 │           ├── system/                    # 10. System Telemetry & Integrity Probes
 │           ├── lineage/                   # 11. Y-STR, X-STR & mtDNA Lineage Engine
-│           ├── dvi/                       # 12. Interpol Mass Disaster (DVI) Engine
+│           ├── dvi/                       # 12. Interpol Disaster Victim Identification (DVI) Engine
+│           │   ├── dvi_mathematical_formulation.py # Direct AM, Trio, Deficiency, Siblings, Multi-Omic Joint LR & Hungarian Solver
+│           │   ├── dvi_reference_datasets.py      # Interpol Reference Standards, Golden VECTOR_P2_03, Casework Cohorts
+│           │   └── dvi_cross_validation.py        # Familias 3 DVI, Interpol Guide §4 & ENFSI Evaluative Reporting Shield
 │           ├── hid/                       # 13. Human Identification (HID) Engine
 │           ├── anthropology/              # 14. Skeletal Morphometrics & Stature Engine
 │           ├── entomology/                # 15. ADH Post-Mortem Interval (PMI) Engine

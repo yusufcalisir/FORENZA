@@ -137,8 +137,24 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
   - [x] `EC-MT-06`: $\ge 2$ homoplasmic point differences triggers definitive SWGDAM maternal exclusion ($LR = 0.0, \log_{10} LR = -300.0$).
   - **Full test run:** `pytest backend/app/api/test_mtdna_routes.py backend/node/services/forensic/mtdna/ backend/node/services/forensic/dna/test_mtdna_forensics.py -v` → **56 passed in 9.36s**
 
+### Module 2.4: DVI-PED — Interpol Disaster Victim Identification & Complex Pedigrees [VERIFIED 2026-08-21]
+- [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-21]:**
+  - [x] Interpol DVI Reference Standard Pedigree Templates (Direct AM Personal Item, Biological Parents Trio, Single Parent Deficiency Duo, Full Sibling Collateral Pair).
+  - [x] Certified Golden Benchmark VECTOR_P2_03 (Severely degraded PM skeletal sample with Autosomal $LR = 5.2 \times 10^3$, Y-STR $p_{\text{upper}} = 0.0002 \implies LR_Y = 5,000$, mtDNA $p_{\text{upper}} = 0.0001 \implies LR_M = 10,000 \implies LR_{\text{Joint}} = 2.6 \times 10^{11}, \log_{10} LR = 11.4149$).
+  - [x] Casework Benchmark Cohorts: Direct AM Match ($LR \ge 10^{18}$), Trio Parents Missing Child ($LR \approx 8.7 \times 10^7$), Degraded PM Remains with 3 Loci Dropout ($LR > 10^{11}$), Unrelated Non-Kin Exclusion ($LR \le 10^{-8}$).
+- [x] **Criterion 2 (Independent Tool Cross-Check) ✅ COMPLETE [2026-08-21]:**
+  - [x] Familias 3 DVI Batch Module concordance for multi-pedigree likelihood ratios and Bayesian posterior updating ($W$).
+  - [x] Interpol DVI Guide Section 4 (2018, 2023) 4-tier decision boundaries ($LR \ge 10^6, 10^4 \to 10^6, 10^{-2} \to 10^4, \le 10^{-2}$) and judicial action criteria.
+  - [x] ENFSI (2017) Evaluative Reporting Guidelines with active Interpol Multi-Omic Legal Shield.
+- [x] **Criterion 3 (5 Documented Edge Cases) ✅ COMPLETE [2026-08-21]:**
+  - [x] `EC-DVI-01`: Undamaged ante-mortem personal item (e.g. toothbrush) matching victim yielding $LR \ge 10^{18}$.
+  - [x] `EC-DVI-02`: Mother + Father finding missing child yielding posterior probability $W > 0.9999$.
+  - [x] `EC-DVI-03`: Degraded victim sample with 3 dropped loci resolved cleanly under Bayesian pedigree prior ($W > 0.999999$).
+  - [x] `EC-DVI-04`: Mutual exclusivity constraint strictly enforced in joint assignment matrix via Hungarian bipartite solver.
+  - [x] `EC-DVI-05`: Prior probability of identity $P(H_1) = 0.001$ updated to posterior $P(H_1 \mid E) > 0.9999$ for $LR \ge 10^7$.
+  - [x] `EC-DVI-06`: Multi-omic fusion log-additivity invariant $|\log_{10} LR_{\text{Joint}} - \sum \log_{10} LR_i| < 10^{-6}$.
+  - **Full test run:** `pytest backend/app/api/test_dvi_routes.py backend/node/services/forensic/dvi/ -v` → **48 passed in 5.83s**
+
 ---
 
-*(Pillars 2.4 to 7 checklist sections are formatted identically following the master roadmap).*
-
-
+*(Pillars 2.5 to 7 checklist sections are formatted identically following the master roadmap).*

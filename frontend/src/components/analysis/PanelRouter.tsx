@@ -7,6 +7,7 @@ import LineageDnaPanel from "@/components/analysis/LineageDnaPanel";
 import PanelYSTR from "@/components/analysis/PanelYSTR";
 import PanelXSTR from "@/components/analysis/PanelXSTR";
 import PanelMTDNA from "@/components/analysis/PanelMTDNA";
+import PanelDVI from "@/components/analysis/PanelDVI";
 import DviPanel from "@/components/analysis/DviPanel";
 import HumanIdPanel from "@/components/analysis/HumanIdPanel";
 import ProbabilisticGenotypingPanel from "@/components/analysis/ProbabilisticGenotypingPanel";
@@ -451,7 +452,8 @@ export function renderPanel(tabId: string) {
     case "mtdna":
       return <PanelMTDNA />;
     case "dvi":
-      return <DviPanel />;
+    case "dvi_ped":
+      return <PanelDVI />;
     case "humanid":
       return <HumanIdPanel />;
 

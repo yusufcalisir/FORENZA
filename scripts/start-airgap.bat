@@ -1,9 +1,10 @@
 @echo off
 REM ==============================================================================
 REM FORENZA: Forensic Evidence Operating System
-# One-Click Air-Gapped Workstation Launcher (Windows Batch Wrapper)
+REM One-Click Air-Gapped Workstation Launcher (Windows Batch Wrapper)
 REM ==============================================================================
 
+chcp 65001 >nul
 TITLE FORENZA Air-Gapped Forensic Operating System
 
 echo Launching FORENZA Air-Gapped Workstation via PowerShell...

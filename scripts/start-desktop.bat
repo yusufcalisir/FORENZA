@@ -4,6 +4,7 @@ REM FORENZA: Forensic Evidence Operating System
 REM One-Click Desktop Workstation Launcher (Windows Batch Wrapper)
 REM ==============================================================================
 
+chcp 65001 >nul
 TITLE FORENZA Native Desktop Forensic Workstation
 
 echo Launching FORENZA Desktop Workstation...

@@ -48,7 +48,7 @@ docker save -o $tarPath `
     postgres:16-alpine `
     redis:7-alpine
 
-Write-Host "  ✓ Exported container images to $tarPath" -ForegroundColor Green
+Write-Host "  * Exported container images to $tarPath" -ForegroundColor Green
 
 # 4. Assemble Offline Package
 Write-Host "[4/4] Assembling Distribution Archive..." -ForegroundColor Cyan
@@ -68,7 +68,7 @@ Compress-Archive -Path "$PkgWorkDir\*" -DestinationPath $zipPath -CompressionLev
 $sha256 = (Get-FileHash -Path $zipPath -Algorithm SHA256).Hash
 
 Write-Host "`n========================================================================" -ForegroundColor Green
-Write-Host "🎉 Air-Gapped Windows ZIP Package Created Successfully!" -ForegroundColor Green
+Write-Host "  [OK] Air-Gapped Windows ZIP Package Created Successfully!" -ForegroundColor Green
 Write-Host "========================================================================" -ForegroundColor Green
 Write-Host "  Distribution Archive: $zipPath" -ForegroundColor White
 Write-Host "  SHA-256 Checksum:     $sha256" -ForegroundColor Cyan

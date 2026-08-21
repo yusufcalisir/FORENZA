@@ -1,7 +1,8 @@
 {
-  "name": "forenza-desktop",
+  "name": "forenza",
+  "productName": "FORENZA",
   "version": "2.0.0",
-  "description": "FORENZA Forensic Evidence Operating System - Native Desktop Workstation",
+  "description": "FORENZA Forensic Evidence Operating System — Native Desktop Workstation",
   "main": "main.js",
   "author": "FORENZA Biocomputational Intelligence Team <forenza@yusufcalisir.dev>",
   "license": "MIT",

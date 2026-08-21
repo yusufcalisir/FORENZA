@@ -31,7 +31,7 @@ if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
 }
 
 try {
-    $null = docker compose version
+    docker compose version 2>&1 | Out-Null
 } catch {
     Write-Host "[ERROR] Docker Compose plugin is required but not found." -ForegroundColor Red
     exit 1

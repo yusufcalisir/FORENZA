@@ -29,13 +29,13 @@ Write-Host "[3/3] Compiling Native Windows Executable (.exe)..." -ForegroundColo
 & npx electron-builder --win --x64
 
 Write-Host "`n========================================================================" -ForegroundColor Green
-Write-Host "🎉 FORENZA Windows Desktop Installer Built Successfully!" -ForegroundColor Green
+Write-Host "  [OK] FORENZA Windows Desktop Installer Built Successfully!" -ForegroundColor Green
 Write-Host "========================================================================" -ForegroundColor Green
 Write-Host "Output Directory: $DistDir" -ForegroundColor White
 if (Test-Path $DistDir) {
     Get-ChildItem -Path $DistDir -Filter "*.exe" | ForEach-Object {
         $sizeMB = [math]::Round($_.Length / 1MB, 1)
-        Write-Host "  • $($_.Name) ($sizeMB MB)" -ForegroundColor Cyan
+        Write-Host "  * $($_.Name) ($sizeMB MB)" -ForegroundColor Cyan
     }
 }
 Write-Host "`nReady for air-gapped laboratory distribution without web server installation.`n"

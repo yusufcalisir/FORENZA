@@ -714,6 +714,8 @@ _STR_STORE["CASE-2026-8891"] = _STR_STORE["test-profile-eu"]
 @app.head("/readyz", include_in_schema=False)
 @app.get("/api/health", tags=["System"], include_in_schema=False)
 @app.head("/api/health", include_in_schema=False)
+@app.get("/api/v1/system/health", tags=["System"], include_in_schema=False)
+@app.head("/api/v1/system/health", include_in_schema=False)
 def health_check() -> dict:
     """
     Health check endpoint for orchestration, uptime monitoring, and keep-alive cronjobs.

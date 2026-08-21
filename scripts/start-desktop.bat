@@ -5,7 +5,7 @@ REM One-Click Desktop Workstation Launcher (Windows Batch Wrapper)
 REM ==============================================================================
 
 chcp 65001 >nul
-TITLE FORENZA Native Desktop Forensic Workstation
+TITLE FORENZA
 
 echo Launching FORENZA Desktop Workstation...
 powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0start-desktop.ps1"

@@ -12,6 +12,7 @@ const fs = require('fs');
 const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged;
 const ROOT_DIR = path.resolve(__dirname, '..');
 const BACKEND_DIR = path.join(ROOT_DIR, 'backend');
+const ICON_PATH = path.join(__dirname, 'assets', 'icon.png');
 
 let mainWindow = null;
 let backendProcess = null;
@@ -103,7 +104,7 @@ function startBackendSidecar() {
 
       // Poll healthcheck endpoint until ready
       const checkHealth = (retries = 30) => {
-        const req = http.get(`http://127.0.0.1:${backendPort}/api/v1/system/health`, (res) => {
+        const req = http.get(`http://127.0.0.1:${backendPort}/api/v1/health`, (res) => {
           if (res.statusCode === 200) {
             console.log('[FORENZA Desktop] Biocomputational Engine is HEALTHY (35 subsystems active).');
             backendReady = true;
@@ -162,7 +163,8 @@ function createMainWindow() {
     minWidth: 1024,
     minHeight: 700,
     backgroundColor: '#090d16',
-    title: 'FORENZA: Forensic Evidence Operating System',
+    title: 'FORENZA',
+    icon: ICON_PATH,
     show: false,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
@@ -182,6 +184,7 @@ function createMainWindow() {
 
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
+    mainWindow.setTitle('FORENZA');
     if (isDev) {
       // mainWindow.webContents.openDevTools({ mode: 'detach' });
     }
@@ -196,6 +199,14 @@ function createMainWindow() {
 // App Lifecycle
 // ------------------------------------------------------------------------------
 app.whenReady().then(async () => {
+  // Set application name shown in taskbar, about dialog, and tray
+  app.setName('FORENZA');
+
+  // Set dock/taskbar icon (Linux & macOS; Windows uses BrowserWindow icon)
+  if (app.dock) {
+    app.dock.setIcon(ICON_PATH);
+  }
+
   setupIpcHandlers();
   await startBackendSidecar();
   createMainWindow();

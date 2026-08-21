@@ -99,5 +99,25 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
-*(Pillars 2.2 to 7 checklist sections are formatted identically following the master roadmap).*
+### Module 2.2: X-STR — X-Chromosome 12-Locus Linkage & Kinship Engine (Argus X-12) [VERIFIED 2026-08-21]
+- [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-21]:**
+  - [x] Tillmar et al. (2017) Argus X-12 European ($N=3,850$) & East Asian ($N=2,940$) population linkage group allele frequency distributions across all 12 loci.
+  - [x] Certified Multi-Omic Reference Standards: NA12878 (46,XX CEU Female), NA19240 (46,XX YRI Female), NIST SRM 2391d Component A (46,XY Male), and HG002 / NA24385 (46,XY Ashkenazi Male).
+  - [x] Casework Benchmark Cohorts: Paternal Half-Sisters (`VECTOR_P2_02`: $KI_X \approx 1.854 \times 10^5, \log_{10} KI_X \approx 5.268$), Biological Father-Daughter Duo ($KI_X > 3.5 \times 10^5$), Paternal Grandmother-Granddaughter Trio ($KI_X > 500$), and Unrelated Females Exclusion ($KI_X = 0.0$).
+- [x] **Criterion 2 (Independent Tool Cross-Check) ✅ COMPLETE [2026-08-21]:**
+  - [x] Familias 3 X-STR Linkage Module concordance across all 4 linkage groups ($|\Delta KI / KI| < 10^{-4}$).
+  - [x] Kling et al. linkage disequilibrium cluster formulas and exact Kosambi mapping function $r = \frac{1}{2}\tanh(2d/100)$ ($|\Delta r| < 10^{-6}$).
+  - [x] ISFG (2012) & ENFSI (2017) 7-Tier Evaluative Reporting Disclaimer with active Prosecutor's Fallacy Shield for X-chromosomal inheritance.
+- [x] **Criterion 3 (5 Documented Edge Cases) ✅ COMPLETE [2026-08-21]:**
+  - [x] `EC-XSTR-01`: Father-Daughter obligate match across all 12 loci yields massive kinship support ($LR > 3.5 \times 10^5, \log_{10} LR > 5.50$) in absence of mutation.
+  - [x] `EC-XSTR-02`: Tightly linked pair DXS10148–DXS10135 calculated with exact Kosambi recombination correction ($r=0.003$ vs $r=0.50$), verifying cluster linkage dependency.
+  - [x] `EC-XSTR-03`: Paternal half-sisters share full paternal X-chromosome ($LR > 10^4$), whereas unrelated females show non-matching alleles and exclusion.
+  - [x] `EC-XSTR-04`: Hemizygous male profile containing $>1$ allele at any X-STR locus is rejected with HTTP 422 / ValueError validation exception.
+  - [x] `EC-XSTR-05`: Total $KI_X = \prod_{k=1}^4 KI_{\text{LG}_k}$ preserves strict log-space additivity $|\log_{10} KI_X - \sum \log_{10} KI_{\text{LG}}| < 10^{-6}$.
+  - [x] `EC-XSTR-06`: Kosambi boundary limits ($d=0 \to r=0, d \to \infty \to r=0.50, d < 0 \to \text{ValueError}$).
+  - **Full test run:** `pytest backend/app/api/test_xstr_routes.py backend/node/services/forensic/xstr/ backend/node/services/forensic/dna/test_xstr_kinship.py -v` → **68 passed in 7.67s**
+
+---
+
+*(Pillars 2.3 to 7 checklist sections are formatted identically following the master roadmap).*
 

@@ -5,6 +5,7 @@ import { useForensicCaseStore } from "@/store/forensicCaseStore";
 import AncestryDataPanel from "@/components/analysis/AncestryDataPanel";
 import LineageDnaPanel from "@/components/analysis/LineageDnaPanel";
 import PanelYSTR from "@/components/analysis/PanelYSTR";
+import PanelXSTR from "@/components/analysis/PanelXSTR";
 import DviPanel from "@/components/analysis/DviPanel";
 import HumanIdPanel from "@/components/analysis/HumanIdPanel";
 import ProbabilisticGenotypingPanel from "@/components/analysis/ProbabilisticGenotypingPanel";
@@ -444,7 +445,7 @@ export function renderPanel(tabId: string) {
       return <PanelYSTR />;
     case "lineage_x":
     case "xstr":
-      return <LineageDnaPanel initialTab="xstr" />;
+      return <PanelXSTR />;
     case "lineage_mt":
     case "mtdna":
       return <LineageDnaPanel initialTab="mtdna" />;

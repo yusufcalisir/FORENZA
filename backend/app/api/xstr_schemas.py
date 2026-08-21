@@ -1,48 +1,54 @@
 """
-FORENZA X-STR Linkage & Female Kinship API — Pydantic v2 Schemas (Module 07).
+FORENZA X-STR Linkage & Female Kinship API — Pydantic v2 Schemas (Module 2.2).
+Standards Compliance: ISO/IEC 17025:2017, ISFG Recommendations on X-STR Testing (2012),
+ENFSI Evaluative Reporting (2017).
 
-Covers:
-  - Argus X-12 Kinship Evaluation (PHS, Father-Daughter, PGM-GD, Mother-Son, Full Sisters)
-  - Kosambi Mapping Function (cM -> r)
-  - Linkage Group Cluster Inspection
-  - Argus X-12 Panel Metadata
+Research Source: research/pillar_2_lineage_kinship_research.md §2.1 & §2.2.
 """
 
-from typing import Dict, List, Optional
-from pydantic import BaseModel, Field
+from typing import Dict, List, Optional, Any, Union
+from pydantic import BaseModel, Field, ConfigDict
 
 
 # ── Genotype & Profile Schemas ───────────────────────────────────────────────
 
 class XSTRGenotypeSchema(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
     locus: str = Field(..., description="Locus name in Argus X-12 (e.g. 'DXS10148').", examples=["DXS10148"])
     allele1: float = Field(..., description="Primary allele repeat count.", examples=[12.0])
     allele2: Optional[float] = Field(None, description="Secondary allele repeat count (None for hemizygous males).", examples=[15.0])
 
 
 class XSTRProfileSchema(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
     profile_id: str = Field(..., description="Profile identifier.", examples=["PERSON-A"])
     is_male: bool = Field(..., description="True if male (hemizygous), False if female.", examples=[False])
-    loci: Dict[str, XSTRGenotypeSchema] = Field(
+    loci: Dict[str, Union[XSTRGenotypeSchema, List[float], float, str]] = Field(
         ...,
-        description="Map of X-STR locus names to genotype definitions.",
+        description="Map of X-STR locus names to genotype definitions or allele arrays.",
     )
 
 
-# ── Kinship Evaluation ───────────────────────────────────────────────────────
+# ── Kinship Evaluation Schemas ───────────────────────────────────────────────
 
 class XSTRKinshipRequest(BaseModel):
-    """
-    Request for Argus X-12 12-locus kinship evaluation.
-    """
-    profile1: XSTRProfileSchema = Field(..., description="First individual profile.")
-    profile2: XSTRProfileSchema = Field(..., description="Second individual profile.")
+    """Request for Argus X-12 12-locus kinship evaluation."""
+    model_config = ConfigDict(protected_namespaces=())
+
+    profile1: Optional[XSTRProfileSchema] = None
+    profile2: Optional[XSTRProfileSchema] = None
+    profile_a: Optional[Dict[str, Any]] = None
+    profile_b: Optional[Dict[str, Any]] = None
+    sex_a: str = Field("FEMALE", description="Sex of Person A ('FEMALE' or 'MALE').")
+    sex_b: str = Field("FEMALE", description="Sex of Person B ('FEMALE' or 'MALE').")
     relationship: str = Field(
         "PATERNAL_HALF_SISTERS",
-        description="Kinship relationship to test: 'PATERNAL_HALF_SISTERS', 'FATHER_DAUGHTER', 'PGM_GD', 'MOTHER_SON', 'FULL_SISTERS'.",
+        description="Kinship relationship: 'PATERNAL_HALF_SISTERS', 'FATHER_DAUGHTER', 'PATERNAL_GRANDMOTHER_GRANDDAUGHTER', 'MOTHER_SON', 'FULL_SISTERS', 'UNRELATED'.",
         examples=["PATERNAL_HALF_SISTERS"],
     )
-    population_frequencies: Optional[Dict[str, float]] = Field(
+    population_frequencies: Optional[Dict[str, Any]] = Field(
         None,
         description="Optional allele frequency overrides per locus.",
     )
@@ -56,6 +62,8 @@ class XSTRKinshipRequest(BaseModel):
 
 
 class LinkageGroupResultSchema(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
     group_id: str
     chromosomal_band: str
     evaluated_loci: List[str]
@@ -66,6 +74,8 @@ class LinkageGroupResultSchema(BaseModel):
 
 
 class XSTRKinshipResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
     profile1_id: str
     profile2_id: str
     profile1_male: bool
@@ -78,12 +88,16 @@ class XSTRKinshipResponse(BaseModel):
     linkage_group_results: List[LinkageGroupResultSchema]
     is_excluded: bool
     kinship_verdict: str
+    verbal_predicate_en: str
+    verbal_predicate_tr: str
     prosecutors_fallacy_shield: str
 
 
 # ── Kosambi Mapping Function ─────────────────────────────────────────────────
 
 class KosambiRequest(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
     genetic_distance_cm: float = Field(
         ...,
         ge=0.0,
@@ -93,14 +107,18 @@ class KosambiRequest(BaseModel):
 
 
 class KosambiResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
     genetic_distance_cm: float
     recombination_fraction_r: float
     formula: str
 
 
-# ── Panel Metadata ───────────────────────────────────────────────────────────
+# ── Panel Metadata & Catalogs ────────────────────────────────────────────────
 
 class XSTRLocusMetadataSchema(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
     locus_name: str
     linkage_group: str
     chromosomal_band: str
@@ -110,6 +128,8 @@ class XSTRLocusMetadataSchema(BaseModel):
 
 
 class LinkageGroupMetadataSchema(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
     group_id: str
     chromosomal_band: str
     loci: List[str]
@@ -118,8 +138,47 @@ class LinkageGroupMetadataSchema(BaseModel):
 
 
 class ArgusX12PanelMetadataResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
     panel_name: str
     total_loci: int
     total_linkage_groups: int
     linkage_groups: List[LinkageGroupMetadataSchema]
     loci: List[XSTRLocusMetadataSchema]
+
+
+class XStrPopulationMetadataSchema(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
+    code: str
+    name: str
+    sample_size_n: int
+    citation: str
+    description: str
+
+
+class XStrGoldStandardSchema(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
+    sample_id: str
+    coriell_id: str
+    nist_designation: Optional[str]
+    sex: str
+    population: str
+    description: str
+    x_str_genotypes: Dict[str, List[float]]
+
+
+class XStrCaseworkCohortSchema(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
+    cohort_id: str
+    name: str
+    relationship: str
+    sex_a: str
+    sex_b: str
+    description: str
+    expected_matching_loci: int
+    expected_min_ki: float
+    profile_a: Dict[str, List[float]]
+    profile_b: Dict[str, List[float]]

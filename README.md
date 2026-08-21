@@ -243,6 +243,14 @@ str-analysis/
 │           │   ├── test_ystr_reference_datasets.py # Global Metapopulations & Gold Standards (12/12 Passed)
 │           │   ├── test_ystr_cross_validation.py # External Concordance & ISFG Shield (6/6 Passed)
 │           │   └── test_ystr_edge_cases.py # 8 Empirical Edge-Case Tests (8/8 Passed)
+│           ├── xstr/                      # 32. X-STR 12-Locus Linkage & Kinship Engine (Argus X-12)
+│           │   ├── xstr_mathematical_formulation.py # 4 Linkage Groups (LG1–LG4), Kosambi Mapping, Kinship KI_X
+│           │   ├── xstr_reference_datasets.py # Tillmar et al. (2017) European/Asian Freqs, Gold Standards
+│           │   ├── xstr_cross_validation.py # Familias 3 Linkage Concordance, ISFG/ENFSI Reporting Shield
+│           │   ├── test_xstr_mathematical_formulation.py # Pure Formulation & Kosambi Invariant Tests
+│           │   ├── test_xstr_reference_datasets.py # Population Datasets & Gold Standards Tests
+│           │   ├── test_xstr_cross_validation.py # External Cross-Validation & ISFG Shield Tests
+│           │   └── test_xstr_edge_cases.py # 6 Empirical Edge-Case Tests (EC-XSTR-01 to 06)
 │           └── tests/                     # Automated Test Suite (1050+ Tests Passing)
 │
 ├── frontend/                              # Next.js 16 Workstation Dashboard

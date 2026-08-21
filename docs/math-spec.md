@@ -2671,6 +2671,75 @@ All certified standards and analyzed case profiles support loss-less determinist
 2. **ISO/IEC 17025 LIMS JSON:** JSON schema containing `$schema`, `sampleMetadata`, `strGenotypes`, `aimGenotypes`, and `hirisplexGenotypes`.
 3. **GeneMapper ID-X CE Table CSV:** 10-column table format (`Sample Name, Marker, Allele 1, Allele 2, Height 1, Height 2, Size 1, Size 2, Data Point 1, Data Point 2`).
 
+---
+
+## 80. X-STR 12-Locus Linkage & Complex Female Kinship Engine (Argus X-12)
+
+### 80.1 Investigator Argus X-12 Linkage Clusters (LG1–LG4)
+The human X chromosome features unique sex-linked inheritance: hemizygous males ($46,XY$) transmit their single maternal X chromosome intact to all biological daughters without meiotic recombination. Heterozygous females ($46,XX$) undergo meiotic recombination between linked X-STR loci.
+
+The Investigator Argus X-12 panel partitions 12 highly polymorphic X-STR markers into 4 independent Linkage Groups:
+- **Linkage Group 1 (LG1, Xp22.2):** `DXS10148` (12.42 Mb, 18.5 cM), `DXS10135` (13.15 Mb, 19.8 cM), `DXS8378` (14.90 Mb, 22.1 cM); intra-cluster recombination $r_{1-2} = 0.003, r_{2-3} = 0.022$.
+- **Linkage Group 2 (LG2, Xq12):** `DXS7132` (68.10 Mb, 72.3 cM), `DXS10074` (70.80 Mb, 74.8 cM), `DXS10079` (71.35 Mb, 75.3 cM); intra-cluster recombination $r_{1-2} = 0.015, r_{2-3} = 0.020$.
+- **Linkage Group 3 (LG3, Xq26):** `DXS10103` (133.50 Mb, 138.2 cM), `HPRTB` (133.90 Mb, 138.6 cM), `DXS10101` (134.60 Mb, 140.1 cM); intra-cluster recombination $r_{1-2} = 0.001, r_{2-3} = 0.012$.
+- **Linkage Group 4 (LG4, Xq28):** `DXS10146` (148.20 Mb, 155.4 cM), `DXS10134` (149.10 Mb, 156.3 cM), `DXS7423` (150.05 Mb, 157.2 cM); intra-cluster recombination $r_{1-2} = 0.005, r_{2-3} = 0.008$.
+
+---
+
+### 80.2 Kosambi Mapping Function & Interference Modeling
+Genetic distance $d$ (cM) and observed meiotic recombination fraction $r$ are related via the Kosambi mapping function incorporating positive chiasma interference:
+
+$$r = \frac{1}{2} \tanh\left(\frac{2d}{100}\right) = \frac{1}{2} \left( \frac{e^{4d/100} - 1}{e^{4d/100} + 1} \right)$$
+
+The inverse Kosambi transformation calculates genetic map distance from recombination frequency:
+
+$$d = 25 \ln\left( \frac{1 + 2r}{1 - 2r} \right) \quad (\text{cM})$$
+
+---
+
+### 80.3 Complex Female Kinship Index Formulations ($KI_X$)
+
+#### 1. Father - Daughter Duo Kinship
+Biological fathers possess a single hemizygous allele $A_f$ transmitted deterministically:
+
+$$KI_{X, \text{Duo}, l} = \begin{cases} \frac{1.0}{p(A_f)} & \text{if } A_f \in G_{\text{daughter}} \\ \frac{\mu}{2 p(A_{\text{daughter}})} & \text{if germline mutation occurs} \end{cases}$$
+
+#### 2. Paternal Half-Sisters (PHS)
+Paternal half-sisters inherit identical paternal X chromosomes. Incorporating intra-cluster recombination fraction $r$:
+
+$$KI_{X, \text{PHS}, l} = \frac{(1 - r) \cdot h(A_1, A_2) + r \cdot h(A_1) h(A_2)}{h(A_1) h(A_2)} \approx \frac{1 - r}{p(A_{\text{shared}})} + r$$
+
+#### 3. Paternal Grandmother - Granddaughter (PGM-GD) Deficiency Kinship
+In deficiency cases involving a deceased intermediate male:
+
+$$KI_{X, \text{PGM-GD}, l} = \frac{0.5}{p(A_{\text{shared}})} + 0.5$$
+
+#### 4. Mother - Son Kinship
+$$KI_{X, \text{MS}, l} = \begin{cases} \frac{0.5}{p(A_{\text{son}})} & \text{if mother is heterozygous } (A_1 A_2) \\ \frac{1.0}{p(A_{\text{son}})} & \text{if mother is homozygous } (A_1 A_1) \end{cases}$$
+
+---
+
+### 80.4 Multi-Cluster Independence Product Rule & Invariants
+Because the 4 linkage groups are separated by $> 50\text{ cM}$ ($r \to 0.50$, linkage equilibrium between clusters), the combined Kinship Index is the product across all 4 independent groups:
+
+$$KI_{X, \text{Total}} = \prod_{g=1}^4 KI_{X, \text{LG}_g} = \prod_{g=1}^4 \left( \prod_{l \in \text{LG}_g} KI_{X, l} \right)$$
+
+$$\log_{10} KI_{X, \text{Total}} = \sum_{g=1}^4 \log_{10} KI_{X, \text{LG}_g}$$
+
+Strict Mathematical Invariant:
+$$\left| \log_{10} KI_{X, \text{Total}} - \sum_{g=1}^4 \log_{10} KI_{X, \text{LG}_g} \right| < 10^{-6}$$
+
+---
+
+### 80.5 ISFG (2012) & ENFSI (2017) Evaluative Reporting Statements
+Likelihood Ratios are mapped onto the 7-tier ENFSI (2017) scale with active Prosecutor's Fallacy shields:
+- $KI_X \ge 10^6$: Extremely Strong Support for Paternal Kinship.
+- $10^4 \le KI_X < 10^6$: Very Strong Support for Paternal Kinship.
+- $10^2 \le KI_X < 10^4$: Moderately Strong Support for Paternal Kinship.
+- $1 \le KI_X < 10^2$: Limited / Inconclusive Support for Paternal Kinship.
+- $0 < KI_X < 1$: Support for Defense / Non-Kinship Hypothesis.
+- $KI_X = 0$: Definitive Exclusion of Biological Kinship.
+
 
 
 

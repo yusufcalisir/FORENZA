@@ -408,10 +408,18 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { setInspectorOpen } = useIngestStore();
-  const { t } = useSaasLanguage();
+  const { t, lang } = useSaasLanguage();
+  const isTr = lang === "tr";
 
   return (
     <div className="flex min-h-screen lg:h-screen lg:overflow-hidden bg-[#080c14] text-tactical-text">
+      {/* ── WCAG 2.2 AA Skip to Main Content Link ── */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[10000] focus:px-4 focus:py-2 focus:bg-emerald-500 focus:text-black focus:font-mono focus:font-bold focus:rounded-xl focus:shadow-[0_0_20px_rgba(16,185,129,0.5)] focus:outline-none focus:ring-2 focus:ring-black"
+      >
+        {isTr ? "Ana İçeriğe Atla" : "Skip to Main Content"}
+      </a>
       {/* ── Mobile Overlay Drawer ── */}
       <AnimatePresence>
         {mobileMenuOpen && (
@@ -594,7 +602,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
 
         {/* Viewport Render Outlet */}
-        <main className="flex-1 overflow-y-auto p-4 lg:p-6 bg-[#070D18]/70">
+        <main id="main-content" className="flex-1 overflow-y-auto p-4 lg:p-6 bg-[#070D18]/70">
           {children}
         </main>
         <DnaProfileInspectorModal />

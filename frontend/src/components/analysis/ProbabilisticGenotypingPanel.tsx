@@ -388,32 +388,32 @@ export default function ProbabilisticGenotypingPanel() {
 
       {/* ── Invariant Telemetry Banner ── */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-3 flex items-center justify-between">
-          <div className="flex items-center gap-2">
+        <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 min-w-0">
+          <div className="flex items-center gap-2 min-w-0">
             <Check className="w-4 h-4 text-emerald-400 shrink-0" />
-            <span className="text-[11px] text-zinc-300 font-semibold">
+            <span className="text-[11px] text-zinc-300 font-semibold truncate">
               {isTr ? "Simpleks Normalizasyonu:" : "Simplex Normalization:"}
             </span>
           </div>
-          <span className="text-xs font-bold text-emerald-400 tabular-nums font-mono">
+          <span className="text-xs font-bold text-emerald-400 tabular-nums font-mono shrink-0">
             Σ w_k = {simplexSum.toFixed(6)} (Δ = 0.000%)
           </span>
         </div>
 
-        <div className="rounded-xl border border-tactical-border/60 bg-black/30 p-3 flex items-center justify-between">
-          <span className="text-[11px] text-zinc-400">
+        <div className="rounded-xl border border-tactical-border/60 bg-black/30 p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 min-w-0">
+          <span className="text-[11px] text-zinc-400 truncate">
             {isTr ? "Gelman-Rubin Sınırı:" : "Gelman-Rubin Horizon:"}
           </span>
-          <span className={`text-xs font-bold tabular-nums ${mcmcState.r_hat_max <= 1.05 ? "text-emerald-400" : "text-amber-400"}`}>
+          <span className={`text-xs font-bold tabular-nums shrink-0 ${mcmcState.r_hat_max <= 1.05 ? "text-emerald-400" : "text-amber-400"}`}>
             R̂_max = {mcmcState.r_hat_max.toFixed(3)} ≤ 1.050
           </span>
         </div>
 
-        <div className="rounded-xl border border-tactical-border/60 bg-black/30 p-3 flex items-center justify-between">
-          <span className="text-[11px] text-zinc-400">
+        <div className="rounded-xl border border-tactical-border/60 bg-black/30 p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 min-w-0">
+          <span className="text-[11px] text-zinc-400 truncate">
             {isTr ? "Etkin Örneklem Büyüklüğü:" : "Effective Sample Size:"}
           </span>
-          <span className="text-xs font-bold text-amber-400 tabular-nums">
+          <span className="text-xs font-bold text-amber-400 tabular-nums shrink-0">
             ESS_min = {mcmcState.ess_min.toLocaleString()} &gt; 1,000
           </span>
         </div>
@@ -422,12 +422,12 @@ export default function ProbabilisticGenotypingPanel() {
       {/* ── Model Parameter Controls (Responsive Grid) ── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Dropout Calculator Card */}
-        <div className="rounded-xl border border-tactical-border/60 bg-tactical-surface/40 p-4 space-y-3">
-          <div className="flex items-center justify-between border-b border-tactical-border/40 pb-2">
-            <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">
+        <div className="rounded-xl border border-tactical-border/60 bg-tactical-surface/40 p-4 space-y-3 min-w-0">
+          <div className="flex items-center justify-between gap-1 border-b border-tactical-border/40 pb-2">
+            <span className="text-xs font-bold text-amber-400 uppercase tracking-wider truncate">
               {isTr ? "Lojistik Alel Kaybı P(D)" : "Logistic Dropout P(D)"}
             </span>
-            <span className="text-[10px] text-zinc-500">β₀=+2.50, β₁=-0.025</span>
+            <span className="text-[10px] text-zinc-500 font-mono shrink-0">β₀=+2.50, β₁=-0.025</span>
           </div>
           <div className="space-y-2">
             <div className="flex justify-between text-[11px]">
@@ -453,12 +453,12 @@ export default function ProbabilisticGenotypingPanel() {
         </div>
 
         {/* Drop-in & Stutter Model Card */}
-        <div className="rounded-xl border border-tactical-border/60 bg-tactical-surface/40 p-4 space-y-3">
-          <div className="flex items-center justify-between border-b border-tactical-border/40 pb-2">
-            <span className="text-xs font-bold text-cyan-400 uppercase tracking-wider">
+        <div className="rounded-xl border border-tactical-border/60 bg-tactical-surface/40 p-4 space-y-3 min-w-0">
+          <div className="flex items-center justify-between gap-1 border-b border-tactical-border/40 pb-2">
+            <span className="text-xs font-bold text-cyan-400 uppercase tracking-wider truncate">
               {isTr ? "Poisson Alel Eklenmesi" : "Poisson Drop-in (λ_c)"}
             </span>
-            <span className="text-[10px] text-zinc-500">λ_c = 0.020</span>
+            <span className="text-[10px] text-zinc-500 font-mono shrink-0">λ_c = 0.020</span>
           </div>
           <div className="space-y-2">
             <div className="flex justify-between text-[11px]">
@@ -484,19 +484,19 @@ export default function ProbabilisticGenotypingPanel() {
         </div>
 
         {/* MCMC Mixture Ratio & Contributor Selection */}
-        <div className="rounded-xl border border-tactical-border/60 bg-tactical-surface/40 p-4 space-y-3">
-          <div className="flex items-center justify-between border-b border-tactical-border/40 pb-2">
-            <span className="text-xs font-bold text-purple-400 uppercase tracking-wider">
+        <div className="rounded-xl border border-tactical-border/60 bg-tactical-surface/40 p-4 space-y-3 min-w-0">
+          <div className="flex items-center justify-between gap-2 border-b border-tactical-border/40 pb-2">
+            <span className="text-xs font-bold text-purple-400 uppercase tracking-wider truncate">
               {isTr ? "Katkı Verenler (K)" : "Contributors (K)"}
             </span>
-            <div className="flex gap-1">
+            <div className="flex gap-1 shrink-0">
               {[2, 3, 4].map((k) => (
                 <button
                   key={k}
                   onClick={() => setNumContributors(k)}
-                  className={`px-2 py-0.5 text-[10px] font-bold rounded border transition-all cursor-pointer ${
+                  className={`min-h-[36px] min-w-[36px] flex items-center justify-center text-xs font-bold rounded-lg border transition-all cursor-pointer ${
                     numContributors === k
-                      ? "bg-purple-500/20 border-purple-500 text-purple-300"
+                      ? "bg-purple-500/20 border-purple-500 text-purple-300 shadow-sm"
                       : "bg-black/30 border-tactical-border/40 text-zinc-500 hover:text-zinc-300"
                   }`}
                 >
@@ -531,18 +531,18 @@ export default function ProbabilisticGenotypingPanel() {
         </div>
 
         {/* MCMC Configuration & Engine Card */}
-        <div className="rounded-xl border border-tactical-border/60 bg-tactical-surface/40 p-4 space-y-3">
-          <div className="flex items-center justify-between border-b border-tactical-border/40 pb-2">
-            <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">
+        <div className="rounded-xl border border-tactical-border/60 bg-tactical-surface/40 p-4 space-y-3 min-w-0">
+          <div className="flex items-center justify-between gap-1 border-b border-tactical-border/40 pb-2">
+            <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider truncate">
               {isTr ? "Olabilirlik Çekirdeği" : "Likelihood Kernel"}
             </span>
-            <span className="text-[10px] text-zinc-500">{isTr ? "MCMC Ayarı" : "MCMC Setup"}</span>
+            <span className="text-[10px] text-zinc-500 shrink-0">{isTr ? "MCMC Ayarı" : "MCMC Setup"}</span>
           </div>
           <div className="space-y-2">
             <div className="flex items-center justify-between gap-2">
               <button
                 onClick={() => setModelEngine("STRmix")}
-                className={`flex-1 py-1 text-[10px] font-bold rounded border transition-all cursor-pointer ${
+                className={`flex-1 min-h-[38px] py-1.5 text-[10px] font-bold rounded-lg border transition-all cursor-pointer ${
                   modelEngine === "STRmix"
                     ? "bg-emerald-500/20 border-emerald-500/60 text-emerald-300 shadow-[0_0_10px_rgba(16,185,129,0.2)]"
                     : "bg-black/30 border-tactical-border/40 text-zinc-400 hover:text-zinc-200"
@@ -552,7 +552,7 @@ export default function ProbabilisticGenotypingPanel() {
               </button>
               <button
                 onClick={() => setModelEngine("EuroForMix")}
-                className={`flex-1 py-1 text-[10px] font-bold rounded border transition-all cursor-pointer ${
+                className={`flex-1 min-h-[38px] py-1.5 text-[10px] font-bold rounded-lg border transition-all cursor-pointer ${
                   modelEngine === "EuroForMix"
                     ? "bg-emerald-500/20 border-emerald-500/60 text-emerald-300 shadow-[0_0_10px_rgba(16,185,129,0.2)]"
                     : "bg-black/30 border-tactical-border/40 text-zinc-400 hover:text-zinc-200"
@@ -907,18 +907,18 @@ export default function ProbabilisticGenotypingPanel() {
       </div>
 
       {/* ── Deconvoluted Loci & Bilingual ENFSI 2017 Scale ── */}
-      <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-4 sm:p-5 space-y-4 shadow-lg">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-tactical-border/40 pb-3">
-          <div className="flex items-center gap-2">
+      <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-4 sm:p-5 space-y-4 shadow-lg min-w-0">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-tactical-border/40 pb-3 min-w-0">
+          <div className="flex items-center gap-2 min-w-0">
             <Layers className="w-4 h-4 text-emerald-400 shrink-0" />
-            <span className="text-xs font-bold text-tactical-text uppercase tracking-wider">
+            <span className="text-xs font-bold text-tactical-text uppercase tracking-wider truncate">
               {isTr
                 ? `Sürekli Lokus Ayrıştırma Çağrıları (${mcmcState.num_contributors}-Katkılı Karışım)`
                 : `Continuous Locus Deconvolution Calls (${mcmcState.num_contributors}-Contributor Mixture)`}
             </span>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-lg">
+          <div className="flex items-center gap-2 shrink-0">
+            <span className="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-lg font-mono">
               ENFSI 2017: {isTr ? mcmcState.verbal_scale_tr : mcmcState.verbal_scale_en}
             </span>
           </div>
@@ -928,7 +928,7 @@ export default function ProbabilisticGenotypingPanel() {
           {mcmcState.locus_deconvolutions.map((loc) => (
             <div
               key={loc.locus}
-              className="rounded-xl border border-tactical-border/60 bg-black/30 p-3.5 space-y-2 hover:border-tactical-border transition-all"
+              className="rounded-xl border border-tactical-border/60 bg-black/30 p-3.5 space-y-2 hover:border-tactical-border transition-all min-w-0"
             >
               <div className="flex items-center justify-between border-b border-tactical-border/30 pb-1.5">
                 <span className="text-xs font-bold text-amber-300 font-mono">{loc.locus}</span>
@@ -961,15 +961,15 @@ export default function ProbabilisticGenotypingPanel() {
       </div>
 
       {/* ── Prosecutor's Fallacy Shield (Pillar 6 §4) ── */}
-      <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-4 flex items-start gap-3">
+      <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-4 flex items-start gap-3 min-w-0">
         <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
-        <div className="space-y-1 text-xs">
+        <div className="space-y-1 text-xs min-w-0">
           <span className="font-bold text-emerald-300 uppercase tracking-wider block">
             {isTr
               ? "Aktif Savcı Yanılgısı Kalkanı (ENFSI 2017 & ISO 17025 Standardı)"
               : "Active Prosecutor's Fallacy Shield (ENFSI 2017 & ISO 17025 Standard)"}
           </span>
-          <p className="text-tactical-text-muted text-[11px] leading-relaxed">
+          <p className="text-tactical-text-muted text-[11px] leading-relaxed break-words">
             {isTr ? (
               <>
                 DNA profili bulguları, DNA'nın şüpheli şahıstan (Hp) kaynaklanması hipotezi altında, referans popülasyondan rastgele akraba olmayan bir bireyden (Hd)

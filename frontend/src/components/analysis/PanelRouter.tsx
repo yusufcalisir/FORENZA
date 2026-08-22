@@ -356,15 +356,19 @@ export function PanelSTR() {
       </div>
 
       {/* Exact Biostatistical Additivity Verification Banner */}
-      <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs font-mono">
-        <div className="flex items-center gap-2">
-          <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="font-bold text-emerald-300">
-            {isTr ? "Biyoistatistiksel Toplamsallık İnvaryantı Doğrulandı:" : "Biostatistical Additivity Invariant Verified:"}
+      <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs font-mono">
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 min-w-0">
+          <div className="flex items-center gap-2 shrink-0">
+            <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+            <span className="font-bold text-emerald-300">
+              {isTr ? "Biyoistatistiksel Toplamsallık İnvaryantı Doğrulandı:" : "Biostatistical Additivity Invariant Verified:"}
+            </span>
+          </div>
+          <span className="text-zinc-200 font-bold bg-black/40 px-2 py-0.5 rounded border border-emerald-500/20 whitespace-nowrap">
+            log₁₀(LR_total) = ∑ log₁₀(LR_l) = +{totalLog10.toFixed(6)}
           </span>
-          <span className="text-zinc-300">log₁₀(LR_total) = ∑ log₁₀(LR_l) = +{totalLog10.toFixed(6)}</span>
         </div>
-        <div className="text-[10px] text-zinc-400 font-mono">
+        <div className="text-[10px] text-zinc-400 font-mono shrink-0 bg-black/30 px-2.5 py-1 rounded-lg border border-tactical-border/30">
           {isTr ? "Birleşik LR" : "Combined LR"} = ∏ LR_l = <strong className="text-emerald-300">{totalLR.toExponential(6)}</strong> ({isTr ? "%0.000 Sapma" : "0.000% Deviation"})
         </div>
       </div>

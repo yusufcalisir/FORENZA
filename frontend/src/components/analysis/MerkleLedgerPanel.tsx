@@ -296,20 +296,20 @@ export default function MerkleLedgerPanel() {
     <div className="space-y-6 font-mono text-tactical-text">
       {/* ── Subsystem Header ── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl border border-indigo-500/30 bg-indigo-500/10 shadow-lg overflow-hidden">
-        <div className="flex items-center gap-3">
+        <div className="flex items-start sm:items-center gap-3 min-w-0">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 shadow-[0_0_15px_rgba(99,102,241,0.2)]">
             <GitBranch className="w-5 h-5" />
           </div>
-          <div className="min-w-0">
+          <div className="min-w-0 space-y-0.5">
             <div className="flex flex-wrap items-center gap-2">
-              <h2 className="text-sm sm:text-base font-bold tracking-widest text-tactical-text uppercase truncate">
+              <h2 className="text-sm sm:text-base font-bold tracking-widest text-tactical-text uppercase">
                 {isTr ? "Müdahale Korumalı Merkle Ağacı Delil Zinciri Defteri" : "Tamper-Evident Merkle Tree Chain-of-Custody Ledger"}
               </h2>
-              <span className="px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 shrink-0">
-                Pillar 6 §1 (ISO/IEC 17025 • SHA-256)
+              <span className="px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 whitespace-nowrap shrink-0">
+                ISO/IEC 17025 • SHA-256
               </span>
             </div>
-            <p className="text-[10px] text-zinc-400 mt-0.5 truncate">
+            <p className="text-[10px] text-zinc-400 leading-relaxed">
               {isTr
                 ? "Zincirleme SHA-256 Yaprak Delil Olayları • İkili Dengeli Merkle İndirgemesi • Müdahale Korumalı Kapsama İspatı"
                 : "Chained SHA-256 Leaf Custody Events • Binary Balanced Merkle Reduction • Tamper-Evident Proof of Inclusion"}

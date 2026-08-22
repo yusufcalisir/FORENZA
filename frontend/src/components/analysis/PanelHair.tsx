@@ -285,22 +285,26 @@ export default function PanelHair() {
         <div className="flex flex-col gap-4 w-full font-mono">
 
             {/* Header */}
-            <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-violet-500/20 border border-violet-500/40">
-                    <Scissors className="w-5 h-5 text-violet-400" />
-                </div>
-                <div>
-                    <h2 className="text-base font-semibold text-tactical-text-primary font-mono tracking-wide">
-                        {isTr ? "SAÇ-DOKU: Modül 3.4" : "HAIR-TEX: Module 3.4"}
-                    </h2>
-                    <p className="text-xs text-tactical-text-secondary">
-                        {isTr
-                            ? "Saç Morfolojisi, Kesit Eğriliği & Kellik Poligenik Risk Skoru (PRS)"
-                            : "Hair Morphology, Cross-Sectional Curvature & Balding PRS"}
-                    </p>
-                </div>
-                <div className="ml-auto px-2 py-0.5 rounded text-[10px] font-mono border border-emerald-500/40 text-emerald-400 bg-emerald-500/10">
-                    {isTr ? "DOĞRULANDI" : "VERIFIED"}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 sm:p-4 rounded-2xl bg-violet-500/10 border border-violet-500/30">
+                <div className="flex items-start sm:items-center gap-3 min-w-0">
+                    <div className="p-2 rounded-lg bg-violet-500/20 border border-violet-500/40 shrink-0">
+                        <Scissors className="w-5 h-5 text-violet-400" />
+                    </div>
+                    <div className="min-w-0 space-y-0.5">
+                        <div className="flex flex-wrap items-center gap-2">
+                            <h2 className="text-base font-semibold text-tactical-text-primary font-mono tracking-wide">
+                                {isTr ? "SAÇ-DOKU: Modül 3.4" : "HAIR-TEX: Module 3.4"}
+                            </h2>
+                            <span className="px-2 py-0.5 rounded text-[10px] font-mono border border-emerald-500/40 text-emerald-400 bg-emerald-500/10 whitespace-nowrap shrink-0">
+                                {isTr ? "DOĞRULANDI" : "VERIFIED"}
+                            </span>
+                        </div>
+                        <p className="text-xs text-tactical-text-secondary leading-relaxed">
+                            {isTr
+                                ? "Saç Morfolojisi, Kesit Eğriliği & Kellik Poligenik Risk Skoru (PRS)"
+                                : "Hair Morphology, Cross-Sectional Curvature & Balding PRS"}
+                        </p>
+                    </div>
                 </div>
             </div>
 

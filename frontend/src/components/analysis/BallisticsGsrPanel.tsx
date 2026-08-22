@@ -319,20 +319,20 @@ export default function BallisticsGsrPanel() {
     <div className="space-y-6 font-mono text-tactical-text">
       {/* ── Subsystem Header ── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl border border-orange-500/30 bg-orange-500/10 shadow-lg">
-        <div className="flex items-center gap-3">
+        <div className="flex items-start sm:items-center gap-3 min-w-0">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-orange-500/20 border border-orange-500/40 text-orange-300 shadow-[0_0_15px_rgba(249,115,22,0.2)]">
             <Target className="w-5 h-5" />
           </div>
-          <div className="min-w-0">
+          <div className="min-w-0 space-y-0.5">
             <div className="flex flex-wrap items-center gap-2">
-              <h2 className="text-sm sm:text-base font-bold tracking-widest text-tactical-text uppercase truncate">
+              <h2 className="text-sm sm:text-base font-bold tracking-widest text-tactical-text uppercase">
                 {isTr ? "Adli Balistik & SEM-EDX GSR Analizi" : "Forensic Ballistics & SEM-EDX GSR Analysis"}
               </h2>
-              <span className="px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-bold bg-orange-500/20 text-orange-300 border border-orange-500/30 shrink-0">
-                Pillar 5 §2 (ASTM E1588 / NIST 3D CMC)
+              <span className="px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-bold bg-orange-500/20 text-orange-300 border border-orange-500/30 whitespace-nowrap shrink-0">
+                ASTM E1588 • NIST 3D CMC
               </span>
             </div>
-            <p className="text-[10px] text-zinc-400 mt-0.5 truncate">
+            <p className="text-[10px] text-zinc-400 leading-relaxed">
               {isTr
                 ? "SEM-EDX Pb-Ba-Sb Parçacık Sınıfları • 3D Uyumlu Eşleşen Hücreler (CMC) Yiv-Set Karşılaştırması"
                 : "SEM-EDX Pb-Ba-Sb Particle Tiers • 3D Congruent Matching Cells (CMC) Striation Toolmark Comparison"}

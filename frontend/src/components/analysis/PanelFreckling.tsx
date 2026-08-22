@@ -335,22 +335,26 @@ export default function PanelFreckling() {
         <div className="flex flex-col gap-4 w-full font-mono">
 
             {/* Header */}
-            <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-rose-500/20 border border-rose-500/40">
-                    <Sun className="w-5 h-5 text-rose-400" />
-                </div>
-                <div>
-                    <h2 className="text-base font-semibold text-tactical-text-primary font-mono tracking-wide">
-                        {isTr ? "MC1R-UV: Modül 3.5" : "MC1R-UV: Module 3.5"}
-                    </h2>
-                    <p className="text-xs text-tactical-text-secondary">
-                        {isTr
-                            ? "MC1R Epistazı, Efelid (Çillenme) & UV Hassasiyet İndeksi"
-                            : "MC1R Epistasis, Ephelides (Freckling) & UV Sensitivity Index"}
-                    </p>
-                </div>
-                <div className="ml-auto px-2 py-0.5 rounded text-[10px] font-mono border border-emerald-500/40 text-emerald-400 bg-emerald-500/10">
-                    {isTr ? "DOĞRULANDI" : "VERIFIED"}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 sm:p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30">
+                <div className="flex items-start sm:items-center gap-3 min-w-0">
+                    <div className="p-2 rounded-lg bg-rose-500/20 border border-rose-500/40 shrink-0">
+                        <Sun className="w-5 h-5 text-rose-400" />
+                    </div>
+                    <div className="min-w-0 space-y-0.5">
+                        <div className="flex flex-wrap items-center gap-2">
+                            <h2 className="text-base font-semibold text-tactical-text-primary font-mono tracking-wide">
+                                {isTr ? "MC1R-UV: Modül 3.5" : "MC1R-UV: Module 3.5"}
+                            </h2>
+                            <span className="px-2 py-0.5 rounded text-[10px] font-mono border border-emerald-500/40 text-emerald-400 bg-emerald-500/10 whitespace-nowrap shrink-0">
+                                {isTr ? "DOĞRULANDI" : "VERIFIED"}
+                            </span>
+                        </div>
+                        <p className="text-xs text-tactical-text-secondary leading-relaxed">
+                            {isTr
+                                ? "MC1R Epistazı, Efelid (Çillenme) & UV Hassasiyet İndeksi"
+                                : "MC1R Epistasis, Ephelides (Freckling) & UV Sensitivity Index"}
+                        </p>
+                    </div>
                 </div>
             </div>
 

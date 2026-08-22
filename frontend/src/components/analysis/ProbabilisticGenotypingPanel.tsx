@@ -317,20 +317,20 @@ export default function ProbabilisticGenotypingPanel() {
     <div className="space-y-6 font-mono">
       {/* ── Top Header Strip ── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-tactical-border/60 pb-4">
-        <div className="flex items-center gap-3">
+        <div className="flex items-start sm:items-center gap-3 min-w-0">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.15)]">
             <Activity className="w-5 h-5" />
           </div>
-          <div className="min-w-0">
+          <div className="min-w-0 space-y-0.5">
             <div className="flex flex-wrap items-center gap-2">
-              <h2 className="text-sm sm:text-base font-bold tracking-widest text-tactical-text uppercase truncate">
+              <h2 className="text-sm sm:text-base font-bold tracking-widest text-tactical-text uppercase">
                 {isTr ? "Sürekli Olasılıksal Genotipleme Motoru" : "Continuous Probabilistic Genotyping Engine"}
               </h2>
-              <span className="text-[9px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded font-bold shrink-0">
-                Pillar 1 §2 (SWGDAM 2020)
+              <span className="text-[9px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded font-bold whitespace-nowrap shrink-0">
+                SWGDAM (2020) • ISO/IEC 17025
               </span>
             </div>
-            <p className="text-[10px] text-tactical-text-muted mt-0.5 truncate">
+            <p className="text-[10px] text-tactical-text-muted leading-relaxed">
               {isTr
                 ? "3-Zincirli Metropolis-Hastings MCMC • Gelman-Rubin R̂ ≤ 1.05 • %95 HPD Güvenilirlik Aralığı"
                 : "3-Chain Metropolis-Hastings MCMC • Gelman-Rubin R̂ ≤ 1.05 • 95% HPD Credible Interval"}

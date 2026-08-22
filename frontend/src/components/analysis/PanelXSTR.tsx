@@ -327,21 +327,23 @@ export default function PanelXSTR() {
       {/* ── Header & Governance Banner ───────────────────────────────────── */}
       <div className="relative overflow-hidden rounded-2xl border border-cyan-500/30 bg-gradient-to-r from-slate-900 via-cyan-950/20 to-slate-900 p-6 shadow-2xl backdrop-blur-xl">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div className="space-y-1">
-            <div className="flex items-center gap-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 shadow-lg shadow-cyan-500/10">
+          <div className="space-y-1 min-w-0">
+            <div className="flex items-start sm:items-center gap-3 min-w-0">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 shadow-lg shadow-cyan-500/10">
                 <Network className="h-5 w-5" />
               </span>
-              <div>
-                <h1 className="text-xl font-bold tracking-wide text-white sm:text-2xl flex items-center gap-2">
-                  {isTr
-                    ? "Investigator Argus X-12 Bağlantı & Akrabalık Motoru"
-                    : "Investigator Argus X-12 Linkage & Kinship Engine"}
-                  <span className="rounded-full bg-cyan-500/20 px-2.5 py-0.5 text-xs font-semibold text-cyan-300 border border-cyan-500/40">
+              <div className="min-w-0 space-y-0.5">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h1 className="text-lg sm:text-2xl font-bold tracking-wide text-white">
+                    {isTr
+                      ? "Investigator Argus X-12 Bağlantı & Akrabalık Motoru"
+                      : "Investigator Argus X-12 Linkage & Kinship Engine"}
+                  </h1>
+                  <span className="rounded-full bg-cyan-500/20 px-2.5 py-0.5 text-xs font-semibold text-cyan-300 border border-cyan-500/40 whitespace-nowrap shrink-0">
                     {isTr ? "MODÜL 2.2" : "MODULE 2.2"}
                   </span>
-                </h1>
-                <p className="text-xs text-slate-400 sm:text-sm">
+                </div>
+                <p className="text-xs text-slate-400 sm:text-sm leading-relaxed">
                   {isTr
                     ? "X-Kromozomal 12-Lokus Bağlantı Kümeleri (LG1–LG4) • Kosambi Haritalaması • PHS & Eksiklik Akrabalığı"
                     : "X-Chromosomal 12-Locus Linkage Clusters (LG1–LG4) • Kosambi Mapping • PHS & Deficiency Kinship"}

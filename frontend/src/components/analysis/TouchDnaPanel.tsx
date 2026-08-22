@@ -518,50 +518,52 @@ ${isTr ? "Olabilirlik Oranı (LR), yarışan hipotezler (Hp ve Hd) altında dü�
   return (
     <div className="space-y-6 font-mono">
       {/* ── Top Header Banner ───────────────────────────────────────────────── */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-tactical-border/60 pb-5">
-        <div className="flex items-center gap-3.5">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-500/10 border border-orange-500/30 text-orange-400 shadow-[0_0_20px_rgba(249,115,22,0.2)]">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-tactical-border/60 pb-5 min-w-0">
+        <div className="flex items-start sm:items-center gap-3.5 min-w-0">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-orange-500/10 border border-orange-500/30 text-orange-400 shadow-[0_0_20px_rgba(249,115,22,0.2)]">
             <Fingerprint className="w-6 h-6" />
           </div>
-          <div>
-            <div className="flex items-center gap-2">
+          <div className="min-w-0 space-y-1">
+            <div className="flex flex-wrap items-center gap-2">
               <h1 className="text-base sm:text-lg font-black tracking-widest text-tactical-text uppercase">
                 {isTr ? "Temas DNA & Düşük Şablon Stokastik Modelleme" : "Touch DNA & Low-Template Stochastic Modeling"}
               </h1>
-              <span className="text-[10px] font-bold text-orange-400 bg-orange-500/10 border border-orange-500/20 px-2 py-0.5 rounded-full">
+              <span className="text-[10px] font-bold text-orange-400 bg-orange-500/10 border border-orange-500/20 px-2.5 py-0.5 rounded-full whitespace-nowrap shrink-0">
                 MOD-04
               </span>
             </div>
-            <p className="text-xs text-tactical-text-muted mt-0.5">
+            <p className="text-[11px] sm:text-xs text-tactical-text-muted leading-relaxed">
               {isTr
-                ? "Pillar 1 §4 • Yüzey Geri Kazanımı (η) • Lojistik Alel Kaybı P(D) • Poisson Eklenmesi P(C) • Curran-Gill LTDNA LR"
-                : "Pillar 1 §4 • Substrate Recovery (η) • Logistic Dropout P(D) • Poisson Drop-in P(C) • Curran-Gill LTDNA LR"}
+                ? "Yüzey Geri Kazanımı (η) • Lojistik Alel Kaybı P(D) • Poisson Eklenmesi P(C) • Curran-Gill LTDNA LR"
+                : "Substrate Recovery (η) • Logistic Dropout P(D) • Poisson Drop-in P(C) • Curran-Gill LTDNA LR"}
             </p>
           </div>
         </div>
 
         {/* Golden Preset Selector */}
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-[11px] text-tactical-text-muted uppercase font-bold mr-1 flex items-center gap-1">
+        <div className="flex flex-wrap items-center gap-2 p-1.5 rounded-2xl bg-black/40 border border-tactical-border/50 shrink-0">
+          <span className="text-[11px] text-tactical-text-muted uppercase font-bold px-2 flex items-center gap-1 shrink-0">
             <Sparkles className="w-3.5 h-3.5 text-amber-400" /> {isTr ? "Hazır Ayarlar:" : "Presets:"}
           </span>
-          {(Object.keys(GOLDEN_PRESETS) as PresetKey[]).map((key) => {
-            const p = GOLDEN_PRESETS[key];
-            const isSelected = selectedPreset === key;
-            return (
-              <button
-                key={key}
-                onClick={() => handleLoadPreset(key)}
-                className={`min-h-[38px] px-3 py-1.5 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
-                  isSelected
-                    ? "bg-orange-500/20 border-orange-500/60 text-orange-300 shadow-[0_0_12px_rgba(249,115,22,0.25)]"
-                    : "bg-tactical-surface/50 border-tactical-border/50 text-tactical-text-muted hover:border-tactical-border"
-                }`}
-              >
-                {key}
-              </button>
-            );
-          })}
+          <div className="flex flex-wrap items-center gap-1.5">
+            {(Object.keys(GOLDEN_PRESETS) as PresetKey[]).map((key) => {
+              const p = GOLDEN_PRESETS[key];
+              const isSelected = selectedPreset === key;
+              return (
+                <button
+                  key={key}
+                  onClick={() => handleLoadPreset(key)}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all border cursor-pointer whitespace-nowrap ${
+                    isSelected
+                      ? "bg-orange-500/20 border-orange-500/60 text-orange-300 shadow-[0_0_12px_rgba(249,115,22,0.25)]"
+                      : "bg-tactical-surface/50 border-tactical-border/50 text-tactical-text-muted hover:border-tactical-border hover:text-zinc-200"
+                  }`}
+                >
+                  {key}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 

@@ -180,16 +180,16 @@ export default function BpaAreaOfOriginPanel() {
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-rose-500/20 border border-rose-500/40 text-rose-300 shadow-[0_0_15px_rgba(244,63,94,0.2)]">
             <Crosshair className="w-5 h-5" />
           </div>
-          <div className="min-w-0">
+          <div className="min-w-0 space-y-0.5">
             <div className="flex flex-wrap items-center gap-2">
-              <h2 className="text-sm sm:text-base font-bold tracking-widest text-tactical-text uppercase truncate">
+              <h2 className="text-sm sm:text-base font-bold tracking-widest text-tactical-text uppercase">
                 {isTr ? "3D Kan Lekesi Deseni Analizi & Çıkış Noktası" : "3D Bloodstain Pattern Analysis & Area of Origin"}
               </h2>
-              <span className="px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30 shrink-0">
-                Pillar 5 §1 (SWGSTAIN / IABPA)
+              <span className="px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30 whitespace-nowrap shrink-0">
+                SWGSTAIN • IABPA 2024
               </span>
             </div>
-            <p className="text-[10px] text-zinc-400 mt-0.5 truncate">
+            <p className="text-[10px] text-zinc-400 leading-relaxed">
               {isTr
                 ? "Eliptik Çarpma Dinamiği (sin α = W/L) • En Küçük Kareler Ortogonal Yakınsama • Schiller-Naumann Sürüklenmesi"
                 : "Elliptical Impact Dynamics (sin α = W/L) • Least-Squares Orthogonal Convergence • Schiller-Naumann Drag"}

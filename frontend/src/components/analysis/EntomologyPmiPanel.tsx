@@ -218,20 +218,20 @@ export default function EntomologyPmiPanel() {
     <div className="space-y-6 font-mono text-tactical-text">
       {/* ── Subsystem Header ── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 shadow-lg">
-        <div className="flex items-center gap-3">
+        <div className="flex items-start sm:items-center gap-3 min-w-0">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
             <Bug className="w-5 h-5" />
           </div>
-          <div className="min-w-0">
+          <div className="min-w-0 space-y-0.5">
             <div className="flex flex-wrap items-center gap-2">
-              <h2 className="text-sm sm:text-base font-bold tracking-widest text-tactical-text uppercase truncate">
+              <h2 className="text-sm sm:text-base font-bold tracking-widest text-tactical-text uppercase">
                 {isTr ? "Adli Entomoloji & Minimum PMI Tahmini" : "Forensic Entomology & Minimum PMI Estimation"}
               </h2>
-              <span className="px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shrink-0">
-                Pillar 5 §3 (EAFE / NAFEA)
+              <span className="px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 whitespace-nowrap shrink-0">
+                EAFE • NAFEA 2024
               </span>
             </div>
-            <p className="text-[10px] text-zinc-400 mt-0.5 truncate">
+            <p className="text-[10px] text-zinc-400 leading-relaxed">
               {isTr
                 ? "Birikimli Derece-Saat (ADH) • Geriye Doğru Ortam Termal Toplamı • Maggot Mass Isı Sapması (ΔT_mass)"
                 : "Accumulated Degree Hours (ADH) • Backward Ambient Thermal Summation • Maggot Mass Offset (ΔT_mass)"}

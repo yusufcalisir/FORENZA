@@ -134,22 +134,22 @@ export default function MeasurementUncertaintyPanel() {
     <div className="space-y-6 font-mono text-tactical-text">
       {/* ── Subsystem Header ── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl border border-sky-500/30 bg-sky-500/10 shadow-lg">
-        <div className="flex items-center gap-3">
+        <div className="flex items-start sm:items-center gap-3 min-w-0">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sky-500/20 border border-sky-500/40 text-sky-300">
             <Scale className="w-5 h-5" />
           </div>
-          <div>
-            <div className="flex items-center gap-2">
+          <div className="min-w-0 space-y-0.5">
+            <div className="flex flex-wrap items-center gap-2">
               <h2 className="text-sm font-bold tracking-widest text-tactical-text uppercase">
                 {isTr
-                  ? "ISO/IEC 17025:2017 Ölçüm Belirsizliği & Kalibrasyon (Pillar 6 §3)"
-                  : "ISO/IEC 17025:2017 Measurement Uncertainty & Calibration (Pillar 6 §3)"}
+                  ? "ISO/IEC 17025:2017 Ölçüm Belirsizliği & Kalibrasyon"
+                  : "ISO/IEC 17025:2017 Measurement Uncertainty & Calibration"}
               </h2>
-              <span className="px-2 py-0.5 rounded text-[8px] font-bold bg-sky-500/20 text-sky-300 border border-sky-500/30">
+              <span className="px-2 py-0.5 rounded text-[8px] font-bold bg-sky-500/20 text-sky-300 border border-sky-500/30 whitespace-nowrap shrink-0">
                 GUM • JCGM 100:2008 • k=2.00
               </span>
             </div>
-            <p className="text-[10px] text-zinc-400 mt-0.5">
+            <p className="text-[10px] text-zinc-400 leading-relaxed">
               {isTr
                 ? "Kantitatif DNA Konsantrasyonu Metrolojik Bütçesi • Birleşik Standart Belirsizlik u_c • Yeterlilik z-Skorları"
                 : "Quantitative DNA Concentration Metrological Budget • Combined Standard Uncertainty u_c • Proficiency z-Scores"}

@@ -132,20 +132,20 @@ export default function ZkpAuditorPanel() {
     <div className="space-y-6 font-mono text-tactical-text">
       {/* ── Subsystem Header ── */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl border border-indigo-500/30 bg-indigo-500/10 shadow-lg overflow-hidden">
-        <div className="flex items-center gap-3">
+        <div className="flex items-start sm:items-center gap-3 min-w-0">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-500/20 border border-indigo-500/40 text-indigo-300">
             <Lock className="w-5 h-5" />
           </div>
-          <div className="min-w-0">
+          <div className="min-w-0 space-y-0.5">
             <div className="flex flex-wrap items-center gap-2">
               <h2 className="text-xs sm:text-sm font-bold tracking-widest text-tactical-text uppercase">
-                {isTr ? "ZKP Kör Adli Denetçi (Pillar 6 §2)" : "ZKP Blind Forensic Auditor (Pillar 6 §2)"}
+                {isTr ? "ZKP Kör Adli Denetçi & Gizlilik Devresi" : "ZKP Blind Forensic Auditor & Privacy Circuit"}
               </h2>
               <span className="px-2.5 py-0.5 rounded-lg text-[8px] sm:text-[9px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 whitespace-nowrap shrink-0">
                 Groth16 • BN254 • GDPR Art. 9
               </span>
             </div>
-            <p className="text-[9px] sm:text-[10px] text-zinc-400 mt-0.5 truncate">
+            <p className="text-[9px] sm:text-[10px] text-zinc-400 leading-relaxed">
               {isTr
                 ? "Sıfır Bilgi Gizlilik Korumalı STR Doğrulama Devresi • Poseidon Taahhüdü • Çift Doğrusal Eşleşmeler"
                 : "Zero-Knowledge Privacy-Preserving STR Verification Circuit • Poseidon Commitment • Bilinear Multi-Pairings"}

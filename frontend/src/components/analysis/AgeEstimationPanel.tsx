@@ -175,7 +175,7 @@ export default function AgeEstimationPanel() {
         <button
           onClick={runPrediction}
           disabled={loading}
-          className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 active:scale-95 text-white font-bold text-xs transition-all shadow-lg shadow-purple-500/25 disabled:opacity-50 shrink-0 whitespace-nowrap cursor-pointer"
+          className="w-full sm:w-auto min-h-[42px] flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 active:scale-95 text-white font-bold text-xs transition-all shadow-lg shadow-purple-500/25 disabled:opacity-50 shrink-0 whitespace-nowrap cursor-pointer"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
           <span>
@@ -207,7 +207,7 @@ export default function AgeEstimationPanel() {
                   const res = predictAgeClientSide(cpgBetas, tissueType, knownAge ? parseFloat(knownAge) : null, m.id as ModelMode);
                   setResult(res);
                 }}
-                className={`p-2 rounded-lg text-left transition-all border cursor-pointer ${
+                className={`min-h-[44px] p-2 rounded-lg text-left transition-all border cursor-pointer flex flex-col justify-center ${
                   modelMode === m.id
                     ? "bg-purple-500/20 border-purple-500/60 text-purple-200 shadow-md"
                     : "bg-black/30 border-tactical-border/40 text-zinc-400 hover:border-purple-500/30"
@@ -231,7 +231,7 @@ export default function AgeEstimationPanel() {
               <button
                 key={p.id}
                 onClick={() => handlePresetSelect(p.id)}
-                className={`p-2 rounded-lg text-left transition-all border cursor-pointer ${
+                className={`min-h-[40px] p-2 rounded-lg text-left transition-all border cursor-pointer flex flex-col justify-center ${
                   activePreset === p.id
                     ? "bg-amber-500/20 border-amber-500/60 text-amber-200 shadow-md"
                     : "bg-black/30 border-tactical-border/40 text-zinc-400 hover:border-amber-500/30"
@@ -274,7 +274,7 @@ export default function AgeEstimationPanel() {
                 const res = predictAgeClientSide(cpgBetas, e.target.value, knownAge ? parseFloat(knownAge) : null, modelMode);
                 setResult(res);
               }}
-              className="w-full bg-black/60 border border-tactical-border/70 rounded-xl p-2.5 font-mono text-xs text-purple-300 font-bold focus:outline-none focus:border-purple-500 shadow-inner cursor-pointer"
+              className="w-full bg-black/60 border border-tactical-border/70 rounded-xl p-2.5 font-mono text-xs text-purple-300 font-bold focus:outline-none focus:border-purple-500 shadow-inner cursor-pointer min-h-[42px]"
             >
               <option value="BLOOD">
                 {isTr ? "Tam Kan / Kan Lekesi (Öteleme: 0.00 yıl | RSE ±1.95)" : "Whole Blood / Bloodstain (Offset: 0.00 yrs | RSE ±1.95)"}
@@ -305,7 +305,7 @@ export default function AgeEstimationPanel() {
                 const res = predictAgeClientSide(cpgBetas, tissueType, e.target.value ? parseFloat(e.target.value) : null, modelMode);
                 setResult(res);
               }}
-              className="w-full bg-black/60 border border-tactical-border/70 rounded-xl p-2.5 font-mono text-xs text-purple-300 font-bold focus:outline-none focus:border-purple-500 shadow-inner"
+              className="w-full bg-black/60 border border-tactical-border/70 rounded-xl p-2.5 font-mono text-xs text-purple-300 font-bold focus:outline-none focus:border-purple-500 shadow-inner min-h-[42px]"
             />
           </div>
 
@@ -478,7 +478,7 @@ export default function AgeEstimationPanel() {
                   <div className="flex items-center gap-1 bg-black/40 p-1 rounded-lg border border-indigo-500/30">
                     <button
                       onClick={() => setLangTab("en")}
-                      className={`px-2.5 py-0.5 rounded text-[9px] font-bold transition-all cursor-pointer ${
+                      className={`min-h-[30px] px-3 py-0.5 rounded text-[9px] font-bold transition-all cursor-pointer flex items-center justify-center ${
                         langTab === "en" ? "bg-indigo-500 text-white" : "text-zinc-400 hover:text-white"
                       }`}
                     >
@@ -486,7 +486,7 @@ export default function AgeEstimationPanel() {
                     </button>
                     <button
                       onClick={() => setLangTab("tr")}
-                      className={`px-2.5 py-0.5 rounded text-[9px] font-bold transition-all cursor-pointer ${
+                      className={`min-h-[30px] px-3 py-0.5 rounded text-[9px] font-bold transition-all cursor-pointer flex items-center justify-center ${
                         langTab === "tr" ? "bg-indigo-500 text-white" : "text-zinc-400 hover:text-white"
                       }`}
                     >

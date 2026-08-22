@@ -60,6 +60,25 @@ export default function MeasurementUncertaintyPanel() {
   const [budgetData, setBudgetData] = useState<BudgetResponse | null>(null);
   const [proficiencyData, setProficiencyData] = useState<ProficiencyResponse | null>(null);
 
+  const getLocalizedComponentName = (name: string) => {
+    if (!isTr) return name;
+    if (name.includes("Micro-Pipette Volume") || name.includes("Pipette")) return "Mikro-Pipet Hacmi (x1)";
+    if (name.includes("Thermal Gradient") || name.includes("Thermal")) return "Termal Gradyan (x2)";
+    if (name.includes("qPCR Standard Curve") || name.includes("Standard Curve")) return "qPCR Standart Eğrisi (x3)";
+    if (name.includes("Master Mix Amplification") || name.includes("Master Mix")) return "Master Mix Çoğaltımı (x4)";
+    return name;
+  };
+
+  const getLocalizedDist = (dist: string) => {
+    if (!isTr) return dist;
+    switch (dist.toUpperCase()) {
+      case "RECTANGULAR": return "DİKDÖRTGEN (RECT)";
+      case "NORMAL": return "NORMAL (GAUSS)";
+      case "TRIANGULAR": return "ÜÇGEN (TRI)";
+      default: return dist;
+    }
+  };
+
   const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 
   const handleCalculateBudget = async () => {
@@ -274,9 +293,9 @@ export default function MeasurementUncertaintyPanel() {
                         <tbody className="divide-y divide-tactical-border/20">
                           {budgetData.components.map((comp) => (
                             <tr key={comp.component_name} className="hover:bg-black/20">
-                              <td className="py-1.5 text-zinc-300 font-bold">{comp.component_name}</td>
+                              <td className="py-1.5 text-zinc-300 font-bold">{getLocalizedComponentName(comp.component_name)}</td>
                               <td className="py-1.5 text-sky-300">{comp.standard_uncertainty.toFixed(4)}</td>
-                              <td className="py-1.5 text-zinc-400">{comp.probability_distribution}</td>
+                              <td className="py-1.5 text-zinc-400">{getLocalizedDist(comp.probability_distribution)}</td>
                               <td className="py-1.5 text-right text-amber-300">{comp.variance_contribution.toFixed(6)}</td>
                               <td className="py-1.5 text-right text-emerald-400 font-bold">%{comp.percentage_contribution}</td>
                             </tr>
@@ -406,7 +425,15 @@ export default function MeasurementUncertaintyPanel() {
                       <span className="text-zinc-500">
                         {isTr ? "ISO/IEC 17025 Uyumluluk Kararı:" : "ISO/IEC 17025 Compliance Verdict:"}
                       </span>
-                      <span className="text-zinc-200 font-bold">{proficiencyData.verdict}</span>
+                      <span className="text-zinc-200 font-bold">
+                        {isTr
+                          ? (proficiencyData.performance_tier === "SATISFACTORY"
+                              ? "Tatmin Edici Performans — ISO/IEC 17025 Uyumu Doğrulandı"
+                              : proficiencyData.performance_tier === "QUESTIONABLE"
+                              ? "Şüpheli Performans — Uyarı Bildirildi"
+                              : "Yetersiz Performans — Düzeltici Faaliyet Gerekli")
+                          : proficiencyData.verdict}
+                      </span>
                     </div>
                     <div className="flex justify-between text-[11px]">
                       <span className="text-zinc-500">

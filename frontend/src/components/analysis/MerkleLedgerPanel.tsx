@@ -98,6 +98,73 @@ export default function MerkleLedgerPanel() {
     return `${hex}a1b2c3d4e5f60718293a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e`.slice(0, 64);
   };
 
+  const getLocalizedActionType = (action: string) => {
+    if (!isTr) return action;
+    switch (action) {
+      case "PASS": return "DOĞRULANDI";
+      case "FAIL": return "BAŞARISIZ";
+      case "WARNING": return "UYARI";
+      case "COLLECTION": return "DELİL TOPLAMA";
+      case "TRANSFER": return "SEVKİYAT / NAKİL";
+      case "ACCESSION": return "LIMS KABUL";
+      case "EXTRACTION": return "DNA EKSTRAKSİYONU";
+      case "SEALED": return "MÜHÜRLENDİ";
+      default: return action;
+    }
+  };
+
+  const getLocalizedLocation = (loc: string) => {
+    if (!isTr) return loc;
+    if (loc.includes("23. Post-Mortem GC-MS Tox") || loc.includes("Post-Mortem")) return "25. Ölüm Sonrası Toksikokinetik";
+    if (loc.includes("01. Autosomal STR Engine") || loc.includes("Autosomal STR")) return "01. Otozomal STR Motoru";
+    if (loc.includes("11. HIrisPlex-S Pigmentation") || loc.includes("HIrisPlex-S")) return "11. HIrisPlex-S Pigmentasyon";
+    if (loc.includes("02. MCMC Mixture Deconvolution") || loc.includes("MCMC Mixture")) return "02. MCMC Karışım Dekonvolüsyonu";
+    if (loc.includes("16. Horvath Epigenetic Clock") || loc.includes("Horvath")) return "16. Horvath Epigenetik Yaş Saati";
+    if (loc.includes("28. Circom ZKP Auditor") || loc.includes("Circom")) return "27. Circom ZKP Denetçisi";
+    if (loc === "CRIME_SCENE_SECTOR_A") return "OLAY_YERİ_SEKTÖR_A";
+    if (loc === "EVIDENCE_TRANSPORT_VEHICLE") return "DELİL_NAKİL_ARACI";
+    if (loc === "CENTRAL_LAB_ACCESSIONING") return "MERKEZ_LAB_NUMUNE_KABUL";
+    if (loc === "EXTRACTION_SUITE_B") return "EKSTRAKSİYON_LAB_B";
+    if (loc === "EVIDENCE_LEDGER") return "DELİL_DEFTERİ";
+    return loc;
+  };
+
+  const getLocalizedNotes = (notes?: string) => {
+    if (!notes) return "";
+    if (!isTr) return notes;
+    if (notes.includes("Toxicology LC-MS/MS & Widmark BAC: Morphine 0.85 mg/L — FATAL threshold exceeded")) {
+      return "Toksikoloji LC-MS/MS & Widmark BAC: Morfin 0.85 mg/L — ÖLÜMCÜL eşik aşıldı";
+    }
+    if (notes.includes("STR 24-locus profile verified — CASE-2026-EU-GERMANIC-01")) {
+      return "24 lokus STR profili doğrulandı — CASE-2026-EU-GERMANIC-01";
+    }
+    if (notes.includes("HIrisPlex-S 24-SNP phenotype report compiled")) {
+      return "HIrisPlex-S 24-SNP fenotip raporu derlendi";
+    }
+    if (notes.includes("Metropolis-Hastings 3-contributor mixture deconvolution")) {
+      return "Metropolis-Hastings 3 katkılı DNA karışım dekonvolüsyonu";
+    }
+    if (notes.includes("Horvath 5-CpG epigenetic age clock (38.2 ± 2.8 yr)")) {
+      return "Horvath 5-CpG epigenetik yaş saati (38.2 ± 2.8 yıl)";
+    }
+    if (notes.includes("Circom Groth16 ZKP proof generated & verified")) {
+      return "Circom Groth16 ZKP ispatı sentezlendi & doğrulandı";
+    }
+    if (notes.includes("Biological swab secured in sterile barcoded envelope.")) {
+      return "Biyolojik sürüntü steril barkodlu zarfa alındı.";
+    }
+    if (notes.includes("Chain of custody handoff to central logistics.")) {
+      return "Delil zinciri merkezi lojistik birimine teslim edildi.";
+    }
+    if (notes.includes("Sample logged into LIMS with barcode verification.")) {
+      return "Numune barkod doğrulaması ile LIMS sistemine işlendi.";
+    }
+    if (notes.includes("Automated magnetic bead DNA extraction completed.")) {
+      return "Manyetik boncuk tabanlı otomatik DNA ekstraksiyonu tamamlandı.";
+    }
+    return notes;
+  };
+
   const fetchTree = async (currentEvents: CustodyEvent[]) => {
     if (loading) return;
     setLoading(true);
@@ -359,11 +426,11 @@ export default function MerkleLedgerPanel() {
                   }`}
                 >
                   <div className="flex items-center justify-between text-xs mb-1">
-                    <span className="font-bold text-zinc-200">{ev.event_id} ({ev.action_type})</span>
+                    <span className="font-bold text-zinc-200">{ev.event_id} ({getLocalizedActionType(ev.action_type)})</span>
                     <span className="text-[10px] text-zinc-500 font-mono">{ev.timestamp_iso.slice(11, 19)} UTC</span>
                   </div>
-                  <div className="text-[10px] text-zinc-400">{ev.officer_id} • {ev.location_id}</div>
-                  <div className="text-[9px] text-zinc-500 mt-1 truncate">{ev.notes}</div>
+                  <div className="text-[10px] text-zinc-400">{ev.officer_id} • {getLocalizedLocation(ev.location_id)}</div>
+                  <div className="text-[9px] text-zinc-500 mt-1 truncate">{getLocalizedNotes(ev.notes)}</div>
                 </div>
               ))}
             </div>
@@ -462,7 +529,7 @@ export default function MerkleLedgerPanel() {
                       : "border-tactical-border/40 bg-black/40 text-zinc-400 hover:text-zinc-200"
                   }`}
                 >
-                  <div className="text-xs font-bold">{ev.event_id} — {ev.action_type}</div>
+                  <div className="text-xs font-bold">{ev.event_id} — {getLocalizedActionType(ev.action_type)}</div>
                   <div className="text-[10px] text-zinc-400">{ev.officer_id}</div>
                 </button>
               ))}
@@ -492,7 +559,9 @@ export default function MerkleLedgerPanel() {
                           ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
                           : "bg-rose-500/20 text-rose-300 border-rose-500/40"
                       }`}>
-                        {verifyResult.verdict}
+                        {isTr
+                          ? (verifyResult.is_valid ? "GEÇERLİ — İNKAR EDİLEMEZ İSPAT" : "GEÇERSİZ — BOZULMUŞ KÖK")
+                          : verifyResult.verdict}
                       </span>
                     </div>
                   </div>

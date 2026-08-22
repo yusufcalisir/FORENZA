@@ -366,7 +366,9 @@ export default function ZkpAuditorPanel() {
                         {isTr ? "Eşleşme Durumu" : "Pairing Status"}
                       </span>
                       <span className="text-[10px] sm:text-xs font-bold px-2.5 py-1 rounded-lg border font-mono bg-emerald-500/20 text-emerald-300 border-emerald-500/40 whitespace-nowrap">
-                        {verifyResult.verdict}
+                        {isTr
+                          ? (verifyResult.is_valid ? "EŞLEŞME DOĞRULANDI (GEÇERLİ)" : "EŞLEŞME GEÇERSİZ")
+                          : verifyResult.verdict}
                       </span>
                     </div>
                   </div>

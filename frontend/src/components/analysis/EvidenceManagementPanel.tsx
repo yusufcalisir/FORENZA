@@ -89,6 +89,54 @@ export default function EvidenceManagementPanel() {
 
   const selectedItem = ITEMS.find((i) => i.id === selectedId)!;
 
+  const getLocalizedSensorLabel = (type: string) => {
+    if (!isTr) return SENSOR_CONFIG[type]?.label || type;
+    switch (type) {
+      case "LIDAR": return "LiDAR";
+      case "BPA": return "BPA";
+      case "BALLISTICS": return "Balistik";
+      case "DNA": return "DNA";
+      case "BONE": return "Kemik";
+      default: return SENSOR_CONFIG[type]?.label || type;
+    }
+  };
+
+  const getLocalizedMethod = (method: string) => {
+    if (!isTr) return method;
+    switch (method) {
+      case "Sterile Cotton Swab": return "Steril Pamuk Sürüntü";
+      case "Sterile Forceps": return "Steril Pens";
+      case "Tape Lift": return "Bantla Kaldırma";
+      case "Excision": return "Kemik Eksizyonu";
+      case "TLS Scan": return "TLS Lidar Taraması";
+      case "SEM-EDX CMC": return "SEM-EDX & 3D CMC";
+      default: return method;
+    }
+  };
+
+  const getLocalizedCondition = (cond: string) => {
+    if (!isTr) return cond;
+    switch (cond) {
+      case "Dry Ambient": return "Kuru Ortam";
+      case "Room Temp": return "Oda Sıcaklığı";
+      case "Frozen -20C": return "Dondurulmuş (-20°C)";
+      case "Sealed CAD": return "Mühürlü CAD Verisi";
+      default: return cond;
+    }
+  };
+
+  const getLocalizedBadge = (badge: string) => {
+    if (!isTr) return badge;
+    switch (badge) {
+      case "SEALED": return "MÜHÜRLÜ";
+      case "IN_LAB": return "LABORATUVARDA";
+      case "FROZEN": return "DONDURULMUŞ";
+      case "SCANNED": return "TARANDI";
+      case "ANALYZED": return "ANALİZ EDİLDİ";
+      default: return badge;
+    }
+  };
+
   // SE(3) transform for display (simplified — applies to centroid for juror view)
   function applyTransformOffset(x: number, y: number): [number, number] {
     const psi = (yawDeg * Math.PI) / 180;
@@ -443,7 +491,7 @@ export default function EvidenceManagementPanel() {
                         <span className="text-[10px] font-bold text-tactical-text">{item.id}</span>
                       </div>
                       <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded ${cfg.color} bg-white/5 border border-white/10`}>
-                        {cfg.label}
+                        {getLocalizedSensorLabel(item.type)}
                       </span>
                     </div>
                     <p className="text-[9px] text-zinc-500 font-mono">
@@ -487,10 +535,11 @@ export default function EvidenceManagementPanel() {
                   <span className="text-emerald-300 font-bold">{isTr ? "Hacim V = 4π/3·a·b·c" : "Volume V = 4π/3·a·b·c"}</span>
                   <span className="text-emerald-200 font-bold">{volume.toFixed(4)} m³</span>
                 </div>
-                {/* Sensor precision */}
+                {/* Sensor precision and collection details */}
                 <div className="mt-2 p-2 rounded-lg bg-black/20 border border-tactical-border/30 space-y-1">
-                  <p className="text-zinc-500 text-[9px] uppercase font-bold">{isTr ? "Sensör Hassasiyeti (§5.1)" : "Sensor Precision (§5.1)"}</p>
+                  <p className="text-zinc-500 text-[9px] uppercase font-bold">{isTr ? "Sensör & Toplama Yöntemi" : "Sensor & Collection Method"}</p>
                   <p className="text-zinc-300">σ = ±{selectedItem.precision_m * 1000} mm → ±{selectedItem.precision_m} m</p>
+                  <p className="text-zinc-400">{isTr ? "Yöntem:" : "Method:"} {getLocalizedMethod(selectedItem.method)} • {isTr ? "Koşul:" : "Condition:"} {getLocalizedCondition(selectedItem.condition)}</p>
                 </div>
 
                 {/* SHA-256 Custody */}
@@ -498,7 +547,7 @@ export default function EvidenceManagementPanel() {
                   <div className="flex items-center gap-1.5 mb-1">
                     <ShieldCheck className="w-3 h-3 text-emerald-400" />
                     <span className="text-emerald-300 font-bold text-[9px]">
-                      {isTr ? "Delil Zinciri Bozulmamış" : "Chain of Custody Intact"}
+                      {isTr ? "Delil Zinciri Bozulmamış" : "Chain of Custody Intact"} ({getLocalizedBadge(selectedItem.badge)})
                     </span>
                   </div>
                   <p className="text-zinc-500 text-[9px]">SHA-256: {selectedItem.hash}</p>

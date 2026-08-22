@@ -451,7 +451,13 @@ export default function ExpertWitnessPanel() {
                     <ShieldCheck className="w-3.5 h-3.5" />
                     {isTr ? "Savcılık Safsatası Kalkanı (Prosecutor's Fallacy Shield)" : "Prosecutor's Fallacy Shield"}
                   </div>
-                  <p className="leading-relaxed">{reportData.prosecutors_fallacy_shield.substring(0, 320)}…</p>
+                  <p className="leading-relaxed">
+                    {isTr
+                      ? (reportData.language === "tr"
+                          ? reportData.prosecutors_fallacy_shield.substring(0, 320)
+                          : "Savcılık Safsatası Kalkanı: LR değeri şüphelinin suçlu olma olasılığı değil; delilin hipotezler altındaki bağıl olasılığıdır (ENFSI 2017).")
+                      : reportData.prosecutors_fallacy_shield.substring(0, 320)}…
+                  </p>
                 </div>
               </motion.div>
             )}

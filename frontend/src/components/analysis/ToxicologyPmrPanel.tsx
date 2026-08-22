@@ -347,10 +347,10 @@ export default function ToxicologyPmrPanel() {
           )}
 
           {/* Inner Tabs */}
-          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-black/60 border border-tactical-border/60 overflow-x-auto max-w-full">
+          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-black/60 border border-tactical-border/60 w-full sm:w-auto overflow-x-auto">
             <button
               onClick={() => setActiveTab("pmr")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+              className={`min-h-[36px] px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center justify-center flex-1 sm:flex-initial ${
                 activeTab === "pmr" ? "bg-rose-500 text-black shadow-md font-extrabold" : "text-zinc-400 hover:text-zinc-200"
               }`}
             >
@@ -358,7 +358,7 @@ export default function ToxicologyPmrPanel() {
             </button>
             <button
               onClick={() => setActiveTab("extrap")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+              className={`min-h-[36px] px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center justify-center flex-1 sm:flex-initial ${
                 activeTab === "extrap" ? "bg-rose-500 text-black shadow-md font-extrabold" : "text-zinc-400 hover:text-zinc-200"
               }`}
             >
@@ -408,7 +408,7 @@ export default function ToxicologyPmrPanel() {
               <button
                 onClick={() => runPmrEvaluation(selectedDrug, cHeart, cFemoral, unit)}
                 disabled={loading}
-                className="px-4 py-2 rounded-xl bg-rose-500 hover:bg-rose-400 text-zinc-950 font-black text-xs uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(244,63,94,0.3)] hover:shadow-[0_0_25px_rgba(244,63,94,0.5)] disabled:opacity-50 flex items-center gap-1.5 cursor-pointer active:scale-95"
+                className="min-h-[36px] px-4 py-2 rounded-xl bg-rose-500 hover:bg-rose-400 text-zinc-950 font-black text-xs uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(244,63,94,0.3)] hover:shadow-[0_0_25px_rgba(244,63,94,0.5)] disabled:opacity-50 flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
                 {loading
@@ -422,7 +422,7 @@ export default function ToxicologyPmrPanel() {
                 <button
                   key={p.name}
                   onClick={() => loadPreset(p)}
-                  className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                  className={`min-h-[44px] p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
                     selectedDrug === p.name
                       ? "border-rose-500/80 bg-rose-500/20 text-rose-300 font-bold"
                       : "border-tactical-border/40 bg-black/40 text-zinc-400 hover:text-zinc-200"
@@ -444,7 +444,7 @@ export default function ToxicologyPmrPanel() {
                   step="0.01"
                   value={cHeart}
                   onChange={(e) => setCHeart(parseFloat(e.target.value) || 0)}
-                  className="w-full bg-black/50 border border-tactical-border/70 rounded-xl p-2 font-mono text-xs text-tactical-text focus:outline-none focus:border-rose-500"
+                  className="w-full min-h-[40px] bg-black/50 border border-tactical-border/70 rounded-xl p-2 font-mono text-xs text-tactical-text focus:outline-none focus:border-rose-500"
                 />
               </div>
 
@@ -457,7 +457,7 @@ export default function ToxicologyPmrPanel() {
                   step="0.01"
                   value={cFemoral}
                   onChange={(e) => setCFemoral(parseFloat(e.target.value) || 0)}
-                  className="w-full bg-black/50 border border-tactical-border/70 rounded-xl p-2 font-mono text-xs text-tactical-text focus:outline-none focus:border-rose-500"
+                  className="w-full min-h-[40px] bg-black/50 border border-tactical-border/70 rounded-xl p-2 font-mono text-xs text-tactical-text focus:outline-none focus:border-rose-500"
                 />
               </div>
             </div>
@@ -542,7 +542,7 @@ export default function ToxicologyPmrPanel() {
               <button
                 onClick={() => runExtrapolation(selectedDrug, cFemoral, elapsedHours, unit)}
                 disabled={loading}
-                className="px-4 py-2 rounded-xl bg-rose-500 hover:bg-rose-400 text-zinc-950 font-black text-xs uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(244,63,94,0.3)] hover:shadow-[0_0_25px_rgba(244,63,94,0.5)] disabled:opacity-50 flex items-center gap-1.5 cursor-pointer active:scale-95"
+                className="min-h-[36px] px-4 py-2 rounded-xl bg-rose-500 hover:bg-rose-400 text-zinc-950 font-black text-xs uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(244,63,94,0.3)] hover:shadow-[0_0_25px_rgba(244,63,94,0.5)] disabled:opacity-50 flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
                 {loading
@@ -566,7 +566,7 @@ export default function ToxicologyPmrPanel() {
                       setUnit(preset.unit);
                     }
                   }}
-                  className="w-full bg-black/50 border border-tactical-border/70 rounded-xl p-2 font-mono text-xs text-rose-300 font-bold focus:outline-none focus:border-rose-500"
+                  className="w-full min-h-[40px] bg-black/50 border border-tactical-border/70 rounded-xl p-2 font-mono text-xs text-rose-300 font-bold focus:outline-none focus:border-rose-500"
                 >
                   {DRUG_PRESETS.map((d) => (
                     <option key={d.name} value={d.name}>
@@ -585,7 +585,7 @@ export default function ToxicologyPmrPanel() {
                   step="0.01"
                   value={cFemoral}
                   onChange={(e) => setCFemoral(parseFloat(e.target.value) || 0)}
-                  className="w-full bg-black/50 border border-tactical-border/70 rounded-xl p-2 font-mono text-xs text-tactical-text focus:outline-none focus:border-rose-500"
+                  className="w-full min-h-[40px] bg-black/50 border border-tactical-border/70 rounded-xl p-2 font-mono text-xs text-tactical-text focus:outline-none focus:border-rose-500"
                 />
               </div>
 

@@ -250,7 +250,7 @@ export default function EntomologyPmiPanel() {
           <button
             onClick={runPmiEstimation}
             disabled={loading}
-            className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black text-xs uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_25px_rgba(16,185,129,0.5)] disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer active:scale-95"
+            className="w-full sm:w-auto min-h-[42px] px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black text-xs uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_25px_rgba(16,185,129,0.5)] disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer active:scale-95"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
             {loading
@@ -307,7 +307,7 @@ export default function EntomologyPmiPanel() {
                   const firstStage = Object.keys(SPECIES_CONFIG[e.target.value]?.stages || {})[0];
                   if (firstStage) setSelectedStage(firstStage);
                 }}
-                className="w-full p-2.5 rounded-xl border border-tactical-border/60 bg-black/60 text-xs text-zinc-200 cursor-pointer"
+                className="w-full min-h-[40px] p-2.5 rounded-xl border border-tactical-border/60 bg-black/60 text-xs text-zinc-200 cursor-pointer"
               >
                 {Object.keys(SPECIES_CONFIG).map((sp) => (
                   <option key={sp} value={sp}>
@@ -324,7 +324,7 @@ export default function EntomologyPmiPanel() {
               <select
                 value={selectedStage}
                 onChange={(e) => setSelectedStage(e.target.value)}
-                className="w-full p-2.5 rounded-xl border border-tactical-border/60 bg-black/60 text-xs text-zinc-200 cursor-pointer"
+                className="w-full min-h-[40px] p-2.5 rounded-xl border border-tactical-border/60 bg-black/60 text-xs text-zinc-200 cursor-pointer"
               >
                 {stagesList.map((stg) => (
                   <option key={stg} value={stg}>
@@ -344,7 +344,7 @@ export default function EntomologyPmiPanel() {
                 type="datetime-local"
                 value={samplingTime}
                 onChange={(e) => setSamplingTime(e.target.value)}
-                className="w-full p-2 rounded-lg border border-tactical-border/60 bg-black/60 text-xs text-zinc-200"
+                className="w-full min-h-[40px] p-2 rounded-lg border border-tactical-border/60 bg-black/60 text-xs text-zinc-200"
               />
             </div>
             <div className="space-y-1">
@@ -356,7 +356,7 @@ export default function EntomologyPmiPanel() {
                 step={0.5}
                 value={avgAmbientTemp}
                 onChange={(e) => setAvgAmbientTemp(parseFloat(e.target.value) || 0)}
-                className="w-full p-2 rounded-lg border border-tactical-border/60 bg-black/60 text-xs text-zinc-200 tabular-nums"
+                className="w-full min-h-[40px] p-2 rounded-lg border border-tactical-border/60 bg-black/60 text-xs text-zinc-200 tabular-nums"
               />
             </div>
             <div className="space-y-1">
@@ -370,7 +370,7 @@ export default function EntomologyPmiPanel() {
                 max={5}
                 value={deltaTMass}
                 onChange={(e) => setDeltaTMass(parseFloat(e.target.value) || 0)}
-                className="w-full p-2 rounded-lg border border-tactical-border/60 bg-black/60 text-xs text-zinc-200 tabular-nums"
+                className="w-full min-h-[40px] p-2 rounded-lg border border-tactical-border/60 bg-black/60 text-xs text-zinc-200 tabular-nums"
               />
             </div>
           </div>

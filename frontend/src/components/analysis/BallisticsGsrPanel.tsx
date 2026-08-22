@@ -348,19 +348,19 @@ export default function BallisticsGsrPanel() {
             </span>
           )}
 
-          <div className="flex bg-black/60 p-1 rounded-xl border border-tactical-border/60">
+          <div className="flex bg-black/60 p-1 rounded-xl border border-tactical-border/60 w-full sm:w-auto overflow-x-auto">
             <button
               onClick={() => setActiveSubTab("gsr")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                activeSubTab === "gsr" ? "bg-orange-500 text-black shadow-md" : "text-zinc-400 hover:text-zinc-200"
+              className={`min-h-[36px] px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center justify-center flex-1 sm:flex-initial ${
+                activeSubTab === "gsr" ? "bg-orange-500 text-black shadow-md font-extrabold" : "text-zinc-400 hover:text-zinc-200"
               }`}
             >
               SEM-EDX GSR
             </button>
             <button
               onClick={() => setActiveSubTab("cmc")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                activeSubTab === "cmc" ? "bg-orange-500 text-black shadow-md" : "text-zinc-400 hover:text-zinc-200"
+              className={`min-h-[36px] px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center justify-center flex-1 sm:flex-initial ${
+                activeSubTab === "cmc" ? "bg-orange-500 text-black shadow-md font-extrabold" : "text-zinc-400 hover:text-zinc-200"
               }`}
             >
               3D CMC Balistik
@@ -410,7 +410,7 @@ export default function BallisticsGsrPanel() {
               <button
                 onClick={runGsrAnalysis}
                 disabled={loading}
-                className="px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-400 text-zinc-950 font-black text-xs uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_25px_rgba(249,115,22,0.5)] disabled:opacity-50 flex items-center gap-1.5 cursor-pointer active:scale-95"
+                className="min-h-[36px] px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-400 text-zinc-950 font-black text-xs uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_25px_rgba(249,115,22,0.5)] disabled:opacity-50 flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
                 {loading
@@ -528,7 +528,7 @@ export default function BallisticsGsrPanel() {
               <button
                 onClick={runCmcAnalysis}
                 disabled={loading}
-                className="px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-400 text-zinc-950 font-black text-xs uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_25px_rgba(249,115,22,0.5)] disabled:opacity-50 flex items-center gap-1.5 cursor-pointer active:scale-95"
+                className="min-h-[36px] px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-400 text-zinc-950 font-black text-xs uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_25px_rgba(249,115,22,0.5)] disabled:opacity-50 flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
                 {loading

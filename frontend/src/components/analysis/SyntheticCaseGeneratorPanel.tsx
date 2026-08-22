@@ -248,7 +248,7 @@ export default function SyntheticCaseGeneratorPanel() {
           <button
             onClick={handleGenerateCase}
             disabled={loading}
-            className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-pink-500 hover:bg-pink-400 text-zinc-950 font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_20px_rgba(236,72,153,0.3)] hover:shadow-[0_0_25px_rgba(236,72,153,0.5)] disabled:opacity-50 active:scale-95"
+            className="w-full sm:w-auto min-h-[42px] px-5 py-2.5 rounded-xl bg-pink-500 hover:bg-pink-400 text-zinc-950 font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_20px_rgba(236,72,153,0.3)] hover:shadow-[0_0_25px_rgba(236,72,153,0.5)] disabled:opacity-50 active:scale-95"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
             {loading
@@ -315,8 +315,8 @@ export default function SyntheticCaseGeneratorPanel() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         {/* Left: Stochastic Case Parameter Controls */}
-        <div className="space-y-4 rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-4 sm:p-5 shadow-xl flex flex-col justify-between">
-          <span className="text-xs font-bold uppercase tracking-wider text-tactical-text block border-b border-tactical-border/40 pb-3">
+        <div className="space-y-4 rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-4 sm:p-5 shadow-xl flex flex-col justify-between min-w-0">
+          <span className="text-xs font-bold uppercase tracking-wider text-tactical-text block border-b border-tactical-border/40 pb-3 truncate">
             {isTr ? "Sentetik Vaka Üreteci Kontrolleri" : "Synthetic Case Generator Controls"}
           </span>
 
@@ -325,7 +325,7 @@ export default function SyntheticCaseGeneratorPanel() {
             <select
               value={scenarioType}
               onChange={(e) => setScenarioType(e.target.value)}
-              className="w-full p-2.5 rounded-xl border border-tactical-border/60 bg-black/60 text-xs text-zinc-200 cursor-pointer outline-none focus:border-pink-500"
+              className="w-full min-h-[42px] p-2.5 rounded-xl border border-tactical-border/60 bg-black/60 text-xs text-zinc-200 cursor-pointer outline-none focus:border-pink-500 shadow-sm"
             >
               <option value="3_PERSON_STR_MIXTURE">
                 {isTr ? "3 Kişilik Karmaşık STR Karışımı" : "3-Person Complex STR Mixture"}
@@ -369,7 +369,7 @@ export default function SyntheticCaseGeneratorPanel() {
                 max={1}
                 value={degradation}
                 onChange={(e) => setDegradation(parseFloat(e.target.value))}
-                className="w-full p-2 rounded-lg border border-tactical-border/60 bg-black/60 text-xs text-zinc-200 tabular-nums"
+                className="w-full min-h-[40px] p-2 rounded-xl border border-tactical-border/60 bg-black/60 text-xs text-zinc-200 tabular-nums"
               />
             </div>
             <div className="space-y-1">
@@ -381,7 +381,7 @@ export default function SyntheticCaseGeneratorPanel() {
                 max={0.5}
                 value={dropout}
                 onChange={(e) => setDropout(parseFloat(e.target.value))}
-                className="w-full p-2 rounded-lg border border-tactical-border/60 bg-black/60 text-xs text-zinc-200 tabular-nums"
+                className="w-full min-h-[40px] p-2 rounded-xl border border-tactical-border/60 bg-black/60 text-xs text-zinc-200 tabular-nums"
               />
             </div>
           </div>
@@ -391,11 +391,11 @@ export default function SyntheticCaseGeneratorPanel() {
             <span className="text-[9px] text-zinc-400 uppercase font-bold block">
               {isTr ? "Sentezlenen Katkı Verenler" : "Synthesized Contributors"}
             </span>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1.5">
               {caseData.ground_truth_contributors.map((c) => (
                 <span
                   key={c.contributor_id}
-                  className="px-2 py-1 rounded bg-zinc-800 text-[9px] font-mono text-zinc-300 border border-tactical-border/40"
+                  className="px-2 py-1 rounded-lg bg-zinc-800 text-[9px] font-mono text-zinc-300 border border-tactical-border/40 whitespace-nowrap"
                 >
                   {c.contributor_id} ({c.role}): {(c.mixture_proportion * 100).toFixed(0)}%
                 </span>
@@ -405,29 +405,29 @@ export default function SyntheticCaseGeneratorPanel() {
         </div>
 
         {/* Right: Ground-Truth & Self-Validation Output */}
-        <div className="space-y-4">
+        <div className="space-y-4 min-w-0">
           <motion.div
             key={caseData.synthetic_case_id}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="rounded-2xl border border-pink-500/40 bg-tactical-surface/50 p-4 sm:p-5 space-y-4 shadow-xl"
+            className="rounded-2xl border border-pink-500/40 bg-tactical-surface/50 p-4 sm:p-5 space-y-4 shadow-xl min-w-0"
           >
-            <div className="flex items-center justify-between border-b border-pink-500/20 pb-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-tactical-text flex items-center gap-2">
+            <div className="flex items-center justify-between border-b border-pink-500/20 pb-3 gap-2 min-w-0">
+              <span className="text-xs font-bold uppercase tracking-wider text-tactical-text flex items-center gap-2 min-w-0 truncate">
                 <Dna className="w-4 h-4 text-pink-400 shrink-0" />
-                {isTr ? "Gerçek Durum Hedef Matrisi" : "Ground-Truth Target Matrix"}
+                <span className="truncate">{isTr ? "Gerçek Durum Hedef Matrisi" : "Ground-Truth Target Matrix"}</span>
               </span>
-              <span className="px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold text-[9px] uppercase shrink-0">
+              <span className="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold text-[9px] uppercase shrink-0 whitespace-nowrap">
                 {isTr ? "%100 DOĞRULANDI" : "100% VALIDATED"}
               </span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono">
-              <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40 space-y-1">
+              <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40 space-y-1 min-w-0">
                 <span className="text-[9px] text-zinc-500 block uppercase">{isTr ? "Vaka Kimliği" : "Case ID"}</span>
                 <span className="font-bold text-pink-300 text-xs truncate block">{caseData.synthetic_case_id}</span>
               </div>
-              <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40 space-y-1">
+              <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40 space-y-1 min-w-0">
                 <span className="text-[9px] text-zinc-500 block uppercase">{isTr ? "Gerçek Olabilirlik Oranı (LR)" : "True Ground-Truth LR"}</span>
                 <span className="font-bold text-emerald-300 text-xs block tabular-nums">
                   10^{caseData.ground_truth_metrics.true_log10_lr}
@@ -439,7 +439,7 @@ export default function SyntheticCaseGeneratorPanel() {
             <button
               onClick={handleEvaluateBenchmark}
               disabled={evaluating}
-              className="w-full py-3 rounded-xl border border-pink-500/40 bg-pink-500/20 hover:bg-pink-500/30 text-pink-200 font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer transition-all shadow-[0_0_15px_rgba(236,72,153,0.15)] disabled:opacity-50 active:scale-95"
+              className="w-full min-h-[44px] py-3 rounded-xl border border-pink-500/40 bg-pink-500/20 hover:bg-pink-500/30 text-pink-200 font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer transition-all shadow-[0_0_15px_rgba(236,72,153,0.15)] disabled:opacity-50 active:scale-95"
             >
               <Play className={`w-3.5 h-3.5 fill-current ${evaluating ? "animate-spin" : ""}`} />
               {evaluating
@@ -452,26 +452,26 @@ export default function SyntheticCaseGeneratorPanel() {
               <motion.div
                 initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="p-3 sm:p-4 rounded-xl bg-black/60 border border-pink-500/30 space-y-2.5 text-xs font-mono"
+                className="p-3 sm:p-4 rounded-xl bg-black/60 border border-pink-500/30 space-y-2.5 text-xs font-mono min-w-0"
               >
                 <div className="flex flex-wrap items-center justify-between gap-2 border-b border-tactical-border/30 pb-2">
                   <span className="text-[9px] text-pink-300 font-bold uppercase">
                     {isTr ? "Akademik Doğrulama Karnesi" : "Academic Validation Scorecard"}
                   </span>
-                  <span className="px-2 py-0.5 rounded text-[8px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                  <span className="px-2 py-0.5 rounded text-[8px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 whitespace-nowrap">
                     {benchmark.self_validation_verdict}
                   </span>
                 </div>
-                <div className="grid grid-cols-3 gap-2 pt-1 text-[10px]">
-                  <div className="p-2 rounded-lg bg-black/40 border border-tactical-border/20 text-center">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1 text-[10px]">
+                  <div className="p-2.5 rounded-lg bg-black/40 border border-tactical-border/20 text-center">
                     <span className="text-zinc-500 text-[8px] block uppercase">ROC-AUC</span>
                     <span className="font-bold text-emerald-400 text-xs tabular-nums">{benchmark.roc_auc_score}</span>
                   </div>
-                  <div className="p-2 rounded-lg bg-black/40 border border-tactical-border/20 text-center">
+                  <div className="p-2.5 rounded-lg bg-black/40 border border-tactical-border/20 text-center">
                     <span className="text-zinc-500 text-[8px] block uppercase">Log10 LR RMSE</span>
                     <span className="font-bold text-zinc-200 text-xs tabular-nums">{benchmark.log10_lr_rmse}</span>
                   </div>
-                  <div className="p-2 rounded-lg bg-black/40 border border-tactical-border/20 text-center">
+                  <div className="p-2.5 rounded-lg bg-black/40 border border-tactical-border/20 text-center">
                     <span className="text-zinc-500 text-[8px] block uppercase">FIR @ 0%</span>
                     <span className="font-bold text-emerald-400 text-xs tabular-nums">{benchmark.false_inclusion_rate_fir_0pct}%</span>
                   </div>

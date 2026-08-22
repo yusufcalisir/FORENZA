@@ -306,7 +306,7 @@ export default function PanelMTDNA() {
             </div>
 
             {/* SVG Circular Visualization */}
-            <div className="relative w-full h-56 sm:h-64 flex items-center justify-center my-2">
+            <div className="relative w-full h-48 sm:h-64 flex items-center justify-center my-2">
               <svg viewBox="0 0 200 200" className="w-full h-full max-w-[240px]">
                 {/* Background Ring (Full 16,569 bp Genome) */}
                 <circle
@@ -325,22 +325,21 @@ export default function PanelMTDNA() {
                   r="75"
                   fill="none"
                   stroke="#334155"
-                  strokeWidth="10"
-                  strokeDasharray="400 70"
-                  strokeDashoffset="30"
+                  strokeWidth="14"
+                  strokeDasharray="420 450"
+                  strokeDashoffset="60"
                 />
 
-                {/* D-Loop Control Region (16024 to 576 ~ 1,122 bp) */}
+                {/* D-Loop Control Region (Highlighted) */}
                 <circle
                   cx="100"
                   cy="100"
                   r="75"
                   fill="none"
                   stroke="#10b981"
-                  strokeWidth="14"
-                  strokeDasharray="50 420"
-                  strokeDashoffset="25"
-                  className="animate-pulse"
+                  strokeWidth="16"
+                  strokeDasharray="45 450"
+                  strokeDashoffset="15"
                 />
 
                 {/* HV1 Region (Emerald) */}
@@ -416,12 +415,12 @@ export default function PanelMTDNA() {
               </div>
 
               {/* Domain Filter Buttons */}
-              <div className="flex items-center gap-1 p-1 bg-slate-800 rounded-lg text-xs">
+              <div className="flex flex-wrap items-center gap-1 p-1 bg-slate-800 rounded-lg text-xs w-full sm:w-auto">
                 {(["ALL", "HV1", "HV2", "HV3"] as const).map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setActiveDomainTab(tab)}
-                    className={`px-2.5 py-1 rounded font-medium transition cursor-pointer ${
+                    className={`min-h-[32px] px-2.5 py-1 rounded font-medium transition cursor-pointer flex items-center justify-center ${
                       activeDomainTab === tab
                         ? "bg-emerald-500 text-slate-950 font-bold shadow"
                         : "text-slate-400 hover:text-slate-200"
@@ -591,7 +590,7 @@ export default function PanelMTDNA() {
                 onChange={(e) => setObservedK(parseInt(e.target.value))}
                 className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
               />
-              <div className="flex justify-between text-[10px] text-slate-500 mt-1 font-mono">
+              <div className="flex flex-wrap justify-between text-[9px] sm:text-[10px] text-slate-500 mt-1 font-mono gap-1">
                 <span>0 ({isTr ? "Nadir / Yeni" : "Rare / Novel"})</span>
                 <span>500</span>
                 <span>1,420 (H1)</span>
@@ -615,7 +614,7 @@ export default function PanelMTDNA() {
                 onChange={(e) => setDatabaseN(parseInt(e.target.value))}
                 className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-cyan-500"
               />
-              <div className="flex justify-between text-[10px] text-slate-500 mt-1 font-mono">
+              <div className="flex flex-wrap justify-between text-[9px] sm:text-[10px] text-slate-500 mt-1 font-mono gap-1">
                 <span>1,000</span>
                 <span>24,500 (EUR)</span>
                 <span>48,500 ({isTr ? "Küresel" : "Global"})</span>

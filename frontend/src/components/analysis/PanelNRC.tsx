@@ -396,41 +396,50 @@ export function PanelNRC() {
         })}
       </div>
 
-      {/* ── Tabbed View Selection ─────────────────────────────────────────────── */}
-      <div className="flex border-b border-slate-800 gap-4 text-xs font-semibold text-slate-400">
-        <button
-          onClick={() => setActiveTab("stratification")}
-          className={`pb-2.5 transition-colors border-b-2 flex items-center gap-1.5 cursor-pointer ${
-            activeTab === "stratification"
-              ? "border-emerald-500 text-emerald-400"
-              : "border-transparent hover:text-slate-200"
-          }`}
-        >
-          <BarChart3 className="w-3.5 h-3.5" />
-          {isTr ? "Demografik Katmanlaşma & ENFSI Raporlama" : "Demographic Stratification & ENFSI Reporting"}
-        </button>
-        <button
-          onClick={() => setActiveTab("loci_table")}
-          className={`pb-2.5 transition-colors border-b-2 flex items-center gap-1.5 cursor-pointer ${
-            activeTab === "loci_table"
-              ? "border-emerald-500 text-emerald-400"
-              : "border-transparent hover:text-slate-200"
-          }`}
-        >
-          <FileSpreadsheet className="w-3.5 h-3.5" />
-          {isTr ? "24-Lokus Balding-Nichols Simpleks Dağılımı" : "24-Locus Balding-Nichols Simplex Breakdown"}
-        </button>
-        <button
-          onClick={() => setActiveTab("anova_fst")}
-          className={`pb-2.5 transition-colors border-b-2 flex items-center gap-1.5 cursor-pointer ${
-            activeTab === "anova_fst"
-              ? "border-emerald-500 text-emerald-400"
-              : "border-transparent hover:text-slate-200"
-          }`}
-        >
-          <Scale className="w-3.5 h-3.5" />
-          {isTr ? "Weir & Cockerham (1984) ANOVA F_st Tahmincisi" : "Weir & Cockerham (1984) ANOVA F_st Estimator"}
-        </button>
+      {/* ── Tabbed View Selection (Tactical Card Tabs) ─────────────────────────── */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 p-1.5 rounded-2xl bg-black/40 border border-tactical-border/60">
+        {[
+          {
+            id: "stratification",
+            label: isTr ? "Demografik Katmanlaşma & ENFSI" : "Demographic Stratification & ENFSI",
+            sub: isTr ? "4 Popülasyon Karşılaştırması" : "4-Population Comparison",
+            icon: BarChart3,
+          },
+          {
+            id: "loci_table",
+            label: isTr ? "24-Lokus Simpleks Dağılımı" : "24-Locus Simplex Breakdown",
+            sub: isTr ? "Lokus Bazında Balding-Nichols" : "Locus-by-Locus Balding-Nichols",
+            icon: FileSpreadsheet,
+          },
+          {
+            id: "anova_fst",
+            label: isTr ? "Weir & Cockerham ANOVA F_st" : "Weir & Cockerham ANOVA F_st",
+            sub: isTr ? "Sapmasız Popülasyon Farklılaşması" : "Unbiased Differentiation",
+            icon: Scale,
+          },
+        ].map((tab) => {
+          const Icon = tab.icon;
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as any)}
+              className={`p-3 rounded-xl text-left transition-all cursor-pointer border flex items-center gap-3 ${
+                isActive
+                  ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/50 shadow-md shadow-emerald-500/10"
+                  : "bg-slate-900/40 text-zinc-400 border-transparent hover:border-tactical-border/60 hover:text-zinc-200"
+              }`}
+            >
+              <div className={`p-2 rounded-lg shrink-0 ${isActive ? "bg-emerald-500/30 text-emerald-300" : "bg-black/40 text-zinc-500"}`}>
+                <Icon className="w-4 h-4" />
+              </div>
+              <div className="min-w-0">
+                <span className="text-xs font-bold block truncate">{tab.label}</span>
+                <span className="text-[10px] text-zinc-500 block truncate">{tab.sub}</span>
+              </div>
+            </button>
+          );
+        })}
       </div>
 
       {/* ── Tab 1: Demographic Stratification & ENFSI Statement ──────────────── */}
@@ -574,37 +583,51 @@ export function PanelNRC() {
 
       {/* ── Tab 3: Weir & Cockerham ANOVA Fst Estimator ────────────────────────── */}
       {activeTab === "anova_fst" && (
-        <div className="p-5 rounded-xl bg-slate-900/60 border border-slate-800 space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-sm font-bold text-slate-100">
-                {isTr
-                  ? "Weir & Cockerham (1984) Sapmasız ANOVA F_st / θ̂ Tahmincisi"
-                  : "Weir & Cockerham (1984) Unbiased ANOVA F_st / θ̂ Estimator"}
+        <div className="p-4 sm:p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-4 shadow-lg min-w-0">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-800/80 pb-3.5">
+            <div className="space-y-1 min-w-0">
+              <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
+                <Scale className="w-4 h-4 text-indigo-400 shrink-0" />
+                <span>
+                  {isTr
+                    ? "Weir & Cockerham (1984) Sapmasız ANOVA F_st / θ̂ Tahmincisi"
+                    : "Weir & Cockerham (1984) Unbiased ANOVA F_st / θ̂ Estimator"}
+                </span>
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-400 leading-relaxed">
                 {isTr
                   ? "Toplam alelik varyansı Popülasyonlar Arası Ortalama Kare (MSP) ve Popülasyonlar İçi Ortalama Kare (MSG) bileşenlerine ayırır."
                   : "Decomposes total allelic variance into Mean Square Between Populations (MSP) and Mean Square Within Populations (MSG)."}
               </p>
             </div>
-            <span className="px-2.5 py-1 text-xs font-mono rounded-lg bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-bold">
-              θ̂ = (MSP - MSG) / [MSP + (n_c - 1)MSG]
-            </span>
+            <div className="shrink-0">
+              <span className="inline-block px-3 py-1.5 text-xs font-mono rounded-xl bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 font-bold shadow-sm whitespace-nowrap">
+                θ̂ = (MSP - MSG) / [MSP + (n_c - 1)MSG]
+              </span>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
-            <div className="p-4 rounded-lg bg-slate-800/60 border border-slate-700/50">
-              <span className="text-xs text-slate-400">{isTr ? "MSP (Gruplar Arası Varyans):" : "MSP (Between Variance):"}</span>
-              <div className="text-lg font-bold font-mono text-indigo-400 mt-1">0.0418</div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-1">
+            <div className="p-4 rounded-xl bg-slate-800/60 border border-slate-700/50 space-y-1">
+              <span className="text-[11px] text-slate-400 uppercase font-bold block">
+                {isTr ? "MSP (Gruplar Arası Varyans)" : "MSP (Between Variance)"}
+              </span>
+              <div className="text-xl font-bold font-mono text-indigo-300 tabular-nums">0.0418</div>
+              <span className="text-[10px] text-zinc-500 font-mono">MS_between (df=3)</span>
             </div>
-            <div className="p-4 rounded-lg bg-slate-800/60 border border-slate-700/50">
-              <span className="text-xs text-slate-400">{isTr ? "MSG (Grup İçi Varyans):" : "MSG (Within Variance):"}</span>
-              <div className="text-lg font-bold font-mono text-indigo-400 mt-1">0.0124</div>
+            <div className="p-4 rounded-xl bg-slate-800/60 border border-slate-700/50 space-y-1">
+              <span className="text-[11px] text-slate-400 uppercase font-bold block">
+                {isTr ? "MSG (Grup İçi Varyans)" : "MSG (Within Variance)"}
+              </span>
+              <div className="text-xl font-bold font-mono text-indigo-300 tabular-nums">0.0124</div>
+              <span className="text-[10px] text-zinc-500 font-mono">MS_within (df=2068)</span>
             </div>
-            <div className="p-4 rounded-lg bg-slate-800/60 border border-slate-700/50">
-              <span className="text-xs text-slate-400">{isTr ? "Etkin Örneklem Büyüklüğü (n_c):" : "Effective Sample Size (n_c):"}</span>
-              <div className="text-lg font-bold font-mono text-emerald-400 mt-1">518.0</div>
+            <div className="p-4 rounded-xl bg-slate-800/60 border border-slate-700/50 space-y-1">
+              <span className="text-[11px] text-slate-400 uppercase font-bold block">
+                {isTr ? "Etkin Örneklem (n_c)" : "Effective Sample (n_c)"}
+              </span>
+              <div className="text-xl font-bold font-mono text-emerald-400 tabular-nums">518.0</div>
+              <span className="text-[10px] text-emerald-500/80 font-mono">θ̂_weir = 0.0185 (F_st)</span>
             </div>
           </div>
         </div>

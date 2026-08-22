@@ -499,10 +499,10 @@ export default function SuspectVisualizer({
                         </div>
 
                         {/* Tab Selector */}
-                        <div className="flex items-center gap-0.5 p-1 bg-black/40 rounded border border-tactical-border/50">
+                        <div className="flex items-center gap-1 p-1 bg-black/40 rounded border border-tactical-border/50 overflow-x-auto w-full">
                             <button
                                 onClick={() => setActiveView("overview")}
-                                className={`flex-1 py-1 px-1 rounded text-[7px] font-mono font-bold uppercase transition-all cursor-pointer ${
+                                className={`flex-1 min-h-[32px] py-1 px-1.5 rounded text-[8px] sm:text-[9px] font-mono font-bold uppercase transition-all cursor-pointer whitespace-nowrap flex items-center justify-center ${
                                     activeView === "overview"
                                         ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
                                         : "text-zinc-500 hover:text-zinc-300"
@@ -512,7 +512,7 @@ export default function SuspectVisualizer({
                             </button>
                             <button
                                 onClick={() => setActiveView("morphometrics")}
-                                className={`flex-1 py-1 px-1 rounded text-[7px] font-mono font-bold uppercase transition-all cursor-pointer ${
+                                className={`flex-1 min-h-[32px] py-1 px-1.5 rounded text-[8px] sm:text-[9px] font-mono font-bold uppercase transition-all cursor-pointer whitespace-nowrap flex items-center justify-center ${
                                     activeView === "morphometrics"
                                         ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40"
                                         : "text-zinc-500 hover:text-zinc-300"
@@ -522,7 +522,7 @@ export default function SuspectVisualizer({
                             </button>
                             <button
                                 onClick={() => setActiveView("hair_balding")}
-                                className={`flex-1 py-1 px-1 rounded text-[7px] font-mono font-bold uppercase transition-all cursor-pointer ${
+                                className={`flex-1 min-h-[32px] py-1 px-1.5 rounded text-[8px] sm:text-[9px] font-mono font-bold uppercase transition-all cursor-pointer whitespace-nowrap flex items-center justify-center ${
                                     activeView === "hair_balding"
                                         ? "bg-amber-500/20 text-amber-300 border border-amber-500/40"
                                         : "text-zinc-500 hover:text-zinc-300"
@@ -532,7 +532,7 @@ export default function SuspectVisualizer({
                             </button>
                             <button
                                 onClick={() => setActiveView("freckles_uv")}
-                                className={`flex-1 py-1 px-1 rounded text-[7px] font-mono font-bold uppercase transition-all cursor-pointer ${
+                                className={`flex-1 min-h-[32px] py-1 px-1.5 rounded text-[8px] sm:text-[9px] font-mono font-bold uppercase transition-all cursor-pointer whitespace-nowrap flex items-center justify-center ${
                                     activeView === "freckles_uv"
                                         ? "bg-rose-500/20 text-rose-300 border border-rose-500/40"
                                         : "text-zinc-500 hover:text-zinc-300"
@@ -589,25 +589,25 @@ export default function SuspectVisualizer({
                             /* 3D Craniofacial Morphometrics Tab (Module 3.3) */
                             <div className="space-y-3">
                                 {/* Standard Presets Bar */}
-                                <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
+                                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 w-full">
                                     <span className="font-mono text-[7px] text-zinc-500 uppercase shrink-0">
                                         {isTr ? "Standartlar:" : "Standards:"}
                                     </span>
                                     <button
                                         onClick={() => setMorphoSnps({ rs974448: 1, rs12882923: 0, rs11130635: 2, rs13289: 0, rs7559252: 1 })}
-                                        className="px-1.5 py-0.5 rounded bg-cyan-950/40 border border-cyan-700/40 text-[7px] font-mono text-cyan-300 hover:bg-cyan-900/40 shrink-0 cursor-pointer"
+                                        className="min-h-[28px] px-2 py-0.5 rounded bg-cyan-950/40 border border-cyan-700/40 text-[7px] sm:text-[8px] font-mono text-cyan-300 hover:bg-cyan-900/40 shrink-0 cursor-pointer flex items-center justify-center"
                                     >
                                         NA12878 (EUR Leptorrhine)
                                     </button>
                                     <button
                                         onClick={() => setMorphoSnps({ rs974448: 0, rs12882923: 2, rs11130635: 0, rs13289: 2, rs7559252: 2 })}
-                                        className="px-1.5 py-0.5 rounded bg-amber-950/40 border border-amber-700/40 text-[7px] font-mono text-amber-300 hover:bg-amber-900/40 shrink-0 cursor-pointer"
+                                        className="min-h-[28px] px-2 py-0.5 rounded bg-amber-950/40 border border-amber-700/40 text-[7px] sm:text-[8px] font-mono text-amber-300 hover:bg-amber-900/40 shrink-0 cursor-pointer flex items-center justify-center"
                                     >
                                         NA19240 (AFR Platyrrhine)
                                     </button>
                                     <button
                                         onClick={() => setMorphoSnps({ rs974448: 1, rs12882923: 1, rs11130635: 1, rs13289: 1, rs7559252: 1 })}
-                                        className="px-1.5 py-0.5 rounded bg-emerald-950/40 border border-emerald-700/40 text-[7px] font-mono text-emerald-300 hover:bg-emerald-900/40 shrink-0 cursor-pointer"
+                                        className="min-h-[28px] px-2 py-0.5 rounded bg-emerald-950/40 border border-emerald-700/40 text-[7px] sm:text-[8px] font-mono text-emerald-300 hover:bg-emerald-900/40 shrink-0 cursor-pointer flex items-center justify-center"
                                     >
                                         NA18507 (EAS Mesorrhine)
                                     </button>
@@ -735,7 +735,7 @@ export default function SuspectVisualizer({
                                                 <button
                                                     key={rs}
                                                     onClick={() => setMorphoSnps(p => ({ ...p, [rs]: ((p[rs] || 0) + 1) % 3 }))}
-                                                    className="p-1 rounded bg-black/50 border border-zinc-800 hover:border-cyan-500/50 flex flex-col items-center text-[7px] font-mono cursor-pointer"
+                                                    className="p-1.5 rounded bg-black/50 border border-zinc-800 hover:border-cyan-500/50 flex flex-col items-center text-[7px] sm:text-[8px] font-mono cursor-pointer min-h-[38px] justify-between"
                                                 >
                                                     <span className="text-zinc-300 font-bold">{gene}</span>
                                                     <span className="mt-0.5 px-1 py-0.2 rounded bg-cyan-500/20 text-cyan-300 font-bold">d={d}</span>

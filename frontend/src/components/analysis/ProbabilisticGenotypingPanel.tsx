@@ -837,7 +837,7 @@ export default function ProbabilisticGenotypingPanel() {
               </span>
             </div>
             <span className="text-[9px] text-amber-400 font-bold bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded shrink-0">
-              Pillar 1 §5 (Hp vs Hd)
+              ENFSI 2017 (Hp vs Hd)
             </span>
           </div>
 

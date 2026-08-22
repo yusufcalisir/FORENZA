@@ -290,21 +290,21 @@ export default function HIrisPlexPanel() {
     return (
         <div className="space-y-6 font-mono">
             {/* ── Subsystem Header ── */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl border border-purple-500/30 bg-purple-500/10 shadow-lg">
-                <div className="flex items-center gap-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl border border-purple-500/30 bg-purple-500/10 shadow-lg min-w-0">
+                <div className="flex items-start sm:items-center gap-3 min-w-0 flex-1">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple-500/20 border border-purple-500/40 text-purple-300">
                         <Eye className="w-5 h-5" />
                     </div>
-                    <div>
+                    <div className="min-w-0 flex-1 space-y-0.5">
                         <div className="flex flex-wrap items-center gap-2">
                             <h2 className="text-xs sm:text-sm font-bold tracking-widest text-tactical-text uppercase">
                                 {isTr ? "HIrisPlex-S DNA Fenotipleme Motoru" : "HIrisPlex-S DNA Phenotyping Engine"}
                             </h2>
-                            <span className="px-2 py-0.5 rounded text-[8px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30 whitespace-nowrap">
+                            <span className="px-2 py-0.5 rounded text-[8px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30 whitespace-nowrap shrink-0">
                                 WALSH ET AL. (2018)
                             </span>
                         </div>
-                        <p className="text-[9px] sm:text-[10px] text-zinc-400 mt-0.5">
+                        <p className="text-[9px] sm:text-[10px] text-zinc-400 leading-relaxed">
                             {isTr
                                 ? "Göz Rengi, Saç Pigmentasyonu ve Fitzpatrick Cilt Fototipi için 24-SNP Çok Terimli Lojistik Regresyon Modeli"
                                 : "24-SNP Multinomial Logistic Regression Model for Eye Color, Hair Pigmentation & Fitzpatrick Skin Phototype"}
@@ -312,7 +312,7 @@ export default function HIrisPlexPanel() {
                     </div>
                 </div>
 
-                <div className="flex items-center gap-2 text-[10px] text-zinc-400 bg-black/40 px-3 py-1.5 rounded-xl border border-tactical-border/60 shrink-0 self-start sm:self-auto">
+                <div className="flex items-center gap-2 text-[10px] text-zinc-400 bg-black/40 px-3 py-1.5 rounded-xl border border-tactical-border/60 shrink-0 self-start sm:self-auto whitespace-nowrap">
                     <span>{isTr ? "Aktif Vaka:" : "Active Case:"}</span>
                     <strong className="text-purple-300">{activeCase.metadata.caseId}</strong>
                 </div>

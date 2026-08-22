@@ -494,17 +494,17 @@ export default function ExpertWitnessPanel() {
 
               {[
                 {
-                  label: isTr ? "Hakemli Algoritmalar (Pillar 3)" : "Peer-Reviewed Algorithms (Pillar 3)",
+                  label: isTr ? "Hakemli Algoritmalar (Daubert Kriteri 3)" : "Peer-Reviewed Algorithms (Daubert Prong 3)",
                   value: peerReviewed,
                   setter: setPeerReviewed
                 },
                 {
-                  label: isTr ? "SWGDAM (2020) QAS Uyumluluğu (Pillar 4)" : "SWGDAM (2020) QAS Compliant (Pillar 4)",
+                  label: isTr ? "SWGDAM (2020) QAS Uyumluluğu (Daubert Kriteri 4)" : "SWGDAM (2020) QAS Compliant (Daubert Prong 4)",
                   value: swgdam,
                   setter: setSwgdam
                 },
                 {
-                  label: isTr ? "ISO/IEC 17025:2017 Akreditasyonu (Pillar 4)" : "ISO/IEC 17025:2017 Accreditation (Pillar 4)",
+                  label: isTr ? "ISO/IEC 17025:2017 Akreditasyonu (Daubert Kriteri 4)" : "ISO/IEC 17025:2017 Accreditation (Daubert Prong 4)",
                   value: iso17025,
                   setter: setIso17025
                 },
@@ -558,26 +558,26 @@ export default function ExpertWitnessPanel() {
                     }
                   </div>
 
-                  {/* Pillar Grid */}
+                  {/* Daubert Criteria Grid */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {[
                       {
-                        label: isTr ? "Pillar 1: Yanlışlanabilirlik & Test Edilebilirlik" : "Pillar 1: Falsifiability & Testability",
+                        label: isTr ? "Kriter 1: Yanlışlanabilirlik & Test Edilebilirlik" : "Prong 1: Falsifiability & Testability",
                         sub: isTr ? "Otomatik deterministik birim test paketleri" : "Automated deterministic unit test suites",
                         pass: daubertData.pillar_1_falsifiability
                       },
                       {
-                        label: isTr ? "Pillar 2: Hata Oranı" : "Pillar 2: Error Rate",
+                        label: isTr ? "Kriter 2: Bilinen Hata Oranı" : "Prong 2: Known Error Rate",
                         sub: `P_error ≤ ${daubertData.error_rate_bound.toExponential(0)} (Daubert FRE 702)`,
                         pass: daubertData.pillar_2_error_rate
                       },
                       {
-                        label: isTr ? "Pillar 3: Hakemli Bilimsel Literatür" : "Pillar 3: Peer-Reviewed Literature",
+                        label: isTr ? "Kriter 3: Hakemli Bilimsel Literatür" : "Prong 3: Peer-Reviewed Literature",
                         sub: isTr ? "Yayınlanmış algoritmalar ve hakemli doğrulama" : "Published algorithms & peer-reviewed validation",
                         pass: daubertData.pillar_3_peer_review
                       },
                       {
-                        label: isTr ? "Pillar 4: Standartlar ve Kalite Kontrol" : "Pillar 4: Standards Control",
+                        label: isTr ? "Kriter 4: Standartlar ve Kalite Kontrol" : "Prong 4: Standards Control",
                         sub: "SWGDAM (2020) & ISO/IEC 17025:2017",
                         pass: daubertData.pillar_4_standards
                       },

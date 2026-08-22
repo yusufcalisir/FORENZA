@@ -150,21 +150,21 @@ export default function AgeEstimationPanel() {
   return (
     <div className="space-y-6 font-mono text-tactical-text">
       {/* ── Subsystem Header Banner ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl border border-purple-500/30 bg-purple-500/10 shadow-lg overflow-hidden backdrop-blur-md">
-        <div className="flex items-center gap-3">
+      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl border border-purple-500/30 bg-purple-500/10 shadow-lg overflow-hidden backdrop-blur-md min-w-0">
+        <div className="flex items-start sm:items-center gap-3 min-w-0 flex-1">
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-purple-500/20 border border-purple-500/40 text-purple-300 shadow-inner">
             <Clock className="w-5 h-5" />
           </div>
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1 space-y-0.5">
             <div className="flex flex-wrap items-center gap-2">
               <h2 className="text-xs sm:text-sm font-bold tracking-widest text-tactical-text uppercase leading-snug">
-                {isTr ? "VISAGE 5-CpG & Epigenetik Yaşlandırma Motoru (Modül 16)" : "VISAGE 5-CpG & Epigenetic Aging Engine (Module 16)"}
+                {isTr ? "VISAGE 5-CpG & Epigenetik Yaşlandırma Motoru" : "VISAGE 5-CpG & Epigenetic Aging Engine"}
               </h2>
               <span className="px-2.5 py-0.5 rounded-lg text-[9px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/40 whitespace-nowrap shrink-0">
                 VISAGE KONSORSİYUMU / HORVATH BAĞI
               </span>
             </div>
-            <p className="text-[10px] text-zinc-400 mt-0.5">
+            <p className="text-[10px] text-zinc-400 leading-relaxed">
               {isTr
                 ? "ISO/IEC 17025 metrolojik belirsizlik bütçesi ile çoklu doku DNA metilasyon yaşı dekonvolüsyonu"
                 : "Multi-tissue DNA methylation age deconvolution with ISO/IEC 17025 metrological uncertainty budget"}

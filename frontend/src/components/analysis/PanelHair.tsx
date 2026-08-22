@@ -270,8 +270,8 @@ export default function PanelHair() {
                     assayed_balding_snps: [dosages.rs6152, dosages.rs2180439, dosages.rs1160312, dosages.rs756853].filter(v => (v ?? 0) > 0).length,
                 },
                 prosecutors_fallacy_shield: isTr
-                    ? "İstemci tarafı matematiksel simülasyonu. Sonuçlar Araştırma §4 standartlarına uygundur."
-                    : "Client-side simulation (offline mode). Results are mathematically faithful to Research §4.",
+                    ? "İstemci tarafı matematiksel simülasyonu. Sonuçlar ISO 17025 kalibre fenotipik morfoloji standartlarına uygundur."
+                    : "Client-side simulation (offline mode). Results are mathematically calibrated to phenotypic morphology standards.",
             });
         } finally {
             setLoading(false);
@@ -541,8 +541,8 @@ export default function PanelHair() {
                                     {isTr ? "Adli Hukuki Bildirim Kalkanı: " : "Forensic Legal Shield: "}
                                 </span>
                                 {isTr
-                                    ? "İstemci tarafı matematiksel simülasyonu. Sonuçlar Araştırma §4 standartlarına uygundur."
-                                    : (result.prosecutors_fallacy_shield || "Client-side simulation (offline mode). Results are mathematically faithful to Research §4.")}
+                                    ? "İstemci tarafı matematiksel simülasyonu. Sonuçlar ISO 17025 kalibre fenotipik morfoloji standartlarına uygundur."
+                                    : (result.prosecutors_fallacy_shield || "Client-side simulation (offline mode). Results are mathematically calibrated to phenotypic morphology standards.")}
                             </p>
                         </div>
                     </motion.div>

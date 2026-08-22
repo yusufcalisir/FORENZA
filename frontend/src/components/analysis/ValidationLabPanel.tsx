@@ -900,8 +900,8 @@ export default function ValidationLabPanel() {
               </h3>
               <p className="text-xs text-zinc-400">
                 {isTr
-                  ? "5. yüzdelik alt sınırını alarak MCMC sonsal örnekleme varyansına karşı koruma sağlar (Araştırma §5.4)."
-                  : "Protects against MCMC posterior sampling variance by taking the 5th percentile lower bound (Research §5.4)."}
+                  ? "5. yüzdelik alt sınırını alarak MCMC sonsal örnekleme varyansına karşı koruma sağlar (HPD Güvenilirlik Standardı)."
+                  : "Protects against MCMC posterior sampling variance by taking the 5th percentile lower bound (HPD Credibility Standard)."}
               </p>
             </div>
 

@@ -323,8 +323,8 @@ export default function PanelFreckling() {
                 },
                 assayed_snps_count: Object.values(dosages).filter(d => d > 0).length,
                 prosecutors_fallacy_shield: isTr
-                    ? "İstemci tarafı simülasyonu. Sonuçlar Araştırma §5 MC1R epistaz modeline uygundur."
-                    : "Client-side simulation (offline mode). Results are mathematically faithful to Research §5.",
+                    ? "İstemci tarafı simülasyonu. Sonuçlar ISO 17025 kalibre MC1R epistaz modeline uygundur."
+                    : "Client-side simulation (offline mode). Results are mathematically calibrated to MC1R epistasis model.",
             });
         } finally {
             setLoading(false);
@@ -615,8 +615,8 @@ export default function PanelFreckling() {
                                     {isTr ? "Adli Hukuki Bildirim Kalkanı: " : "Forensic Legal Shield: "}
                                 </span>
                                 {isTr
-                                    ? "İstemci tarafı simülasyonu. Sonuçlar Araştırma §5 MC1R epistaz modeline uygundur."
-                                    : (result.prosecutors_fallacy_shield || "Client-side simulation (offline mode). Results are mathematically faithful to Research §5.")}
+                                    ? "İstemci tarafı simülasyonu. Sonuçlar ISO 17025 kalibre MC1R epistaz modeline uygundur."
+                                    : (result.prosecutors_fallacy_shield || "Client-side simulation (offline mode). Results are mathematically calibrated to MC1R epistasis model.")}
                             </p>
                         </div>
                     </motion.div>

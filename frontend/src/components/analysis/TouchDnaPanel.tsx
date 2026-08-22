@@ -660,14 +660,18 @@ ${isTr ? "Olabilirlik Oranı (LR), yarışan hipotezler (Hp ve Hd) altında dü�
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Left 2 Cols: Substrate Cards */}
               <div className="lg:col-span-2 rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 space-y-5 shadow-lg">
-                <div className="flex items-center justify-between border-b border-tactical-border/40 pb-3">
-                  <span className="text-xs font-bold text-tactical-text uppercase tracking-wider flex items-center gap-2">
-                    <Layers className="w-4 h-4 text-orange-400" />
-                    {isTr
-                      ? "Adli Yüzey Fiziksel Geri Kazanım Matrisi (4 Malzeme)"
-                      : "Forensic Substrate Physical Recovery Matrix (4 Materials)"}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-tactical-border/40 pb-3 min-w-0">
+                  <span className="text-xs font-bold text-tactical-text uppercase tracking-wider flex items-center gap-2 min-w-0">
+                    <Layers className="w-4 h-4 text-orange-400 shrink-0" />
+                    <span className="truncate">
+                      {isTr
+                        ? "Adli Yüzey Fiziksel Geri Kazanım Matrisi (4 Malzeme)"
+                        : "Forensic Substrate Physical Recovery Matrix (4 Materials)"}
+                    </span>
                   </span>
-                  <span className="text-[10px] text-tactical-text-muted">{isTr ? "Referans Verim Katsayısı (η)" : "Reference Yield Factor (η)"}</span>
+                  <span className="text-[10px] text-tactical-text-muted whitespace-nowrap shrink-0">
+                    {isTr ? "Referans Verim Katsayısı (η)" : "Reference Yield Factor (η)"}
+                  </span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
@@ -801,15 +805,17 @@ ${isTr ? "Olabilirlik Oranı (LR), yarışan hipotezler (Hp ve Hd) altında dü�
           >
             <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 space-y-5 shadow-lg">
               {/* Curve Controls */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-tactical-border/40 pb-3">
-                <span className="text-xs font-bold text-tactical-text uppercase tracking-wider flex items-center gap-2">
-                  <TrendingDown className="w-4 h-4 text-orange-400" />
-                  {isTr
-                    ? "Kalibre Edilmiş Sigmoid Alel Kaybı Fonksiyonu P(D | x)"
-                    : "Calibrated Sigmoid Allele Dropout Function P(D | x)"}
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-tactical-border/40 pb-3 min-w-0">
+                <span className="text-xs font-bold text-tactical-text uppercase tracking-wider flex items-center gap-2 min-w-0">
+                  <TrendingDown className="w-4 h-4 text-orange-400 shrink-0" />
+                  <span className="truncate">
+                    {isTr
+                      ? "Kalibre Edilmiş Sigmoid Alel Kaybı Fonksiyonu P(D | x)"
+                      : "Calibrated Sigmoid Allele Dropout Function P(D | x)"}
+                  </span>
                 </span>
 
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-1.5 shrink-0">
                   {[
                     { id: "MASS", label: isTr ? "Kalıp Kütlesi (pg)" : "Template Mass (pg)" },
                     { id: "RFU", label: isTr ? "Pik Yüksekliği (RFU)" : "Peak Height (RFU)" },
@@ -818,10 +824,10 @@ ${isTr ? "Olabilirlik Oranı (LR), yarışan hipotezler (Hp ve Hd) altında dü�
                     <button
                       key={m.id}
                       onClick={() => setCurveMode(m.id as any)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border cursor-pointer ${
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border cursor-pointer whitespace-nowrap ${
                         curveMode === m.id
                           ? "bg-orange-500/20 border-orange-500/50 text-orange-300 shadow-[0_0_10px_rgba(249,115,22,0.2)]"
-                          : "bg-black/20 border-tactical-border/40 text-tactical-text-muted hover:border-tactical-border"
+                          : "bg-black/20 border-tactical-border/40 text-tactical-text-muted hover:border-tactical-border hover:text-zinc-200"
                       }`}
                     >
                       {m.label}
@@ -1212,15 +1218,15 @@ ${isTr ? "Olabilirlik Oranı (LR), yarışan hipotezler (Hp ve Hd) altında dü�
 
             {/* 24-Locus Table */}
             <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 space-y-4 shadow-lg overflow-x-auto">
-              <div className="flex items-center justify-between border-b border-tactical-border/40 pb-2">
-                <span className="text-xs font-bold text-tactical-text uppercase tracking-wider">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-tactical-border/40 pb-2 min-w-0">
+                <span className="text-xs font-bold text-tactical-text uppercase tracking-wider min-w-0 truncate">
                   {isTr
                     ? "24-Belirteçli Elektroferogram Pik Dağılımı & Stokastik Durumlar"
                     : "24-Marker Electropherogram Peak Breakdown & Stochastic States"}
                 </span>
-                <span className="text-[10px] text-zinc-500">
+                <span className="text-[10px] text-zinc-500 whitespace-nowrap shrink-0">
                   {isTr
-                    ? `${multiLocusAnalysis.locusResults.length} lokus gösteriliyor (${multiLocusAnalysis.dropoutsCount} kayıp)`
+                    ? `${multiLocusAnalysis.locusResults.length} lokus (${multiLocusAnalysis.dropoutsCount} kayıp)`
                     : `Showing ${multiLocusAnalysis.locusResults.length} loci (${multiLocusAnalysis.dropoutsCount} dropouts)`}
                 </span>
               </div>

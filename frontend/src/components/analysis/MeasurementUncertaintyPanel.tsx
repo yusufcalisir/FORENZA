@@ -158,10 +158,10 @@ export default function MeasurementUncertaintyPanel() {
         </div>
 
         {/* Tab Controls */}
-        <div className="flex items-center gap-1 p-1 rounded-xl bg-black/60 border border-tactical-border/60">
+        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-black/60 border border-tactical-border/60 w-full sm:w-auto overflow-x-auto">
           <button
             onClick={() => setActiveTab("budget")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+            className={`min-h-[36px] px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center justify-center flex-1 sm:flex-initial ${
               activeTab === "budget" ? "bg-sky-500 text-white shadow-md font-extrabold" : "text-zinc-400 hover:text-zinc-200"
             }`}
           >
@@ -172,7 +172,7 @@ export default function MeasurementUncertaintyPanel() {
               setActiveTab("proficiency");
               if (!proficiencyData) handleEvaluateProficiency();
             }}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+            className={`min-h-[36px] px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center justify-center flex-1 sm:flex-initial ${
               activeTab === "proficiency" ? "bg-sky-500 text-white shadow-md font-extrabold" : "text-zinc-400 hover:text-zinc-200"
             }`}
           >
@@ -185,7 +185,7 @@ export default function MeasurementUncertaintyPanel() {
       {activeTab === "budget" && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left: Input Controls */}
-          <div className="space-y-4 rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 shadow-xl">
+          <div className="space-y-4 rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-4 sm:p-5 shadow-xl">
             <div className="border-b border-tactical-border/40 pb-3">
               <span className="text-xs font-bold uppercase tracking-wider text-tactical-text block">
                 {isTr ? "Kantifikasyon Parametreleri" : "Quantification Parameters"}
@@ -204,7 +204,7 @@ export default function MeasurementUncertaintyPanel() {
                   max="10.0"
                   value={nominalConc}
                   onChange={(e) => setNominalConc(parseFloat(e.target.value) || 0.0)}
-                  className="w-full px-3 py-2 rounded-xl bg-black/50 border border-tactical-border/60 text-tactical-text font-mono"
+                  className="w-full min-h-[40px] px-3 py-2 rounded-xl bg-black/50 border border-tactical-border/60 text-tactical-text font-mono"
                 />
               </div>
 
@@ -215,7 +215,7 @@ export default function MeasurementUncertaintyPanel() {
                 <select
                   value={coverageFactor}
                   onChange={(e) => setCoverageFactor(parseFloat(e.target.value))}
-                  className="w-full px-3 py-2 rounded-xl bg-black/50 border border-tactical-border/60 text-tactical-text font-mono"
+                  className="w-full min-h-[40px] px-3 py-2 rounded-xl bg-black/50 border border-tactical-border/60 text-tactical-text font-mono"
                 >
                   <option value={2.0}>{isTr ? "k = 2.00 (%95.45 Genişletilmiş Standart)" : "k = 2.00 (95.45% Expanded Standard)"}</option>
                   <option value={1.0}>{isTr ? "k = 1.00 (%68.27 Standart u_c)" : "k = 1.00 (68.27% Standard u_c)"}</option>
@@ -227,7 +227,7 @@ export default function MeasurementUncertaintyPanel() {
             <button
               onClick={handleCalculateBudget}
               disabled={loading}
-              className="w-full py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full min-h-[42px] py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-95"
             >
               <Calculator className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
               {isTr ? "Bütçeyi Yeniden Hesapla" : "Recalculate Budget"}
@@ -325,7 +325,7 @@ export default function MeasurementUncertaintyPanel() {
       {activeTab === "proficiency" && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left: Proficiency Inputs */}
-          <div className="space-y-4 rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 shadow-xl">
+          <div className="space-y-4 rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-4 sm:p-5 shadow-xl">
             <div className="border-b border-tactical-border/40 pb-3">
               <span className="text-xs font-bold uppercase tracking-wider text-tactical-text block">
                 {isTr ? "Yeterlilik Testi Konsensüs Verileri" : "Proficiency Test Consensus Inputs"}
@@ -342,7 +342,7 @@ export default function MeasurementUncertaintyPanel() {
                   step="0.01"
                   value={labValue}
                   onChange={(e) => setLabValue(parseFloat(e.target.value) || 0.0)}
-                  className="w-full px-3 py-2 rounded-xl bg-black/50 border border-tactical-border/60 text-tactical-text font-mono"
+                  className="w-full min-h-[40px] px-3 py-2 rounded-xl bg-black/50 border border-tactical-border/60 text-tactical-text font-mono"
                 />
               </div>
 
@@ -355,7 +355,7 @@ export default function MeasurementUncertaintyPanel() {
                   step="0.01"
                   value={consensusMean}
                   onChange={(e) => setConsensusMean(parseFloat(e.target.value) || 0.0)}
-                  className="w-full px-3 py-2 rounded-xl bg-black/50 border border-tactical-border/60 text-tactical-text font-mono"
+                  className="w-full min-h-[40px] px-3 py-2 rounded-xl bg-black/50 border border-tactical-border/60 text-tactical-text font-mono"
                 />
               </div>
 
@@ -369,7 +369,7 @@ export default function MeasurementUncertaintyPanel() {
                   min="0.001"
                   value={consensusStd}
                   onChange={(e) => setConsensusStd(parseFloat(e.target.value) || 0.01)}
-                  className="w-full px-3 py-2 rounded-xl bg-black/50 border border-tactical-border/60 text-tactical-text font-mono"
+                  className="w-full min-h-[40px] px-3 py-2 rounded-xl bg-black/50 border border-tactical-border/60 text-tactical-text font-mono"
                 />
               </div>
             </div>
@@ -377,7 +377,7 @@ export default function MeasurementUncertaintyPanel() {
             <button
               onClick={handleEvaluateProficiency}
               disabled={loading}
-              className="w-full py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full min-h-[42px] py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-95"
             >
               <Activity className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
               {isTr ? "z-Skorunu Değerlendir" : "Evaluate z-Score"}

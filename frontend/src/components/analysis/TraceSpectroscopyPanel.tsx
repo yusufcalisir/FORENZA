@@ -336,10 +336,10 @@ export default function TraceSpectroscopyPanel() {
           )}
 
           {/* Inner Tabs */}
-          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-black/60 border border-tactical-border/60 overflow-x-auto max-w-full">
+          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-black/60 border border-tactical-border/60 w-full sm:w-auto overflow-x-auto">
             <button
               onClick={() => setActiveTab("ftir")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+              className={`min-h-[36px] px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center justify-center flex-1 sm:flex-initial ${
                 activeTab === "ftir" ? "bg-cyan-500 text-black shadow-md font-extrabold" : "text-zinc-400 hover:text-zinc-200"
               }`}
             >
@@ -347,7 +347,7 @@ export default function TraceSpectroscopyPanel() {
             </button>
             <button
               onClick={() => setActiveTab("msi")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+              className={`min-h-[36px] px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center justify-center flex-1 sm:flex-initial ${
                 activeTab === "msi" ? "bg-cyan-500 text-black shadow-md font-extrabold" : "text-zinc-400 hover:text-zinc-200"
               }`}
             >
@@ -397,7 +397,7 @@ export default function TraceSpectroscopyPanel() {
               <button
                 onClick={() => runSpectroscopyMatch(selectedFiberPreset)}
                 disabled={loading}
-                className="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-zinc-950 font-black text-xs uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_25px_rgba(6,182,212,0.5)] disabled:opacity-50 flex items-center gap-1.5 cursor-pointer active:scale-95"
+                className="min-h-[36px] px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-zinc-950 font-black text-xs uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_25px_rgba(6,182,212,0.5)] disabled:opacity-50 flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
                 {loading
@@ -418,7 +418,7 @@ export default function TraceSpectroscopyPanel() {
                       setSelectedFiberPreset(fName);
                       runSpectroscopyMatch(fName);
                     }}
-                    className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                    className={`min-h-[44px] p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
                       selectedFiberPreset === fName
                         ? "border-cyan-500/80 bg-cyan-500/20 text-cyan-300 font-bold"
                         : "border-tactical-border/40 bg-black/40 text-zinc-400 hover:text-zinc-200"
@@ -567,7 +567,7 @@ export default function TraceSpectroscopyPanel() {
                     setEvidenceQuery(isTr ? p.evidence : p.evidence_en);
                     runMsiAnalysis(p.nm, isTr ? p.evidence : p.evidence_en);
                   }}
-                  className={`p-3 rounded-xl border text-left w-full transition-all cursor-pointer ${
+                  className={`min-h-[50px] p-3 rounded-xl border text-left w-full transition-all cursor-pointer ${
                     selectedWavelength === p.nm
                       ? "border-cyan-500/80 bg-cyan-500/20 text-cyan-300 font-bold"
                       : "border-tactical-border/40 bg-black/40 text-zinc-400 hover:text-zinc-200"

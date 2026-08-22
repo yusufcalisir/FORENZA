@@ -311,7 +311,7 @@ export default function PanelADNA() {
             </div>
 
             {/* SVG Deamination Plot */}
-            <div className="relative w-full h-56 bg-slate-950/80 rounded-xl border border-slate-800 p-3 flex items-end">
+            <div className="relative w-full h-48 sm:h-56 bg-slate-950/80 rounded-xl border border-slate-800 p-2 sm:p-3 flex items-end">
               <svg viewBox="0 0 300 150" className="w-full h-full">
                 {/* Grid Lines */}
                 <line x1="30" y1="20" x2="290" y2="20" stroke="#334155" strokeDasharray="2 2" strokeWidth="0.5" />
@@ -494,7 +494,7 @@ export default function PanelADNA() {
               onChange={(e) => setContamination(parseFloat(e.target.value))}
               className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-purple-500"
             />
-            <div className="flex justify-between text-[10px] text-slate-500 mt-1 font-mono">
+            <div className="flex flex-wrap justify-between text-[9px] sm:text-[10px] text-slate-500 mt-1 font-mono gap-1">
               <span>0% ({isTr ? "Saf aDNA" : "Pure aDNA"})</span>
               <span>20% ({isTr ? "Tipik İşlenmiş" : "Typical Handled"})</span>
               <span>40% ({isTr ? "Ağır" : "Severe"})</span>
@@ -562,7 +562,7 @@ export default function PanelADNA() {
               onChange={(e) => setTestPosition(parseInt(e.target.value, 10))}
               className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-cyan-500"
             />
-            <div className="flex justify-between text-[10px] text-slate-500 mt-1 font-mono">
+            <div className="flex flex-wrap justify-between text-[9px] sm:text-[10px] text-slate-500 mt-1 font-mono gap-1">
               <span>{isTr ? "Pozisyon 1 (Uç, Yüksek Hasar)" : "Position 1 (Terminal, High Damage)"}</span>
               <span>{isTr ? "Pozisyon 20" : "Position 20"}</span>
               <span>{isTr ? "Pozisyon 40 (İç Bölge, Gerçek SNP)" : "Position 40 (Interior, True SNP)"}</span>
@@ -570,7 +570,7 @@ export default function PanelADNA() {
           </div>
 
           {/* Posterior Probabilities HUD */}
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
             <div className={`p-2.5 rounded-lg border text-center ${testPosition === 1 ? "bg-cyan-950/40 border-cyan-500/40 text-cyan-300" : "bg-slate-800/40 border-slate-700 text-slate-400"}`}>
               <span className="text-[10px] block uppercase font-mono">CC (Ref)</span>
               <span className="text-base font-bold font-mono">{(postCC * 100).toFixed(1)}%</span>

@@ -239,10 +239,10 @@ export default function ExpertWitnessPanel() {
         </div>
 
         {/* Tab Controls */}
-        <div className="flex items-center gap-1 p-1 rounded-xl bg-black/60 border border-tactical-border/60">
+        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-black/60 border border-tactical-border/60 w-full sm:w-auto overflow-x-auto">
           <button
             onClick={() => { setActiveTab("enfsi"); if (!reportData) fetchReport(); }}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+            className={`min-h-[36px] px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center justify-center flex-1 sm:flex-initial ${
               activeTab === "enfsi" ? "bg-amber-500 text-black shadow-md font-extrabold" : "text-zinc-400 hover:text-zinc-200"
             }`}
           >
@@ -250,7 +250,7 @@ export default function ExpertWitnessPanel() {
           </button>
           <button
             onClick={() => { setActiveTab("daubert"); if (!daubertData) fetchDaubert(); }}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+            className={`min-h-[36px] px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center justify-center flex-1 sm:flex-initial ${
               activeTab === "daubert" ? "bg-amber-500 text-black shadow-md font-extrabold" : "text-zinc-400 hover:text-zinc-200"
             }`}
           >
@@ -263,7 +263,7 @@ export default function ExpertWitnessPanel() {
       {activeTab === "enfsi" && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left: Inputs */}
-          <div className="space-y-4 rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 shadow-xl">
+          <div className="space-y-4 rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-4 sm:p-5 shadow-xl">
             <div className="border-b border-tactical-border/40 pb-3 flex items-center justify-between">
               <span className="text-xs font-bold uppercase tracking-wider text-tactical-text">
                 {isTr ? "Değerlendirici Parametreler" : "Evaluative Parameters"}
@@ -347,7 +347,7 @@ export default function ExpertWitnessPanel() {
             <button
               onClick={fetchReport}
               disabled={loading}
-              className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full min-h-[42px] py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-95"
             >
               <Scale className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
               {isTr ? "Değerlendirici Raporu Oluştur" : "Generate Evaluative Report"}
@@ -402,7 +402,7 @@ export default function ExpertWitnessPanel() {
                   </div>
 
                   {/* Dual Language Side-by-Side */}
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     <div className="p-2.5 rounded-xl bg-black/40 border border-tactical-border/30">
                       <div className="text-[9px] text-zinc-500 uppercase font-bold mb-1">🇬🇧 English</div>
                       <p className="text-[11px] text-zinc-300 leading-relaxed">{reportData.phrase_en}</p>
@@ -469,7 +469,7 @@ export default function ExpertWitnessPanel() {
       {activeTab === "daubert" && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left: Daubert Inputs */}
-          <div className="space-y-4 rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 shadow-xl">
+          <div className="space-y-4 rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-4 sm:p-5 shadow-xl">
             <div className="border-b border-tactical-border/40 pb-3">
               <span className="text-xs font-bold uppercase tracking-wider text-tactical-text block">
                 {isTr ? "Daubert FRE 702 Denetim Parametreleri" : "Daubert FRE 702 Audit Parameters"}
@@ -484,7 +484,7 @@ export default function ExpertWitnessPanel() {
                 <select
                   value={errorRate}
                   onChange={e => setErrorRate(parseFloat(e.target.value))}
-                  className="w-full px-3 py-2 rounded-xl bg-black/50 border border-tactical-border/60 text-tactical-text font-mono"
+                  className="w-full min-h-[40px] px-3 py-2 rounded-xl bg-black/50 border border-tactical-border/60 text-tactical-text font-mono"
                 >
                   <option value={1e-9}>{isTr ? "1×10⁻⁹ (Geçerli: ≤ 1×10⁻⁶)" : "1×10⁻⁹ (Pass: ≤ 1×10⁻⁶)"}</option>
                   <option value={1e-6}>{isTr ? "1×10⁻⁶ (Sınır)" : "1×10⁻⁶ (Boundary)"}</option>
@@ -510,10 +510,10 @@ export default function ExpertWitnessPanel() {
                 },
               ].map(({ label, value, setter }) => (
                 <label key={label} className="flex items-center justify-between gap-2 cursor-pointer">
-                  <span className="text-zinc-400">{label}:</span>
+                  <span className="text-zinc-400 text-[11px] leading-snug">{label}:</span>
                   <button
                     onClick={() => setter(v => !v)}
-                    className={`px-3 py-1 rounded-lg text-[10px] font-bold border transition-all cursor-pointer ${
+                    className={`min-h-[36px] px-3.5 py-1 rounded-lg text-xs font-bold border transition-all cursor-pointer shrink-0 ${
                       value
                         ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
                         : "bg-rose-500/20 text-rose-300 border-rose-500/40"
@@ -528,7 +528,7 @@ export default function ExpertWitnessPanel() {
             <button
               onClick={fetchDaubert}
               disabled={loading}
-              className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full min-h-[42px] py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-95"
             >
               <Gavel className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
               {isTr ? "Daubert Denetimini Çalıştır" : "Run Daubert Audit"}

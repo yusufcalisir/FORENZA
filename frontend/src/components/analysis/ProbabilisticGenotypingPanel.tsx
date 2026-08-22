@@ -61,7 +61,7 @@ export default function ProbabilisticGenotypingPanel() {
   const [isSampling, setIsSampling] = useState<boolean>(false);
   const [sampleProgress, setSampleProgress] = useState<number>(0);
   const [lastExecutedAt, setLastExecutedAt] = useState<string | null>(null);
-  const { lang, setLang } = useSaasLanguage();
+  const { lang } = useSaasLanguage();
   const isTr = lang === "tr";
   const selectedLanguage = isTr ? "TR" : "EN";
 
@@ -339,26 +339,6 @@ export default function ProbabilisticGenotypingPanel() {
         </div>
 
         <div className="flex items-center gap-2 sm:gap-3 shrink-0 flex-wrap">
-          {/* Language Toggle */}
-          <div className="flex items-center rounded-lg border border-tactical-border/60 bg-black/40 p-0.5 text-[10px]">
-            <button
-              onClick={() => setLang("en")}
-              className={`px-2 py-0.5 rounded font-bold transition-all cursor-pointer ${
-                !isTr ? "bg-amber-500 text-zinc-950" : "text-zinc-400 hover:text-zinc-200"
-              }`}
-            >
-              EN
-            </button>
-            <button
-              onClick={() => setLang("tr")}
-              className={`px-2 py-0.5 rounded font-bold transition-all cursor-pointer ${
-                isTr ? "bg-amber-500 text-zinc-950" : "text-zinc-400 hover:text-zinc-200"
-              }`}
-            >
-              TR
-            </button>
-          </div>
-
           {lastExecutedAt && (
             <span className="text-[10px] text-zinc-500 hidden md:inline-block">
               {lastExecutedAt}

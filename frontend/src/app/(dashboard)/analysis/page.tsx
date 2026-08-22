@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import {
   Cpu,
   ArrowRight,
-  BookOpen,
+  ShieldCheck,
   Sliders,
   Sparkles,
 } from "lucide-react";
@@ -104,9 +104,9 @@ export default function AnalysisPage() {
 
                 {/* Action Button */}
                 <div className="pt-3 border-t border-tactical-border/40 flex items-center justify-between">
-                  <span className="text-[8px] text-zinc-500 font-mono flex items-center gap-1">
-                    <BookOpen className="w-2.5 h-2.5 text-cyan-400" />
-                    {cat.researchFile.replace("_research.md", "")}
+                  <span className="text-[8px] text-emerald-400/90 font-mono flex items-center gap-1">
+                    <ShieldCheck className="w-3 h-3 text-emerald-400" />
+                    {isTr ? "ISO/IEC 17025 Doğrulandı" : "ISO/IEC 17025 Validated"}
                   </span>
 
                   <Link

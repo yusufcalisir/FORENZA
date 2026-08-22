@@ -470,7 +470,7 @@ export default function PanelFreckling() {
                     ))}
 
                     <div className="bg-tactical-surface/30 border border-tactical-border/20 rounded-lg p-3 font-mono text-[10px] text-tactical-text-secondary leading-relaxed">
-                        <div className="text-violet-300 mb-1">{isTr ? "Araştırma §5.2 Formülü:" : "Research §5.2 Formula:"}</div>
+                        <div className="text-violet-300 mb-1">{isTr ? "Matematiksel Epistaz Modeli:" : "Mathematical Epistasis Model:"}</div>
                         <div>logit = <span className="text-rose-300">-2.50</span> + <span className="text-amber-300">1.35</span>×W_MC1R + <span className="text-violet-300">0.85</span>×X_ASIP + <span className="text-sky-300">0.65</span>×X_BNC2</div>
                         <div>F_score = 100 / (1 + e<sup>-logit</sup>)</div>
                     </div>

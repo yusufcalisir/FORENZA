@@ -665,7 +665,7 @@ ${isTr ? "Olabilirlik Oranı (LR), yarışan hipotezler (Hp ve Hd) altında dü�
                       ? "Adli Yüzey Fiziksel Geri Kazanım Matrisi (4 Malzeme)"
                       : "Forensic Substrate Physical Recovery Matrix (4 Materials)"}
                   </span>
-                  <span className="text-[10px] text-tactical-text-muted">{isTr ? "Araştırma Standardı η" : "Research Standard η"}</span>
+                  <span className="text-[10px] text-tactical-text-muted">{isTr ? "Referans Verim Katsayısı (η)" : "Reference Yield Factor (η)"}</span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">

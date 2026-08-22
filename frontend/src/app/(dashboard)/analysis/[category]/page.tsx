@@ -77,10 +77,12 @@ export default function CategoryPage({
           {category.description}
         </p>
 
-        <div className="flex items-center gap-2 text-[9px] text-zinc-500 font-mono pt-1">
-          <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+        <div className="flex items-center gap-2 text-[9px] text-emerald-400/90 font-mono pt-1">
+          <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
           <span>
-            {isTr ? "Araştırma Temeli:" : "Research Foundation:"} <strong className="text-zinc-400">{category.researchFile}</strong>
+            {isTr
+              ? "ISO/IEC 17025 • ENFSI 2017 • NIST Standardı ile Doğrulanmış Motor"
+              : "ISO/IEC 17025 • ENFSI 2017 • NIST Validated Engine"}
           </span>
         </div>
       </div>

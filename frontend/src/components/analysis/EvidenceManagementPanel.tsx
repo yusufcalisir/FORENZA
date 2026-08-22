@@ -583,8 +583,8 @@ export default function EvidenceManagementPanel() {
         </div>
         <p className="text-[9px] text-zinc-600 mt-3 text-center font-mono">
           {isTr
-            ? "Araştırma: Pillar 6 §5.1–§5.2 • SE(3) Tescili • %95 GA Hacimsel Elipsoidi χ²₃=7.815 • LiDAR±2mm | BPA±12mm | Balistik±5mm | DNA±8mm"
-            : "Research: Pillar 6 §5.1–§5.2 • SE(3) Registration • 95% CI Volumetric Ellipsoid χ²₃=7.815 • LiDAR±2mm | BPA±12mm | Ballistics±5mm | DNA±8mm"}
+            ? "Standart: ISO 21043 • SE(3) Tescili • %95 GA Hacimsel Elipsoidi χ²₃=7.815 • LiDAR±2mm | BPA±12mm | Balistik±5mm | DNA±8mm"
+            : "Standard: ISO 21043 • SE(3) Registration • 95% CI Volumetric Ellipsoid χ²₃=7.815 • LiDAR±2mm | BPA±12mm | Ballistics±5mm | DNA±8mm"}
         </p>
       </div>
     </div>

@@ -409,10 +409,10 @@ export default function ComprehensiveEpigenomicsPanel() {
         </div>
 
         {/* Inner Navigation Tabs */}
-        <div className="flex flex-wrap items-center gap-1.5 p-1 rounded-xl bg-black/60 border border-tactical-border/60 shrink-0">
+        <div className="flex flex-wrap items-center gap-1.5 p-1 rounded-xl bg-black/60 border border-tactical-border/60 w-full sm:w-auto overflow-x-auto shrink-0">
           <button
             onClick={() => setActiveResearchTab("clock")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+            className={`min-h-[36px] px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap cursor-pointer flex items-center justify-center ${
               activeResearchTab === "clock"
                 ? "bg-purple-500 text-black shadow-md font-extrabold"
                 : "text-zinc-400 hover:text-zinc-200"
@@ -422,7 +422,7 @@ export default function ComprehensiveEpigenomicsPanel() {
           </button>
           <button
             onClick={() => setActiveResearchTab("tissue")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+            className={`min-h-[36px] px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap cursor-pointer flex items-center justify-center ${
               activeResearchTab === "tissue"
                 ? "bg-purple-500 text-black shadow-md font-extrabold"
                 : "text-zinc-400 hover:text-zinc-200"
@@ -432,7 +432,7 @@ export default function ComprehensiveEpigenomicsPanel() {
           </button>
           <button
             onClick={() => setActiveResearchTab("lifestyle")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+            className={`min-h-[36px] px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap cursor-pointer flex items-center justify-center ${
               activeResearchTab === "lifestyle"
                 ? "bg-purple-500 text-black shadow-md font-extrabold"
                 : "text-zinc-400 hover:text-zinc-200"
@@ -442,7 +442,7 @@ export default function ComprehensiveEpigenomicsPanel() {
           </button>
           <button
             onClick={() => setActiveResearchTab("telomere_pmi")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+            className={`min-h-[36px] px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap cursor-pointer flex items-center justify-center ${
               activeResearchTab === "telomere_pmi"
                 ? "bg-purple-500 text-black shadow-md font-extrabold"
                 : "text-zinc-400 hover:text-zinc-200"
@@ -452,7 +452,7 @@ export default function ComprehensiveEpigenomicsPanel() {
           </button>
           <button
             onClick={() => setActiveResearchTab("bisulfite_qc")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+            className={`min-h-[36px] px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap cursor-pointer flex items-center justify-center ${
               activeResearchTab === "bisulfite_qc"
                 ? "bg-purple-500 text-black shadow-md font-extrabold"
                 : "text-zinc-400 hover:text-zinc-200"
@@ -480,7 +480,7 @@ export default function ComprehensiveEpigenomicsPanel() {
               <button
                 onClick={runDeconvolution}
                 disabled={deconvLoading}
-                className="px-3 py-1 rounded-lg bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 font-bold text-[10px] uppercase transition-all flex items-center gap-1 cursor-pointer"
+                className="min-h-[32px] px-3 py-1 rounded-lg bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 font-bold text-[10px] uppercase transition-all flex items-center gap-1 cursor-pointer"
               >
                 <RefreshCw className={`w-3 h-3 ${deconvLoading ? "animate-spin" : ""}`} />
                 {isTr ? "Dekonvolüe Et" : "Deconvolve"}
@@ -576,7 +576,7 @@ export default function ComprehensiveEpigenomicsPanel() {
               <button
                 onClick={runLifestyleAnalysis}
                 disabled={lifestyleLoading}
-                className="px-3 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-bold text-[10px] uppercase transition-all flex items-center gap-1 cursor-pointer"
+                className="min-h-[32px] px-3 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-bold text-[10px] uppercase transition-all flex items-center gap-1 cursor-pointer"
               >
                 <RefreshCw className={`w-3 h-3 ${lifestyleLoading ? "animate-spin" : ""}`} />
                 {isTr ? "Analiz Et" : "Analyze"}
@@ -772,7 +772,7 @@ export default function ComprehensiveEpigenomicsPanel() {
               <button
                 onClick={runTelomerePmiAnalysis}
                 disabled={telomereLoading}
-                className="px-3 py-1 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 font-bold text-[10px] uppercase transition-all flex items-center gap-1 cursor-pointer"
+                className="min-h-[32px] px-3 py-1 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 font-bold text-[10px] uppercase transition-all flex items-center gap-1 cursor-pointer"
               >
                 <RefreshCw className={`w-3 h-3 ${telomereLoading ? "animate-spin" : ""}`} />
                 {isTr ? "Analiz Et" : "Analyze"}
@@ -930,7 +930,7 @@ export default function ComprehensiveEpigenomicsPanel() {
               <button
                 onClick={runBisulfiteQcAnalysis}
                 disabled={bisulfiteLoading}
-                className="px-3 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 font-bold text-[10px] uppercase transition-all flex items-center gap-1 cursor-pointer"
+                className="min-h-[32px] px-3 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 font-bold text-[10px] uppercase transition-all flex items-center gap-1 cursor-pointer"
               >
                 <RefreshCw className={`w-3 h-3 ${bisulfiteLoading ? "animate-spin" : ""}`} />
                 {isTr ? "Kaliteyi Çalıştır" : "Run QC"}
@@ -1002,7 +1002,7 @@ export default function ComprehensiveEpigenomicsPanel() {
               <div className="flex items-center gap-2 pt-1">
                 <button
                   onClick={() => setQcProbeType("TYPE_I")}
-                  className={`flex-1 py-1 rounded text-[10px] font-bold cursor-pointer ${
+                  className={`flex-1 min-h-[36px] py-1.5 rounded text-[10px] font-bold cursor-pointer flex items-center justify-center ${
                     qcProbeType === "TYPE_I" ? "bg-purple-500 text-black" : "bg-black/40 text-zinc-400 border border-tactical-border/40"
                   }`}
                 >
@@ -1010,7 +1010,7 @@ export default function ComprehensiveEpigenomicsPanel() {
                 </button>
                 <button
                   onClick={() => setQcProbeType("TYPE_II")}
-                  className={`flex-1 py-1 rounded text-[10px] font-bold cursor-pointer ${
+                  className={`flex-1 min-h-[36px] py-1.5 rounded text-[10px] font-bold cursor-pointer flex items-center justify-center ${
                     qcProbeType === "TYPE_II" ? "bg-purple-500 text-black" : "bg-black/40 text-zinc-400 border border-tactical-border/40"
                   }`}
                 >

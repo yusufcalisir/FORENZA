@@ -182,13 +182,13 @@ export default function AncestryDataPanel({
                 </div>
 
                 {/* Golden Test Vector Presets */}
-                <div className="flex flex-wrap items-center gap-1.5">
+                <div className="flex flex-wrap items-center gap-1.5 w-full sm:w-auto mt-2 sm:mt-0">
                     <button
                         onClick={() => setSnpDosages({
                             rs1426654: 2, rs16891982: 2, rs2814778: 0, rs3827072: 0,
                             rs1800414: 0, rs10424031: 0, rs885479: 0, rs3340: 2,
                         })}
-                        className="px-2 py-0.5 rounded text-[8px] font-bold uppercase bg-blue-500/20 text-blue-300 border border-blue-500/40 hover:bg-blue-500/30 transition-all cursor-pointer"
+                        className="w-full sm:w-auto min-h-[30px] px-2.5 py-1 rounded text-[9px] font-bold uppercase bg-blue-500/20 text-blue-300 border border-blue-500/40 hover:bg-blue-500/30 transition-all cursor-pointer flex items-center justify-center"
                     >
                         {isTr ? "VEKTÖR_P3_01 (Açık EUR)" : "VECTOR_P3_01 (Fair EUR)"}
                     </button>
@@ -197,7 +197,7 @@ export default function AncestryDataPanel({
                             rs2814778: 2, rs10424031: 2, rs1426654: 0, rs16891982: 0,
                             rs3827072: 0, rs1800414: 0, rs885479: 0, rs3340: 0,
                         })}
-                        className="px-2 py-0.5 rounded text-[8px] font-bold uppercase bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 transition-all cursor-pointer"
+                        className="w-full sm:w-auto min-h-[30px] px-2.5 py-1 rounded text-[9px] font-bold uppercase bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 transition-all cursor-pointer flex items-center justify-center"
                     >
                         {isTr ? "VEKTÖR_P3_02 (Koyu AFR)" : "VECTOR_P3_02 (Dark AFR)"}
                     </button>
@@ -206,7 +206,7 @@ export default function AncestryDataPanel({
                             rs3827072: 2, rs1800414: 2, rs885479: 2, rs1426654: 0,
                             rs16891982: 0, rs2814778: 0, rs10424031: 0, rs3340: 1,
                         })}
-                        className="px-2 py-0.5 rounded text-[8px] font-bold uppercase bg-pink-500/20 text-pink-300 border border-pink-500/40 hover:bg-pink-500/30 transition-all cursor-pointer"
+                        className="w-full sm:w-auto min-h-[30px] px-2.5 py-1 rounded text-[9px] font-bold uppercase bg-pink-500/20 text-pink-300 border border-pink-500/40 hover:bg-pink-500/30 transition-all cursor-pointer flex items-center justify-center"
                     >
                         {isTr ? "VEKTÖR_P3_03 (Doğu Asya EAS)" : "VECTOR_P3_03 (East Asian EAS)"}
                     </button>
@@ -310,9 +310,9 @@ export default function AncestryDataPanel({
                             <div
                                 key={rsid}
                                 onClick={() => toggleDosage(rsid)}
-                                className="p-2 rounded-lg bg-black/40 border border-tactical-border/50 hover:border-cyan-500/50 cursor-pointer space-y-1 transition-all"
+                                className="p-2.5 rounded-lg bg-black/40 border border-tactical-border/50 hover:border-cyan-500/50 cursor-pointer space-y-1 transition-all min-h-[44px] flex flex-col justify-between"
                             >
-                                <div className="flex justify-between text-[9px]">
+                                <div className="flex justify-between items-center text-[9px]">
                                     <span className="font-bold text-white font-mono">{rsid}</span>
                                     <span className="px-1.5 py-0.2 rounded font-bold font-mono bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
                                         d={d}

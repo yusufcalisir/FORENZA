@@ -7,6 +7,7 @@ import {
     FileText, Clock, Filter, ChevronDown, Activity, ChevronRight, Hash
 } from "lucide-react";
 import { useForensicCaseStore } from "@/store/forensicCaseStore";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 import {
     PROCESS_INTEGRITY_CONFIG,
     FINDING_SEVERITY_CONFIG,
@@ -32,6 +33,8 @@ const SEVERITY_ICONS: Record<FindingSeverity, typeof CheckCircle> = {
 
 export default function AuditPage() {
     const { auditTrail, activeCase } = useForensicCaseStore();
+    const { lang } = useSaasLanguage();
+    const isTr = lang === "tr";
     const [filter, setFilter] = useState<LogLevel>("ALL");
     const [expanded, setExpanded] = useState<string | null>(null);
 
@@ -50,14 +53,24 @@ export default function AuditPage() {
                 <div>
                     <div className="flex items-center gap-2 mb-0.5">
                         <ShieldCheck className="w-4 h-4 text-amber-400 shrink-0" />
-                        <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest">FORENZA Compliance &amp; Integrity</span>
+                        <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest">
+                            {isTr ? "FORENZA Uyumluluk & Bütünlük" : "FORENZA Compliance & Integrity"}
+                        </span>
                     </div>
-                    <h1 className="text-sm sm:text-base font-extrabold text-white tracking-tight">Compliance &amp; ISO 17025 Audit Log</h1>
-                    <p className="text-[9px] sm:text-[10px] text-zinc-400 mt-0.5">HMAC-SHA256 Chain of Custody • Immutable Forensic Event Ledger • ZKP Verified</p>
+                    <h1 className="text-sm sm:text-base font-extrabold text-white tracking-tight">
+                        {isTr ? "ISO 17025 Uyumluluk & Denetim Günlüğü" : "Compliance & ISO 17025 Audit Log"}
+                    </h1>
+                    <p className="text-[9px] sm:text-[10px] text-zinc-400 mt-0.5">
+                        {isTr
+                            ? "HMAC-SHA256 Delil Zinciri • Değişmez Adli Olay Defteri • ZKP Doğrulandı"
+                            : "HMAC-SHA256 Chain of Custody • Immutable Forensic Event Ledger • ZKP Verified"}
+                    </p>
                 </div>
                 <div className="flex items-center gap-1.5 shrink-0">
                     <Lock className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                    <span className="text-[9px] font-bold text-amber-400 uppercase tracking-wider">Chain Integrity: VERIFIED</span>
+                    <span className="text-[9px] font-bold text-amber-400 uppercase tracking-wider">
+                        {isTr ? "Zincir Bütünlüğü: DOĞRULANDI" : "Chain Integrity: VERIFIED"}
+                    </span>
                 </div>
             </div>
 
@@ -82,9 +95,9 @@ export default function AuditPage() {
             {/* Summary Metrics */}
             <div className="grid grid-cols-3 gap-2 sm:gap-3">
                 {([
-                    { label: "Events PASS", value: counts.PASS, color: "text-emerald-400", bg: "border-emerald-500/30 bg-emerald-500/5" },
-                    { label: "Events WARNING", value: counts.WARNING, color: "text-amber-400", bg: "border-amber-500/30 bg-amber-500/5" },
-                    { label: "Events FAIL", value: counts.FAIL, color: "text-red-400", bg: "border-red-500/30 bg-red-500/5" },
+                    { label: isTr ? "BAŞARILI OLAYLAR" : "Events PASS", value: counts.PASS, color: "text-emerald-400", bg: "border-emerald-500/30 bg-emerald-500/5" },
+                    { label: isTr ? "UYARI OLAYLARI" : "Events WARNING", value: counts.WARNING, color: "text-amber-400", bg: "border-amber-500/30 bg-amber-500/5" },
+                    { label: isTr ? "BAŞARISIZ OLAYLAR" : "Events FAIL", value: counts.FAIL, color: "text-red-400", bg: "border-red-500/30 bg-red-500/5" },
                 ] as const).map((m) => (
                     <motion.div key={m.label} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
                         className={`rounded-xl border ${m.bg} p-2.5 sm:p-4 text-center`}>
@@ -98,7 +111,7 @@ export default function AuditPage() {
             <div className="flex items-center justify-between gap-2 flex-wrap bg-tactical-surface/80 p-2.5 rounded-xl border border-tactical-border/60">
                 <div className="flex items-center gap-1.5 flex-wrap">
                     <Filter className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
-                    <span className="text-[9px] text-zinc-400 uppercase font-bold mr-1">Filter:</span>
+                    <span className="text-[9px] text-zinc-400 uppercase font-bold mr-1">{isTr ? "Filtre:" : "Filter:"}</span>
                     {(["ALL", "PASS", "WARNING", "FAIL"] as LogLevel[]).map((f) => (
                         <button
                             key={f}
@@ -111,23 +124,23 @@ export default function AuditPage() {
                                 : "bg-black/40 border-tactical-border/60 text-zinc-400 hover:text-zinc-200"
                                 }`}
                         >
-                            {f}
+                            {f === "ALL" ? (isTr ? "TÜMÜ" : "ALL") : f}
                         </button>
                     ))}
                 </div>
-                <span className="text-[9px] text-zinc-500 font-bold ml-auto">{filtered.length} events</span>
+                <span className="text-[9px] text-zinc-500 font-bold ml-auto">{filtered.length} {isTr ? "olay" : "events"}</span>
             </div>
 
             {/* Log Table / Cards */}
             <div className="rounded-xl border border-tactical-border/60 bg-tactical-surface/60 overflow-hidden">
                 {/* Desktop Header */}
                 <div className="hidden md:grid grid-cols-12 px-4 py-2.5 border-b border-tactical-border/40 text-[8px] font-bold text-zinc-400 uppercase tracking-wider">
-                    <span className="col-span-1">ID</span>
-                    <span className="col-span-2">Timestamp</span>
-                    <span className="col-span-3">Event &amp; Findings</span>
-                    <span className="col-span-2">Module</span>
-                    <span className="col-span-2 text-center">Finding Severity</span>
-                    <span className="col-span-2 text-right">Chain Integrity</span>
+                    <span className="col-span-1">{isTr ? "KİMLİK" : "ID"}</span>
+                    <span className="col-span-2">{isTr ? "ZAMAN DAMGASI" : "Timestamp"}</span>
+                    <span className="col-span-3">{isTr ? "OLAY & BULGULAR" : "Event & Findings"}</span>
+                    <span className="col-span-2">{isTr ? "MODÜL" : "Module"}</span>
+                    <span className="col-span-2 text-center">{isTr ? "BULGU ÖNEMİ" : "Finding Severity"}</span>
+                    <span className="col-span-2 text-right">{isTr ? "ZİNCİR BÜTÜNLÜĞÜ" : "Chain Integrity"}</span>
                 </div>
 
                 {filtered.map((entry, i) => {
@@ -159,7 +172,7 @@ export default function AuditPage() {
                                 <div className="col-span-2 flex justify-end">
                                     <span className={`flex items-center gap-1 text-[8px] font-bold border rounded-md px-1.5 py-0.5 ${sc.bg} ${sc.border} ${sc.color}`}>
                                         <StatusIcon className="w-2.5 h-2.5 shrink-0" />
-                                        INTEGRITY: {entry.status}
+                                        {isTr ? "BÜTÜNLÜK:" : "INTEGRITY:"} {entry.status}
                                     </span>
                                 </div>
                             </motion.div>
@@ -224,15 +237,21 @@ export default function AuditPage() {
                                     >
                                         <div className="pt-2.5 grid grid-cols-1 sm:grid-cols-3 gap-2">
                                             <div className="p-2 rounded-lg bg-black/40 border border-tactical-border/30 space-y-0.5">
-                                                <span className="text-[8px] text-zinc-500 uppercase block font-bold">Process &amp; Chain Integrity</span>
+                                                <span className="text-[8px] text-zinc-500 uppercase block font-bold">
+                                                    {isTr ? "Süreç & Zincir Bütünlüğü" : "Process & Chain Integrity"}
+                                                </span>
                                                 <span className="text-[10px] text-emerald-400 font-mono font-bold truncate block">{entry.status} (HMAC-SHA256 Validated)</span>
                                             </div>
                                             <div className="p-2 rounded-lg bg-black/40 border border-tactical-border/30 space-y-0.5">
-                                                <span className="text-[8px] text-zinc-500 uppercase block font-bold">Finding Classification</span>
+                                                <span className="text-[8px] text-zinc-500 uppercase block font-bold">
+                                                    {isTr ? "Bulgu Sınıflandırması" : "Finding Classification"}
+                                                </span>
                                                 <span className={`text-[10px] ${sev.color} font-mono font-bold truncate block`}>{sev.label}</span>
                                             </div>
                                             <div className="p-2 rounded-lg bg-black/40 border border-tactical-border/30 space-y-0.5">
-                                                <span className="text-[8px] text-zinc-500 uppercase block font-bold">Polygon zkEVM Ledger</span>
+                                                <span className="text-[8px] text-zinc-500 uppercase block font-bold">
+                                                    {isTr ? "Polygon zkEVM Defteri" : "Polygon zkEVM Ledger"}
+                                                </span>
                                                 <span className="text-[10px] text-cyan-400 font-mono font-bold truncate block">{entry.polygonTx || `Block #1,847,${290 - i}`}</span>
                                             </div>
                                         </div>
@@ -248,8 +267,14 @@ export default function AuditPage() {
             <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-3.5 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center gap-2.5 max-w-full overflow-hidden">
                 <ShieldCheck className="w-5 h-5 text-amber-400 shrink-0" />
                 <div className="min-w-0">
-                    <p className="text-[10px] sm:text-xs font-bold text-amber-400 uppercase tracking-wider">ISO/IEC 17025:2017 Compliance Certificate</p>
-                    <p className="text-[9px] sm:text-[10px] text-zinc-400 mt-0.5 leading-relaxed break-words">All forensic analyses are performed under accredited quality management system. Chain of custody verified via HMAC-SHA256 on Polygon zkEVM immutable ledger. Expert witness admissibility certified.</p>
+                    <p className="text-[10px] sm:text-xs font-bold text-amber-400 uppercase tracking-wider">
+                        {isTr ? "ISO/IEC 17025:2017 Uyumluluk Sertifikası" : "ISO/IEC 17025:2017 Compliance Certificate"}
+                    </p>
+                    <p className="text-[9px] sm:text-[10px] text-zinc-400 mt-0.5 leading-relaxed break-words">
+                        {isTr
+                            ? "Tüm adli analizler akredite kalite yönetim sistemi altında gerçekleştirilir. Delil zinciri, Polygon zkEVM değişmez defterinde HMAC-SHA256 ile doğrulanmıştır. Bilirkişi tanıklık kabul edilebilirliği onaylanmıştır."
+                            : "All forensic analyses are performed under accredited quality management system. Chain of custody verified via HMAC-SHA256 on Polygon zkEVM immutable ledger. Expert witness admissibility certified."}
+                    </p>
                 </div>
             </div>
         </div>

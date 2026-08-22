@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { GitBranch, Users, AlertTriangle, CheckCircle, HelpCircle } from "lucide-react";
 import { useMemo } from "react";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -39,13 +40,13 @@ interface PedigreeTreeProps {
 
 // ─── Styling ─────────────────────────────────────────────────────────────────
 
-const REL_STYLES: Record<string, { color: string; label: string; icon: typeof Users }> = {
-    PARENT_CHILD: { color: "#34d399", label: "Parent–Child", icon: Users },
-    FULL_SIBLING: { color: "#fbbf24", label: "Full Sibling", icon: Users },
-    HALF_SIBLING: { color: "#22d3ee", label: "Half Sibling", icon: Users },
-    SELF: { color: "#a78bfa", label: "Self / Identical", icon: CheckCircle },
-    UNRELATED: { color: "#71717a", label: "Unrelated", icon: HelpCircle },
-    INCONCLUSIVE: { color: "#71717a", label: "Inconclusive", icon: AlertTriangle },
+const REL_STYLES: Record<string, { color: string; label: string; labelTr: string; icon: typeof Users }> = {
+    PARENT_CHILD: { color: "#34d399", label: "Parent–Child", labelTr: "Ebeveyn–Çocuk", icon: Users },
+    FULL_SIBLING: { color: "#fbbf24", label: "Full Sibling", labelTr: "Öz Kardeş", icon: Users },
+    HALF_SIBLING: { color: "#22d3ee", label: "Half Sibling", labelTr: "Üvey Kardeş", icon: Users },
+    SELF: { color: "#a78bfa", label: "Self / Identical", labelTr: "Kendisi / Özdeş", icon: CheckCircle },
+    UNRELATED: { color: "#71717a", label: "Unrelated", labelTr: "Akraba Değil", icon: HelpCircle },
+    INCONCLUSIVE: { color: "#71717a", label: "Inconclusive", labelTr: "Belirsiz", icon: AlertTriangle },
 };
 
 function formatKI(ki: number): string {
@@ -135,6 +136,9 @@ function ProfileNode({
 // ─── Main Component ──────────────────────────────────────────────────────────
 
 export default function PedigreeTree({ kinshipData, profileAId, profileBId }: PedigreeTreeProps) {
+    const { lang } = useSaasLanguage();
+    const isTr = lang === "tr";
+
     const style = REL_STYLES[kinshipData.relationship_type] || REL_STYLES.INCONCLUSIVE;
     const RelIcon = style.icon;
 
@@ -174,7 +178,7 @@ export default function PedigreeTree({ kinshipData, profileAId, profileBId }: Pe
                 <div className="flex items-center gap-2">
                     <GitBranch className="w-4 h-4 text-tactical-primary" />
                     <h3 className="font-data text-[10px] font-bold tracking-[0.15em] uppercase text-tactical-text">
-                        Pedigree Analysis
+                        {isTr ? "Soyağacı Analizi" : "Pedigree Analysis"}
                     </h3>
                 </div>
                 <div className="flex items-center gap-1.5">
@@ -186,7 +190,7 @@ export default function PedigreeTree({ kinshipData, profileAId, profileBId }: Pe
                             backgroundColor: `${style.color}10`,
                         }}
                     >
-                        {style.label}
+                        {isTr ? style.labelTr : style.label}
                     </span>
                 </div>
             </div>
@@ -241,12 +245,12 @@ export default function PedigreeTree({ kinshipData, profileAId, profileBId }: Pe
                         fontFamily="monospace"
                         letterSpacing="0.08em"
                     >
-                        {(kinshipData.confidence * 100).toFixed(1)}% CONFIDENCE
+                        {(kinshipData.confidence * 100).toFixed(1)}% {isTr ? "GÜVEN" : "CONFIDENCE"}
                     </text>
 
                     {/* Profile Nodes */}
                     <ProfileNode
-                        label="Query Profile"
+                        label={isTr ? "Sorgu Profili" : "Query Profile"}
                         id={profileAId}
                         x={nodeAx}
                         y={nodeAy}
@@ -254,7 +258,7 @@ export default function PedigreeTree({ kinshipData, profileAId, profileBId }: Pe
                         isQuery={true}
                     />
                     <ProfileNode
-                        label="Database Hit"
+                        label={isTr ? "Veritabanı Kaydı" : "Database Hit"}
                         id={profileBId}
                         x={nodeBx}
                         y={nodeBy}
@@ -268,10 +272,10 @@ export default function PedigreeTree({ kinshipData, profileAId, profileBId }: Pe
             <div className="px-4 py-2 border-t border-zinc-800/30">
                 <div className="flex items-center gap-2 mb-1.5">
                     <span className="font-data text-[7px] text-zinc-600 uppercase tracking-wider">
-                        IBS Distribution
+                        {isTr ? "IBS Dağılımı" : "IBS Distribution"}
                     </span>
                     <span className="font-data text-[7px] text-zinc-700">
-                        {kinshipData.loci_analyzed} loci
+                        {kinshipData.loci_analyzed} {isTr ? "lokus" : "loci"}
                     </span>
                 </div>
                 <div className="flex h-2 rounded-full overflow-hidden bg-zinc-900">
@@ -326,7 +330,7 @@ export default function PedigreeTree({ kinshipData, profileAId, profileBId }: Pe
                     </div>
                     {kinshipData.exclusion_count > 0 && (
                         <span className="font-data text-[6px] text-amber-400/80">
-                            {kinshipData.exclusion_count} exclusion{kinshipData.exclusion_count > 1 ? "s" : ""}
+                            {kinshipData.exclusion_count} {isTr ? "dışlama" : `exclusion${kinshipData.exclusion_count > 1 ? "s" : ""}`}
                         </span>
                     )}
                 </div>
@@ -335,9 +339,9 @@ export default function PedigreeTree({ kinshipData, profileAId, profileBId }: Pe
             {/* KI Comparison Grid */}
             <div className="grid grid-cols-3 divide-x divide-zinc-800/30 border-t border-zinc-800/30">
                 {[
-                    { label: "Parent-Child", ki: kinshipData.kinship_index_parent_child, log: kinshipData.log10_ki_parent_child, type: "PARENT_CHILD" },
-                    { label: "Full Sibling", ki: kinshipData.kinship_index_full_sibling, log: kinshipData.log10_ki_full_sibling, type: "FULL_SIBLING" },
-                    { label: "Half Sibling", ki: kinshipData.kinship_index_half_sibling, log: kinshipData.log10_ki_half_sibling, type: "HALF_SIBLING" },
+                    { label: isTr ? "Ebeveyn-Çocuk" : "Parent-Child", ki: kinshipData.kinship_index_parent_child, log: kinshipData.log10_ki_parent_child, type: "PARENT_CHILD" },
+                    { label: isTr ? "Öz Kardeş" : "Full Sibling", ki: kinshipData.kinship_index_full_sibling, log: kinshipData.log10_ki_full_sibling, type: "FULL_SIBLING" },
+                    { label: isTr ? "Üvey Kardeş" : "Half Sibling", ki: kinshipData.kinship_index_half_sibling, log: kinshipData.log10_ki_half_sibling, type: "HALF_SIBLING" },
                 ].map((item) => {
                     const isActive = kinshipData.relationship_type === item.type;
                     return (

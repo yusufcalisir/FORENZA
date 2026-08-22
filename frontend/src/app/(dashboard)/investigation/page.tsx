@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { useIngestStore } from "@/store/ingestStore";
 import { useForensicCaseStore } from "@/store/forensicCaseStore";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 import SystemPulse from "@/components/investigation/SystemPulse";
 import CryptographicShield from "@/components/investigation/CryptographicShield";
@@ -42,6 +43,9 @@ async function fetchAnalysis(profileId: string, population: string) {
 }
 
 export default function InvestigationDashboard() {
+  const { lang } = useSaasLanguage();
+  const isTr = lang === "tr";
+
   // Central Case Store
   const { activeCase, addAuditLog } = useForensicCaseStore();
   const { setLastIngested, setInspectorOpen } = useIngestStore();
@@ -160,12 +164,14 @@ export default function InvestigationDashboard() {
         >
           <Lock className="w-12 h-12 animate-pulse" />
         </motion.div>
-        <h1 className="text-xl font-bold tracking-[0.2em] uppercase">Session Terminated</h1>
+        <h1 className="text-xl font-bold tracking-[0.2em] uppercase">
+          {isTr ? "Oturum Sonlandırıldı" : "Session Terminated"}
+        </h1>
         <div className="flex flex-col items-center space-y-1 text-zinc-500 font-mono text-xs">
-          <p>Blockchain Access Token Revoked</p>
-          <p>Local Key Material Shredded</p>
+          <p>{isTr ? "Blokzincir Erişim Belirteci İptal Edildi" : "Blockchain Access Token Revoked"}</p>
+          <p>{isTr ? "Yerel Anahtar Materyali İmha Edildi" : "Local Key Material Shredded"}</p>
           <p>
-            Audit Log: <span className="text-red-400">EMERGENCY_EXIT_0x9F2A</span>
+            {isTr ? "Denetim Kaydı:" : "Audit Log:"} <span className="text-red-400">EMERGENCY_EXIT_0x9F2A</span>
           </p>
         </div>
       </div>
@@ -183,9 +189,13 @@ export default function InvestigationDashboard() {
       <div className="flex-1 space-y-6 min-w-0 max-w-full">
         {/* Header & Panic */}
         <TacticalPageHeader
-          title="Forensic Investigation & Knowledge Graph"
-          subtitle="Relational Case Subgraph • Pedigree Kinship Traversal • Level 4 Cryptographic Clearance"
-          badge="PROPERTY GRAPH INSPECTOR"
+          title={isTr ? "Adli Soruşturma & Bilgi Grafiği" : "Forensic Investigation & Knowledge Graph"}
+          subtitle={
+            isTr
+              ? "İlişkisel Vaka Alt Grafiği • Soy Ağacı Akrabalık Gezinimi • Seviye 4 Kriptografik Yetki"
+              : "Relational Case Subgraph • Pedigree Kinship Traversal • Level 4 Cryptographic Clearance"
+          }
+          badge={isTr ? "ÖZELLİK GRAFİK İNCELEYİCİ" : "PROPERTY GRAPH INSPECTOR"}
           icon={GitGraph}
           accentColor="purple"
           actions={
@@ -194,7 +204,7 @@ export default function InvestigationDashboard() {
               className="group flex items-center gap-2 px-3 py-1.5 bg-red-950/40 hover:bg-red-900/60 text-red-400 border border-red-900/60 rounded-xl transition-all font-mono text-xs font-bold uppercase tracking-wider cursor-pointer"
             >
               <ShieldAlert className="w-3.5 h-3.5 group-hover:animate-pulse" />
-              <span>Revoke Access</span>
+              <span>{isTr ? "Erişimi İptal Et" : "Revoke Access"}</span>
             </button>
           }
         />
@@ -229,7 +239,7 @@ export default function InvestigationDashboard() {
                         </span>
                       </div>
                       <p className="text-[10px] text-zinc-400 truncate">
-                        {activeCase.profile.markerCount} STR Loci • {activeCase.profile.snpCount} SNPs • {activeCase.profile.ancestry.primary}
+                        {activeCase.profile.markerCount} {isTr ? "STR Lokusu" : "STR Loci"} • {activeCase.profile.snpCount} SNPs • {activeCase.profile.ancestry.primary}
                       </p>
                     </div>
                   </div>
@@ -239,7 +249,7 @@ export default function InvestigationDashboard() {
                     className="px-3 py-1.5 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 shrink-0 cursor-pointer"
                   >
                     <SlidersHorizontal className="w-3 h-3" />
-                    <span>Edit Profile / STRs</span>
+                    <span>{isTr ? "Profili / STR'leri Düzenle" : "Edit Profile / STRs"}</span>
                   </button>
                 </div>
 
@@ -250,16 +260,18 @@ export default function InvestigationDashboard() {
                   </div>
 
                   <h2 className="text-lg sm:text-2xl font-bold text-white tracking-tight">
-                    Multi-Node Forensic Vault Search
+                    {isTr ? "Çok Düğümlü Adli Kasa Taraması" : "Multi-Node Forensic Vault Search"}
                   </h2>
                   <p className="text-zinc-400 text-xs leading-relaxed max-w-md mx-auto">
-                    Execute cross-jurisdictional DNA matching across federated repository nodes using Zero-Knowledge proofs and Dirichlet Bayesian likelihood ratios.
+                    {isTr
+                      ? "Sıfır Bilgi İspatları ve Bayesçi olabilirlik oranları kullanarak federe depo düğümleri arasında yargı yetkileri arası DNA eşleştirmesi yürütün."
+                      : "Execute cross-jurisdictional DNA matching across federated repository nodes using Zero-Knowledge proofs and Dirichlet Bayesian likelihood ratios."}
                   </p>
 
                   <div className="flex justify-center pt-1">
                     <span className="text-emerald-400 font-mono text-[10px] font-bold border border-emerald-500/30 bg-emerald-500/10 py-1 px-3 rounded-lg flex items-center gap-1.5 shadow-sm">
                       <Lock className="w-3 h-3 text-emerald-400 shrink-0" />
-                      Zero-Knowledge Circom BN254 Enabled
+                      {isTr ? "Sıfır Bilgi Circom BN254 Etkin" : "Zero-Knowledge Circom BN254 Enabled"}
                     </span>
                   </div>
                 </div>
@@ -272,7 +284,7 @@ export default function InvestigationDashboard() {
                     className="flex-1 px-4 py-3 bg-zinc-800/80 hover:bg-zinc-700/80 text-white font-bold rounded-xl border border-zinc-700/60 hover:border-zinc-500 transition-all flex items-center justify-center gap-2 text-xs font-mono uppercase tracking-wider cursor-pointer shadow-md min-h-[44px]"
                   >
                     <Upload className="w-4 h-4 text-cyan-400 shrink-0" />
-                    <span>Upload DNA Profile</span>
+                    <span>{isTr ? "DNA Profili Yükle" : "Upload DNA Profile"}</span>
                   </button>
 
                   {/* Action 2: Execute Match */}
@@ -284,12 +296,12 @@ export default function InvestigationDashboard() {
                     {isAnalyzing ? (
                       <>
                         <RefreshCw className="w-4 h-4 animate-spin shrink-0" />
-                        <span>Verifying ZKP...</span>
+                        <span>{isTr ? "ZKP Doğrulanıyor..." : "Verifying ZKP..."}</span>
                       </>
                     ) : (
                       <>
                         <Sparkles className="w-4 h-4 shrink-0" />
-                        <span>Run ZKP Match</span>
+                        <span>{isTr ? "ZKP Eşleştirmesini Çalıştır" : "Run ZKP Match"}</span>
                       </>
                     )}
                   </button>
@@ -310,9 +322,11 @@ export default function InvestigationDashboard() {
                         <CheckCircle className="w-4 h-4 text-emerald-400" />
                       </div>
                       <div className="min-w-0">
-                        <h3 className="text-xs font-bold text-white truncate">Match Verified</h3>
+                        <h3 className="text-xs font-bold text-white truncate">
+                          {isTr ? "Eşleşme Doğrulandı" : "Match Verified"}
+                        </h3>
                         <p className="text-[9px] text-zinc-400 font-mono truncate">
-                          ZKP Commitment: 0x89f2…089
+                          {isTr ? "ZKP Taahhüdü:" : "ZKP Commitment:"} 0x89f2…089
                         </p>
                       </div>
                     </div>
@@ -320,7 +334,7 @@ export default function InvestigationDashboard() {
                       onClick={resetInvestigation}
                       className="text-xs text-zinc-400 hover:text-emerald-300 font-mono underline cursor-pointer shrink-0 ml-2"
                     >
-                      New Search
+                      {isTr ? "Yeni Arama" : "New Search"}
                     </button>
                   </div>
 

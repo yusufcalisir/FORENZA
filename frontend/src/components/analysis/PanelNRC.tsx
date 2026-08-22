@@ -12,21 +12,22 @@ import {
   FileSpreadsheet,
 } from "lucide-react";
 import { useForensicCaseStore } from "@/store/forensicCaseStore";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 // ─── NIST 1036 Demographic Frequencies & Metadata ─────────────────────────────
 const DEMOGRAPHIC_POPULATIONS = [
-  { id: "Caucasian", name: "Caucasian (US)", n: 361, flag: "🇺🇸", color: "from-blue-500 to-indigo-600" },
-  { id: "AfricanAmerican", name: "African American", n: 342, flag: "🌍", color: "from-amber-500 to-orange-600" },
-  { id: "Hispanic", name: "Hispanic (US)", n: 236, flag: "🇲🇽", color: "from-emerald-500 to-teal-600" },
-  { id: "Asian", name: "Asian (US)", n: 97, flag: "🌏", color: "from-purple-500 to-fuchsia-600" },
+  { id: "Caucasian", name: "Caucasian (US)", nameTr: "Kafkas (ABD)", n: 361, flag: "🇺🇸", color: "from-blue-500 to-indigo-600" },
+  { id: "AfricanAmerican", name: "African American", nameTr: "Afrikalı-Amerikalı", n: 342, flag: "🌍", color: "from-amber-500 to-orange-600" },
+  { id: "Hispanic", name: "Hispanic (US)", nameTr: "Hispanik (ABD)", n: 236, flag: "🇲🇽", color: "from-emerald-500 to-teal-600" },
+  { id: "Asian", name: "Asian (US)", nameTr: "Asyalı (ABD)", n: 97, flag: "🌏", color: "from-purple-500 to-fuchsia-600" },
 ] as const;
 
 const THETA_PRESETS = [
-  { label: "0.000 (Panmixia / HWE)", value: 0.0, desc: "Standard Hardy-Weinberg Equilibrium (no substructure)" },
-  { label: "0.010 (NRC II Rec 4.10)", value: 0.01, desc: "Large outbred general populations" },
-  { label: "0.030 (FBI / SWGDAM)", value: 0.03, desc: "US subpopulation standard (Conservative default)" },
-  { label: "0.050 (Isolated / Inbred)", value: 0.05, desc: "Geographically isolated or endogamous groups" },
-  { label: "0.150 (High Endogamy Stress)", value: 0.15, desc: "Severe bottleneck or first-cousin pedigree coancestry" },
+  { label: "0.000 (Panmixia / HWE)", value: 0.0, desc: "Standard Hardy-Weinberg Equilibrium (no substructure)", descTr: "Standart Hardy-Weinberg Dengesi (alt yapı yok)" },
+  { label: "0.010 (NRC II Rec 4.10)", value: 0.01, desc: "Large outbred general populations", descTr: "Geniş dışa evli genel popülasyonlar" },
+  { label: "0.030 (FBI / SWGDAM)", value: 0.03, desc: "US subpopulation standard (Conservative default)", descTr: "ABD alt popülasyon standardı (İhtiyatlı varsayılan)" },
+  { label: "0.050 (Isolated / Inbred)", value: 0.05, desc: "Geographically isolated or endogamous groups", descTr: "Coğrafi olarak izole veya akraba evliliği grupları" },
+  { label: "0.150 (High Endogamy Stress)", value: 0.15, desc: "Severe bottleneck or first-cousin pedigree coancestry", descTr: "Şiddetli genetik darboğaz veya birinci derece kuzen akrabalığı" },
 ];
 
 const GOLDEN_PROFILES: Record<string, { name: string; ethnicity: string; sex: string; markers: Record<string, [number, number]> }> = {
@@ -164,6 +165,8 @@ function computeBaldingNicholsProb(p1: number, p2: number, isHomo: boolean, thet
 
 export function PanelNRC() {
   const { activeCase } = useForensicCaseStore();
+  const { lang } = useSaasLanguage();
+  const isTr = lang === "tr";
   const [selectedPopulation, setSelectedPopulation] = useState<string>("Caucasian");
   const [theta, setTheta] = useState<number>(0.03);
   const [selectedStandard, setSelectedStandard] = useState<string>("CASE_PROFILE");
@@ -238,7 +241,7 @@ export function PanelNRC() {
   }, [activeMarkers, theta, selectedPopulation]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 font-mono">
       {/* ── Header & Mission Control Bar ────────────────────────────────────────── */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-xl backdrop-blur-xl">
         <div className="flex items-center gap-4">
@@ -248,27 +251,31 @@ export function PanelNRC() {
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-lg font-bold text-slate-100 tracking-tight">
-                Module 1.3: NRC-II Dirichlet F_st &amp; Balding-Nichols Population Genetics
+                {isTr
+                  ? "Modül 1.3: NRC-II Dirichlet F_st & Balding-Nichols Popülasyon Genetiği"
+                  : "Module 1.3: NRC-II Dirichlet F_st & Balding-Nichols Population Genetics"}
               </h2>
               <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
-                VERIFIED (3/3 Criteria)
+                {isTr ? "DOĞRULANDI (3/3 Kriter)" : "VERIFIED (3/3 Criteria)"}
               </span>
             </div>
             <p className="text-xs text-slate-400 mt-0.5">
-              Multi-ethnic subpopulation coancestry (θ), Weir-Cockerham ANOVA &amp; ENFSI (2017) Reciprocal Shield
+              {isTr
+                ? "Çok etnikli alt popülasyon akrabalığı (θ), Weir-Cockerham ANOVA & ENFSI (2017) Karşılıklılık Kalkanı"
+                : "Multi-ethnic subpopulation coancestry (θ), Weir-Cockerham ANOVA & ENFSI (2017) Reciprocal Shield"}
             </p>
           </div>
         </div>
 
         {/* Profile Selector */}
         <div className="flex items-center gap-2">
-          <span className="text-xs text-slate-400 font-medium">Standard Profile:</span>
+          <span className="text-xs text-slate-400 font-medium">{isTr ? "Standart Profil:" : "Standard Profile:"}</span>
           <select
             value={selectedStandard}
             onChange={(e) => setSelectedStandard(e.target.value)}
-            className="px-3 py-1.5 text-xs font-mono bg-slate-800 border border-slate-700 rounded-lg text-slate-200 focus:outline-none focus:border-emerald-500"
+            className="px-3 py-1.5 text-xs font-mono bg-slate-800 border border-slate-700 rounded-lg text-slate-200 focus:outline-none focus:border-emerald-500 cursor-pointer"
           >
-            <option value="CASE_PROFILE">Active Case Profile ({activeCase.profile.profileId})</option>
+            <option value="CASE_PROFILE">{isTr ? "Aktif Vaka Profili" : "Active Case Profile"} ({activeCase.profile.profileId})</option>
             <option value="SRM_2391D_COMP_A">NIST SRM 2391d Comp A (Caucasian 9947A)</option>
             <option value="SRM_2391D_COMP_B">NIST SRM 2391d Comp B (African American 9948)</option>
           </select>
@@ -282,12 +289,14 @@ export function PanelNRC() {
             <div className="flex items-center gap-2">
               <Sliders className="w-4 h-4 text-emerald-400" />
               <span className="text-sm font-semibold text-slate-200">
-                Coancestry Coefficient (θ = F_st):{" "}
+                {isTr ? "Akrabalık Katsayısı (θ = F_st): " : "Coancestry Coefficient (θ = F_st): "}
                 <span className="font-mono text-emerald-400 text-base">{theta.toFixed(3)}</span>
               </span>
             </div>
             <p className="text-xs text-slate-400">
-              Accounts for subpopulation differentiation and allelic correlation among common ancestral lineages.
+              {isTr
+                ? "Ortak atasal soylar arasındaki alt popülasyon farklılaşmasını ve alelik korelasyonu hesaba katar."
+                : "Accounts for subpopulation differentiation and allelic correlation among common ancestral lineages."}
             </p>
           </div>
 
@@ -297,12 +306,12 @@ export function PanelNRC() {
               <button
                 key={p.value}
                 onClick={() => setTheta(p.value)}
-                className={`px-2.5 py-1 text-xs rounded-lg font-mono transition-all ${
+                className={`px-2.5 py-1 text-xs rounded-lg font-mono transition-all cursor-pointer ${
                   Math.abs(theta - p.value) < 1e-4
                     ? "bg-emerald-500 text-slate-950 font-bold shadow-md shadow-emerald-500/20"
                     : "bg-slate-800/80 text-slate-300 hover:bg-slate-700/80 border border-slate-700/60"
                 }`}
-                title={p.desc}
+                title={isTr ? p.descTr : p.desc}
               >
                 {p.label}
               </button>
@@ -322,12 +331,12 @@ export function PanelNRC() {
             className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500"
           />
           <div className="flex justify-between text-[10px] font-mono text-slate-500 mt-1">
-            <span>0.000 (Panmixia)</span>
+            <span>0.000 ({isTr ? "Panmiksi" : "Panmixia"})</span>
             <span>0.010 (NRC II Rec 4.10)</span>
-            <span>0.030 (SWGDAM Standard)</span>
-            <span>0.050 (Isolated)</span>
-            <span>0.100 (Inbred)</span>
-            <span>0.150 (Severe Endogamy)</span>
+            <span>0.030 ({isTr ? "SWGDAM Standardı" : "SWGDAM Standard"})</span>
+            <span>0.050 ({isTr ? "İzole" : "Isolated"})</span>
+            <span>0.100 ({isTr ? "Akraba Evliliği" : "Inbred"})</span>
+            <span>0.150 ({isTr ? "Şiddetli Endogami" : "Severe Endogamy"})</span>
           </div>
         </div>
       </div>
@@ -351,7 +360,9 @@ export function PanelNRC() {
                 <span className="text-lg">{pop.flag}</span>
                 <span className="text-[10px] font-mono text-slate-400">N={pop.n}</span>
               </div>
-              <h3 className="text-sm font-semibold text-slate-200 mt-2">{pop.name}</h3>
+              <h3 className="text-sm font-semibold text-slate-200 mt-2">
+                {isTr ? pop.nameTr : pop.name}
+              </h3>
 
               <div className="mt-3 space-y-1">
                 <div className="flex justify-between items-baseline">
@@ -361,8 +372,8 @@ export function PanelNRC() {
                   </span>
                 </div>
                 <div className="flex justify-between items-baseline text-[11px] text-slate-400">
-                  <span>Match Weight:</span>
-                  <span className="font-mono">1 in 10^{telemetry?.log10Lr.toFixed(1)}</span>
+                  <span>{isTr ? "Eşleşme Ağırlığı:" : "Match Weight:"}</span>
+                  <span className="font-mono">1 / 10^{telemetry?.log10Lr.toFixed(1)}</span>
                 </div>
               </div>
 
@@ -387,36 +398,36 @@ export function PanelNRC() {
       <div className="flex border-b border-slate-800 gap-4 text-xs font-semibold text-slate-400">
         <button
           onClick={() => setActiveTab("stratification")}
-          className={`pb-2.5 transition-colors border-b-2 flex items-center gap-1.5 ${
+          className={`pb-2.5 transition-colors border-b-2 flex items-center gap-1.5 cursor-pointer ${
             activeTab === "stratification"
               ? "border-emerald-500 text-emerald-400"
               : "border-transparent hover:text-slate-200"
           }`}
         >
           <BarChart3 className="w-3.5 h-3.5" />
-          Demographic Stratification &amp; ENFSI Reporting
+          {isTr ? "Demografik Katmanlaşma & ENFSI Raporlama" : "Demographic Stratification & ENFSI Reporting"}
         </button>
         <button
           onClick={() => setActiveTab("loci_table")}
-          className={`pb-2.5 transition-colors border-b-2 flex items-center gap-1.5 ${
+          className={`pb-2.5 transition-colors border-b-2 flex items-center gap-1.5 cursor-pointer ${
             activeTab === "loci_table"
               ? "border-emerald-500 text-emerald-400"
               : "border-transparent hover:text-slate-200"
           }`}
         >
           <FileSpreadsheet className="w-3.5 h-3.5" />
-          24-Locus Balding-Nichols Simplex Breakdown
+          {isTr ? "24-Lokus Balding-Nichols Simpleks Dağılımı" : "24-Locus Balding-Nichols Simplex Breakdown"}
         </button>
         <button
           onClick={() => setActiveTab("anova_fst")}
-          className={`pb-2.5 transition-colors border-b-2 flex items-center gap-1.5 ${
+          className={`pb-2.5 transition-colors border-b-2 flex items-center gap-1.5 cursor-pointer ${
             activeTab === "anova_fst"
               ? "border-emerald-500 text-emerald-400"
               : "border-transparent hover:text-slate-200"
           }`}
         >
           <Scale className="w-3.5 h-3.5" />
-          Weir &amp; Cockerham (1984) ANOVA F_st Estimator
+          {isTr ? "Weir & Cockerham (1984) ANOVA F_st Tahmincisi" : "Weir & Cockerham (1984) ANOVA F_st Estimator"}
         </button>
       </div>
 
@@ -428,31 +439,32 @@ export function PanelNRC() {
             <div className="p-5 rounded-xl bg-slate-900/60 border border-slate-800 space-y-4">
               <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                ENFSI (2017) Evaluative Reporting &amp; Reciprocal Invariant
+                {isTr ? "ENFSI (2017) Değerlendirici Raporlama & Karşılıklılık İnvaryantı" : "ENFSI (2017) Evaluative Reporting & Reciprocal Invariant"}
               </h3>
 
               <div className="p-3.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-xs text-emerald-200 space-y-1">
                 <div className="font-bold flex items-center gap-1.5">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                  Prosecutor&apos;s Fallacy Active Shield:
+                  {isTr ? "Aktif Savcı Yanılgısı Kalkanı:" : "Prosecutor's Fallacy Active Shield:"}
                 </div>
                 <p>
-                  LR(Hp / Hd) × LR(Hd / Hp) = 1.00000000 ± 10⁻⁶. Evaluative weight is formulated
-                  strictly as conditional probability of evidence given hypotheses, eliminating prior odds bias.
+                  {isTr
+                    ? "LR(Hp / Hd) × LR(Hd / Hp) = 1.00000000 ± 10⁻⁶. Değerlendirme ağırlığı, önsel olasılık yanlılığını ortadan kaldıracak şekilde yalnızca hipotezler koşulundaki delil olasılığı olarak formüle edilmiştir."
+                    : "LR(Hp / Hd) × LR(Hd / Hp) = 1.00000000 ± 10⁻⁶. Evaluative weight is formulated strictly as conditional probability of evidence given hypotheses, eliminating prior odds bias."}
                 </p>
               </div>
 
               <div className="space-y-2 text-xs">
                 <div className="flex justify-between p-2.5 rounded-lg bg-slate-800/60 border border-slate-700/50">
-                  <span className="text-slate-400">Verbal Scale (EN):</span>
+                  <span className="text-slate-400">{isTr ? "Sözlü İfade (EN):" : "Verbal Scale (EN):"}</span>
                   <span className="font-bold text-slate-100">Extremely strong support for inclusion (Hp)</span>
                 </div>
                 <div className="flex justify-between p-2.5 rounded-lg bg-slate-800/60 border border-slate-700/50">
-                  <span className="text-slate-400">Sözlü İfade (TR):</span>
+                  <span className="text-slate-400">{isTr ? "Sözlü İfade (TR):" : "Verbal Scale (TR):"}</span>
                   <span className="font-bold text-slate-100">Dahil olma lehine son derece güçlü delil (Hp)</span>
                 </div>
                 <div className="flex justify-between p-2.5 rounded-lg bg-slate-800/60 border border-slate-700/50">
-                  <span className="text-slate-400">Demographic Sensitivity Spread:</span>
+                  <span className="text-slate-400">{isTr ? "Demografik Duyarlılık Farkı:" : "Demographic Sensitivity Spread:"}</span>
                   <span className="font-mono text-emerald-400 font-bold">
                     Δ Log₁₀ LR = {popTelemetry.logSpread.toFixed(2)} (10^{popTelemetry.logSpread.toFixed(2)}×)
                   </span>
@@ -465,7 +477,9 @@ export function PanelNRC() {
           <div className="lg:col-span-6 p-5 rounded-xl bg-slate-900/60 border border-slate-800 flex flex-col justify-between">
             <h3 className="text-sm font-bold text-slate-100 mb-4 flex items-center gap-2">
               <BarChart3 className="w-4 h-4 text-emerald-400" />
-              Composite Log₁₀ LR Across Demographies (θ = {theta.toFixed(3)})
+              {isTr
+                ? `Demografiler Arası Birleşik Log₁₀ LR Dağılımı (θ = ${theta.toFixed(3)})`
+                : `Composite Log₁₀ LR Across Demographies (θ = ${theta.toFixed(3)})`}
             </h3>
 
             <div className="space-y-4 my-auto">
@@ -476,9 +490,9 @@ export function PanelNRC() {
                   <div key={pop.id} className="space-y-1.5">
                     <div className="flex justify-between text-xs font-mono">
                       <span className="text-slate-300">
-                        {pop.flag} {pop.name}
+                        {pop.flag} {isTr ? pop.nameTr : pop.name}
                       </span>
-                      <span className="text-emerald-400 font-bold">+{tel?.log10Lr.toFixed(2)} nats</span>
+                      <span className="text-emerald-400 font-bold">+{tel?.log10Lr.toFixed(2)} log₁₀</span>
                     </div>
                     <div className="w-full bg-slate-800 h-3 rounded-full overflow-hidden p-0.5">
                       <div
@@ -492,7 +506,7 @@ export function PanelNRC() {
             </div>
 
             <div className="mt-4 pt-3 border-t border-slate-800/80 text-[11px] text-slate-400 flex items-center justify-between">
-              <span>Standard: NIST 1036 Stratified Database</span>
+              <span>{isTr ? "Standart: NIST 1036 Katmanlaştırılmış Veritabanı" : "Standard: NIST 1036 Stratified Database"}</span>
               <span className="font-mono">p_min = 0.00241</span>
             </div>
           </div>
@@ -504,11 +518,13 @@ export function PanelNRC() {
         <div className="rounded-xl border border-slate-800 bg-slate-900/60 overflow-hidden">
           <div className="p-4 bg-slate-800/40 border-b border-slate-800 flex justify-between items-center">
             <span className="text-xs font-bold text-slate-200">
-              Locus-by-Locus Balding-Nichols Evaluation ({selectedPopulation}, θ = {theta.toFixed(3)})
+              {isTr
+                ? `Lokus Bazında Balding-Nichols Değerlendirmesi (${selectedPopulation}, θ = ${theta.toFixed(3)})`
+                : `Locus-by-Locus Balding-Nichols Evaluation (${selectedPopulation}, θ = ${theta.toFixed(3)})`}
             </span>
             <div className="flex items-center gap-2">
               <span className="px-2 py-0.5 text-[10px] font-mono rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                Simplex Sum = 1.00000000 ± 1e-6
+                {isTr ? "Simpleks Toplamı = 1.00000000 ± 1e-6" : "Simplex Sum = 1.00000000 ± 1e-6"}
               </span>
             </div>
           </div>
@@ -517,13 +533,13 @@ export function PanelNRC() {
             <table className="w-full text-left text-xs font-mono">
               <thead className="bg-slate-800/80 text-slate-400 border-b border-slate-700/60">
                 <tr>
-                  <th className="py-2.5 px-3">Locus</th>
-                  <th className="py-2.5 px-3">Genotype</th>
-                  <th className="py-2.5 px-3">Type</th>
-                  <th className="py-2.5 px-3">Freq p₁</th>
-                  <th className="py-2.5 px-3">Freq p₂</th>
+                  <th className="py-2.5 px-3">{isTr ? "STR Lokusu" : "Locus"}</th>
+                  <th className="py-2.5 px-3">{isTr ? "Genotip" : "Genotype"}</th>
+                  <th className="py-2.5 px-3">{isTr ? "Tip" : "Type"}</th>
+                  <th className="py-2.5 px-3">{isTr ? "Frekans p₁" : "Freq p₁"}</th>
+                  <th className="py-2.5 px-3">{isTr ? "Frekans p₂" : "Freq p₂"}</th>
                   <th className="py-2.5 px-3">P(E|S, θ)</th>
-                  <th className="py-2.5 px-3 text-right">Locus LR</th>
+                  <th className="py-2.5 px-3 text-right">{isTr ? "Lokus LR" : "Locus LR"}</th>
                   <th className="py-2.5 px-3 text-right">Log₁₀ LR</th>
                 </tr>
               </thead>
@@ -535,7 +551,7 @@ export function PanelNRC() {
                       {row.a1}, {row.a2}
                     </td>
                     <td className="py-2 px-3 text-[11px] text-slate-400">
-                      {row.isHomo ? "Homozygote" : "Heterozygote"}
+                      {row.isHomo ? (isTr ? "Homozigot" : "Homozygote") : (isTr ? "Heterozigot" : "Heterozygote")}
                     </td>
                     <td className="py-2 px-3">{row.p1.toFixed(4)}</td>
                     <td className="py-2 px-3">{row.isHomo ? "—" : row.p2.toFixed(4)}</td>
@@ -560,11 +576,14 @@ export function PanelNRC() {
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-sm font-bold text-slate-100">
-                Weir &amp; Cockerham (1984) Unbiased ANOVA F_st / θ̂ Estimator
+                {isTr
+                  ? "Weir & Cockerham (1984) Sapmasız ANOVA F_st / θ̂ Tahmincisi"
+                  : "Weir & Cockerham (1984) Unbiased ANOVA F_st / θ̂ Estimator"}
               </h3>
               <p className="text-xs text-slate-400">
-                Decomposes total allelic variance into Mean Square Between Populations (MSP) and Mean Square Within
-                Populations (MSG).
+                {isTr
+                  ? "Toplam alelik varyansı Popülasyonlar Arası Ortalama Kare (MSP) ve Popülasyonlar İçi Ortalama Kare (MSG) bileşenlerine ayırır."
+                  : "Decomposes total allelic variance into Mean Square Between Populations (MSP) and Mean Square Within Populations (MSG)."}
               </p>
             </div>
             <span className="px-2.5 py-1 text-xs font-mono rounded-lg bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-bold">
@@ -574,15 +593,15 @@ export function PanelNRC() {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
             <div className="p-4 rounded-lg bg-slate-800/60 border border-slate-700/50">
-              <span className="text-xs text-slate-400">MSP (Between Variance):</span>
+              <span className="text-xs text-slate-400">{isTr ? "MSP (Gruplar Arası Varyans):" : "MSP (Between Variance):"}</span>
               <div className="text-lg font-bold font-mono text-indigo-400 mt-1">0.0418</div>
             </div>
             <div className="p-4 rounded-lg bg-slate-800/60 border border-slate-700/50">
-              <span className="text-xs text-slate-400">MSG (Within Variance):</span>
+              <span className="text-xs text-slate-400">{isTr ? "MSG (Grup İçi Varyans):" : "MSG (Within Variance):"}</span>
               <div className="text-lg font-bold font-mono text-indigo-400 mt-1">0.0124</div>
             </div>
             <div className="p-4 rounded-lg bg-slate-800/60 border border-slate-700/50">
-              <span className="text-xs text-slate-400">Effective Sample Size (n_c):</span>
+              <span className="text-xs text-slate-400">{isTr ? "Etkin Örneklem Büyüklüğü (n_c):" : "Effective Sample Size (n_c):"}</span>
               <div className="text-lg font-bold font-mono text-emerald-400 mt-1">518.0</div>
             </div>
           </div>

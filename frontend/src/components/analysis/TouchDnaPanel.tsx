@@ -24,6 +24,7 @@ import {
   Copy,
   Check,
 } from "lucide-react";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 // ===========================================================================
 // 1. Exact Biocomputational Research Constants (Pillar 1 §4 & Artifact D)
@@ -47,38 +48,50 @@ const SUBSTRATES = [
   {
     id: "SMOOTH_NON_POROUS",
     name: "Smooth Non-Porous",
+    nameTr: "Düz Gözeneksiz",
     examples: "Glass, Polished Metal, Phone Screen",
+    examplesTr: "Cam, Parlatılmış Metal, Telefon Ekranı",
     efficiency: 0.60,
     badgeColor: "text-cyan-400 bg-cyan-500/10 border-cyan-500/30",
     porosity: "NON_POROUS",
     desc: "Optimal recovery substrate; minimal cellular entrapment.",
+    descTr: "Optimal geri kazanım yüzeyi; minimum hücresel hapsolma.",
   },
   {
     id: "TEXTURED_NON_POROUS",
     name: "Textured Non-Porous",
+    nameTr: "Dokulu Gözeneksiz",
     examples: "Firearm Grip, Steering Wheel, Tool Handle",
+    examplesTr: "Silah Kabzası, Direksiyon Simidi, Alet Sapı",
     efficiency: 0.40,
     badgeColor: "text-amber-400 bg-amber-500/10 border-amber-500/30",
     porosity: "TEXTURED",
     desc: "Standard forensic touch evidence; moderate cellular shearing.",
+    descTr: "Standart adli temas delili; orta düzeyde hücresel sürtünme.",
   },
   {
     id: "POROUS_FABRIC",
     name: "Porous Fabric",
+    nameTr: "Gözenekli Kumaş",
     examples: "Cotton T-Shirt, Denim Collar, Mask",
+    examplesTr: "Pamuklu Tişört, Kot Yaka, Maske",
     efficiency: 0.20,
     badgeColor: "text-rose-400 bg-rose-500/10 border-rose-500/30",
     porosity: "POROUS",
     desc: "Severe entrapment; deep fiber absorption reduces recovery.",
+    descTr: "Şiddetli hapsolma; derin lif emilimi geri kazanımı düşürür.",
   },
   {
     id: "ROUGH_WOOD",
     name: "Rough Wood / Brick",
+    nameTr: "Pürüzlü Ahşap / Tuğla",
     examples: "Unfinished Timber, Concrete, Brick",
+    examplesTr: "İşlenmemiş Kereste, Beton, Tuğla",
     efficiency: 0.15,
     badgeColor: "text-purple-400 bg-purple-500/10 border-purple-500/30",
     porosity: "HIGHLY_POROUS",
     desc: "Extreme cellular fragmentation and porous matrix trapping.",
+    descTr: "Aşırı hücresel parçalanma ve gözenekli matris hapsolması.",
   },
 ];
 
@@ -362,6 +375,9 @@ const GOLDEN_PRESETS: Record<PresetKey, GoldenPreset> = {
 // ===========================================================================
 
 export default function TouchDnaPanel() {
+  const { lang } = useSaasLanguage();
+  const isTr = lang === "tr";
+
   // State
   const [activeTab, setActiveTab] = useState<"SUBSTRATE" | "CURVES" | "DROPIN" | "HETEROZYGOTE" | "PROFILE">("SUBSTRATE");
   const [selectedPreset, setSelectedPreset] = useState<PresetKey>("VECTOR_03");
@@ -433,22 +449,22 @@ export default function TouchDnaPanel() {
 
     // Verbal predicate (ENFSI 2017)
     let verbalEn = "Extremely Strong Support for Prosecution Proposition (Hp)";
-    let verbalTr = "Kovuşturma Propozisyonu İçin Son Derece Güçlü Destek";
+    let verbalTr = "İddia Makamı Hipotezi (Hp) Lehine Son Derece Güçlü Destek";
     if (totalLog10 < 0) {
       verbalEn = "Exclusion / Support for Defense Proposition (Hd)";
-      verbalTr = "Dışlama / Savunma Propozisyonu İçin Destek";
+      verbalTr = "Dışlama / Savunma Hipotezi (Hd) Lehine Destek";
     } else if (totalLog10 === 0) {
       verbalEn = "Inconclusive / Neutral Evidence";
       verbalTr = "Sonuçsuz / Nötr Delil";
     } else if (totalLog10 < 2) {
       verbalEn = "Weak / Limited Support for Prosecution Proposition";
-      verbalTr = "Kovuşturma İçin Zayıf / Sınırlı Destek";
+      verbalTr = "İddia Makamı Lehine Zayıf / Sınırlı Destek";
     } else if (totalLog10 < 4) {
       verbalEn = "Moderate Support for Prosecution Proposition";
-      verbalTr = "Kovuşturma İçin Orta Düzeyde Destek";
+      verbalTr = "İddia Makamı Lehine Orta Düzeyde Destek";
     } else if (totalLog10 < 6) {
       verbalEn = "Strong Support for Prosecution Proposition";
-      verbalTr = "Kovuşturma İçin Güçlü Destek";
+      verbalTr = "İddia Makamı Lehine Güçlü Destek";
     }
 
     return {
@@ -473,11 +489,11 @@ FORENZA FORENSIC EVIDENCE OS — TOUCH DNA & LTDNA REPORT
 ============================================================
 Case Protocol: Module 1.4 Low-Template Stochastic Modeling
 Reference Preset: ${GOLDEN_PRESETS[selectedPreset].name}
-Substrate: ${activeSubstrate.name} (Efficiency η = ${activeSubstrate.efficiency * 100}%)
+Substrate: ${isTr ? activeSubstrate.nameTr : activeSubstrate.name} (Efficiency η = ${activeSubstrate.efficiency * 100}%)
 Initial Deposition Mass: ${initialMassPg.toFixed(1)} pg
 Recovered DNA Mass: ${recoveredMassPg.toFixed(1)} pg (~${cellCountEquivalent} diploid cells)
 Stochastic Allele Dropout Risk P(D): ${(pDropoutTemplate * 100).toFixed(2)}%
-Operational Zone: ${isLtdnaRegime ? "LOW-TEMPLATE DNA (LTDNA) STOCHASTIC REGIME" : "STANDARD CASEREGIME"}
+Operational Zone: ${isLtdnaRegime ? (isTr ? "DÜŞÜK ŞABLON DNA (LTDNA) STOKASTİK REJİMİ" : "LOW-TEMPLATE DNA (LTDNA) STOCHASTIC REGIME") : (isTr ? "STANDART VAKA REJİMİ" : "STANDARD CASE REGIME")}
 
 MULTI-LOCUS STOCHASTIC LIKELIHOOD RATIO:
 ------------------------------------------------------------
@@ -487,10 +503,10 @@ Total Combined log10(LR): ${multiLocusAnalysis.totalLog10 >= 0 ? "+" : ""}${mult
 Total Likelihood Ratio: ${multiLocusAnalysis.totalLr.toExponential(4)}
 
 ENFSI 2017 VERBAL STATEMENT:
-"${multiLocusAnalysis.verbalEn}"
+"${isTr ? multiLocusAnalysis.verbalTr : multiLocusAnalysis.verbalEn}"
 
 PROSECUTOR'S FALLACY SHIELD:
-The Likelihood Ratio measures the probability of the low-template DNA profile under competing propositions (Hp vs Hd). It is NOT the posterior probability that the suspect committed the crime or deposited the touch trace.
+${isTr ? "Olabilirlik Oranı (LR), yarışan hipotezler (Hp ve Hd) altında düşük şablonlu DNA profilinin gözlenme olasılığını ölçer. Şüphelinin suçu işlediği veya temas izini bıraktığı yönünde doğrudan bir sonsal suçluluk olasılığı değildir." : "The Likelihood Ratio measures the probability of the low-template DNA profile under competing propositions (Hp vs Hd). It is NOT the posterior probability that the suspect committed the crime or deposited the touch trace."}
 ============================================================
 `.trim();
 
@@ -510,14 +526,16 @@ The Likelihood Ratio measures the probability of the low-template DNA profile un
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-base sm:text-lg font-black tracking-widest text-tactical-text uppercase">
-                Touch DNA & Low-Template Stochastic Modeling
+                {isTr ? "Temas DNA & Düşük Şablon Stokastik Modelleme" : "Touch DNA & Low-Template Stochastic Modeling"}
               </h1>
               <span className="text-[10px] font-bold text-orange-400 bg-orange-500/10 border border-orange-500/20 px-2 py-0.5 rounded-full">
                 MOD-04
               </span>
             </div>
             <p className="text-xs text-tactical-text-muted mt-0.5">
-              Pillar 1 §4 • Substrate Recovery (η) • Logistic Dropout P(D) • Poisson Drop-in P(C) • Curran-Gill LTDNA LR
+              {isTr
+                ? "Pillar 1 §4 • Yüzey Geri Kazanımı (η) • Lojistik Alel Kaybı P(D) • Poisson Eklenmesi P(C) • Curran-Gill LTDNA LR"
+                : "Pillar 1 §4 • Substrate Recovery (η) • Logistic Dropout P(D) • Poisson Drop-in P(C) • Curran-Gill LTDNA LR"}
             </p>
           </div>
         </div>
@@ -525,7 +543,7 @@ The Likelihood Ratio measures the probability of the low-template DNA profile un
         {/* Golden Preset Selector */}
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-[11px] text-tactical-text-muted uppercase font-bold mr-1 flex items-center gap-1">
-            <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Presets:
+            <Sparkles className="w-3.5 h-3.5 text-amber-400" /> {isTr ? "Hazır Ayarlar:" : "Presets:"}
           </span>
           {(Object.keys(GOLDEN_PRESETS) as PresetKey[]).map((key) => {
             const p = GOLDEN_PRESETS[key];
@@ -534,7 +552,7 @@ The Likelihood Ratio measures the probability of the low-template DNA profile un
               <button
                 key={key}
                 onClick={() => handleLoadPreset(key)}
-                className={`min-h-[38px] px-3 py-1.5 rounded-xl text-xs font-bold transition-all border ${
+                className={`min-h-[38px] px-3 py-1.5 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
                   isSelected
                     ? "bg-orange-500/20 border-orange-500/60 text-orange-300 shadow-[0_0_12px_rgba(249,115,22,0.25)]"
                     : "bg-tactical-surface/50 border-tactical-border/50 text-tactical-text-muted hover:border-tactical-border"
@@ -550,11 +568,11 @@ The Likelihood Ratio measures the probability of the low-template DNA profile un
       {/* ── Navigation Tabs ─────────────────────────────────────────────────── */}
       <div className="flex flex-wrap gap-2 border-b border-tactical-border/40 pb-3">
         {[
-          { id: "SUBSTRATE", label: "1. Substrate Transfer & Recovery", icon: Layers },
-          { id: "CURVES", label: "2. Logistic Dropout Curves P(D)", icon: TrendingDown },
-          { id: "DROPIN", label: "3. Poisson Drop-in & Height PDF", icon: BarChart3 },
-          { id: "HETEROZYGOTE", label: "4. Heterozygote Balance & LR", icon: Scale },
-          { id: "PROFILE", label: "5. 24-Locus Profile EPG & Report", icon: Dna },
+          { id: "SUBSTRATE", label: isTr ? "1. Yüzey Transferi & Geri Kazanım" : "1. Substrate Transfer & Recovery", icon: Layers },
+          { id: "CURVES", label: isTr ? "2. Lojistik Alel Kaybı Eğrileri P(D)" : "2. Logistic Dropout Curves P(D)", icon: TrendingDown },
+          { id: "DROPIN", label: isTr ? "3. Poisson Eklenmesi & Yükseklik PDF" : "3. Poisson Drop-in & Height PDF", icon: BarChart3 },
+          { id: "HETEROZYGOTE", label: isTr ? "4. Heterozigot Dengesi & LR" : "4. Heterozygote Balance & LR", icon: Scale },
+          { id: "PROFILE", label: isTr ? "5. 24-Lokus Profil EPG & Rapor" : "5. 24-Locus Profile EPG & Report", icon: Dna },
         ].map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -562,7 +580,7 @@ The Likelihood Ratio measures the probability of the low-template DNA profile un
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`min-h-[44px] px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all border ${
+              className={`min-h-[44px] px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all border cursor-pointer ${
                 isActive
                   ? "bg-orange-500/15 border-orange-500/50 text-orange-300 shadow-[0_0_15px_rgba(249,115,22,0.15)]"
                   : "bg-tactical-surface/30 border-tactical-border/40 text-tactical-text-muted hover:border-tactical-border/70 hover:text-tactical-text"
@@ -590,19 +608,27 @@ The Likelihood Ratio measures the probability of the low-template DNA profile un
             {/* Live Telemetry Summary Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-4 space-y-1 shadow-md">
-                <span className="text-[10px] text-tactical-text-muted uppercase font-bold tracking-wider">Initial Touch Mass</span>
+                <span className="text-[10px] text-tactical-text-muted uppercase font-bold tracking-wider">
+                  {isTr ? "Başlangıç Temas Kütlesi" : "Initial Touch Mass"}
+                </span>
                 <p className="text-xl font-bold font-mono text-tactical-text tabular-nums">{initialMassPg.toFixed(1)} pg</p>
-                <span className="text-[10px] text-zinc-500 block">Deposition on substrate</span>
+                <span className="text-[10px] text-zinc-500 block">{isTr ? "Yüzeye temas birikimi" : "Deposition on substrate"}</span>
               </div>
 
               <div className="rounded-2xl border border-orange-500/30 bg-orange-500/5 p-4 space-y-1 shadow-md">
-                <span className="text-[10px] text-orange-400 uppercase font-bold tracking-wider">Recovered DNA Mass</span>
+                <span className="text-[10px] text-orange-400 uppercase font-bold tracking-wider">
+                  {isTr ? "Geri Kazanılan DNA Kütlesi" : "Recovered DNA Mass"}
+                </span>
                 <p className="text-xl font-bold font-mono text-orange-300 tabular-nums">{recoveredMassPg.toFixed(1)} pg</p>
-                <span className="text-[10px] text-orange-400/80 block">~{cellCountEquivalent} diploid cell equivalents</span>
+                <span className="text-[10px] text-orange-400/80 block">
+                  ~{cellCountEquivalent} {isTr ? "diploit hücre eşdeğeri" : "diploid cell equivalents"}
+                </span>
               </div>
 
               <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-4 space-y-1 shadow-md">
-                <span className="text-[10px] text-tactical-text-muted uppercase font-bold tracking-wider">Logistic Dropout Risk P(D)</span>
+                <span className="text-[10px] text-tactical-text-muted uppercase font-bold tracking-wider">
+                  {isTr ? "Lojistik Alel Kaybı Riski P(D)" : "Logistic Dropout Risk P(D)"}
+                </span>
                 <p className={`text-xl font-bold font-mono tabular-nums ${pDropoutTemplate > 0.5 ? "text-rose-400" : pDropoutTemplate > 0.1 ? "text-amber-400" : "text-emerald-400"}`}>
                   {(pDropoutTemplate * 100).toFixed(2)}%
                 </p>
@@ -610,19 +636,21 @@ The Likelihood Ratio measures the probability of the low-template DNA profile un
               </div>
 
               <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-4 space-y-1 shadow-md">
-                <span className="text-[10px] text-tactical-text-muted uppercase font-bold tracking-wider">Forensic Operational Regime</span>
+                <span className="text-[10px] text-tactical-text-muted uppercase font-bold tracking-wider">
+                  {isTr ? "Adli Operasyonel Rejim" : "Forensic Operational Regime"}
+                </span>
                 <p className="text-sm font-bold font-mono flex items-center gap-1.5 mt-1 text-tactical-text">
                   {isLtdnaRegime ? (
                     <span className="text-rose-400 flex items-center gap-1">
-                      <AlertTriangle className="w-4 h-4 text-rose-400" /> LTDNA (&lt; 100 pg)
+                      <AlertTriangle className="w-4 h-4 text-rose-400" /> {isTr ? "LTDNA (< 100 pg)" : "LTDNA (< 100 pg)"}
                     </span>
                   ) : (
                     <span className="text-emerald-400 flex items-center gap-1">
-                      <ShieldCheck className="w-4 h-4 text-emerald-400" /> Standard Casework
+                      <ShieldCheck className="w-4 h-4 text-emerald-400" /> {isTr ? "Standart Vaka Rejimi" : "Standard Casework"}
                     </span>
                   )}
                 </p>
-                <span className="text-[10px] text-zinc-500 block">SWGDAM Stochastic Threshold</span>
+                <span className="text-[10px] text-zinc-500 block">{isTr ? "SWGDAM Stokastik Eşiği" : "SWGDAM Stochastic Threshold"}</span>
               </div>
             </div>
 
@@ -633,9 +661,11 @@ The Likelihood Ratio measures the probability of the low-template DNA profile un
                 <div className="flex items-center justify-between border-b border-tactical-border/40 pb-3">
                   <span className="text-xs font-bold text-tactical-text uppercase tracking-wider flex items-center gap-2">
                     <Layers className="w-4 h-4 text-orange-400" />
-                    Forensic Substrate Physical Recovery Matrix (4 Materials)
+                    {isTr
+                      ? "Adli Yüzey Fiziksel Geri Kazanım Matrisi (4 Malzeme)"
+                      : "Forensic Substrate Physical Recovery Matrix (4 Materials)"}
                   </span>
-                  <span className="text-[10px] text-tactical-text-muted">Research Standard η</span>
+                  <span className="text-[10px] text-tactical-text-muted">{isTr ? "Araştırma Standardı η" : "Research Standard η"}</span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
@@ -654,14 +684,16 @@ The Likelihood Ratio measures the probability of the low-template DNA profile un
                         }`}
                       >
                         <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold text-tactical-text">{sub.name}</span>
+                          <span className="text-xs font-bold text-tactical-text">{isTr ? sub.nameTr : sub.name}</span>
                           <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${sub.badgeColor}`}>
                             η = {(sub.efficiency * 100).toFixed(0)}%
                           </span>
                         </div>
-                        <p className="text-[10px] text-zinc-400 line-clamp-1">{sub.examples}</p>
+                        <p className="text-[10px] text-zinc-400 line-clamp-1">{isTr ? sub.examplesTr : sub.examples}</p>
                         <div className="pt-1.5 border-t border-tactical-border/30 flex items-center justify-between text-[11px] font-mono">
-                          <span className="text-zinc-500">Yield: <strong className="text-tactical-text">{rec.toFixed(1)} pg</strong></span>
+                          <span className="text-zinc-500">
+                            {isTr ? "Verim:" : "Yield:"} <strong className="text-tactical-text">{rec.toFixed(1)} pg</strong>
+                          </span>
                           <span className={pd > 0.5 ? "text-rose-400" : pd > 0.2 ? "text-amber-400" : "text-emerald-400"}>
                             P(D) = {(pd * 100).toFixed(1)}%
                           </span>
@@ -676,7 +708,7 @@ The Likelihood Ratio measures the probability of the low-template DNA profile un
                   <div className="flex items-center justify-between text-xs">
                     <span className="font-bold text-tactical-text flex items-center gap-1.5">
                       <Sliders className="w-3.5 h-3.5 text-orange-400" />
-                      Adjust Initial Touch Deposition Mass (pg):
+                      {isTr ? "Başlangıç Temas Kütlesini Ayarlayın (pg):" : "Adjust Initial Touch Deposition Mass (pg):"}
                     </span>
                     <span className="font-mono font-bold text-orange-400 tabular-nums text-sm">
                       {initialMassPg.toFixed(1)} pg
@@ -692,10 +724,10 @@ The Likelihood Ratio measures the probability of the low-template DNA profile un
                     className="w-full accent-orange-500 bg-black/40 h-2 rounded-lg cursor-pointer"
                   />
                   <div className="flex justify-between text-[10px] text-zinc-500 font-mono">
-                    <span>5 pg (Single-Cell)</span>
-                    <span>100 pg (SWGDAM Threshold)</span>
-                    <span>500 pg (Casework)</span>
-                    <span>1000 pg (1.0 ng Standard)</span>
+                    <span>5 pg ({isTr ? "Tek Hücre" : "Single-Cell"})</span>
+                    <span>100 pg ({isTr ? "SWGDAM Eşiği" : "SWGDAM Threshold"})</span>
+                    <span>500 pg ({isTr ? "Vaka Düzeyi" : "Casework"})</span>
+                    <span>1000 pg (1.0 ng {isTr ? "Standart" : "Standard"})</span>
                   </div>
                 </div>
               </div>
@@ -704,28 +736,32 @@ The Likelihood Ratio measures the probability of the low-template DNA profile un
               <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 space-y-4 shadow-lg flex flex-col justify-between">
                 <div className="space-y-4">
                   <span className="text-xs font-bold text-tactical-text uppercase tracking-wider block border-b border-tactical-border/40 pb-2">
-                    Transfer Physics & Swabbing Protocol
+                    {isTr ? "Transfer Fiziği & Sürüntü Protokolü" : "Transfer Physics & Swabbing Protocol"}
                   </span>
 
                   <div className="p-3.5 rounded-xl bg-black/20 border border-tactical-border/40 space-y-1.5 text-xs">
-                    <span className="text-zinc-500 block text-[10px] uppercase font-bold">Active Substrate</span>
-                    <p className="font-bold text-orange-300">{activeSubstrate.name}</p>
-                    <p className="text-[11px] text-zinc-400 leading-relaxed">{activeSubstrate.desc}</p>
+                    <span className="text-zinc-500 block text-[10px] uppercase font-bold">
+                      {isTr ? "Aktif Yüzey" : "Active Substrate"}
+                    </span>
+                    <p className="font-bold text-orange-300">{isTr ? activeSubstrate.nameTr : activeSubstrate.name}</p>
+                    <p className="text-[11px] text-zinc-400 leading-relaxed">{isTr ? activeSubstrate.descTr : activeSubstrate.desc}</p>
                   </div>
 
                   <div className="p-3.5 rounded-xl bg-black/20 border border-tactical-border/40 space-y-2 text-xs">
-                    <span className="text-zinc-500 block text-[10px] uppercase font-bold">Mathematical Recovery Calculation</span>
+                    <span className="text-zinc-500 block text-[10px] uppercase font-bold">
+                      {isTr ? "Matematiksel Geri Kazanım Hesabı" : "Mathematical Recovery Calculation"}
+                    </span>
                     <div className="space-y-1 text-[11px] font-mono">
                       <div className="flex justify-between">
-                        <span className="text-zinc-400">Initial Deposition (m_in):</span>
+                        <span className="text-zinc-400">{isTr ? "Başlangıç Kütlesi (m_in):" : "Initial Deposition (m_in):"}</span>
                         <span className="text-tactical-text font-bold">{initialMassPg.toFixed(1)} pg</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-zinc-400">Recovery Coefficient (η):</span>
+                        <span className="text-zinc-400">{isTr ? "Geri Kazanım Katsayısı (η):" : "Recovery Coefficient (η):"}</span>
                         <span className="text-orange-400 font-bold">{(activeSubstrate.efficiency * 100).toFixed(0)}%</span>
                       </div>
                       <div className="flex justify-between pt-1 border-t border-tactical-border/30">
-                        <span className="text-zinc-300 font-bold">Recovered Template (m_rec):</span>
+                        <span className="text-zinc-300 font-bold">{isTr ? "Geri Kazanılan Kalıp (m_rec):" : "Recovered Template (m_rec):"}</span>
                         <span className="text-orange-300 font-bold">{recoveredMassPg.toFixed(1)} pg</span>
                       </div>
                     </div>
@@ -734,12 +770,16 @@ The Likelihood Ratio measures the probability of the low-template DNA profile un
 
                 <div className={`p-3.5 rounded-xl border space-y-1 text-xs ${isLtdnaRegime ? "bg-rose-500/10 border-rose-500/30 text-rose-300" : "bg-emerald-500/10 border-emerald-500/30 text-emerald-300"}`}>
                   <span className="text-[10px] uppercase font-bold block">
-                    {isLtdnaRegime ? "⚠️ Severe Stochastic Warning" : "✅ Standard Quality Profile"}
+                    {isLtdnaRegime ? (isTr ? "⚠️ Şiddetli Stokastik Uyarı" : "⚠️ Severe Stochastic Warning") : (isTr ? "✅ Standart Kalitede Profil" : "✅ Standard Quality Profile")}
                   </span>
                   <p className="text-[11px] leading-relaxed">
                     {isLtdnaRegime
-                      ? "Recovered template is under 100 pg. Allele dropout P(D) and false homozygosity risk require continuous MCMC probabilistic interpretation."
-                      : "Recovered mass is sufficient for standard STR binning with zero locus dropouts expected."}
+                      ? (isTr
+                          ? "Geri kazanılan DNA kalıbı 100 pg altındadır. Alel kaybı P(D) ve yalancı homozigotluk riski sürekli MCMC olasılıksal yorumlama gerektirir."
+                          : "Recovered template is under 100 pg. Allele dropout P(D) and false homozygosity risk require continuous MCMC probabilistic interpretation.")
+                      : (isTr
+                          ? "Geri kazanılan kütle, lokus kaybı beklenmeksizin standart STR sınıflandırması için yeterlidir."
+                          : "Recovered mass is sufficient for standard STR binning with zero locus dropouts expected.")}
                   </p>
                 </div>
               </div>
@@ -762,19 +802,21 @@ The Likelihood Ratio measures the probability of the low-template DNA profile un
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-tactical-border/40 pb-3">
                 <span className="text-xs font-bold text-tactical-text uppercase tracking-wider flex items-center gap-2">
                   <TrendingDown className="w-4 h-4 text-orange-400" />
-                  Calibrated Sigmoid Allele Dropout Function P(D | x)
+                  {isTr
+                    ? "Kalibre Edilmiş Sigmoid Alel Kaybı Fonksiyonu P(D | x)"
+                    : "Calibrated Sigmoid Allele Dropout Function P(D | x)"}
                 </span>
 
                 <div className="flex items-center gap-2">
                   {[
-                    { id: "MASS", label: "Template Mass (pg)" },
-                    { id: "RFU", label: "Peak Height (RFU)" },
-                    { id: "FRAGMENT", label: "Amplicon Decay (bp)" },
+                    { id: "MASS", label: isTr ? "Kalıp Kütlesi (pg)" : "Template Mass (pg)" },
+                    { id: "RFU", label: isTr ? "Pik Yüksekliği (RFU)" : "Peak Height (RFU)" },
+                    { id: "FRAGMENT", label: isTr ? "Amplikon Bozunması (bp)" : "Amplicon Decay (bp)" },
                   ].map((m) => (
                     <button
                       key={m.id}
                       onClick={() => setCurveMode(m.id as any)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border cursor-pointer ${
                         curveMode === m.id
                           ? "bg-orange-500/20 border-orange-500/50 text-orange-300 shadow-[0_0_10px_rgba(249,115,22,0.2)]"
                           : "bg-black/20 border-tactical-border/40 text-tactical-text-muted hover:border-tactical-border"
@@ -836,12 +878,12 @@ The Likelihood Ratio measures the probability of the low-template DNA profile un
                 </svg>
 
                 {/* SVG Labels */}
-                <div className="absolute top-3 left-4 text-[10px] font-mono text-zinc-400 flex items-center gap-4">
-                  <span className="text-orange-400 font-bold">● P(D | x) Logistic Sigmoid</span>
-                  <span className="text-amber-400">┆ Stochastic Threshold ({curveMode === "MASS" ? "100 pg" : "150 RFU"})</span>
+                <div className="absolute top-3 left-4 text-[10px] font-mono text-zinc-400 flex items-center gap-4 flex-wrap">
+                  <span className="text-orange-400 font-bold">● P(D | x) {isTr ? "Lojistik Sigmoid" : "Logistic Sigmoid"}</span>
+                  <span className="text-amber-400">┆ {isTr ? "Stokastik Eşik" : "Stochastic Threshold"} ({curveMode === "MASS" ? "100 pg" : "150 RFU"})</span>
                   {curveMode === "MASS" && (
                     <span className="text-rose-400 font-bold">
-                      ◆ Current Point: {recoveredMassPg.toFixed(1)} pg → P(D) = {(pDropoutTemplate * 100).toFixed(1)}%
+                      ◆ {isTr ? "Mevcut Nokta:" : "Current Point:"} {recoveredMassPg.toFixed(1)} pg → P(D) = {(pDropoutTemplate * 100).toFixed(1)}%
                     </span>
                   )}
                 </div>
@@ -856,21 +898,21 @@ The Likelihood Ratio measures the probability of the low-template DNA profile un
               {/* Research Formulas & Acceptance Boundaries */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-mono">
                 <div className="p-3.5 rounded-xl bg-black/20 border border-tactical-border/40 space-y-1">
-                  <span className="text-zinc-500 text-[10px] block font-bold">RFU Model Equation</span>
+                  <span className="text-zinc-500 text-[10px] block font-bold">{isTr ? "RFU Model Denklemi" : "RFU Model Equation"}</span>
                   <p className="text-orange-300 font-bold">P(D | RFU) = 1 / (1 + e^(-(2.50 - 0.025·RFU)))</p>
-                  <span className="text-[10px] text-zinc-500 block">Critical 1% Threshold = 283.81 RFU</span>
+                  <span className="text-[10px] text-zinc-500 block">{isTr ? "Kritik %1 Eşiği = 283.81 RFU" : "Critical 1% Threshold = 283.81 RFU"}</span>
                 </div>
 
                 <div className="p-3.5 rounded-xl bg-black/20 border border-tactical-border/40 space-y-1">
-                  <span className="text-zinc-500 text-[10px] block font-bold">Mass Model Equation</span>
+                  <span className="text-zinc-500 text-[10px] block font-bold">{isTr ? "Kütle Model Denklemi" : "Mass Model Equation"}</span>
                   <p className="text-orange-300 font-bold">P(D | pg) = 1 / (1 + e^(-(3.20 - 0.080·pg)))</p>
-                  <span className="text-[10px] text-zinc-500 block">Critical 1% Threshold = 97.44 pg</span>
+                  <span className="text-[10px] text-zinc-500 block">{isTr ? "Kritik %1 Eşiği = 97.44 pg" : "Critical 1% Threshold = 97.44 pg"}</span>
                 </div>
 
                 <div className="p-3.5 rounded-xl bg-black/20 border border-tactical-border/40 space-y-1">
-                  <span className="text-zinc-500 text-[10px] block font-bold">Amplicon Decay Penalty</span>
+                  <span className="text-zinc-500 text-[10px] block font-bold">{isTr ? "Amplikon Bozunma Cezası" : "Amplicon Decay Penalty"}</span>
                   <p className="text-orange-300 font-bold">+0.008·(bp - 100) on Logit Scale</p>
-                  <span className="text-[10px] text-zinc-500 block">Degraded touch DNA size hierarchy</span>
+                  <span className="text-[10px] text-zinc-500 block">{isTr ? "Bozunmuş temas DNA boyut hiyerarşisi" : "Degraded touch DNA size hierarchy"}</span>
                 </div>
               </div>
             </div>
@@ -891,7 +933,9 @@ The Likelihood Ratio measures the probability of the low-template DNA profile un
               {/* Left Col: Discrete Poisson PMF */}
               <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 space-y-4 shadow-lg">
                 <span className="text-xs font-bold text-tactical-text uppercase tracking-wider block border-b border-tactical-border/40 pb-2">
-                  Poisson Allele Drop-in Probability P(C = k) (λ_C = 0.020)
+                  {isTr
+                    ? "Poisson Alel Eklenme Olasılığı P(C = k) (λ_C = 0.020)"
+                    : "Poisson Allele Drop-in Probability P(C = k) (λ_C = 0.020)"}
                 </span>
 
                 <div className="space-y-3">
@@ -902,7 +946,7 @@ The Likelihood Ratio measures the probability of the low-template DNA profile un
                       <div key={k} className="p-3 rounded-xl bg-black/20 border border-tactical-border/40 space-y-1 text-xs">
                         <div className="flex justify-between items-center">
                           <span className="font-bold text-tactical-text">
-                            k = {k} Drop-in Allele{k === 1 ? "" : "s"}
+                            k = {k} {isTr ? "Eklenen Alel" : `Drop-in Allele${k === 1 ? "" : "s"}`}
                           </span>
                           <span className="font-mono font-bold text-orange-400">{pct}%</span>
                         </div>
@@ -915,9 +959,15 @@ The Likelihood Ratio measures the probability of the low-template DNA profile un
                 </div>
 
                 <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs space-y-1 font-mono">
-                  <span className="text-[10px] uppercase font-bold block">24-Locus Clean Profile Composite Invariant</span>
+                  <span className="text-[10px] uppercase font-bold block">
+                    {isTr ? "24-Lokus Temiz Profil Birleşik İnvaryantı" : "24-Locus Clean Profile Composite Invariant"}
+                  </span>
                   <p className="text-sm font-bold">P(C_total = 0) = e^(-24 · 0.020) = 61.88%</p>
-                  <p className="text-[10px] text-emerald-400/80">38.12% probability of observing ≥ 1 sporadic drop-in peak across 24 loci.</p>
+                  <p className="text-[10px] text-emerald-400/80">
+                    {isTr
+                      ? "24 lokus genelinde en az 1 rastlantısal eklenme piki gözlenme olasılığı: %38.12."
+                      : "38.12% probability of observing ≥ 1 sporadic drop-in peak across 24 loci."}
+                  </p>
                 </div>
               </div>
 
@@ -925,16 +975,20 @@ The Likelihood Ratio measures the probability of the low-template DNA profile un
               <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 space-y-4 shadow-lg flex flex-col justify-between">
                 <div className="space-y-4">
                   <span className="text-xs font-bold text-tactical-text uppercase tracking-wider block border-b border-tactical-border/40 pb-2">
-                    Truncated Exponential Height Density f(h_C)
+                    {isTr ? "Kesilmiş Üstel Pik Yüksekliği Yoğunluğu f(h_C)" : "Truncated Exponential Height Density f(h_C)"}
                   </span>
 
                   <div className="space-y-2 text-xs font-mono">
                     <p className="text-zinc-400 text-[11px] leading-relaxed">
-                      Drop-in fluorescence signals are constrained to the low-RFU region above Analytical Threshold (AT = 50.0 RFU):
+                      {isTr
+                        ? "Eklenme floresan sinyalleri, Analitik Eşik (AT = 50.0 RFU) üzerindeki düşük RFU bölgesiyle sınırlıdır:"
+                        : "Drop-in fluorescence signals are constrained to the low-RFU region above Analytical Threshold (AT = 50.0 RFU):"}
                     </p>
                     <div className="p-3 rounded-xl bg-black/30 border border-tactical-border/40 space-y-1.5">
                       <span className="text-orange-300 font-bold block">f(h_C) = λ_h · exp(-λ_h · (h_C - AT))   for h_C ≥ 50 RFU</span>
-                      <span className="text-zinc-500 text-[10px] block">λ_h = 0.015 RFU⁻¹ • Theoretical Mean E[h_C] = 116.67 RFU</span>
+                      <span className="text-zinc-500 text-[10px] block">
+                        λ_h = 0.015 RFU⁻¹ • {isTr ? "Teorik Ortalama E[h_C] = 116.67 RFU" : "Theoretical Mean E[h_C] = 116.67 RFU"}
+                      </span>
                     </div>
                   </div>
 
@@ -952,9 +1006,13 @@ The Likelihood Ratio measures the probability of the low-template DNA profile un
                 </div>
 
                 <div className="p-3.5 rounded-xl bg-black/20 border border-tactical-border/40 space-y-1 text-xs">
-                  <span className="text-zinc-500 block text-[10px] uppercase font-bold">Sub-Threshold Culling</span>
+                  <span className="text-zinc-500 block text-[10px] uppercase font-bold">
+                    {isTr ? "Eşik Altı Ayıklama (Culling)" : "Sub-Threshold Culling"}
+                  </span>
                   <p className="text-[11px] text-zinc-400">
-                    Any peak below AT = 50.0 RFU has density <strong className="text-tactical-text font-mono">f(h) = 0.0000</strong> and is culled from likelihood evaluation.
+                    {isTr
+                      ? "AT = 50.0 RFU altındaki herhangi bir pik f(h) = 0.0000 yoğunluğuna sahiptir ve olabilirlik değerlendirmesinden çıkarılır."
+                      : "Any peak below AT = 50.0 RFU has density f(h) = 0.0000 and is culled from likelihood evaluation."}
                   </p>
                 </div>
               </div>
@@ -976,13 +1034,13 @@ The Likelihood Ratio measures the probability of the low-template DNA profile un
               {/* Left Col: Heterozygote Balance Interactive Sliders */}
               <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 space-y-5 shadow-lg">
                 <span className="text-xs font-bold text-tactical-text uppercase tracking-wider block border-b border-tactical-border/40 pb-2">
-                  Heterozygote Peak Balance Ratio H_b = h_min / h_max
+                  {isTr ? "Heterozigot Pik Denge Oranı H_b = h_min / h_max" : "Heterozygote Peak Balance Ratio H_b = h_min / h_max"}
                 </span>
 
                 {/* h1 Slider */}
                 <div className="space-y-2">
                   <div className="flex justify-between text-xs font-mono">
-                    <span className="text-zinc-400 font-bold">Allele 1 Peak Height (h₁):</span>
+                    <span className="text-zinc-400 font-bold">{isTr ? "Alel 1 Pik Yüksekliği (h₁):" : "Allele 1 Peak Height (h₁):"}</span>
                     <span className="text-orange-400 font-bold">{h1Rfu.toFixed(0)} RFU</span>
                   </div>
                   <input
@@ -999,7 +1057,7 @@ The Likelihood Ratio measures the probability of the low-template DNA profile un
                 {/* h2 Slider */}
                 <div className="space-y-2">
                   <div className="flex justify-between text-xs font-mono">
-                    <span className="text-zinc-400 font-bold">Allele 2 Peak Height (h₂):</span>
+                    <span className="text-zinc-400 font-bold">{isTr ? "Alel 2 Pik Yüksekliği (h₂):" : "Allele 2 Peak Height (h₂):"}</span>
                     <span className="text-orange-400 font-bold">{h2Rfu.toFixed(0)} RFU</span>
                   </div>
                   <input
@@ -1016,21 +1074,27 @@ The Likelihood Ratio measures the probability of the low-template DNA profile un
                 {/* Status Badges */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 pt-2 text-xs font-mono">
                   <div className={`p-2.5 rounded-xl border text-center ${hbAnalysis.isImbalanced ? "bg-rose-500/10 border-rose-500/30 text-rose-300" : "bg-emerald-500/10 border-emerald-500/30 text-emerald-300"}`}>
-                    <span className="text-[10px] block text-zinc-500">H_b Ratio</span>
+                    <span className="text-[10px] block text-zinc-500">{isTr ? "H_b Oranı" : "H_b Ratio"}</span>
                     <strong className="text-sm">{hbAnalysis.hb.toFixed(3)}</strong>
-                    <span className="text-[9px] block">{hbAnalysis.isImbalanced ? "< 0.60 (Imbalanced)" : ">= 0.60 (Normal)"}</span>
+                    <span className="text-[9px] block">
+                      {hbAnalysis.isImbalanced ? (isTr ? "< 0.60 (Dengesiz)" : "< 0.60 (Imbalanced)") : (isTr ? ">= 0.60 (Normal)" : ">= 0.60 (Normal)")}
+                    </span>
                   </div>
 
                   <div className={`p-2.5 rounded-xl border text-center ${hbAnalysis.isSubStochastic ? "bg-amber-500/10 border-amber-500/30 text-amber-300" : "bg-emerald-500/10 border-emerald-500/30 text-emerald-300"}`}>
-                    <span className="text-[10px] block text-zinc-500">Stochastic (ST)</span>
+                    <span className="text-[10px] block text-zinc-500">{isTr ? "Stokastik (ST)" : "Stochastic (ST)"}</span>
                     <strong className="text-sm">{hbAnalysis.hMin.toFixed(0)} RFU</strong>
-                    <span className="text-[9px] block">{hbAnalysis.isSubStochastic ? "< 150 RFU (Active)" : ">= 150 RFU (Passed)"}</span>
+                    <span className="text-[9px] block">
+                      {hbAnalysis.isSubStochastic ? (isTr ? "< 150 RFU (Riskli)" : "< 150 RFU (Active)") : (isTr ? ">= 150 RFU (Geçti)" : ">= 150 RFU (Passed)")}
+                    </span>
                   </div>
 
                   <div className={`p-2.5 rounded-xl border text-center ${hbAnalysis.isSubAt ? "bg-rose-500/10 border-rose-500/30 text-rose-300" : "bg-emerald-500/10 border-emerald-500/30 text-emerald-300"}`}>
-                    <span className="text-[10px] block text-zinc-500">Analytical (AT)</span>
+                    <span className="text-[10px] block text-zinc-500">{isTr ? "Analitik (AT)" : "Analytical (AT)"}</span>
                     <strong className="text-sm">50.0 RFU</strong>
-                    <span className="text-[9px] block">{hbAnalysis.isSubAt ? "Sub-AT Culled" : "Above AT"}</span>
+                    <span className="text-[9px] block">
+                      {hbAnalysis.isSubAt ? (isTr ? "Eşik Altı (Yok)" : "Sub-AT Culled") : (isTr ? "Eşik Üstü" : "Above AT")}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -1039,46 +1103,54 @@ The Likelihood Ratio measures the probability of the low-template DNA profile un
               <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 space-y-4 shadow-lg flex flex-col justify-between">
                 <div className="space-y-3">
                   <span className="text-xs font-bold text-tactical-text uppercase tracking-wider block border-b border-tactical-border/40 pb-2">
-                    Curran-Gill 4-State Markov Observation Model
+                    {isTr ? "Curran-Gill 4-Durumlu Markov Gözlem Modeli" : "Curran-Gill 4-State Markov Observation Model"}
                   </span>
 
                   <div className="space-y-2 text-xs font-mono">
                     <div className="p-3 rounded-xl bg-black/20 border border-tactical-border/40 space-y-1">
                       <div className="flex justify-between text-zinc-300">
-                        <span>Scenario A (Both Present):</span>
+                        <span>{isTr ? "Senaryo A (Her İkisi Mevcut):" : "Scenario A (Both Present):"}</span>
                         <strong className="text-emerald-400 font-bold">(1 - P(D))² · (1 - λ_C)</strong>
                       </div>
-                      <span className="text-[10px] text-zinc-500 block">Full profile retention under Hp</span>
+                      <span className="text-[10px] text-zinc-500 block">
+                        {isTr ? "Hp altında tam profil korunumu" : "Full profile retention under Hp"}
+                      </span>
                     </div>
 
                     <div className="p-3 rounded-xl bg-black/20 border border-tactical-border/40 space-y-1">
                       <div className="flex justify-between text-zinc-300">
-                        <span>Scenario B (Single Dropout):</span>
+                        <span>{isTr ? "Senaryo B (Tek Alel Kaybı):" : "Scenario B (Single Dropout):"}</span>
                         <strong className="text-amber-400 font-bold">2·P(D)·(1 - P(D)) · (1 - λ_C)</strong>
                       </div>
-                      <span className="text-[10px] text-zinc-500 block">One sister allele dropped (VECTOR_03)</span>
+                      <span className="text-[10px] text-zinc-500 block">
+                        {isTr ? "Bir kardeş alel kayboldu (VECTOR_03)" : "One sister allele dropped (VECTOR_03)"}
+                      </span>
                     </div>
 
                     <div className="p-3 rounded-xl bg-black/20 border border-tactical-border/40 space-y-1">
                       <div className="flex justify-between text-zinc-300">
-                        <span>Scenario C (Double Dropout):</span>
+                        <span>{isTr ? "Senaryo C (Çift Alel Kaybı):" : "Scenario C (Double Dropout):"}</span>
                         <strong className="text-rose-400 font-bold">P(D)² · (1 - λ_C)</strong>
                       </div>
-                      <span className="text-[10px] text-zinc-500 block">Complete locus dropout under Hp</span>
+                      <span className="text-[10px] text-zinc-500 block">
+                        {isTr ? "Hp altında tam lokus kaybı" : "Complete locus dropout under Hp"}
+                      </span>
                     </div>
 
                     <div className="p-3 rounded-xl bg-black/20 border border-tactical-border/40 space-y-1">
                       <div className="flex justify-between text-zinc-300">
-                        <span>Scenario D (Sporadic Drop-in):</span>
+                        <span>{isTr ? "Senaryo D (Rastlantısal Eklenme):" : "Scenario D (Sporadic Drop-in):"}</span>
                         <strong className="text-purple-400 font-bold">2·P(D)·(1 - P(D)) · λ_C·f(h_C)</strong>
                       </div>
-                      <span className="text-[10px] text-zinc-500 block">Artifact peak penalization</span>
+                      <span className="text-[10px] text-zinc-500 block">
+                        {isTr ? "Yapay pik cezalandırması" : "Artifact peak penalization"}
+                      </span>
                     </div>
                   </div>
                 </div>
 
                 <div className="p-3.5 rounded-xl bg-orange-500/10 border border-orange-500/30 text-orange-300 text-xs font-mono flex items-center justify-between">
-                  <span>VECTOR_03 vWA Single Dropout LR:</span>
+                  <span>{isTr ? "VECTOR_03 vWA Tek Kayıp LR:" : "VECTOR_03 vWA Single Dropout LR:"}</span>
                   <strong className="text-base text-emerald-400 font-bold">log10(LR) = +0.5604</strong>
                 </div>
               </div>
@@ -1102,35 +1174,35 @@ The Likelihood Ratio measures the probability of the low-template DNA profile un
                 <div className="flex items-center gap-2">
                   <Dna className="w-5 h-5 text-orange-400" />
                   <span className="text-xs font-bold text-tactical-text uppercase tracking-wider">
-                    24-Locus Profile Likelihood Ratio (ENFSI 2017 & SWGDAM)
+                    {isTr ? "24-Lokus Profil Olabilirlik Oranı (ENFSI 2017 & SWGDAM)" : "24-Locus Profile Likelihood Ratio (ENFSI 2017 & SWGDAM)"}
                   </span>
                 </div>
                 <button
                   onClick={copyJurorReport}
-                  className="px-3.5 py-1.5 rounded-xl bg-orange-500/20 hover:bg-orange-500/30 border border-orange-500/40 text-orange-300 text-xs font-bold flex items-center gap-1.5 transition-all self-start sm:self-auto"
+                  className="px-3.5 py-1.5 rounded-xl bg-orange-500/20 hover:bg-orange-500/30 border border-orange-500/40 text-orange-300 text-xs font-bold flex items-center gap-1.5 transition-all self-start sm:self-auto cursor-pointer"
                 >
                   {copiedReport ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                  {copiedReport ? "Report Copied!" : "Copy Juror Report"}
+                  {copiedReport ? (isTr ? "Rapor Kopyalandı!" : "Report Copied!") : (isTr ? "Jüri Raporunu Kopyala" : "Copy Juror Report")}
                 </button>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-mono">
                 <div>
-                  <span className="text-[10px] text-zinc-500 uppercase block">Composite log10(LR)</span>
+                  <span className="text-[10px] text-zinc-500 uppercase block">{isTr ? "Birleşik log10(LR)" : "Composite log10(LR)"}</span>
                   <p className="text-2xl font-black text-emerald-400 tabular-nums">
                     {multiLocusAnalysis.totalLog10 >= 0 ? "+" : ""}{multiLocusAnalysis.totalLog10}
                   </p>
                 </div>
                 <div>
-                  <span className="text-[10px] text-zinc-500 uppercase block">Total Point Likelihood Ratio</span>
+                  <span className="text-[10px] text-zinc-500 uppercase block">{isTr ? "Toplam Nokta Olabilirlik Oranı" : "Total Point Likelihood Ratio"}</span>
                   <p className="text-lg font-bold text-tactical-text tabular-nums mt-0.5">
                     {multiLocusAnalysis.totalLr.toExponential(4)}
                   </p>
                 </div>
                 <div>
-                  <span className="text-[10px] text-zinc-500 uppercase block">ENFSI (2017) Verbal Predicate</span>
+                  <span className="text-[10px] text-zinc-500 uppercase block">{isTr ? "ENFSI (2017) Sözlü İfade" : "ENFSI (2017) Verbal Predicate"}</span>
                   <p className="text-xs font-bold text-orange-300 mt-1 leading-snug">
-                    {multiLocusAnalysis.verbalEn}
+                    {isTr ? multiLocusAnalysis.verbalTr : multiLocusAnalysis.verbalEn}
                   </p>
                 </div>
               </div>
@@ -1140,21 +1212,25 @@ The Likelihood Ratio measures the probability of the low-template DNA profile un
             <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 space-y-4 shadow-lg overflow-x-auto">
               <div className="flex items-center justify-between border-b border-tactical-border/40 pb-2">
                 <span className="text-xs font-bold text-tactical-text uppercase tracking-wider">
-                  24-Marker Electropherogram Peak Breakdown & Stochastic States
+                  {isTr
+                    ? "24-Belirteçli Elektroferogram Pik Dağılımı & Stokastik Durumlar"
+                    : "24-Marker Electropherogram Peak Breakdown & Stochastic States"}
                 </span>
                 <span className="text-[10px] text-zinc-500">
-                  Showing {multiLocusAnalysis.locusResults.length} loci ({multiLocusAnalysis.dropoutsCount} dropouts)
+                  {isTr
+                    ? `${multiLocusAnalysis.locusResults.length} lokus gösteriliyor (${multiLocusAnalysis.dropoutsCount} kayıp)`
+                    : `Showing ${multiLocusAnalysis.locusResults.length} loci (${multiLocusAnalysis.dropoutsCount} dropouts)`}
                 </span>
               </div>
 
               <table className="w-full text-left text-xs font-mono border-collapse">
                 <thead>
                   <tr className="border-b border-tactical-border/40 text-[10px] text-zinc-400 uppercase">
-                    <th className="py-2.5 px-3">Locus</th>
-                    <th className="py-2.5 px-3">Size (bp)</th>
-                    <th className="py-2.5 px-3">Suspect</th>
-                    <th className="py-2.5 px-3">Observed EPG Peaks (RFU)</th>
-                    <th className="py-2.5 px-3">State</th>
+                    <th className="py-2.5 px-3">{isTr ? "STR Lokusu" : "Locus"}</th>
+                    <th className="py-2.5 px-3">{isTr ? "Boyut (bp)" : "Size (bp)"}</th>
+                    <th className="py-2.5 px-3">{isTr ? "Şüpheli" : "Suspect"}</th>
+                    <th className="py-2.5 px-3">{isTr ? "Gözlenen EPG Pikleri (RFU)" : "Observed EPG Peaks (RFU)"}</th>
+                    <th className="py-2.5 px-3">{isTr ? "Durum" : "State"}</th>
                     <th className="py-2.5 px-3">P(D)</th>
                     <th className="py-2.5 px-3 text-right">log10(LR_l)</th>
                   </tr>
@@ -1162,6 +1238,11 @@ The Likelihood Ratio measures the probability of the low-template DNA profile un
                 <tbody className="divide-y divide-tactical-border/30 text-[11px]">
                   {multiLocusAnalysis.locusResults.map((row) => {
                     const isDropped = row.state === "SINGLE_DROPOUT" || row.state === "DOUBLE_DROPOUT";
+                    const stateLabelTr =
+                      row.state === "BOTH_PRESENT" ? "HER İKİSİ MEVCUT" :
+                      row.state === "SINGLE_DROPOUT" ? "TEK ALEL KAYBI" :
+                      row.state === "DOUBLE_DROPOUT" ? "ÇİFT ALEL KAYBI" : row.state;
+
                     return (
                       <tr key={row.locus} className="hover:bg-white/5 transition-colors">
                         <td className="py-2.5 px-3 font-bold text-tactical-text">{row.locus}</td>
@@ -1171,7 +1252,9 @@ The Likelihood Ratio measures the probability of the low-template DNA profile un
                         </td>
                         <td className="py-2.5 px-3">
                           {Object.keys(row.observed).length === 0 ? (
-                            <span className="text-rose-400 italic">[0] No Peak (Dropout)</span>
+                            <span className="text-rose-400 italic">
+                              {isTr ? "[0] Pik Yok (Kayıp)" : "[0] No Peak (Dropout)"}
+                            </span>
                           ) : (
                             Object.entries(row.observed).map(([al, h]) => (
                               <span key={al} className="inline-block mr-2 px-2 py-0.5 rounded bg-black/40 border border-tactical-border/40 text-[10px]">
@@ -1190,7 +1273,7 @@ The Likelihood Ratio measures the probability of the low-template DNA profile un
                                 : "bg-rose-500/10 border-rose-500/30 text-rose-400"
                             }`}
                           >
-                            {row.state}
+                            {isTr ? stateLabelTr : row.state}
                           </span>
                         </td>
                         <td className="py-2.5 px-3 text-zinc-400">{(row.locusPd * 100).toFixed(1)}%</td>

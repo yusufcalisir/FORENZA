@@ -349,10 +349,15 @@ export function PanelSTR() {
   );
 }
 
+import PanelHair from "@/components/analysis/PanelHair";
+import PanelFreckling from "@/components/analysis/PanelFreckling";
+
 // ─── Biocomputational Kinship X-STR Engine ────────────────────────────────────
 
 export function PanelKinship() {
   const { activeCase } = useForensicCaseStore();
+  const { lang } = useSaasLanguage();
+  const isTr = lang === "tr";
   const [hypo, setHypo] = useState<"paternity" | "full_sibs" | "half_sibs">("paternity");
 
   const baseKinshipLR = Number(activeCase.profile.kinshipLR) || 4528900.0;
@@ -368,10 +373,10 @@ export function PanelKinship() {
   const mockKinshipData = {
     relationship_type:
       hypo === "paternity"
-        ? "Parent-Child (PO)"
+        ? (isTr ? "Ebeveyn-Çocuk (PO)" : "Parent-Child (PO)")
         : hypo === "full_sibs"
-        ? "Full Sibling (FS)"
-        : "Half Sibling (HS)",
+        ? (isTr ? "Öz Kardeş (FS)" : "Full Sibling (FS)")
+        : (isTr ? "Üvey Kardeş (HS)" : "Half Sibling (HS)"),
     confidence: 0.9999,
     kinship_index_parent_child: lrMap.paternity,
     kinship_index_full_sibling: lrMap.full_sibs,
@@ -389,8 +394,8 @@ export function PanelKinship() {
       ibs1_count: 12,
       ibs2_count: 12,
     },
-    population_used: "Caucasian NIST 2024 / NRC II",
-    reasoning: "Hummel's Predicate: Practical Certainty of Kinship Relation",
+    population_used: isTr ? "Kafkas NIST 2024 / NRC II" : "Caucasian NIST 2024 / NRC II",
+    reasoning: isTr ? "Hummel Yüklemi: Akrabalık İlişkisinde Fiili Kesinlik" : "Hummel's Predicate: Practical Certainty of Kinship Relation",
   };
 
   return (
@@ -398,17 +403,19 @@ export function PanelKinship() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl border border-tactical-border/60 bg-tactical-surface/50">
         <div className="space-y-0.5">
           <span className="text-xs font-bold text-white uppercase tracking-wider">
-            Argus X-12 Kinship Index & Pedigree Engine
+            {isTr ? "Argus X-12 Akrabalık İndeksi & Soy Ağacı Motoru" : "Argus X-12 Kinship Index & Pedigree Engine"}
           </span>
           <p className="text-[10px] text-zinc-400">
-            Computes PHS (Pairwise Haplotype Sharing) kinship ratios across clustered linkage groups.
+            {isTr
+              ? "Kümelenmiş bağlantı grupları üzerinden PHS (İkili Haplotipe Dayalı Paylaşım) akrabalık oranlarını hesaplar."
+              : "Computes PHS (Pairwise Haplotype Sharing) kinship ratios across clustered linkage groups."}
           </p>
         </div>
         <div className="flex items-center gap-1.5 bg-black/60 p-1 rounded-xl border border-tactical-border/60 shrink-0">
           {[
-            { id: "paternity", label: "Paternity (PO)" },
-            { id: "full_sibs", label: "Full Siblings (FS)" },
-            { id: "half_sibs", label: "Half Siblings (HS)" },
+            { id: "paternity", label: isTr ? "Babalık / Ebeveyn (PO)" : "Paternity (PO)" },
+            { id: "full_sibs", label: isTr ? "Öz Kardeşler (FS)" : "Full Siblings (FS)" },
+            { id: "half_sibs", label: isTr ? "Üvey Kardeşler (HS)" : "Half Siblings (HS)" },
           ].map((btn) => (
             <button
               key={btn.id}
@@ -427,14 +434,20 @@ export function PanelKinship() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="p-4 rounded-xl border border-emerald-500/30 bg-emerald-950/20 space-y-2">
-          <span className="text-[9px] text-emerald-400 font-bold uppercase">Kinship Likelihood Ratio (CPI)</span>
+          <span className="text-[9px] text-emerald-400 font-bold uppercase">
+            {isTr ? "Akrabalık Olabilirlik Oranı (CPI)" : "Kinship Likelihood Ratio (CPI)"}
+          </span>
           <p className="text-2xl font-mono font-extrabold text-white">{lr.toExponential(4)}</p>
           <p className="text-xs text-emerald-300 font-bold">Log₁₀ CPI: +{log10Lr.toFixed(2)}</p>
         </div>
         <div className="p-4 rounded-xl border border-tactical-border/60 bg-black/40 space-y-2">
-          <span className="text-[9px] text-zinc-400 font-bold uppercase">W-Value (Probability of Relation)</span>
+          <span className="text-[9px] text-zinc-400 font-bold uppercase">
+            {isTr ? "W-Değeri (Akrabalık Olasılığı)" : "W-Value (Probability of Relation)"}
+          </span>
           <p className="text-2xl font-mono font-extrabold text-white">99.9999%</p>
-          <p className="text-[10px] text-zinc-400">Hummel’s Predicate: Practical Certainty of Relation</p>
+          <p className="text-[10px] text-zinc-400">
+            {isTr ? "Hummel Yüklemi: Akrabalık İlişkisinde Fiili Kesinlik" : "Hummel’s Predicate: Practical Certainty of Relation"}
+          </p>
         </div>
       </div>
 
@@ -501,9 +514,9 @@ export function renderPanel(tabId: string) {
     case "suspect":
       return <SuspectVisualizer />;
     case "hair":
-      return <MicroscopyPanel />;
+      return <PanelHair />;
     case "freckling":
-      return <ComprehensiveEpigenomicsPanel />;
+      return <PanelFreckling />;
 
     // Pillar 4: Epigenetics & Aging
     case "age":

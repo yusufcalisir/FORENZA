@@ -4,6 +4,7 @@ import { ReactNode } from "react";
 import { Sparkles, Dna, CheckCircle2, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useIngestStore } from "@/store/ingestStore";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 interface TacticalPageHeaderProps {
   title: string;
@@ -22,6 +23,8 @@ export default function TacticalPageHeader({
   accentColor = "cyan",
   actions
 }: TacticalPageHeaderProps) {
+  const { lang } = useSaasLanguage();
+  const isTr = lang === "tr";
   const { loadSampleCaseEU, loadSampleCaseAA, setInspectorOpen, toastBanner, setToastBanner } = useIngestStore();
 
   const colorMap = {
@@ -56,6 +59,7 @@ export default function TacticalPageHeader({
   };
 
   const style = colorMap[accentColor];
+  const displayBadge = badge === "ACTIVE WORKSPACE" ? (isTr ? "AKTİF ÇALIŞMA ALANI" : "ACTIVE WORKSPACE") : badge;
 
   return (
     <div className="space-y-3 font-mono max-w-full">
@@ -70,9 +74,9 @@ export default function TacticalPageHeader({
               <h1 className="text-sm sm:text-base lg:text-lg font-black tracking-wider uppercase text-white leading-tight break-words">
                 {title}
               </h1>
-              {badge && (
+              {displayBadge && (
                 <span className={`px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-bold ${style.bg} border ${style.border} ${style.badgeText} shrink-0`}>
-                  {badge}
+                  {displayBadge}
                 </span>
               )}
             </div>
@@ -95,7 +99,7 @@ export default function TacticalPageHeader({
                   className="px-2.5 sm:px-3 py-2 rounded-xl font-mono text-[9px] sm:text-xs font-bold bg-cyan-500/15 border border-cyan-500/40 text-cyan-300 hover:bg-cyan-500/25 active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-[0_0_12px_rgba(6,182,212,0.15)]"
                 >
                   <Sparkles className="w-3 h-3 text-cyan-400 shrink-0" />
-                  <span>Sample EU</span>
+                  <span>{isTr ? "Numune EU" : "Sample EU"}</span>
                 </button>
 
                 <button
@@ -103,7 +107,7 @@ export default function TacticalPageHeader({
                   className="px-2.5 sm:px-3 py-2 rounded-xl font-mono text-[9px] sm:text-xs font-bold bg-purple-500/15 border border-purple-500/40 text-purple-300 hover:bg-purple-500/25 active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-[0_0_12px_rgba(168,85,247,0.15)]"
                 >
                   <Sparkles className="w-3 h-3 text-purple-400 shrink-0" />
-                  <span>Sample AA</span>
+                  <span>{isTr ? "Numune AA" : "Sample AA"}</span>
                 </button>
               </div>
 
@@ -113,7 +117,7 @@ export default function TacticalPageHeader({
                 className="w-full sm:w-auto px-3.5 py-2 rounded-xl font-mono text-[9px] sm:text-xs font-bold bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/25 active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-[0_0_12px_rgba(16,185,129,0.15)]"
               >
                 <Dna className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span>DNA &amp; SNP Inspector</span>
+                <span>{isTr ? "DNA & SNP İnceleyici" : "DNA & SNP Inspector"}</span>
               </button>
             </>
           )}
@@ -138,7 +142,7 @@ export default function TacticalPageHeader({
                 onClick={() => setInspectorOpen(true)}
                 className="px-2 py-1 rounded text-[9px] sm:text-[10px] font-bold bg-emerald-400/20 text-emerald-200 border border-emerald-400/40 hover:bg-emerald-400/30 transition-all cursor-pointer font-mono"
               >
-                Inspect Profile
+                {isTr ? "Profili İncele" : "Inspect Profile"}
               </button>
               <button
                 onClick={() => setToastBanner(null)}

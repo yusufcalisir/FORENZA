@@ -42,32 +42,32 @@ export default function CategoryPage({
     <div className="space-y-6 font-mono max-w-full overflow-hidden">
       {/* ── Suite Header & Breadcrumb (NO global map banner) ── */}
       <div className="rounded-2xl border border-tactical-border/80 bg-[#070D18] p-4 sm:p-6 space-y-4 shadow-xl">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-tactical-border/60 pb-4">
-          <div className="flex items-center gap-3 min-w-0">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-tactical-border/60 pb-4 min-w-0">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
             <div className={`p-3 rounded-2xl border ${cc.border} ${cc.bg} shrink-0`}>
               <CatIcon className={`w-6 h-6 ${cc.text}`} />
             </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-2">
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2 flex-wrap min-w-0">
                 <Link
                   href="/analysis"
-                  className="text-[10px] text-zinc-400 hover:text-cyan-300 transition-colors flex items-center gap-1 font-bold uppercase"
+                  className="min-h-[32px] px-2 py-0.5 rounded-lg bg-black/40 border border-tactical-border/60 text-[10px] text-zinc-400 hover:text-cyan-300 transition-colors flex items-center gap-1 font-bold uppercase shrink-0"
                 >
                   <ArrowLeft className="w-3 h-3" /> {isTr ? "İstasyon Merkezi" : "Workstation Hub"}
                 </Link>
                 <span className="text-zinc-600">/</span>
-                <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest">
+                <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest truncate">
                   {isTr ? `Süit ${category.pillarNumber}` : `Pillar ${category.pillarNumber}`}
                 </span>
               </div>
-              <h1 className="text-base sm:text-xl font-extrabold text-white tracking-tight mt-0.5">
+              <h1 className="text-base sm:text-xl font-extrabold text-white tracking-tight mt-1 truncate">
                 {category.label}
               </h1>
             </div>
           </div>
 
           <div className="flex items-center gap-2 flex-wrap shrink-0">
-            <span className="text-[9px] font-bold text-cyan-400 bg-cyan-500/10 border border-cyan-500/30 px-3 py-1.5 rounded-xl uppercase">
+            <span className="text-[9px] font-bold text-cyan-400 bg-cyan-500/10 border border-cyan-500/30 px-3 py-1.5 rounded-xl uppercase whitespace-nowrap">
               {isTr ? "5 Kalibre Modül" : "5 Calibrated Modules"}
             </span>
           </div>
@@ -89,7 +89,7 @@ export default function CategoryPage({
 
       {/* ── Grid of 5 Module Cards (Kart kart görünüm) ── */}
       <div className="space-y-3">
-        <div className="flex items-center justify-between px-1">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 px-1">
           <span className="text-[10px] font-extrabold uppercase tracking-widest text-zinc-400">
             {isTr ? "Bu Süitteki Mevcut Modüller" : "Available Modules in this Suite"}
           </span>
@@ -107,27 +107,27 @@ export default function CategoryPage({
               <motion.div
                 key={tab.id}
                 whileHover={{ y: -2 }}
-                className="rounded-2xl border border-tactical-border/70 bg-[#0A0F1E] p-4 sm:p-5 flex flex-col justify-between space-y-4 hover:border-cyan-500/40 transition-all shadow-md group"
+                className="rounded-2xl border border-tactical-border/70 bg-[#0A0F1E] p-4 sm:p-5 flex flex-col justify-between space-y-4 hover:border-cyan-500/40 transition-all shadow-md group min-w-0"
               >
-                <div className="space-y-3">
+                <div className="space-y-3 min-w-0">
                   {/* Module Header */}
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="flex items-start justify-between gap-2 min-w-0">
+                    <div className="flex items-center gap-2.5 min-w-0 flex-1">
                       <div className="p-2 rounded-xl bg-black/60 border border-tactical-border/60 shrink-0 group-hover:border-cyan-500/40">
                         <TabIcon className="w-4 h-4 text-cyan-400" />
                       </div>
-                      <div className="min-w-0">
+                      <div className="min-w-0 flex-1">
                         <span className="text-[8px] font-bold text-zinc-500 uppercase tracking-widest block">
                           {isTr ? "Modül" : "Module"} {tab.badge}
                         </span>
-                        <h3 className="text-xs font-bold text-white group-hover:text-cyan-300 transition-colors truncate">
+                        <h3 className="text-xs font-bold text-white group-hover:text-cyan-300 transition-colors break-words">
                           {tab.label}
                         </h3>
                       </div>
                     </div>
 
                     <span
-                      className={`text-[7px] font-bold px-1.5 py-0.5 rounded border shrink-0 ${mat.tagBg} ${mat.tagText} ${mat.tagBorder}`}
+                      className={`text-[7px] font-bold px-1.5 py-0.5 rounded border shrink-0 whitespace-nowrap ${mat.tagBg} ${mat.tagText} ${mat.tagBorder}`}
                     >
                       {mat.shortLabel}
                     </span>
@@ -139,7 +139,7 @@ export default function CategoryPage({
                       <span className="text-zinc-500 font-bold uppercase block text-[8px]">
                         {isTr ? "Algoritma / Model:" : "Algorithm / Model:"}
                       </span>
-                      <span className="text-cyan-300 font-semibold">{tab.method}</span>
+                      <span className="text-cyan-300 font-semibold break-words">{tab.method}</span>
                     </div>
                     {tab.standard && (
                       <div className="pt-1 border-t border-tactical-border/30 flex items-center gap-1 text-zinc-400">
@@ -158,7 +158,7 @@ export default function CategoryPage({
                 {/* Launch Button */}
                 <Link
                   href={`/analysis/${category.id}/${tab.id}`}
-                  className="w-full py-2 bg-gradient-to-r from-zinc-800 to-zinc-800/80 hover:from-cyan-500/20 hover:to-teal-500/20 text-zinc-200 hover:text-cyan-300 border border-zinc-700/60 hover:border-cyan-500/40 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+                  className="w-full min-h-[42px] py-2.5 bg-gradient-to-r from-zinc-800 to-zinc-800/80 hover:from-cyan-500/20 hover:to-teal-500/20 text-zinc-200 hover:text-cyan-300 border border-zinc-700/60 hover:border-cyan-500/40 rounded-xl text-[10px] sm:text-[11px] font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm active:scale-95 shrink-0"
                 >
                   <span>{isTr ? "Modül Görünümünü Başlat" : "Launch Module Viewport"}</span>
                   <ArrowRight className="w-3.5 h-3.5" />

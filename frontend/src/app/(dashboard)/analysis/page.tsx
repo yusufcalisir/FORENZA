@@ -58,25 +58,25 @@ export default function AnalysisPage() {
                 key={cat.id}
                 whileHover={{ y: -3 }}
                 transition={{ duration: 0.15 }}
-                className="rounded-2xl border border-tactical-border/70 bg-[#0A0F1E] p-4 sm:p-5 flex flex-col justify-between space-y-4 hover:border-cyan-500/40 transition-all shadow-lg group relative overflow-hidden"
+                className="rounded-2xl border border-tactical-border/70 bg-[#0A0F1E] p-4 sm:p-5 flex flex-col justify-between space-y-4 hover:border-cyan-500/40 transition-all shadow-lg group relative overflow-hidden min-w-0"
               >
-                <div className="space-y-3">
+                <div className="space-y-3 min-w-0">
                   {/* Header */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2.5">
-                      <div className={`p-2.5 rounded-xl border ${cc.border} ${cc.bg}`}>
+                  <div className="flex items-center justify-between gap-2 min-w-0">
+                    <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                      <div className={`p-2.5 rounded-xl border ${cc.border} ${cc.bg} shrink-0`}>
                         <CatIcon className={`w-4 h-4 ${cc.text}`} />
                       </div>
-                      <div>
+                      <div className="min-w-0 flex-1">
                         <span className="text-[8px] font-bold text-zinc-500 uppercase tracking-widest block">
                           {isTr ? `Süit ${cat.pillarNumber}` : `Pillar ${cat.pillarNumber}`}
                         </span>
-                        <h3 className="text-xs font-bold text-white uppercase tracking-wider group-hover:text-cyan-300 transition-colors">
+                        <h3 className="text-xs font-bold text-white uppercase tracking-wider group-hover:text-cyan-300 transition-colors truncate">
                           {cat.label}
                         </h3>
                       </div>
                     </div>
-                    <span className="text-[8px] font-bold px-2 py-0.5 rounded-md bg-black/60 text-zinc-400 border border-tactical-border/60">
+                    <span className="text-[8px] font-bold px-2 py-0.5 rounded-md bg-black/60 text-zinc-400 border border-tactical-border/60 shrink-0 whitespace-nowrap">
                       {isTr ? "5 Modül" : "5 Modules"}
                     </span>
                   </div>
@@ -94,7 +94,7 @@ export default function AnalysisPage() {
                     {cat.tabs.map((tab) => (
                       <span
                         key={tab.id}
-                        className="text-[8px] font-bold px-1.5 py-0.5 rounded bg-black/50 text-zinc-400 border border-tactical-border/40"
+                        className="text-[8px] font-bold px-1.5 py-0.5 rounded bg-black/50 text-zinc-400 border border-tactical-border/40 whitespace-nowrap shrink-0"
                       >
                         {tab.badge}
                       </span>
@@ -103,18 +103,18 @@ export default function AnalysisPage() {
                 </div>
 
                 {/* Action Button */}
-                <div className="pt-3 border-t border-tactical-border/40 flex items-center justify-between">
-                  <span className="text-[8px] text-emerald-400/90 font-mono flex items-center gap-1">
-                    <ShieldCheck className="w-3 h-3 text-emerald-400" />
+                <div className="pt-3 border-t border-tactical-border/40 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                  <span className="text-[8px] text-emerald-400/90 font-mono flex items-center gap-1 shrink-0">
+                    <ShieldCheck className="w-3 h-3 text-emerald-400 shrink-0" />
                     {isTr ? "ISO/IEC 17025 Doğrulandı" : "ISO/IEC 17025 Validated"}
                   </span>
 
                   <Link
                     href={`/analysis/${cat.id}`}
-                    className="px-3 py-1.5 rounded-xl bg-zinc-800/80 hover:bg-cyan-500/20 text-zinc-300 hover:text-cyan-300 border border-zinc-700/60 hover:border-cyan-500/40 text-[9px] font-extrabold uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer"
+                    className="w-full sm:w-auto min-h-[42px] px-3.5 py-2 rounded-xl bg-zinc-800/90 hover:bg-cyan-500/20 text-zinc-200 hover:text-cyan-300 border border-zinc-700/60 hover:border-cyan-500/40 text-[10px] font-extrabold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 shadow-sm shrink-0"
                   >
                     <span>{isTr ? "Süiti İncele" : "Explore Suite"}</span>
-                    <ArrowRight className="w-3 h-3" />
+                    <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
                 </div>
               </motion.div>

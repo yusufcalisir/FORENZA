@@ -514,14 +514,39 @@ export default function ValidationLabPanel() {
         </div>
       </div>
 
-      {/* ── Navigation Tabs ── */}
-      <div className="flex border-b border-tactical-border/60 bg-black/40 rounded-t-xl p-1 gap-1 overflow-x-auto">
+      {/* ── Navigation Tabs (Tactical Cards Grid) ── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2 p-1.5 rounded-2xl bg-black/40 border border-tactical-border/60">
         {[
-          { id: "tippett", label: isTr ? "Tippett Kalibrasyon Eğrileri (ECCDF)" : "Tippett Calibration Curves (ECCDF)", icon: TrendingUp },
-          { id: "roc", label: isTr ? "Ampirik ROC & AUC Analizi" : "Empirical ROC & AUC Analysis", icon: Target },
-          { id: "cllr", label: isTr ? "Cllr Bilgi Maliyeti & PAV" : "Cllr Information Cost & PAV", icon: BarChart },
-          { id: "hpd", label: isTr ? "%95 HPD Alt Sınırı (Mahkeme LR)" : "95% HPD Lower Bound (Court LR)", icon: ShieldCheck },
-          { id: "enfsi", label: isTr ? "ENFSI (2017) Değerlendirici Ölçek" : "ENFSI (2017) Evaluative Scale", icon: FileText },
+          {
+            id: "tippett",
+            label: isTr ? "Tippett Kalibrasyonu" : "Tippett Calibration",
+            sub: isTr ? "ECCDF Aşım Eğrileri" : "ECCDF Exceedance Curves",
+            icon: TrendingUp,
+          },
+          {
+            id: "roc",
+            label: isTr ? "Ampirik ROC & AUC" : "Empirical ROC & AUC",
+            sub: isTr ? "Ayırt Edicilik Gücü" : "Discrimination Power",
+            icon: Target,
+          },
+          {
+            id: "cllr",
+            label: isTr ? "Cllr & PAV Kalibrasyonu" : "Cllr & PAV Calibration",
+            sub: isTr ? "Log-Olabilirlik Maliyeti" : "Log-Likelihood Cost",
+            icon: BarChart,
+          },
+          {
+            id: "hpd",
+            label: isTr ? "%95 HPD Mahkeme LR" : "95% HPD Court LR",
+            sub: isTr ? "Muhafazakar Alt Sınır" : "Conservative Lower Bound",
+            icon: ShieldCheck,
+          },
+          {
+            id: "enfsi",
+            label: isTr ? "ENFSI (2017) Ölçeği" : "ENFSI (2017) Scale",
+            sub: isTr ? "7-Kademeli Sözlü İfade" : "7-Tier Verbal Scale",
+            icon: FileText,
+          },
         ].map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -529,21 +554,26 @@ export default function ValidationLabPanel() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as ActiveTab)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+              className={`p-3 rounded-xl text-left transition-all cursor-pointer border flex items-center gap-3 ${
                 isActive
-                  ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-sm"
-                  : "text-zinc-400 hover:text-zinc-200 hover:bg-white/5"
+                  ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/50 shadow-md shadow-emerald-500/10"
+                  : "bg-slate-900/40 text-zinc-400 border-transparent hover:border-tactical-border/60 hover:text-zinc-200"
               }`}
             >
-              <Icon className="h-4 w-4" />
-              {tab.label}
+              <div className={`p-2 rounded-lg shrink-0 ${isActive ? "bg-emerald-500/30 text-emerald-300" : "bg-black/40 text-zinc-500"}`}>
+                <Icon className="w-4 h-4" />
+              </div>
+              <div className="min-w-0">
+                <span className="text-xs font-bold block truncate">{tab.label}</span>
+                <span className="text-[10px] text-zinc-500 block truncate">{tab.sub}</span>
+              </div>
             </button>
           );
         })}
       </div>
 
       {/* ── Active Workstation Panel ── */}
-      <div className="rounded-b-xl border border-t-0 border-tactical-border/60 bg-tactical-surface/40 p-6 backdrop-blur-xl">
+      <div className="rounded-2xl border border-tactical-border/60 bg-tactical-surface/40 p-5 sm:p-6 backdrop-blur-xl shadow-xl">
         {/* TAB 1: TIPPETT CALIBRATION CURVES */}
         {activeTab === "tippett" && (
           <div className="space-y-6">

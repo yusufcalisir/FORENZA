@@ -44,27 +44,27 @@ export default function LineageDnaPanel({
         </div>
 
         {/* Sub-tab switcher */}
-        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-black/40 border border-tactical-border/60 overflow-x-auto max-w-full shrink-0">
+        <div className="flex flex-wrap sm:flex-nowrap items-center gap-1.5 p-1 rounded-xl bg-black/40 border border-tactical-border/60 shrink-0">
           <button
             onClick={() => setSelectedTab("ystr")}
-            className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold uppercase transition-all whitespace-nowrap cursor-pointer ${
-              selectedTab === "ystr" ? "bg-indigo-500/20 text-indigo-300 border border-indigo-500/40" : "text-zinc-500 hover:text-zinc-300"
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase transition-all whitespace-nowrap cursor-pointer ${
+              selectedTab === "ystr" ? "bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 shadow-sm" : "text-zinc-500 hover:text-zinc-300"
             }`}
           >
             {isTr ? "Y-STR Baba Soyu" : "Y-STR Paternal"}
           </button>
           <button
             onClick={() => setSelectedTab("xstr")}
-            className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold uppercase transition-all whitespace-nowrap cursor-pointer ${
-              selectedTab === "xstr" ? "bg-indigo-500/20 text-indigo-300 border border-indigo-500/40" : "text-zinc-500 hover:text-zinc-300"
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase transition-all whitespace-nowrap cursor-pointer ${
+              selectedTab === "xstr" ? "bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 shadow-sm" : "text-zinc-500 hover:text-zinc-300"
             }`}
           >
             {isTr ? "X-STR Akrabalık" : "X-STR Kinship"}
           </button>
           <button
             onClick={() => setSelectedTab("mtdna")}
-            className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold uppercase transition-all whitespace-nowrap cursor-pointer ${
-              selectedTab === "mtdna" ? "bg-indigo-500/20 text-indigo-300 border border-indigo-500/40" : "text-zinc-500 hover:text-zinc-300"
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase transition-all whitespace-nowrap cursor-pointer ${
+              selectedTab === "mtdna" ? "bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 shadow-sm" : "text-zinc-500 hover:text-zinc-300"
             }`}
           >
             {isTr ? "mtDNA Anne Soyu" : "mtDNA Maternal"}

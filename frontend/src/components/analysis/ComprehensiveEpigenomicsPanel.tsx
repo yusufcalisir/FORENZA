@@ -409,10 +409,10 @@ export default function ComprehensiveEpigenomicsPanel() {
         </div>
 
         {/* Inner Navigation Tabs */}
-        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-black/60 border border-tactical-border/60 overflow-x-auto max-w-full shrink-0">
+        <div className="flex flex-wrap items-center gap-1.5 p-1 rounded-xl bg-black/60 border border-tactical-border/60 shrink-0">
           <button
             onClick={() => setActiveResearchTab("clock")}
-            className={`px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
               activeResearchTab === "clock"
                 ? "bg-purple-500 text-black shadow-md font-extrabold"
                 : "text-zinc-400 hover:text-zinc-200"
@@ -422,7 +422,7 @@ export default function ComprehensiveEpigenomicsPanel() {
           </button>
           <button
             onClick={() => setActiveResearchTab("tissue")}
-            className={`px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
               activeResearchTab === "tissue"
                 ? "bg-purple-500 text-black shadow-md font-extrabold"
                 : "text-zinc-400 hover:text-zinc-200"
@@ -432,7 +432,7 @@ export default function ComprehensiveEpigenomicsPanel() {
           </button>
           <button
             onClick={() => setActiveResearchTab("lifestyle")}
-            className={`px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
               activeResearchTab === "lifestyle"
                 ? "bg-purple-500 text-black shadow-md font-extrabold"
                 : "text-zinc-400 hover:text-zinc-200"
@@ -442,7 +442,7 @@ export default function ComprehensiveEpigenomicsPanel() {
           </button>
           <button
             onClick={() => setActiveResearchTab("telomere_pmi")}
-            className={`px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
               activeResearchTab === "telomere_pmi"
                 ? "bg-purple-500 text-black shadow-md font-extrabold"
                 : "text-zinc-400 hover:text-zinc-200"
@@ -452,7 +452,7 @@ export default function ComprehensiveEpigenomicsPanel() {
           </button>
           <button
             onClick={() => setActiveResearchTab("bisulfite_qc")}
-            className={`px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
               activeResearchTab === "bisulfite_qc"
                 ? "bg-purple-500 text-black shadow-md font-extrabold"
                 : "text-zinc-400 hover:text-zinc-200"

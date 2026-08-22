@@ -1534,17 +1534,17 @@ export default function DnaProfileInspectorModal() {
             })}
           </div>
 
-          {/* ── Navigation Tab Bar (7 Clean Card Tabs, Non-scrolling) ── */}
-          <div className="flex flex-wrap items-center justify-between gap-2 px-3 sm:px-4 py-2 border-b border-tactical-border/70 bg-[#080d19] shrink-0">
-            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+          {/* ── Navigation Tab Bar — horizontal scroll on mobile, icon+badge only < sm ── */}
+          <div className="flex items-center justify-between gap-0 border-b border-tactical-border/70 bg-[#080d19] shrink-0 min-w-0">
+            <div className="flex items-center gap-1 overflow-x-auto scrollbar-none px-2 sm:px-3 py-2 flex-1 min-w-0">
               {[
-                { id: "inferred", label: isTr ? "Çıkarsanan Telemetri & GIS" : "Inferred Telemetry & GIS", icon: Globe, badge: `${Math.round(bgaResult.dominantProbability * 100)}% BGA`, color: "text-emerald-400" },
-                { id: "str", label: isTr ? "24-STR Çoklu Lokus" : "24-STR Multiplex", icon: Dna, badge: `${strList.length} ${isTr ? "Lokus" : "Loci"}`, color: "text-cyan-400" },
-                { id: "ystr", label: isTr ? "Y-STR Soyu (27 Lokus)" : "Y-STR (27 Loci)", icon: Dna, badge: `${ystrList.length} ${isTr ? "Lokus" : "Loci"}`, color: "text-amber-400" },
-                { id: "mtdna", label: isTr ? "mtDNA (D-Loop)" : "mtDNA (D-Loop)", icon: Flame, badge: `${mtdnaMutations.length} Mut`, color: "text-rose-400" },
-                { id: "snp", label: isTr ? "55-SNP AIM Matrisi" : "55-SNP AIM Matrix", icon: Sliders, badge: `${Object.keys(snpDosages).length} SNP`, color: "text-purple-400" },
-                { id: "epg", label: isTr ? "EPG Spektrumu" : "EPG Spectrum", icon: Activity, badge: `DI ${epgResult.degradationIndex.toFixed(2)}`, color: "text-teal-400" },
-                { id: "terminal", label: isTr ? "CLI DNA Kabuğu" : "CLI DNA Shell", icon: TerminalIcon, badge: "BASH v2.4", color: "text-cyan-400" },
+                { id: "inferred", label: isTr ? "Telemetri & GIS" : "Telemetry & GIS", icon: Globe, badge: `${Math.round(bgaResult.dominantProbability * 100)}%`, color: "text-emerald-400" },
+                { id: "str", label: isTr ? "24-STR" : "24-STR", icon: Dna, badge: `${strList.length}L`, color: "text-cyan-400" },
+                { id: "ystr", label: isTr ? "Y-STR" : "Y-STR", icon: Dna, badge: `${ystrList.length}L`, color: "text-amber-400" },
+                { id: "mtdna", label: "mtDNA", icon: Flame, badge: `${mtdnaMutations.length}M`, color: "text-rose-400" },
+                { id: "snp", label: "55-SNP", icon: Sliders, badge: `${Object.keys(snpDosages).length}`, color: "text-purple-400" },
+                { id: "epg", label: "EPG", icon: Activity, badge: `DI${epgResult.degradationIndex.toFixed(1)}`, color: "text-teal-400" },
+                { id: "terminal", label: "CLI", icon: TerminalIcon, badge: "v2.4", color: "text-cyan-400" },
               ].map((tItem) => {
                 const Icon = tItem.icon;
                 const isActive = tab === tItem.id;
@@ -1552,20 +1552,21 @@ export default function DnaProfileInspectorModal() {
                   <button
                     key={tItem.id}
                     onClick={() => setTab(tItem.id as any)}
-                    className={`flex items-center gap-1.5 py-1.5 sm:py-2 px-2.5 sm:px-3 font-mono text-[10px] sm:text-[11px] font-bold rounded-xl border transition-all cursor-pointer ${
+                    title={tItem.label}
+                    className={`flex items-center gap-1 sm:gap-1.5 py-1.5 px-2 sm:px-2.5 font-mono text-[9px] sm:text-[10px] font-bold rounded-lg border transition-all cursor-pointer shrink-0 whitespace-nowrap ${
                       isActive
-                        ? "text-white border-cyan-400 bg-cyan-500/20 shadow-[0_0_12px_rgba(6,182,212,0.25)] font-extrabold"
+                        ? "text-white border-cyan-400 bg-cyan-500/20 shadow-[0_0_10px_rgba(6,182,212,0.2)] font-extrabold"
                         : "text-zinc-400 border-tactical-border/60 bg-black/40 hover:text-zinc-200 hover:bg-white/5"
                     }`}
                   >
-                    <Icon className={`w-3.5 h-3.5 ${isActive ? "text-cyan-300" : tItem.color}`} />
-                    <span>{tItem.label}</span>
+                    <Icon className={`w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0 ${isActive ? "text-cyan-300" : tItem.color}`} />
+                    <span className="hidden sm:inline">{tItem.label}</span>
                     {tItem.badge && (
                       <span
-                        className={`text-[8px] px-1.5 py-0.2 rounded border font-mono ${
+                        className={`text-[7px] sm:text-[8px] px-1 sm:px-1.5 py-0.5 rounded border font-mono ${
                           isActive
                             ? "bg-cyan-500/30 text-cyan-200 border-cyan-400/50"
-                            : "bg-black/50 text-zinc-400 border-tactical-border/60"
+                            : "bg-black/50 text-zinc-500 border-tactical-border/60"
                         }`}
                       >
                         {tItem.badge}
@@ -1576,12 +1577,12 @@ export default function DnaProfileInspectorModal() {
               })}
             </div>
 
-            <div className="hidden lg:flex items-center gap-3 text-[10px] text-zinc-400">
-              <span>{isTr ? "Numune:" : "Sample:"} <strong className="text-cyan-300">{profileId}</strong></span>
+            <div className="hidden lg:flex items-center gap-2 xl:gap-3 text-[9px] xl:text-[10px] text-zinc-400 px-3 shrink-0">
+              <span className="truncate max-w-[100px]">{isTr ? "Numune:" : "ID:"} <strong className="text-cyan-300">{profileId}</strong></span>
               <span className="h-3 w-px bg-tactical-border/60" />
-              <span>Y-Hg: <strong className="text-amber-300">{liveYstrHaplogroup.predictedHaplogroup}</strong></span>
+              <span>Y: <strong className="text-amber-300">{liveYstrHaplogroup.predictedHaplogroup}</strong></span>
               <span className="h-3 w-px bg-tactical-border/60" />
-              <span>mt-Hg: <strong className="text-rose-300">{liveMtdnaHaplogroup.predictedHaplogroup}</strong></span>
+              <span>mt: <strong className="text-rose-300">{liveMtdnaHaplogroup.predictedHaplogroup}</strong></span>
             </div>
           </div>
 
@@ -1607,12 +1608,13 @@ export default function DnaProfileInspectorModal() {
                 TAB 0: INTERACTIVE FORENSIC CLI DNA & SNP SHELL
                ════════════════════════════════════════════════════════════════════ */}
             {tab === "terminal" && (
-              <div className="flex flex-col space-y-3">
+              <div className="flex flex-col gap-2 sm:gap-3">
                 {/* Quick Action Command Chips */}
-                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 shrink-0 text-[9px] scrollbar-none">
-                  <span className="text-zinc-500 font-bold uppercase shrink-0">
+                <div className="flex flex-col gap-1.5">
+                  <span className="text-[8px] sm:text-[9px] text-zinc-500 font-bold uppercase tracking-wider">
                     {isTr ? "Hızlı Komutlar:" : "Quick Commands:"}
                   </span>
+                  <div className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto pb-1 shrink-0 scrollbar-none">
                   {[
                     { label: "preset load NA12878", cmd: "preset load NA12878" },
                     { label: "preset load HG002", cmd: "preset load HG002" },
@@ -1649,15 +1651,16 @@ export default function DnaProfileInspectorModal() {
                     <button
                       key={q.label}
                       onClick={() => runCliCommand(q.cmd)}
-                      className="px-2 py-0.5 rounded bg-black/60 hover:bg-cyan-500/20 text-cyan-300 hover:text-white border border-tactical-border/60 hover:border-cyan-500/40 transition-all shrink-0 cursor-pointer font-bold font-mono"
+                      className="px-2 py-0.5 rounded bg-black/60 hover:bg-cyan-500/20 text-cyan-300 hover:text-white border border-tactical-border/60 hover:border-cyan-500/40 transition-all shrink-0 cursor-pointer font-bold font-mono text-[8px] sm:text-[9px] whitespace-nowrap min-h-[28px] flex items-center"
                     >
                       {q.label}
                     </button>
                   ))}
+                  </div>
                 </div>
 
                 {/* Interactive Terminal Output Console */}
-                <div className="bg-black/90 rounded-2xl border border-tactical-border/80 p-3 sm:p-4 overflow-y-auto font-mono text-[11px] leading-relaxed space-y-1 scrollbar-thin scrollbar-thumb-zinc-800 shadow-inner h-[380px] max-h-[460px]">
+                <div className="bg-black/90 rounded-xl sm:rounded-2xl border border-tactical-border/80 p-2.5 sm:p-4 overflow-y-auto font-mono text-[10px] sm:text-[11px] leading-relaxed space-y-1 scrollbar-thin scrollbar-thumb-zinc-800 shadow-inner h-[calc(45dvh)] sm:h-[360px] sm:max-h-[440px] min-h-[180px]">
                   {terminalLines.map((line) => (
                     <div
                       key={line.id}
@@ -1685,9 +1688,12 @@ export default function DnaProfileInspectorModal() {
                     e.preventDefault();
                     runCliCommand(cliInput);
                   }}
-                  className="flex items-center gap-2 bg-black/70 border border-tactical-border/80 rounded-xl px-3 py-2 shrink-0 focus-within:border-cyan-500/60 transition-colors shadow-sm"
+                  className="flex items-center gap-1.5 sm:gap-2 bg-black/70 border border-tactical-border/80 rounded-xl px-2 sm:px-3 py-2 shrink-0 focus-within:border-cyan-500/60 transition-colors shadow-sm min-w-0"
                 >
-                  <span className="text-emerald-400 font-bold select-none text-[11px] shrink-0">forenza@lab-alpha:~$</span>
+                  <span className="text-emerald-400 font-bold select-none text-[9px] sm:text-[11px] shrink-0">
+                    <span className="hidden sm:inline">forenza@lab-alpha:~$</span>
+                    <span className="inline sm:hidden">~$</span>
+                  </span>
                   <input
                     type="text"
                     value={cliInput}
@@ -1714,16 +1720,16 @@ export default function DnaProfileInspectorModal() {
                         }
                       }
                     }}
-                    placeholder={isTr ? "Adli komut girin (örn. benchmark a, phenotype, ancestry, help)..." : "Type a forensic command (e.g. benchmark a, phenotype, ancestry, help)..."}
-                    className="flex-1 bg-transparent text-white placeholder-zinc-500 text-[11px] font-mono focus:outline-none min-w-0"
+                    placeholder={isTr ? "Komut girin (help, phenotype, ancestry...)" : "Type command (help, phenotype, ancestry...)"}
+                    className="flex-1 bg-transparent text-white placeholder-zinc-500 text-[10px] sm:text-[11px] font-mono focus:outline-none min-w-0"
                     autoFocus
                   />
                   <button
                     type="submit"
-                    className="px-3 py-1 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 rounded-lg text-[10px] font-bold uppercase transition-all cursor-pointer flex items-center gap-1 shrink-0"
+                    className="min-h-[32px] sm:min-h-[auto] px-2.5 sm:px-3 py-1 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 rounded-lg text-[9px] sm:text-[10px] font-bold uppercase transition-all cursor-pointer flex items-center gap-1 shrink-0"
                   >
                     <Play className="w-3 h-3" />
-                    <span>{isTr ? "Çalıştır" : "Run"}</span>
+                    <span className="hidden xs:inline sm:inline">{isTr ? "Çalıştır" : "Run"}</span>
                   </button>
                 </form>
               </div>

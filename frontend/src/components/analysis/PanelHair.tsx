@@ -309,12 +309,12 @@ export default function PanelHair() {
             </div>
 
             {/* Presets */}
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 w-full">
                 {PRESETS.map(p => (
                     <button
                         key={p.label}
                         onClick={() => applyPreset(p)}
-                        className="px-2 py-1 rounded text-[11px] font-mono border border-tactical-border/40 text-tactical-text-secondary hover:border-violet-500/60 hover:text-violet-300 transition-colors cursor-pointer"
+                        className="w-full sm:w-auto min-h-[32px] px-2.5 py-1 rounded text-[11px] font-mono border border-tactical-border/40 text-tactical-text-secondary hover:border-violet-500/60 hover:text-violet-300 transition-colors cursor-pointer flex items-center justify-center"
                     >
                         {isTr ? p.labelTr : p.label}
                     </button>
@@ -343,7 +343,7 @@ export default function PanelHair() {
                                         key={d}
                                         id={`${rsid}-dose-${d}`}
                                         onClick={() => setDosages(prev => ({ ...prev, [rsid]: d }))}
-                                        className={`flex-1 py-1.5 rounded text-sm font-mono border transition-all cursor-pointer ${
+                                        className={`flex-1 min-h-[36px] py-1.5 rounded text-sm font-mono border transition-all cursor-pointer flex items-center justify-center ${
                                             dosages[rsid] === d
                                                 ? "border-violet-500/80 bg-violet-500/20 text-violet-300"
                                                 : "border-tactical-border/40 text-tactical-text-secondary hover:border-tactical-border/70"
@@ -379,7 +379,7 @@ export default function PanelHair() {
                                         key={d}
                                         id={`${rsid}-dose-${d}`}
                                         onClick={() => setDosages(prev => ({ ...prev, [rsid]: d }))}
-                                        className={`flex-1 py-1.5 rounded text-sm font-mono border transition-all cursor-pointer ${
+                                        className={`flex-1 min-h-[36px] py-1.5 rounded text-sm font-mono border transition-all cursor-pointer flex items-center justify-center ${
                                             dosages[rsid] === d
                                                 ? "border-amber-500/80 bg-amber-500/20 text-amber-300"
                                                 : "border-tactical-border/40 text-tactical-text-secondary hover:border-tactical-border/70"
@@ -397,7 +397,7 @@ export default function PanelHair() {
                         id="hair-run-analysis-btn"
                         onClick={runAnalysis}
                         disabled={loading}
-                        className="mt-2 w-full py-2.5 rounded-lg border border-violet-500/60 bg-violet-500/15 text-violet-300 font-mono text-sm flex items-center justify-center gap-2 hover:bg-violet-500/25 transition-all disabled:opacity-50 cursor-pointer"
+                        className="mt-2 w-full min-h-[42px] py-2.5 rounded-lg border border-violet-500/60 bg-violet-500/15 text-violet-300 font-mono text-sm flex items-center justify-center gap-2 hover:bg-violet-500/25 transition-all disabled:opacity-50 cursor-pointer"
                     >
                         {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <BarChart3 className="w-4 h-4" />}
                         {loading ? (isTr ? "Hesaplanıyor..." : "Computing...") : (isTr ? "Saç Analizini Çalıştır" : "Execute Hair Analysis")}

@@ -1,41 +1,103 @@
 "use client";
 
 import React, { useState } from "react";
+import dynamic from "next/dynamic";
 import { useForensicCaseStore } from "@/store/forensicCaseStore";
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
-import AncestryDataPanel from "@/components/analysis/AncestryDataPanel";
-import LineageDnaPanel from "@/components/analysis/LineageDnaPanel";
-import PanelYSTR from "@/components/analysis/PanelYSTR";
-import PanelXSTR from "@/components/analysis/PanelXSTR";
-import PanelMTDNA from "@/components/analysis/PanelMTDNA";
-import PanelDVI from "@/components/analysis/PanelDVI";
-import PanelADNA from "@/components/analysis/PanelADNA";
-import DviPanel from "@/components/analysis/DviPanel";
-import HumanIdPanel from "@/components/analysis/HumanIdPanel";
-import ProbabilisticGenotypingPanel from "@/components/analysis/ProbabilisticGenotypingPanel";
-import BayesianShiftChart from "@/components/analysis/BayesianShiftChart";
-import PanelNRC from "@/components/analysis/PanelNRC";
-import ValidationLabPanel from "@/components/analysis/ValidationLabPanel";
-import AgeEstimationPanel from "@/components/analysis/AgeEstimationPanel";
-import EntomologyPmiPanel from "@/components/analysis/EntomologyPmiPanel";
-import BodyFluidPanel from "@/components/analysis/BodyFluidPanel";
-import MicroscopyPanel from "@/components/analysis/MicroscopyPanel";
-import BpaAreaOfOriginPanel from "@/components/analysis/BpaAreaOfOriginPanel";
-import BallisticsGsrPanel from "@/components/analysis/BallisticsGsrPanel";
-import TraceSpectroscopyPanel from "@/components/analysis/TraceSpectroscopyPanel";
-import ToxicologyPmrPanel from "@/components/analysis/ToxicologyPmrPanel";
-import ExpertWitnessPanel from "@/components/analysis/ExpertWitnessPanel";
-import ComprehensiveEpigenomicsPanel from "@/components/analysis/ComprehensiveEpigenomicsPanel";
-import TouchDnaPanel from "@/components/analysis/TouchDnaPanel";
-import SyntheticCaseGeneratorPanel from "@/components/analysis/SyntheticCaseGeneratorPanel";
-import MerkleLedgerPanel from "@/components/analysis/MerkleLedgerPanel";
-import ZkpAuditorPanel from "@/components/analysis/ZkpAuditorPanel";
-import MeasurementUncertaintyPanel from "@/components/analysis/MeasurementUncertaintyPanel";
-import EvidenceManagementPanel from "@/components/analysis/EvidenceManagementPanel";
-import PedigreeTree from "@/components/analysis/PedigreeTree";
-import HIrisPlexPanel from "@/components/analysis/HIrisPlexPanel";
-import SuspectVisualizer from "@/components/analysis/SuspectVisualizer";
-import GeoForensicIntelligencePanel from "@/components/analysis/GeoForensicIntelligencePanel";
+import { ModuleSkeletonLoader } from "@/components/analysis/ModuleSkeletonLoader";
+
+const AncestryDataPanel = dynamic(() => import("@/components/analysis/AncestryDataPanel"), {
+  loading: () => <ModuleSkeletonLoader label="Loading Biogeographical Ancestry Engine..." />,
+});
+const PanelYSTR = dynamic(() => import("@/components/analysis/PanelYSTR"), {
+  loading: () => <ModuleSkeletonLoader label="Loading Y-FILER Plus Haplotype Engine..." />,
+});
+const PanelXSTR = dynamic(() => import("@/components/analysis/PanelXSTR"), {
+  loading: () => <ModuleSkeletonLoader label="Loading Argus X-12 Linkage Engine..." />,
+});
+const PanelMTDNA = dynamic(() => import("@/components/analysis/PanelMTDNA"), {
+  loading: () => <ModuleSkeletonLoader label="Loading EMPOP mtDNA Alignment Engine..." />,
+});
+const PanelDVI = dynamic(() => import("@/components/analysis/PanelDVI"), {
+  loading: () => <ModuleSkeletonLoader label="Loading DVI Joint Likelihood Engine..." />,
+});
+const PanelADNA = dynamic(() => import("@/components/analysis/PanelADNA"), {
+  loading: () => <ModuleSkeletonLoader label="Loading aDNA MapDamage Kinetics Engine..." />,
+});
+const HumanIdPanel = dynamic(() => import("@/components/analysis/HumanIdPanel"), {
+  loading: () => <ModuleSkeletonLoader label="Loading Human Identification Panel..." />,
+});
+const ProbabilisticGenotypingPanel = dynamic(() => import("@/components/analysis/ProbabilisticGenotypingPanel"), {
+  loading: () => <ModuleSkeletonLoader label="Loading MCMC Continuous Deconvolution Engine..." />,
+});
+const PanelNRC = dynamic(() => import("@/components/analysis/PanelNRC"), {
+  loading: () => <ModuleSkeletonLoader label="Loading Balding-Nichols Population Engine..." />,
+});
+const ValidationLabPanel = dynamic(() => import("@/components/analysis/ValidationLabPanel"), {
+  loading: () => <ModuleSkeletonLoader label="Loading Tippett ROC Calibration Engine..." />,
+});
+const AgeEstimationPanel = dynamic(() => import("@/components/analysis/AgeEstimationPanel"), {
+  loading: () => <ModuleSkeletonLoader label="Loading Epigenetic Age Clock Engine..." />,
+});
+const EntomologyPmiPanel = dynamic(() => import("@/components/analysis/EntomologyPmiPanel"), {
+  loading: () => <ModuleSkeletonLoader label="Loading Forensic Entomology Thermal Summation..." />,
+});
+const BodyFluidPanel = dynamic(() => import("@/components/analysis/BodyFluidPanel"), {
+  loading: () => <ModuleSkeletonLoader label="Loading tDMR Tissue Identification Engine..." />,
+});
+const BpaAreaOfOriginPanel = dynamic(() => import("@/components/analysis/BpaAreaOfOriginPanel"), {
+  loading: () => <ModuleSkeletonLoader label="Loading 3D BPA Trajectory Solver..." />,
+});
+const BallisticsGsrPanel = dynamic(() => import("@/components/analysis/BallisticsGsrPanel"), {
+  loading: () => <ModuleSkeletonLoader label="Loading SEM-EDX GSR & CMC Ballistics Engine..." />,
+});
+const TraceSpectroscopyPanel = dynamic(() => import("@/components/analysis/TraceSpectroscopyPanel"), {
+  loading: () => <ModuleSkeletonLoader label="Loading ATR-FTIR Trace Spectroscopy Engine..." />,
+});
+const ToxicologyPmrPanel = dynamic(() => import("@/components/analysis/ToxicologyPmrPanel"), {
+  loading: () => <ModuleSkeletonLoader label="Loading Post-Mortem Toxicology PMR Engine..." />,
+});
+const ExpertWitnessPanel = dynamic(() => import("@/components/analysis/ExpertWitnessPanel"), {
+  loading: () => <ModuleSkeletonLoader label="Loading ENFSI Court-Ready Statement Engine..." />,
+});
+const ComprehensiveEpigenomicsPanel = dynamic(() => import("@/components/analysis/ComprehensiveEpigenomicsPanel"), {
+  loading: () => <ModuleSkeletonLoader label="Loading Multi-Omic Lifestyle Biomarker Engine..." />,
+});
+const TouchDnaPanel = dynamic(() => import("@/components/analysis/TouchDnaPanel"), {
+  loading: () => <ModuleSkeletonLoader label="Loading Touch & Low Template DNA Engine..." />,
+});
+const MerkleLedgerPanel = dynamic(() => import("@/components/analysis/MerkleLedgerPanel"), {
+  loading: () => <ModuleSkeletonLoader label="Loading Merkle Chain of Custody Ledger..." />,
+});
+const ZkpAuditorPanel = dynamic(() => import("@/components/analysis/ZkpAuditorPanel"), {
+  loading: () => <ModuleSkeletonLoader label="Loading Circom BN254 ZKP Blind Auditor..." />,
+});
+const MeasurementUncertaintyPanel = dynamic(() => import("@/components/analysis/MeasurementUncertaintyPanel"), {
+  loading: () => <ModuleSkeletonLoader label="Loading ISO 17025 Measurement Uncertainty Engine..." />,
+});
+const EvidenceManagementPanel = dynamic(() => import("@/components/analysis/EvidenceManagementPanel"), {
+  loading: () => <ModuleSkeletonLoader label="Loading 3D Spatial Evidence Visualizer..." />,
+});
+const PedigreeTree = dynamic(() => import("@/components/analysis/PedigreeTree"), {
+  loading: () => <ModuleSkeletonLoader label="Loading Kinship Pedigree Tree..." />,
+});
+const HIrisPlexPanel = dynamic(() => import("@/components/analysis/HIrisPlexPanel"), {
+  loading: () => <ModuleSkeletonLoader label="Loading HIrisPlex-S 41-SNP Phenotype Model..." />,
+});
+const SuspectVisualizer = dynamic(() => import("@/components/analysis/SuspectVisualizer"), {
+  ssr: false,
+  loading: () => <ModuleSkeletonLoader label="Loading 3D Craniofacial Morphometry Renderer..." />,
+});
+const GeoForensicIntelligencePanel = dynamic(() => import("@/components/analysis/GeoForensicIntelligencePanel"), {
+  ssr: false,
+  loading: () => <ModuleSkeletonLoader label="Loading Geo-Forensic Spatial Intelligence..." />,
+});
+const PanelHair = dynamic(() => import("@/components/analysis/PanelHair"), {
+  loading: () => <ModuleSkeletonLoader label="Loading Hair Morphology PRS Model..." />,
+});
+const PanelFreckling = dynamic(() => import("@/components/analysis/PanelFreckling"), {
+  loading: () => <ModuleSkeletonLoader label="Loading MC1R Freckling & Epistasis Model..." />,
+});
 
 // ─── NIST 1036 Multi-Ethnic Reference Allele Frequency Matrix ─────────────────
 const NIST_1036_POP_FREQS: Record<string, Record<string, Record<string, number>>> = {
@@ -348,9 +410,6 @@ export function PanelSTR() {
     </div>
   );
 }
-
-import PanelHair from "@/components/analysis/PanelHair";
-import PanelFreckling from "@/components/analysis/PanelFreckling";
 
 // ─── Biocomputational Kinship X-STR Engine ────────────────────────────────────
 

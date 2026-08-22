@@ -54,32 +54,38 @@ export function SaasLanguageProvider({
   useEffect(() => {
     setMounted(true);
 
-    // Phase 1: Check localStorage first, then Cookie (User's explicit saved preference)
+    // Phase 1: Check if user made an EXPLICIT manual selection (localStorage or cookie).
+    // Auto-detected values are NEVER written to localStorage, so if something is here
+    // it was definitely set by the user via the toggle button.
     try {
       const stored = localStorage.getItem(STORAGE_KEY) as SaasLanguage | null;
       if (stored === "tr" || stored === "en") {
         setLangState(stored);
+        // Keep cookie in sync but don't touch localStorage again
         setCookie(COOKIE_NAME, stored);
         return;
       }
+      // Check cookie as fallback (e.g. localStorage cleared but cookie still there)
       const cookieVal = getCookie(COOKIE_NAME) as SaasLanguage | null;
       if (cookieVal === "tr" || cookieVal === "en") {
         setLangState(cookieVal);
+        // Restore localStorage so Phase 1 catches it next time
         localStorage.setItem(STORAGE_KEY, cookieVal);
         return;
       }
     } catch (_) {}
 
-    // Phase 2: If server detected language (e.g. initialLang is "tr"), preserve and persist it
+    // Phase 2: No explicit user preference found.
+    // Use server-detected initialLang (from IP / Accept-Language header) — state only,
+    // do NOT persist to localStorage/cookie so other users / future sessions start fresh.
     if (initialLang === "tr" || initialLang === "en") {
-      try {
-        localStorage.setItem(STORAGE_KEY, initialLang);
-        setCookie(COOKIE_NAME, initialLang);
-      } catch (_) {}
+      setLangState(initialLang);
+      // Intentionally NOT writing to localStorage or cookie here.
       return;
     }
 
-    // Phase 3: Client browser fallback detection
+    // Phase 3: Client-side browser fallback (no cookie, no server hint).
+    // Apply to state only — no persistence.
     try {
       const navLang = (navigator.language || "").toLowerCase();
       const navLangs = Array.from(navigator.languages || []).map((l) => l.toLowerCase());
@@ -91,10 +97,8 @@ export function SaasLanguageProvider({
         tz.includes("Istanbul") ||
         tz.includes("Turkey");
 
-      const detectedLang: SaasLanguage = isTurkish ? "tr" : "en";
-      setLangState(detectedLang);
-      localStorage.setItem(STORAGE_KEY, detectedLang);
-      setCookie(COOKIE_NAME, detectedLang);
+      setLangState(isTurkish ? "tr" : "en");
+      // Still no persistence — only explicit user action persists.
     } catch (e) {
       console.warn("Language detection fallback error", e);
     }

@@ -1378,7 +1378,7 @@ export default function DnaProfileInspectorModal() {
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-        className="fixed inset-0 z-[100000] flex items-center justify-center p-2 sm:p-4 bg-black/85 backdrop-blur-md font-mono"
+        className="fixed inset-0 z-[100000] flex items-center justify-center p-0 sm:p-4 bg-black/85 backdrop-blur-md font-mono"
       >
         <input
           type="file"
@@ -1396,7 +1396,7 @@ export default function DnaProfileInspectorModal() {
           initial={{ opacity: 0, scale: 0.98, y: 8 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.98, y: 8 }}
-          className="relative w-full h-[95vh] sm:h-auto sm:max-h-[94vh] sm:max-w-6xl flex flex-col rounded-2xl border border-tactical-border/80 bg-[#070D18] text-tactical-text shadow-[0_0_80px_rgba(0,0,0,0.9)] overflow-hidden"
+          className="relative w-full h-[100dvh] sm:h-auto sm:max-h-[94vh] sm:max-w-6xl flex flex-col rounded-none sm:rounded-2xl border-0 sm:border border-tactical-border/80 bg-[#070D18] text-tactical-text shadow-[0_0_80px_rgba(0,0,0,0.9)] overflow-hidden pt-[env(safe-area-inset-top,0px)] pb-[env(safe-area-inset-bottom,0px)]"
         >
           {/* Drag Overlay */}
           {isDragOver && (
@@ -1412,24 +1412,24 @@ export default function DnaProfileInspectorModal() {
           )}
 
           {/* ── Top Bar / Header ── */}
-          <div className="flex items-center justify-between px-3 sm:px-4 py-2.5 sm:py-3 border-b border-tactical-border/70 bg-[#0a1120] shrink-0">
-            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+          <div className="flex items-center justify-between px-3 sm:px-4 py-2 sm:py-3 border-b border-tactical-border/70 bg-[#0a1120] shrink-0 min-w-0">
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
               <div className="flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400">
                 <Dna className="h-4 w-4 sm:h-5 sm:w-5 animate-pulse" />
               </div>
-              <div className="min-w-0">
-                <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-                  <h2 className="text-xs sm:text-sm font-extrabold tracking-wider uppercase text-white font-mono">
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap min-w-0">
+                  <h2 className="text-xs sm:text-sm font-extrabold tracking-wider uppercase text-white font-mono truncate">
                     {isTr ? "DNA & SNP Terminali" : "DNA & SNP Terminal"}
                   </h2>
-                  <span className="px-1.5 py-0.2 rounded text-[8px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                  <span className="px-1.5 py-0.2 rounded text-[8px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 whitespace-nowrap shrink-0">
                     ISO/IEC 17025
                   </span>
-                  <span className="px-1.5 py-0.2 rounded text-[8px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                  <span className="px-1.5 py-0.2 rounded text-[8px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30 whitespace-nowrap shrink-0">
                     CODIS CMF 3.2
                   </span>
                 </div>
-                <p className="text-[9px] sm:text-[10px] text-zinc-400 truncate">
+                <p className="text-[9px] sm:text-[10px] text-zinc-400 truncate hidden sm:block">
                   {isTr
                     ? "24-STR Çoklu Lokus • 55-SNP AIM • 41-SNP HIrisPlex-S • 5-Boyalı EPG Spektrumu"
                     : "24-STR Multiplex • 55-SNP AIM • 41-SNP HIrisPlex-S • 5-Dye EPG Spectrum"}
@@ -1437,14 +1437,14 @@ export default function DnaProfileInspectorModal() {
               </div>
             </div>
 
-            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            <div className="flex items-center gap-1 sm:gap-2 shrink-0">
               {/* File Upload Button */}
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="px-2.5 py-1.5 rounded-xl text-[10px] font-bold bg-zinc-800 border border-tactical-border/70 text-zinc-300 hover:text-white hover:bg-zinc-700 transition-all flex items-center gap-1.5 cursor-pointer"
+                className="min-h-[38px] px-2.5 py-1.5 rounded-xl text-[10px] font-bold bg-zinc-800 border border-tactical-border/70 text-zinc-300 hover:text-white hover:bg-zinc-700 transition-all flex items-center gap-1.5 cursor-pointer"
                 title={isTr ? "Dosya İçe Aktar (CSV, TSV, XML, VCF, JSON)" : "Import File (CSV, TSV, XML, VCF, JSON)"}
               >
-                <Upload className="w-3.5 h-3.5 text-cyan-400" />
+                <Upload className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
                 <span className="hidden md:inline">{isTr ? "Dosya İçe Aktar" : "Import File"}</span>
               </button>
 
@@ -1452,10 +1452,10 @@ export default function DnaProfileInspectorModal() {
               <div className="relative">
                 <button
                   onClick={() => setExportDropdownOpen(!exportDropdownOpen)}
-                  className="px-2.5 py-1.5 rounded-xl text-[10px] font-bold bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/25 transition-all flex items-center gap-1.5 cursor-pointer"
+                  className="min-h-[38px] px-2.5 py-1.5 rounded-xl text-[10px] font-bold bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/25 transition-all flex items-center gap-1.5 cursor-pointer"
                   title={isTr ? "Adli Profili Dışa Aktar" : "Export Forensic Profile"}
                 >
-                  <Download className="w-3.5 h-3.5 text-emerald-400" />
+                  <Download className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                   <span className="hidden md:inline">{isTr ? "Dışa Aktar" : "Export"}</span>
                 </button>
 
@@ -1489,8 +1489,8 @@ export default function DnaProfileInspectorModal() {
               {/* Close Button */}
               <button
                 onClick={() => setInspectorOpen(false)}
-                className="p-1.5 rounded-xl text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors cursor-pointer"
-                title={isTr ? "Terminali Kapat" : "Close Terminal"}
+                aria-label={isTr ? "Terminali Kapat" : "Close Terminal"}
+                className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>

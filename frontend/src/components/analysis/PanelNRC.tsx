@@ -268,14 +268,14 @@ export function PanelNRC() {
         </div>
 
         {/* Profile Selector */}
-        <div className="flex flex-col sm:flex-row sm:items-center gap-2 min-w-0 shrink-0 pt-3 lg:pt-0 border-t lg:border-t-0 border-slate-800/60">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 min-w-0 shrink-0 pt-3 lg:pt-0 border-t lg:border-t-0 border-slate-800/60 w-full sm:w-auto">
           <span className="text-[11px] sm:text-xs text-slate-400 font-medium whitespace-nowrap">
             {isTr ? "Standart Profil:" : "Standard Profile:"}
           </span>
           <select
             value={selectedStandard}
             onChange={(e) => setSelectedStandard(e.target.value)}
-            className="w-full sm:w-auto max-w-full px-3 py-1.5 text-xs font-mono bg-slate-800 border border-slate-700 rounded-lg text-slate-200 focus:outline-none focus:border-emerald-500 cursor-pointer truncate"
+            className="w-full sm:w-auto min-h-[40px] max-w-full px-3 py-2 text-xs font-mono bg-slate-800 border border-slate-700 rounded-xl text-slate-200 focus:outline-none focus:border-emerald-500 cursor-pointer truncate shadow-sm"
           >
             <option value="CASE_PROFILE">{isTr ? "Aktif Vaka Profili" : "Active Case Profile"} ({activeCase.profile.profileId})</option>
             <option value="SRM_2391D_COMP_A">NIST SRM 2391d Comp A (Caucasian 9947A)</option>
@@ -285,11 +285,11 @@ export function PanelNRC() {
       </div>
 
       {/* ── Coancestry Parameter Tuning & Presets ──────────────────────────────── */}
-      <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 shadow-lg space-y-4">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          <div className="space-y-1">
+      <div className="p-4 sm:p-5 rounded-2xl bg-slate-900/60 border border-slate-800 shadow-lg space-y-4 min-w-0">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 min-w-0">
+          <div className="space-y-1 min-w-0">
             <div className="flex items-center gap-2">
-              <Sliders className="w-4 h-4 text-emerald-400" />
+              <Sliders className="w-4 h-4 text-emerald-400 shrink-0" />
               <span className="text-sm font-semibold text-slate-200">
                 {isTr ? "Akrabalık Katsayısı (θ = F_st): " : "Coancestry Coefficient (θ = F_st): "}
                 <span className="font-mono text-emerald-400 text-base">{theta.toFixed(3)}</span>
@@ -303,12 +303,12 @@ export function PanelNRC() {
           </div>
 
           {/* Quick Presets */}
-          <div className="flex flex-wrap items-center gap-1.5">
+          <div className="flex flex-wrap items-center gap-1.5 shrink-0">
             {THETA_PRESETS.map((p) => (
               <button
                 key={p.value}
                 onClick={() => setTheta(p.value)}
-                className={`px-2.5 py-1 text-xs rounded-lg font-mono transition-all cursor-pointer ${
+                className={`min-h-[36px] px-2.5 py-1.5 text-xs rounded-xl font-mono transition-all cursor-pointer flex items-center justify-center ${
                   Math.abs(theta - p.value) < 1e-4
                     ? "bg-emerald-500 text-slate-950 font-bold shadow-md shadow-emerald-500/20"
                     : "bg-slate-800/80 text-slate-300 hover:bg-slate-700/80 border border-slate-700/60"
@@ -332,7 +332,7 @@ export function PanelNRC() {
             onChange={(e) => setTheta(parseFloat(e.target.value))}
             className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500"
           />
-          <div className="flex justify-between text-[10px] font-mono text-slate-500 mt-1">
+          <div className="flex flex-wrap justify-between text-[9px] sm:text-[10px] font-mono text-slate-500 mt-1 gap-1">
             <span>0.000 ({isTr ? "Panmiksi" : "Panmixia"})</span>
             <span>0.010 (NRC II Rec 4.10)</span>
             <span>0.030 ({isTr ? "SWGDAM Standardı" : "SWGDAM Standard"})</span>
@@ -526,22 +526,22 @@ export function PanelNRC() {
 
       {/* ── Tab 2: 24-Locus Balding-Nichols Breakdown Table ─────────────────────── */}
       {activeTab === "loci_table" && (
-        <div className="rounded-xl border border-slate-800 bg-slate-900/60 overflow-hidden">
-          <div className="p-4 bg-slate-800/40 border-b border-slate-800 flex justify-between items-center">
+        <div className="rounded-xl border border-slate-800 bg-slate-900/60 overflow-hidden min-w-0">
+          <div className="p-4 bg-slate-800/40 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <span className="text-xs font-bold text-slate-200">
               {isTr
                 ? `Lokus Bazında Balding-Nichols Değerlendirmesi (${selectedPopulation}, θ = ${theta.toFixed(3)})`
                 : `Locus-by-Locus Balding-Nichols Evaluation (${selectedPopulation}, θ = ${theta.toFixed(3)})`}
             </span>
-            <div className="flex items-center gap-2">
-              <span className="px-2 py-0.5 text-[10px] font-mono rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+            <div className="flex items-center gap-2 shrink-0">
+              <span className="px-2 py-0.5 text-[10px] font-mono rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 whitespace-nowrap">
                 {isTr ? "Simpleks Toplamı = 1.00000000 ± 1e-6" : "Simplex Sum = 1.00000000 ± 1e-6"}
               </span>
             </div>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs font-mono">
+          <div className="overflow-x-auto w-full">
+            <table className="w-full min-w-[620px] text-left text-xs font-mono">
               <thead className="bg-slate-800/80 text-slate-400 border-b border-slate-700/60">
                 <tr>
                   <th className="py-2.5 px-3">{isTr ? "STR Lokusu" : "Locus"}</th>

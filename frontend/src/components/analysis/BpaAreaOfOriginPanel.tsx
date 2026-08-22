@@ -381,12 +381,14 @@ export default function BpaAreaOfOriginPanel() {
               animate={{ opacity: 1, y: 0 }}
               className="rounded-2xl border border-rose-500/40 bg-tactical-surface/50 p-4 sm:p-5 space-y-4 shadow-xl"
             >
-              <div className="flex items-center justify-between border-b border-rose-500/20 pb-3">
-                <span className="text-xs font-bold uppercase tracking-wider text-tactical-text flex items-center gap-2">
-                  <Compass className="w-4 h-4 text-rose-400" />
-                  {isTr ? "Hesaplanan Çıkış Noktası (r₀)" : "Calculated Point of Origin (r₀)"}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-rose-500/20 pb-3 min-w-0">
+                <span className="text-xs font-bold uppercase tracking-wider text-tactical-text flex items-center gap-2 min-w-0">
+                  <Compass className="w-4 h-4 text-rose-400 shrink-0" />
+                  <span className="truncate">
+                    {isTr ? "Hesaplanan Çıkış Noktası (r₀)" : "Calculated Point of Origin (r₀)"}
+                  </span>
                 </span>
-                <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[9px] font-bold">
+                <span className="px-2.5 py-0.5 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[9px] font-bold whitespace-nowrap shrink-0 self-start sm:self-auto">
                   {isTr ? "YAKINSADI" : "CONVERGED"}
                 </span>
               </div>
@@ -407,31 +409,31 @@ export default function BpaAreaOfOriginPanel() {
               </div>
 
               <div className="p-3 rounded-xl bg-black/30 border border-tactical-border/30 space-y-2 text-xs">
-                <div className="flex justify-between">
+                <div className="flex justify-between items-center gap-2">
                   <span className="text-zinc-400">
                     {isTr ? "%95 Uzamsal Hata Yarıçapı:" : "95% Spatial Error Radius:"}
                   </span>
-                  <span className="text-emerald-400 font-bold tabular-nums">±{result.spatial_error_radius_cm} cm</span>
+                  <span className="text-emerald-400 font-bold tabular-nums shrink-0">±{result.spatial_error_radius_cm} cm</span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between items-center gap-2">
                   <span className="text-zinc-400">
                     {isTr ? "Yakınsayan Lekeler:" : "Stains Converged:"}
                   </span>
-                  <span className="text-zinc-200 font-bold tabular-nums">
+                  <span className="text-zinc-200 font-bold tabular-nums shrink-0">
                     {result.stains_analyzed} / {stains.length}
                   </span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between items-center gap-2">
                   <span className="text-zinc-400">
                     {isTr ? "Ortalama Çarpma Açısı:" : "Mean Impact Angle:"}
                   </span>
-                  <span className="text-zinc-200 font-bold tabular-nums">{result.mean_impact_angle_deg}°</span>
+                  <span className="text-zinc-200 font-bold tabular-nums shrink-0">{result.mean_impact_angle_deg}°</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-zinc-400">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                  <span className="text-zinc-400 whitespace-nowrap">
                     {isTr ? "Sürüklenme & Yerçekimi Modeli:" : "Drag & Gravity Model:"}
                   </span>
-                  <span className={`font-bold ${result.gravity_correction_applied ? "text-amber-400" : "text-zinc-500"}`}>
+                  <span className={`font-bold text-left sm:text-right ${result.gravity_correction_applied ? "text-amber-400" : "text-zinc-300"}`}>
                     {result.gravity_correction_applied
                       ? (isTr ? "Schiller-Naumann Sürüklenmesi" : "Schiller-Naumann Drag")
                       : (isTr ? "Doğrusal İzdüşüm (SWGSTAIN)" : "Straight-Line (SWGSTAIN)")}

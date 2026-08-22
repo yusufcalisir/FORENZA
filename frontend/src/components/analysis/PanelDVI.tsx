@@ -228,11 +228,27 @@ export default function PanelDVI() {
 
   // Simulated 3x3 Mass Disaster Reconciliation Matrix
   const simulatedPMs = isTr
-    ? ["PM-CESET-01 (Femur)", "PM-CESET-02 (Diş)", "PM-CESET-03 (Kaburga)"]
-    : ["PM-REMAIN-01 (Femur)", "PM-REMAIN-02 (Tooth)", "PM-REMAIN-03 (Rib)"];
+    ? [
+        { code: "PM-01", sample: "Femur" },
+        { code: "PM-02", sample: "Diş" },
+        { code: "PM-03", sample: "Kaburga" },
+      ]
+    : [
+        { code: "PM-01", sample: "Femur" },
+        { code: "PM-02", sample: "Tooth" },
+        { code: "PM-03", sample: "Rib" },
+      ];
   const simulatedAMs = isTr
-    ? ["AM-AİLE-101 (Çocuk)", "AM-AİLE-102 (Baba)", "AM-AİLE-103 (Anne)"]
-    : ["AM-FAM-101 (Child)", "AM-FAM-102 (Father)", "AM-FAM-103 (Mother)"];
+    ? [
+        { code: "AM-101", kin: "Çocuk" },
+        { code: "AM-102", kin: "Baba" },
+        { code: "AM-103", kin: "Anne" },
+      ]
+    : [
+        { code: "AM-101", kin: "Child" },
+        { code: "AM-102", kin: "Father" },
+        { code: "AM-103", kin: "Mother" },
+      ];
 
   const matrixScores = [
     [jointLr, 1.2e2, 1.0e-4],
@@ -629,43 +645,53 @@ export default function PanelDVI() {
           </div>
 
           {/* 3x3 Mass Disaster Reconciliation Matrix Grid */}
-          <div className="lg:col-span-2 bg-slate-800/40 p-4 rounded-xl border border-slate-700/60 flex flex-col justify-between">
+          <div className="lg:col-span-2 bg-slate-800/40 p-3 sm:p-4 rounded-xl border border-slate-700/60 flex flex-col justify-between min-w-0">
             <div>
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-bold text-slate-200 flex items-center gap-1.5">
-                  <FileSpreadsheet className="w-4 h-4 text-cyan-400" />
-                  {isTr
-                    ? "N × M Afet Eşleştirme Matrisi (Macar 1-e-1 Çözücü)"
-                    : "N × M Disaster Reconciliation Matrix (Hungarian 1-to-1 Solver)"}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 mb-3 border-b border-slate-700/40 pb-2">
+                <span className="text-xs font-bold text-slate-200 flex items-center gap-1.5 min-w-0">
+                  <FileSpreadsheet className="w-4 h-4 text-cyan-400 shrink-0" />
+                  <span className="truncate">
+                    {isTr
+                      ? "N × M Afet Eşleştirme Matrisi (Macar 1-e-1 Çözücü)"
+                      : "N × M Disaster Reconciliation Matrix (Hungarian 1-to-1 Solver)"}
+                  </span>
                 </span>
-                <span className="text-[11px] text-slate-400 font-mono">
+                <span className="text-[10px] sm:text-[11px] text-slate-400 font-mono whitespace-nowrap shrink-0">
                   {isTr ? "3 PM Ceset × 3 AM Aile" : "3 PM Remains × 3 AM Families"}
                 </span>
               </div>
 
               {/* Table Matrix */}
-              <div className="overflow-x-auto">
-                <table className="w-full text-xs text-left">
+              <div className="w-full">
+                <table className="w-full table-fixed text-xs text-left">
                   <thead>
                     <tr className="border-b border-slate-700 text-[10px] uppercase text-slate-400 font-mono">
-                      <th className="py-1.5 px-2">{isTr ? "PM Ceset" : "PM Remain"}</th>
+                      <th className="py-2 px-1 w-1/4">
+                        <span className="block font-bold truncate">{isTr ? "PM Ceset" : "PM Remain"}</span>
+                      </th>
                       {simulatedAMs.map((am) => (
-                        <th key={am} className="py-1.5 px-2 text-right">{am}</th>
+                        <th key={am.code} className="py-2 px-1 text-center w-1/4">
+                          <span className="block font-bold text-slate-200">{am.code}</span>
+                          <span className="text-[9px] text-zinc-500 font-normal block">{am.kin}</span>
+                        </th>
                       ))}
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-800/80 font-mono">
                     {simulatedPMs.map((pm, rIdx) => (
-                      <tr key={pm} className="hover:bg-slate-800/30">
-                        <td className="py-2 px-2 text-slate-300 font-mono text-[11px]">{pm}</td>
+                      <tr key={pm.code} className="hover:bg-slate-800/30">
+                        <td className="py-2 px-1 text-slate-300 font-mono">
+                          <span className="block font-bold text-xs">{pm.code}</span>
+                          <span className="text-[9px] text-zinc-500 block">{pm.sample}</span>
+                        </td>
                         {matrixScores[rIdx].map((score, cIdx) => {
                           const isOptimal = rIdx === cIdx; // Diagonal 1-to-1 match in simulation
                           return (
-                            <td key={`cell-${rIdx}-${cIdx}`} className="py-2 px-2 text-right">
+                            <td key={`cell-${rIdx}-${cIdx}`} className="py-2 px-1 text-center">
                               <span
-                                className={`px-2 py-0.5 rounded text-[11px] inline-block ${
+                                className={`px-1 py-1 rounded text-[10px] sm:text-xs font-bold inline-flex items-center justify-center gap-0.5 w-full ${
                                   isOptimal
-                                    ? "bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-bold"
+                                    ? "bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 shadow-sm"
                                     : score > 1.0e4
                                     ? "bg-cyan-500/10 text-cyan-300"
                                     : score < 1.0e-2
@@ -673,8 +699,8 @@ export default function PanelDVI() {
                                     : "text-slate-400"
                                 }`}
                               >
-                                {score.toExponential(1)}
-                                {isOptimal && <Check className="w-3 h-3 inline ml-1 text-emerald-400" />}
+                                <span>{score.toExponential(1)}</span>
+                                {isOptimal && <Check className="w-3 h-3 text-emerald-400 shrink-0" />}
                               </span>
                             </td>
                           );
@@ -686,15 +712,15 @@ export default function PanelDVI() {
               </div>
             </div>
 
-            <div className="mt-3 pt-3 border-t border-slate-700/60 flex items-center justify-between text-[11px] text-slate-400">
+            <div className="mt-3 pt-3 border-t border-slate-700/60 flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-[10px] sm:text-[11px] text-slate-400 font-mono">
               <span>
                 {isTr ? "Macar Çözücü: " : "Hungarian Solver: "}
                 <strong className="text-emerald-400">
-                  {isTr ? "%100 Karşılıklı Dışlayıcılık Korundu" : "100% Mutual Exclusivity Preserved"}
+                  {isTr ? "%100 Dışlayıcılık Korundu" : "100% Exclusivity Preserved"}
                 </strong>
               </span>
               <span>
-                {isTr ? "Optimal Eşleşme Oranı: " : "Optimal Match Rate: "}
+                {isTr ? "Optimal Eşleşme: " : "Optimal Match: "}
                 <strong className="text-cyan-300">3 / 3 (%100)</strong>
               </span>
             </div>

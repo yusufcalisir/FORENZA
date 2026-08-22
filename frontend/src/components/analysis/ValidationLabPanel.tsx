@@ -326,11 +326,11 @@ export default function ValidationLabPanel() {
           </div>
 
           {/* Quick Action Button */}
-          <div className="flex flex-wrap items-center gap-2 shrink-0">
+          <div className="flex flex-wrap items-center gap-2 shrink-0 w-full sm:w-auto">
             <button
               onClick={handleExecuteSimulation}
               disabled={isRunning}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-xs font-bold uppercase tracking-wider shadow-lg shadow-emerald-900/30 hover:brightness-110 active:scale-95 transition-all cursor-pointer disabled:opacity-50"
+              className="w-full sm:w-auto min-h-[42px] flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-xs font-bold uppercase tracking-wider shadow-lg shadow-emerald-900/30 hover:brightness-110 active:scale-95 transition-all cursor-pointer disabled:opacity-50"
             >
               <Play className={`h-4 w-4 ${isRunning ? "animate-spin" : ""}`} />
               {isRunning ? (isTr ? "MCMC Çalıştırılıyor..." : "Running MCMC...") : (isTr ? "Simülasyonu Başlat" : "Execute Simulation")}
@@ -365,7 +365,7 @@ export default function ValidationLabPanel() {
             <button
               key={preset.id}
               onClick={() => setSelectedPreset(preset.id)}
-              className={`p-4 rounded-xl border text-left transition-all cursor-pointer relative overflow-hidden ${
+              className={`p-4 rounded-xl border text-left transition-all cursor-pointer relative overflow-hidden min-h-[44px] ${
                 isSelected
                   ? "bg-emerald-950/30 border-emerald-500/60 shadow-lg shadow-emerald-950/20"
                   : "bg-tactical-surface/40 border-tactical-border/40 hover:border-tactical-border/80 hover:bg-tactical-surface/60"
@@ -385,17 +385,17 @@ export default function ValidationLabPanel() {
       </div>
 
       {/* ── Secondary Control Ribbon ── */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl border border-tactical-border/60 bg-tactical-surface/50 text-xs">
-        <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl border border-tactical-border/60 bg-tactical-surface/50 text-xs min-w-0">
+        <div className="flex flex-wrap items-center gap-3 min-w-0">
           {/* Population Group */}
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 flex-wrap">
             <span className="text-[10px] text-zinc-500 uppercase font-bold">{isTr ? "Popülasyon:" : "PopGen:"}</span>
-            <div className="flex items-center gap-1 bg-black/60 p-1 rounded-lg border border-tactical-border/50">
+            <div className="flex items-center gap-1 bg-black/60 p-1 rounded-lg border border-tactical-border/50 flex-wrap">
               {["Caucasian", "AfricanAmerican", "Hispanic", "Asian"].map((pop) => (
                 <button
                   key={pop}
                   onClick={() => setPopulation(pop)}
-                  className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase transition-all cursor-pointer ${
+                  className={`min-h-[30px] px-2 py-0.5 rounded text-[10px] font-bold uppercase transition-all cursor-pointer flex items-center justify-center ${
                     population === pop
                       ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40"
                       : "text-zinc-500 hover:text-zinc-300"
@@ -408,14 +408,14 @@ export default function ValidationLabPanel() {
           </div>
 
           {/* Subpopulation Theta */}
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 flex-wrap">
             <span className="text-[10px] text-zinc-500 uppercase font-bold">NRC II θ:</span>
-            <div className="flex items-center gap-1 bg-black/60 p-1 rounded-lg border border-tactical-border/50">
+            <div className="flex items-center gap-1 bg-black/60 p-1 rounded-lg border border-tactical-border/50 flex-wrap">
               {[0.0, 0.01, 0.03, 0.05].map((th) => (
                 <button
                   key={th}
                   onClick={() => setTheta(th)}
-                  className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase transition-all cursor-pointer ${
+                  className={`min-h-[30px] px-2 py-0.5 rounded text-[10px] font-bold uppercase transition-all cursor-pointer flex items-center justify-center ${
                     theta === th
                       ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
                       : "text-zinc-500 hover:text-zinc-300"
@@ -428,14 +428,14 @@ export default function ValidationLabPanel() {
           </div>
 
           {/* Language Toggle for Court Reporting */}
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 flex-wrap">
             <span className="text-[10px] text-zinc-500 uppercase font-bold">{isTr ? "ENFSI Dili:" : "ENFSI Lang:"}</span>
-            <div className="flex items-center gap-1 bg-black/60 p-1 rounded-lg border border-tactical-border/50">
+            <div className="flex items-center gap-1 bg-black/60 p-1 rounded-lg border border-tactical-border/50 flex-wrap">
               {(["en", "tr"] as const).map((targetLang) => (
                 <button
                   key={targetLang}
                   onClick={() => setLang(targetLang)}
-                  className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase transition-all cursor-pointer ${
+                  className={`min-h-[30px] px-2 py-0.5 rounded text-[10px] font-bold uppercase transition-all cursor-pointer flex items-center justify-center ${
                     lang === targetLang
                       ? "bg-purple-500/20 text-purple-300 border border-purple-500/40"
                       : "text-zinc-500 hover:text-zinc-300"
@@ -449,9 +449,9 @@ export default function ValidationLabPanel() {
         </div>
 
         {/* Telemetry Status */}
-        <div className="flex items-center gap-2 text-[10px] text-zinc-400">
+        <div className="flex items-center gap-2 text-[10px] text-zinc-400 shrink-0">
           <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span>
+          <span className="truncate">
             {isTr
               ? `Durum: Doğrulandı (N=${calculations.n_hp} H_p vs N=${calculations.n_hd} H_d)`
               : `Status: Verified (N=${calculations.n_hp} H_p vs N=${calculations.n_hd} H_d)`}
@@ -604,7 +604,7 @@ export default function ValidationLabPanel() {
             </div>
 
             {/* SVG Tippett Chart Container */}
-            <div className="relative h-64 sm:h-80 w-full rounded-xl bg-black/60 p-4 border border-tactical-border/60 flex flex-col justify-end">
+            <div className="relative h-56 sm:h-80 w-full rounded-xl bg-black/60 p-2 sm:p-4 border border-tactical-border/60 flex flex-col justify-end">
               <svg className="h-full w-full overflow-visible" viewBox="0 0 800 300" preserveAspectRatio="none">
                 {/* Horizontal Gridlines */}
                 {[0, 0.25, 0.5, 0.75, 1.0].map((yVal) => {
@@ -744,7 +744,7 @@ export default function ValidationLabPanel() {
             </div>
 
             {/* SVG ROC Plot */}
-            <div className="relative h-64 sm:h-80 w-full rounded-xl bg-black/60 p-4 border border-tactical-border/60 flex flex-col justify-end">
+            <div className="relative h-56 sm:h-80 w-full rounded-xl bg-black/60 p-2 sm:p-4 border border-tactical-border/60 flex flex-col justify-end">
               <svg className="h-full w-full overflow-visible" viewBox="0 0 400 300" preserveAspectRatio="none">
                 {/* Diagonal Reference (Random Chance line) */}
                 <line x1="40" y1="280" x2="380" y2="20" stroke="#3f3f46" strokeDasharray="4 4" strokeWidth="1.5" />
@@ -973,8 +973,8 @@ export default function ValidationLabPanel() {
             </div>
 
             {/* 7-Tier Visual Table */}
-            <div className="overflow-x-auto rounded-xl border border-tactical-border/60 bg-black/50">
-              <table className="w-full text-left text-xs border-collapse">
+            <div className="overflow-x-auto w-full rounded-xl border border-tactical-border/60 bg-black/50">
+              <table className="w-full min-w-[560px] text-left text-xs border-collapse">
                 <thead>
                   <tr className="border-b border-tactical-border/60 bg-tactical-surface/50 text-[10px] uppercase text-zinc-400">
                     <th className="p-3">{isTr ? "Düzey" : "Tier"}</th>

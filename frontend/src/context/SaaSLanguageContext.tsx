@@ -13,8 +13,8 @@ interface SaasLanguageContextType {
 
 const SaasLanguageContext = createContext<SaasLanguageContextType | undefined>(undefined);
 
-const COOKIE_NAME = "forenza_saas_lang";
-const STORAGE_KEY = "forenza_saas_lang";
+const COOKIE_NAME = "forenza_saas_lang_user"; // Only written on explicit user toggle
+const STORAGE_KEY = "forenza_saas_lang_user";  // Same — never auto-set
 
 function getCookie(name: string): string | null {
   if (typeof document === "undefined") return null;

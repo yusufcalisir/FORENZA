@@ -80,13 +80,16 @@ export default async function RootLayout({
   const cookieStore = await cookies();
   const headersList = await headers();
 
-  const savedLangCookie = cookieStore.get("forenza_saas_lang")?.value;
+  // "forenza_saas_lang_user" is ONLY written when the user explicitly toggles the language.
+  // The old "forenza_saas_lang" key (auto-set by previous code) is intentionally ignored.
+  const savedLangCookie = cookieStore.get("forenza_saas_lang_user")?.value;
   let initialLang: SaasLanguage = "en";
 
   if (savedLangCookie === "tr" || savedLangCookie === "en") {
+    // Explicit user preference — always honour it
     initialLang = savedLangCookie;
   } else {
-    // Server-side Geolocation & Language detection
+    // No explicit preference → detect from IP / Accept-Language header
     const country = headersList.get("x-vercel-ip-country") || headersList.get("cf-ipcountry") || headersList.get("x-country") || "";
     const acceptLang = headersList.get("accept-language") || "";
     const timezone = headersList.get("x-vercel-ip-timezone") || headersList.get("x-timezone") || "";
@@ -98,6 +101,7 @@ export default async function RootLayout({
     if (isTurkishCountry || isTurkishLang || isTurkishTz) {
       initialLang = "tr";
     }
+    // Otherwise stays "en" (the default)
   }
 
   return (

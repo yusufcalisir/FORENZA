@@ -541,7 +541,7 @@ ${isTr ? "Olabilirlik Oranı (LR), yarışan hipotezler (Hp ve Hd) altında dü�
         </div>
 
         {/* Golden Preset Selector */}
-        <div className="flex flex-wrap items-center gap-2 p-1.5 rounded-2xl bg-black/40 border border-tactical-border/50 shrink-0">
+        <div className="flex flex-wrap items-center gap-2 p-1.5 rounded-2xl bg-black/40 border border-tactical-border/50 shrink-0 w-full sm:w-auto">
           <span className="text-[11px] text-tactical-text-muted uppercase font-bold px-2 flex items-center gap-1 shrink-0">
             <Sparkles className="w-3.5 h-3.5 text-amber-400" /> {isTr ? "Hazır Ayarlar:" : "Presets:"}
           </span>
@@ -553,7 +553,7 @@ ${isTr ? "Olabilirlik Oranı (LR), yarışan hipotezler (Hp ve Hd) altında dü�
                 <button
                   key={key}
                   onClick={() => handleLoadPreset(key)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all border cursor-pointer whitespace-nowrap ${
+                  className={`min-h-[36px] px-3 py-1.5 rounded-xl text-xs font-bold transition-all border cursor-pointer whitespace-nowrap flex items-center justify-center ${
                     isSelected
                       ? "bg-orange-500/20 border-orange-500/60 text-orange-300 shadow-[0_0_12px_rgba(249,115,22,0.25)]"
                       : "bg-tactical-surface/50 border-tactical-border/50 text-tactical-text-muted hover:border-tactical-border hover:text-zinc-200"
@@ -729,7 +729,7 @@ ${isTr ? "Olabilirlik Oranı (LR), yarışan hipotezler (Hp ve Hd) altında dü�
                     onChange={(e) => setInitialMassPg(parseFloat(e.target.value))}
                     className="w-full accent-orange-500 bg-black/40 h-2 rounded-lg cursor-pointer"
                   />
-                  <div className="flex justify-between text-[10px] text-zinc-500 font-mono">
+                  <div className="flex flex-wrap justify-between text-[9px] sm:text-[10px] text-zinc-500 font-mono gap-1">
                     <span>5 pg ({isTr ? "Tek Hücre" : "Single-Cell"})</span>
                     <span>100 pg ({isTr ? "SWGDAM Eşiği" : "SWGDAM Threshold"})</span>
                     <span>500 pg ({isTr ? "Vaka Düzeyi" : "Casework"})</span>
@@ -837,7 +837,7 @@ ${isTr ? "Olabilirlik Oranı (LR), yarışan hipotezler (Hp ve Hd) altında dü�
               </div>
 
               {/* Interactive SVG Chart Container */}
-              <div className="relative h-64 sm:h-72 w-full bg-black/40 rounded-xl border border-tactical-border/50 p-4 flex flex-col justify-end">
+              <div className="relative h-56 sm:h-72 w-full bg-black/40 rounded-xl border border-tactical-border/50 p-2 sm:p-4 flex flex-col justify-end">
                 {/* SVG Visualizer */}
                 <svg className="w-full h-full" viewBox="0 0 500 200" preserveAspectRatio="none">
                   {/* Grid Lines */}
@@ -1217,7 +1217,7 @@ ${isTr ? "Olabilirlik Oranı (LR), yarışan hipotezler (Hp ve Hd) altında dü�
             </div>
 
             {/* 24-Locus Table */}
-            <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 space-y-4 shadow-lg overflow-x-auto">
+            <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-4 sm:p-5 space-y-4 shadow-lg overflow-x-auto w-full min-w-0">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-tactical-border/40 pb-2 min-w-0">
                 <span className="text-xs font-bold text-tactical-text uppercase tracking-wider min-w-0 truncate">
                   {isTr
@@ -1231,7 +1231,7 @@ ${isTr ? "Olabilirlik Oranı (LR), yarışan hipotezler (Hp ve Hd) altında dü�
                 </span>
               </div>
 
-              <table className="w-full text-left text-xs font-mono border-collapse">
+              <table className="w-full min-w-[620px] text-left text-xs font-mono border-collapse">
                 <thead>
                   <tr className="border-b border-tactical-border/40 text-[10px] text-zinc-400 uppercase">
                     <th className="py-2.5 px-3">{isTr ? "STR Lokusu" : "Locus"}</th>

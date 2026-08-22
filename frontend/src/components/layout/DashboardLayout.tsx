@@ -19,6 +19,7 @@ import {
   Search,
   Sliders,
   ArrowRight,
+  Cpu,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import ForenzaLogoIcon from "@/components/common/ForenzaLogoIcon";
@@ -540,55 +541,75 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* ── Main Workspace Area ── */}
       <div className="flex flex-1 flex-col min-w-0 overflow-hidden">
         {/* Mobile Topbar */}
-        <header className="lg:hidden flex h-14 items-center justify-between px-3 sm:px-4 border-b border-tactical-border/60 bg-[#0a0f1a]/95 backdrop-blur-md shrink-0 pt-[env(safe-area-inset-top,0px)]">
+        <header className="lg:hidden flex h-14 items-center justify-between px-3 sm:px-4 border-b border-tactical-border/50 bg-gradient-to-r from-[#08101e]/98 via-[#0a1220]/98 to-[#08101e]/98 backdrop-blur-xl shrink-0 pt-[env(safe-area-inset-top,0px)] shadow-[0_1px_20px_rgba(0,0,0,0.6)] relative overflow-hidden">
+          {/* Subtle ambient glow stripe */}
+          <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent pointer-events-none" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-8 bg-cyan-500/5 rounded-full blur-2xl pointer-events-none" />
+
           <button
             onClick={() => setMobileMenuOpen(true)}
             aria-label={isTr ? "Navigasyon Menüsünü Aç" : "Open Navigation Menu"}
-            className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl bg-black/50 border border-tactical-border/70 text-zinc-300 hover:text-white active:scale-95 transition-all cursor-pointer shadow-sm"
+            className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl bg-white/5 border border-tactical-border/60 text-zinc-300 hover:text-white hover:border-cyan-500/40 hover:bg-cyan-500/10 active:scale-95 transition-all cursor-pointer shadow-sm relative z-10"
           >
-            <Menu className="w-5 h-5 text-emerald-400" />
+            <Menu className="w-5 h-5 text-zinc-400" />
           </button>
 
-          <Link href="/analysis" className="flex items-center gap-2 min-w-0">
-            <ForenzaLogoIcon size={24} className="shrink-0" />
-            <div className="flex flex-col">
-              <span className="font-mono text-xs font-extrabold tracking-widest text-white leading-tight">
+          <Link href="/analysis" className="flex items-center gap-2.5 min-w-0 relative z-10">
+            <div className="relative shrink-0">
+              <div className="absolute inset-0 bg-emerald-500/20 rounded-full blur-md" />
+              <ForenzaLogoIcon size={26} className="relative" />
+            </div>
+            <div className="flex flex-col leading-none">
+              <span className="font-mono text-[11px] font-extrabold tracking-[0.2em] text-white">
                 FORENZA
               </span>
-              <span className="font-mono text-[8px] font-bold tracking-widest text-emerald-400 leading-none">
+              <span className="font-mono text-[8px] font-bold tracking-[0.15em] text-emerald-400/90">
                 EVIDENCE OS
               </span>
             </div>
           </Link>
 
-          <div className="flex items-center gap-1.5 shrink-0">
+          <div className="flex items-center gap-2 shrink-0 relative z-10">
             <SaaSLanguageToggle />
             <button
               onClick={() => setInspectorOpen(true)}
               aria-label={isTr ? "Aktif DNA Profilini İncele" : "Inspect Active DNA Profile"}
-              className="min-h-[44px] px-2.5 py-1 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 active:scale-95 border border-emerald-500/30 text-emerald-300 font-mono text-[9px] font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm shrink-0"
+              className="min-h-[38px] px-2.5 py-1 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 active:scale-95 border border-emerald-500/25 hover:border-emerald-500/50 text-emerald-300 font-mono text-[9px] font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm shrink-0 group"
             >
-              <Radio className="w-2.5 h-2.5 text-emerald-400 animate-pulse shrink-0" />
-              <span className="truncate max-w-[80px] sm:max-w-[120px]">
+              <span className="relative flex shrink-0">
+                <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-emerald-400 opacity-50" />
+                <Radio className="w-2.5 h-2.5 text-emerald-400 relative" />
+              </span>
+              <span className="truncate max-w-[72px] sm:max-w-[110px] group-hover:text-emerald-200 transition-colors">
                 {activeProfile?.profileId ? activeProfile.profileId.replace("PROFILE-", "") : "CASE-2026"}
               </span>
             </button>
           </div>
         </header>
 
-        {/* Mobile Compact Telemetry Status Ticker */}
-        <div className="lg:hidden flex items-center justify-between px-3 py-1 bg-black/60 border-b border-tactical-border/40 font-mono text-[9px] text-zinc-400 shrink-0 gap-2">
-          <div className="flex items-center gap-1.5 shrink-0">
-            <Activity className="w-3 h-3 text-emerald-400 shrink-0" />
-            <span className="text-zinc-500">{t.dashboardTopBar?.subsystemsCount || "35 Subsystems"}</span>
-            <span className="text-emerald-400 font-bold">{t.dashboardTopBar?.subsystemsOnline || "ONLINE"}</span>
+        {/* Mobile Compact Status Ribbon */}
+        <div className="lg:hidden flex items-center gap-0 border-b border-tactical-border/30 bg-black/70 backdrop-blur-sm shrink-0 overflow-hidden">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 border-r border-tactical-border/30 shrink-0">
+            <span className="relative flex">
+              <span className="animate-ping absolute inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400 opacity-60" />
+              <Activity className="w-2.5 h-2.5 text-emerald-400 relative shrink-0" />
+            </span>
+            <span className="font-mono text-[8px] text-zinc-500 tracking-wider whitespace-nowrap">{t.dashboardTopBar?.subsystemsCount || "35 Subsystems"}</span>
+            <span className="font-mono text-[8px] text-emerald-400 font-extrabold tracking-widest whitespace-nowrap">{t.dashboardTopBar?.subsystemsOnline || "ONLINE"}</span>
           </div>
-          <div className="h-2.5 w-px bg-tactical-border/60 shrink-0" />
-          <div className="flex items-center gap-1 shrink-0">
-            <ShieldCheck className="w-3 h-3 text-amber-400 shrink-0" />
-            <span className="text-amber-400 font-bold">{t.dashboardTopBar?.isoStandard || "ISO/IEC 17025"}</span>
+          <div className="flex items-center gap-1.5 px-3 py-1.5 shrink-0">
+            <ShieldCheck className="w-2.5 h-2.5 text-amber-400 shrink-0" />
+            <span className="font-mono text-[8px] text-amber-400 font-bold tracking-wider whitespace-nowrap">{t.dashboardTopBar?.isoStandard || "ISO/IEC 17025:2017"}</span>
+          </div>
+          <div className="flex-1" />
+          <div className="px-2 py-1 mr-1">
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/20 font-mono text-[7px] text-cyan-400 font-bold tracking-widest uppercase whitespace-nowrap">
+              <Cpu className="w-2 h-2" />
+              {t.dashboardTopBar?.engineName || "FORENZA OS"}
+            </span>
           </div>
         </div>
+
 
         {/* Desktop Top Status Bar */}
         <div className="hidden lg:flex h-10 items-center justify-between px-5 border-b border-tactical-border/40 bg-black/40 shrink-0">

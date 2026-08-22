@@ -553,7 +553,7 @@ export default function HIrisPlexPanel() {
                     </div>
                     
                     {/* Golden Preset Buttons */}
-                    <div className="flex flex-wrap items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0">
                         <button
                             onClick={() => setSnpDosages({
                                 rs12913832: 2, // C/C (Blue)
@@ -566,7 +566,7 @@ export default function HIrisPlexPanel() {
                                 rs12203592: 1,
                                 rs3827072: 0,
                             })}
-                            className="px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase bg-blue-500/20 text-blue-300 border border-blue-500/40 hover:bg-blue-500/30 transition-all cursor-pointer"
+                            className="w-full sm:w-auto min-h-[32px] px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase bg-blue-500/20 text-blue-300 border border-blue-500/40 hover:bg-blue-500/30 transition-all cursor-pointer flex items-center justify-center"
                         >
                             {isTr ? "VEKTÖR_P3_01 (Açık Tenli EU)" : "VECTOR_P3_01 (Fair EU)"}
                         </button>
@@ -583,7 +583,7 @@ export default function HIrisPlexPanel() {
                                 rs12203592: 0,
                                 rs3827072: 0,
                             })}
-                            className="px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 transition-all cursor-pointer"
+                            className="w-full sm:w-auto min-h-[32px] px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 transition-all cursor-pointer flex items-center justify-center"
                         >
                             {isTr ? "VEKTÖR_P3_02 (Koyu Tenli AFR)" : "VECTOR_P3_02 (Dark AFR)"}
                         </button>
@@ -600,14 +600,14 @@ export default function HIrisPlexPanel() {
                                 rs12203592: 2, // IRF4 Ephelides
                                 rs3827072: 0,
                             })}
-                            className="px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase bg-rose-500/20 text-rose-300 border border-rose-500/40 hover:bg-rose-500/30 transition-all cursor-pointer"
+                            className="w-full sm:w-auto min-h-[32px] px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase bg-rose-500/20 text-rose-300 border border-rose-500/40 hover:bg-rose-500/30 transition-all cursor-pointer flex items-center justify-center"
                         >
                             {isTr ? "MC1R Kızıl Saç Önayarı" : "MC1R Red Hair Preset"}
                         </button>
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3">
                     {SNP_CATALOG.map((snp) => {
                         const d = snpDosages[snp.rsid] ?? 0;
                         const genotypeStr = d === 2 ? `${snp.ref}/${snp.ref}` : d === 1 ? `${snp.ref}/${snp.alt}` : `${snp.alt}/${snp.alt}`;
@@ -615,7 +615,7 @@ export default function HIrisPlexPanel() {
                             <div
                                 key={snp.rsid}
                                 onClick={() => toggleDosage(snp.rsid)}
-                                className="p-3.5 rounded-xl border border-tactical-border/60 bg-black/40 hover:border-cyan-500/50 transition-all cursor-pointer space-y-2 group"
+                                className="p-3.5 rounded-xl border border-tactical-border/60 bg-black/40 hover:border-cyan-500/50 transition-all cursor-pointer space-y-2 group min-h-[44px]"
                             >
                                 <div className="flex items-center justify-between">
                                     <span className="text-xs font-bold text-white font-mono group-hover:text-cyan-300 transition-colors">

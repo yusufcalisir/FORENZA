@@ -157,16 +157,16 @@ export default function ZkpAuditorPanel() {
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full lg:w-auto shrink-0">
           <button
             onClick={() => setHidePrivateWitness(!hidePrivateWitness)}
-            className="px-3 py-1.5 rounded-xl border border-tactical-border/60 bg-black/60 text-[10px] sm:text-xs font-bold text-zinc-300 hover:text-white flex items-center justify-center gap-1.5 cursor-pointer transition-all whitespace-nowrap"
+            className="min-h-[36px] px-3.5 py-1.5 rounded-xl border border-tactical-border/60 bg-black/60 text-xs font-bold text-zinc-300 hover:text-white flex items-center justify-center gap-1.5 cursor-pointer transition-all whitespace-nowrap"
           >
             {hidePrivateWitness ? <EyeOff className="w-3.5 h-3.5 text-amber-400 shrink-0" /> : <Eye className="w-3.5 h-3.5 text-emerald-400 shrink-0" />}
             <span>{hidePrivateWitness ? (isTr ? "Özel Tanık (Gizli)" : "Private Witness (Masked)") : (isTr ? "Tanık Açık" : "Witness Revealed")}</span>
           </button>
 
-          <div className="flex items-center justify-center gap-1 p-1 rounded-xl bg-black/60 border border-tactical-border/60">
+          <div className="flex items-center justify-center gap-1 p-1 rounded-xl bg-black/60 border border-tactical-border/60 w-full sm:w-auto overflow-x-auto">
             <button
               onClick={() => setActiveTab("comparator")}
-              className={`flex-1 sm:flex-initial text-center px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+              className={`min-h-[36px] flex-1 sm:flex-initial text-center px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center justify-center ${
                 activeTab === "comparator" ? "bg-indigo-500 text-white shadow-md font-extrabold" : "text-zinc-400 hover:text-zinc-200"
               }`}
             >
@@ -177,7 +177,7 @@ export default function ZkpAuditorPanel() {
                 setActiveTab("pairing");
                 if (!proofData) handleSynthesizeProof();
               }}
-              className={`flex-1 sm:flex-initial text-center px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+              className={`min-h-[36px] flex-1 sm:flex-initial text-center px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center justify-center ${
                 activeTab === "pairing" ? "bg-indigo-500 text-white shadow-md font-extrabold" : "text-zinc-400 hover:text-zinc-200"
               }`}
             >
@@ -191,7 +191,7 @@ export default function ZkpAuditorPanel() {
       {activeTab === "comparator" && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left: Private Witness & Threshold Controls */}
-          <div className="space-y-4 rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 shadow-xl">
+          <div className="space-y-4 rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-4 sm:p-5 shadow-xl">
             <div className="flex items-center justify-between border-b border-tactical-border/40 pb-3">
               <span className="text-xs font-bold uppercase tracking-wider text-tactical-text">
                 {isTr ? "Devre Kısıtlamaları Konfigürasyonu" : "Circuit Constraints Configuration"}
@@ -243,7 +243,7 @@ export default function ZkpAuditorPanel() {
             <button
               onClick={handleSynthesizeProof}
               disabled={loading}
-              className="w-full py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full min-h-[42px] py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-95"
             >
               <Cpu className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
               {isTr ? "Groth16 İspatını Sentezle" : "Synthesize Groth16 Proof"}

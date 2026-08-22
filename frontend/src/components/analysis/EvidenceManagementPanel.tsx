@@ -350,7 +350,7 @@ export default function EvidenceManagementPanel() {
                   key={v}
                   id={`view-${v}`}
                   onClick={() => setViewMode(v)}
-                  className={`flex-1 sm:flex-initial px-2.5 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
+                  className={`min-h-[32px] flex-1 sm:flex-initial px-2.5 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
                     viewMode === v
                       ? "bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 shadow-sm"
                       : "bg-black/30 border border-tactical-border/30 text-zinc-400 hover:text-zinc-200"
@@ -371,7 +371,7 @@ export default function EvidenceManagementPanel() {
               <button
                 id="toggle-ellipsoids"
                 onClick={() => setShowEllipsoids(!showEllipsoids)}
-                className={`px-2.5 py-1 rounded-md border font-bold transition-all whitespace-nowrap cursor-pointer ${
+                className={`min-h-[32px] px-2.5 py-1 rounded-md border font-bold transition-all whitespace-nowrap cursor-pointer ${
                   showEllipsoids
                     ? "border-cyan-500/40 text-cyan-300 bg-cyan-500/20"
                     : "border-tactical-border/30 text-zinc-500 bg-black/30"
@@ -382,7 +382,7 @@ export default function EvidenceManagementPanel() {
               <button
                 id="toggle-bpa"
                 onClick={() => setShowBpaTrajectory(!showBpaTrajectory)}
-                className={`px-2.5 py-1 rounded-md border font-bold transition-all whitespace-nowrap cursor-pointer ${
+                className={`min-h-[32px] px-2.5 py-1 rounded-md border font-bold transition-all whitespace-nowrap cursor-pointer ${
                   showBpaTrajectory
                     ? "border-rose-500/40 text-rose-300 bg-rose-500/20"
                     : "border-tactical-border/30 text-zinc-500 bg-black/30"
@@ -393,7 +393,7 @@ export default function EvidenceManagementPanel() {
               <button
                 id="toggle-ballistic"
                 onClick={() => setShowBallisticVector(!showBallisticVector)}
-                className={`px-2.5 py-1 rounded-md border font-bold transition-all whitespace-nowrap cursor-pointer ${
+                className={`min-h-[32px] px-2.5 py-1 rounded-md border font-bold transition-all whitespace-nowrap cursor-pointer ${
                   showBallisticVector
                     ? "border-orange-500/40 text-orange-300 bg-orange-500/20"
                     : "border-tactical-border/30 text-zinc-500 bg-black/30"
@@ -480,7 +480,7 @@ export default function EvidenceManagementPanel() {
                 const cfg = SENSOR_CONFIG[item.type] ?? SENSOR_CONFIG["DNA"];
                 return (
                   <div key={item.id} onClick={() => setSelectedId(item.id)}
-                    className={`p-3 rounded-xl border transition-all cursor-pointer ${
+                    className={`min-h-[48px] p-3 rounded-xl border transition-all cursor-pointer ${
                       selectedId === item.id
                         ? "bg-indigo-500/10 border-indigo-500/50 shadow-[0_0_10px_rgba(99,102,241,0.15)]"
                         : "bg-black/20 border-tactical-border/30 hover:border-tactical-border/60"
@@ -506,7 +506,7 @@ export default function EvidenceManagementPanel() {
           {/* 95% Ellipsoid Inspector */}
           <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-4 shadow-lg">
             <button id="toggle-ellipsoid-detail" onClick={() => setDetailsOpen(!detailsOpen)}
-              className="w-full flex items-center justify-between border-b border-tactical-border/40 pb-2 mb-3">
+              className="min-h-[40px] w-full flex items-center justify-between border-b border-tactical-border/40 pb-2 mb-3">
               <span className="text-[10px] font-bold text-tactical-text uppercase tracking-wider">
                 {isTr ? "%95 Elipsoit Denetçisi (§5.2)" : "95% Ellipsoid Inspector (§5.2)"}
               </span>

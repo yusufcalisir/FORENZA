@@ -215,18 +215,18 @@ export default function IsoReportGeneratorPanel() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
           <button
             onClick={handleCompileReport}
             disabled={loading}
-            className="px-4 py-2 rounded-xl bg-purple-500 hover:bg-purple-400 text-black font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+            className="min-h-[42px] px-4 py-2 rounded-xl bg-purple-500 hover:bg-purple-400 text-black font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 active:scale-95"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
             {isTr ? "ISO Sertifikasını Derle" : "Compile ISO Certificate"}
           </button>
           <button
             onClick={handlePrint}
-            className="px-4 py-2 rounded-xl border border-purple-500/40 bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 font-bold text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer transition-all"
+            className="min-h-[42px] px-4 py-2 rounded-xl border border-purple-500/40 bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95"
           >
             <Printer className="w-3.5 h-3.5" />
             {isTr ? "Yazdır / PDF Olarak Kaydet" : "Print / Export PDF"}
@@ -239,7 +239,7 @@ export default function IsoReportGeneratorPanel() {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-6 space-y-6 shadow-2xl"
+          className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-4 sm:p-6 space-y-6 shadow-2xl"
         >
           {/* Document Header Stamp */}
           <div className="border-b border-tactical-border/60 pb-4 text-center space-y-1">
@@ -351,9 +351,9 @@ export default function IsoReportGeneratorPanel() {
             </div>
 
             {/* Section 8 */}
-            <div className="md:col-span-2 p-3 rounded-xl bg-black/60 border border-zinc-900 text-[9px] text-zinc-500 flex items-center justify-between">
-              <span>{isTr ? "8. Kriptografik Denetim Hashi:" : "8. Cryptographic Audit Hash:"} <span className="font-mono text-zinc-300">{report.audit_trail_and_cryptography.certificate_hash}</span></span>
-              <span className="text-emerald-400 font-bold">{isTr ? "ONAYLANDI" : "CERTIFIED"}</span>
+            <div className="md:col-span-2 p-3 rounded-xl bg-black/60 border border-zinc-900 text-[9px] text-zinc-500 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+              <span className="break-all">{isTr ? "8. Kriptografik Denetim Hashi:" : "8. Cryptographic Audit Hash:"} <span className="font-mono text-zinc-300">{report.audit_trail_and_cryptography.certificate_hash}</span></span>
+              <span className="text-emerald-400 font-bold shrink-0">{isTr ? "ONAYLANDI" : "CERTIFIED"}</span>
             </div>
 
           </div>

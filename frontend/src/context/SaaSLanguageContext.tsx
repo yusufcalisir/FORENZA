@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { SaasLanguage, saasTranslations, SaasTranslation } from "@/dictionaries/saasTranslations";
 
 interface SaasLanguageContextType {
@@ -13,6 +13,21 @@ interface SaasLanguageContextType {
 
 const SaasLanguageContext = createContext<SaasLanguageContextType | undefined>(undefined);
 
+const COOKIE_NAME = "forenza_saas_lang";
+const STORAGE_KEY = "forenza_saas_lang";
+
+function getCookie(name: string): string | null {
+  if (typeof document === "undefined") return null;
+  const match = document.cookie.match(new RegExp("(^|;\\s*)" + name + "=([^;]+)"));
+  return match ? decodeURIComponent(match[2]) : null;
+}
+
+function setCookie(name: string, value: string, days = 365) {
+  if (typeof document === "undefined") return;
+  const expires = new Date(Date.now() + days * 864e5).toUTCString();
+  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/; SameSite=Lax`;
+}
+
 export function SaasLanguageProvider({
   children,
   initialLang = "en",
@@ -20,34 +35,51 @@ export function SaasLanguageProvider({
   children: React.ReactNode;
   initialLang?: SaasLanguage;
 }) {
-  // IMPORTANT: Must start with `initialLang` (not localStorage) so that the
-  // first client render exactly matches the server-rendered HTML.
-  // Reading localStorage here causes React Hydration Error #418 because the
-  // server has no localStorage and renders with initialLang, but the client
-  // synchronously reads a different value → SSR/CSR mismatch.
   const [lang, setLangState] = useState<SaasLanguage>(initialLang);
-
-  // mounted flag — false on server / first render, true after hydration.
-  // Expose this so every consumer can safely gate lang-dependent JSX output.
   const [mounted, setMounted] = useState(false);
 
+  const applyLang = useCallback((newLang: SaasLanguage, persist = true) => {
+    setLangState(newLang);
+    if (persist) {
+      try {
+        localStorage.setItem(STORAGE_KEY, newLang);
+        setCookie(COOKIE_NAME, newLang);
+        window.dispatchEvent(new CustomEvent("forenza-lang-changed", { detail: newLang }));
+      } catch (e) {
+        console.warn("Language persistence error", e);
+      }
+    }
+  }, []);
+
   useEffect(() => {
-    // Mark hydration complete — must run before any lang changes below.
     setMounted(true);
 
-    // Phase 1: Respect saved user preference (highest priority).
+    // Phase 1: Check localStorage first, then Cookie (User's explicit saved preference)
     try {
-      const saved = localStorage.getItem("forenza_saas_lang") as SaasLanguage | null;
-      if (saved === "tr" || saved === "en") {
-        setLangState(saved);
+      const stored = localStorage.getItem(STORAGE_KEY) as SaasLanguage | null;
+      if (stored === "tr" || stored === "en") {
+        setLangState(stored);
+        setCookie(COOKIE_NAME, stored);
+        return;
+      }
+      const cookieVal = getCookie(COOKIE_NAME) as SaasLanguage | null;
+      if (cookieVal === "tr" || cookieVal === "en") {
+        setLangState(cookieVal);
+        localStorage.setItem(STORAGE_KEY, cookieVal);
         return;
       }
     } catch (_) {}
 
-    // Phase 2: SSR already detected language correctly → nothing to do.
-    if (initialLang !== "en") return;
+    // Phase 2: If server detected language (e.g. initialLang is "tr"), preserve and persist it
+    if (initialLang === "tr" || initialLang === "en") {
+      try {
+        localStorage.setItem(STORAGE_KEY, initialLang);
+        setCookie(COOKIE_NAME, initialLang);
+      } catch (_) {}
+      return;
+    }
 
-    // Phase 3: SSR headers unavailable (local dev, etc.) → browser fallback.
+    // Phase 3: Client browser fallback detection
     try {
       const navLang = (navigator.language || "").toLowerCase();
       const navLangs = Array.from(navigator.languages || []).map((l) => l.toLowerCase());
@@ -59,22 +91,40 @@ export function SaasLanguageProvider({
         tz.includes("Istanbul") ||
         tz.includes("Turkey");
 
-      if (isTurkish) {
-        setLangState("tr");
-      }
+      const detectedLang: SaasLanguage = isTurkish ? "tr" : "en";
+      setLangState(detectedLang);
+      localStorage.setItem(STORAGE_KEY, detectedLang);
+      setCookie(COOKIE_NAME, detectedLang);
     } catch (e) {
-      console.warn("Language auto-detection error", e);
+      console.warn("Language detection fallback error", e);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialLang]);
+
+  // Synchronize across multiple components, frames, or tabs
+  useEffect(() => {
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === STORAGE_KEY && (e.newValue === "tr" || e.newValue === "en")) {
+        setLangState(e.newValue as SaasLanguage);
+      }
+    };
+
+    const handleCustomChange = (e: Event) => {
+      const customEvent = e as CustomEvent<SaasLanguage>;
+      if (customEvent.detail === "tr" || customEvent.detail === "en") {
+        setLangState(customEvent.detail);
+      }
+    };
+
+    window.addEventListener("storage", handleStorage);
+    window.addEventListener("forenza-lang-changed", handleCustomChange);
+    return () => {
+      window.removeEventListener("storage", handleStorage);
+      window.removeEventListener("forenza-lang-changed", handleCustomChange);
+    };
   }, []);
 
   const setLang = (newLang: SaasLanguage) => {
-    setLangState(newLang);
-    try {
-      localStorage.setItem("forenza_saas_lang", newLang);
-    } catch (e) {
-      console.warn("Could not save language preference", e);
-    }
+    applyLang(newLang, true);
   };
 
   // Dynamically synchronize browser tab title with active language

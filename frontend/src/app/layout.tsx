@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
+import { headers, cookies } from "next/headers";
 import "./globals.css";
 import { Providers } from "./providers";
-
+import { SaasLanguage } from "@/dictionaries/saasTranslations";
 
 // Resolve base URL: custom domain > Vercel auto URL > default production Vercel deployment
 const getSiteUrl = () => {
@@ -71,20 +72,42 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const headersList = await headers();
+
+  const savedLangCookie = cookieStore.get("forenza_saas_lang")?.value;
+  let initialLang: SaasLanguage = "en";
+
+  if (savedLangCookie === "tr" || savedLangCookie === "en") {
+    initialLang = savedLangCookie;
+  } else {
+    // Server-side Geolocation & Language detection
+    const country = headersList.get("x-vercel-ip-country") || headersList.get("cf-ipcountry") || headersList.get("x-country") || "";
+    const acceptLang = headersList.get("accept-language") || "";
+    const timezone = headersList.get("x-vercel-ip-timezone") || headersList.get("x-timezone") || "";
+
+    const isTurkishCountry = country.toUpperCase() === "TR";
+    const isTurkishLang = /tr(-[a-z]{2})?|\btr\b/i.test(acceptLang);
+    const isTurkishTz = /istanbul|turkey/i.test(timezone);
+
+    if (isTurkishCountry || isTurkishLang || isTurkishTz) {
+      initialLang = "tr";
+    }
+  }
+
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang={initialLang} className="dark" suppressHydrationWarning>
       <body
         className="font-sans antialiased"
         suppressHydrationWarning
       >
-        <Providers>{children}</Providers>
+        <Providers initialLang={initialLang}>{children}</Providers>
       </body>
-
     </html>
   );
 }

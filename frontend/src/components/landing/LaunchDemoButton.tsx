@@ -4,11 +4,12 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Zap } from "lucide-react";
 import DnaLaunchTransition from "@/components/common/DnaLaunchTransition";
+import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 export default function LaunchDemoButton({
     size = "md",
     className = "",
-    label = "Launch FORENZA OS",
+    label,
     compactMobile = false,
     iconOnly = false,
 }: {
@@ -19,7 +20,11 @@ export default function LaunchDemoButton({
     iconOnly?: boolean;
 }) {
     const router = useRouter();
+    const { lang, t } = useSaasLanguage();
+    const isTr = lang === "tr";
     const [isTransitioning, setIsTransitioning] = useState(false);
+
+    const buttonLabel = label || t.hero?.launchDemo || (isTr ? "FORENZA OS'u Başlat" : "Launch FORENZA OS");
 
     const sizeClasses = {
         sm: "px-3.5 py-1.5 font-mono text-[10px]",
@@ -45,8 +50,8 @@ export default function LaunchDemoButton({
             <button
                 type="button"
                 onClick={handleClick}
-                aria-label={label}
-                title={label}
+                aria-label={buttonLabel}
+                title={buttonLabel}
                 className={`group relative inline-flex items-center justify-center font-mono font-bold tracking-wider transition-all duration-300 rounded-xl bg-tactical-surface/90 hover:bg-emerald-500/15 text-emerald-400 border border-emerald-500/40 hover:border-emerald-400/80 shadow-[0_0_15px_rgba(16,185,129,0.15)] hover:shadow-[0_0_25px_rgba(16,185,129,0.3)] hover:scale-[1.02] active:scale-[0.98] cursor-pointer ${
                     iconOnly
                         ? "p-2"
@@ -58,7 +63,7 @@ export default function LaunchDemoButton({
                 <Zap className="h-4 w-4 text-emerald-400 fill-emerald-400/20 shrink-0 transition-transform group-hover:scale-110" />
                 {!iconOnly && (
                     <span className={`whitespace-nowrap uppercase tracking-wider ${compactMobile ? "hidden sm:inline" : ""}`}>
-                        {label}
+                        {buttonLabel}
                     </span>
                 )}
             </button>

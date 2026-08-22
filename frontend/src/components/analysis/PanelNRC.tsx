@@ -243,23 +243,23 @@ export function PanelNRC() {
   return (
     <div className="space-y-6 font-mono">
       {/* ── Header & Mission Control Bar ────────────────────────────────────────── */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-xl backdrop-blur-xl">
-        <div className="flex items-center gap-4">
-          <div className="p-3 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/10 border border-emerald-500/30 text-emerald-400">
-            <Globe2 className="w-7 h-7" />
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-xl backdrop-blur-xl min-w-0 overflow-hidden">
+        <div className="flex items-start sm:items-center gap-3 sm:gap-4 min-w-0">
+          <div className="p-2.5 sm:p-3 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/10 border border-emerald-500/30 text-emerald-400 shrink-0">
+            <Globe2 className="w-6 h-6 sm:w-7 sm:h-7" />
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-lg font-bold text-slate-100 tracking-tight">
+          <div className="min-w-0 space-y-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="text-base sm:text-lg font-bold text-slate-100 tracking-tight">
                 {isTr
                   ? "Modül 1.3: NRC-II Dirichlet F_st & Balding-Nichols Popülasyon Genetiği"
                   : "Module 1.3: NRC-II Dirichlet F_st & Balding-Nichols Population Genetics"}
               </h2>
-              <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+              <span className="px-2 py-0.5 text-[10px] sm:text-xs font-semibold rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 whitespace-nowrap shrink-0">
                 {isTr ? "DOĞRULANDI (3/3 Kriter)" : "VERIFIED (3/3 Criteria)"}
               </span>
             </div>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-[11px] sm:text-xs text-slate-400 leading-relaxed">
               {isTr
                 ? "Çok etnikli alt popülasyon akrabalığı (θ), Weir-Cockerham ANOVA & ENFSI (2017) Karşılıklılık Kalkanı"
                 : "Multi-ethnic subpopulation coancestry (θ), Weir-Cockerham ANOVA & ENFSI (2017) Reciprocal Shield"}
@@ -268,12 +268,14 @@ export function PanelNRC() {
         </div>
 
         {/* Profile Selector */}
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-slate-400 font-medium">{isTr ? "Standart Profil:" : "Standard Profile:"}</span>
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 min-w-0 shrink-0 pt-3 lg:pt-0 border-t lg:border-t-0 border-slate-800/60">
+          <span className="text-[11px] sm:text-xs text-slate-400 font-medium whitespace-nowrap">
+            {isTr ? "Standart Profil:" : "Standard Profile:"}
+          </span>
           <select
             value={selectedStandard}
             onChange={(e) => setSelectedStandard(e.target.value)}
-            className="px-3 py-1.5 text-xs font-mono bg-slate-800 border border-slate-700 rounded-lg text-slate-200 focus:outline-none focus:border-emerald-500 cursor-pointer"
+            className="w-full sm:w-auto max-w-full px-3 py-1.5 text-xs font-mono bg-slate-800 border border-slate-700 rounded-lg text-slate-200 focus:outline-none focus:border-emerald-500 cursor-pointer truncate"
           >
             <option value="CASE_PROFILE">{isTr ? "Aktif Vaka Profili" : "Active Case Profile"} ({activeCase.profile.profileId})</option>
             <option value="SRM_2391D_COMP_A">NIST SRM 2391d Comp A (Caucasian 9947A)</option>

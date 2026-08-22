@@ -515,7 +515,7 @@ export default function PanelXSTR() {
               r = ½ · tanh(2d / 100) = ½ · (e^{"{4d/100}"} - 1) / (e^{"{4d/100}"} + 1)
             </p>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-4">
             <div className="rounded-lg bg-slate-800/80 px-3 py-1.5 border border-slate-700">
               <span className="text-[11px] text-slate-400">{isTr ? "Harita Mesafesi d:" : "Map Distance d:"}</span>{" "}
               <span className="font-mono font-bold text-cyan-300">{kosambiDistanceCm.toFixed(1)} cM</span>
@@ -537,7 +537,7 @@ export default function PanelXSTR() {
             onChange={(e) => setKosambiDistanceCm(parseFloat(e.target.value))}
             className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-400"
           />
-          <div className="flex justify-between text-[10px] font-mono text-slate-500 mt-1">
+          <div className="flex flex-wrap justify-between text-[9px] sm:text-[10px] font-mono text-slate-500 mt-1 gap-1">
             <span>0 cM (r = 0.0)</span>
             <span>18.5 cM (LG1 r ≈ 0.177)</span>
             <span>35.0 cM (r ≈ 0.301)</span>
@@ -549,7 +549,7 @@ export default function PanelXSTR() {
 
       {/* ── Chromosome X Cytogenetic Map & 4 Linkage Groups ───────────────── */}
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-tactical-border/40 pb-2">
           <h3 className="text-sm font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
             <Dna className="h-4 w-4 text-cyan-400" />
             {isTr
@@ -569,23 +569,23 @@ export default function PanelXSTR() {
                 key={lg.id}
                 className="rounded-xl border border-slate-800 bg-slate-900/60 p-4 backdrop-blur-md hover:border-slate-700 transition-colors"
               >
-                <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
-                  <div>
-                    <div className="flex items-center gap-2">
+                <div className="flex items-center justify-between border-b border-slate-800/80 pb-3 gap-2">
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
                       <span className="font-bold text-white text-sm">
                         {isTr ? `Bağlantı Grubu ${lg.id.replace("LG", "")}` : lg.name}
                       </span>
-                      <span className="rounded bg-slate-800 px-2 py-0.5 text-[10px] font-mono text-cyan-300 border border-slate-700">
+                      <span className="rounded bg-slate-800 px-2 py-0.5 text-[10px] font-mono text-cyan-300 border border-slate-700 whitespace-nowrap">
                         {lg.band}
                       </span>
                     </div>
-                    <p className="text-[11px] text-slate-400 mt-0.5">
+                    <p className="text-[11px] text-slate-400 mt-0.5 truncate">
                       {isTr
                         ? `Küme içi rekombinasyon: r₁₋₂ = ${lg.r12}, r₂₋₃ = ${lg.r23}`
                         : `Intra-cluster recombination: r₁₋₂ = ${lg.r12}, r₂₋₃ = ${lg.r23}`}
                     </p>
                   </div>
-                  <div className="text-right">
+                  <div className="text-right shrink-0">
                     <span className="text-xs text-slate-400 block font-mono">KI_{lg.id}</span>
                     <span className="font-mono font-bold text-cyan-300 text-sm">
                       {grpRes.ki.toLocaleString("en-US", { maximumFractionDigits: 2 })}
@@ -608,22 +608,22 @@ export default function PanelXSTR() {
                     return (
                       <div
                         key={locName}
-                        className="flex items-center justify-between rounded-lg bg-slate-800/40 p-2.5 border border-slate-800/80 text-xs"
+                        className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 rounded-lg bg-slate-800/40 p-2.5 border border-slate-800/80 text-xs min-w-0"
                       >
-                        <div>
+                        <div className="min-w-0">
                           <div className="flex items-center gap-2">
                             <span className="font-mono font-semibold text-slate-200">{locName}</span>
                             <span className="text-[10px] text-slate-500 font-mono">
                               {meta.mb} Mb ({meta.cm} cM)
                             </span>
                           </div>
-                          <span className="text-[10px] text-slate-400 font-mono mt-0.5 block">
+                          <span className="text-[10px] text-slate-400 font-mono mt-0.5 block truncate">
                             {isTr ? "Motif:" : "Motif:"} {meta.motif}
                           </span>
                         </div>
 
-                        <div className="flex items-center gap-3">
-                          <div className="text-right font-mono text-[11px]">
+                        <div className="flex items-center justify-between sm:justify-end gap-3 pt-1 sm:pt-0 border-t sm:border-t-0 border-slate-700/40">
+                          <div className="text-left sm:text-right font-mono text-[11px]">
                             <div className="text-slate-400">
                               A: <span className="text-slate-200">{gA.join(", ")}</span>
                             </div>

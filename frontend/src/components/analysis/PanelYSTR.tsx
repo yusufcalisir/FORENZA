@@ -446,15 +446,13 @@ export default function PanelYSTR() {
       )}
 
       {/* ── Preset Benchmark Cohort Selector ── */}
-      <div className="space-y-2.5">
-        <div className="flex items-center justify-between">
+      <div className="space-y-2.5 min-w-0">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-tactical-border/40 pb-2">
           <span className="text-xs font-bold text-tactical-text uppercase tracking-wider flex items-center gap-1.5">
-            <Layers className="w-3.5 h-3.5 text-indigo-400" />
-            {isTr
-              ? "Sertifikalı Vaka & Referans Kohortları (Pillar 2 §1)"
-              : "Certified Casework & Reference Cohorts (Pillar 2 §1)"}
+            <Layers className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
+            <span>{isTr ? "Sertifikalı Vaka & Referans Kohortları" : "Certified Casework & Reference Cohorts"}</span>
           </span>
-          <span className="text-[10px] text-zinc-500">
+          <span className="text-[10px] text-zinc-500 whitespace-nowrap shrink-0">
             {isTr ? "ISO/IEC 17025:2017 Altın Standartlar" : "ISO/IEC 17025:2017 Gold Standards"}
           </span>
         </div>
@@ -575,13 +573,13 @@ export default function PanelYSTR() {
       </div>
 
       {/* ── Control Configuration & Population Partition Strip ── */}
-      <div className="p-4 rounded-xl bg-black/40 border border-tactical-border/60 space-y-3">
+      <div className="p-4 rounded-xl bg-black/40 border border-tactical-border/60 space-y-3 min-w-0">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 text-xs">
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 w-full lg:w-auto min-w-0">
             {/* Metapopulation Selector */}
-            <div className="flex items-center gap-2 bg-black/60 px-3 py-1.5 rounded-lg border border-tactical-border/50">
-              <span className="text-zinc-400 font-bold whitespace-nowrap">
-                {isTr ? "YHRD Popülasyonu:" : "YHRD Partition:"}
+            <div className="flex items-center gap-2 bg-black/60 px-3 py-2 rounded-xl border border-tactical-border/50 min-w-0">
+              <span className="text-zinc-400 font-bold whitespace-nowrap shrink-0">
+                {isTr ? "YHRD:" : "YHRD:"}
               </span>
               <select
                 value={selectedPop.code}
@@ -590,7 +588,7 @@ export default function PanelYSTR() {
                   setSelectedPop(pop);
                   setTheta(pop.theta);
                 }}
-                className="bg-transparent text-indigo-300 font-bold outline-none cursor-pointer"
+                className="bg-transparent text-indigo-300 font-bold outline-none cursor-pointer w-full min-w-0 truncate text-xs"
               >
                 {YHRD_METAPOPULATIONS.map((p) => (
                   <option key={p.code} value={p.code} className="bg-zinc-900 text-zinc-200">
@@ -601,7 +599,7 @@ export default function PanelYSTR() {
             </div>
 
             {/* Meioses Depth */}
-            <div className="flex items-center gap-2 bg-black/60 px-3 py-1.5 rounded-lg border border-tactical-border/50">
+            <div className="flex items-center justify-between gap-2 bg-black/60 px-3 py-2 rounded-xl border border-tactical-border/50">
               <span className="text-zinc-400 font-bold whitespace-nowrap">
                 {isTr ? "Mayoz (m):" : "Meioses (m):"}
               </span>
@@ -616,12 +614,12 @@ export default function PanelYSTR() {
             </div>
 
             {/* Coancestry Theta */}
-            <div className="flex items-center gap-2 bg-black/60 px-3 py-1.5 rounded-lg border border-tactical-border/50">
-              <span className="text-zinc-400 font-bold whitespace-nowrap">Theta (θ):</span>
+            <div className="flex items-center gap-2 bg-black/60 px-3 py-2 rounded-xl border border-tactical-border/50 min-w-0">
+              <span className="text-zinc-400 font-bold whitespace-nowrap shrink-0">Theta (θ):</span>
               <select
                 value={theta}
                 onChange={(e) => setTheta(parseFloat(e.target.value))}
-                className="bg-transparent text-amber-300 font-bold outline-none cursor-pointer"
+                className="bg-transparent text-amber-300 font-bold outline-none cursor-pointer w-full min-w-0 truncate text-xs"
               >
                 <option value={0.01} className="bg-zinc-900 text-zinc-200">
                   0.01 ({isTr ? "Genel Avrupa" : "General European"})
@@ -639,7 +637,7 @@ export default function PanelYSTR() {
             </div>
 
             {/* Observed Matches k */}
-            <div className="flex items-center gap-2 bg-black/60 px-3 py-1.5 rounded-lg border border-tactical-border/50">
+            <div className="flex items-center justify-between gap-2 bg-black/60 px-3 py-2 rounded-xl border border-tactical-border/50">
               <span className="text-zinc-400 font-bold whitespace-nowrap">
                 {isTr ? "Gözlenen (k):" : "Observed (k):"}
               </span>
@@ -654,45 +652,47 @@ export default function PanelYSTR() {
             </div>
           </div>
 
-          <div className="text-[10px] text-zinc-500 font-bold flex items-center gap-1.5">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-            {isTr
-              ? "YHRD Sürüm 68 Standart Sayım Yöntemi Aktif"
-              : "YHRD Release 68 Standard Counting Method Active"}
+          <div className="text-[10px] text-zinc-500 font-bold flex items-center gap-1.5 shrink-0">
+            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+            <span>
+              {isTr
+                ? "YHRD Sürüm 68 Standart Sayım Yöntemi Aktif"
+                : "YHRD Release 68 Standard Counting Method Active"}
+            </span>
           </div>
         </div>
       </div>
 
       {/* ── 27-Locus Multiplex Heatmap Matrix ── */}
       <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-4 sm:p-5 space-y-4 shadow-xl">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-tactical-border/40 pb-3">
-          <div>
+        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3 border-b border-tactical-border/40 pb-3 min-w-0">
+          <div className="min-w-0 space-y-0.5">
             <h3 className="text-xs sm:text-sm font-bold text-tactical-text uppercase tracking-wider">
               {isTr
                 ? "Y-FILER Plus 27-Lokus Haplotipleri Matrisi (25 Sistem)"
                 : "Y-FILER Plus 27-Locus Haplotype Matrix (25 Systems)"}
             </h3>
-            <p className="text-[10px] text-tactical-text-muted mt-0.5">
+            <p className="text-[10px] text-tactical-text-muted leading-relaxed">
               {isTr
                 ? "CE Boya Kimyası Çoklaması • 7 Hızlı Mutasyona Uğrayan Lokus (RM) • Kademeli Mutasyon Modeli"
                 : "CE Dye Chemistry Multiplex • 7 Rapidly Mutating Loci (RM) • Stepwise Mutation Model"}
             </p>
           </div>
 
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 text-blue-300">
+          <div className="flex items-center gap-1.5 flex-wrap shrink-0">
+            <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 text-blue-300 whitespace-nowrap">
               6-FAM ({isTr ? "Mavi" : "Blue"})
             </span>
-            <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-300">
+            <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 whitespace-nowrap">
               VIC ({isTr ? "Yeşil" : "Green"})
             </span>
-            <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/30 text-amber-300">
+            <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/30 text-amber-300 whitespace-nowrap">
               NED ({isTr ? "Sarı" : "Yellow"})
             </span>
-            <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-rose-500/10 border border-rose-500/30 text-rose-300">
+            <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-rose-500/10 border border-rose-500/30 text-rose-300 whitespace-nowrap">
               TAZ ({isTr ? "Kırmızı" : "Red"})
             </span>
-            <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-fuchsia-500/10 border border-fuchsia-500/30 text-fuchsia-300">
+            <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-fuchsia-500/10 border border-fuchsia-500/30 text-fuchsia-300 whitespace-nowrap">
               SID ({isTr ? "Mor / RM" : "Purple / RM"})
             </span>
           </div>

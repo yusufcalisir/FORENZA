@@ -447,9 +447,9 @@ export default function GeoForensicIntelligencePanel({
                     <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 relative z-10">
                         <div className="space-y-1.5 min-w-0">
                             <div className="flex items-center gap-2.5 flex-wrap">
-                                <div className="px-2.5 py-1 rounded-md bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-mono text-[10px] font-bold tracking-wider uppercase flex items-center gap-1.5 min-h-[28px]">
+                                <div className="px-2.5 py-1 rounded-md bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-mono text-[10px] font-bold tracking-wider uppercase flex items-center gap-1.5 min-h-[28px] whitespace-nowrap shrink-0">
                                     <Globe className="w-3.5 h-3.5" />
-                                    {isTr ? "PILLAR 7: JEO-ADLİ İSTİHBARAT" : "PILLAR 7: GEO-FORENSIC INTELLIGENCE"}
+                                    {isTr ? "JEO-ADLİ İSTİHBARAT" : "GEO-FORENSIC INTELLIGENCE"}
                                 </div>
                                 <span className="text-[10px] font-mono text-zinc-400 bg-zinc-800/80 px-2 py-0.5 rounded border border-zinc-700/50 min-h-[24px] flex items-center">
                                     ISO/IEC 17025:2017 & ASTM E3272-21

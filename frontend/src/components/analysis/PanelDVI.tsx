@@ -243,23 +243,25 @@ export default function PanelDVI() {
   return (
     <div className="space-y-6 text-slate-100 font-mono pb-12">
       {/* ── Header & Badges ────────────────────────────────────────────── */}
-      <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-6 shadow-xl backdrop-blur">
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 bg-cyan-500/10 border border-cyan-500/30 rounded-lg text-cyan-400">
+      <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-5 sm:p-6 shadow-xl backdrop-blur min-w-0">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 min-w-0">
+          <div className="min-w-0">
+            <div className="flex items-start sm:items-center gap-3 min-w-0">
+              <div className="p-2.5 bg-cyan-500/10 border border-cyan-500/30 rounded-xl text-cyan-400 shrink-0">
                 <Users className="w-6 h-6 animate-pulse" />
               </div>
-              <div>
-                <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight flex items-center gap-2">
-                  {isTr
-                    ? "Interpol Afet Kurbanlarını Kimliklendirme & Soybağı Eşleştirici"
-                    : "Interpol Disaster Victim Identification & Pedigree Reconciler"}
-                  <span className="text-xs px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
-                    {isTr ? "Süit 2.4" : "Pillar 2.4"}
+              <div className="min-w-0 space-y-0.5">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h1 className="text-lg sm:text-2xl font-bold text-white tracking-tight">
+                    {isTr
+                      ? "Interpol Afet Kurbanlarını Kimliklendirme & Soybağı Eşleştirici"
+                      : "Interpol Disaster Victim Identification & Pedigree Reconciler"}
+                  </h1>
+                  <span className="text-xs px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 whitespace-nowrap shrink-0">
+                    INTERPOL DVI 2023
                   </span>
-                </h1>
-                <p className="text-xs text-slate-400 mt-0.5">
+                </div>
+                <p className="text-xs text-slate-400 leading-relaxed">
                   {isTr
                     ? "Interpol DVI Kılavuzu Bölüm 4 (2018/2023) • Çoklu-Omik Kanıt Birleştirme • Bayesyen Sonsal Oranlar • Macar 1-e-1 Çözücü"
                     : "Interpol DVI Guide Section 4 (2018/2023) • Multi-Omic Evidence Fusion • Bayesian Posterior Odds • Hungarian 1-to-1 Solver"}

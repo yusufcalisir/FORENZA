@@ -211,23 +211,25 @@ export default function PanelMTDNA() {
   return (
     <div className="space-y-6 text-slate-100 font-mono pb-12">
       {/* ── Header & Badges ────────────────────────────────────────────── */}
-      <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-6 shadow-xl backdrop-blur">
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 bg-emerald-500/10 border border-emerald-500/30 rounded-lg text-emerald-400">
+      <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-5 sm:p-6 shadow-xl backdrop-blur min-w-0">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 min-w-0">
+          <div className="min-w-0">
+            <div className="flex items-start sm:items-center gap-3 min-w-0">
+              <div className="p-2.5 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-400 shrink-0">
                 <Compass className="w-6 h-6 animate-spin-slow" />
               </div>
-              <div>
-                <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight flex items-center gap-2">
-                  {isTr
-                    ? "Mitokondriyal DNA (mtDNA) EMPOP rCRS/RSRS Hizalama Motoru"
-                    : "Mitochondrial DNA (mtDNA) EMPOP rCRS/RSRS Alignment Engine"}
-                  <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                    {isTr ? "Süit 2.3" : "Pillar 2.3"}
+              <div className="min-w-0 space-y-0.5">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h1 className="text-lg sm:text-2xl font-bold text-white tracking-tight">
+                    {isTr
+                      ? "Mitokondriyal DNA (mtDNA) EMPOP rCRS/RSRS Hizalama Motoru"
+                      : "Mitochondrial DNA (mtDNA) EMPOP rCRS/RSRS Alignment Engine"}
+                  </h1>
+                  <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 whitespace-nowrap shrink-0">
+                    EMPOP 15 • ISFG 2024
                   </span>
-                </h1>
-                <p className="text-xs text-slate-400 mt-0.5">
+                </div>
+                <p className="text-xs text-slate-400 leading-relaxed">
                   {isTr
                     ? "Revize Cambridge Referans Dizisi (NC_012920.1, 16.569 bp) • ISFG 3'-Sağa Hizalama Düzelticisi • PhyloTree Build 17"
                     : "Revised Cambridge Reference Sequence (NC_012920.1, 16,569 bp) • ISFG 3'-Right Alignment Normalizer • PhyloTree Build 17"}

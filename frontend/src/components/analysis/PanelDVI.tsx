@@ -354,7 +354,7 @@ export default function PanelDVI() {
             </div>
 
             {/* SVG Pedigree Graph */}
-            <div className="relative w-full h-48 sm:h-56 flex items-center justify-center bg-slate-950/60 rounded-xl border border-slate-800 p-2">
+            <div className="relative w-full h-44 sm:h-56 flex items-center justify-center bg-slate-950/60 rounded-xl border border-slate-800 p-2">
               <svg viewBox="0 0 240 180" className="w-full h-full">
                 {currentPreset.pedigreeType === "TRIO_PARENTS" && (
                   <>
@@ -492,7 +492,7 @@ export default function PanelDVI() {
                   </span>
                   <button
                     onClick={() => setHasYstr(!hasYstr)}
-                    className={`text-[10px] px-2 py-0.5 rounded font-mono font-bold cursor-pointer ${hasYstr ? "bg-cyan-500/20 text-cyan-300" : "bg-slate-800 text-slate-500"}`}
+                    className={`min-h-[30px] flex items-center justify-center text-[10px] px-2.5 py-1 rounded-md font-mono font-bold cursor-pointer transition-colors ${hasYstr ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40" : "bg-slate-800 text-slate-500 border border-slate-700"}`}
                   >
                     {hasYstr ? (isTr ? "ETKİN (δ_y=1)" : "ENABLED (δ_y=1)") : (isTr ? "DEVRE DIŞI (δ_y=0)" : "DISABLED (δ_y=0)")}
                   </button>
@@ -516,7 +516,7 @@ export default function PanelDVI() {
                   </span>
                   <button
                     onClick={() => setHasMtdna(!hasMtdna)}
-                    className={`text-[10px] px-2 py-0.5 rounded font-mono font-bold cursor-pointer ${hasMtdna ? "bg-purple-500/20 text-purple-300" : "bg-slate-800 text-slate-500"}`}
+                    className={`min-h-[30px] flex items-center justify-center text-[10px] px-2.5 py-1 rounded-md font-mono font-bold cursor-pointer transition-colors ${hasMtdna ? "bg-purple-500/20 text-purple-300 border border-purple-500/40" : "bg-slate-800 text-slate-500 border border-slate-700"}`}
                   >
                     {hasMtdna ? (isTr ? "ETKİN (δ_m=1)" : "ENABLED (δ_m=1)") : (isTr ? "DEVRE DIŞI (δ_m=0)" : "DISABLED (δ_m=0)")}
                   </button>
@@ -540,7 +540,7 @@ export default function PanelDVI() {
                   </span>
                   <button
                     onClick={() => setHasSnp(!hasSnp)}
-                    className={`text-[10px] px-2 py-0.5 rounded font-mono font-bold cursor-pointer ${hasSnp ? "bg-amber-500/20 text-amber-300" : "bg-slate-800 text-slate-500"}`}
+                    className={`min-h-[30px] flex items-center justify-center text-[10px] px-2.5 py-1 rounded-md font-mono font-bold cursor-pointer transition-colors ${hasSnp ? "bg-amber-500/20 text-amber-300 border border-amber-500/40" : "bg-slate-800 text-slate-500 border border-slate-700"}`}
                   >
                     {hasSnp ? (isTr ? "ETKİN (δ_s=1)" : "ENABLED (δ_s=1)") : (isTr ? "DEVRE DIŞI (δ_s=0)" : "DISABLED (δ_s=0)")}
                   </button>
@@ -621,7 +621,7 @@ export default function PanelDVI() {
                 onChange={(e) => setPriorProb(parseFloat(e.target.value))}
                 className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-cyan-500"
               />
-              <div className="flex justify-between text-[10px] text-slate-500 mt-1 font-mono">
+              <div className="flex flex-wrap justify-between text-[9px] sm:text-[10px] text-slate-500 mt-1 font-mono gap-1">
                 <span>0.0001 (10 binde 1)</span>
                 <span>0.001 ({isTr ? "Varsayılan DVI" : "Default DVI"})</span>
                 <span>0.01 (100'de 1)</span>
@@ -662,8 +662,8 @@ export default function PanelDVI() {
               </div>
 
               {/* Table Matrix */}
-              <div className="w-full">
-                <table className="w-full table-fixed text-xs text-left">
+              <div className="w-full overflow-x-auto">
+                <table className="w-full min-w-[280px] table-fixed text-xs text-left">
                   <thead>
                     <tr className="border-b border-slate-700 text-[10px] uppercase text-slate-400 font-mono">
                       <th className="py-2 px-1 w-1/4">

@@ -407,7 +407,7 @@ function SidebarContent({
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { setInspectorOpen } = useIngestStore();
+  const { setInspectorOpen, activeProfile } = useIngestStore();
   const { t, lang } = useSaasLanguage();
   const isTr = lang === "tr";
 
@@ -449,9 +449,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   <SaaSLanguageToggle />
                   <button
                     onClick={() => setMobileMenuOpen(false)}
-                    className="p-1 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors cursor-pointer"
+                    aria-label={isTr ? "Menüyü Kapat" : "Close Menu"}
+                    className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors cursor-pointer"
                   >
-                    <X className="w-4 h-4" />
+                    <X className="w-5 h-5" />
                   </button>
                 </div>
               </div>
@@ -538,24 +539,55 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* ── Main Workspace Area ── */}
       <div className="flex flex-1 flex-col min-w-0 overflow-hidden">
         {/* Mobile Topbar */}
-        <header className="lg:hidden flex h-12 items-center justify-between px-3 border-b border-tactical-border/60 bg-[#0a0f1a] shrink-0">
-          <button onClick={() => setMobileMenuOpen(true)}>
-            <Menu className="w-5 h-5 text-zinc-400" />
+        <header className="lg:hidden flex h-14 items-center justify-between px-3 sm:px-4 border-b border-tactical-border/60 bg-[#0a0f1a]/95 backdrop-blur-md shrink-0 pt-[env(safe-area-inset-top,0px)]">
+          <button
+            onClick={() => setMobileMenuOpen(true)}
+            aria-label={isTr ? "Navigasyon Menüsünü Aç" : "Open Navigation Menu"}
+            className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl bg-black/50 border border-tactical-border/70 text-zinc-300 hover:text-white active:scale-95 transition-all cursor-pointer shadow-sm"
+          >
+            <Menu className="w-5 h-5 text-emerald-400" />
           </button>
-          <div className="flex items-center gap-2">
-            <ForenzaLogoIcon size={22} />
-            <span className="font-mono text-xs font-extrabold tracking-widest text-white">
-              FORENZA
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <SaaSLanguageToggle />
-            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-[8px] font-bold uppercase tracking-wider">
-              <Radio className="w-2.5 h-2.5 text-emerald-400 animate-pulse" />
-              <span>{t.dashboardTopBar?.onlineStatus || "ONLINE"}</span>
+
+          <Link href="/analysis" className="flex items-center gap-2 min-w-0">
+            <ForenzaLogoIcon size={24} className="shrink-0" />
+            <div className="flex flex-col">
+              <span className="font-mono text-xs font-extrabold tracking-widest text-white leading-tight">
+                FORENZA
+              </span>
+              <span className="font-mono text-[8px] font-bold tracking-widest text-emerald-400 leading-none">
+                EVIDENCE OS
+              </span>
             </div>
+          </Link>
+
+          <div className="flex items-center gap-1.5 shrink-0">
+            <SaaSLanguageToggle />
+            <button
+              onClick={() => setInspectorOpen(true)}
+              aria-label={isTr ? "Aktif DNA Profilini İncele" : "Inspect Active DNA Profile"}
+              className="min-h-[44px] px-2.5 py-1 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 active:scale-95 border border-emerald-500/30 text-emerald-300 font-mono text-[9px] font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm shrink-0"
+            >
+              <Radio className="w-2.5 h-2.5 text-emerald-400 animate-pulse shrink-0" />
+              <span className="truncate max-w-[80px] sm:max-w-[120px]">
+                {activeProfile?.profileId ? activeProfile.profileId.replace("PROFILE-", "") : "CASE-2026"}
+              </span>
+            </button>
           </div>
         </header>
+
+        {/* Mobile Compact Telemetry Status Ticker */}
+        <div className="lg:hidden flex items-center justify-between px-3 py-1 bg-black/60 border-b border-tactical-border/40 font-mono text-[9px] text-zinc-400 shrink-0 gap-2">
+          <div className="flex items-center gap-1.5 shrink-0">
+            <Activity className="w-3 h-3 text-emerald-400 shrink-0" />
+            <span className="text-zinc-500">{t.dashboardTopBar?.subsystemsCount || "35 Subsystems"}</span>
+            <span className="text-emerald-400 font-bold">{t.dashboardTopBar?.subsystemsOnline || "ONLINE"}</span>
+          </div>
+          <div className="h-2.5 w-px bg-tactical-border/60 shrink-0" />
+          <div className="flex items-center gap-1 shrink-0">
+            <ShieldCheck className="w-3 h-3 text-amber-400 shrink-0" />
+            <span className="text-amber-400 font-bold">{t.dashboardTopBar?.isoStandard || "ISO/IEC 17025"}</span>
+          </div>
+        </div>
 
         {/* Desktop Top Status Bar */}
         <div className="hidden lg:flex h-10 items-center justify-between px-5 border-b border-tactical-border/40 bg-black/40 shrink-0">
@@ -592,12 +624,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
           <div className="flex items-center gap-3">
             <SaaSLanguageToggle />
-            <div className="flex items-center gap-2 pl-2">
-              <Radio className="w-3 h-3 text-emerald-400 animate-pulse" />
-              <span className="font-mono text-[9px] text-emerald-400 font-bold uppercase tracking-widest">
-                {t.dashboardTopBar?.activeCase || "CASE-2026-FORENZA"}
+            <button
+              onClick={() => setInspectorOpen(true)}
+              className="flex items-center gap-2 px-3 py-1 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 active:scale-95 border border-emerald-500/30 text-emerald-300 font-mono text-[9px] font-bold transition-all cursor-pointer shadow-sm"
+              title={isTr ? "Aktif DNA Profilini İncele" : "Inspect Active DNA Profile"}
+            >
+              <Radio className="w-3 h-3 text-emerald-400 animate-pulse shrink-0" />
+              <span className="tracking-widest uppercase truncate max-w-[140px]">
+                {activeProfile?.profileId || t.dashboardTopBar?.activeCase || "CASE-2026-FORENZA"}
               </span>
-            </div>
+            </button>
           </div>
         </div>
 

@@ -16,6 +16,8 @@ import {
   COLOR_CLASSES,
   MATURITY_CONFIG,
   getSubsystemCategory,
+  getSubsystemTab,
+  getMaturityConfig,
   CategoryId,
 } from "@/config/subsystems";
 import { renderPanel } from "@/components/analysis/PanelRouter";
@@ -34,12 +36,13 @@ export default function ModulePage({
   const { lang } = useSaasLanguage();
   const isTr = lang === "tr";
 
-  const category = getSubsystemCategory(categoryId) || SUBSYSTEM_CATEGORIES[0];
-  const currentTab = category.tabs.find((t) => t.id === tabId) || category.tabs[0];
+  const category = getSubsystemCategory(categoryId, lang) || SUBSYSTEM_CATEGORIES[0];
+  const currentTab = getSubsystemTab(tabId, lang) || category.tabs[0];
 
   const CatIcon = category.icon;
   const cc = COLOR_CLASSES[category.color] || COLOR_CLASSES.cyan;
-  const currentMat = MATURITY_CONFIG[currentTab?.maturity || "ACTIVE"];
+  const maturityConfig = getMaturityConfig(lang);
+  const currentMat = maturityConfig[currentTab?.maturity || "ACTIVE"];
 
   return (
     <div className="space-y-4 font-mono max-w-full overflow-hidden">
@@ -95,7 +98,7 @@ export default function ModulePage({
           {category.tabs.map((tab) => {
             const TabIcon = tab.icon;
             const isActive = currentTab.id === tab.id;
-            const tMat = MATURITY_CONFIG[tab.maturity];
+            const tMat = maturityConfig[tab.maturity];
 
             return (
               <Link

@@ -13,7 +13,7 @@ import ActiveProfileBanner from "@/components/common/ActiveProfileBanner";
 import { useIngestStore } from "@/store/ingestStore";
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 import {
-  SUBSYSTEM_CATEGORIES,
+  getSubsystemCategories,
   COLOR_CLASSES,
 } from "@/config/subsystems";
 
@@ -21,6 +21,7 @@ export default function AnalysisPage() {
   const { setInspectorOpen } = useIngestStore();
   const { lang } = useSaasLanguage();
   const isTr = lang === "tr";
+  const categories = getSubsystemCategories(lang);
 
   return (
     <div className="space-y-6 font-mono max-w-full overflow-hidden">
@@ -48,7 +49,7 @@ export default function AnalysisPage() {
 
         {/* 7 Research Domain Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {SUBSYSTEM_CATEGORIES.map((cat) => {
+          {categories.map((cat) => {
             const CatIcon = cat.icon;
             const cc = COLOR_CLASSES[cat.color] || COLOR_CLASSES.cyan;
 
@@ -112,7 +113,7 @@ export default function AnalysisPage() {
                     href={`/analysis/${cat.id}`}
                     className="px-3 py-1.5 rounded-xl bg-zinc-800/80 hover:bg-cyan-500/20 text-zinc-300 hover:text-cyan-300 border border-zinc-700/60 hover:border-cyan-500/40 text-[9px] font-extrabold uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer"
                   >
-                    <span>Explore Suite</span>
+                    <span>{isTr ? "Süiti İncele" : "Explore Suite"}</span>
                     <ArrowRight className="w-3 h-3" />
                   </Link>
                 </div>

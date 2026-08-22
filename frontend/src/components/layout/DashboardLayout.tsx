@@ -28,6 +28,8 @@ import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 import { useIngestStore } from "@/store/ingestStore";
 import {
   SUBSYSTEM_CATEGORIES,
+  getSubsystemCategories,
+  getMaturityConfig,
   COLOR_CLASSES,
   MATURITY_CONFIG,
   SubsystemCategory,
@@ -148,12 +150,15 @@ function SidebarContent({
     }));
   };
 
+  const categories = useMemo(() => getSubsystemCategories(lang), [lang]);
+  const maturityConfig = useMemo(() => getMaturityConfig(lang), [lang]);
+
   // Filtered subsystems based on search
   const filteredCategories = useMemo(() => {
-    if (!searchQuery.trim()) return SUBSYSTEM_CATEGORIES;
+    if (!searchQuery.trim()) return categories;
     const q = searchQuery.toLowerCase().trim();
 
-    return SUBSYSTEM_CATEGORIES.map((cat) => {
+    return categories.map((cat) => {
       const matchCat =
         cat.label.toLowerCase().includes(q) ||
         cat.description.toLowerCase().includes(q) ||
@@ -173,18 +178,18 @@ function SidebarContent({
       }
       return null;
     }).filter(Boolean) as SubsystemCategory[];
-  }, [searchQuery]);
+  }, [searchQuery, categories]);
 
   // If searching, expand all
   useEffect(() => {
     if (searchQuery.trim()) {
       const allOpen: Record<string, boolean> = {};
-      SUBSYSTEM_CATEGORIES.forEach((c) => {
+      categories.forEach((c) => {
         allOpen[c.id] = true;
       });
       setExpandedPillars(allOpen);
     }
-  }, [searchQuery]);
+  }, [searchQuery, categories]);
 
   return (
     <div className="flex flex-col h-full overflow-hidden text-xs font-mono select-none">
@@ -336,7 +341,7 @@ function SidebarContent({
                       {cat.tabs.map((tab) => {
                         const isTabActive =
                           currentCategory === cat.id && currentTab === tab.id;
-                        const mat = MATURITY_CONFIG[tab.maturity];
+                        const mat = maturityConfig[tab.maturity];
 
                         return (
                           <Link

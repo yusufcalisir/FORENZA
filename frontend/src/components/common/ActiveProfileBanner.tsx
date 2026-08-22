@@ -15,6 +15,86 @@ const GeoForensicPanel = dynamic(() => import("@/components/analysis/GeoForensic
     ),
 });
 
+function translateEyeColor(val: string, isTr: boolean): string {
+    if (!isTr) return val;
+    const map: Record<string, string> = {
+        "Blue": "Mavi",
+        "Brown": "Kahverengi",
+        "Intermediate": "Ela / Orta",
+        "Hazel": "Ela",
+        "Green": "Yeşil",
+    };
+    return map[val] || val;
+}
+
+function translateSkinType(val: string, isTr: boolean): string {
+    if (!isTr) return val;
+    const map: Record<string, string> = {
+        "Very Pale Type I": "Çok Açık (Tip I)",
+        "Pale Type II": "Açık (Tip II)",
+        "Intermediate Type III": "Buğday (Tip III)",
+        "Dark Type IV": "Esmer (Tip IV)",
+        "Dark to Black Type V VI": "Koyu / Siyah (Tip V-VI)",
+        "Type I / II (Fair Skin)": "Tip I / II (Açık Ten)",
+        "Type III / IV (Medium)": "Tip III / IV (Buğday Ten)",
+        "Type V / VI (Dark)": "Tip V / VI (Koyu Ten)",
+    };
+    return map[val] || val;
+}
+
+function translateHairType(val: string, isTr: boolean): string {
+    if (!isTr) return val;
+    const map: Record<string, string> = {
+        "Blond": "Sarı / Kumral",
+        "Brown": "Kahverengi",
+        "Black": "Siyah",
+        "Red": "Kızıl",
+        "Straight": "Düz Saç",
+        "Wavy": "Dalgalı Saç",
+        "Curly": "Kıvırcık Saç",
+    };
+    return map[val] || val;
+}
+
+function translateAncestry(val: string, isTr: boolean): string {
+    if (!isTr) return val;
+    return val
+        .replace("European", "Avrupa")
+        .replace("Middle Eastern", "Orta Doğu")
+        .replace("African", "Afrika")
+        .replace("East Asian", "Doğu Asya")
+        .replace("South Asian", "Güney Asya")
+        .replace("Indigenous American", "Amerika Yerlisi")
+        .replace("Oceanian", "Okyanusya")
+        .replace("North-Western European", "Kuzeybatı Avrupa")
+        .replace("Baltic / Slavic", "Baltık / Slav")
+        .replace("Secondary", "İkincil");
+}
+
+function translateCluster(val: string, isTr: boolean): string {
+    if (!isTr) return val;
+    return val
+        .replace("European Continental Reference Cluster", "Avrupa Kıtasal Referans Kümesi")
+        .replace("African Continental Reference Cluster", "Afrika Kıtasal Referans Kümesi")
+        .replace("East Asian Continental Reference Cluster", "Doğu Asya Kıtasal Referans Kümesi")
+        .replace("South Asian Continental Reference Cluster", "Güney Asya Kıtasal Referans Kümesi")
+        .replace("Middle Eastern Continental Reference Cluster", "Orta Doğu Kıtasal Referans Kümesi")
+        .replace("Indigenous American Continental Reference Cluster", "Amerika Yerlisi Referans Kümesi")
+        .replace("Oceanian Continental Reference Cluster", "Okyanusya Referans Kümesi")
+        .replace("Continental Reference Cluster", "Kıtasal Referans Kümesi");
+}
+
+function translateCountry(val: string, isTr: boolean): string {
+    if (!isTr) return val;
+    return val
+        .replace("European / West Eurasian", "Avrupa / Batı Avrasya")
+        .replace("Sub-Saharan African", "Sahra Altı Afrika")
+        .replace("East Asian / Pacific Rim", "Doğu Asya / Pasifik")
+        .replace("South Asian / Indo-European", "Güney Asya / Hint-Avrupa")
+        .replace("Germany (DE)", "Almanya (DE)")
+        .replace("United States", "Amerika Birleşik Devletleri");
+}
+
 export default function ActiveProfileBanner() {
     const { lang } = useSaasLanguage();
     const isTr = lang === "tr";
@@ -34,7 +114,7 @@ export default function ActiveProfileBanner() {
 
     const geoResults = [
         {
-            region: `${activeProfile.geoLocation.country} (${activeProfile.geoLocation.cityRegion})`,
+            region: `${translateCountry(activeProfile.geoLocation.country, isTr)} (${activeProfile.geoLocation.cityRegion})`,
             lat: activeProfile.geoLocation.lat,
             lng: activeProfile.geoLocation.lng,
             probability: activeProfile.geoLocation.confidencePct / 100,
@@ -95,13 +175,13 @@ export default function ActiveProfileBanner() {
                     </div>
                     <div className="grid grid-cols-[100px_1fr] items-center gap-y-1.5 gap-x-2 text-[10px]">
                         <span className="text-zinc-400 font-mono">{isTr ? "Göz Rengi:" : "Eye Color:"}</span>
-                        <span className="font-bold text-cyan-300 font-mono truncate">{activeProfile.phenotype.eyeColor} ({activeProfile.phenotype.eyeColorProb}%)</span>
+                        <span className="font-bold text-cyan-300 font-mono truncate">{translateEyeColor(activeProfile.phenotype.eyeColor, isTr)} ({activeProfile.phenotype.eyeColorProb}%)</span>
 
                         <span className="text-zinc-400 font-mono">{isTr ? "Ten Tipi:" : "Skin Phototype:"}</span>
-                        <span className="font-bold text-amber-300 font-mono truncate">{activeProfile.phenotype.skinType}</span>
+                        <span className="font-bold text-amber-300 font-mono truncate">{translateSkinType(activeProfile.phenotype.skinType, isTr)}</span>
 
                         <span className="text-zinc-400 font-mono">{isTr ? "Saç Dokusu:" : "Hair Texture:"}</span>
-                        <span className="font-bold text-purple-300 font-mono truncate">{activeProfile.phenotype.hairType}</span>
+                        <span className="font-bold text-purple-300 font-mono truncate">{translateHairType(activeProfile.phenotype.hairType, isTr)}</span>
                     </div>
                 </div>
 
@@ -113,13 +193,13 @@ export default function ActiveProfileBanner() {
                     </div>
                     <div className="grid grid-cols-[100px_1fr] items-center gap-y-1.5 gap-x-2 text-[10px]">
                         <span className="text-zinc-400 font-mono">{isTr ? "Birincil:" : "Primary:"}</span>
-                        <span className="font-bold text-cyan-300 font-mono truncate">{activeProfile.ancestry.primary} ({activeProfile.ancestry.primaryPct}%)</span>
+                        <span className="font-bold text-cyan-300 font-mono truncate">{translateAncestry(activeProfile.ancestry.primary, isTr)} ({activeProfile.ancestry.primaryPct}%)</span>
 
                         <span className="text-zinc-400 font-mono">{isTr ? "İkincil:" : "Secondary:"}</span>
-                        <span className="font-bold text-purple-300 font-mono truncate">{activeProfile.ancestry.secondary} ({activeProfile.ancestry.secondaryPct}%)</span>
+                        <span className="font-bold text-purple-300 font-mono truncate">{translateAncestry(activeProfile.ancestry.secondary, isTr)} ({activeProfile.ancestry.secondaryPct}%)</span>
 
                         <span className="text-zinc-400 font-mono">{isTr ? "Küme:" : "Cluster:"}</span>
-                        <span className="font-bold text-white font-mono truncate">{activeProfile.ancestry.populationCluster}</span>
+                        <span className="font-bold text-white font-mono truncate">{translateCluster(activeProfile.ancestry.populationCluster, isTr)}</span>
                     </div>
                 </div>
 
@@ -137,7 +217,7 @@ export default function ActiveProfileBanner() {
                         <span className="font-bold text-white font-mono truncate">{activeProfile.geoLocation.cityRegion}</span>
 
                         <span className="text-zinc-400 font-mono">{isTr ? "Ülke:" : "Country:"}</span>
-                        <span className="font-bold text-cyan-300 font-mono truncate">{activeProfile.geoLocation.country}</span>
+                        <span className="font-bold text-cyan-300 font-mono truncate">{translateCountry(activeProfile.geoLocation.country, isTr)}</span>
                     </div>
                 </div>
             </div>

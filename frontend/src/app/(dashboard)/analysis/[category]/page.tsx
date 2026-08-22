@@ -16,6 +16,7 @@ import {
   COLOR_CLASSES,
   MATURITY_CONFIG,
   getSubsystemCategory,
+  getMaturityConfig,
   CategoryId,
 } from "@/config/subsystems";
 import { useIngestStore } from "@/store/ingestStore";
@@ -28,10 +29,11 @@ export default function CategoryPage({
 }) {
   const resolvedParams = use(params);
   const categoryId = resolvedParams.category as CategoryId;
-  const category = getSubsystemCategory(categoryId) || SUBSYSTEM_CATEGORIES[0];
-  const { setInspectorOpen } = useIngestStore();
   const { lang } = useSaasLanguage();
   const isTr = lang === "tr";
+  const category = getSubsystemCategory(categoryId, lang) || SUBSYSTEM_CATEGORIES[0];
+  const maturityConfig = getMaturityConfig(lang);
+  const { setInspectorOpen } = useIngestStore();
 
   const CatIcon = category.icon;
   const cc = COLOR_CLASSES[category.color] || COLOR_CLASSES.cyan;
@@ -97,7 +99,7 @@ export default function CategoryPage({
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {category.tabs.map((tab) => {
             const TabIcon = tab.icon;
-            const mat = MATURITY_CONFIG[tab.maturity];
+            const mat = maturityConfig[tab.maturity];
 
             return (
               <motion.div
@@ -114,7 +116,7 @@ export default function CategoryPage({
                       </div>
                       <div className="min-w-0">
                         <span className="text-[8px] font-bold text-zinc-500 uppercase tracking-widest block">
-                          Module {tab.badge}
+                          {isTr ? "Modül" : "Module"} {tab.badge}
                         </span>
                         <h3 className="text-xs font-bold text-white group-hover:text-cyan-300 transition-colors truncate">
                           {tab.label}
@@ -133,7 +135,7 @@ export default function CategoryPage({
                   <div className="space-y-1.5 text-[9px] bg-black/40 p-2.5 rounded-xl border border-tactical-border/40 font-mono">
                     <div>
                       <span className="text-zinc-500 font-bold uppercase block text-[8px]">
-                        Algorithm / Model:
+                        {isTr ? "Algoritma / Model:" : "Algorithm / Model:"}
                       </span>
                       <span className="text-cyan-300 font-semibold">{tab.method}</span>
                     </div>
@@ -156,7 +158,7 @@ export default function CategoryPage({
                   href={`/analysis/${category.id}/${tab.id}`}
                   className="w-full py-2 bg-gradient-to-r from-zinc-800 to-zinc-800/80 hover:from-cyan-500/20 hover:to-teal-500/20 text-zinc-200 hover:text-cyan-300 border border-zinc-700/60 hover:border-cyan-500/40 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
                 >
-                  <span>Launch Module Viewport</span>
+                  <span>{isTr ? "Modül Görünümünü Başlat" : "Launch Module Viewport"}</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </motion.div>

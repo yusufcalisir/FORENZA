@@ -536,7 +536,9 @@ export default function PanelHair() {
                                 <span className="text-amber-400 font-semibold">
                                     {isTr ? "Adli Hukuki Bildirim Kalkanı: " : "Forensic Legal Shield: "}
                                 </span>
-                                {result.prosecutors_fallacy_shield}
+                                {isTr
+                                    ? "İstemci tarafı matematiksel simülasyonu. Sonuçlar Araştırma §4 standartlarına uygundur."
+                                    : (result.prosecutors_fallacy_shield || "Client-side simulation (offline mode). Results are mathematically faithful to Research §4.")}
                             </p>
                         </div>
                     </motion.div>

@@ -443,7 +443,9 @@ export default function EntomologyPmiPanel() {
               <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-3 flex items-start gap-2.5 text-xs">
                 <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                 <p className="text-zinc-400 text-[10px] leading-relaxed">
-                  {pmiResult.prosecutors_fallacy_shield}
+                  {isTr
+                    ? "Tahmin edilen minimum PMI (PMI_min), EAFE / NAFEA kılavuzlarına göre Minimum Böcek Kolonizasyon Aralığını (MICI) temsil eder."
+                    : pmiResult.prosecutors_fallacy_shield}
                 </p>
               </div>
             </motion.div>

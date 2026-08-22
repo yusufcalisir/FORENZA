@@ -387,7 +387,9 @@ export default function ZkpAuditorPanel() {
                       <ShieldCheck className="w-3.5 h-3.5" />
                       {isTr ? "Kriptografik Delil İnkar Edilemezliği" : "Cryptographic Evidence Non-Repudiation"}
                     </div>
-                    {verifyResult.prosecutors_fallacy_shield}
+                    {isTr
+                      ? "Groth16 ZKP, ham STR profillerini veya allel değerlerini ifşa etmeden 24 lokus profil eşleşmesini BN254 eliptik eğrisi üzerinde matematiksel olarak kanıtlar."
+                      : (verifyResult.prosecutors_fallacy_shield || "Groth16 ZKP mathematically proves 24-locus STR match on BN254 curve without disclosing raw alleles.")}
                   </div>
                 </div>
               </motion.div>

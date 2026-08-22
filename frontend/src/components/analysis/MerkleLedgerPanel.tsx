@@ -532,7 +532,9 @@ export default function MerkleLedgerPanel() {
                       <ShieldCheck className="w-3.5 h-3.5" />
                       {isTr ? "Kriptografik Delil İnkar Edilemezliği" : "Cryptographic Evidence Non-Repudiation"}
                     </div>
-                    {verifyResult.prosecutors_fallacy_shield}
+                    {isTr
+                      ? "O(log₂ N) Merkle dahil edilme kanıtı, adli delil zincirinin değiştirilemezliğini ve bütünlüğünü kriptografik olarak doğrular."
+                      : (verifyResult.prosecutors_fallacy_shield || "O(log2 N) Merkle inclusion proofs cryptographically verify chain-of-custody immutability.")}
                   </div>
                 </div>
               </motion.div>

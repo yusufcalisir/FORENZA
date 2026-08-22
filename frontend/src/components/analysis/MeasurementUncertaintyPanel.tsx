@@ -291,7 +291,9 @@ export default function MeasurementUncertaintyPanel() {
                       <ShieldCheck className="w-3.5 h-3.5" />
                       {isTr ? "ISO/IEC 17025:2017 Madde 7.6 Metrolojik Belirsizlik Kalkanı" : "ISO/IEC 17025:2017 Clause 7.6 Metrological Uncertainty Shield"}
                     </div>
-                    {budgetData.prosecutors_fallacy_shield}
+                    {isTr
+                      ? "GUM kılavuzuna göre genişletilmiş belirsizlik bütçesi (U_95% = 2.00 · u_c) ölçüm güvenilirliğini sağlar (ISO/IEC 17025:2017)."
+                      : (budgetData.prosecutors_fallacy_shield || "Expanded uncertainty budgeting (U_95% = 2.00 · u_c) guarantees metrological confidence under GUM (ISO/IEC 17025:2017).")}
                   </div>
                 </div>
               </motion.div>

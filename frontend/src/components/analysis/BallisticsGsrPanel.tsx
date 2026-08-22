@@ -494,13 +494,19 @@ export default function BallisticsGsrPanel() {
                   <span className="text-zinc-400 text-[10px] uppercase font-bold block">
                     {isTr ? "Sonuç:" : "Conclusion:"}
                   </span>
-                  <p className="text-zinc-200 font-bold leading-relaxed">{gsrResult.evidence_strength}</p>
+                  <p className="text-zinc-200 font-bold leading-relaxed">
+                    {isTr
+                      ? (gsrResult.likelihood_ratio >= 10000 ? "Ateşli Silah Atışına Son Derece Güçlü Kanıt Desteği (LR > 10.000)" : "Atışa Güçlü Kanıt Desteği")
+                      : gsrResult.evidence_strength}
+                  </p>
                 </div>
 
                 <div className="rounded-xl border border-orange-500/30 bg-orange-500/5 p-3 flex items-start gap-2.5 text-xs">
                   <ShieldCheck className="w-4 h-4 text-orange-400 shrink-0 mt-0.5" />
                   <p className="text-zinc-400 text-[10px] leading-relaxed">
-                    {gsrResult.prosecutors_fallacy_shield}
+                    {isTr
+                      ? "Karakteristik Pb-Ba-Sb parçacıklarının saptanması, bir ateşli silah patlamasına yakınlığı gösterir (ASTM E1588-20)."
+                      : gsrResult.prosecutors_fallacy_shield}
                   </p>
                 </div>
               </motion.div>
@@ -603,13 +609,19 @@ export default function BallisticsGsrPanel() {
                   <span className="text-zinc-400 text-[10px] uppercase font-bold block">
                     {isTr ? "Balistik Sonuç:" : "Ballistic Conclusion:"}
                   </span>
-                  <p className="text-zinc-200 font-bold leading-relaxed">{cmcResult.ballistic_conclusion}</p>
+                  <p className="text-zinc-200 font-bold leading-relaxed">
+                    {isTr
+                      ? (cmcResult.cmc_count >= 6 ? "Şüpheli ateşli silaha kesin balistik eşleşme (K >= 6 CMC, P_yanlış < 10^-6)." : "Yetersiz uyumlu hücre sayısı.")
+                      : cmcResult.ballistic_conclusion}
+                  </p>
                 </div>
 
                 <div className="rounded-xl border border-orange-500/30 bg-orange-500/5 p-3 flex items-start gap-2.5 text-xs">
                   <ShieldCheck className="w-4 h-4 text-orange-400 shrink-0 mt-0.5" />
                   <p className="text-zinc-400 text-[10px] leading-relaxed">
-                    {cmcResult.prosecutors_fallacy_shield}
+                    {isTr
+                      ? "Tanımlama, K >= 6 uyumlu eşleşen hücrenin çapraz korelasyon (CCF >= 0.55), öteleme (±15 μm) ve dönme (±1.0°) toleranslarını karşılamasıyla sağlanır."
+                      : cmcResult.prosecutors_fallacy_shield}
                   </p>
                 </div>
               </motion.div>

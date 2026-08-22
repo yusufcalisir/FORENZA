@@ -302,6 +302,17 @@ export default function ToxicologyPmrPanel() {
     }
   };
 
+  const getPmrRiskLabel = (tier: string) => {
+    if (!isTr) return tier;
+    if (tier.includes("High / Severe") || tier.includes("Yüksek / Şiddetli")) return "Yüksek / Şiddetli";
+    if (tier.includes("Low / Minimal") || tier.includes("Düşük / Minimal")) return "Düşük / Minimal";
+    if (tier.includes("Very High") || tier.includes("Çok Yüksek")) return "Çok Yüksek";
+    if (tier.includes("Moderate") || tier.includes("Orta")) return "Orta Düzey";
+    if (tier.includes("High") || tier.includes("Yüksek")) return "Yüksek";
+    if (tier.includes("Low") || tier.includes("Düşük")) return "Düşük";
+    return tier;
+  };
+
   return (
     <div className="space-y-6 font-mono text-tactical-text">
       {/* ── Subsystem Header ── */}
@@ -478,7 +489,7 @@ export default function ToxicologyPmrPanel() {
                           ? "bg-rose-500/20 text-rose-300 border-rose-500/40"
                           : "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
                       }`}>
-                        {pmrResult.pmr_risk_tier}
+                        {getPmrRiskLabel(pmrResult.pmr_risk_tier)}
                       </span>
                     </div>
                   </div>
@@ -487,8 +498,20 @@ export default function ToxicologyPmrPanel() {
                     <span className="text-[10px] text-zinc-500 block uppercase">
                       {isTr ? "Toksikolojik Kılavuz:" : "Toxicology Guideline:"}
                     </span>
-                    <p className="text-zinc-200 leading-relaxed font-bold">{pmrResult.clinical_guideline}</p>
-                    <p className="text-rose-300 text-[11px] mt-1">{pmrResult.alert_message}</p>
+                    <p className="text-zinc-200 leading-relaxed font-bold">
+                      {isTr
+                        ? (pmrResult.is_cardiac_overestimated
+                            ? "Belirgin ölüm sonrası akciğer-kalp difüzyonu; femoral venöz kan zorunludur."
+                            : "İhmal edilebilir yeniden dağılım etkisi.")
+                        : pmrResult.clinical_guideline}
+                    </p>
+                    <p className="text-rose-300 text-[11px] mt-1">
+                      {isTr
+                        ? (pmrResult.is_cardiac_overestimated
+                            ? `YÜKSEK PMR FAZLA TAHMİN UYARISI: Kalp kanı konsantrasyonu (${pmrResult.c_heart} ${pmrResult.unit}), periferik femoral kandan (${pmrResult.c_femoral} ${pmrResult.unit}) %${pmrResult.overestimation_percentage.toFixed(1)} daha yüksektir.`
+                            : `PMR normal denge sınırları içerisinde (C/P = ${pmrResult.cp_observed}).`)
+                        : pmrResult.alert_message}
+                    </p>
                   </div>
 
                   <div className="p-3 rounded-xl bg-black/30 border border-tactical-border/30 text-[10px] text-zinc-400 font-mono">
@@ -496,7 +519,9 @@ export default function ToxicologyPmrPanel() {
                       <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
                       {isTr ? "SOFT / TIAFT Yasal Değerlendirme Kalkanı" : "SOFT / TIAFT Legal Evaluative Shield"}
                     </div>
-                    {pmrResult.prosecutors_fallacy_shield}
+                    {isTr
+                      ? "Ölüm sonrası kardiyak kan konsantrasyonları doğrudan ölüm öncesi intoksikasyon seviyelerine çevrilemez (SOFT / TIAFT Kılavuzları)."
+                      : pmrResult.prosecutors_fallacy_shield}
                   </div>
                 </div>
               </motion.div>
@@ -657,7 +682,9 @@ export default function ToxicologyPmrPanel() {
                       <ShieldCheck className="w-3.5 h-3.5" />
                       {isTr ? "SOFT / TIAFT Yasal Değerlendirme Kalkanı" : "SOFT / TIAFT Legal Evaluative Shield"}
                     </div>
-                    {extrapResult.prosecutors_fallacy_shield}
+                    {isTr
+                      ? "Ölüm öncesi geriye ekstrapolasyon, sağlam bir dolaşım sisteminde doğrusal veya üstel atılım varsayar (SOFT / TIAFT)."
+                      : extrapResult.prosecutors_fallacy_shield}
                   </div>
                 </div>
               </motion.div>

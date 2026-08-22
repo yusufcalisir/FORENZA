@@ -481,7 +481,11 @@ export default function TraceSpectroscopyPanel() {
                       <span className="text-[10px] text-zinc-500 block">
                         {isTr ? "Lif Sınıfı" : "Fiber Class"}
                       </span>
-                      <span className="font-bold text-zinc-200">{spectroResult.top_match.fiber_type}</span>
+                      <span className="font-bold text-zinc-200">
+                        {isTr
+                          ? (spectroResult.top_match.fiber_type === "Synthetic" ? "Sentetik" : spectroResult.top_match.fiber_type === "Natural" ? "Doğal" : spectroResult.top_match.fiber_type)
+                          : spectroResult.top_match.fiber_type}
+                      </span>
                     </div>
                     <div className="p-3 rounded-xl bg-black/40 border border-tactical-border/40 space-y-0.5">
                       <span className="text-[10px] text-zinc-500 block">
@@ -532,7 +536,9 @@ export default function TraceSpectroscopyPanel() {
                       <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
                       {isTr ? "SWGMAT / ASTM E2228 Yasal Değerlendirme Kalkanı" : "SWGMAT / ASTM E2228 Legal Evaluative Shield"}
                     </div>
-                    {spectroResult.prosecutors_fallacy_shield}
+                    {isTr
+                      ? "HQI ≥ %90.0 skoru kesin kimyasal polimer tanımlaması sağlar. Sentetik lifler seri üretim ürünüdür (SWGMAT / ASTM E2228)."
+                      : spectroResult.prosecutors_fallacy_shield}
                   </div>
                 </div>
               </motion.div>

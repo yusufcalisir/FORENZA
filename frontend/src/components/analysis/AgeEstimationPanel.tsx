@@ -503,10 +503,12 @@ export default function AgeEstimationPanel() {
                 <div className="flex items-start gap-2.5 p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-[10px] text-amber-200/90 leading-normal">
                   <ShieldCheck className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                   <div>
-                    <span className="font-bold text-amber-300 uppercase block">
+                    <span className="font-bold text-amber-300 uppercase block mb-0.5">
                       {isTr ? "Adli Değerlendirici Raporlama Kalkanı:" : "Forensic Evaluative Reporting Shield:"}
                     </span>
-                    {result.prosecutors_fallacy_shield}
+                    {isTr
+                      ? `Epigenetik tahminler biyolojik yaşlanmayı (%95 güven aralığı: ±${result.expanded_uncertainty_95 || 4.24} yıl) temsil eder ve kronolojik yaştan doku maruziyetine göre sapabilir.`
+                      : result.prosecutors_fallacy_shield}
                   </div>
                 </div>
               </div>

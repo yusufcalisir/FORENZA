@@ -417,11 +417,11 @@ export default function PanelYSTR() {
         </div>
 
         {/* Live Calculation Badge */}
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex items-center gap-3 shrink-0 w-full sm:w-auto">
           <button
             onClick={() => runLiveAnalysis(selectedCohort, selectedPop.size, theta, meioses, observedK)}
             disabled={isAnalyzing}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/40 text-indigo-200 text-xs font-bold transition-all disabled:opacity-50 cursor-pointer"
+            className="w-full sm:w-auto min-h-[40px] flex items-center justify-center gap-2 px-3.5 py-2 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/40 text-indigo-200 text-xs font-bold transition-all disabled:opacity-50 cursor-pointer shadow-sm active:scale-95"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isAnalyzing ? "animate-spin" : ""}`} />
             <span>
@@ -698,7 +698,7 @@ export default function PanelYSTR() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-7 gap-3">
           {LOCUS_ORDER.map((loc) => {
             const valA = selectedCohort.profileA[loc.name];
             const valB = selectedCohort.profileB[loc.name];
@@ -866,7 +866,7 @@ export default function PanelYSTR() {
               </p>
             </div>
 
-            <div className="grid grid-cols-3 gap-3 text-center">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center">
               <div className="p-3 rounded-xl bg-black/40 border border-blue-500/30 space-y-1">
                 <span className="text-[9px] text-zinc-400 font-bold uppercase">
                   {isTr ? "DYS389I (İçiçe)" : "DYS389I (Nested)"}

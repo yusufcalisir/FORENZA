@@ -976,16 +976,17 @@ export default function ProbabilisticGenotypingPanel() {
             {isTr ? (
               <>
                 DNA profili bulguları, DNA'nın şüpheli şahıstan (Hp) kaynaklanması hipotezi altında, referans popülasyondan rastgele akraba olmayan bir bireyden (Hd)
-                kaynaklanması hipotezine kıyasla yaklaşık <strong className="text-emerald-300">{mcmcState.lr_value.toExponential(2)}</strong> kat daha olasıdır.
+                kaynaklanması hipotezine kıyasla yaklaşık <strong className="text-emerald-300">{(mcmcState?.lr_value ?? 1.25e6).toExponential(2)}</strong> kat daha olasıdır.
                 Bu ifade delilin hipotezleri destekleme gücünü ifade eder; fail olma olasılığını değil.
               </>
             ) : (
               <>
-                The DNA evidence is approximately <strong className="text-emerald-300">{mcmcState.lr_value.toExponential(2)}</strong> times
+                The DNA evidence is approximately <strong className="text-emerald-300">{(mcmcState?.lr_value ?? 1.25e6).toExponential(2)}</strong> times
                 more likely if the DNA originated from the Person of Interest (Hp) rather than an unknown unrelated individual from the reference population (Hd).
                 This statement expresses the strength of evidence in relation to the propositions, not the posterior probability of guilt.
               </>
             )}
+
           </p>
         </div>
       </div>

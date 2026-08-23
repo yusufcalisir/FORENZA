@@ -566,8 +566,9 @@ export function PanelNRC() {
                     </td>
                     <td className="py-2 px-3">{row.p1.toFixed(4)}</td>
                     <td className="py-2 px-3">{row.isHomo ? "—" : row.p2.toFixed(4)}</td>
-                    <td className="py-2 px-3 text-amber-300">{row.pCond.toExponential(3)}</td>
+                    <td className="py-2 px-3 text-amber-300">{row.pCond ? row.pCond.toExponential(3) : "—"}</td>
                     <td className="py-2 px-3 text-right font-bold text-slate-100">
+
                       {row.locusLr.toFixed(1)}
                     </td>
                     <td className="py-2 px-3 text-right text-emerald-400 font-bold">

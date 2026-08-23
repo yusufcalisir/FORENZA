@@ -577,12 +577,12 @@ export default function PanelYSTR() {
             <Database className="w-3.5 h-3.5 text-cyan-400" />
           </div>
           <p className="text-xl sm:text-2xl font-bold font-mono tabular-nums text-cyan-300">
-            p &lt; {kinshipResult.pUpper.toExponential(4)}
+            p &lt; {(kinshipResult.pUpper ?? 0.0001).toExponential(4)}
           </p>
           <p className="text-[10px] text-zinc-400">
             {isTr
-              ? `${Math.round(1.0 / kinshipResult.pUpper).toLocaleString()} erkekte 1 (N=${selectedPop.size.toLocaleString()})`
-              : `1 in ${Math.round(1.0 / kinshipResult.pUpper).toLocaleString()} males (N=${selectedPop.size.toLocaleString()})`}
+              ? `${Math.round(1.0 / (kinshipResult.pUpper || 0.0001)).toLocaleString()} erkekte 1 (N=${selectedPop.size.toLocaleString()})`
+              : `1 in ${Math.round(1.0 / (kinshipResult.pUpper || 0.0001)).toLocaleString()} males (N=${selectedPop.size.toLocaleString()})`}
           </p>
         </div>
 
@@ -593,8 +593,9 @@ export default function PanelYSTR() {
             <Sliders className="w-3.5 h-3.5 text-amber-400" />
           </div>
           <p className="text-xl sm:text-2xl font-bold font-mono tabular-nums text-amber-300">
-            p = {kinshipResult.brennerProb.toExponential(4)}
+            p = {(kinshipResult.brennerProb ?? 0.0001).toExponential(4)}
           </p>
+
           <p className="text-[10px] text-zinc-400">
             {isTr ? `Fst Düzeltmesi • ${selectedPop.code} Bölümü` : `Fst Correction • ${selectedPop.code} Partition`}
           </p>

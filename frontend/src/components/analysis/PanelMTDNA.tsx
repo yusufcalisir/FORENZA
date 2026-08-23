@@ -689,12 +689,13 @@ export default function PanelMTDNA() {
             <div className="p-3 bg-slate-900/80 rounded-lg border border-slate-800 text-[11px] text-slate-400 space-y-1">
               <div className="flex justify-between">
                 <span>{isTr ? "Frekans Nokta Tahmini (k/N):" : "Frequency Point Estimate (k/N):"}</span>
-                <span className="font-mono text-slate-200">{(observedK / databaseN).toExponential(4)}</span>
+                <span className="font-mono text-slate-200">{((observedK ?? 0) / (databaseN || 48500)).toExponential(4)}</span>
               </div>
               <div className="flex justify-between">
                 <span>{isTr ? "Clopper-Pearson %95 Üst Sınırı:" : "Clopper-Pearson 95% Bound:"}</span>
-                <span className="font-mono text-emerald-400 font-bold">{pUpper.toExponential(4)}</span>
+                <span className="font-mono text-emerald-400 font-bold">{(pUpper ?? 0.0001).toExponential(4)}</span>
               </div>
+
               <div className="flex justify-between">
                 <span>{isTr ? "Eşdeğer Eşleşme Oranı:" : "Equivalent Match Ratio:"}</span>
                 <span className="font-mono text-cyan-400 font-bold">

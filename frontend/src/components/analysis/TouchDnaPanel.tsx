@@ -500,9 +500,10 @@ MULTI-LOCUS STOCHASTIC LIKELIHOOD RATIO:
 Evaluated Loci Count: ${multiLocusAnalysis.locusResults.length}
 Observed Dropout Loci: ${multiLocusAnalysis.dropoutsCount}
 Total Combined log10(LR): ${multiLocusAnalysis.totalLog10 >= 0 ? "+" : ""}${multiLocusAnalysis.totalLog10}
-Total Likelihood Ratio: ${multiLocusAnalysis.totalLr.toExponential(4)}
+Total Likelihood Ratio: ${(multiLocusAnalysis.totalLr ?? 1.0).toExponential(4)}
 
 ENFSI 2017 VERBAL STATEMENT:
+
 "${isTr ? multiLocusAnalysis.verbalTr : multiLocusAnalysis.verbalEn}"
 
 PROSECUTOR'S FALLACY SHIELD:
@@ -1226,8 +1227,9 @@ ${isTr ? "Olabilirlik Oranı (LR), yarışan hipotezler (Hp ve Hd) altında dü�
                 <div>
                   <span className="text-[10px] text-zinc-500 uppercase block">{isTr ? "Toplam Nokta Olabilirlik Oranı" : "Total Point Likelihood Ratio"}</span>
                   <p className="text-lg font-bold text-tactical-text tabular-nums mt-0.5">
-                    {multiLocusAnalysis.totalLr.toExponential(4)}
+                    {(multiLocusAnalysis.totalLr ?? 1.0).toExponential(4)}
                   </p>
+
                 </div>
                 <div>
                   <span className="text-[10px] text-zinc-500 uppercase block">{isTr ? "ENFSI (2017) Sözlü İfade" : "ENFSI (2017) Verbal Predicate"}</span>

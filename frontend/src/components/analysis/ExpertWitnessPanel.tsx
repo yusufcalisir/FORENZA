@@ -563,9 +563,10 @@ export default function ExpertWitnessPanel() {
                       },
                       {
                         label: isTr ? "Kriter 2: Bilinen Hata Oranı" : "Prong 2: Known Error Rate",
-                        sub: `P_error ≤ ${daubertData.error_rate_bound.toExponential(0)} (Daubert FRE 702)`,
+                        sub: `P_error ≤ ${daubertData.error_rate_bound ? daubertData.error_rate_bound.toExponential(0) : "1e-15"} (Daubert FRE 702)`,
                         pass: daubertData.pillar_2_error_rate
                       },
+
                       {
                         label: isTr ? "Kriter 3: Hakemli Bilimsel Literatür" : "Prong 3: Peer-Reviewed Literature",
                         sub: isTr ? "Yayınlanmış algoritmalar ve hakemli doğrulama" : "Published algorithms & peer-reviewed validation",

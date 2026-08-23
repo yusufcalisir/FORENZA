@@ -1206,8 +1206,9 @@ export default function DnaProfileInspectorModal() {
     const top1 = continentalBreakdown[0] || { label: "European", cluster: "EUR", probability: 0.95 };
     const top2 = continentalBreakdown[1] || { label: "Secondary", cluster: "MID", probability: 0.01 };
 
-    let combinedLRStr = livePopGen.combinedLr.toExponential(2);
+    let combinedLRStr = (livePopGen?.combinedLr ?? 1.0).toExponential(2);
     let cocProofHash = "0x" + Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join("");
+
     let executedProvider = "FORENZA Biocomputational Client Engine";
 
     setCalcProgress(50);
@@ -1246,9 +1247,10 @@ export default function DnaProfileInspectorModal() {
         if (resp.ok) {
           backendRes = await resp.json();
           executedProvider = "FastAPI Terminal Engine";
-          combinedLRStr = Number(backendRes.popgen?.combined_lr || livePopGen.combinedLr).toExponential(2);
-          cocProofHash = backendRes.chain_of_custody_hash || cocProofHash;
+          combinedLRStr = Number(backendRes?.popgen?.combined_lr || livePopGen?.combinedLr || 1.0).toExponential(2);
+          cocProofHash = backendRes?.chain_of_custody_hash || cocProofHash;
           break;
+
         }
       } catch (e) {
         console.warn(`[FORENZA] Endpoint ${url} unreachable:`, e);
@@ -1950,9 +1952,10 @@ export default function DnaProfileInspectorModal() {
                     </span>
                     <div className="mt-1 flex items-baseline gap-1.5">
                       <span className="text-base font-extrabold text-emerald-400 tabular-nums">
-                        {livePopGen.combinedLr.toExponential(4)}
+                        {(livePopGen?.combinedLr ?? 1.0).toExponential(4)}
                       </span>
                     </div>
+
                   </div>
 
                   {/* Log10(LR) */}
@@ -2162,8 +2165,9 @@ export default function DnaProfileInspectorModal() {
                       {isTr ? "YHRD %95 Clopper-Pearson (p̂_üst)" : "YHRD 95% Clopper-Pearson (p̂_upper)"}
                     </span>
                     <p className="text-base sm:text-lg font-extrabold text-cyan-300 font-mono">
-                      {liveYstrStats.clopper.upperBound.toExponential(3)}
+                      {(liveYstrStats?.clopper?.upperBound ?? 0.0001).toExponential(3)}
                     </p>
+
                     <p className="text-[9px] text-zinc-400 truncate">
                       {isTr ? "N = 35.000 Küresel Veritabanı (k = 0)" : "N = 35,000 World Database (k = 0)"}
                     </p>
@@ -2403,8 +2407,9 @@ export default function DnaProfileInspectorModal() {
                       {isTr ? "EMPOP %95 Clopper-Pearson (p̂_üst)" : "EMPOP 95% Clopper-Pearson (p̂_upper)"}
                     </span>
                     <p className="text-base sm:text-lg font-extrabold text-cyan-300 font-mono">
-                      {liveMtdnaStats.upperBound.toExponential(3)}
+                      {(liveMtdnaStats?.upperBound ?? 0.0001).toExponential(3)}
                     </p>
+
                     <p className="text-[9px] text-zinc-400 truncate">
                       {isTr ? `N = 48.200 Küresel Profil (k = ${liveMtdnaStats.observedMatches})` : `N = 48,200 Global Profiles (k = ${liveMtdnaStats.observedMatches})`}
                     </p>

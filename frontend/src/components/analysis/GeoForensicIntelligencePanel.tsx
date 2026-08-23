@@ -1392,7 +1392,7 @@ export default function GeoForensicIntelligencePanel({
                                 </div>
                                 <div className="flex justify-between">
                                     <span className="text-zinc-400">{isTr ? "Birleşik Olabilirlik Oranı:" : "Fused Likelihood Ratio:"}</span>
-                                    <span className="text-amber-300 font-bold font-mono">{fusedLR.toExponential(2)}</span>
+                                    <span className="text-amber-300 font-bold font-mono">{(fusedLR ?? 1).toExponential(2)}</span>
                                 </div>
                             </div>
                         </div>
@@ -1438,11 +1438,12 @@ export default function GeoForensicIntelligencePanel({
                                         : "ENFSI 2017 Courtroom Evaluative Statement (Bilingual EN / TR)"}
                                 </div>
                                 <p className="text-zinc-200 leading-relaxed">
-                                    <strong>EN:</strong> Multi-criteria geo-forensic fusion provides extremely strong support for source inclusion (H1 over H2) with a Fused Likelihood Ratio of {fusedLR.toExponential(2)}.
+                                    <strong>EN:</strong> Multi-criteria geo-forensic fusion provides extremely strong support for source inclusion (H1 over H2) with a Fused Likelihood Ratio of {(fusedLR ?? 1).toExponential(2)}.
                                 </p>
                                 <p className="text-zinc-400 leading-relaxed">
-                                    <strong>TR:</strong> Çok kriterli jeo-adli füzyon bulguları, şüpheli örneğin olay yeri kökenine dahil oluş hipotezini (H1) {fusedLR.toExponential(2)} birleşik olabilirlik oranıyla fevkalade güçlü derecede desteklemektedir.
+                                    <strong>TR:</strong> Çok kriterli jeo-adli füzyon bulguları, şüpheli örneğin olay yeri kökenine dahil oluş hipotezini (H1) {(fusedLR ?? 1).toExponential(2)} birleşik olabilirlik oranıyla fevkalade güçlü derecede desteklemektedir.
                                 </p>
+
                                 <div className="pt-2 border-t border-zinc-800 text-[10px] text-zinc-500 leading-tight">
                                     <Shield className="w-3 h-3 inline mr-1 text-emerald-400" />
                                     <strong>{isTr ? "SAVCILIK SAFSATASI KALKANI (ISO 17025): " : "PROSECUTOR'S FALLACY SHIELD (ISO 17025): "}</strong>
@@ -1529,8 +1530,9 @@ export default function GeoForensicIntelligencePanel({
                                     </div>
                                     <div className="p-2 rounded bg-black/60 border border-zinc-800">
                                         <p className="text-[9px] text-zinc-500">LR RATIO</p>
-                                        <p className="text-sm font-bold text-amber-400">{metaIsoCert.statistical_interpretation?.lr_value?.toExponential(2)}</p>
+                                        <p className="text-sm font-bold text-amber-400">{metaIsoCert.statistical_interpretation?.lr_value ? Number(metaIsoCert.statistical_interpretation.lr_value).toExponential(2) : "—"}</p>
                                     </div>
+
                                     <div className="p-2 rounded bg-black/60 border border-zinc-800">
                                         <p className="text-[9px] text-zinc-500">VERBAL TIER</p>
                                         <p className="text-[11px] font-bold text-zinc-300">{metaIsoCert.statistical_interpretation?.enfsi_tier?.slice(0, 10)}</p>

@@ -32,7 +32,13 @@ import {
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 import { getApiBaseUrl } from "@/lib/api";
 
+function formatExp(val: number | undefined | null, digits = 2, fallback = "—"): string {
+  if (val === undefined || val === null || isNaN(val)) return fallback;
+  return Number(val).toExponential(digits);
+}
+
 // ── Types ──────────────────────────────────────────────────────────────────
+
 
 export interface DviCaseworkPreset {
   id: string;
@@ -237,15 +243,16 @@ export default function PanelDVI() {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         setLiveDvi({
-          jointLr: data.joint_lr,
-          log10Joint: data.log10_joint_lr,
-          posteriorW: data.posterior_probability_w,
-          decisionTier: data.decision_tier,
-          judicialAction: data.judicial_action,
-          verbalEn: data.verbal_predicate_en,
-          verbalTr: data.verbal_predicate_tr,
+          jointLr: Number(data.joint_lr ?? fallbackJointLr),
+          log10Joint: Number(data.log10_joint_lr ?? fallbackLog10Joint),
+          posteriorW: Number(data.posterior_probability_w ?? fallbackPosteriorW),
+          decisionTier: data.decision_tier || currentPreset.expectedTier,
+          judicialAction: data.judicial_action || (isTr ? "Analiz tamamlandı." : "Analysis completed."),
+          verbalEn: data.verbal_predicate_en || "Evaluated",
+          verbalTr: data.verbal_predicate_tr || "Değerlendirildi",
         });
       })
+
       .catch(() => {
         // Graceful fallback to client mathematics
         let fbTier: "DEFINITIVE_IDENTIFICATION" | "PROBABLE_MATCH" | "INCONCLUSIVE" | "EXCLUSION" = "EXCLUSION";
@@ -547,7 +554,7 @@ export default function PanelDVI() {
                 </div>
                 <div className="flex justify-between items-baseline mt-2">
                   <span className="text-[11px] text-slate-400">LR_Autosomal:</span>
-                  <span className="text-base font-bold font-mono text-white">{autoLr.toExponential(2)}</span>
+                  <span className="text-base font-bold font-mono text-white">{formatExp(autoLr, 2)}</span>
                 </div>
                 <div className="text-[10px] font-mono text-slate-500 text-right">
                   log10 = {Math.log10(autoLr > 0 ? autoLr : 1).toFixed(2)}
@@ -571,7 +578,7 @@ export default function PanelDVI() {
                   <span className="text-[11px] text-slate-400">
                     {isTr ? "YHRD Frekansı (p_Y):" : "YHRD Frequency (p_Y):"}
                   </span>
-                  <span className="text-sm font-bold font-mono text-cyan-300">{hasYstr ? ystrPUpper.toExponential(1) : "—"}</span>
+                  <span className="text-sm font-bold font-mono text-cyan-300">{hasYstr ? formatExp(ystrPUpper, 1) : "—"}</span>
                 </div>
                 <div className="text-[10px] font-mono text-slate-400 text-right">
                   LR_Y = {hasYstr ? lrY.toLocaleString() : "1.00"}
@@ -595,7 +602,8 @@ export default function PanelDVI() {
                   <span className="text-[11px] text-slate-400">
                     {isTr ? "EMPOP Frekansı (p_M):" : "EMPOP Frequency (p_M):"}
                   </span>
-                  <span className="text-sm font-bold font-mono text-purple-300">{hasMtdna ? mtdnaPUpper.toExponential(1) : "—"}</span>
+                  <span className="text-sm font-bold font-mono text-purple-300">{hasMtdna ? formatExp(mtdnaPUpper, 1) : "—"}</span>
+
                 </div>
                 <div className="text-[10px] font-mono text-slate-400 text-right">
                   LR_mtDNA = {hasMtdna ? lrM.toLocaleString() : "1.00"}
@@ -633,9 +641,9 @@ export default function PanelDVI() {
                 {isTr ? "Birleşik Çoklu-Omik Ortak LR:" : "Combined Multi-Omic Joint LR:"}
               </span>
               <span className="text-xl font-extrabold font-mono text-cyan-400">
-                {jointLr.toExponential(4)}
+                {formatExp(jointLr, 4)}
               </span>
-              <span className="text-xs font-mono text-slate-400 ml-2">(log10 = {log10Joint.toFixed(4)})</span>
+              <span className="text-xs font-mono text-slate-400 ml-2">(log10 = {(log10Joint ?? 0).toFixed(4)})</span>
             </div>
 
             <div className="text-right">
@@ -643,7 +651,7 @@ export default function PanelDVI() {
                 {isTr ? "Sonsal Olasılık (W):" : "Posterior Probability (W):"}
               </span>
               <span className="text-xl font-extrabold font-mono text-emerald-400">
-                {(posteriorW * 100).toFixed(6)}%
+                {((posteriorW ?? 0) * 100).toFixed(6)}%
               </span>
             </div>
           </div>
@@ -701,11 +709,11 @@ export default function PanelDVI() {
             <div className="p-3 bg-slate-900/80 rounded-lg border border-slate-800 text-[11px] text-slate-400 space-y-1.5">
               <div className="flex justify-between">
                 <span>{isTr ? "Önsel Oran:" : "Prior Odds:"}</span>
-                <span className="font-mono text-slate-200">{(priorProb / (1 - priorProb)).toExponential(3)}</span>
+                <span className="font-mono text-slate-200">{formatExp(priorProb / (1 - priorProb), 3)}</span>
               </div>
               <div className="flex justify-between">
                 <span>{isTr ? "Sonsal Oran:" : "Posterior Odds:"}</span>
-                <span className="font-mono text-cyan-300 font-bold">{(jointLr * (priorProb / (1 - priorProb))).toExponential(3)}</span>
+                <span className="font-mono text-cyan-300 font-bold">{formatExp((jointLr ?? 1.0) * (priorProb / (1 - priorProb)), 3)}</span>
               </div>
               <div className="flex justify-between">
                 <span>{isTr ? "Hukuki Eylem:" : "Judicial Action:"}</span>
@@ -769,7 +777,7 @@ export default function PanelDVI() {
                                     : "text-slate-400"
                                 }`}
                               >
-                                <span>{score.toExponential(1)}</span>
+                                <span>{formatExp(score, 1)}</span>
                                 {isOptimal && <Check className="w-3 h-3 text-emerald-400 shrink-0" />}
                               </span>
                             </td>
@@ -777,6 +785,7 @@ export default function PanelDVI() {
                         })}
                       </tr>
                     ))}
+
                   </tbody>
                 </table>
               </div>

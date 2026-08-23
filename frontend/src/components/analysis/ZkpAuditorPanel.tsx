@@ -267,9 +267,10 @@ export default function ZkpAuditorPanel() {
             : "Tier 0: Definitive Exclusion / Support for Defense Hypothesis (LR < 1)",
           prosecutorsFallacyShield: isSatisfying
             ? isTr
-              ? `HUKUKİ KALKAN (ENFSI 2017): Sıfır bilgi ispatı, DNA profil eşleşmesinin LR >= ${claimedThreshold.toExponential(2)} eşiğini sağladığını doğrular. Bu bulgu delilin gözlenme olasılığını [P(E|Hp)/P(E|Hd)] ifade eder; sanığın doğrudan suçluluk olasılığı [P(Hp|E)] değildir.`
-              : `EVIDENTIARY SHIELD (ENFSI 2017): The zero-knowledge cryptographic proof confirms that the DNA profile match satisfies LR >= ${claimedThreshold.toExponential(2)}. This evaluates P(Evidence|Hp)/P(Evidence|Hd), NOT the posterior probability of guilt P(Hp|Evidence).`
+              ? `HUKUKİ KALKAN (ENFSI 2017): Sıfır bilgi ispatı, DNA profil eşleşmesinin LR >= ${(claimedThreshold ?? 1e6).toExponential(2)} eşiğini sağladığını doğrular. Bu bulgu delilin gözlenme olasılığını [P(E|Hp)/P(E|Hd)] ifade eder; sanığın doğrudan suçluluk olasılığı [P(Hp|E)] değildir.`
+              : `EVIDENTIARY SHIELD (ENFSI 2017): The zero-knowledge cryptographic proof confirms that the DNA profile match satisfies LR >= ${(claimedThreshold ?? 1e6).toExponential(2)}. This evaluates P(Evidence|Hp)/P(Evidence|Hd), NOT the posterior probability of guilt P(Hp|Evidence).`
             : isTr
+
             ? "HUKUKİ KALKAN: Eşleşme eşiği kısıtı sağlanamadı. Sanık aleyhine hiçbir adli kimliklendirme çıkarımı yapılamaz."
             : "EVIDENTIARY SHIELD: Zero-knowledge match threshold unsatisfied. No statistical inference of identity may be drawn.",
           smtSoundness: {
@@ -448,7 +449,8 @@ export default function ZkpAuditorPanel() {
                 <span className="text-zinc-400">
                   {isTr ? "Hedeflenen Olabilirlik Eşiği (M_thresh):" : "Claimed Match Threshold (M_thresh):"}
                 </span>
-                <span className="font-bold text-blue-400 font-mono">10^{lrThresholdExp} ({Math.pow(10, lrThresholdExp).toExponential(0)})</span>
+                <span className="font-bold text-blue-400 font-mono">10^{lrThresholdExp} ({Math.pow(10, lrThresholdExp || 6).toExponential(0)})</span>
+
               </div>
               <input
                 type="range"

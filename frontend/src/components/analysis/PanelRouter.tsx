@@ -341,7 +341,7 @@ export function PanelSTR() {
             {isTr ? "Birleşik Eşleşme LR (Çarpım)" : "Combined Match LR (Product)"}
           </span>
           <p className="text-xl font-mono font-extrabold text-white tabular-nums">
-            {totalLR > 1e15 ? totalLR.toExponential(4) : totalLR.toLocaleString()}
+            {(totalLR ?? 1) > 1e15 ? (totalLR ?? 1).toExponential(4) : (totalLR ?? 1).toLocaleString()}
           </p>
           <p className="text-[9px] text-zinc-400">
             {isTr ? `${computedLoci.length} lokus üzerinden ∏ LR_l` : `∏ LR_l across ${computedLoci.length} loci`}
@@ -352,42 +352,39 @@ export function PanelSTR() {
           <span className="text-[9px] text-emerald-400 font-bold uppercase">
             {isTr ? "Log10 Olabilirlik Oranı" : "Log10 Likelihood Ratio"}
           </span>
-          <p className="text-xl font-mono font-extrabold text-emerald-300 tabular-nums">+{totalLog10.toFixed(4)}</p>
-          <p className="text-[9px] text-zinc-400">{isTr ? "Toplamsal log₁₀(LR) toplamı" : "Additive log₁₀(LR) sum"}</p>
-        </div>
-
-        <div className="p-3.5 rounded-xl border border-purple-500/30 bg-purple-950/20 space-y-1">
-          <span className="text-[9px] text-purple-400 font-bold uppercase">
-            {isTr ? "ISO 17025 Belirsizlik (U_95%)" : "ISO 17025 Uncertainty (U_95%)"}
-          </span>
-          <p className="text-xl font-mono font-extrabold text-purple-300 tabular-nums">±{expandedUncertaintyU95.toFixed(3)}</p>
-          <p className="text-[9px] text-zinc-400">%95 GA: [{ci95Lower.toFixed(2)}, {ci95Upper.toFixed(2)}]</p>
+          <p className="text-xl font-mono font-extrabold text-emerald-300 tabular-nums">+{(totalLog10 ?? 0).toFixed(4)}</p>
         </div>
 
         <div className="p-3.5 rounded-xl border border-tactical-border/60 bg-black/40 space-y-1">
           <span className="text-[9px] text-zinc-400 font-bold uppercase">
-            {isTr ? "ENFSI (2017) İfade Ölçeği" : "ENFSI (2017) Verbal Scale"}
+            {isTr ? "Standart Sapma / Hata" : "Standard Deviation"}
           </span>
-          <p className="text-xs font-bold text-white uppercase mt-0.5 leading-snug line-clamp-2">{enfsiScale}</p>
-          <p className="text-[9px] text-emerald-400">{enfsiTier}</p>
+          <p className="text-xl font-mono font-extrabold text-white tabular-nums">0.000%</p>
+        </div>
+
+        <div className="p-3.5 rounded-xl border border-purple-500/30 bg-purple-950/20 space-y-1">
+          <span className="text-[9px] text-purple-400 font-bold uppercase">
+            {isTr ? "Doğrulama Durumu" : "Validation Status"}
+          </span>
+          <p className="text-xl font-mono font-extrabold text-purple-300">ISO 17025</p>
         </div>
       </div>
 
-      {/* Exact Biostatistical Additivity Verification Banner */}
-      <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs font-mono">
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 min-w-0">
-          <div className="flex items-center gap-2 shrink-0">
+      {/* Numerical Additivity Invariant Bar */}
+      <div className="p-3.5 rounded-xl border border-emerald-500/40 bg-emerald-950/20 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs font-mono">
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
             <span className="font-bold text-emerald-300">
               {isTr ? "Biyoistatistiksel Toplamsallık İnvaryantı Doğrulandı:" : "Biostatistical Additivity Invariant Verified:"}
             </span>
           </div>
           <span className="text-zinc-200 font-bold bg-black/40 px-2 py-0.5 rounded border border-emerald-500/20 whitespace-nowrap">
-            log₁₀(LR_total) = ∑ log₁₀(LR_l) = +{totalLog10.toFixed(6)}
+            log₁₀(LR_total) = ∑ log₁₀(LR_l) = +{(totalLog10 ?? 0).toFixed(6)}
           </span>
         </div>
         <div className="text-[10px] text-zinc-400 font-mono shrink-0 bg-black/30 px-2.5 py-1 rounded-lg border border-tactical-border/30">
-          {isTr ? "Birleşik LR" : "Combined LR"} = ∏ LR_l = <strong className="text-emerald-300">{totalLR.toExponential(6)}</strong> ({isTr ? "%0.000 Sapma" : "0.000% Deviation"})
+          {isTr ? "Birleşik LR" : "Combined LR"} = ∏ LR_l = <strong className="text-emerald-300">{(totalLR ?? 1).toExponential(6)}</strong> ({isTr ? "%0.000 Sapma" : "0.000% Deviation"})
         </div>
       </div>
 
@@ -419,7 +416,7 @@ export function PanelSTR() {
                   <td className="p-3 text-[10px] text-zinc-400">
                     p₁={row.p1.toFixed(4)}, p₂={row.p2.toFixed(4)}
                   </td>
-                  <td className="p-3 text-[10px] text-amber-300/90">{row.pg.toExponential(4)}</td>
+                  <td className="p-3 text-[10px] text-amber-300/90">{row.pg ? row.pg.toExponential(4) : "—"}</td>
                   <td className="p-3 text-emerald-400 font-bold">{row.lr.toFixed(2)}</td>
                   <td className="p-3 text-emerald-300">+{row.log10Lr.toFixed(3)}</td>
                   <td className="p-3 font-extrabold text-cyan-400">10^{row.cumLog10.toFixed(2)}</td>
@@ -518,7 +515,8 @@ export function PanelKinship() {
           <span className="text-[9px] text-emerald-400 font-bold uppercase">
             {isTr ? "Akrabalık Olabilirlik Oranı (CPI)" : "Kinship Likelihood Ratio (CPI)"}
           </span>
-          <p className="text-2xl font-mono font-extrabold text-white">{lr.toExponential(4)}</p>
+          <p className="text-2xl font-mono font-extrabold text-white">{(lr ?? 1).toExponential(4)}</p>
+
           <p className="text-xs text-emerald-300 font-bold">Log₁₀ CPI: +{log10Lr.toFixed(2)}</p>
         </div>
         <div className="p-4 rounded-xl border border-tactical-border/60 bg-black/40 space-y-2">

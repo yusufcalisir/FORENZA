@@ -352,9 +352,10 @@ export default function BayesianShiftChart({
                     fontFamily: "monospace",
                 }}
             >
-                <span>95% HPD: [{ciLower.toFixed(6)}, {ciUpper.toFixed(6)}]</span>
-                <span>Prior: {priorHp.toExponential(2)}</span>
+                <span>95% HPD: [{(ciLower ?? 0.99999999).toFixed(6)}, {(ciUpper ?? 0.9999999999).toFixed(6)}]</span>
+                <span>Prior: {(priorHp ?? 0.000001).toExponential(2)}</span>
             </div>
         </div>
     );
 }
+

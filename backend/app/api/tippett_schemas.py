@@ -208,6 +208,18 @@ class CohortGenerationRequest(BaseTippettSchema):
         description="Type of cohort: 'pristine', 'ltdna_degraded', or 'nist_srm2391d'",
         examples=["pristine", "ltdna_degraded", "nist_srm2391d"],
     )
+    population: str = Field(
+        "Caucasian",
+        description="Population group: 'Caucasian', 'AfricanAmerican', 'Hispanic', 'Asian'",
+        examples=["Caucasian", "AfricanAmerican", "Hispanic", "Asian"],
+    )
+    theta: float = Field(
+        0.03,
+        ge=0.0,
+        le=0.10,
+        description="NRC II Balding-Nichols subpopulation coancestry coefficient theta (Fst).",
+        examples=[0.0, 0.01, 0.03, 0.05],
+    )
     n_pairs: int = Field(
         1000,
         ge=10,
@@ -226,6 +238,7 @@ class CohortGenerationRequest(BaseTippettSchema):
         42,
         description="Random number generator seed for deterministic reproducibility.",
     )
+
 
 
 class CohortGenerationResponse(BaseTippettSchema):

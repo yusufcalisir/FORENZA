@@ -288,18 +288,19 @@ async def generate_simulation_cohort(body: CohortGenerationRequest) -> CohortGen
     try:
         if body.cohort_type == "pristine":
             cohort = TippettReferenceDatasetRegistry.generate_pristine_cohort(
-                n_pairs=body.n_pairs, seed=body.seed
+                n_pairs=body.n_pairs, theta=body.theta, seed=body.seed
             )
         elif body.cohort_type == "ltdna_degraded":
             cohort = TippettReferenceDatasetRegistry.generate_ltdna_degraded_cohort(
-                n_pairs=body.n_pairs, p_dropout=body.p_dropout, seed=body.seed
+                n_pairs=body.n_pairs, p_dropout=body.p_dropout, theta=body.theta, seed=body.seed
             )
         elif body.cohort_type == "nist_srm2391d":
             cohort = TippettReferenceDatasetRegistry.get_nist_srm2391d_evaluation(
-                n_non_donors=body.n_pairs, seed=body.seed
+                n_non_donors=body.n_pairs, theta=body.theta, seed=body.seed
             )
         else:
             raise ValueError(f"Unknown cohort type: {body.cohort_type}")
+
     except Exception as exc:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,

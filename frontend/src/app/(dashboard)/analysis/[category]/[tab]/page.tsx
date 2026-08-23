@@ -126,23 +126,24 @@ export default function ModulePage({
 
         {/* Operational Status & Scientific Boundary Banner */}
         <div
-          className={`p-3 rounded-xl border ${currentMat.bg} ${currentMat.border} flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs shadow-md`}
+          className={`p-3 rounded-xl border ${currentMat.bg} ${currentMat.border} flex flex-col lg:flex-row lg:items-center justify-between gap-3 text-xs shadow-md`}
         >
-          <div className="flex items-center gap-2.5 min-w-0">
+          <div className="flex items-start sm:items-center gap-2.5 min-w-0 flex-1">
             <span
-              className={`flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[9px] font-bold border ${currentMat.tagBg} ${currentMat.tagText} ${currentMat.tagBorder} shrink-0 uppercase`}
+              className={`flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[9px] font-bold border ${currentMat.tagBg} ${currentMat.tagText} ${currentMat.tagBorder} shrink-0 uppercase mt-0.5 sm:mt-0`}
             >
               <span className={`w-1.5 h-1.5 rounded-full ${currentMat.dot}`} />
               {currentMat.shortLabel}
             </span>
-            <p className="text-[10px] text-zinc-300 min-w-0 break-words">
+            <p className="text-[10px] text-zinc-300 min-w-0 leading-relaxed">
               <strong className="text-white">{currentTab.label}:</strong> {currentTab.maturityNote}
             </p>
           </div>
-          <span className="text-[9px] text-zinc-400 shrink-0 font-bold hidden xl:inline-block">
+          <span className="text-[9px] text-zinc-400/90 shrink-0 font-medium hidden xl:inline-block text-right pl-3 border-l border-white/10">
             {currentMat.desc}
           </span>
         </div>
+
 
         {/* Full-Viewport Computational Canvas */}
         <div className="pt-2">

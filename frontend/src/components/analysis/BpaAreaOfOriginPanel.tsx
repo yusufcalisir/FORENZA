@@ -284,83 +284,84 @@ export default function BpaAreaOfOriginPanel() {
             </div>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
+          <div className="w-full overflow-hidden">
+            <table className="w-full text-left text-xs table-fixed">
               <thead className="bg-black/40 text-zinc-400 uppercase text-[9px] border-b border-tactical-border/40">
                 <tr>
-                  <th className="py-2 px-3">{isTr ? "Leke No" : "Stain ID"}</th>
-                  <th className="py-2 px-2">X (cm)</th>
-                  <th className="py-2 px-2">Y (cm)</th>
-                  <th className="py-2 px-2">Z (cm)</th>
-                  <th className="py-2 px-2">{isTr ? "Genişlik (mm)" : "Width (mm)"}</th>
-                  <th className="py-2 px-2">{isTr ? "Uzunluk (mm)" : "Length (mm)"}</th>
-                  <th className="py-2 px-2">Gamma (°)</th>
-                  <th className="py-2 px-2 text-right">{isTr ? "İşlem" : "Action"}</th>
+                  <th className="py-2 px-1.5 w-[14%] truncate">{isTr ? "Leke No" : "Stain ID"}</th>
+                  <th className="py-2 px-1 text-center w-[12%]">X (cm)</th>
+                  <th className="py-2 px-1 text-center w-[12%]">Y (cm)</th>
+                  <th className="py-2 px-1 text-center w-[12%]">Z (cm)</th>
+                  <th className="py-2 px-1 text-center w-[13%]">{isTr ? "Genişlik (mm)" : "Width (mm)"}</th>
+                  <th className="py-2 px-1 text-center w-[13%]">{isTr ? "Uzunluk (mm)" : "Length (mm)"}</th>
+                  <th className="py-2 px-1 text-center w-[15%]">Gamma (°)</th>
+                  <th className="py-2 px-1 text-center w-[9%]">{isTr ? "İşlem" : "Action"}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-tactical-border/20 text-zinc-300 font-mono">
                 {stains.map((stain, idx) => (
                   <tr key={stain.stain_id} className="hover:bg-rose-500/5 transition-all">
-                    <td className="py-2 px-3 font-bold text-rose-300">{stain.stain_id}</td>
-                    <td className="py-2 px-2">
+                    <td className="py-1.5 px-1.5 font-bold text-rose-300 text-[11px] truncate">{stain.stain_id}</td>
+                    <td className="py-1.5 px-1">
                       <input
                         type="number"
                         step={1.0}
                         value={stain.x_cm}
                         onChange={(e) => handleUpdateStain(idx, "x_cm", parseFloat(e.target.value) || 0)}
-                        className="w-16 bg-black/60 border border-tactical-border/60 rounded px-1.5 py-0.5 text-xs text-zinc-100"
+                        className="w-full bg-black/60 border border-tactical-border/60 rounded px-1 py-0.5 text-xs text-center text-zinc-100 font-mono focus:border-rose-500 focus:outline-none"
                       />
                     </td>
-                    <td className="py-2 px-2">
+                    <td className="py-1.5 px-1">
                       <input
                         type="number"
                         step={1.0}
                         value={stain.y_cm}
                         onChange={(e) => handleUpdateStain(idx, "y_cm", parseFloat(e.target.value) || 0)}
-                        className="w-16 bg-black/60 border border-tactical-border/60 rounded px-1.5 py-0.5 text-xs text-zinc-100"
+                        className="w-full bg-black/60 border border-tactical-border/60 rounded px-1 py-0.5 text-xs text-center text-zinc-100 font-mono focus:border-rose-500 focus:outline-none"
                       />
                     </td>
-                    <td className="py-2 px-2">
+                    <td className="py-1.5 px-1">
                       <input
                         type="number"
                         step={1.0}
                         value={stain.z_cm}
                         onChange={(e) => handleUpdateStain(idx, "z_cm", parseFloat(e.target.value) || 0)}
-                        className="w-16 bg-black/60 border border-tactical-border/60 rounded px-1.5 py-0.5 text-xs text-zinc-100"
+                        className="w-full bg-black/60 border border-tactical-border/60 rounded px-1 py-0.5 text-xs text-center text-zinc-100 font-mono focus:border-rose-500 focus:outline-none"
                       />
                     </td>
-                    <td className="py-2 px-2">
+                    <td className="py-1.5 px-1">
                       <input
                         type="number"
                         step={0.1}
                         value={stain.width_mm}
                         onChange={(e) => handleUpdateStain(idx, "width_mm", parseFloat(e.target.value) || 0)}
-                        className="w-14 bg-black/60 border border-tactical-border/60 rounded px-1.5 py-0.5 text-xs text-zinc-100"
+                        className="w-full bg-black/60 border border-tactical-border/60 rounded px-1 py-0.5 text-xs text-center text-zinc-100 font-mono focus:border-rose-500 focus:outline-none"
                       />
                     </td>
-                    <td className="py-2 px-2">
+                    <td className="py-1.5 px-1">
                       <input
                         type="number"
                         step={0.1}
                         value={stain.length_mm}
                         onChange={(e) => handleUpdateStain(idx, "length_mm", parseFloat(e.target.value) || 0)}
-                        className="w-14 bg-black/60 border border-tactical-border/60 rounded px-1.5 py-0.5 text-xs text-zinc-100"
+                        className="w-full bg-black/60 border border-tactical-border/60 rounded px-1 py-0.5 text-xs text-center text-zinc-100 font-mono focus:border-rose-500 focus:outline-none"
                       />
                     </td>
-                    <td className="py-2 px-2">
+                    <td className="py-1.5 px-1">
                       <input
                         type="number"
                         step={1.0}
                         value={stain.gamma_degrees}
                         onChange={(e) => handleUpdateStain(idx, "gamma_degrees", parseFloat(e.target.value) || 0)}
-                        className="w-16 bg-black/60 border border-tactical-border/60 rounded px-1.5 py-0.5 text-xs text-zinc-100"
+                        className="w-full bg-black/60 border border-tactical-border/60 rounded px-1 py-0.5 text-xs text-center text-zinc-100 font-mono focus:border-rose-500 focus:outline-none"
                       />
                     </td>
-                    <td className="py-2 px-2 text-right">
+                    <td className="py-1.5 px-1 text-center">
                       <button
                         onClick={() => handleRemoveStain(idx)}
                         disabled={stains.length <= 2}
-                        className="text-red-400 hover:text-red-300 disabled:opacity-30 text-xs px-2 py-0.5 cursor-pointer"
+                        className="text-red-400 hover:text-red-300 disabled:opacity-30 text-xs px-1.5 py-0.5 cursor-pointer"
+                        title={isTr ? "Lekeyi Sil" : "Delete Stain"}
                       >
                         ✕
                       </button>
@@ -370,6 +371,7 @@ export default function BpaAreaOfOriginPanel() {
               </tbody>
             </table>
           </div>
+
         </div>
 
         {/* Right Column: 3D Point of Origin Solution */}

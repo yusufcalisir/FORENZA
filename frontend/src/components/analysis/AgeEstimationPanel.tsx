@@ -38,11 +38,7 @@ export default function AgeEstimationPanel() {
   const [tissueType, setTissueType] = useState<string>("BLOOD");
   const [knownAge, setKnownAge] = useState<string>("25.0");
   const [activePreset, setActivePreset] = useState<string>("VECTOR_VISAGE_02");
-  const [langTab, setLangTab] = useState<"en" | "tr">(isTr ? "tr" : "en");
 
-  useEffect(() => {
-    setLangTab(isTr ? "tr" : "en");
-  }, [isTr]);
 
   // State for CpG Beta values
   const [cpgBetas, setCpgBetas] = useState<Record<string, number>>({
@@ -482,29 +478,12 @@ export default function AgeEstimationPanel() {
                       {isTr ? "Standart ENFSI Değerlendirici Mahkeme İfadesi" : "Standardized ENFSI Evaluative Court Statement"}
                     </span>
                   </div>
-                  <div className="flex items-center gap-1 bg-black/40 p-1 rounded-lg border border-indigo-500/30">
-                    <button
-                      onClick={() => setLangTab("en")}
-                      className={`min-h-[30px] px-3 py-0.5 rounded text-[9px] font-bold transition-all cursor-pointer flex items-center justify-center ${
-                        langTab === "en" ? "bg-indigo-500 text-white" : "text-zinc-400 hover:text-white"
-                      }`}
-                    >
-                      English
-                    </button>
-                    <button
-                      onClick={() => setLangTab("tr")}
-                      className={`min-h-[30px] px-3 py-0.5 rounded text-[9px] font-bold transition-all cursor-pointer flex items-center justify-center ${
-                        langTab === "tr" ? "bg-indigo-500 text-white" : "text-zinc-400 hover:text-white"
-                      }`}
-                    >
-                      Türkçe
-                    </button>
-                  </div>
                 </div>
 
                 <div className="p-3.5 rounded-xl bg-black/50 border border-indigo-500/20 text-xs text-zinc-300 font-sans leading-relaxed">
-                  {langTab === "en" ? result.enfsi_statement_en : result.enfsi_statement_tr}
+                  {isTr ? result.enfsi_statement_tr : result.enfsi_statement_en}
                 </div>
+
 
                 {/* Legal Fallacy Shield */}
                 <div className="flex items-start gap-2.5 p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-[10px] text-amber-200/90 leading-normal">

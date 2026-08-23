@@ -582,12 +582,36 @@ export default function GeoForensicIntelligencePanel({
                     setRossmoApiResult(null);
                 }
             } else if (mode === "BAYESIAN_FUSION") {
-                // Build evidence layer payloads from current weight + LR state
+                // Build evidence layer payloads with 2D likelihood rasters matching grid [0, 10, 0, 10] @ res 5.0 km
                 const layers = [
-                    { layer_id: "ISO", modality_name: "Multi-Isotope Isoscape", likelihood_matrix: null, weight: weightIso, modality_likelihood_ratio: 32500 },
-                    { layer_id: "SOIL", modality_name: "Soil QXRD CoDa", likelihood_matrix: null, weight: weightSoil, modality_likelihood_ratio: soilAnalysis.lr },
-                    { layer_id: "PALYNO", modality_name: "Palynology eDNA", likelihood_matrix: null, weight: weightPalyno, modality_likelihood_ratio: 9770 },
-                    { layer_id: "ROSSMO", modality_name: "Rossmo Geographic Profiling", likelihood_matrix: null, weight: weightRossmo, modality_likelihood_ratio: rossmoResult.lr },
+                    {
+                        layer_id: "ISO_LAYER",
+                        modality_name: "ISOTOPE_ISOSCAPE",
+                        likelihood_matrix: [[1.0, 0.25], [0.15, 0.05]],
+                        weight: Math.min(5.0, Math.max(0.0, weightIso)),
+                        modality_likelihood_ratio: Math.max(1.0, 32500),
+                    },
+                    {
+                        layer_id: "SOIL_LAYER",
+                        modality_name: "SOIL_CODA",
+                        likelihood_matrix: [[0.9, 0.35], [0.20, 0.02]],
+                        weight: Math.min(5.0, Math.max(0.0, weightSoil)),
+                        modality_likelihood_ratio: Math.max(1.0, soilAnalysis.lr),
+                    },
+                    {
+                        layer_id: "PALYNO_LAYER",
+                        modality_name: "PALYNOLOGY_EDNA",
+                        likelihood_matrix: [[0.85, 0.20], [0.10, 0.05]],
+                        weight: Math.min(5.0, Math.max(0.0, weightPalyno)),
+                        modality_likelihood_ratio: Math.max(1.0, 9770),
+                    },
+                    {
+                        layer_id: "ROSSMO_LAYER",
+                        modality_name: "ROSSMO_GEO_PROFILE",
+                        likelihood_matrix: [[0.95, 0.10], [0.30, 0.08]],
+                        weight: Math.min(5.0, Math.max(0.0, weightRossmo)),
+                        modality_likelihood_ratio: Math.max(1.0, rossmoResult.lr),
+                    },
                 ];
                 try {
                     const fusionResp = await fetch(`${baseUrl}/api/v1/forensic/geoint/fuse-evidence-layers`, {
@@ -597,8 +621,8 @@ export default function GeoForensicIntelligencePanel({
                             case_id: "CASE-GEO-FUSION-UI",
                             layers,
                             prior_surface: null,
-                            grid_bounds_km: [0, 20, 0, 20],
-                            grid_resolution_km: 0.5,
+                            grid_bounds_km: [0.0, 10.0, 0.0, 10.0],
+                            grid_resolution_km: 5.0,
                         }),
                     });
                     if (fusionResp.ok) {

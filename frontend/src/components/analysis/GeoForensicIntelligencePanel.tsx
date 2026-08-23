@@ -1262,6 +1262,7 @@ export default function GeoForensicIntelligencePanel({
                         </div>
 
                         <div className="lg:col-span-2 p-4 sm:p-5 rounded-2xl border border-tactical-border/60 bg-tactical-surface/50 flex flex-col justify-between space-y-4">
+                            {/* Header */}
                             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                                 <div>
                                     <h3 className="text-sm font-bold text-white flex items-center gap-2">
@@ -1271,37 +1272,97 @@ export default function GeoForensicIntelligencePanel({
                                             : "6-Biome Ecological Classifier & 16S/ITS eDNA Regression"}
                                     </h3>
                                     <p className="text-xs text-zinc-400 font-mono">
-                                        {isTr
-                                            ? "Bray-Curtis Metriği: dBC = 0.023 | Kosinüs: 0.9995"
-                                            : "Bray-Curtis Metric: dBC = 0.023 | Cosine: 0.9995"}
+                                        {metaResult
+                                            ? (isTr
+                                                ? `Aitchison CLR Mesafesi: d = ${metaResult.aitchisonDistance.toFixed(4)} | log₁₀LR = ${metaResult.log10lr.toFixed(2)}`
+                                                : `Aitchison CLR Distance: d = ${metaResult.aitchisonDistance.toFixed(4)} | log₁₀LR = ${metaResult.log10lr.toFixed(2)}`)
+                                            : (isTr
+                                                ? "Execute Solver'ı çalıştırın →"
+                                                : "Run Execute Solver to compute →")}
                                     </p>
                                 </div>
-                                <span className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono text-xs font-bold w-fit">
-                                    {isTr ? "YAPRAK DÖKEN ORMAN (%93.3 Güven)" : "DECIDUOUS_FOREST (93.3% Conf.)"}
+                                {/* Biome badge — derived from log10LR */}
+                                {metaResult ? (
+                                    <span className={`px-3 py-1 rounded-full border font-mono text-xs font-bold w-fit shrink-0 ${
+                                        metaResult.log10lr >= 2.0
+                                            ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
+                                            : metaResult.log10lr >= 0
+                                            ? "bg-amber-500/10 border-amber-500/30 text-amber-400"
+                                            : "bg-rose-500/10 border-rose-500/30 text-rose-400"
+                                    }`}>
+                                        {metaResult.log10lr >= 2.0
+                                            ? (isTr ? "YAPRAK DÖKEN ORMAN (Dahil)" : "DECIDUOUS_FOREST (Inclusion)")
+                                            : metaResult.log10lr >= 0
+                                            ? (isTr ? "BELİRSİZ BİYOM" : "AMBIGUOUS_BIOME")
+                                            : (isTr ? "UZAK BİYOM (Dışlama)" : "DISTANT_BIOME (Exclusion)")}
+                                    </span>
+                                ) : (
+                                    <span className="px-3 py-1 rounded-full bg-zinc-800/60 border border-zinc-700/40 text-zinc-500 font-mono text-xs font-bold w-fit shrink-0">
+                                        {isTr ? "Bekleniyor..." : "Pending..."}
+                                    </span>
+                                )}
+                            </div>
+
+                            {/* Metric cards */}
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                <div className="p-3 rounded-xl bg-zinc-900/60 border border-zinc-800 text-center">
+                                    <p className="text-[9px] font-mono text-zinc-500 uppercase">Aitchison dCLR</p>
+                                    <p className={`text-sm font-bold font-mono transition-colors ${
+                                        !metaResult ? "text-zinc-600" :
+                                        metaResult.aitchisonDistance < 1.5 ? "text-emerald-400" : "text-rose-400"
+                                    }`}>
+                                        {metaResult ? metaResult.aitchisonDistance.toFixed(4) : "—"}
+                                    </p>
+                                </div>
+                                <div className="p-3 rounded-xl bg-zinc-900/60 border border-zinc-800 text-center">
+                                    <p className="text-[9px] font-mono text-zinc-500 uppercase">log₁₀ LR</p>
+                                    <p className={`text-sm font-bold font-mono transition-colors ${
+                                        !metaResult ? "text-zinc-600" :
+                                        metaResult.log10lr >= 2 ? "text-emerald-400" :
+                                        metaResult.log10lr >= 0 ? "text-amber-400" : "text-rose-400"
+                                    }`}>
+                                        {metaResult ? (metaResult.log10lr >= 0 ? "+" : "") + metaResult.log10lr.toFixed(2) : "—"}
+                                    </p>
+                                </div>
+                                <div className="p-3 rounded-xl bg-zinc-900/60 border border-zinc-800 text-center col-span-2 sm:col-span-1">
+                                    <p className="text-[9px] font-mono text-zinc-500 uppercase">U₉₅% (GUM)</p>
+                                    <p className="text-sm font-bold font-mono text-amber-400">
+                                        {metaResult ? `±${metaResult.uExpanded.toFixed(2)} log₁₀` : "—"}
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* ENFSI Tier */}
+                            <div className="p-3 rounded-xl bg-black/40 border border-zinc-800 flex items-center justify-between gap-2 text-xs font-mono">
+                                <span className="text-zinc-400 shrink-0">
+                                    {isTr ? "ENFSI (2017) Sözel Kademe:" : "ENFSI (2017) Verbal Tier:"}
+                                </span>
+                                <span className={`px-2.5 py-0.5 rounded-full border text-[11px] font-bold truncate ${
+                                    !metaResult ? "bg-zinc-800/60 border-zinc-700/40 text-zinc-500" :
+                                    metaResult.log10lr >= 0
+                                        ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+                                        : "bg-rose-500/10 text-rose-400 border-rose-500/30"
+                                }`}>
+                                    {metaResult?.enfsiTier ?? (isTr ? "Hesaplanmadı" : "Not computed")}
                                 </span>
                             </div>
 
-                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                                <div className="p-3 rounded-xl bg-zinc-900/60 border border-zinc-800 text-center">
-                                    <p className="text-[9px] font-mono text-zinc-500 uppercase">Bray-Curtis dBC</p>
-                                    <p className="text-sm font-bold font-mono text-emerald-400">0.023</p>
-                                </div>
-                                <div className="p-3 rounded-xl bg-zinc-900/60 border border-zinc-800 text-center">
-                                    <p className="text-[9px] font-mono text-zinc-500 uppercase">{isTr ? "Taç Kapalılığı" : "Canopy Coverage"}</p>
-                                    <p className="text-sm font-bold font-mono text-cyan-400">93.3%</p>
-                                </div>
-                                <div className="p-3 rounded-xl bg-zinc-900/60 border border-zinc-800 text-center col-span-2 sm:col-span-1">
-                                    <p className="text-[9px] font-mono text-zinc-500 uppercase">{isTr ? "eDNA Tahmini Enlem/Boylam" : "eDNA Predicted Lat/Lon"}</p>
-                                    <p className="text-sm font-bold font-mono text-amber-400">49.15°N, 9.30°E</p>
-                                </div>
-                            </div>
-
+                            {/* Top Phyla / Diagnostic Taxa */}
                             <div className="p-4 rounded-xl border border-zinc-800 bg-black/40 text-xs font-mono text-zinc-300">
                                 <strong>{isTr ? "Diyagnostik İndikatör Taksonlar: " : "Diagnostic Indicator Taxa: "}</strong>
-                                <em>Quercus robur</em>, <em>Fagus sylvatica</em>, <em>Carpinus betulus</em>.{" "}
-                                {isTr
-                                    ? "Ilıman Avrupa geniş yapraklı orman toprak horizonlarıyla kuvvetli korelasyon göstermektedir."
-                                    : "Strongly correlates with temperate European broadleaf forest soil horizons."}
+                                {metaResult && metaResult.topPhyla.length > 0
+                                    ? metaResult.topPhyla.map((p, i) => (
+                                        <span key={p.name}>
+                                            {i > 0 && ", "}
+                                            <em>{p.name}</em>
+                                            <span className="text-zinc-500"> ({(p.abundance * 100).toFixed(1)}%)</span>
+                                        </span>
+                                    ))
+                                    : <><em>Quercus robur</em>, <em>Fagus sylvatica</em>, <em>Carpinus betulus</em></>
+                                }
+                                {". "}{isTr
+                                    ? "Ilıman Avrupa geniş yapraklı orman toprak horizonlarıyla korelasyon göstermektedir."
+                                    : "Correlates with temperate European broadleaf forest soil horizons."}
                             </div>
                         </div>
                     </motion.div>

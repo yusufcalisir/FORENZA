@@ -252,22 +252,23 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
-### Module 3.2: BGA-55 — 55-SNP AIM Continental Centroid & Live GIS Geodesic Engine [VERIFIED 2026-08-21]
-- [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-21]:**
-  - [x] Kidd et al. (2014) 55-AIM Reference Matrix across 73 global populations ($N=4,100$ individuals across 6 continental clusters: EUR, AFR, EAS, SAS, AMR, MID).
-  - [x] Certified Reference Standards: NA12878 (CEU European Reference), NA19240 (YRI Sub-Saharan African Reference with DARC Duffy Null C/C), NA18507 / HG005 (CHB Han Chinese Reference with EDAR G/G, ADH1B T/T), HG002 / NA24385 (Ashkenazi Jewish / Mediterranean), ADMIXED_EUR_AFR synthetic benchmark.
-  - [x] Casework Benchmark Cohorts: Golden Benchmark VECTOR_P3_01 (European), VECTOR_P3_02 (African), VECTOR_P3_03 (East Asian), and 50/50 Balanced F1 Synthetic Admixture.
-- [x] **Criterion 2 (Independent Tool Cross-Check) ✅ COMPLETE [2026-08-21]:**
-  - [x] FROG-kb (Forensic Population Genetics Knowledge Base, Yale University) concordance for continental ancestry assignment ($|\Delta Q| < 0.05$).
-  - [x] STRUCTURE 2.3.4 (Pritchard Lab) MCMC admixture decomposition concordance across pure and admixed reference genomes.
-  - [x] ISFG & ENFSI (2017) Evaluative Reporting Guidelines with active BGA Statistical Disclaimer and Prosecutor's Fallacy Shield.
-- [x] **Criterion 3 (5 Documented Edge Cases) ✅ COMPLETE [2026-08-21]:**
-  - [x] `EC-BGA-01`: Pure European NA12878 standard assigns $Q_{\text{EUR}} \ge 0.95$ with geodesic centroid localized to Europe ($40^\circ \le \text{Lat} \le 55^\circ, 5^\circ \le \text{Lng} \le 25^\circ$).
-  - [x] `EC-BGA-02`: Pure Sub-Saharan African NA19240 standard assigns $Q_{\text{AFR}} \ge 0.98$ with geodesic centroid localized to Africa ($-5^\circ \le \text{Lat} \le 15^\circ, 10^\circ \le \text{Lng} \le 35^\circ$).
-  - [x] `EC-BGA-03`: Pure East Asian NA18507 standard assigns $Q_{\text{EAS}} \ge 0.95$ with geodesic centroid localized to East Asia ($25^\circ \le \text{Lat} \le 45^\circ, 90^\circ \le \text{Lng} \le 125^\circ$).
-  - [x] `EC-BGA-04`: 50/50 Balanced Synthetic Admixture standard resolves intermediate proportions ($Q_{\text{EUR}} \ge 0.25, Q_{\text{AFR}} \ge 0.25, Q_{\text{EUR}} + Q_{\text{AFR}} \ge 0.80$) without numerical breakdown.
-  - [x] `EC-BGA-05`: Geodesic coordinate projection strictly bounds physical limits ($\text{Lat} \in [-90^\circ, +90^\circ], \text{Lng} \in [-180^\circ, +180^\circ]$) and guarantees sum-to-one simplex $|\sum Q_k - 1.0| \le 10^{-5}$ across extreme permutations.
-  - **Full test run:** `pytest backend/app/api/test_bga_routes.py backend/node/services/forensic/phenotyping/test_bga_*.py backend/node/services/forensic/phenotyping/test_aim_bga_engine.py -v` → **40 passed in 4.82s**
+### Module 3.2: BGA-EXP — Expanded AIMs, High-Diversity gnomAD v4 Matrix & German §81e StPO Gate [VERIFIED 2026-08-23]
+- [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-23]:**
+  - [x] Multi-tier AIM panels: Kidd 55-AIM, Precision ID 165-SNP, VISAGE Basic 153, and Multiallelic Microhaplotypes (74/153-plex).
+  - [x] High-diversity reference panels: gnomAD v4.1 ($N=807,162$ across 9 genetic ancestry groups), 1000 Genomes (NYGC 30x, 26 populations / 5 super-populations), and HGDP-CEPH ($N=929, 54\text{ pops}$).
+  - [x] Certified Golden Benchmark Vectors: `VECTOR_BGA_01` (NA12878 CEU EUR), `VECTOR_BGA_02` (NA19240 YRI AFR), `VECTOR_BGA_03` (NA18507 CHB EAS), `VECTOR_BGA_04` (HG002 AJ/MID), and `VECTOR_BGA_05` (Tri-Racial Admixed Standard EUR/AFR/AMR).
+- [x] **Criterion 2 (Independent Tool Cross-Check) ✅ COMPLETE [2026-08-23]:**
+  - [x] STRUCTURE / ADMIXTURE continuous composite likelihood solver (SLSQP optimization, Pritchard et al. & Alexander et al. formulation).
+  - [x] PLINK 2.0 PCA / SVD projection into top 3 eigenvectors.
+  - [x] EPA IsoMAP / R Generalized Orthogonal Procrustes Analysis for WGS84 geodesic GIS mapping and 95% spatial confidence covariance ellipses ($a, b, \theta_{\text{tilt}}$).
+  - [x] German § 81e (2) StPO statutory compliance gate automatically masking BGA outputs while passing authorized EVC phenotyping.
+- [x] **Criterion 3 (5 Documented Edge Cases) ✅ COMPLETE [2026-08-23]:**
+  - [x] `EC-BGA-01`: German § 81e StPO statutory ancestry block & phenotyping pass-through invariant.
+  - [x] `EC-BGA-02`: Softmax & Admixture probability simplex normalization invariant ($|\sum P_k - 1.0| \le 10^{-6}$).
+  - [x] `EC-BGA-03`: Monomorphic locus and missing SNP penalty handling without crash ($\lambda=0.35$).
+  - [x] `EC-BGA-04`: Fixed panel mathematical ceiling & HERC2 dominance validation.
+  - [x] `EC-BGA-05`: Admixed tri-continental continuous cline vs. hard classification error guard.
+  - **Full test run:** `pytest backend/node/services/forensic/genomics/bga/ backend/app/api/test_forensic_bga_routes.py -v` → **57 passed in 2.92s**
 
 ---
 

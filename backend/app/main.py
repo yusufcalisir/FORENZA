@@ -544,6 +544,18 @@ try:
 except Exception as _fgg_import_err:
     logger.warning(f"[boot] FGG router not loaded: {_fgg_import_err}")
 
+# --- Expanded Biogeographical Ancestry (BGA) & gnomAD Population Matrix Router ---
+try:
+    try:
+        from app.api.forensic_bga_routes import router as forensic_bga_router
+    except ImportError:
+        from backend.app.api.forensic_bga_routes import router as forensic_bga_router
+    app.include_router(forensic_bga_router)
+    logger.info("[boot] Expanded BGA & gnomAD Matrix API router registered at /api/forensic/bga")
+except Exception as _bga_exp_import_err:
+    logger.warning(f"[boot] Expanded BGA router not loaded: {_bga_exp_import_err}")
+
+
 
 
 

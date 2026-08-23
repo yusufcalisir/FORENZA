@@ -285,6 +285,20 @@ str-analysis/
 │           │   ├── test_cranio_edge_cases.py # 5 Empirical Edge-Case Tests (EC-CRANIO-01 to 05)
 │           │   ├── test_hair_edge_cases.py # 5 Empirical Edge-Case Tests (EC-HAIR-01 to 05)
 │           │   └── test_mc1r_edge_cases.py # 5 Empirical Edge-Case Tests (EC-MC1R-01 to 05)
+│           ├── genomics/bga/              # Expanded AIMs, gnomAD v4.1 & High-Diversity BGA Engine
+│           │   ├── schemas.py             # Pydantic v2 Domain Models (Panels, QC, Governance)
+│           │   ├── panel_registry.py      # Multi-Tier Registry (Kidd 55, Precision 165, VISAGE 153, Microhaplotypes)
+│           │   ├── liftover_normalizer.py # Forward Strand (+/+) & GRCh37/GRCh38 Liftover Normalizer
+│           │   ├── parser.py              # Multi-Vendor Parser (23andMe, AncestryDNA, VCF, SNaPshot)
+│           │   ├── qc_engine.py           # Call Rate, Heterozygosity Mixture Guard & Missing Penalties
+│           │   ├── reference_matrices.py  # 1000G (26 pops), gnomAD v4.1 (807k, 9 groups), HGDP (54 pops)
+│           │   ├── frequency_smoother.py  # Dirichlet Bayesian Regularizer & Floor Invariant
+│           │   ├── informativeness_engine.py # Rosenberg In & Wright's Fst Population Divergence
+│           │   ├── pca_procrustes_engine.py  # PCA SVD Projection & 3D WGS84 Procrustes GIS Map
+│           │   ├── admixture_engine.py    # Hard Discrete LR & Soft Continuous SLSQP Q-Matrix Solver
+│           │   ├── hirisplex_model.py     # HIrisPlex-S 41-SNP MLR Models & Intermediate Thresholds
+│           │   ├── governance_engine.py   # German § 81e StPO Ancestry Gate & ISFG Fallacy Shields
+│           │   └── golden_vectors.py      # 5 Certified Golden Standards (NA12878, NA19240, NA18507, HG002, Tri-Racial)
 │           └── tests/                     # Automated Test Suite (1200+ Tests Passing)
 │
 ├── frontend/                              # Next.js 16 Workstation Dashboard

@@ -71,10 +71,12 @@ export default function MerkleLedgerPanel() {
   const [events, setEvents] = useState<CustodyEvent[]>(dynamicEvents);
   const [isTampered, setIsTampered] = useState<boolean>(false);
   const [selectedEventIndex, setSelectedEventIndex] = useState<number>(1);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [isRehashing, setIsRehashing] = useState<boolean>(false);
+  const [proofLoading, setProofLoading] = useState<boolean>(false);
   const [progress, setProgress] = useState<number>(0);
   const [stageText, setStageText] = useState<string>("");
   const [lastActionTime, setLastActionTime] = useState<string | null>(null);
+
 
   const [merkleRoot, setMerkleRoot] = useState<string>("8f9e1c2b3a4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f");
   const [leafHashes, setLeafHashes] = useState<string[]>([
@@ -166,8 +168,8 @@ export default function MerkleLedgerPanel() {
   };
 
   const fetchTree = async (currentEvents: CustodyEvent[]) => {
-    if (loading) return;
-    setLoading(true);
+    if (isRehashing) return;
+    setIsRehashing(true);
     setProgress(15);
     setStageText(
       isTr
@@ -226,7 +228,7 @@ export default function MerkleLedgerPanel() {
             : "Merkle tree anchored to immutable root commitment."
         );
         setTimeout(() => {
-          setLoading(false);
+          setIsRehashing(false);
           setLastActionTime(isTr ? `Yeniden hashleme ${new Date().toLocaleTimeString()}` : `Rehashed at ${new Date().toLocaleTimeString()}`);
         }, 200);
       }, 850);
@@ -253,7 +255,7 @@ export default function MerkleLedgerPanel() {
   };
 
   const generateProof = async (idx: number) => {
-    setLoading(true);
+    setProofLoading(true);
     const API_BASE = getApiBaseUrl();
     try {
       const res = await fetch(`${API_BASE}/api/v1/forensic/lims/merkle/generate-proof`, {
@@ -288,9 +290,10 @@ export default function MerkleLedgerPanel() {
     } catch (e) {
       console.error("Proof generation error:", e);
     } finally {
-      setLoading(false);
+      setProofLoading(false);
     }
   };
+
 
   return (
     <div className="space-y-6 font-mono text-tactical-text">
@@ -362,9 +365,9 @@ export default function MerkleLedgerPanel() {
         </div>
       </div>
 
-      {/* ── Active Progress Bar ── */}
+      {/* ── Active Progress Bar (Only during explicit tree rehash) ── */}
       <AnimatePresence>
-        {loading && (
+        {isRehashing && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
@@ -401,15 +404,16 @@ export default function MerkleLedgerPanel() {
               </span>
               <button
                 onClick={() => fetchTree(events)}
-                disabled={loading}
+                disabled={isRehashing}
                 className="min-h-[36px] px-4 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-black text-xs uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(99,102,241,0.3)] hover:shadow-[0_0_25px_rgba(99,102,241,0.5)] disabled:opacity-50 flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
               >
-                <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
-                {loading
+                <RefreshCw className={`w-3.5 h-3.5 ${isRehashing ? "animate-spin" : ""}`} />
+                {isRehashing
                   ? (isTr ? `Yeniden Hesaplanıyor %${progress}...` : `Rehashing ${progress}%...`)
                   : (isTr ? "Ağacı Yeniden Hesapla" : "Rehash Tree")}
               </button>
             </div>
+
 
             <div className="space-y-2">
               {events.map((ev, idx) => (

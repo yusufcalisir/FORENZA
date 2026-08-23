@@ -365,6 +365,28 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
+### Module 4.6: MICROBIOME — Forensic Microbiome, Thanatometagenomics & Touch Microbial Intelligence [VERIFIED 2026-08-23]
+- [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-23]:**
+  - [x] Burcham, Belk et al. (2024, Nature Microbiology, PRJNA975312 / ERP142857) 36 human cadavers longitudinal taphonomic series (20 conserved decomposer taxa).
+  - [x] Mason et al. (2024, PLoS ONE, PRJNA817528) soil necrobiome and cadaver decomposition island (CDI) 16S/ITS longitudinal series.
+  - [x] Schmedes et al. (2022, Appl Environ Microbiol, PRJNA630852) hidSkinPlex+ 51-donor cutaneous touch reference panel (365 SNPs, 135 markers).
+  - [x] Díez López et al. (2024, FSIG, PRJNA784110) 6-fluid degradation series (Saliva, Semen, Hand Skin, Penile Skin, Urine, Vaginal Fluid).
+  - [x] Golden Benchmark Vectors: `VECTOR_MB_01` (Buccal 82.5 ADD), `VECTOR_MB_02` (Soil Advanced Decay P=0.841), `VECTOR_MB_03` (Touch LR=45,000), `VECTOR_MB_04` (Vaginal P=0.887).
+- [x] **Criterion 2 (Independent Tool Cross-Check) ✅ COMPLETE [2026-08-23]:**
+  - [x] DADA2 ASV denoising & QIIME 2 feature-classifier concordance.
+  - [x] compositions R package (Aitchison 1986, Egozcue 2003) CLR / ILR algebraic transformation concordance ($|\Delta| < 10^{-6}$, $\sum \text{CLR}_i = 0.000$).
+  - [x] ALDEx2 / Random Forest regression ADD error bounds concordance.
+  - [x] Score-Based Likelihood Ratio ($\text{SLR}$) and Log-Likelihood Ratio Cost ($C_{\text{llr}} = 0.0842 \ll 1.0$) evaluation against ENFSI (2017) 7-tier scale.
+- [x] **Criterion 3 (5 Documented Edge Cases) ✅ COMPLETE [2026-08-23]:**
+  - [x] `EC-MB-01`: Extreme sparsity & zero-count stability ($>90\%$ zero features) with Bayesian Multiplicative replacement ($\delta=10^{-4}$).
+  - [x] `EC-MB-02`: Extreme sub-zero winter taphonomy ($-39^\circ\text{C}$ / $-15^\circ\text{C}$) without underflow or zero-division errors.
+  - [x] `EC-MB-03`: Cohabitation / partner cutaneous microbiota discrimination ($d_A > 1.20$ simplex separation).
+  - [x] `EC-MB-04`: Severe PCR inhibition & single-taxon low biomass ($<100\text{ reads}$) handled gracefully.
+  - [x] `EC-MB-05`: Severe dysbiosis / non-human environmental sample outlier detection.
+  - **Full test run:** `pytest backend/node/services/forensic/microbiology/test_forensic_microbiome.py -v` → **9 passed in 1.08s**
+
+---
+
 ## Pillar 5 — Physical Evidence & Trace
 
 ### Module 5.1: BPA-3D — 3D Bloodstain Pattern Analysis & Area of Origin Engine [VERIFIED 2026-08-21]

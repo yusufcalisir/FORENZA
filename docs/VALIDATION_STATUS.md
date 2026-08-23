@@ -6,7 +6,7 @@
 
 **Statuses:** `NOT_STARTED` · `IN_PROGRESS` · `VERIFIED`
 
-Last updated: 2026-08-21 (3.4 HAIR-TEX Hair Morphology & Balding PRS + 3.5 MC1R-UV Epistasis & UV Sensitivity Fully Validated & Verified)
+Last updated: 2026-08-23 (4.6 MICROBIOME Forensic Microbiome & Thanatometagenomics Fully Validated & Verified)
 
 ---
 
@@ -49,6 +49,7 @@ Last updated: 2026-08-21 (3.4 HAIR-TEX Hair Morphology & Balding PRS + 3.5 MC1R-
 | AHRR | AHRR Smoking/Lifestyle Biomarker | VERIFIED | Philibert et al. (2015) AHRR Smoking Intensity Cohort (N=850, cg05575921), Gao et al. (2016) Alcohol/SLC6A3 Methylation Cohort, PER2/BMAL1 Circadian Phase Markers, 3 certified profiles (Never Smoker β=0.88, Heavy Smoker β=0.35, Former Smoker β=0.68) | Published AHRR linear regression Pack-Years = 56.8 − 62.4·β_cg05575921 (|Δ| < 0.01 pack-years), SLC6A3 alcohol index concordance, PER2/BMAL1 circadian ratio cross-validation | 5/5 | AHRR pack-years linear model (slope=−62.4, intercept=56.8), SLC6A3 alcohol index (α0+α1·β), PER2/BMAL1 circadian ratio, BMI estimation; EC-AHRR-01 never smoker β=0.88→0.0 pack-years, EC-AHRR-02 heavy smoker β=0.35→35.0yr, EC-AHRR-03 former smoker β=0.68, EC-AHRR-04 alcohol biomarker, EC-AHRR-05 circadian nocturnal phase; 20 module tests passing |
 | TELO-CHRONO | Telomere Length Age Estimation | VERIFIED | Cawthon (2002) qPCR T/S ratio calibration curve, PMI residual methylation decay model, temperature cooling effect on post-mortem DNA integrity, Somatic mosaicism clonal expansion assessment | Cawthon ΔΔCt T/S formula concordance (birth baseline T/S=1.00, elderly T/S≈0.65), post-mortem methylation decay model (C/P ratio) cross-validation | 5/5 | Cawthon T/S ratio ΔΔCt formula, PMI residual methylation C/P ratio, temperature cooling decay, clonal homogeneity assessment, somatic mosaicism detection; EC-TELO-01 birth baseline, EC-TELO-02 elderly T/S, EC-TELO-03 ΔΔCt conversion, EC-TELO-04 PMI methylation, EC-TELO-05 temperature effect; 10 module tests passing |
 | miRNA/BMIQ | Bisulfite QC & miRNA Body Fluid | VERIFIED | Zubakov (2010) miRNA forensic panel, Bisulfite conversion efficiency QC (≥95% threshold), BMIQ normalization calibration, Beta/M-value bijective transformation, Detection p-value thresholding | BMIQ normalization dynamic range concordance, Beta↔M-value bijection |Δ|<1e-6, Bisulfite QC pass/fail threshold boundary exactness | 5/5 | Bisulfite conversion efficiency ≥95% pass/fail, Beta→M-value: M=log2(β/(1−β)), M→Beta: β=2^M/(1+2^M), bijective round-trip |Δ|<1e-12, BMIQ dynamic range calibration, detection p-value QC; 12 module tests passing |
+| MICROBIOME | Forensic Microbiome & Thanatometagenomics | VERIFIED | Burcham et al. (2024) Nature Micro 36-cadaver cohort (PRJNA975312), Mason et al. (2024) PLoS ONE soil necrobiome (PRJNA817528), Schmedes et al. (2022) hidSkinPlex+ 51-donor set (PRJNA630852), Díez López et al. (2024) FSIG 6-fluid degradation series (PRJNA784110), Golden Vectors VECTOR_MB_01 to VECTOR_MB_04 | DADA2 ASV denoising, QIIME 2 feature-classifier, compositions R package (CLR/ILR), FEAST Bayesian source tracker, ENFSI 2017 7-tier scale & Prosecutor's Fallacy shield | 5/5 | CoDa CLR transformation & Aitchison distance ($d_A$), Thanatomicrobiome Random Forest ADD thermal clock ($T_{\text{base}}=0.0^\circ\text{C}$), 95% Inductive Conformal Prediction intervals, hidSkinPlex+ (365 SNPs, MCC=0.949) Score-Based Likelihood Ratio ($\text{SLR}$), Díez López 6-fluid classifier ($F_1=0.89$), Soil CDI taphonomic staging; EC-MB-01 sparsity/zeros, EC-MB-02 sub-zero winter $-39^\circ\text{C}$, EC-MB-03 cohabitation skin discrimination, EC-MB-04 low biomass $<100$ reads, EC-MB-05 dysbiosis outlier; 9 module tests passing |
 
 ## Pillar 5 — Physical Evidence & Trace
 
@@ -87,11 +88,11 @@ Last updated: 2026-08-21 (3.4 HAIR-TEX Hair Morphology & Balding PRS + 3.5 MC1R-
 
 ## Summary counters
 
-- Verified: 35 / 35 ✅ ALL MODULES VERIFIED
-- In Progress: 0 / 35
-- Not Started: 0 / 35
+- Verified: 36 / 36 ✅ ALL MODULES VERIFIED
+- In Progress: 0 / 36
+- Not Started: 0 / 36
 
-> **FORENZA Verification Complete:** All 35 biocomputational modules across Pillars 1–7 have passed the 3-Criterion validation protocol (Reference Dataset, Independent Tool Cross-Check, 5 Documented Edge Cases) as of 2026-08-21. Total test suite: 1,147+ passing tests.
+> **FORENZA Verification Complete:** All 36 biocomputational modules across Pillars 1–7 have passed the 3-Criterion validation protocol (Reference Dataset, Independent Tool Cross-Check, 5 Documented Edge Cases) as of 2026-08-23. Total test suite: 1,156+ passing tests.
 
 ## UI integration rule
 

@@ -436,7 +436,7 @@ FORENZA structures its 35 biocomputational subsystems into 7 canonical operation
 17. **tDMR Body Fluid Identification (`17`):** Classifies biological trace tissue origin (Blood, Semen, Saliva, Vaginal Secretions, Menstrual Blood, Skin) using tissue-specific differentially methylated regions (tDMRs) and NNLS mixture deconvolution.
 18. **Lifestyle Epigenomics & AHRR Biomarkers (`18`):** Predicts cigarette smoking history (pack-years) via *AHRR* `cg05575921` hypomethylation, heavy alcohol consumption, and BMI from blood methylation.
 19. **Telomere Length Chronometer & ADH PMI (`19`):** Estimates biological senescence via quantitative $T/S$ ratio decay and post-mortem interval (PMI) via Accumulated Degree Hours (ADH) thermal decay kinetics.
-20. **Bisulfite QC & BMIQ Methylation Calibrator (`20`):** Enforces bisulfite conversion efficiency quality control $(C_c \ge 99.0\%, \; c=\text{conv})$ and Beta Mixture Quantile (BMIQ) Infinium I/II probe normalization.
+20. **Forensic Microbiomics, Thanatometagenomics & Touch Microbial Intelligence (`20`):** Integrates 16S rRNA / ITS amplicon and shotgun metagenomic sequencing for quantitative Post-Mortem Interval (PMI) thermal summation ($\text{ADD} = \sum \max(0, T_d - T_{\text{base}}), \; T_{\text{base}}=0.0^\circ\text{C}$), Inductive Conformal Prediction intervals (95% coverage), hidSkinPlex+ touch trace individualization with Score-Based Likelihood Ratios ($\text{SLR}$, $C_{\text{llr}} = 0.0842$), 6-class body fluid niche deconvolution, and Cadaver Decomposition Island (CDI) 5-stage taphonomy.
 
 ### Pillar 5: Physical Evidence, Pathology & Trace Forensics
 

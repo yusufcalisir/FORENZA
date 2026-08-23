@@ -472,7 +472,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
             { id: "17", name: "Body Fluid & Tissue Origin tDMR", badge: "tDMR-FLUID", metrics: "6-Tissue QDA/NNLS • Semen • Blood • Saliva", desc: "Deconvolutes tissue-specific differentially methylated regions (tDMRs) to identify 6 forensic body fluids with Sum-to-One invariant." },
             { id: "18", name: "Lifestyle Epigenomics & AHRR", badge: "AHRR-LIFE", metrics: "AHRR Smoking • Pack-Years • Epigenetic BMI", desc: "Analyzes AHRR hypomethylation to quantify tobacco smoke pack-years, alcohol exposure indices, and epigenetic BMI." },
             { id: "19", name: "Telomere Length Decay & PMI", badge: "TELO-PMI", metrics: "qPCR T/S Decay • ADH Thermal Summation", desc: "Measures relative telomere-to-single-copy-gene (T/S) length ratio and calculates inverse Post-Mortem Interval (PMI) under ADH." },
-            { id: "20", name: "Bisulfite QC & Probe Calibration Lab", badge: "BISULFITE-QC", metrics: "Conversion ≥99.0% • Logit M-Value • BMIQ", desc: "Validates bisulfite conversion efficiency (C_conv ≥ 99.0%), computes bijective Beta ↔ M logit transforms, and applies BMIQ normalization." }
+            { id: "20", name: "Forensic Microbiome & Thanatometagenomics", badge: "MICROBIOME", metrics: "16S V4 PMI ADD • hidSkinPlex+ SLR • 6-Fluid Niche", desc: "Calculates Post-Mortem Interval (PMI) using CoDa CLR and thermal summation (ADD), evaluates touch trace individualization with hidSkinPlex+ (365 SNPs) Likelihood Ratios, and classifies body fluid niches." }
           ]
         },
         {
@@ -894,7 +894,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
             { id: "17", name: "Dokuya Özgü Vücut Sıvısı tDMR Ayrıştırması", badge: "tDMR-FLUID", metrics: "6-Doku QDA/NNLS • Meni • Kan • Tükürük", desc: "Dokuya özgü farklı metillenen bölgeleri (tDMR) çözümleyerek 6 adli vücut sıvısı türünü Toplam-1 olasılık değişmeziyle tespit eder." },
             { id: "18", name: "Çevresel Yaşam Tarzı Epigenetiği ve AHRR", badge: "AHRR-LIFE", metrics: "AHRR Sigara Skoru • Paket-Yıl • Epigenetik BMI", desc: "Kronik tütün kullanım paket-yılını, alkol maruziyet indeksini ve epigenetik vücut kitle indeksini belirlemek için AHRR geni hipometilasyonunu analiz eder." },
             { id: "19", name: "Telomer Uzunluğu Azalması ve PMI", badge: "TELO-PMI", metrics: "qPCR T/S Azalması • ADH Termal Toplamı", desc: "Göreceli telomer/tek kopya gen (T/S) uzunluk oranını ölçer ve ADH termal toplamı altında ters Ölüm Sonrası Zaman Aralığını (PMI) hesaplar." },
-            { id: "20", name: "Bisülfit Kalite Kontrol ve Prob Kalibrasyon Laboratuvarı", badge: "BISULFITE-QC", metrics: "Dönüşüm ≥%99.0 • Logit M-Değeri • BMIQ", desc: "Bisülfit dönüşüm verimliliğini doğrular (C_conv ≥ %99.0), bijektif Beta ↔ M logit dönüşümlerini hesaplar ve BMIQ Tip II prob normalizasyonu uygular." }
+            { id: "20", name: "Adli Mikrobiyom ve Tanatometagenomik Zekası", badge: "MICROBIOME", metrics: "16S V4 PMI ADD • hidSkinPlex+ SLR • 6-Sıvı Nişi", desc: "Kompozisyonel veri analizi (CoDa CLR) ve termal toplam (ADD) ile Ölüm Zamanı (PMI) hesaplar; hidSkinPlex+ (365 SNP) ile dokunma izi olabilirlik oranı (SLR) ve 6 vücut sıvısı ayrımı yapar." }
           ]
         },
         {

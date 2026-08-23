@@ -98,6 +98,9 @@ const PanelHair = dynamic(() => import("@/components/analysis/PanelHair"), {
 const PanelFreckling = dynamic(() => import("@/components/analysis/PanelFreckling"), {
   loading: () => <ModuleSkeletonLoader label="Loading MC1R Freckling & Epistasis Model..." />,
 });
+const MicrobiomeAnalysisPanel = dynamic(() => import("@/components/analysis/MicrobiomeAnalysisPanel"), {
+  loading: () => <ModuleSkeletonLoader label="Loading Forensic Microbiome & Metagenomics Engine..." />,
+});
 
 // ─── NIST 1036 Multi-Ethnic Reference Allele Frequency Matrix ─────────────────
 const NIST_1036_POP_FREQS: Record<string, Record<string, Record<string, number>>> = {
@@ -586,7 +589,7 @@ export function renderPanel(tabId: string) {
     case "freckling":
       return <PanelFreckling />;
 
-    // Pillar 4: Epigenetics & Aging
+    // Pillar 4: Epigenetics, Microbiomics & Aging
     case "age":
       return <AgeEstimationPanel />;
     case "bodyfluid":
@@ -597,6 +600,10 @@ export function renderPanel(tabId: string) {
       return <AgeEstimationPanel />;
     case "mirna":
       return <BodyFluidPanel />;
+    case "microbiome":
+    case "metagenomics":
+    case "thanatomicrobiome":
+      return <MicrobiomeAnalysisPanel />;
 
     // Pillar 5: Pathology & Trace Forensics
     case "bpa":

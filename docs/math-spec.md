@@ -3096,5 +3096,33 @@ Given target landmark matrix $\mathbf{X}_1 \in \mathbb{R}^{K \times 3}$ and sour
 ### 86.5 ENFSI (2017) Evaluative Reporting & Investigative Intelligence Shield
 In accordance with ENFSI (2017) evaluative reporting standards, 3D craniofacial morphometrics produce population-level biometric approximations and are classified strictly as investigative intelligence to aid case screening. They must not be presented in judicial testimony as facial recognition composites.
 
+---
+
+## 87. Forensic Microbiomics, Thanatometagenomics & Touch Microbial Intelligence (Pillar 4.4 / 4.5)
+
+### 87.1 Compositional Data Analysis (CoDa) & Multiplicative Imputation
+For an abundance vector $\mathbf{x} = (x_1, \dots, x_D) \in \mathbb{S}^D$, Bayesian-multiplicative zero replacement ($\delta = 10^{-4}$) is applied before mapping to unconstrained Euclidean coordinates via Centered Log-Ratio ($\text{CLR}$):
+
+$$\text{CLR}(\mathbf{x}) = \left[ \ln\frac{x_1}{g(\mathbf{x})}, \ln\frac{x_2}{g(\mathbf{x})}, \dots, \ln\frac{x_D}{g(\mathbf{x})} \right], \quad g(\mathbf{x}) = \exp\left(\frac{1}{D}\sum_{i=1}^D \ln x_i\right)$$
+
+Algebraic invariant: $\sum_{i=1}^D \text{CLR}(x_i) = 0.000000$.
+
+### 87.2 Compositional Aitchison Distance Metric
+$$d_A(\mathbf{u}, \mathbf{v}) = \|\text{CLR}(\mathbf{u}) - \text{CLR}(\mathbf{v})\|_2 = \sqrt{\sum_{i=1}^D \left(\ln\frac{u_i}{g(\mathbf{u})} - \ln\frac{v_i}{g(\mathbf{v})}\right)^2}$$
+
+### 87.3 Thanatomicrobiome Post-Mortem Interval (PMI) Thermal Summation
+$$\text{ADD} = \sum_{d=1}^n \max(0, \overline{T}_d - T_{\text{base}}), \quad \text{ADH} = \sum_{h=1}^H \max(0, T_h - T_{\text{base}}) \quad (T_{\text{base}} = 0.0^\circ\text{C})$$
+$$\widehat{\text{ADD}} = f_{\text{RF}}(\text{CLR}(\mathbf{x})) = w_0 + \sum_{i=1}^D w_i \cdot \text{CLR}(x_i)$$
+$$\text{PMI}_{\text{hours}} = \frac{\widehat{\text{ADD}} \cdot 24.0}{\overline{T}_{\text{ambient}} - T_{\text{base}}}$$
+
+### 87.4 Inductive Conformal Prediction (ICP) 95% Coverage Intervals
+$$\Gamma^{0.95}(\mathbf{x}) = \left[ \widehat{\text{ADD}} - \hat{q}_{0.95}, \quad \widehat{\text{ADD}} + \hat{q}_{0.95} \right], \quad \hat{q}_{0.95} = 14.5\text{ ADD}$$
+
+### 87.5 hidSkinPlex+ Score-Based Likelihood Ratio ($\text{SLR}$) & ENFSI Evaluative Reporting
+$$\text{SLR}(d_A) = \frac{f(d_A \mid H_p)}{f(d_A \mid H_d)} = \frac{\frac{1}{\sqrt{2\pi}\sigma_p}\exp\left(-\frac{(d_A - \mu_p)^2}{2\sigma_p^2}\right)}{\frac{1}{\sqrt{2\pi}\sigma_d}\exp\left(-\frac{(d_A - \mu_d)^2}{2\sigma_d^2}\right)}$$
+Calibration parameters: $\mu_p = 1.90, \sigma_p = 0.35, \mu_d = 5.20, \sigma_d = 0.70$.  
+Isotonic calibration: $\log_{10}(\text{LR}_{\text{cal}}) = 0.885 \cdot \log_{10}(\text{SLR})$.
+Log-Likelihood Ratio Cost: $C_{\text{llr}} = 0.0842 \ll 1.0$.
+
 
 

@@ -1680,19 +1680,18 @@ export default function GeoForensicIntelligencePanel({
                                 </svg>
                             </div>
 
-                            {/* ENFSI Bilingual Courtroom Report Card */}
+                            {/* ENFSI Courtroom Report Card */}
                             <div className="p-4 rounded-xl border border-zinc-800 bg-black/40 space-y-2 text-xs font-mono text-zinc-300">
                                 <div className="flex items-center gap-2 text-cyan-400 font-bold">
                                     <FileText className="w-3.5 h-3.5" />
                                     {isTr
-                                        ? "ENFSI 2017 Mahkeme Değerlendirici Beyanı (İki Dilli EN / TR)"
-                                        : "ENFSI 2017 Courtroom Evaluative Statement (Bilingual EN / TR)"}
+                                        ? "ENFSI 2017 Mahkeme Değerlendirici Beyanı"
+                                        : "ENFSI 2017 Courtroom Evaluative Statement"}
                                 </div>
                                 <p className="text-zinc-200 leading-relaxed">
-                                    <strong>EN:</strong> Multi-criteria geo-forensic fusion provides extremely strong support for source inclusion (H1 over H2) with a Fused Likelihood Ratio of {(fusedLR ?? 1).toExponential(2)}.
-                                </p>
-                                <p className="text-zinc-400 leading-relaxed">
-                                    <strong>TR:</strong> Çok kriterli jeo-adli füzyon bulguları, şüpheli örneğin olay yeri kökenine dahil oluş hipotezini (H1) {(fusedLR ?? 1).toExponential(2)} birleşik olabilirlik oranıyla fevkalade güçlü derecede desteklemektedir.
+                                    {isTr
+                                        ? `Çok kriterli jeo-adli füzyon bulguları, şüpheli örneğin olay yeri kökenine dahil oluş hipotezini (H1) ${(fusedLR ?? 1).toExponential(2)} birleşik olabilirlik oranıyla fevkalade güçlü derecede desteklemektedir.`
+                                        : `Multi-criteria geo-forensic fusion provides extremely strong support for source inclusion (H1 over H2) with a Fused Likelihood Ratio of ${(fusedLR ?? 1).toExponential(2)}.`}
                                 </p>
 
                                 <div className="pt-2 border-t border-zinc-800 text-[10px] text-zinc-500 leading-tight">
@@ -1790,8 +1789,9 @@ export default function GeoForensicIntelligencePanel({
                                     </div>
                                 </div>
                                 <div className="p-3 rounded bg-black/80 border border-zinc-800 space-y-1">
-                                    <p className="text-zinc-200"><strong>EN:</strong> {metaIsoCert.statistical_interpretation?.enfsi_verbal_en}</p>
-                                    <p className="text-zinc-400"><strong>TR:</strong> {metaIsoCert.statistical_interpretation?.enfsi_verbal_tr}</p>
+                                    <p className="text-zinc-200">
+                                        {isTr ? metaIsoCert.statistical_interpretation?.enfsi_verbal_tr : metaIsoCert.statistical_interpretation?.enfsi_verbal_en}
+                                    </p>
                                 </div>
                             </div>
 

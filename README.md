@@ -518,11 +518,24 @@ $$P(Y = k) = \frac{\exp\left(\beta_{k0} + \sum_{i=1}^M \beta_{ki} X_i\right)}{1 
 
 $$\left| \sum_{k=1}^K P(Y=k) - 1.0 \right| \le \epsilon \quad \implies \quad \text{Status: NORMALIZED}$$
 
-### 4. Horvath Epigenetic Methylation Age Clock
+### 4. Multi-Generation Epigenetic Clocks & Multimodal PMI Bayesian Fusion
 
-Chronological age estimation is derived from the linear combination of beta values $(\beta_i = \frac{M}{M + U + 100})$ across selected CpG sites transformed by an inverse calibration function:
+#### A. Horvath & Forensic Reduced Clocks Piecewise Log-Linear Transformation
+Chronological age estimation is derived from the linear combination of beta values ($\beta_i = \frac{M}{M + U + 100}$) across selected CpG sites transformed by Horvath's bijective link function ($y_0 = 20.0, \text{mult} = 21.0$):
 
-$$\text{Age} = f\left( b_0 + \sum_{i=1}^{N} w_i \cdot \beta_i \right)$$
+$$F(\text{Age}) = \begin{cases} \ln\left(\frac{\text{Age} + 1}{y_0 + 1}\right), & \text{Age} \le y_0 \\ \frac{\text{Age} - y_0}{y_0 + 1}, & \text{Age} > y_0 \end{cases} \iff \widehat{\text{Age}} = \begin{cases} (y_0 + 1)\exp(\hat{Y}) - 1, & \hat{Y} < 0 \\ (y_0 + 1)\hat{Y} + y_0, & \hat{Y} \ge 0 \end{cases}$$
+
+Tissue-specific baseline shifts ($\Delta_{\text{tissue}}$) calibrate matrix variations (Whole Blood $0.00$, Saliva $+2.45$, Semen $+18.60$, Bone $+1.15$, Teeth $+0.80$, Cartilage $+0.50$, Skin $-1.20\text{ yrs}$).
+
+#### B. Second- and Third-Generation Biological Aging & Mortality Hazard
+- **Levine PhenoAge (513-CpG):** Composite Gompertz biological mortality hazard $\text{PhenoAge} = 141.50 + \frac{\ln(-\ln(1 - \text{cdf}) / \gamma)}{\alpha}$.
+- **Lu GrimAge (1,030-CpG):** Multi-stage surrogate mortality risk incorporating $\text{DNAm PACKYRS}$ and 7 plasma proteins ($\text{ADM, B2M, Cystatin C, GDF-15, Leptin, PAI-1, TIMP-1}$).
+- **Belsky DunedinPACE:** 3rd-generation dynamic pace-of-aging velocity metric ($d\text{BioAge}/d\text{Time}$, normative mean $1.0\text{ bio-yrs/calendar-yr}$).
+
+#### C. Multimodal Post-Mortem Interval (PMI) Bayesian Evidence Fusion
+Post-mortem cellular arrest preserves $5\text{mC}$ methylation for $\ge 72-120\text{h}$ (reflecting Age-at-Death). PMI is independently estimated through joint Bayesian evidence fusion:
+
+$$P(\text{PMI} \mid \mathbf{E}) \propto P(\text{PMI}) \cdot \mathcal{N}(\text{PMI}_{\text{Henssge}} \mid \text{PMI}, \sigma_H^2) \cdot \mathcal{N}(\text{PMI}_{K^+} \mid \text{PMI}, \sigma_K^2) \cdot \mathcal{N}(\text{PMI}_{\text{Ento}} \mid \text{PMI}, \sigma_E^2)$$
 
 ### 5. Bloodstain Impact Angle Formula
 

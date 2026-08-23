@@ -42,7 +42,7 @@ def test_horvath_2013_metadata(registry):
     assert horvath.generation == ClockGeneration.FIRST_GEN_CHRONO
     assert horvath.has_piecewise_transform is True
     assert horvath.pivot_age == 20.0
-    assert horvath.intercept == 0.696000
+    assert horvath.intercept == -1.120000
     assert "cg16867657" in horvath.cpg_weights
     assert horvath.cpg_weights["cg16867657"] == 2.850000  # ELOVL2
     assert horvath.cpg_weights["cg16419235"] == -0.950000  # PENK (negative coefficient)

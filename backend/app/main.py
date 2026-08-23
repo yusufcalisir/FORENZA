@@ -344,6 +344,14 @@ try:
 except Exception as _epi_import_err:
     logger.warning(f"[boot] Epigenetics router not loaded: {_epi_import_err}")
 
+# --- Forensic Epigenetic Clocks (Horvath, PhenoAge, GrimAge) & Multimodal PMI Router ---
+try:
+    from app.api.forensic_epigenetic_clock_routes import router as epigenetic_clocks_router
+    app.include_router(epigenetic_clocks_router, prefix="/api/v1")
+    logger.info("[boot] Forensic Epigenetic Clocks & Multimodal PMI API router registered at /api/v1/forensic/epigenetics/clocks")
+except Exception as _epi_clocks_import_err:
+    logger.warning(f"[boot] Epigenetic clocks router not loaded: {_epi_clocks_import_err}")
+
 # --- Forensic Physical Evidence & Ballistics Router ---
 try:
     from app.api.physical_routes import router as physical_router

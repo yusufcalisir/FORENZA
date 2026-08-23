@@ -469,7 +469,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
           shortName: "Epigenetics",
           badge: "EPIGENETICS",
           subsystems: [
-            { id: "16", name: "Horvath / VISAGE Epigenetic Clock", badge: "HORVATH", metrics: "Piecewise Elastic Net • 5-CpG • Multi-Tissue", desc: "Quantifies DNA methylation levels at key CpG loci using Horvath piecewise linear/exponential link function to estimate chronological age." },
+            { id: "16", name: "Multi-Generation Epigenetic Clocks & PMI", badge: "EPI-CLOCKS", metrics: "Horvath • VISAGE Enhanced • PhenoAge • GrimAge • DunedinPACE • Bayesian PMI", desc: "Quantifies DNA methylation at diagnostic CpG loci across 1st, 2nd, and 3rd generation clocks with ISO 17025 uncertainty and fuses multimodal PMI evidence." },
             { id: "17", name: "Body Fluid & Tissue Origin tDMR", badge: "tDMR-FLUID", metrics: "6-Tissue QDA/NNLS • Semen • Blood • Saliva", desc: "Deconvolutes tissue-specific differentially methylated regions (tDMRs) to identify 6 forensic body fluids with Sum-to-One invariant." },
             { id: "18", name: "Lifestyle Epigenomics & AHRR", badge: "AHRR-LIFE", metrics: "AHRR Smoking • Pack-Years • Epigenetic BMI", desc: "Analyzes AHRR hypomethylation to quantify tobacco smoke pack-years, alcohol exposure indices, and epigenetic BMI." },
             { id: "19", name: "Telomere Length Decay & PMI", badge: "TELO-PMI", metrics: "qPCR T/S Decay • ADH Thermal Summation", desc: "Measures relative telomere-to-single-copy-gene (T/S) length ratio and calculates inverse Post-Mortem Interval (PMI) under ADH." },

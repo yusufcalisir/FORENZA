@@ -73,14 +73,19 @@ class MethylationSample(BaseModel):
 
 class ClockEstimationRequest(BaseModel):
     """Request payload for multi-generation epigenetic age and biological risk analysis."""
-    model_config = ConfigDict(protected_namespaces=())
+    model_config = ConfigDict(protected_namespaces=(), populate_by_name=True)
 
     sample: MethylationSample
     target_clocks: List[str] = Field(
         default=["horvath_2013", "visage_enhanced", "phenoage", "grimage"],
         description="List of clock model IDs to evaluate"
     )
+    selected_clocks: Optional[List[str]] = Field(
+        default=None,
+        description="Alias for target_clocks"
+    )
     chronological_age: Optional[float] = Field(default=None, ge=0.0, le=125.0, description="Known calendar age if validating/benchmarking")
+    chronological_age_known: Optional[float] = Field(default=None, ge=0.0, le=125.0, description="Alias for chronological_age")
     smoking_pack_years: Optional[float] = Field(default=0.0, ge=0.0, description="Tobacco exposure pack-years")
     biological_sex: Optional[str] = Field(default="UNKNOWN", description="MALE, FEMALE, or UNKNOWN")
     clinical_biomarkers: Optional[Dict[str, float]] = Field(

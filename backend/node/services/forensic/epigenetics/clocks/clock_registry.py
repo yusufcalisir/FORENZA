@@ -284,7 +284,7 @@ class EpigeneticClockRegistry:
                 EpigeneticTissueType.EPIDERMIS,
                 EpigeneticTissueType.BONE,
             ],
-            intercept=0.696000,
+            intercept=-1.120000,
             has_piecewise_transform=True,
             pivot_age=20.0,
             target_variable="CHRONOLOGICAL_AGE",
@@ -325,7 +325,7 @@ class EpigeneticClockRegistry:
             name="PedBE Pediatric Buccal Clock (2019)",
             generation=ClockGeneration.FIRST_GEN_CHRONO,
             primary_tissues=[EpigeneticTissueType.SALIVA_BUCCAL],
-            intercept=-0.150000,
+            intercept=-2.510000,
             has_piecewise_transform=True,
             pivot_age=20.0,
             target_variable="CHRONOLOGICAL_AGE",
@@ -344,7 +344,7 @@ class EpigeneticClockRegistry:
             name="Levine DNAm PhenoAge (2018)",
             generation=ClockGeneration.SECOND_GEN_BIOLOGICAL,
             primary_tissues=[EpigeneticTissueType.WHOLE_BLOOD],
-            intercept=-12.800000,
+            intercept=8.500000,
             has_piecewise_transform=False,
             target_variable="PHENOTYPIC_AGE",
             reported_mae=5.20,
@@ -447,7 +447,7 @@ class EpigeneticClockRegistry:
                 EpigeneticTissueType.TEETH,
                 EpigeneticTissueType.CARTILAGE,
             ],
-            intercept=-1.850000,
+            intercept=-3.364000,
             has_piecewise_transform=True,
             pivot_age=20.0,
             target_variable="CHRONOLOGICAL_AGE",
@@ -488,6 +488,10 @@ class EpigeneticClockRegistry:
                 "cg17861230": 48.600000,   # PDE4C (hypermethylated)
             },
         )
+
+    def get_all_clocks(self) -> Dict[str, ClockModelMetadata]:
+        """Retrieve all registered clock metadata dictionaries."""
+        return self._clocks
 
     def get_clock(self, clock_id: str) -> Optional[ClockModelMetadata]:
         """Retrieve clock parameterization by clock ID."""

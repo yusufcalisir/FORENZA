@@ -324,7 +324,7 @@ export default function AncestryDataPanel({
                                         : "text-zinc-400 hover:text-zinc-200"
                                 }`}
                             >
-                                ISFG / Uluslararası
+                                {isTr ? "ISFG / Uluslararası" : "ISFG / International"}
                             </button>
                             <button
                                 type="button"
@@ -336,7 +336,7 @@ export default function AncestryDataPanel({
                                 }`}
                             >
                                 <Lock className="w-3 h-3" />
-                                <span>Almanya §81e StPO</span>
+                                <span>{isTr ? "Almanya §81e StPO" : "Germany §81e StPO"}</span>
                             </button>
                         </div>
                     </div>
@@ -349,7 +349,7 @@ export default function AncestryDataPanel({
                             <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                             {isTr ? "Sertifikalı Altın Standart Vektörleri:" : "Certified Golden Reference Vectors:"}
                         </span>
-                        <span className="text-zinc-500 font-mono">5 Standart</span>
+                        <span className="text-zinc-500 font-mono">{isTr ? "5 Standart" : "5 Standards"}</span>
                     </div>
 
                     <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
@@ -364,7 +364,7 @@ export default function AncestryDataPanel({
                             <span className="text-[8px] font-mono font-bold px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/30 w-fit">
                                 NA12878 CEU
                             </span>
-                            <div className="text-[10px] font-bold text-white mt-1">Avrupa (EUR)</div>
+                            <div className="text-[10px] font-bold text-white mt-1">{isTr ? "Avrupa (EUR)" : "European (EUR)"}</div>
                         </button>
 
                         <button
@@ -378,7 +378,7 @@ export default function AncestryDataPanel({
                             <span className="text-[8px] font-mono font-bold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 w-fit">
                                 NA19240 YRI
                             </span>
-                            <div className="text-[10px] font-bold text-white mt-1">Afrika (AFR)</div>
+                            <div className="text-[10px] font-bold text-white mt-1">{isTr ? "Afrika (AFR)" : "African (AFR)"}</div>
                         </button>
 
                         <button
@@ -392,7 +392,7 @@ export default function AncestryDataPanel({
                             <span className="text-[8px] font-mono font-bold px-1.5 py-0.5 rounded bg-pink-500/20 text-pink-300 border border-pink-500/30 w-fit">
                                 NA18507 CHB
                             </span>
-                            <div className="text-[10px] font-bold text-white mt-1">Doğu Asya (EAS)</div>
+                            <div className="text-[10px] font-bold text-white mt-1">{isTr ? "Doğu Asya (EAS)" : "East Asian (EAS)"}</div>
                         </button>
 
                         <button
@@ -406,7 +406,7 @@ export default function AncestryDataPanel({
                             <span className="text-[8px] font-mono font-bold px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 w-fit">
                                 HG002 AJ
                             </span>
-                            <div className="text-[10px] font-bold text-white mt-1">Orta Doğu/Aşkenazi</div>
+                            <div className="text-[10px] font-bold text-white mt-1">{isTr ? "Orta Doğu/Aşkenazi" : "Middle East / Ashkenazi"}</div>
                         </button>
 
                         <button
@@ -420,7 +420,7 @@ export default function AncestryDataPanel({
                             <span className="text-[8px] font-mono font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 w-fit">
                                 ADMIXED TRI
                             </span>
-                            <div className="text-[10px] font-bold text-white mt-1">3-Yönlü Melez</div>
+                            <div className="text-[10px] font-bold text-white mt-1">{isTr ? "3-Yönlü Melez" : "3-Way Admixture"}</div>
                         </button>
                     </div>
                 </div>
@@ -438,16 +438,20 @@ export default function AncestryDataPanel({
                         <div className="flex items-center gap-2 font-bold text-rose-400">
                             <Lock className="w-5 h-5 shrink-0" />
                             <span className="text-xs uppercase tracking-wider">
-                                § 81e (2) StPO Yasal Uyum Kapısı: Biyocoğrafi Köken Sansürü Aktif
+                                {isTr
+                                    ? "§ 81e (2) StPO Yasal Uyum Kapısı: Biyocoğrafi Köken Sansürü Aktif"
+                                    : "§ 81e (2) StPO Statutory Compliance Gate: BGA Redaction Active"}
                             </span>
                         </div>
                         <p className="text-[10px] leading-relaxed text-rose-200/90 font-sans">
-                            Alman Ceza Muhakemesi Kanunu (§ 81e StPO) gereğince şüpheli DNA örneklerinden biyocoğrafi köken (BGA) çıkarımı yasaklanmıştır.
-                            Kıtasal karışım yüzdeleri ve coğrafi koordinatlar yasal olarak maskelenmiştir. Dış Görünüş Özellikleri (HIrisPlex-S Fenotip) ve Epigenetik Yaş analizleri yetkili olarak sunulmaktadır.
+                            {isTr
+                                ? "Alman Ceza Muhakemesi Kanunu (§ 81e StPO) gereğince şüpheli DNA örneklerinden biyocoğrafi köken (BGA) çıkarımı yasaklanmıştır. Kıtasal karışım yüzdeleri ve coğrafi koordinatlar yasal olarak maskelenmiştir. Dış Görünüş Özellikleri (HIrisPlex-S Fenotip) ve Epigenetik Yaş analizleri yetkili olarak sunulmaktadır."
+                                : "In accordance with German Code of Criminal Procedure (§ 81e StPO), inferring biogeographical ancestry (BGA) from unknown DNA traces is legally restricted. Continental admixture proportions and geographic coordinates are redacted. Externally Visible Characteristics (HIrisPlex-S) and Epigenetic Age remain authorized."}
                         </p>
                     </motion.div>
                 )}
             </AnimatePresence>
+
 
             {/* ── Main Proportions Breakdown & GIS Projection Grid ────────────── */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -575,8 +579,9 @@ export default function AncestryDataPanel({
                             : "Interactive AIM Locus Laboratory (Click locus to cycle dosage 0, 1, 2)"}
                     </span>
                     <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-300">
-                        {Object.keys(snpDosages).length} Loci Aktif
+                        {Object.keys(snpDosages).length} {isTr ? "Lokus Aktif" : "Loci Active"}
                     </span>
+
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">

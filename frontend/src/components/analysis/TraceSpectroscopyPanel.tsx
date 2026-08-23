@@ -304,55 +304,54 @@ export default function TraceSpectroscopyPanel() {
 
   return (
     <div className="space-y-6 font-mono text-tactical-text">
-      {/* ── Subsystem Header ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl border border-cyan-500/30 bg-cyan-500/10 shadow-lg">
-        <div className="flex items-start sm:items-center gap-3 min-w-0">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 shadow-[0_0_15px_rgba(6,182,212,0.2)]">
-            <Sparkles className="w-5 h-5" />
-          </div>
-          <div className="min-w-0 space-y-0.5">
-            <div className="flex flex-wrap items-center gap-2">
-              <h2 className="text-sm sm:text-base font-bold tracking-widest text-tactical-text uppercase">
-                {isTr ? "Mikro-Spektroskopi & Çoklu Spektral Görüntüleme (MSI)" : "Trace Micro-Spectroscopy & MSI Engine"}
-              </h2>
-              <span className="px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 whitespace-nowrap shrink-0">
-                SWGMAT • ASTM E2228
-              </span>
+      {/* ── Modern Unified Benchmark & Standards Mission Bar ────────────── */}
+      <div className="bg-[#080D1A] border border-tactical-border/80 rounded-2xl p-4 sm:p-5 shadow-xl space-y-4">
+        {/* Top: Engine Identity & Technical Verification Badges */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-tactical-border/40 pb-3.5">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="p-2 bg-cyan-500/10 border border-cyan-500/30 rounded-xl text-cyan-400 shrink-0">
+              <Sparkles className="w-5 h-5 animate-pulse" />
             </div>
-            <p className="text-[10px] text-zinc-400 leading-relaxed">
-              {isTr
-                ? "Çoklu Spektral Optik Görüntüleme • ATR-FTIR & Raman Eşleşme Kalite İndeksi (HQI ≥ %90) Karşılaştırması"
-                : "Multispectral Optical Imaging • ATR-FTIR & Raman Hit Quality Index (HQI ≥ 90%) Dot Product Matching"}
-            </p>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs sm:text-sm font-extrabold text-white uppercase tracking-wider truncate">
+                  {isTr ? "Mikro-Spektroskopi & Çoklu Spektral (MSI)" : "Micro-Spectroscopy & MSI"}
+                </span>
+                <span className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-cyan-500/10 border border-cyan-500/30 text-cyan-300">
+                  SWGMAT • ASTM E2228
+                </span>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <div className="flex flex-wrap items-center gap-2 shrink-0">
-          {lastActionTime && (
-            <span className="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-1 rounded hidden md:flex items-center gap-1">
-              <Check className="w-3 h-3" />
-              {lastActionTime}
-            </span>
-          )}
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
+            {lastActionTime && (
+              <span className="text-[9px] text-emerald-400 font-bold bg-white/[0.03] border border-white/10 px-2.5 py-1 rounded-lg flex items-center gap-1">
+                <Check className="w-3 h-3" />
+                {lastActionTime}
+              </span>
+            )}
 
-          {/* Inner Tabs */}
-          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-black/60 border border-tactical-border/60 w-full sm:w-auto overflow-x-auto">
-            <button
-              onClick={() => setActiveTab("ftir")}
-              className={`min-h-[36px] px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center justify-center flex-1 sm:flex-initial ${
-                activeTab === "ftir" ? "bg-cyan-500 text-black shadow-md font-extrabold" : "text-zinc-400 hover:text-zinc-200"
-              }`}
-            >
-              {isTr ? "ATR-FTIR & Raman (HQI)" : "ATR-FTIR & Raman (HQI)"}
-            </button>
-            <button
-              onClick={() => setActiveTab("msi")}
-              className={`min-h-[36px] px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center justify-center flex-1 sm:flex-initial ${
-                activeTab === "msi" ? "bg-cyan-500 text-black shadow-md font-extrabold" : "text-zinc-400 hover:text-zinc-200"
-              }`}
-            >
-              {isTr ? "Çoklu Spektral Optik (MSI)" : "Multispectral Optical (MSI)"}
-            </button>
+            <div className="flex bg-black/60 p-1 rounded-xl border border-tactical-border/60">
+              <button
+                type="button"
+                onClick={() => setActiveTab("ftir")}
+                className={`px-3 py-1 rounded-lg text-[10px] font-bold transition-all cursor-pointer ${
+                  activeTab === "ftir" ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 shadow-sm" : "text-zinc-400 hover:text-zinc-200"
+                }`}
+              >
+                {isTr ? "ATR-FTIR (HQI)" : "ATR-FTIR (HQI)"}
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("msi")}
+                className={`px-3 py-1 rounded-lg text-[10px] font-bold transition-all cursor-pointer ${
+                  activeTab === "msi" ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 shadow-sm" : "text-zinc-400 hover:text-zinc-200"
+                }`}
+              >
+                {isTr ? "Çoklu Spektral (MSI)" : "Multispectral (MSI)"}
+              </button>
+            </div>
           </div>
         </div>
       </div>

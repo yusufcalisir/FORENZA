@@ -48,43 +48,47 @@ export default function BodyFluidPanel() {
   ];
 
   return (
-    <div className="space-y-6 font-mono">
-      {/* ── Top Header Strip ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-tactical-border/60 pb-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.15)]">
-            <Droplet className="w-5 h-5" />
+    <div className="space-y-6 font-mono text-tactical-text">
+      {/* ── Modern Unified Benchmark & Standards Mission Bar ────────────── */}
+      <div className="bg-[#080D1A] border border-tactical-border/80 rounded-2xl p-4 sm:p-5 shadow-xl space-y-4">
+        {/* Top: Engine Identity & Technical Verification Badges */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-tactical-border/40 pb-3.5">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="p-2 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-400 shrink-0">
+              <Droplet className="w-5 h-5 animate-pulse" />
+            </div>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs sm:text-sm font-extrabold text-white uppercase tracking-wider truncate">
+                  {isTr ? "mRNA Vücut Sıvısı Tanımlama" : "mRNA Body Fluid Identification"}
+                </span>
+                <span className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-amber-500/10 border border-amber-500/30 text-amber-300">
+                  EDNAP • mRNA
+                </span>
+              </div>
+            </div>
           </div>
-          <div>
-            <h2 className="text-sm sm:text-base font-bold tracking-widest text-tactical-text uppercase">
-              {isTr ? "mRNA Vücut Sıvısı Tanımlama Merkezi" : "mRNA Body Fluid Identification Hub"}
-            </h2>
-            <p className="text-[10px] text-tactical-text-muted mt-0.5">
-              {isTr
-                ? "Hücre Tipine Özgü mRNA Belirteç Ekspresyonu • Çok Terimli Softmax Sıvı Olasılığı • RNA/DNA Birlikte Ekstraksiyon Denetimi"
-                : "Cell-Type Specific mRNA Marker Expression • Multinomial Softmax Fluid Probability • RNA/DNA Co-Extraction Audit"}
-            </p>
-          </div>
-        </div>
 
-        {/* Sub-tab switcher */}
-        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-black/40 border border-tactical-border/60">
-          <button
-            onClick={() => setActiveSubTab("classification")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase transition-all cursor-pointer ${
-              activeSubTab === "classification" ? "bg-amber-500/20 text-amber-300 border border-amber-500/40" : "text-zinc-500 hover:text-zinc-300"
-            }`}
-          >
-            {isTr ? "mRNA Ekspresyonu & Olasılıklar" : "mRNA Expression & Probabilities"}
-          </button>
-          <button
-            onClick={() => setActiveSubTab("coextraction")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase transition-all cursor-pointer ${
-              activeSubTab === "coextraction" ? "bg-amber-500/20 text-amber-300 border border-amber-500/40" : "text-zinc-500 hover:text-zinc-300"
-            }`}
-          >
-            {isTr ? "RNA/DNA Birlikte Ekstraksiyon Denetimi" : "RNA/DNA Co-Extraction Audit"}
-          </button>
+          <div className="flex bg-black/60 p-1 rounded-xl border border-tactical-border/60 shrink-0">
+            <button
+              type="button"
+              onClick={() => setActiveSubTab("classification")}
+              className={`px-3 py-1 rounded-lg text-[10px] font-bold uppercase transition-all cursor-pointer ${
+                activeSubTab === "classification" ? "bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm" : "text-zinc-500 hover:text-zinc-300"
+              }`}
+            >
+              {isTr ? "mRNA Ekspresyonu" : "mRNA Expression"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveSubTab("coextraction")}
+              className={`px-3 py-1 rounded-lg text-[10px] font-bold uppercase transition-all cursor-pointer ${
+                activeSubTab === "coextraction" ? "bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm" : "text-zinc-500 hover:text-zinc-300"
+              }`}
+            >
+              {isTr ? "Birlikte Ekstraksiyon" : "Co-Extraction"}
+            </button>
+          </div>
         </div>
       </div>
 

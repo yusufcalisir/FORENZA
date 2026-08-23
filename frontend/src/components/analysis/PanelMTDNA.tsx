@@ -210,80 +210,78 @@ export default function PanelMTDNA() {
 
   return (
     <div className="space-y-6 text-slate-100 font-mono pb-12">
-      {/* ── Header & Badges ────────────────────────────────────────────── */}
-      <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-5 sm:p-6 shadow-xl backdrop-blur min-w-0">
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 min-w-0">
-          <div className="min-w-0">
-            <div className="flex items-start sm:items-center gap-3 min-w-0">
-              <div className="p-2.5 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-400 shrink-0">
-                <Compass className="w-6 h-6 animate-spin-slow" />
-              </div>
-              <div className="min-w-0 space-y-0.5">
-                <div className="flex flex-wrap items-center gap-2">
-                  <h1 className="text-lg sm:text-2xl font-bold text-white tracking-tight">
-                    {isTr
-                      ? "Mitokondriyal DNA (mtDNA) EMPOP rCRS/RSRS Hizalama Motoru"
-                      : "Mitochondrial DNA (mtDNA) EMPOP rCRS/RSRS Alignment Engine"}
-                  </h1>
-                  <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 whitespace-nowrap shrink-0">
-                    EMPOP 15 • ISFG 2024
-                  </span>
-                </div>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  {isTr
-                    ? "Revize Cambridge Referans Dizisi (NC_012920.1, 16.569 bp) • ISFG 3'-Sağa Hizalama Düzelticisi • PhyloTree Build 17"
-                    : "Revised Cambridge Reference Sequence (NC_012920.1, 16,569 bp) • ISFG 3'-Right Alignment Normalizer • PhyloTree Build 17"}
-                </p>
+      {/* ── Modern Unified Benchmark & Standards Mission Bar ────────────── */}
+      <div className="bg-[#080D1A] border border-tactical-border/80 rounded-2xl p-4 sm:p-5 shadow-xl space-y-4">
+        {/* Top: Engine Identity & Technical Verification Badges */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-tactical-border/40 pb-3.5">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="p-2 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-400 shrink-0">
+              <Compass className="w-5 h-5 animate-spin-slow" />
+            </div>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs sm:text-sm font-extrabold text-white uppercase tracking-wider truncate">
+                  {isTr ? "mtDNA EMPOP rCRS/RSRS Hizalama" : "mtDNA EMPOP rCRS/RSRS Alignment"}
+                </span>
+                <span className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-300">
+                  EMPOP 15 • ISFG
+                </span>
               </div>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium bg-emerald-950/60 text-emerald-400 border border-emerald-800/60">
-              <ShieldCheck className="w-3.5 h-3.5" /> {isTr ? "ISO/IEC 17025 Doğrulandı" : "ISO/IEC 17025 Verified"}
+          <div className="flex flex-wrap items-center gap-1.5 shrink-0">
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[9px] font-bold bg-white/[0.03] border border-white/10 text-emerald-400">
+              <ShieldCheck className="w-3 h-3 text-emerald-400" />
+              <span>ISO 17025 Doğrulandı</span>
             </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium bg-blue-950/60 text-blue-400 border border-blue-800/60">
-              <Database className="w-3.5 h-3.5" /> {isTr ? "EMPOP Sürüm 15 (N=48.500)" : "EMPOP Release 15 (N=48,500)"}
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[9px] font-bold bg-white/[0.03] border border-white/10 text-cyan-400">
+              <Database className="w-3 h-3 text-cyan-400" />
+              <span>EMPOP N=48,500</span>
             </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium bg-purple-950/60 text-purple-400 border border-purple-800/60">
-              <Globe2 className="w-3.5 h-3.5" /> {isTr ? "5 Metapopülasyon" : "5 Metapopulations"}
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[9px] font-bold bg-white/[0.03] border border-white/10 text-purple-400">
+              <Globe2 className="w-3 h-3 text-purple-400" />
+              <span>PhyloTree B17</span>
             </span>
           </div>
         </div>
 
-        {/* ── Casework Preset Selector ─────────────────────────────────── */}
-        <div className="mt-6 pt-6 border-t border-slate-800/80">
-          <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-3">
-            {isTr
-              ? "Sertifikalı Vaka Doğrulama / Soy Kohortu Seçin:"
-              : "Select Certified Casework Benchmark / Lineage Cohort:"}
-          </label>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+        {/* Bottom: Casework Benchmark Scenario Cards */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between text-[9px] font-bold text-zinc-400 uppercase tracking-widest px-0.5">
+            <span>{isTr ? "Doğrulama / Soy Kohortu Seçin:" : "Select Benchmark Cohort:"}</span>
+            <span className="text-zinc-500 font-mono">5 Senaryo</span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2">
             {MTDNA_PRESETS.map((preset) => {
               const isSelected = preset.id === selectedPresetId;
               return (
                 <button
+                  type="button"
                   key={preset.id}
                   onClick={() => {
                     startTransition(() => setSelectedPresetId(preset.id));
                   }}
-                  className={`p-3 rounded-lg text-left transition-all border cursor-pointer ${
+                  className={`p-3 rounded-xl text-left transition-all border cursor-pointer flex flex-col justify-between space-y-1.5 ${
                     isSelected
-                      ? "bg-emerald-950/40 border-emerald-500/60 text-white shadow-lg shadow-emerald-950/30"
-                      : "bg-slate-800/40 border-slate-700/60 text-slate-400 hover:bg-slate-800/80 hover:text-slate-200"
+                      ? "bg-emerald-500/15 border-emerald-500/50 text-white shadow-md shadow-emerald-500/10"
+                      : "bg-black/30 border-tactical-border/50 text-zinc-400 hover:bg-white/5 hover:text-zinc-200 hover:border-tactical-border"
                   }`}
                 >
-                  <div className="flex items-center justify-between gap-1 mb-1">
-                    <span className="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-slate-900 border border-slate-700 text-slate-300">
+                  <div className="flex items-center justify-between gap-1">
+                    <span className="text-[8px] font-mono font-bold px-1.5 py-0.5 rounded bg-black/60 border border-white/10 text-zinc-300">
                       {preset.badge}
                     </span>
-                    {isSelected && <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />}
+                    {isSelected && <Check className="w-3 h-3 text-emerald-400 shrink-0" />}
                   </div>
-                  <div className="text-xs font-semibold text-slate-200 line-clamp-1">
-                    {isTr ? preset.titleTr : preset.title}
-                  </div>
-                  <div className="text-[11px] text-slate-400 line-clamp-2 mt-0.5">
-                    {isTr ? preset.descriptionTr : preset.description}
+                  <div>
+                    <div className="text-[10px] font-bold text-white line-clamp-1">
+                      {isTr ? preset.titleTr : preset.title}
+                    </div>
+                    <div className="text-[9px] text-zinc-400 line-clamp-2 mt-0.5 font-sans leading-tight">
+                      {isTr ? preset.descriptionTr : preset.description}
+                    </div>
                   </div>
                 </button>
               );

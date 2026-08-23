@@ -6,8 +6,6 @@ import {
   Cpu,
   ArrowRight,
   ShieldCheck,
-  Sliders,
-  Sparkles,
 } from "lucide-react";
 import ActiveProfileBanner from "@/components/common/ActiveProfileBanner";
 import { useIngestStore } from "@/store/ingestStore";
@@ -40,7 +38,7 @@ export default function AnalysisPage() {
               {isTr ? "Çıkarım Matrisi" : "Inference Matrix"}
             </span>
           </div>
-          <p className="text-[10px] text-zinc-400 mt-1">
+          <p className="text-[10px] text-zinc-400 mt-1 font-sans">
             {isTr
               ? "Kalibre edilmiş çok lokuslu biyobilişimsel modellere, 3D uzamsal görselleştiricilere ve ISO 17025 doğrulama motorlarına erişmek için bir araştırma süiti seçin."
               : "Select a research suite to access calibrated multilocus biocomputational models, 3D spatial visualizers, and ISO 17025 validation engines."}
@@ -58,43 +56,43 @@ export default function AnalysisPage() {
                 key={cat.id}
                 whileHover={{ y: -3 }}
                 transition={{ duration: 0.15 }}
-                className="rounded-2xl border border-tactical-border/70 bg-[#0A0F1E] p-4 sm:p-5 flex flex-col justify-between space-y-4 hover:border-cyan-500/40 transition-all shadow-lg group relative overflow-hidden min-w-0"
+                className={`rounded-2xl border ${cc.border} bg-gradient-to-b from-white/[0.04] to-transparent bg-[#080D1A] p-4 sm:p-5 flex flex-col justify-between space-y-4 hover:shadow-2xl hover:${cc.glow} transition-all duration-200 group relative overflow-hidden min-w-0 shadow-md`}
               >
                 <div className="space-y-3 min-w-0">
                   {/* Header */}
                   <div className="flex items-center justify-between gap-2 min-w-0">
                     <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                      <div className={`p-2.5 rounded-xl border ${cc.border} ${cc.bg} shrink-0`}>
+                      <div className={`p-2.5 rounded-xl border ${cc.border} ${cc.bg} shrink-0 shadow-sm`}>
                         <CatIcon className={`w-4 h-4 ${cc.text}`} />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <span className="text-[8px] font-bold text-zinc-500 uppercase tracking-widest block">
+                        <span className={`text-[8px] font-bold ${cc.text} uppercase tracking-widest block`}>
                           {isTr ? `Süit ${cat.pillarNumber}` : `Pillar ${cat.pillarNumber}`}
                         </span>
-                        <h3 className="text-xs font-bold text-white uppercase tracking-wider group-hover:text-cyan-300 transition-colors truncate">
+                        <h3 className="text-xs sm:text-sm font-bold text-white uppercase tracking-wider group-hover:text-white transition-colors truncate">
                           {cat.label}
                         </h3>
                       </div>
                     </div>
-                    <span className="text-[8px] font-bold px-2 py-0.5 rounded-md bg-black/60 text-zinc-400 border border-tactical-border/60 shrink-0 whitespace-nowrap">
+                    <span className="text-[8px] font-bold px-2 py-0.5 rounded-md bg-black/60 text-zinc-300 border border-white/10 shrink-0 whitespace-nowrap">
                       {isTr ? "5 Modül" : "5 Modules"}
                     </span>
                   </div>
 
                   {/* Tagline & Description */}
-                  <p className="text-[10px] text-zinc-300 font-medium leading-relaxed">
+                  <p className="text-[10px] text-zinc-200 font-medium leading-relaxed font-sans">
                     {cat.tagline}
                   </p>
-                  <p className="text-[9px] text-zinc-500 line-clamp-2 leading-relaxed">
+                  <p className="text-[9px] text-zinc-400 line-clamp-2 leading-relaxed font-sans">
                     {cat.description}
                   </p>
 
                   {/* Sub-module Badges */}
-                  <div className="flex flex-wrap gap-1 pt-1">
+                  <div className="flex flex-wrap gap-1.5 pt-1">
                     {cat.tabs.map((tab) => (
                       <span
                         key={tab.id}
-                        className="text-[8px] font-bold px-1.5 py-0.5 rounded bg-black/50 text-zinc-400 border border-tactical-border/40 whitespace-nowrap shrink-0"
+                        className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-black/60 text-zinc-300 border border-white/10 hover:border-white/20 whitespace-nowrap shrink-0 transition-colors"
                       >
                         {tab.badge}
                       </span>
@@ -103,18 +101,18 @@ export default function AnalysisPage() {
                 </div>
 
                 {/* Action Button */}
-                <div className="pt-3 border-t border-tactical-border/40 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-                  <span className="text-[8px] text-emerald-400/90 font-mono flex items-center gap-1 shrink-0">
+                <div className="pt-3.5 border-t border-white/[0.08] flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                  <span className="text-[8px] text-emerald-400 font-mono flex items-center gap-1 shrink-0 font-semibold">
                     <ShieldCheck className="w-3 h-3 text-emerald-400 shrink-0" />
                     {isTr ? "ISO/IEC 17025 Doğrulandı" : "ISO/IEC 17025 Validated"}
                   </span>
 
                   <Link
                     href={`/analysis/${cat.id}`}
-                    className="w-full sm:w-auto min-h-[42px] px-3.5 py-2 rounded-xl bg-zinc-800/90 hover:bg-cyan-500/20 text-zinc-200 hover:text-cyan-300 border border-zinc-700/60 hover:border-cyan-500/40 text-[10px] font-extrabold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 shadow-sm shrink-0"
+                    className={`w-full sm:w-auto min-h-[40px] px-4 py-2 rounded-xl ${cc.bg} ${cc.border} border text-white font-mono text-[11px] font-extrabold uppercase tracking-wider transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer shadow-md hover:shadow-lg hover:brightness-125 hover:scale-[1.02] active:scale-95 shrink-0 group/btn`}
                   >
                     <span>{isTr ? "Süiti İncele" : "Explore Suite"}</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    <ArrowRight className={`w-3.5 h-3.5 ${cc.text} group-hover/btn:translate-x-1 transition-transform`} />
                   </Link>
                 </div>
               </motion.div>

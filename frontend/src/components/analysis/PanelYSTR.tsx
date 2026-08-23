@@ -388,115 +388,102 @@ export default function PanelYSTR() {
 
   return (
     <div className="space-y-6 font-mono">
-      {/* ── Top Header Strip ── */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-tactical-border/60 pb-5">
-        <div className="flex items-center gap-3.5">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 shadow-[0_0_20px_rgba(99,102,241,0.2)]">
-            <Dna className="w-6 h-6 animate-pulse" />
-          </div>
-          <div className="min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <h2 className="text-sm sm:text-lg font-bold tracking-widest text-tactical-text uppercase truncate">
-                {isTr
-                  ? "Y-STR 27-Lokus Baba Soyu & Akrabalık Motoru"
-                  : "Y-STR 27-Locus Paternal Lineage & Kinship Engine"}
-              </h2>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-500/10 border border-indigo-500/30 text-indigo-300">
-                Y-FILER PLUS
-              </span>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-pink-500/10 border border-pink-500/30 text-pink-300">
-                {isTr ? "7 RM LOKUSU" : "7 RM LOCI"}
-              </span>
+      {/* ── Modern Unified Benchmark & Standards Mission Bar ────────────── */}
+      <div className="bg-[#080D1A] border border-tactical-border/80 rounded-2xl p-4 sm:p-5 shadow-xl space-y-4">
+        {/* Top: Engine Identity & Technical Verification Badges */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-tactical-border/40 pb-3.5">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="p-2 bg-indigo-500/10 border border-indigo-500/30 rounded-xl text-indigo-400 shrink-0">
+              <Dna className="w-5 h-5 animate-pulse" />
             </div>
-            <p className="text-[10px] sm:text-xs text-tactical-text-muted mt-0.5 truncate">
-              {isTr
-                ? "Sürekli Soy Modellemesi • SMM Mayotik Kayma • YHRD R68 Popülasyon Veritabanı • Bayes Kladları"
-                : "Continuous Lineage Modeling • SMM Meiotic Drift • YHRD R68 Population Database • Bayesian Clades"}
-            </p>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs sm:text-sm font-extrabold text-white uppercase tracking-wider truncate">
+                  {isTr ? "Y-STR 27-Lokus Baba Soyu & Akrabalık" : "Y-STR 27-Locus Paternal Lineage"}
+                </span>
+                <span className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-indigo-500/10 border border-indigo-500/30 text-indigo-300">
+                  Y-FILER PLUS
+                </span>
+                <span className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-pink-500/10 border border-pink-500/30 text-pink-300">
+                  {isTr ? "7 RM LOKUSU" : "7 RM LOCI"}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[9px] font-bold bg-white/[0.03] border border-white/10 text-emerald-400">
+              <ShieldCheck className="w-3 h-3 text-emerald-400" />
+              <span>ISO 17025 Doğrulandı</span>
+            </span>
+            <button
+              onClick={() => runLiveAnalysis(selectedCohort, selectedPop.size, theta, meioses, observedK)}
+              disabled={isAnalyzing}
+              className="flex items-center justify-center gap-1.5 px-3 py-1 rounded-lg bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/40 text-indigo-200 text-[10px] font-bold transition-all disabled:opacity-50 cursor-pointer shadow-sm active:scale-95"
+            >
+              <RefreshCw className={`w-3 h-3 ${isAnalyzing ? "animate-spin" : ""}`} />
+              <span>
+                {isAnalyzing
+                  ? (isTr ? "Hesaplanıyor..." : "Computing...")
+                  : (isTr ? "Yeniden Hesapla" : "Re-Calculate")}
+              </span>
+            </button>
           </div>
         </div>
 
-        {/* Live Calculation Badge */}
-        <div className="flex items-center gap-3 shrink-0 w-full sm:w-auto">
-          <button
-            onClick={() => runLiveAnalysis(selectedCohort, selectedPop.size, theta, meioses, observedK)}
-            disabled={isAnalyzing}
-            className="w-full sm:w-auto min-h-[40px] flex items-center justify-center gap-2 px-3.5 py-2 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/40 text-indigo-200 text-xs font-bold transition-all disabled:opacity-50 cursor-pointer shadow-sm active:scale-95"
-          >
-            <RefreshCw className={`w-3.5 h-3.5 ${isAnalyzing ? "animate-spin" : ""}`} />
-            <span>
-              {isAnalyzing
-                ? (isTr ? "Olabilirlikler Hesaplanıyor..." : "Computing Likelihoods...")
-                : (isTr ? "Motoru Yeniden Hesapla" : "Re-Calculate Engine")}
-            </span>
-          </button>
-        </div>
-      </div>
+        {/* Computation Progress Bar */}
+        {isAnalyzing && (
+          <div className="w-full bg-black/40 rounded-full h-1.5 overflow-hidden border border-tactical-border/40">
+            <motion.div
+              className="bg-gradient-to-r from-indigo-500 via-cyan-400 to-pink-500 h-full"
+              initial={{ width: "0%" }}
+              animate={{ width: `${calcProgress}%` }}
+              transition={{ duration: 0.2 }}
+            />
+          </div>
+        )}
 
-      {/* ── Computation Progress Bar ── */}
-      {isAnalyzing && (
-        <div className="w-full bg-black/40 rounded-full h-1.5 overflow-hidden border border-tactical-border/40">
-          <motion.div
-            className="bg-gradient-to-r from-indigo-500 via-cyan-400 to-pink-500 h-full"
-            initial={{ width: "0%" }}
-            animate={{ width: `${calcProgress}%` }}
-            transition={{ duration: 0.2 }}
-          />
-        </div>
-      )}
+        {/* Bottom: Casework Benchmark Scenario Cards */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between text-[9px] font-bold text-zinc-400 uppercase tracking-widest px-0.5">
+            <span>{isTr ? "Sertifikalı Vaka & Referans Kohortları:" : "Select Casework Cohort:"}</span>
+            <span className="text-zinc-500 font-mono">4 Senaryo</span>
+          </div>
 
-      {/* ── Preset Benchmark Cohort Selector ── */}
-      <div className="space-y-2.5 min-w-0">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-tactical-border/40 pb-2">
-          <span className="text-xs font-bold text-tactical-text uppercase tracking-wider flex items-center gap-1.5">
-            <Layers className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
-            <span>{isTr ? "Sertifikalı Vaka & Referans Kohortları" : "Certified Casework & Reference Cohorts"}</span>
-          </span>
-          <span className="text-[10px] text-zinc-500 whitespace-nowrap shrink-0">
-            {isTr ? "ISO/IEC 17025:2017 Altın Standartlar" : "ISO/IEC 17025:2017 Gold Standards"}
-          </span>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          {PRESET_COHORTS.map((cohort) => {
-            const isSelected = selectedCohort.id === cohort.id;
-            return (
-              <button
-                key={cohort.id}
-                onClick={() => setSelectedCohort(cohort)}
-                className={`p-3.5 rounded-xl border text-left transition-all relative overflow-hidden flex flex-col justify-between cursor-pointer ${
-                  isSelected
-                    ? "bg-indigo-950/40 border-indigo-500 shadow-[0_0_20px_rgba(99,102,241,0.15)] ring-1 ring-indigo-500/50"
-                    : "bg-tactical-surface/40 border-tactical-border/60 hover:border-zinc-500 hover:bg-black/30"
-                }`}
-              >
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs font-bold text-tactical-text truncate">
-                      {isTr ? cohort.labelTr : cohort.labelEn}
-                    </span>
-                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded border whitespace-nowrap ${cohort.badgeColor}`}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+            {PRESET_COHORTS.map((cohort) => {
+              const isSelected = selectedCohort.id === cohort.id;
+              return (
+                <button
+                  type="button"
+                  key={cohort.id}
+                  onClick={() => setSelectedCohort(cohort)}
+                  className={`p-3 rounded-xl text-left transition-all border cursor-pointer flex flex-col justify-between space-y-1.5 ${
+                    isSelected
+                      ? "bg-indigo-500/15 border-indigo-500/50 text-white shadow-md shadow-indigo-500/10"
+                      : "bg-black/30 border-tactical-border/50 text-zinc-400 hover:bg-white/5 hover:text-zinc-200 hover:border-tactical-border"
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-1">
+                    <span className="text-[8px] font-mono font-bold px-1.5 py-0.5 rounded bg-black/60 border border-white/10 text-zinc-300">
                       {cohort.badge}
                     </span>
-                  </div>
-                  <p className="text-[10px] text-tactical-text-muted line-clamp-2">
-                    {isTr ? cohort.descriptionTr : cohort.descriptionEn}
-                  </p>
-                </div>
-
-                <div className="mt-2.5 pt-2 border-t border-tactical-border/40 flex items-center justify-between text-[9px]">
-                  <span className="text-zinc-500 font-bold">
-                    {cohort.meioses} {isTr ? "Mayoz Derinliği" : "Meiosis Depth"}
-                  </span>
-                  {isSelected && (
-                    <span className="text-indigo-400 font-bold flex items-center gap-1">
-                      {isTr ? "AKTİF KOHORT" : "ACTIVE COHORT"}
+                    <span className="text-[8px] text-zinc-500 font-bold">
+                      {cohort.meioses} {isTr ? "Mayoz" : "Meioses"}
                     </span>
-                  )}
-                </div>
-              </button>
-            );
-          })}
+                  </div>
+                  <div>
+                    <div className="text-[10px] font-bold text-white line-clamp-1">
+                      {isTr ? cohort.labelTr : cohort.labelEn}
+                    </div>
+                    <div className="text-[9px] text-zinc-400 line-clamp-2 mt-0.5 font-sans leading-tight">
+                      {isTr ? cohort.descriptionTr : cohort.descriptionEn}
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 

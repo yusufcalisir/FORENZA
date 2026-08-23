@@ -208,80 +208,77 @@ export default function PanelADNA() {
 
   return (
     <div className="space-y-6 text-slate-100 font-mono pb-12">
-      {/* ── Header & Badges ────────────────────────────────────────────── */}
-      <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-5 sm:p-6 shadow-xl backdrop-blur min-w-0">
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 min-w-0">
-          <div className="min-w-0">
-            <div className="flex items-start sm:items-center gap-3 min-w-0">
-              <div className="p-2.5 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-400 shrink-0">
-                <Dna className="w-6 h-6 animate-pulse" />
-              </div>
-              <div className="min-w-0 space-y-0.5">
-                <div className="flex flex-wrap items-center gap-2">
-                  <h1 className="text-lg sm:text-2xl font-bold text-white tracking-tight">
-                    {isTr
-                      ? "Antik & Bozulmuş DNA Hasar Kinetiği Motoru"
-                      : "Ancient & Degraded DNA Damage Kinetics Engine"}
-                  </h1>
-                  <span className="text-xs px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 whitespace-nowrap shrink-0">
-                    ISFG PALEOGENOMICS
-                  </span>
-                </div>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  {isTr
-                    ? "Briggs Deaminasyon Kinetiği • MapDamage 2.0 • Fragman Uzunluk Modellemesi • Modern Kontaminant Arındırma"
-                    : "Briggs Deamination Kinetics • MapDamage 2.0 • Fragment Length Modeling • Modern Contaminant Subtraction"}
-                </p>
+      {/* ── Modern Unified Benchmark & Standards Mission Bar ────────────── */}
+      <div className="bg-[#080D1A] border border-tactical-border/80 rounded-2xl p-4 sm:p-5 shadow-xl space-y-4">
+        {/* Top: Engine Identity & Technical Verification Badges */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-tactical-border/40 pb-3.5">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="p-2 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-400 shrink-0">
+              <Dna className="w-5 h-5 animate-pulse" />
+            </div>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs sm:text-sm font-extrabold text-white uppercase tracking-wider truncate">
+                  {isTr ? "Antik & Bozulmuş DNA Hasar Kinetiği" : "Ancient & Degraded DNA Damage Kinetics"}
+                </span>
+                <span className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-amber-500/10 border border-amber-500/30 text-amber-300">
+                  ISFG PALEOGENOMICS
+                </span>
               </div>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium bg-amber-950/60 text-amber-400 border border-amber-800/60">
-              <ShieldCheck className="w-3.5 h-3.5" /> {isTr ? "ISFG Paleogenomik Standardı" : "ISFG Paleogenomics Standard"}
+          <div className="flex flex-wrap items-center gap-1.5 shrink-0">
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[9px] font-bold bg-white/[0.03] border border-white/10 text-amber-400">
+              <ShieldCheck className="w-3 h-3 text-amber-400" />
+              <span>ISFG Paleogenomik</span>
             </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium bg-blue-950/60 text-blue-400 border border-blue-800/60">
-              <Activity className="w-3.5 h-3.5" /> {isTr ? "MapDamage 2.0 Kalibre" : "MapDamage 2.0 Calibrated"}
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[9px] font-bold bg-white/[0.03] border border-white/10 text-cyan-400">
+              <Activity className="w-3 h-3 text-cyan-400" />
+              <span>MapDamage 2.0</span>
             </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium bg-purple-950/60 text-purple-400 border border-purple-800/60">
-              <Scissors className="w-3.5 h-3.5" /> {isTr ? "Kırılma Öncesi Depürinasyon" : "Depurination Pre-Break"}
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[9px] font-bold bg-white/[0.03] border border-white/10 text-purple-400">
+              <span>Depürinasyon Modeli</span>
             </span>
           </div>
         </div>
 
-        {/* ── Casework Benchmark Selector ─────────────────────────────────── */}
-        <div className="mt-6 pt-6 border-t border-slate-800/80">
-          <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-3">
-            {isTr
-              ? "Sertifikalı Antik / Bozulmuş Adli DNA Doğrulamasını Seçin:"
-              : "Select Certified Ancient / Degraded Forensic DNA Benchmark:"}
-          </label>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+        {/* Bottom: Casework Benchmark Scenario Cards */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between text-[9px] font-bold text-zinc-400 uppercase tracking-widest px-0.5">
+            <span>{isTr ? "Sertifikalı Adli aDNA Senaryosu Seçin:" : "Select Certified aDNA Benchmark:"}</span>
+            <span className="text-zinc-500 font-mono">5 Senaryo</span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2">
             {ADNA_PRESETS.map((preset) => {
               const isSelected = preset.id === selectedPresetId;
               return (
                 <button
+                  type="button"
                   key={preset.id}
                   onClick={() => {
                     startTransition(() => setSelectedPresetId(preset.id));
                   }}
-                  className={`p-3 rounded-lg text-left transition-all border cursor-pointer ${
+                  className={`p-3 rounded-xl text-left transition-all border cursor-pointer flex flex-col justify-between space-y-1.5 ${
                     isSelected
-                      ? "bg-amber-950/40 border-amber-500/60 text-white shadow-lg shadow-amber-950/30"
-                      : "bg-slate-800/40 border-slate-700/60 text-slate-400 hover:bg-slate-800/80 hover:text-slate-200"
+                      ? "bg-amber-500/15 border-amber-500/50 text-white shadow-md shadow-amber-500/10"
+                      : "bg-black/30 border-tactical-border/50 text-zinc-400 hover:bg-white/5 hover:text-zinc-200 hover:border-tactical-border"
                   }`}
                 >
-                  <div className="flex items-center justify-between gap-1 mb-1">
-                    <span className="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-slate-900 border border-slate-700 text-slate-300">
+                  <div className="flex items-center justify-between gap-1">
+                    <span className="text-[8px] font-mono font-bold px-1.5 py-0.5 rounded bg-black/60 border border-white/10 text-zinc-300">
                       {preset.badge}
                     </span>
-                    {isSelected && <Check className="w-3.5 h-3.5 text-amber-400 shrink-0" />}
+                    {isSelected && <Check className="w-3 h-3 text-amber-400 shrink-0" />}
                   </div>
-                  <div className="text-xs font-semibold text-slate-200 line-clamp-1">
-                    {isTr ? preset.titleTr : preset.title}
-                  </div>
-                  <div className="text-[11px] text-slate-400 line-clamp-2 mt-0.5">
-                    {isTr ? preset.descriptionTr : preset.description}
+                  <div>
+                    <div className="text-[10px] font-bold text-white line-clamp-1">
+                      {isTr ? preset.titleTr : preset.title}
+                    </div>
+                    <div className="text-[9px] text-zinc-400 line-clamp-2 mt-0.5 font-sans leading-tight">
+                      {isTr ? preset.descriptionTr : preset.description}
+                    </div>
                   </div>
                 </button>
               );

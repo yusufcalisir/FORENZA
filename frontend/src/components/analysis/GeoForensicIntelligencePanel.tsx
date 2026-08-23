@@ -383,7 +383,7 @@ export default function GeoForensicIntelligencePanel({
       ═══════════════════════════════════════════════════════════════════ */}
             {hideHeaderTabs ? (
                 /* Compact Action Bar when embedded in dedicated /analysis/geoint/[tab] routes */
-                <div className="p-3.5 sm:p-4 rounded-2xl border border-tactical-border/70 bg-tactical-surface/60 backdrop-blur-md space-y-3 shadow-lg">
+                <div className="p-4 sm:p-5 rounded-2xl border border-tactical-border/80 bg-[#080D1A] space-y-3 shadow-xl">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div className="flex items-center gap-2 text-xs font-mono min-w-0">
                             <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shrink-0" />
@@ -409,7 +409,7 @@ export default function GeoForensicIntelligencePanel({
                                     setIsDivergentSoil(false);
                                     setCrimeSites(GOLDEN_VECTOR_03);
                                 }}
-                                className="min-h-[38px] px-3 py-1.5 rounded-xl border border-zinc-700/60 bg-zinc-900/80 hover:bg-zinc-800 active:scale-95 text-xs font-mono text-zinc-300 transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
+                                className="min-h-[36px] px-3 py-1.5 rounded-xl border border-zinc-700/60 bg-zinc-900/80 hover:bg-zinc-800 active:scale-95 text-xs font-mono text-zinc-300 transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
                             >
                                 <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                                 <span>{isTr ? "Referansları Yükle" : "Load Benchmarks"}</span>
@@ -417,7 +417,7 @@ export default function GeoForensicIntelligencePanel({
                             <button
                                 onClick={handleRunAnalysis}
                                 disabled={isExecuting}
-                                className="min-h-[38px] px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 active:scale-95 text-white font-mono text-xs font-bold tracking-wide shadow-md shadow-cyan-900/20 transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                                className="min-h-[36px] px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 active:scale-95 text-white font-mono text-xs font-bold tracking-wide shadow-md shadow-cyan-900/20 transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
                             >
                                 <RefreshCw className={`w-3.5 h-3.5 ${isExecuting ? "animate-spin" : ""}`} />
                                 <span>
@@ -441,7 +441,7 @@ export default function GeoForensicIntelligencePanel({
                 </div>
             ) : (
                 /* Full Standalone Banner & Navigation Grid */
-                <div className="p-4 sm:p-6 rounded-2xl border border-tactical-border/60 bg-tactical-surface/50 backdrop-blur-md relative overflow-hidden">
+                <div className="p-4 sm:p-5 rounded-2xl border border-tactical-border/80 bg-[#080D1A] shadow-xl relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
 
                     <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 relative z-10">

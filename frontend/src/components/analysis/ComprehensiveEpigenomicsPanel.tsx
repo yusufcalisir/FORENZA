@@ -385,81 +385,67 @@ export default function ComprehensiveEpigenomicsPanel() {
 
   return (
     <div className="space-y-6 font-mono text-tactical-text">
-      {/* ── Subsystem Header ── */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl border border-purple-500/30 bg-purple-500/10 shadow-lg overflow-hidden">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple-500/20 border border-purple-500/40 text-purple-300">
-            <Dna className="w-5 h-5" />
-          </div>
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2">
-              <h2 className="text-xs sm:text-sm font-bold tracking-widest text-tactical-text uppercase">
-                {isTr ? "Adli Epigenomik & Biyolojik Durum İstihbaratı" : "Forensic Epigenomics & Biological State Intelligence"}
-              </h2>
-              <span className="px-2 py-0.5 rounded text-[8px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30 whitespace-nowrap">
-                {isTr ? "ÇOKLU OMİK EPİGENETİK" : "MULTI-OMICS EPIGENETICS"}
-              </span>
+      {/* ── Modern Unified Benchmark & Standards Mission Bar ────────────── */}
+      <div className="bg-[#080D1A] border border-tactical-border/80 rounded-2xl p-4 sm:p-5 shadow-xl space-y-4">
+        {/* Top: Engine Identity & Technical Verification Badges */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-tactical-border/40 pb-3.5">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="p-2 bg-purple-500/10 border border-purple-500/30 rounded-xl text-purple-400 shrink-0">
+              <Dna className="w-5 h-5 animate-pulse" />
             </div>
-            <p className="text-[9px] sm:text-[10px] text-zinc-400 mt-0.5 truncate">
-              {isTr
-                ? "DNA Metilasyonu • Epigenetik Yaş Saati • Doku Dekonvolüsyonu • AHRR Yaşam Tarzı Profili"
-                : "DNA Methylation • Epigenetic Clock • Tissue Deconvolution • AHRR Lifestyle Profiling"}
-            </p>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs sm:text-sm font-extrabold text-white uppercase tracking-wider truncate">
+                  {isTr ? "Adli Epigenomik & Biyolojik Durum" : "Forensic Epigenomics Intelligence"}
+                </span>
+                <span className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-purple-500/10 border border-purple-500/30 text-purple-300">
+                  HORVATH & VISAGE
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-1.5 shrink-0">
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[9px] font-bold bg-white/[0.03] border border-white/10 text-emerald-400">
+              <ShieldCheck className="w-3 h-3 text-emerald-400" />
+              <span>ISO 17025 Doğrulandı</span>
+            </span>
           </div>
         </div>
 
-        {/* Inner Navigation Tabs */}
-        <div className="flex flex-wrap items-center gap-1.5 p-1 rounded-xl bg-black/60 border border-tactical-border/60 w-full sm:w-auto overflow-x-auto shrink-0">
-          <button
-            onClick={() => setActiveResearchTab("clock")}
-            className={`min-h-[36px] px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap cursor-pointer flex items-center justify-center ${
-              activeResearchTab === "clock"
-                ? "bg-purple-500 text-black shadow-md font-extrabold"
-                : "text-zinc-400 hover:text-zinc-200"
-            }`}
-          >
-            {isTr ? "Epigenetik Yaş Saati" : "Epigenetic Clock"}
-          </button>
-          <button
-            onClick={() => setActiveResearchTab("tissue")}
-            className={`min-h-[36px] px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap cursor-pointer flex items-center justify-center ${
-              activeResearchTab === "tissue"
-                ? "bg-purple-500 text-black shadow-md font-extrabold"
-                : "text-zinc-400 hover:text-zinc-200"
-            }`}
-          >
-            {isTr ? "Doku Dekonvolüsyonu" : "Tissue Deconvolution"}
-          </button>
-          <button
-            onClick={() => setActiveResearchTab("lifestyle")}
-            className={`min-h-[36px] px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap cursor-pointer flex items-center justify-center ${
-              activeResearchTab === "lifestyle"
-                ? "bg-purple-500 text-black shadow-md font-extrabold"
-                : "text-zinc-400 hover:text-zinc-200"
-            }`}
-          >
-            {isTr ? "Yaşam Tarzı & Çevre" : "Lifestyle & Environment"}
-          </button>
-          <button
-            onClick={() => setActiveResearchTab("telomere_pmi")}
-            className={`min-h-[36px] px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap cursor-pointer flex items-center justify-center ${
-              activeResearchTab === "telomere_pmi"
-                ? "bg-purple-500 text-black shadow-md font-extrabold"
-                : "text-zinc-400 hover:text-zinc-200"
-            }`}
-          >
-            {isTr ? "Telomer & PMI Bozunumu" : "Telomere & PMI Decay"}
-          </button>
-          <button
-            onClick={() => setActiveResearchTab("bisulfite_qc")}
-            className={`min-h-[36px] px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap cursor-pointer flex items-center justify-center ${
-              activeResearchTab === "bisulfite_qc"
-                ? "bg-purple-500 text-black shadow-md font-extrabold"
-                : "text-zinc-400 hover:text-zinc-200"
-            }`}
-          >
-            {isTr ? "Bisülfit Kalite Kontrol" : "Bisulfite QC"}
-          </button>
+        {/* Modal Modülasyon / Alt Araştırma Sekmeleri */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between text-[9px] font-bold text-zinc-400 uppercase tracking-widest px-0.5">
+            <span>{isTr ? "Epigenomik Alt Modül Seçin:" : "Select Epigenomics Subsystem:"}</span>
+            <span className="text-zinc-500 font-mono">5 Boyut</span>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
+            {[
+              { id: "clock", label: isTr ? "Epigenetik Yaş" : "Epigenetic Clock", desc: isTr ? "Horvath / VISAGE 5-CpG" : "Horvath & VISAGE" },
+              { id: "tissue", label: isTr ? "Doku Kaynağı" : "Tissue Origin", desc: isTr ? "tDMR 6-Doku Dekonvolüsyonu" : "tDMR 6-Tissue NNLS" },
+              { id: "lifestyle", label: isTr ? "Yaşam Tarzı" : "Lifestyle & Smoke", desc: isTr ? "AHRR Paket-Yılı & BMI" : "AHRR Pack-Years & BMI" },
+              { id: "telomere_pmi", label: isTr ? "Telomer & PMI" : "Telomere & PMI", desc: isTr ? "T/S Oranı & Termal Bozunum" : "T/S Decay & ADH" },
+              { id: "bisulfite_qc", label: isTr ? "Bisülfit QC" : "Bisulfite QC", desc: isTr ? "BMIQ & Dönüşüm Doğrulama" : "BMIQ & Conversion QC" },
+            ].map((tab) => {
+              const isSelected = activeResearchTab === tab.id;
+              return (
+                <button
+                  type="button"
+                  key={tab.id}
+                  onClick={() => setActiveResearchTab(tab.id as typeof activeResearchTab)}
+                  className={`p-3 rounded-xl text-left transition-all border cursor-pointer flex flex-col justify-between space-y-1.5 ${
+                    isSelected
+                      ? "bg-purple-500/15 border-purple-500/50 text-white shadow-md shadow-purple-500/10"
+                      : "bg-black/30 border-tactical-border/50 text-zinc-400 hover:bg-white/5 hover:text-zinc-200 hover:border-tactical-border"
+                  }`}
+                >
+                  <div className="text-[11px] font-bold text-white line-clamp-1">{tab.label}</div>
+                  <div className="text-[9px] text-zinc-400 line-clamp-1 font-sans">{tab.desc}</div>
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 

@@ -333,42 +333,61 @@ export default function PanelFreckling() {
 
     return (
         <div className="flex flex-col gap-4 w-full font-mono">
-
-            {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 sm:p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30">
-                <div className="flex items-start sm:items-center gap-3 min-w-0">
-                    <div className="p-2 rounded-lg bg-rose-500/20 border border-rose-500/40 shrink-0">
-                        <Sun className="w-5 h-5 text-rose-400" />
-                    </div>
-                    <div className="min-w-0 space-y-0.5">
-                        <div className="flex flex-wrap items-center gap-2">
-                            <h2 className="text-base font-semibold text-tactical-text-primary font-mono tracking-wide">
-                                {isTr ? "MC1R-UV: Modül 3.5" : "MC1R-UV: Module 3.5"}
-                            </h2>
-                            <span className="px-2 py-0.5 rounded text-[10px] font-mono border border-emerald-500/40 text-emerald-400 bg-emerald-500/10 whitespace-nowrap shrink-0">
-                                {isTr ? "DOĞRULANDI" : "VERIFIED"}
-                            </span>
+            {/* ── Modern Unified Mission Control Bar ────────────────────────────────────────── */}
+            <div className="bg-[#080D1A] border border-tactical-border/80 rounded-2xl p-4 sm:p-5 shadow-xl space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-tactical-border/40 pb-3.5">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                        <div className="p-2 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-400 shrink-0">
+                            <Sun className="w-5 h-5 animate-pulse" />
                         </div>
-                        <p className="text-xs text-tactical-text-secondary leading-relaxed">
-                            {isTr
-                                ? "MC1R Epistazı, Efelid (Çillenme) & UV Hassasiyet İndeksi"
-                                : "MC1R Epistasis, Ephelides (Freckling) & UV Sensitivity Index"}
-                        </p>
+                        <div className="min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                                <span className="text-xs sm:text-sm font-extrabold text-white uppercase tracking-wider truncate">
+                                    {isTr ? "MC1R Epistazı, Çillenme & UV İndeksi" : "MC1R Epistasis, Freckling & UV Index"}
+                                </span>
+                                <span className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-rose-500/10 border border-rose-500/30 text-rose-300">
+                                    MC1R-UV 3.5
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-1.5 shrink-0">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[9px] font-bold bg-white/[0.03] border border-white/10 text-emerald-400">
+                            <ShieldCheck className="w-3 h-3 text-emerald-400" />
+                            <span>ISO 17025 Doğrulandı</span>
+                        </span>
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[9px] font-bold bg-white/[0.03] border border-white/10 text-rose-400">
+                            <span>Epistaz Modeli</span>
+                        </span>
                     </div>
                 </div>
-            </div>
 
-            {/* Presets */}
-            <div className="flex flex-wrap gap-2 w-full">
-                {PRESETS.map(p => (
-                    <button
-                        key={p.label}
-                        onClick={() => applyPreset(p)}
-                        className="w-full sm:w-auto min-h-[32px] px-2.5 py-1 rounded text-[11px] font-mono border border-tactical-border/40 text-tactical-text-secondary hover:border-rose-500/60 hover:text-rose-300 transition-colors cursor-pointer flex items-center justify-center"
-                    >
-                        {isTr ? p.labelTr : p.label}
-                    </button>
-                ))}
+                {/* Presets */}
+                <div className="space-y-2">
+                    <div className="flex items-center justify-between text-[9px] font-bold text-zinc-400 uppercase tracking-widest px-0.5">
+                        <span>{isTr ? "Doğrulama Profili Seçin:" : "Select Casework Benchmark:"}</span>
+                        <span className="text-zinc-500 font-mono">4 Senaryo</span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+                        {PRESETS.map((p) => (
+                            <button
+                                key={p.label}
+                                type="button"
+                                onClick={() => applyPreset(p)}
+                                className="p-2.5 rounded-xl text-left transition-all border border-tactical-border/50 bg-black/30 text-zinc-300 hover:bg-rose-500/10 hover:border-rose-500/40 hover:text-white cursor-pointer"
+                            >
+                                <div className="text-[11px] font-bold text-white line-clamp-1">
+                                    {isTr ? p.labelTr : p.label}
+                                </div>
+                                <div className="text-[9px] text-zinc-400 line-clamp-1 mt-0.5 font-sans">
+                                    {p.desc}
+                                </div>
+                            </button>
+                        ))}
+                    </div>
+                </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

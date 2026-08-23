@@ -324,93 +324,79 @@ export default function PanelXSTR() {
 
   return (
     <div className="space-y-6 pb-12 font-mono">
-      {/* ── Header & Governance Banner ───────────────────────────────────── */}
-      <div className="relative overflow-hidden rounded-2xl border border-cyan-500/30 bg-gradient-to-r from-slate-900 via-cyan-950/20 to-slate-900 p-6 shadow-2xl backdrop-blur-xl">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div className="space-y-1 min-w-0">
-            <div className="flex items-start sm:items-center gap-3 min-w-0">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 shadow-lg shadow-cyan-500/10">
-                <Network className="h-5 w-5" />
-              </span>
-              <div className="min-w-0 space-y-0.5">
-                <div className="flex flex-wrap items-center gap-2">
-                  <h1 className="text-lg sm:text-2xl font-bold tracking-wide text-white">
-                    {isTr
-                      ? "Investigator Argus X-12 Bağlantı & Akrabalık Motoru"
-                      : "Investigator Argus X-12 Linkage & Kinship Engine"}
-                  </h1>
-                  <span className="rounded-full bg-cyan-500/20 px-2.5 py-0.5 text-xs font-semibold text-cyan-300 border border-cyan-500/40 whitespace-nowrap shrink-0">
-                    {isTr ? "MODÜL 2.2" : "MODULE 2.2"}
-                  </span>
-                </div>
-                <p className="text-xs text-slate-400 sm:text-sm leading-relaxed">
-                  {isTr
-                    ? "X-Kromozomal 12-Lokus Bağlantı Kümeleri (LG1–LG4) • Kosambi Haritalaması • PHS & Eksiklik Akrabalığı"
-                    : "X-Chromosomal 12-Locus Linkage Clusters (LG1–LG4) • Kosambi Mapping • PHS & Deficiency Kinship"}
-                </p>
+      {/* ── Modern Unified Benchmark & Standards Mission Bar ────────────── */}
+      <div className="bg-[#080D1A] border border-tactical-border/80 rounded-2xl p-4 sm:p-5 shadow-xl space-y-4">
+        {/* Top: Engine Identity & Technical Verification Badges */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-tactical-border/40 pb-3.5">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="p-2 bg-purple-500/10 border border-purple-500/30 rounded-xl text-purple-400 shrink-0">
+              <Network className="w-5 h-5 animate-pulse" />
+            </div>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs sm:text-sm font-extrabold text-white uppercase tracking-wider truncate">
+                  {isTr ? "Investigator Argus X-12 Bağlantı & Akrabalık" : "Investigator Argus X-12 Linkage & Kinship"}
+                </span>
+                <span className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-purple-500/10 border border-purple-500/30 text-purple-300">
+                  X-STR 12 LOKUS
+                </span>
               </div>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="rounded-lg border border-slate-700/60 bg-slate-800/80 px-3 py-1.5 text-xs font-mono text-slate-300">
-              ISO/IEC 17025:2017
-            </div>
-            <div className="rounded-lg border border-slate-700/60 bg-slate-800/80 px-3 py-1.5 text-xs font-mono text-cyan-300">
-              ISFG (2012) X-STR
-            </div>
-            <div className="rounded-lg border border-emerald-500/30 bg-emerald-950/30 px-3 py-1.5 text-xs font-mono text-emerald-400 flex items-center gap-1.5">
-              <ShieldCheck className="h-3.5 w-3.5" />
-              VERIFIED 5/5
-            </div>
+          <div className="flex flex-wrap items-center gap-1.5 shrink-0">
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[9px] font-bold bg-white/[0.03] border border-white/10 text-emerald-400">
+              <ShieldCheck className="w-3 h-3 text-emerald-400" />
+              <span>ISO 17025 Doğrulandı</span>
+            </span>
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[9px] font-bold bg-white/[0.03] border border-white/10 text-cyan-400">
+              <span>ISFG (2012) X-STR</span>
+            </span>
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[9px] font-bold bg-white/[0.03] border border-white/10 text-purple-400">
+              <span>LG1–LG4 Kümeleri</span>
+            </span>
           </div>
         </div>
-      </div>
 
-      {/* ── Preset Casework Cohort Selector ───────────────────────────────── */}
-      <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-4 backdrop-blur-md">
-        <div className="mb-3 flex items-center justify-between">
-          <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-2">
-            <Sparkles className="h-3.5 w-3.5 text-cyan-400" />
-            {isTr
-              ? "Sertifikalı Referans Vaka Kohortları & Doğrulama Kümeleri"
-              : "Certified Reference Casework Cohorts & Benchmarks"}
-          </span>
-          <span className="text-[11px] font-mono text-slate-500">
-            {isTr ? "Tillmar vd. (2017) Frekans Kalibrasyonu" : "Tillmar et al. (2017) Frequency Calibration"}
-          </span>
-        </div>
+        {/* Bottom: Casework Benchmark Scenario Cards */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between text-[9px] font-bold text-zinc-400 uppercase tracking-widest px-0.5">
+            <span>{isTr ? "Sertifikalı Vaka Kohortu Seçin:" : "Select Casework Benchmark:"}</span>
+            <span className="text-zinc-500 font-mono">4 Senaryo</span>
+          </div>
 
-        <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-4">
-          {PRESET_COHORTS.map((cohort) => {
-            const isSelected = selectedCohort.id === cohort.id;
-            return (
-              <button
-                key={cohort.id}
-                onClick={() => handleSelectCohort(cohort)}
-                className={`relative flex flex-col justify-between rounded-lg border p-3 text-left transition-all duration-200 cursor-pointer ${
-                  isSelected
-                    ? "border-cyan-500/80 bg-cyan-950/30 shadow-lg shadow-cyan-950/50"
-                    : "border-slate-800 bg-slate-900/40 hover:border-slate-700 hover:bg-slate-800/40"
-                }`}
-              >
-                <div>
-                  <div className="mb-1.5 flex items-center justify-between">
-                    <span className={`rounded px-1.5 py-0.5 text-[10px] font-mono font-medium border ${cohort.badgeColor}`}>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
+            {PRESET_COHORTS.map((cohort) => {
+              const isSelected = selectedCohort.id === cohort.id;
+              return (
+                <button
+                  type="button"
+                  key={cohort.id}
+                  onClick={() => handleSelectCohort(cohort)}
+                  className={`p-3 rounded-xl text-left transition-all border cursor-pointer flex flex-col justify-between space-y-1.5 ${
+                    isSelected
+                      ? "bg-purple-500/15 border-purple-500/50 text-white shadow-md shadow-purple-500/10"
+                      : "bg-black/30 border-tactical-border/50 text-zinc-400 hover:bg-white/5 hover:text-zinc-200 hover:border-tactical-border"
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-1">
+                    <span className="text-[8px] font-mono font-bold px-1.5 py-0.5 rounded bg-black/60 border border-white/10 text-zinc-300">
                       {cohort.badge}
                     </span>
-                    {isSelected && <Check className="h-3.5 w-3.5 text-cyan-400" />}
+                    {isSelected && <Check className="w-3 h-3 text-purple-400 shrink-0" />}
                   </div>
-                  <h4 className="text-xs font-semibold text-slate-200">
-                    {isTr ? cohort.labelTr : cohort.labelEn}
-                  </h4>
-                  <p className="mt-1 text-[11px] text-slate-400 line-clamp-2">
-                    {isTr ? cohort.descriptionTr : cohort.descriptionEn}
-                  </p>
-                </div>
-              </button>
-            );
-          })}
+                  <div>
+                    <div className="text-[10px] font-bold text-white line-clamp-1">
+                      {isTr ? cohort.labelTr : cohort.labelEn}
+                    </div>
+                    <div className="text-[9px] text-zinc-400 line-clamp-2 mt-0.5 font-sans leading-tight">
+                      {isTr ? cohort.descriptionTr : cohort.descriptionEn}
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 

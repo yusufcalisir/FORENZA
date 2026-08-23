@@ -190,47 +190,45 @@ export default function IsoReportGeneratorPanel() {
 
   return (
     <div className="space-y-6 font-mono text-tactical-text">
-      {/* ── Subsystem Header ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl border border-purple-500/30 bg-purple-500/10 shadow-lg">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple-500/20 border border-purple-500/40 text-purple-300">
-            <FileText className="w-5 h-5" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-sm font-bold tracking-widest text-tactical-text uppercase">
-                {isTr
-                  ? "Mahkeme Kabul Edilebilir ISO 17025 Adli Rapor Oluşturucu"
-                  : "Court-Admissible ISO 17025 Forensic Report Generator"}
-              </h2>
-              <span className="px-2 py-0.5 rounded text-[8px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">
-                {isTr ? "RESMİ SERTİFİKA" : "OFFICIAL CERTIFICATE"}
-              </span>
+      {/* ── Modern Unified Benchmark & Standards Mission Bar ────────────── */}
+      <div className="bg-[#080D1A] border border-tactical-border/80 rounded-2xl p-4 sm:p-5 shadow-xl space-y-4">
+        {/* Top: Engine Identity & Technical Verification Badges */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-tactical-border/40 pb-3.5">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="p-2 bg-purple-500/10 border border-purple-500/30 rounded-xl text-purple-400 shrink-0">
+              <FileText className="w-5 h-5 animate-pulse" />
             </div>
-            <p className="text-[10px] text-zinc-400 mt-0.5">
-              {isTr
-                ? "Değişmez Matematik & PDF Dışa Aktarımı ile 8 Bölümlü Standart ISO 17025 Rapor Derleyicisi"
-                : "8-Section Standardized ISO 17025 Report Compiler with Immutable Math & PDF Export"}
-            </p>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs sm:text-sm font-extrabold text-white uppercase tracking-wider truncate">
+                  {isTr ? "ISO 17025 Adli Rapor Oluşturucu" : "ISO 17025 Forensic Report Generator"}
+                </span>
+                <span className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-purple-500/10 border border-purple-500/30 text-purple-300">
+                  ISO/IEC 17025
+                </span>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
-          <button
-            onClick={handleCompileReport}
-            disabled={loading}
-            className="min-h-[42px] px-4 py-2 rounded-xl bg-purple-500 hover:bg-purple-400 text-black font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 active:scale-95"
-          >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
-            {isTr ? "ISO Sertifikasını Derle" : "Compile ISO Certificate"}
-          </button>
-          <button
-            onClick={handlePrint}
-            className="min-h-[42px] px-4 py-2 rounded-xl border border-purple-500/40 bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95"
-          >
-            <Printer className="w-3.5 h-3.5" />
-            {isTr ? "Yazdır / PDF Olarak Kaydet" : "Print / Export PDF"}
-          </button>
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={handleCompileReport}
+              disabled={loading}
+              className="px-3.5 py-1.5 rounded-lg bg-purple-500 hover:bg-purple-400 text-black font-extrabold text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50 active:scale-95"
+            >
+              <RefreshCw className={`w-3 h-3 ${loading ? "animate-spin" : ""}`} />
+              <span>{isTr ? "Sertifikayı Derle" : "Compile Certificate"}</span>
+            </button>
+            <button
+              type="button"
+              onClick={handlePrint}
+              className="px-3 py-1.5 rounded-lg border border-purple-500/40 bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 font-bold text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer transition-all active:scale-95"
+            >
+              <Printer className="w-3 h-3" />
+              <span>{isTr ? "Yazdır / PDF" : "Print / PDF"}</span>
+            </button>
+          </div>
         </div>
       </div>
 

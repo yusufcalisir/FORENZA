@@ -294,70 +294,70 @@ export default function MerkleLedgerPanel() {
 
   return (
     <div className="space-y-6 font-mono text-tactical-text">
-      {/* ── Subsystem Header ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl border border-indigo-500/30 bg-indigo-500/10 shadow-lg overflow-hidden">
-        <div className="flex items-start sm:items-center gap-3 min-w-0">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 shadow-[0_0_15px_rgba(99,102,241,0.2)]">
-            <GitBranch className="w-5 h-5" />
-          </div>
-          <div className="min-w-0 space-y-0.5">
-            <div className="flex flex-wrap items-center gap-2">
-              <h2 className="text-sm sm:text-base font-bold tracking-widest text-tactical-text uppercase">
-                {isTr ? "Müdahale Korumalı Merkle Ağacı Delil Zinciri Defteri" : "Tamper-Evident Merkle Tree Chain-of-Custody Ledger"}
-              </h2>
-              <span className="px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 whitespace-nowrap shrink-0">
-                ISO/IEC 17025 • SHA-256
-              </span>
+      {/* ── Modern Unified Benchmark & Standards Mission Bar ────────────── */}
+      <div className="bg-[#080D1A] border border-tactical-border/80 rounded-2xl p-4 sm:p-5 shadow-xl space-y-4">
+        {/* Top: Engine Identity & Technical Verification Badges */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-tactical-border/40 pb-3.5">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="p-2 bg-indigo-500/10 border border-indigo-500/30 rounded-xl text-indigo-400 shrink-0">
+              <GitBranch className="w-5 h-5 animate-pulse" />
             </div>
-            <p className="text-[10px] text-zinc-400 leading-relaxed">
-              {isTr
-                ? "Zincirleme SHA-256 Yaprak Delil Olayları • İkili Dengeli Merkle İndirgemesi • Müdahale Korumalı Kapsama İspatı"
-                : "Chained SHA-256 Leaf Custody Events • Binary Balanced Merkle Reduction • Tamper-Evident Proof of Inclusion"}
-            </p>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs sm:text-sm font-extrabold text-white uppercase tracking-wider truncate">
+                  {isTr ? "Merkle Ağacı Delil Zinciri Defteri" : "Merkle Tree Chain-of-Custody"}
+                </span>
+                <span className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-indigo-500/10 border border-indigo-500/30 text-indigo-300">
+                  ISO 17025 • SHA-256
+                </span>
+              </div>
+            </div>
           </div>
-        </div>
 
-        {/* Inner Tabs & Tamper Switch */}
-        <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto shrink-0">
-          {lastActionTime && (
-            <span className="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-1 rounded hidden md:flex items-center gap-1">
-              <Check className="w-3 h-3" />
-              {lastActionTime}
-            </span>
-          )}
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
+            {lastActionTime && (
+              <span className="text-[9px] text-emerald-400 font-bold bg-white/[0.03] border border-white/10 px-2.5 py-1 rounded-lg flex items-center gap-1">
+                <Check className="w-3 h-3" />
+                {lastActionTime}
+              </span>
+            )}
 
-          <button
-            onClick={handleTamperToggle}
-            className={`min-h-[36px] px-3.5 py-1.5 rounded-xl border text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap flex-1 sm:flex-initial ${
-              isTampered
-                ? "bg-rose-500/20 text-rose-300 border-rose-500/50 animate-pulse font-extrabold"
-                : "bg-black/60 text-zinc-400 border-tactical-border/60 hover:text-zinc-200"
-            }`}
-          >
-            <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
-            {isTampered ? (isTr ? "Müdahale Edildi (+1 sn)" : "Tampered (+1s)") : (isTr ? "Müdahale Simüle Et" : "Simulate Tampering")}
-          </button>
-
-          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-black/60 border border-tactical-border/60 w-full sm:w-auto overflow-x-auto shrink-0">
             <button
-              onClick={() => setActiveTab("tree")}
-              className={`min-h-[36px] px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center justify-center flex-1 sm:flex-initial ${
-                activeTab === "tree" ? "bg-indigo-500 text-white shadow-md font-extrabold" : "text-zinc-400 hover:text-zinc-200"
+              type="button"
+              onClick={handleTamperToggle}
+              className={`px-3 py-1 rounded-lg border text-[10px] font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap ${
+                isTampered
+                  ? "bg-rose-500/20 text-rose-300 border-rose-500/50 animate-pulse font-extrabold"
+                  : "bg-black/50 text-zinc-400 border-tactical-border/60 hover:text-zinc-200"
               }`}
             >
-              {isTr ? "Delil Ağacı" : "Custody Tree"}
+              <AlertTriangle className="w-3 h-3 shrink-0" />
+              {isTampered ? (isTr ? "Müdahale Edildi (+1s)" : "Tampered (+1s)") : (isTr ? "Müdahale Simüle Et" : "Simulate Tamper")}
             </button>
-            <button
-              onClick={() => {
-                setActiveTab("proof");
-                generateProof(selectedEventIndex);
-              }}
-              className={`min-h-[36px] px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center justify-center flex-1 sm:flex-initial ${
-                activeTab === "proof" ? "bg-indigo-500 text-white shadow-md font-extrabold" : "text-zinc-400 hover:text-zinc-200"
-              }`}
-            >
-              {isTr ? "Kapsama İspatı" : "Inclusion Proof"}
-            </button>
+
+            <div className="flex bg-black/60 p-1 rounded-xl border border-tactical-border/60">
+              <button
+                type="button"
+                onClick={() => setActiveTab("tree")}
+                className={`px-3 py-1 rounded-lg text-[10px] font-bold transition-all cursor-pointer ${
+                  activeTab === "tree" ? "bg-indigo-500/20 text-indigo-300 border border-indigo-500/50 shadow-sm" : "text-zinc-400 hover:text-zinc-200"
+                }`}
+              >
+                {isTr ? "Delil Ağacı" : "Custody Tree"}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveTab("proof");
+                  generateProof(selectedEventIndex);
+                }}
+                className={`px-3 py-1 rounded-lg text-[10px] font-bold transition-all cursor-pointer ${
+                  activeTab === "proof" ? "bg-indigo-500/20 text-indigo-300 border border-indigo-500/50 shadow-sm" : "text-zinc-400 hover:text-zinc-200"
+                }`}
+              >
+                {isTr ? "Kapsama İspatı" : "Inclusion Proof"}
+              </button>
+            </div>
           </div>
         </div>
       </div>

@@ -252,20 +252,23 @@ export function PanelSTR() {
   return (
     <div className="space-y-5 font-mono">
       {/* Multi-Population & θ Coancestry Controls */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 p-4 rounded-xl border border-tactical-border/60 bg-tactical-surface/50">
-        <div className="space-y-0.5">
-          <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-cyan-400" />
-            <span className="text-xs font-bold text-white uppercase tracking-wider">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 p-4 sm:p-5 rounded-2xl border border-tactical-border/80 bg-[#080D1A] shadow-xl">
+        <div className="space-y-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="h-2 w-2 rounded-full bg-cyan-400 shrink-0" />
+            <span className="text-xs sm:text-sm font-extrabold text-white uppercase tracking-wider">
               {isTr
-                ? "Balding-Nichols Alt Popülasyon Akrabalık Modeli (NRC II Tavsiye 4.4)"
-                : "Balding-Nichols Subpopulation Coancestry Model (NRC II Rec 4.4)"}
+                ? "Balding-Nichols Alt Popülasyon Akrabalık Modeli (NRC II)"
+                : "Balding-Nichols Subpopulation Coancestry (NRC II)"}
+            </span>
+            <span className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-cyan-500/10 border border-cyan-500/30 text-cyan-300">
+              NIST 1036
             </span>
           </div>
-          <p className="text-[10px] text-zinc-400">
+          <p className="text-[10px] text-zinc-400 font-sans">
             {isTr
-              ? "NIST 1036 Alel Frekansları • Asgari Frekans Tabanı p_min = 5/(2N) = 0.00241 • ISO 17025 U_95%"
-              : "NIST 1036 Allele Frequencies • Minimum Frequency Floor p_min = 5/(2N) = 0.00241 • ISO 17025 U_95%"}
+              ? "NIST 1036 Alel Frekansları • Asgari Frekans Tabanı p_min = 0.00241 • ISO 17025 U_95%"
+              : "NIST 1036 Allele Frequencies • Minimum Frequency Floor p_min = 0.00241 • ISO 17025 U_95%"}
           </p>
         </div>
 
@@ -279,9 +282,10 @@ export function PanelSTR() {
               { id: "Asian", label: "EAS (N=97)" },
             ].map((pop) => (
               <button
+                type="button"
                 key={pop.id}
                 onClick={() => setPopulation(pop.id)}
-                className={`px-2 py-1 rounded-lg text-[10px] font-bold uppercase transition-all cursor-pointer ${
+                className={`px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase transition-all cursor-pointer ${
                   population === pop.id
                     ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 shadow-sm"
                     : "text-zinc-500 hover:text-zinc-300"
@@ -301,9 +305,10 @@ export function PanelSTR() {
               { label: "θ=0.05", value: 0.05 },
             ].map((btn) => (
               <button
+                type="button"
                 key={btn.value}
                 onClick={() => setTheta(btn.value)}
-                className={`px-2 py-1 rounded-lg text-[10px] font-bold uppercase transition-all cursor-pointer ${
+                className={`px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase transition-all cursor-pointer ${
                   theta === btn.value
                     ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 shadow-sm"
                     : "text-zinc-500 hover:text-zinc-300"

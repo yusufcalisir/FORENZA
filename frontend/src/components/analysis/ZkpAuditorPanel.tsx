@@ -130,59 +130,59 @@ export default function ZkpAuditorPanel() {
 
   return (
     <div className="space-y-6 font-mono text-tactical-text">
-      {/* ── Subsystem Header ── */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl border border-indigo-500/30 bg-indigo-500/10 shadow-lg overflow-hidden">
-        <div className="flex items-start sm:items-center gap-3 min-w-0">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-500/20 border border-indigo-500/40 text-indigo-300">
-            <Lock className="w-5 h-5" />
-          </div>
-          <div className="min-w-0 space-y-0.5">
-            <div className="flex flex-wrap items-center gap-2">
-              <h2 className="text-xs sm:text-sm font-bold tracking-widest text-tactical-text uppercase">
-                {isTr ? "ZKP Kör Adli Denetçi & Gizlilik Devresi" : "ZKP Blind Forensic Auditor & Privacy Circuit"}
-              </h2>
-              <span className="px-2.5 py-0.5 rounded-lg text-[8px] sm:text-[9px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 whitespace-nowrap shrink-0">
-                Groth16 • BN254 • GDPR Art. 9
-              </span>
+      {/* ── Modern Unified Benchmark & Standards Mission Bar ────────────── */}
+      <div className="bg-[#080D1A] border border-tactical-border/80 rounded-2xl p-4 sm:p-5 shadow-xl space-y-4">
+        {/* Top: Engine Identity & Technical Verification Badges */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-tactical-border/40 pb-3.5">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="p-2 bg-indigo-500/10 border border-indigo-500/30 rounded-xl text-indigo-400 shrink-0">
+              <Lock className="w-5 h-5 animate-pulse" />
             </div>
-            <p className="text-[9px] sm:text-[10px] text-zinc-400 leading-relaxed">
-              {isTr
-                ? "Sıfır Bilgi Gizlilik Korumalı STR Doğrulama Devresi • Poseidon Taahhüdü • Çift Doğrusal Eşleşmeler"
-                : "Zero-Knowledge Privacy-Preserving STR Verification Circuit • Poseidon Commitment • Bilinear Multi-Pairings"}
-            </p>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs sm:text-sm font-extrabold text-white uppercase tracking-wider truncate">
+                  {isTr ? "ZKP Kör Adli Denetçi & Gizlilik Devresi" : "ZKP Blind Forensic Auditor"}
+                </span>
+                <span className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-indigo-500/10 border border-indigo-500/30 text-indigo-300">
+                  Groth16 • BN254
+                </span>
+              </div>
+            </div>
           </div>
-        </div>
 
-        {/* Tab Controls */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full lg:w-auto shrink-0">
-          <button
-            onClick={() => setHidePrivateWitness(!hidePrivateWitness)}
-            className="min-h-[36px] px-3.5 py-1.5 rounded-xl border border-tactical-border/60 bg-black/60 text-xs font-bold text-zinc-300 hover:text-white flex items-center justify-center gap-1.5 cursor-pointer transition-all whitespace-nowrap"
-          >
-            {hidePrivateWitness ? <EyeOff className="w-3.5 h-3.5 text-amber-400 shrink-0" /> : <Eye className="w-3.5 h-3.5 text-emerald-400 shrink-0" />}
-            <span>{hidePrivateWitness ? (isTr ? "Özel Tanık (Gizli)" : "Private Witness (Masked)") : (isTr ? "Tanık Açık" : "Witness Revealed")}</span>
-          </button>
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={() => setHidePrivateWitness(!hidePrivateWitness)}
+              className="px-3 py-1 rounded-lg border border-tactical-border/60 bg-black/50 text-[10px] font-bold text-zinc-300 hover:text-white flex items-center justify-center gap-1.5 cursor-pointer transition-all whitespace-nowrap"
+            >
+              {hidePrivateWitness ? <EyeOff className="w-3 h-3 text-amber-400 shrink-0" /> : <Eye className="w-3 h-3 text-emerald-400 shrink-0" />}
+              <span>{hidePrivateWitness ? (isTr ? "Tanık Gizli" : "Witness Masked") : (isTr ? "Tanık Açık" : "Witness Revealed")}</span>
+            </button>
 
-          <div className="flex items-center justify-center gap-1 p-1 rounded-xl bg-black/60 border border-tactical-border/60 w-full sm:w-auto overflow-x-auto">
-            <button
-              onClick={() => setActiveTab("comparator")}
-              className={`min-h-[36px] flex-1 sm:flex-initial text-center px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center justify-center ${
-                activeTab === "comparator" ? "bg-indigo-500 text-white shadow-md font-extrabold" : "text-zinc-400 hover:text-zinc-200"
-              }`}
-            >
-              {isTr ? "STR Devresi" : "STR Circuit"}
-            </button>
-            <button
-              onClick={() => {
-                setActiveTab("pairing");
-                if (!proofData) handleSynthesizeProof();
-              }}
-              className={`min-h-[36px] flex-1 sm:flex-initial text-center px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center justify-center ${
-                activeTab === "pairing" ? "bg-indigo-500 text-white shadow-md font-extrabold" : "text-zinc-400 hover:text-zinc-200"
-              }`}
-            >
-              {isTr ? "Eşleşme Doğrulayıcı" : "Pairing Verifier"}
-            </button>
+            <div className="flex bg-black/60 p-1 rounded-xl border border-tactical-border/60">
+              <button
+                type="button"
+                onClick={() => setActiveTab("comparator")}
+                className={`px-3 py-1 rounded-lg text-[10px] font-bold transition-all cursor-pointer ${
+                  activeTab === "comparator" ? "bg-indigo-500/20 text-indigo-300 border border-indigo-500/50 shadow-sm" : "text-zinc-400 hover:text-zinc-200"
+                }`}
+              >
+                {isTr ? "STR Devresi" : "STR Circuit"}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveTab("pairing");
+                  if (!proofData) handleSynthesizeProof();
+                }}
+                className={`px-3 py-1 rounded-lg text-[10px] font-bold transition-all cursor-pointer ${
+                  activeTab === "pairing" ? "bg-indigo-500/20 text-indigo-300 border border-indigo-500/50 shadow-sm" : "text-zinc-400 hover:text-zinc-200"
+                }`}
+              >
+                {isTr ? "Eşleşme Doğrulayıcı" : "Pairing Verifier"}
+              </button>
+            </div>
           </div>
         </div>
       </div>

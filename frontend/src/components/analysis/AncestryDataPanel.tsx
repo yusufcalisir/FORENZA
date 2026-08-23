@@ -162,54 +162,108 @@ export default function AncestryDataPanel({
     };
 
     return (
-        <div className="h-full flex flex-col gap-4 p-4 font-mono text-zinc-300">
-            {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 sm:p-4 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 shadow-md min-w-0">
-                <div className="flex items-start sm:items-center gap-3 min-w-0 flex-1">
-                    <Globe className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5 sm:mt-0" />
-                    <div className="min-w-0 flex-1 space-y-0.5">
-                        <h2 className="text-xs sm:text-sm font-bold text-white uppercase tracking-wider">
-                            {isTr
-                                ? "55-AIM Biyocoğrafi Köken & Canlı GIS Konumlandırma"
-                                : "55-AIM Biogeographic Ancestry & Live GIS Geolocation"}
-                        </h2>
-                        <p className="text-[10px] text-zinc-400 leading-relaxed">
-                            {isTr
-                                ? "Kidd/Seldin Kıtasal Karışım & 3D Küresel Merkez Projeksiyonları"
-                                : "Kidd/Seldin Continental Admixture & 3D Spherical Centroid Projections"}
-                        </p>
+        <div className="h-full flex flex-col gap-4 font-mono text-zinc-300">
+            {/* ── Modern Unified Benchmark & Standards Mission Bar ────────────── */}
+            <div className="bg-[#080D1A] border border-tactical-border/80 rounded-2xl p-4 sm:p-5 shadow-xl space-y-4">
+                {/* Top: Engine Identity & Technical Verification Badges */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-tactical-border/40 pb-3.5">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                        <div className="p-2 bg-cyan-500/10 border border-cyan-500/30 rounded-xl text-cyan-400 shrink-0">
+                            <Globe className="w-5 h-5 animate-pulse" />
+                        </div>
+                        <div className="min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                                <span className="text-xs sm:text-sm font-extrabold text-white uppercase tracking-wider truncate">
+                                    {isTr ? "55-AIM Biyocoğrafi Köken & Canlı GIS" : "55-AIM Biogeographic Ancestry & GIS"}
+                                </span>
+                                <span className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-cyan-500/10 border border-cyan-500/30 text-cyan-300">
+                                    KIDD / SELDIN 55-SNP
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-1.5 shrink-0">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[9px] font-bold bg-white/[0.03] border border-white/10 text-emerald-400">
+                            <span>ISO 17025 Doğrulandı</span>
+                        </span>
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[9px] font-bold bg-white/[0.03] border border-white/10 text-cyan-400">
+                            <span>5 Kıtasal Küme</span>
+                        </span>
                     </div>
                 </div>
 
-                {/* Golden Test Vector Presets */}
-                <div className="flex flex-wrap items-center gap-1.5 w-full sm:w-auto mt-2 sm:mt-0">
-                    <button
-                        onClick={() => setSnpDosages({
-                            rs1426654: 2, rs16891982: 2, rs2814778: 0, rs3827072: 0,
-                            rs1800414: 0, rs10424031: 0, rs885479: 0, rs3340: 2,
-                        })}
-                        className="w-full sm:w-auto min-h-[30px] px-2.5 py-1 rounded text-[9px] font-bold uppercase bg-blue-500/20 text-blue-300 border border-blue-500/40 hover:bg-blue-500/30 transition-all cursor-pointer flex items-center justify-center"
-                    >
-                        {isTr ? "VEKTÖR_P3_01 (Açık EUR)" : "VECTOR_P3_01 (Fair EUR)"}
-                    </button>
-                    <button
-                        onClick={() => setSnpDosages({
-                            rs2814778: 2, rs10424031: 2, rs1426654: 0, rs16891982: 0,
-                            rs3827072: 0, rs1800414: 0, rs885479: 0, rs3340: 0,
-                        })}
-                        className="w-full sm:w-auto min-h-[30px] px-2.5 py-1 rounded text-[9px] font-bold uppercase bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 transition-all cursor-pointer flex items-center justify-center"
-                    >
-                        {isTr ? "VEKTÖR_P3_02 (Koyu AFR)" : "VECTOR_P3_02 (Dark AFR)"}
-                    </button>
-                    <button
-                        onClick={() => setSnpDosages({
-                            rs3827072: 2, rs1800414: 2, rs885479: 2, rs1426654: 0,
-                            rs16891982: 0, rs2814778: 0, rs10424031: 0, rs3340: 1,
-                        })}
-                        className="w-full sm:w-auto min-h-[30px] px-2.5 py-1 rounded text-[9px] font-bold uppercase bg-pink-500/20 text-pink-300 border border-pink-500/40 hover:bg-pink-500/30 transition-all cursor-pointer flex items-center justify-center"
-                    >
-                        {isTr ? "VEKTÖR_P3_03 (Doğu Asya EAS)" : "VECTOR_P3_03 (East Asian EAS)"}
-                    </button>
+                {/* Bottom: Casework Benchmark Scenario Cards */}
+                <div className="space-y-2">
+                    <div className="flex items-center justify-between text-[9px] font-bold text-zinc-400 uppercase tracking-widest px-0.5">
+                        <span>{isTr ? "Sertifikalı AIM Senaryosu Seçin:" : "Select Certified AIM Benchmark:"}</span>
+                        <span className="text-zinc-500 font-mono">3 Senaryo</span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        <button
+                            type="button"
+                            onClick={() => setSnpDosages({
+                                rs1426654: 2, rs16891982: 2, rs2814778: 0, rs3827072: 0,
+                                rs1800414: 0, rs10424031: 0, rs885479: 0, rs3340: 2,
+                            })}
+                            className="p-3 rounded-xl text-left transition-all border border-tactical-border/50 bg-black/30 text-zinc-400 hover:bg-white/5 hover:text-zinc-200 hover:border-tactical-border cursor-pointer flex flex-col justify-between space-y-1.5"
+                        >
+                            <span className="text-[8px] font-mono font-bold px-1.5 py-0.5 rounded bg-black/60 border border-white/10 text-blue-300 w-fit">
+                                EUR CEU
+                            </span>
+                            <div>
+                                <div className="text-[10px] font-bold text-white line-clamp-1">
+                                    {isTr ? "VEKTÖR_P3_01 (Avrupa)" : "VECTOR_P3_01 (European)"}
+                                </div>
+                                <div className="text-[9px] text-zinc-400 line-clamp-1 font-sans">
+                                    {isTr ? "Açık pigmentasyon, SLC24A5 / HERC2 homozigot" : "Fair pigmentation, SLC24A5 / HERC2 hom."}
+                                </div>
+                            </div>
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={() => setSnpDosages({
+                                rs2814778: 2, rs10424031: 2, rs1426654: 0, rs16891982: 0,
+                                rs3827072: 0, rs1800414: 0, rs885479: 0, rs3340: 0,
+                            })}
+                            className="p-3 rounded-xl text-left transition-all border border-tactical-border/50 bg-black/30 text-zinc-400 hover:bg-white/5 hover:text-zinc-200 hover:border-tactical-border cursor-pointer flex flex-col justify-between space-y-1.5"
+                        >
+                            <span className="text-[8px] font-mono font-bold px-1.5 py-0.5 rounded bg-black/60 border border-white/10 text-amber-300 w-fit">
+                                AFR YRI
+                            </span>
+                            <div>
+                                <div className="text-[10px] font-bold text-white line-clamp-1">
+                                    {isTr ? "VEKTÖR_P3_02 (Afrika)" : "VECTOR_P3_02 (African)"}
+                                </div>
+                                <div className="text-[9px] text-zinc-400 line-clamp-1 font-sans">
+                                    {isTr ? "DARC nüll, koyu fototip, yüksek melanin" : "DARC null, dark phototype, high melanin"}
+                                </div>
+                            </div>
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={() => setSnpDosages({
+                                rs3827072: 2, rs1800414: 2, rs885479: 2, rs1426654: 0,
+                                rs16891982: 0, rs2814778: 0, rs10424031: 0, rs3340: 1,
+                            })}
+                            className="p-3 rounded-xl text-left transition-all border border-tactical-border/50 bg-black/30 text-zinc-400 hover:bg-white/5 hover:text-zinc-200 hover:border-tactical-border cursor-pointer flex flex-col justify-between space-y-1.5"
+                        >
+                            <span className="text-[8px] font-mono font-bold px-1.5 py-0.5 rounded bg-black/60 border border-white/10 text-pink-300 w-fit">
+                                EAS CHB
+                            </span>
+                            <div>
+                                <div className="text-[10px] font-bold text-white line-clamp-1">
+                                    {isTr ? "VEKTÖR_P3_03 (Doğu Asya)" : "VECTOR_P3_03 (East Asian)"}
+                                </div>
+                                <div className="text-[9px] text-zinc-400 line-clamp-1 font-sans">
+                                    {isTr ? "EDAR 370A homozigot, OCA2 türetilmiş alel" : "EDAR 370A hom., OCA2 derived allele"}
+                                </div>
+                            </div>
+                        </button>
+                    </div>
                 </div>
             </div>
 

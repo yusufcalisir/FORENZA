@@ -174,56 +174,55 @@ export default function BpaAreaOfOriginPanel() {
 
   return (
     <div className="space-y-6 font-mono text-tactical-text">
-      {/* ── Subsystem Header ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl border border-rose-500/30 bg-rose-500/10 shadow-lg">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-rose-500/20 border border-rose-500/40 text-rose-300 shadow-[0_0_15px_rgba(244,63,94,0.2)]">
-            <Crosshair className="w-5 h-5" />
-          </div>
-          <div className="min-w-0 space-y-0.5">
-            <div className="flex flex-wrap items-center gap-2">
-              <h2 className="text-sm sm:text-base font-bold tracking-widest text-tactical-text uppercase">
-                {isTr ? "3D Kan Lekesi Deseni Analizi & Çıkış Noktası" : "3D Bloodstain Pattern Analysis & Area of Origin"}
-              </h2>
-              <span className="px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30 whitespace-nowrap shrink-0">
-                SWGSTAIN • IABPA 2024
-              </span>
+      {/* ── Modern Unified Benchmark & Standards Mission Bar ────────────── */}
+      <div className="bg-[#080D1A] border border-tactical-border/80 rounded-2xl p-4 sm:p-5 shadow-xl space-y-4">
+        {/* Top: Engine Identity & Technical Verification Badges */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-tactical-border/40 pb-3.5">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="p-2 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-400 shrink-0">
+              <Crosshair className="w-5 h-5 animate-pulse" />
             </div>
-            <p className="text-[10px] text-zinc-400 leading-relaxed">
-              {isTr
-                ? "Eliptik Çarpma Dinamiği (sin α = W/L) • En Küçük Kareler Ortogonal Yakınsama • Schiller-Naumann Sürüklenmesi"
-                : "Elliptical Impact Dynamics (sin α = W/L) • Least-Squares Orthogonal Convergence • Schiller-Naumann Drag"}
-            </p>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs sm:text-sm font-extrabold text-white uppercase tracking-wider truncate">
+                  {isTr ? "3D Kan Lekesi Deseni & Çıkış Noktası" : "3D BPA & Area of Origin"}
+                </span>
+                <span className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-rose-500/10 border border-rose-500/30 text-rose-300">
+                  SWGSTAIN • IABPA
+                </span>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 w-full sm:w-auto shrink-0">
-          {lastSolvedTime && (
-            <span className="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-1 rounded hidden md:flex items-center gap-1">
-              <Check className="w-3 h-3" />
-              {isTr ? `${lastSolvedTime} çözümlendi` : `Solved at ${lastSolvedTime}`}
-            </span>
-          )}
-
-          <button
-            onClick={() => {
-              setStains(VECTOR_P5_01_STAINS);
-              setApplyGravity(false);
-            }}
-            className="w-full sm:w-auto min-h-[38px] px-3.5 py-2 rounded-xl bg-black/60 hover:bg-black/80 border border-tactical-border/60 text-zinc-300 text-xs font-bold transition-all cursor-pointer flex items-center justify-center"
-          >
-            {isTr ? "VECTOR_P5_01 Yükle" : "Load VECTOR_P5_01"}
-          </button>
-          <button
-            onClick={runBpaSolver}
-            disabled={loading}
-            className="w-full sm:w-auto min-h-[42px] px-5 py-2 rounded-xl bg-rose-500 hover:bg-rose-400 text-zinc-950 font-black text-xs uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(244,63,94,0.3)] hover:shadow-[0_0_25px_rgba(244,63,94,0.5)] disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer active:scale-95"
-          >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
-            {loading
-              ? (isTr ? `Çözülüyor %${progress}...` : `Solving ${progress}%...`)
-              : (isTr ? "3D Çıkış Noktasını Çöz" : "Solve 3D Origin")}
-          </button>
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
+            {lastSolvedTime && (
+              <span className="text-[9px] text-emerald-400 font-bold bg-white/[0.03] border border-white/10 px-2.5 py-1 rounded-lg flex items-center gap-1">
+                <Check className="w-3 h-3" />
+                {lastSolvedTime}
+              </span>
+            )}
+            <button
+              onClick={() => {
+                setStains(VECTOR_P5_01_STAINS);
+                setApplyGravity(false);
+              }}
+              className="px-3 py-1 rounded-lg bg-black/50 hover:bg-black/70 border border-tactical-border/60 text-zinc-300 text-[10px] font-bold transition-all cursor-pointer"
+            >
+              {isTr ? "VECTOR_P5_01 Yükle" : "Load VECTOR_P5_01"}
+            </button>
+            <button
+              onClick={runBpaSolver}
+              disabled={loading}
+              className="px-3.5 py-1 rounded-lg bg-rose-500 hover:bg-rose-400 text-zinc-950 font-extrabold text-[10px] uppercase tracking-wider transition-all disabled:opacity-50 flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
+            >
+              <RefreshCw className={`w-3 h-3 ${loading ? "animate-spin" : ""}`} />
+              <span>
+                {loading
+                  ? (isTr ? `Çözülüyor %${progress}...` : `Solving ${progress}%...`)
+                  : (isTr ? "3D Noktayı Çöz" : "Solve 3D Origin")}
+              </span>
+            </button>
+          </div>
         </div>
       </div>
 

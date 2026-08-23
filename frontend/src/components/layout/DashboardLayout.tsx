@@ -75,6 +75,22 @@ const EXECUTIVE_NAV = [
   },
 ] as const;
 
+function normalizeSearchText(text?: string | null): string {
+  if (!text) return "";
+  return text
+    .toLocaleLowerCase("tr-TR")
+    .replace(/ı/g, "i")
+    .replace(/ğ/g, "g")
+    .replace(/ü/g, "u")
+    .replace(/ş/g, "s")
+    .replace(/ö/g, "o")
+    .replace(/ç/g, "c")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+}
+
 function SidebarContent({
   collapsed,
   onCloseMobile,
@@ -154,34 +170,109 @@ function SidebarContent({
   const categories = useMemo(() => getSubsystemCategories(lang), [lang]);
   const maturityConfig = useMemo(() => getMaturityConfig(lang), [lang]);
 
-  // Filtered subsystems based on search
-  const filteredCategories = useMemo(() => {
-    if (!searchQuery.trim()) return categories;
-    const q = searchQuery.toLowerCase().trim();
+  // High-precision bi-lingual, diacritic-insensitive, multi-token search
+  const { filteredCategories, totalMatches } = useMemo(() => {
+    const q = searchQuery.trim();
+    if (!q) {
+      return { filteredCategories: categories, totalMatches: 35 };
+    }
 
-    return categories.map((cat) => {
-      const matchCat =
-        cat.label.toLowerCase().includes(q) ||
-        cat.description.toLowerCase().includes(q) ||
-        cat.tagline.toLowerCase().includes(q);
+    const tokens = q
+      .split(/\s+/)
+      .map((t) => normalizeSearchText(t))
+      .filter(Boolean);
 
-      const matchingTabs = cat.tabs.filter(
-        (tab) =>
-          tab.label.toLowerCase().includes(q) ||
-          tab.shortTitle.toLowerCase().includes(q) ||
-          tab.badge.toLowerCase().includes(q) ||
-          tab.method.toLowerCase().includes(q)
-      );
+    if (tokens.length === 0) {
+      return { filteredCategories: categories, totalMatches: 35 };
+    }
 
-      if (matchCat) return cat;
-      if (matchingTabs.length > 0) {
-        return { ...cat, tabs: matchingTabs };
-      }
-      return null;
-    }).filter(Boolean) as SubsystemCategory[];
+    let matchCount = 0;
+
+    const result = categories
+      .map((cat, catIdx) => {
+        const canonicalCat = SUBSYSTEM_CATEGORIES[catIdx] || cat;
+
+        // Build category corpus across all TR + EN fields
+        const catCorpus = [
+          cat.id,
+          cat.label,
+          cat.labelTr,
+          cat.shortLabel,
+          cat.shortLabelTr,
+          cat.tagline,
+          cat.taglineTr,
+          cat.description,
+          cat.descriptionTr,
+          canonicalCat.label,
+          canonicalCat.labelTr,
+          canonicalCat.tagline,
+          canonicalCat.taglineTr,
+          canonicalCat.description,
+          canonicalCat.descriptionTr,
+          `suit ${cat.pillarNumber}`,
+          `pillar ${cat.pillarNumber}`,
+          `kategori 0${cat.pillarNumber}`,
+          `0${cat.pillarNumber}`,
+        ]
+          .filter(Boolean)
+          .map((t) => normalizeSearchText(t))
+          .join(" ");
+
+        const catMatchesAllTokens = tokens.every((token) => catCorpus.includes(token));
+
+        // Filter matching tabs within category across all TR + EN fields
+        const matchingTabs = cat.tabs.filter((tab, tabIdx) => {
+          const canonicalTab = canonicalCat.tabs?.[tabIdx] || tab;
+
+          const tabCorpus = [
+            tab.id,
+            tab.label,
+            tab.labelTr,
+            tab.shortTitle,
+            tab.shortTitleTr,
+            tab.badge,
+            tab.method,
+            tab.methodTr,
+            tab.standard,
+            tab.standardTr,
+            tab.maturityNote,
+            tab.maturityNoteTr,
+            canonicalTab.label,
+            canonicalTab.labelTr,
+            canonicalTab.shortTitle,
+            canonicalTab.shortTitleTr,
+            canonicalTab.method,
+            canonicalTab.methodTr,
+            canonicalTab.standard,
+            canonicalTab.standardTr,
+            canonicalTab.maturityNote,
+            canonicalTab.maturityNoteTr,
+          ]
+            .filter(Boolean)
+            .map((t) => normalizeSearchText(t))
+            .join(" ");
+
+          return tokens.every((token) => tabCorpus.includes(token));
+        });
+
+        if (matchingTabs.length > 0) {
+          matchCount += matchingTabs.length;
+          return { ...cat, tabs: matchingTabs };
+        }
+
+        if (catMatchesAllTokens) {
+          matchCount += cat.tabs.length;
+          return cat;
+        }
+
+        return null;
+      })
+      .filter(Boolean) as SubsystemCategory[];
+
+    return { filteredCategories: result, totalMatches: matchCount };
   }, [searchQuery, categories]);
 
-  // If searching, expand all
+  // If searching, auto-expand all matched pillars
   useEffect(() => {
     if (searchQuery.trim()) {
       const allOpen: Record<string, boolean> = {};
@@ -208,9 +299,10 @@ function SidebarContent({
             />
             {searchQuery && (
               <button
+                type="button"
                 onClick={() => setSearchQuery("")}
                 aria-label={isTr ? "Aramayı Temizle" : "Clear Search"}
-                className="absolute right-1 top-1/2 -translate-y-1/2 min-w-[36px] min-h-[36px] flex items-center justify-center text-zinc-500 hover:text-white cursor-pointer"
+                className="absolute right-1 top-1/2 -translate-y-1/2 min-w-[36px] min-h-[36px] flex items-center justify-center text-zinc-400 hover:text-white cursor-pointer"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -272,6 +364,32 @@ function SidebarContent({
           {!collapsed && (
             <div className="px-2.5 py-1 flex items-center justify-between text-[9px] font-extrabold uppercase tracking-widest text-zinc-400">
               <span>{t.sidebarNav?.biocomputationalSuites || "Biocomputational Suites"}</span>
+              {searchQuery.trim() && (
+                <span className="text-cyan-400 font-bold lowercase tracking-normal">
+                  ({totalMatches} {isTr ? "eşleşme" : "matches"})
+                </span>
+              )}
+            </div>
+          )}
+
+          {filteredCategories.length === 0 && !collapsed && (
+            <div className="p-3.5 rounded-xl border border-dashed border-tactical-border/60 bg-black/40 text-center space-y-2 my-2">
+              <Search className="w-4 h-4 text-zinc-500 mx-auto" />
+              <p className="text-xs font-bold text-zinc-300">
+                {isTr ? "Eşleşen modül bulunamadı" : "No matching modules"}
+              </p>
+              <p className="text-[10px] text-zinc-500 leading-normal font-sans">
+                {isTr
+                  ? `"${searchQuery}" için sonuç yok. STR, MCMC, Horvath, ZKP, BPA, İzotop gibi terimleri arayabilirsiniz.`
+                  : `No results for "${searchQuery}". Try keywords like STR, MCMC, Horvath, ZKP, BPA, Isotope.`}
+              </p>
+              <button
+                type="button"
+                onClick={() => setSearchQuery("")}
+                className="text-[10px] text-cyan-400 hover:text-cyan-300 font-bold underline cursor-pointer inline-block mt-1 font-mono"
+              >
+                {isTr ? "Aramayı Temizle" : "Clear Search"}
+              </button>
             </div>
           )}
 

@@ -242,24 +242,24 @@ export function PanelNRC() {
 
   return (
     <div className="space-y-6 font-mono">
-      {/* ── Header & Mission Control Bar ────────────────────────────────────────── */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-xl backdrop-blur-xl min-w-0 overflow-hidden">
-        <div className="flex items-start sm:items-center gap-3 sm:gap-4 min-w-0">
-          <div className="p-2.5 sm:p-3 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/10 border border-emerald-500/30 text-emerald-400 shrink-0">
-            <Globe2 className="w-6 h-6 sm:w-7 sm:h-7" />
+      {/* ── Modern Unified Mission Control Bar ────────────────────────────────────────── */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl bg-[#080D1A] border border-tactical-border/80 shadow-xl min-w-0">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 shrink-0">
+            <Globe2 className="w-5 h-5 animate-pulse" />
           </div>
-          <div className="min-w-0 space-y-1">
-            <div className="flex flex-wrap items-center gap-2">
-              <h2 className="text-base sm:text-lg font-bold text-slate-100 tracking-tight">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h2 className="text-xs sm:text-sm font-extrabold text-white uppercase tracking-wider truncate">
                 {isTr
-                  ? "Modül 1.3: NRC-II Dirichlet F_st & Balding-Nichols Popülasyon Genetiği"
-                  : "Module 1.3: NRC-II Dirichlet F_st & Balding-Nichols Population Genetics"}
+                  ? "NRC-II Dirichlet F_st & Balding-Nichols Popülasyon Genetiği"
+                  : "NRC-II Dirichlet F_st & Balding-Nichols Population Genetics"}
               </h2>
-              <span className="px-2 py-0.5 text-[10px] sm:text-xs font-semibold rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 whitespace-nowrap shrink-0">
-                {isTr ? "DOĞRULANDI (3/3 Kriter)" : "VERIFIED (3/3 Criteria)"}
+              <span className="px-2 py-0.5 text-[9px] font-bold rounded-md bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 whitespace-nowrap shrink-0">
+                {isTr ? "DOĞRULANDI" : "VERIFIED"}
               </span>
             </div>
-            <p className="text-[11px] sm:text-xs text-slate-400 leading-relaxed">
+            <p className="text-[10px] text-zinc-400 mt-0.5 font-sans leading-snug">
               {isTr
                 ? "Çok etnikli alt popülasyon akrabalığı (θ), Weir-Cockerham ANOVA & ENFSI (2017) Karşılıklılık Kalkanı"
                 : "Multi-ethnic subpopulation coancestry (θ), Weir-Cockerham ANOVA & ENFSI (2017) Reciprocal Shield"}
@@ -268,14 +268,14 @@ export function PanelNRC() {
         </div>
 
         {/* Profile Selector */}
-        <div className="flex flex-col sm:flex-row sm:items-center gap-2 min-w-0 shrink-0 pt-3 lg:pt-0 border-t lg:border-t-0 border-slate-800/60 w-full sm:w-auto">
-          <span className="text-[11px] sm:text-xs text-slate-400 font-medium whitespace-nowrap">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 min-w-0 shrink-0 w-full sm:w-auto">
+          <span className="text-[10px] text-zinc-400 font-bold uppercase whitespace-nowrap">
             {isTr ? "Standart Profil:" : "Standard Profile:"}
           </span>
           <select
             value={selectedStandard}
             onChange={(e) => setSelectedStandard(e.target.value)}
-            className="w-full sm:w-auto min-h-[40px] max-w-full px-3 py-2 text-xs font-mono bg-slate-800 border border-slate-700 rounded-xl text-slate-200 focus:outline-none focus:border-emerald-500 cursor-pointer truncate shadow-sm"
+            className="w-full sm:w-auto min-h-[38px] px-3 py-1.5 text-xs font-mono bg-black/50 border border-tactical-border/70 rounded-xl text-white focus:outline-none focus:border-emerald-500 cursor-pointer truncate shadow-sm"
           >
             <option value="CASE_PROFILE">{isTr ? "Aktif Vaka Profili" : "Active Case Profile"} ({activeCase.profile.profileId})</option>
             <option value="SRM_2391D_COMP_A">NIST SRM 2391d Comp A (Caucasian 9947A)</option>

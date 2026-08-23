@@ -517,49 +517,71 @@ ${isTr ? "Olabilirlik Oranı (LR), yarışan hipotezler (Hp ve Hd) altında dü�
 
   return (
     <div className="space-y-6 font-mono">
-      {/* ── Top Header Banner ───────────────────────────────────────────────── */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-tactical-border/60 pb-5 min-w-0">
-        <div className="flex items-start sm:items-center gap-3.5 min-w-0">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-orange-500/10 border border-orange-500/30 text-orange-400 shadow-[0_0_20px_rgba(249,115,22,0.2)]">
-            <Fingerprint className="w-6 h-6" />
-          </div>
-          <div className="min-w-0 space-y-1">
-            <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-base sm:text-lg font-black tracking-widest text-tactical-text uppercase">
-                {isTr ? "Temas DNA & Düşük Şablon Stokastik Modelleme" : "Touch DNA & Low-Template Stochastic Modeling"}
-              </h1>
-              <span className="text-[10px] font-bold text-orange-400 bg-orange-500/10 border border-orange-500/20 px-2.5 py-0.5 rounded-full whitespace-nowrap shrink-0">
-                MOD-04
-              </span>
+      {/* ── Modern Unified Benchmark & Standards Mission Bar ────────────── */}
+      <div className="bg-[#080D1A] border border-tactical-border/80 rounded-2xl p-4 sm:p-5 shadow-xl space-y-4">
+        {/* Top: Engine Identity & Technical Verification Badges */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-tactical-border/40 pb-3.5">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="p-2 bg-orange-500/10 border border-orange-500/30 rounded-xl text-orange-400 shrink-0">
+              <Fingerprint className="w-5 h-5 animate-pulse" />
             </div>
-            <p className="text-[11px] sm:text-xs text-tactical-text-muted leading-relaxed">
-              {isTr
-                ? "Yüzey Geri Kazanımı (η) • Lojistik Alel Kaybı P(D) • Poisson Eklenmesi P(C) • Curran-Gill LTDNA LR"
-                : "Substrate Recovery (η) • Logistic Dropout P(D) • Poisson Drop-in P(C) • Curran-Gill LTDNA LR"}
-            </p>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs sm:text-sm font-extrabold text-white uppercase tracking-wider truncate">
+                  {isTr ? "Temas DNA & Düşük Şablon Stokastik Modelleme" : "Touch DNA & Low-Template Stochastic Modeling"}
+                </span>
+                <span className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-orange-500/10 border border-orange-500/30 text-orange-300">
+                  CURRAN-GILL LTDNA
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-1.5 shrink-0">
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[9px] font-bold bg-white/[0.03] border border-white/10 text-emerald-400">
+              <ShieldCheck className="w-3 h-3 text-emerald-400" />
+              <span>ISO 17025 Doğrulandı</span>
+            </span>
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[9px] font-bold bg-white/[0.03] border border-white/10 text-orange-400">
+              <span>AT 50 RFU • ST 150 RFU</span>
+            </span>
           </div>
         </div>
 
-        {/* Golden Preset Selector */}
-        <div className="flex flex-wrap items-center gap-2 p-1.5 rounded-2xl bg-black/40 border border-tactical-border/50 shrink-0 w-full sm:w-auto">
-          <span className="text-[11px] text-tactical-text-muted uppercase font-bold px-2 flex items-center gap-1 shrink-0">
-            <Sparkles className="w-3.5 h-3.5 text-amber-400" /> {isTr ? "Hazır Ayarlar:" : "Presets:"}
-          </span>
-          <div className="flex flex-wrap items-center gap-1.5">
+        {/* Bottom: Casework Benchmark Scenario Cards */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between text-[9px] font-bold text-zinc-400 uppercase tracking-widest px-0.5">
+            <span>{isTr ? "Sertifikalı LTDNA Referans Kohortu Seçin:" : "Select Certified LTDNA Benchmark:"}</span>
+            <span className="text-zinc-500 font-mono">3 Senaryo</span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
             {(Object.keys(GOLDEN_PRESETS) as PresetKey[]).map((key) => {
               const p = GOLDEN_PRESETS[key];
               const isSelected = selectedPreset === key;
               return (
                 <button
+                  type="button"
                   key={key}
                   onClick={() => handleLoadPreset(key)}
-                  className={`min-h-[36px] px-3 py-1.5 rounded-xl text-xs font-bold transition-all border cursor-pointer whitespace-nowrap flex items-center justify-center ${
+                  className={`p-3 rounded-xl text-left transition-all border cursor-pointer flex flex-col justify-between space-y-1.5 ${
                     isSelected
-                      ? "bg-orange-500/20 border-orange-500/60 text-orange-300 shadow-[0_0_12px_rgba(249,115,22,0.25)]"
-                      : "bg-tactical-surface/50 border-tactical-border/50 text-tactical-text-muted hover:border-tactical-border hover:text-zinc-200"
+                      ? "bg-orange-500/15 border-orange-500/50 text-white shadow-md shadow-orange-500/10"
+                      : "bg-black/30 border-tactical-border/50 text-zinc-400 hover:bg-white/5 hover:text-zinc-200 hover:border-tactical-border"
                   }`}
                 >
-                  {key}
+                  <div className="flex items-center justify-between gap-1">
+                    <span className="text-[8px] font-mono font-bold px-1.5 py-0.5 rounded bg-black/60 border border-white/10 text-zinc-300">
+                      {p.badge}
+                    </span>
+                    {isSelected && <Check className="w-3 h-3 text-orange-400 shrink-0" />}
+                  </div>
+                  <div>
+                    <div className="text-[10px] font-bold text-white line-clamp-1">{p.name}</div>
+                    <div className="text-[9px] text-zinc-400 line-clamp-2 mt-0.5 font-sans leading-tight">
+                      {p.description}
+                    </div>
+                  </div>
                 </button>
               );
             })}

@@ -317,54 +317,54 @@ export default function BallisticsGsrPanel() {
 
   return (
     <div className="space-y-6 font-mono text-tactical-text">
-      {/* ── Subsystem Header ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl border border-orange-500/30 bg-orange-500/10 shadow-lg">
-        <div className="flex items-start sm:items-center gap-3 min-w-0">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-orange-500/20 border border-orange-500/40 text-orange-300 shadow-[0_0_15px_rgba(249,115,22,0.2)]">
-            <Target className="w-5 h-5" />
-          </div>
-          <div className="min-w-0 space-y-0.5">
-            <div className="flex flex-wrap items-center gap-2">
-              <h2 className="text-sm sm:text-base font-bold tracking-widest text-tactical-text uppercase">
-                {isTr ? "Adli Balistik & SEM-EDX GSR Analizi" : "Forensic Ballistics & SEM-EDX GSR Analysis"}
-              </h2>
-              <span className="px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-bold bg-orange-500/20 text-orange-300 border border-orange-500/30 whitespace-nowrap shrink-0">
-                ASTM E1588 • NIST 3D CMC
-              </span>
+      {/* ── Modern Unified Benchmark & Standards Mission Bar ────────────── */}
+      <div className="bg-[#080D1A] border border-tactical-border/80 rounded-2xl p-4 sm:p-5 shadow-xl space-y-4">
+        {/* Top: Engine Identity & Technical Verification Badges */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-tactical-border/40 pb-3.5">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="p-2 bg-orange-500/10 border border-orange-500/30 rounded-xl text-orange-400 shrink-0">
+              <Target className="w-5 h-5 animate-pulse" />
             </div>
-            <p className="text-[10px] text-zinc-400 leading-relaxed">
-              {isTr
-                ? "SEM-EDX Pb-Ba-Sb Parçacık Sınıfları • 3D Uyumlu Eşleşen Hücreler (CMC) Yiv-Set Karşılaştırması"
-                : "SEM-EDX Pb-Ba-Sb Particle Tiers • 3D Congruent Matching Cells (CMC) Striation Toolmark Comparison"}
-            </p>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs sm:text-sm font-extrabold text-white uppercase tracking-wider truncate">
+                  {isTr ? "Adli Balistik & SEM-EDX GSR Analizi" : "Forensic Ballistics & SEM-EDX GSR"}
+                </span>
+                <span className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-orange-500/10 border border-orange-500/30 text-orange-300">
+                  ASTM E1588 • NIST 3D CMC
+                </span>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <div className="flex flex-wrap items-center gap-2 shrink-0">
-          {lastActionTime && (
-            <span className="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-1 rounded hidden md:flex items-center gap-1">
-              <Check className="w-3 h-3" />
-              {lastActionTime}
-            </span>
-          )}
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
+            {lastActionTime && (
+              <span className="text-[9px] text-emerald-400 font-bold bg-white/[0.03] border border-white/10 px-2.5 py-1 rounded-lg flex items-center gap-1">
+                <Check className="w-3 h-3" />
+                {lastActionTime}
+              </span>
+            )}
 
-          <div className="flex bg-black/60 p-1 rounded-xl border border-tactical-border/60 w-full sm:w-auto overflow-x-auto">
-            <button
-              onClick={() => setActiveSubTab("gsr")}
-              className={`min-h-[36px] px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center justify-center flex-1 sm:flex-initial ${
-                activeSubTab === "gsr" ? "bg-orange-500 text-black shadow-md font-extrabold" : "text-zinc-400 hover:text-zinc-200"
-              }`}
-            >
-              SEM-EDX GSR
-            </button>
-            <button
-              onClick={() => setActiveSubTab("cmc")}
-              className={`min-h-[36px] px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center justify-center flex-1 sm:flex-initial ${
-                activeSubTab === "cmc" ? "bg-orange-500 text-black shadow-md font-extrabold" : "text-zinc-400 hover:text-zinc-200"
-              }`}
-            >
-              3D CMC Balistik
-            </button>
+            <div className="flex bg-black/60 p-1 rounded-xl border border-tactical-border/60">
+              <button
+                type="button"
+                onClick={() => setActiveSubTab("gsr")}
+                className={`px-3 py-1 rounded-lg text-[10px] font-bold transition-all cursor-pointer ${
+                  activeSubTab === "gsr" ? "bg-orange-500/20 text-orange-300 border border-orange-500/50 shadow-sm" : "text-zinc-400 hover:text-zinc-200"
+                }`}
+              >
+                SEM-EDX GSR
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveSubTab("cmc")}
+                className={`px-3 py-1 rounded-lg text-[10px] font-bold transition-all cursor-pointer ${
+                  activeSubTab === "cmc" ? "bg-orange-500/20 text-orange-300 border border-orange-500/50 shadow-sm" : "text-zinc-400 hover:text-zinc-200"
+                }`}
+              >
+                3D CMC Balistik
+              </button>
+            </div>
           </div>
         </div>
       </div>

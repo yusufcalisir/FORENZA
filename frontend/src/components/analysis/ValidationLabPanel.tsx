@@ -298,49 +298,41 @@ export default function ValidationLabPanel() {
 
   return (
     <div className="space-y-6 font-mono text-zinc-200">
-      {/* ── Top Telemetry Banner ── */}
-      <div className="relative overflow-hidden rounded-2xl border border-tactical-border/60 bg-tactical-surface/50 p-5 backdrop-blur-xl shadow-2xl">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          <div className="space-y-1.5">
-            <div className="flex flex-wrap items-center gap-2.5">
-              <div className="flex items-center gap-2 rounded-lg bg-emerald-500/10 px-2.5 py-1 border border-emerald-500/30">
-                <ShieldCheck className="h-4 w-4 text-emerald-400" />
-                <span className="text-[11px] font-bold tracking-wider text-emerald-300 uppercase">
-                  {isTr ? "ISO/IEC 17025 • ENFSI 2017 DOĞRULAMA LABORATUVARI" : "ISO/IEC 17025 • ENFSI 2017 VALIDATION LAB"}
+      {/* ── Modern Unified Benchmark & Standards Mission Bar ────────────── */}
+      <div className="bg-[#080D1A] border border-tactical-border/80 rounded-2xl p-4 sm:p-5 shadow-xl space-y-4">
+        {/* Top: Engine Identity & Technical Verification Badges */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-tactical-border/40 pb-3.5">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="p-2 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-400 shrink-0">
+              <Scale className="w-5 h-5 animate-pulse" />
+            </div>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs sm:text-sm font-extrabold text-white uppercase tracking-wider truncate">
+                  {isTr ? "Tippett ROC Kalibrasyonu & Yanıltıcı Delil" : "Tippett ROC Calibration & Validation"}
+                </span>
+                <span className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-300">
+                  ENFSI 2017 • ISO 17025
                 </span>
               </div>
-              <span className="text-xs text-zinc-500">•</span>
-              <span className="text-xs font-semibold text-zinc-400">
-                {isTr ? "Modül 05: Tippett Grafiği ROC Kalibrasyonu & Yanıltıcı Delil" : "Module 05: Tippett Plot ROC Calibration & Misleading Evidence"}
-              </span>
             </div>
-            <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white flex items-center gap-2">
-              <Scale className="h-6 w-6 text-emerald-400" />
-              {isTr ? "Tippett Kalibrasyonu & Yanıltıcı Delil Doğrulama Laboratuvarı" : "Tippett Calibration & Misleading Evidence Lab"}
-            </h1>
-            <p className="text-xs text-zinc-400 max-w-3xl">
-              {isTr
-                ? "Sürekli olasılıksal genotipleme modellerinin gerçek donörler (H_p) ve donör-dışı bireyler (H_d) karşısında ampirik doğrulaması. Tippett tamamlayıcı CDF'leri, ROC AUC, Log-Likelihood-Ratio Maliyeti (Cllr) ve ENFSI 2017 değerlendirici raporlama ölçekleri değerlendirilir."
-                : "Empirical validation of continuous probabilistic genotyping models against ground-truth true donors (H_p) and non-donors (H_d). Evaluates Tippett complementary CDFs, ROC AUC, Log-Likelihood-Ratio Cost (Cllr), and ENFSI 2017 evaluative reporting scales."}
-            </p>
           </div>
 
-          {/* Quick Action Button */}
-          <div className="flex flex-wrap items-center gap-2 shrink-0 w-full sm:w-auto">
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
             <button
               onClick={handleExecuteSimulation}
               disabled={isRunning}
-              className="w-full sm:w-auto min-h-[42px] flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-xs font-bold uppercase tracking-wider shadow-lg shadow-emerald-900/30 hover:brightness-110 active:scale-95 transition-all cursor-pointer disabled:opacity-50"
+              className="flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-[11px] font-bold uppercase tracking-wider shadow-md hover:brightness-110 active:scale-95 transition-all cursor-pointer disabled:opacity-50"
             >
-              <Play className={`h-4 w-4 ${isRunning ? "animate-spin" : ""}`} />
-              {isRunning ? (isTr ? "MCMC Çalıştırılıyor..." : "Running MCMC...") : (isTr ? "Simülasyonu Başlat" : "Execute Simulation")}
+              <Play className={`w-3.5 h-3.5 ${isRunning ? "animate-spin" : ""}`} />
+              <span>{isRunning ? (isTr ? "MCMC Çalıştırılıyor..." : "Running...") : (isTr ? "Simülasyonu Başlat" : "Execute Simulation")}</span>
             </button>
           </div>
         </div>
 
         {/* Live Progress Bar */}
         {isRunning && (
-          <div className="mt-4 space-y-1.5">
+          <div className="space-y-1.5">
             <div className="flex justify-between text-[10px] text-zinc-400">
               <span className="text-emerald-400 font-bold">{stageText}</span>
               <span className="font-bold">%{progress}</span>
@@ -355,33 +347,45 @@ export default function ValidationLabPanel() {
             </div>
           </div>
         )}
-      </div>
 
-      {/* ── Preset Selectors & Parameter Matrix ── */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-        {PRESET_BENCHMARKS.map((preset) => {
-          const isSelected = selectedPreset === preset.id;
-          return (
-            <button
-              key={preset.id}
-              onClick={() => setSelectedPreset(preset.id)}
-              className={`p-4 rounded-xl border text-left transition-all cursor-pointer relative overflow-hidden min-h-[44px] ${
-                isSelected
-                  ? "bg-emerald-950/30 border-emerald-500/60 shadow-lg shadow-emerald-950/20"
-                  : "bg-tactical-surface/40 border-tactical-border/40 hover:border-tactical-border/80 hover:bg-tactical-surface/60"
-              }`}
-            >
-              <div className="flex items-center justify-between gap-2 mb-1.5">
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-black/50 text-emerald-400 border border-emerald-500/30">
-                  {preset.badge}
-                </span>
-                {isSelected && <Check className="h-4 w-4 text-emerald-400" />}
-              </div>
-              <h3 className="text-xs font-bold text-white mb-1">{preset.name}</h3>
-              <p className="text-[10px] text-zinc-400 line-clamp-2">{preset.description}</p>
-            </button>
-          );
-        })}
+        {/* Bottom: Casework Benchmark Scenario Cards */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between text-[9px] font-bold text-zinc-400 uppercase tracking-widest px-0.5">
+            <span>{isTr ? "Doğrulama Kohortu Seçin:" : "Select Validation Cohort:"}</span>
+            <span className="text-zinc-500 font-mono">3 Senaryo</span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+            {PRESET_BENCHMARKS.map((preset) => {
+              const isSelected = selectedPreset === preset.id;
+              return (
+                <button
+                  type="button"
+                  key={preset.id}
+                  onClick={() => setSelectedPreset(preset.id)}
+                  className={`p-3 rounded-xl text-left transition-all border cursor-pointer flex flex-col justify-between space-y-1.5 ${
+                    isSelected
+                      ? "bg-emerald-500/15 border-emerald-500/50 text-white shadow-md shadow-emerald-500/10"
+                      : "bg-black/30 border-tactical-border/50 text-zinc-400 hover:bg-white/5 hover:text-zinc-200 hover:border-tactical-border"
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-1">
+                    <span className="text-[8px] font-mono font-bold px-1.5 py-0.5 rounded bg-black/60 border border-white/10 text-zinc-300">
+                      {preset.badge}
+                    </span>
+                    {isSelected && <Check className="w-3 h-3 text-emerald-400 shrink-0" />}
+                  </div>
+                  <div>
+                    <div className="text-[10px] font-bold text-white line-clamp-1">{preset.name}</div>
+                    <div className="text-[9px] text-zinc-400 line-clamp-2 mt-0.5 font-sans leading-tight">
+                      {preset.description}
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
       </div>
 
       {/* ── Secondary Control Ribbon ── */}

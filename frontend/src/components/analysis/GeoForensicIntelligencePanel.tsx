@@ -780,7 +780,7 @@ export default function GeoForensicIntelligencePanel({
                                 {isTr ? TELEMETRY_PHASES[currentPhaseIndex].labelTr : TELEMETRY_PHASES[currentPhaseIndex].label}
                             </span>
                             <span className="text-zinc-500 hidden md:inline truncate">
-                                — {isTr ? TELEMETRY_PHASES[currentPhaseIndex].descriptionTr : TELEMETRY_PHASES[currentPhaseIndex].description}
+                                : {isTr ? TELEMETRY_PHASES[currentPhaseIndex].descriptionTr : TELEMETRY_PHASES[currentPhaseIndex].description}
                             </span>
                         </div>
 
@@ -897,7 +897,7 @@ export default function GeoForensicIntelligencePanel({
                                     {isTr ? TELEMETRY_PHASES[currentPhaseIndex].labelTr : TELEMETRY_PHASES[currentPhaseIndex].label}
                                 </span>
                                 <span className="text-zinc-500 hidden sm:inline">
-                                    — {isTr ? TELEMETRY_PHASES[currentPhaseIndex].descriptionTr : TELEMETRY_PHASES[currentPhaseIndex].description}
+                                    : {isTr ? TELEMETRY_PHASES[currentPhaseIndex].descriptionTr : TELEMETRY_PHASES[currentPhaseIndex].description}
                                 </span>
                             </div>
                             <span className="text-cyan-400 font-bold tabular-nums">
@@ -1428,7 +1428,7 @@ export default function GeoForensicIntelligencePanel({
                                         !metaResult ? "text-zinc-600" :
                                         metaResult.aitchisonDistance < 1.5 ? "text-emerald-400" : "text-rose-400"
                                     }`}>
-                                        {metaResult ? metaResult.aitchisonDistance.toFixed(4) : "—"}
+                                        {metaResult ? metaResult.aitchisonDistance.toFixed(4) : "-"}
                                     </p>
                                 </div>
                                 <div className="p-3 rounded-xl bg-zinc-900/60 border border-zinc-800 text-center">
@@ -1438,13 +1438,13 @@ export default function GeoForensicIntelligencePanel({
                                         metaResult.log10lr >= 2 ? "text-emerald-400" :
                                         metaResult.log10lr >= 0 ? "text-amber-400" : "text-rose-400"
                                     }`}>
-                                        {metaResult ? (metaResult.log10lr >= 0 ? "+" : "") + metaResult.log10lr.toFixed(2) : "—"}
+                                        {metaResult ? (metaResult.log10lr >= 0 ? "+" : "") + metaResult.log10lr.toFixed(2) : "-"}
                                     </p>
                                 </div>
                                 <div className="p-3 rounded-xl bg-zinc-900/60 border border-zinc-800 text-center col-span-2 sm:col-span-1">
                                     <p className="text-[9px] font-mono text-zinc-500 uppercase">U₉₅% (GUM)</p>
                                     <p className="text-sm font-bold font-mono text-amber-400">
-                                        {metaResult ? `±${metaResult.uExpanded.toFixed(2)} log₁₀` : "—"}
+                                        {metaResult ? `±${metaResult.uExpanded.toFixed(2)} log₁₀` : "-"}
                                     </p>
                                 </div>
                             </div>
@@ -1645,13 +1645,13 @@ export default function GeoForensicIntelligencePanel({
                                 <div className="flex justify-between">
                                     <span className="text-zinc-400">{isTr ? "Arama Verimliliği (SEI):" : "Search Efficiency (SEI):"}</span>
                                     <span className={`font-bold ${bayesianFusionResult ? "text-emerald-400" : "text-zinc-500"}`}>
-                                        {bayesianFusionResult ? `${bayesianFusionResult.sei.toFixed(2)}%` : "—"}
+                                        {bayesianFusionResult ? `${bayesianFusionResult.sei.toFixed(2)}%` : "-"}
                                     </span>
                                 </div>
                                 <div className="flex justify-between">
                                     <span className="text-zinc-400">{isTr ? "S50% Arama Çekirdeği:" : "S50% Search Core:"}</span>
                                     <span className={`font-bold ${bayesianFusionResult ? "text-cyan-400" : "text-zinc-500"}`}>
-                                        {bayesianFusionResult ? `${bayesianFusionResult.searchArea50pct.toFixed(2)} km²` : "—"}
+                                        {bayesianFusionResult ? `${bayesianFusionResult.searchArea50pct.toFixed(2)} km²` : "-"}
                                     </span>
                                 </div>
                                 <div className="flex justify-between">
@@ -1781,7 +1781,7 @@ export default function GeoForensicIntelligencePanel({
 
                             {/* Section 3 & 4: Methods & Empirical Results */}
                             <div className="p-3.5 rounded-xl bg-black/50 border border-zinc-800 space-y-2">
-                                <span className="text-[10px] text-zinc-500 uppercase font-bold">3. Biocomputational Methods & Validated Pipeline</span>
+                                <span className="text-[10px] text-zinc-500 uppercase font-bold">3. Biocomputational Methods : Validated Pipeline</span>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
                                     <p><span className="text-zinc-400">Engines:</span> {metaIsoCert.methods?.classifier_engines?.join(", ")}</p>
                                     <p><span className="text-zinc-400">DB:</span> {metaIsoCert.methods?.reference_database}</p>

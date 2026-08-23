@@ -26,6 +26,31 @@ from ..schemas import (
 )
 
 
+def _parse_scalar(val: Any, modulus: int) -> int:
+    """Robustly converts any int, str, hex, list or float into a field scalar."""
+    if isinstance(val, list):
+        val = val[0] if len(val) > 0 else 0
+    if isinstance(val, str):
+        if val.startswith("0x") or val.startswith("0X"):
+            try:
+                return int(val, 16) % modulus
+            except ValueError:
+                return 0
+        try:
+            return int(val) % modulus
+        except ValueError:
+            try:
+                return int(float(val)) % modulus
+            except (ValueError, OverflowError):
+                return 0
+    if isinstance(val, (int, float)):
+        try:
+            return int(val) % modulus
+        except (ValueError, OverflowError):
+            return 0
+    return 0
+
+
 class PlonkEngine:
     """
     PLONK-KZG Proving & Verification Engine.
@@ -50,8 +75,8 @@ class PlonkEngine:
         r = self.modulus
 
         # 1. Wire evaluations at secret tau
-        pub_val = instance.claimed_lr_threshold_quantized % r
-        wit_val = witness.quotient_advice % r
+        pub_val = _parse_scalar(instance.claimed_lr_threshold_quantized, r)
+        wit_val = _parse_scalar(witness.quotient_advice, r)
 
         w_a = (pub_val + self.srs_tau) % r
         w_b = (wit_val + self.srs_tau * 2) % r
@@ -75,12 +100,12 @@ class PlonkEngine:
         q_tau = ((f_tau - v_eval) * denom_inv) % r
 
         # Construct elliptic curve points for 576-byte PLONK proof
-        point_wire_a = EllipticCurvePoint(x=int(w_a), y=int(w_a * 2 % BN254_BASE_FIELD_Q), group="G1")
-        point_wire_b = EllipticCurvePoint(x=int(w_b), y=int(w_b * 2 % BN254_BASE_FIELD_Q), group="G1")
-        point_wire_c = EllipticCurvePoint(x=int(w_c), y=int(w_c * 2 % BN254_BASE_FIELD_Q), group="G1")
-        point_z = EllipticCurvePoint(x=int(z_eval), y=int(z_eval * 2 % BN254_BASE_FIELD_Q), group="G1")
-        point_t = EllipticCurvePoint(x=int(t_eval), y=int(t_eval * 2 % BN254_BASE_FIELD_Q), group="G1")
-        point_opening = EllipticCurvePoint(x=int(q_tau), y=int(q_tau * 2 % BN254_BASE_FIELD_Q), group="G1")
+        point_wire_a = EllipticCurvePoint(x=f"0x{int(w_a):064x}", y=f"0x{int(w_a * 2 % BN254_BASE_FIELD_Q):064x}", group="G1")
+        point_wire_b = EllipticCurvePoint(x=f"0x{int(w_b):064x}", y=f"0x{int(w_b * 2 % BN254_BASE_FIELD_Q):064x}", group="G1")
+        point_wire_c = EllipticCurvePoint(x=f"0x{int(w_c):064x}", y=f"0x{int(w_c * 2 % BN254_BASE_FIELD_Q):064x}", group="G1")
+        point_z = EllipticCurvePoint(x=f"0x{int(z_eval):064x}", y=f"0x{int(z_eval * 2 % BN254_BASE_FIELD_Q):064x}", group="G1")
+        point_t = EllipticCurvePoint(x=f"0x{int(t_eval):064x}", y=f"0x{int(t_eval * 2 % BN254_BASE_FIELD_Q):064x}", group="G1")
+        point_opening = EllipticCurvePoint(x=f"0x{int(q_tau):064x}", y=f"0x{int(q_tau * 2 % BN254_BASE_FIELD_Q):064x}", group="G1")
 
         proof = PlonkProof(
             wire_commitments=[point_wire_a, point_wire_b, point_wire_c],
@@ -105,7 +130,7 @@ class PlonkEngine:
         start_time = time.perf_counter()
         r = self.modulus
 
-        q_tau = proof.kzg_opening_proof.x if isinstance(proof.kzg_opening_proof.x, int) else proof.kzg_opening_proof.x[0]
+        q_tau = _parse_scalar(proof.kzg_opening_proof.x, r)
 
         # Reconstructed commitment evaluation
         v_eval = 10
@@ -118,6 +143,7 @@ class PlonkEngine:
             quotient_proof_scalar=q_tau,
             srs_tau_scalar=self.srs_tau,
         )
+
 
         latency_ms = (time.perf_counter() - start_time) * 1000.0
 

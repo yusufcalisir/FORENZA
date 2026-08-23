@@ -45,8 +45,8 @@ class EllipticCurvePoint(BaseModel):
     """Affine coordinate point in G1 or G2 group."""
     model_config = ConfigDict(protected_namespaces=(), populate_by_name=True)
 
-    x: Union[int, List[int]] = Field(..., description="x-coordinate (int for G1, [x0, x1] for G2 in F_q^2)")
-    y: Union[int, List[int]] = Field(..., description="y-coordinate (int for G1, [y0, y1] for G2 in F_q^2)")
+    x: Union[int, str, float, List[Union[int, str, float]]] = Field(..., description="x-coordinate (int/hex for G1, [x0, x1] for G2 in F_q^2)")
+    y: Union[int, str, float, List[Union[int, str, float]]] = Field(..., description="y-coordinate (int/hex for G1, [y0, y1] for G2 in F_q^2)")
     is_infinity: bool = Field(default=False, description="Point at infinity indicator")
     group: str = Field(default="G1", description="Group identifier (G1, G2, GT)")
 
@@ -79,7 +79,7 @@ class ZKProofInstance(BaseModel):
 
     case_id_hash: str = Field(..., description="Hex SHA-256 / Blake3 hash of forensic case metadata")
     claimed_lr_threshold: float = Field(..., ge=0.0, description="Claimed Likelihood Ratio threshold (e.g. M_thresh = 1e6)")
-    claimed_lr_threshold_quantized: int = Field(..., description="Scaled integer representation floor(M_thresh * 2^S)")
+    claimed_lr_threshold_quantized: Union[int, float, str] = Field(..., description="Scaled integer representation floor(M_thresh * 2^S)")
     merkle_root: str = Field(..., description="Hex 32-byte Merkle root of reference allele database")
     locus_count: int = Field(default=24, ge=1, le=100, description="Number of evaluated forensic loci")
     scale_s: int = Field(default=16, description="Fixed-point scaling factor used in circuit")
@@ -93,10 +93,11 @@ class ZKWitnessData(BaseModel):
     suspect_genotypes: Dict[str, Tuple[float, float]] = Field(..., description="Private suspect allele calls per locus")
     evidence_peak_heights: Dict[str, Dict[float, float]] = Field(..., description="Electropherogram RFU peak heights per locus")
     true_likelihood_ratio: float = Field(..., ge=0.0, description="Computed continuous Likelihood Ratio")
-    numerator_quantized: int = Field(..., description="Quantized numerator N_hat")
-    denominator_quantized: int = Field(..., description="Quantized denominator D_hat")
-    quotient_advice: int = Field(..., description="Non-deterministic quotient advice LR_hat")
-    remainder_advice: int = Field(..., description="Non-deterministic remainder advice r")
+    numerator_quantized: Union[int, float, str] = Field(..., description="Quantized numerator N_hat")
+    denominator_quantized: Union[int, float, str] = Field(..., description="Quantized denominator D_hat")
+    quotient_advice: Union[int, float, str] = Field(..., description="Non-deterministic quotient advice LR_hat")
+    remainder_advice: Union[int, float, str] = Field(..., description="Non-deterministic remainder advice r")
+
 
 
 class ZKVerificationResult(BaseModel):

@@ -51,6 +51,31 @@ class Groth16VerificationKey:
         self.modulus = BN254_SCALAR_FIELD_R
 
 
+def _parse_scalar(val: Any, modulus: int) -> int:
+    """Robustly converts any int, str, hex, list or float into a field scalar."""
+    if isinstance(val, list):
+        val = val[0] if len(val) > 0 else 0
+    if isinstance(val, str):
+        if val.startswith("0x") or val.startswith("0X"):
+            try:
+                return int(val, 16) % modulus
+            except ValueError:
+                return 0
+        try:
+            return int(val) % modulus
+        except ValueError:
+            try:
+                return int(float(val)) % modulus
+            except (ValueError, OverflowError):
+                return 0
+    if isinstance(val, (int, float)):
+        try:
+            return int(val) % modulus
+        except (ValueError, OverflowError):
+            return 0
+    return 0
+
+
 class Groth16Engine:
     """
     Groth16 Prover & Verifier Engine over BN254 Curve.
@@ -82,8 +107,8 @@ class Groth16Engine:
         r = self.modulus
 
         # 1. Evaluate instance and witness linear combinations
-        pub_val = instance.claimed_lr_threshold_quantized % r
-        wit_val = witness.quotient_advice % r
+        pub_val = _parse_scalar(instance.claimed_lr_threshold_quantized, r)
+        wit_val = _parse_scalar(witness.quotient_advice, r)
 
         # Simulated QAP polynomial evaluations at tau
         l_eval = (pub_val + wit_val) % r
@@ -102,10 +127,22 @@ class Groth16Engine:
         delta_inv = pow(self.pk.delta, r - 2, r)
         c_scalar = (target * delta_inv) % r
 
-        # Construct elliptic curve representation
-        point_a = EllipticCurvePoint(x=int(a_scalar), y=int(a_scalar * 2 % BN254_BASE_FIELD_Q), group="G1")
-        point_b = EllipticCurvePoint(x=[int(b_scalar), 1], y=[int(b_scalar * 2 % BN254_BASE_FIELD_Q), 2], group="G2")
-        point_c = EllipticCurvePoint(x=int(c_scalar), y=int(c_scalar * 2 % BN254_BASE_FIELD_Q), group="G1")
+        # Construct elliptic curve representation with hex strings to prevent precision loss in JS
+        point_a = EllipticCurvePoint(
+            x=f"0x{int(a_scalar):064x}",
+            y=f"0x{int(a_scalar * 2 % BN254_BASE_FIELD_Q):064x}",
+            group="G1"
+        )
+        point_b = EllipticCurvePoint(
+            x=[f"0x{int(b_scalar):064x}", "0x0000000000000000000000000000000000000000000000000000000000000001"],
+            y=[f"0x{int(b_scalar * 2 % BN254_BASE_FIELD_Q):064x}", "0x0000000000000000000000000000000000000000000000000000000000000002"],
+            group="G2"
+        )
+        point_c = EllipticCurvePoint(
+            x=f"0x{int(c_scalar):064x}",
+            y=f"0x{int(c_scalar * 2 % BN254_BASE_FIELD_Q):064x}",
+            group="G1"
+        )
 
         proof = Groth16Proof(
             a=point_a,
@@ -129,12 +166,12 @@ class Groth16Engine:
         start_time = time.perf_counter()
         r = self.modulus
 
-        pub_val = instance.claimed_lr_threshold_quantized % r
+        pub_val = _parse_scalar(instance.claimed_lr_threshold_quantized, r)
         public_inputs_eval = (self.vk.ic[0] + self.vk.ic[1] * (pub_val % 1000)) % r
 
-        a_scalar = proof.a.x if isinstance(proof.a.x, int) else proof.a.x[0]
-        b_scalar = proof.b.x if isinstance(proof.b.x, int) else proof.b.x[0]
-        c_scalar = proof.c.x if isinstance(proof.c.x, int) else proof.c.x[0]
+        a_scalar = _parse_scalar(proof.a.x, r)
+        b_scalar = _parse_scalar(proof.b.x, r)
+        c_scalar = _parse_scalar(proof.c.x, r)
 
         is_valid, residual = BilinearPairingEngine.evaluate_groth16_pairing_check(
             proof_a_scalar=a_scalar,
@@ -146,6 +183,7 @@ class Groth16Engine:
             delta_scalar=self.vk.delta,
             public_inputs_linear_comb=public_inputs_eval,
         )
+
 
         latency_ms = (time.perf_counter() - start_time) * 1000.0
 

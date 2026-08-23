@@ -133,36 +133,40 @@ def synthesize_zk_proof(req: ProofSynthesisRequest) -> Dict[str, Any]:
 @router.post("/verify-proof")
 def verify_zk_proof(req: ProofVerificationRequest) -> Dict[str, Any]:
     """Verifies a zero-knowledge proof against public instance with pairing/range checks."""
-    if req.proving_system == ProvingSystemType.GROTH16:
-        engine = Groth16Engine()
-        proof = Groth16Proof(**req.proof_payload)
-        res = engine.verify_proof(req.instance, proof)
-    elif req.proving_system == ProvingSystemType.PLONK_KZG:
-        engine = PlonkEngine()
-        proof = PlonkProof(**req.proof_payload)
-        res = engine.verify_proof(req.instance, proof)
-    elif req.proving_system == ProvingSystemType.HALO2_KZG:
-        engine = Halo2Engine()
-        res = engine.verify_proof(req.instance, req.proof_payload)
-    elif req.proving_system == ProvingSystemType.VOLE_EMP:
-        engine = VoleEngine()
-        res = engine.verify_stream_proof(req.instance, req.proof_payload)
-    else:
-        raise HTTPException(status_code=400, detail=f"Unsupported proving system {req.proving_system}")
+    try:
+        if req.proving_system == ProvingSystemType.GROTH16:
+            engine = Groth16Engine()
+            proof = Groth16Proof(**req.proof_payload) if isinstance(req.proof_payload, dict) else req.proof_payload
+            res = engine.verify_proof(req.instance, proof)
+        elif req.proving_system == ProvingSystemType.PLONK_KZG:
+            engine = PlonkEngine()
+            proof = PlonkProof(**req.proof_payload) if isinstance(req.proof_payload, dict) else req.proof_payload
+            res = engine.verify_proof(req.instance, proof)
+        elif req.proving_system == ProvingSystemType.HALO2_KZG:
+            engine = Halo2Engine()
+            res = engine.verify_proof(req.instance, req.proof_payload)
+        elif req.proving_system == ProvingSystemType.VOLE_EMP:
+            engine = VoleEngine()
+            res = engine.verify_stream_proof(req.instance, req.proof_payload)
+        else:
+            raise HTTPException(status_code=400, detail=f"Unsupported proving system {req.proving_system}")
 
-    certificate = ZKForensicGovernanceEngine.generate_iso17025_zk_certificate(
-        case_id_hash=req.instance.case_id_hash,
-        proving_system=req.proving_system.value,
-        claimed_threshold=req.instance.claimed_lr_threshold,
-        is_verified=res.is_valid,
-        audit_hash=res.audit_hash,
-    )
+        certificate = ZKForensicGovernanceEngine.generate_iso17025_zk_certificate(
+            case_id_hash=req.instance.case_id_hash,
+            proving_system=req.proving_system.value,
+            claimed_threshold=req.instance.claimed_lr_threshold,
+            is_verified=res.is_valid,
+            audit_hash=res.audit_hash,
+        )
 
-    return {
-        "status": "SUCCESS",
-        "verification_result": res.model_dump(),
-        "iso17025_certificate": certificate,
-    }
+        return {
+            "status": "SUCCESS",
+            "verification_result": res.model_dump(),
+            "iso17025_certificate": certificate,
+        }
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail=f"ZK Verification error: {str(exc)}")
+
 
 
 @router.post("/verify-ceremony-transcript")

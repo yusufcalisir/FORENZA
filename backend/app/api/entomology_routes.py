@@ -35,7 +35,7 @@ async def estimate_entomology_pmi(body: EntomologyPmiRequest) -> EntomologyPmiRe
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Entomology PMI estimation failed: {str(exc)}"
         )
 
@@ -68,7 +68,7 @@ async def audit_arthropod_succession(body: SuccessionAuditRequest) -> Succession
         res = _succession_auditor.audit_succession_wave(body.sample_id, occ)
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Succession audit failed: {str(exc)}"
         )
 

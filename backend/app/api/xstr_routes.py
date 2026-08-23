@@ -99,7 +99,7 @@ async def evaluate_xstr_kinship(body: XSTRKinshipRequest) -> XSTRKinshipResponse
             raw_b = body.profile_b
         else:
             raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                 detail="Either (profile1, profile2) or (profile_a, profile_b) must be supplied.",
             )
 
@@ -145,7 +145,7 @@ async def evaluate_xstr_kinship(body: XSTRKinshipRequest) -> XSTRKinshipResponse
         raise
     except ValueError as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"X-STR input validation error: {str(exc)}",
         )
     except Exception as exc:
@@ -200,7 +200,7 @@ async def compute_kosambi(body: KosambiRequest) -> KosambiResponse:
         r = XStrMathematicalFormulation.kosambi_map(body.genetic_distance_cm)
     except ValueError as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Kosambi validation error: {str(exc)}",
         )
     return KosambiResponse(

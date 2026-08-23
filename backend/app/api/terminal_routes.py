@@ -193,7 +193,7 @@ def parse_forensic_file(req: IngestTerminalFileRequest) -> IngestTerminalFileRes
         )
     except Exception as e:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Failed to parse forensic file: {str(e)}"
         )
 

@@ -56,7 +56,7 @@ async def classify_microbial_taxa(body: MicrobiologyClassifyRequest) -> Microbio
         res = _microbiology_engine.classify_microbial_profile(prof_dom)
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Microbial classification failed: {str(exc)}"
         )
 
@@ -90,7 +90,7 @@ async def predict_microbial_body_site(body: BodySiteOriginRequest) -> BodySiteOr
         res = _origin_auditor.predict_body_site_origin(prof_dom)
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Body site origin prediction failed: {str(exc)}"
         )
 
@@ -116,7 +116,7 @@ async def estimate_thanatomicrobiome_pmi(body: ThanatoPmiRequest) -> ThanatoPmiR
         return _thanato_engine.predict_pmi(body)
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Thanatomicrobiome PMI estimation failed: {str(exc)}"
         )
 
@@ -133,7 +133,7 @@ async def evaluate_touch_trace_association(body: TouchTraceMatchRequest) -> Touc
         return _touch_engine.evaluate_touch_association(body)
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Touch trace association evaluation failed: {str(exc)}"
         )
 
@@ -150,7 +150,7 @@ async def classify_microbial_body_fluid(body: BodyFluidMicrobiomeRequest) -> Bod
         return _fluid_classifier.classify_fluid(body)
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Microbial body fluid classification failed: {str(exc)}"
         )
 
@@ -167,6 +167,6 @@ async def analyze_soil_cdi_taphonomy(body: SoilCdiTaphonomyRequest) -> SoilCdiTa
         return _soil_engine.analyze_soil_cdi(body)
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Soil CDI taphonomy analysis failed: {str(exc)}"
         )

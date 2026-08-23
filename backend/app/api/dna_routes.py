@@ -39,7 +39,7 @@ async def evaluate_ystr_match(body: YSTRMatchRequest) -> YSTRMatchResponse:
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Y-STR match evaluation failed: {str(exc)}"
         )
 
@@ -75,7 +75,7 @@ async def evaluate_mtdna_match(body: MtDnaMatchRequest) -> MtDnaMatchResponse:
         res = _mtdna_engine.evaluate_mtdna_match(ev_prof, sus_prof)
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"mtDNA match evaluation failed: {str(exc)}"
         )
 

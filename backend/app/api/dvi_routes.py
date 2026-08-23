@@ -97,7 +97,7 @@ async def compute_joint_lr(body: DviJointLRRequest) -> DviJointLRResponse:
         w = DviMathematicalFormulation.compute_posterior_probability(joint_lr=joint_lr, prior=body.prior_probability)
     except ValueError as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"DVI Joint LR calculation error: {str(exc)}",
         )
     except Exception as exc:
@@ -271,7 +271,7 @@ async def reconcile_matrix(body: DviReconciliationMatrixRequest) -> DviReconcili
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"DVI Matrix Reconciliation failed: {str(exc)}",
         )
 
@@ -410,7 +410,7 @@ async def search_missing_person_endpoint(body: Dict[str, Any]) -> Dict[str, Any]
         }
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Missing person search failed: {str(exc)}",
         )
 
@@ -457,6 +457,6 @@ async def reconcile_profiles_endpoint(body: Dict[str, Any]) -> Dict[str, Any]:
         }
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"DVI Reconciliation failed: {str(exc)}",
         )

@@ -44,7 +44,7 @@ async def screen_toxicological_analytes(body: ToxicologyScreenRequest) -> Toxico
         res = _tox_engine.screen_analytes(body.sample_id, analytes_dom)
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Toxicological screening failed: {str(exc)}"
         )
 
@@ -85,7 +85,7 @@ async def calculate_widmark_bac(body: WidmarkBacRequest) -> WidmarkBacResponse:
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Widmark BAC calculation failed: {str(exc)}"
         )
 

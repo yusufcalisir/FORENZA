@@ -74,7 +74,7 @@ async def compute_lr(body: LRRequest) -> LRResponse:
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"LR computation failed: {str(exc)}"
         )
 
@@ -128,7 +128,7 @@ async def compute_kinship(body: KinshipRequest) -> KinshipResponse:
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Kinship computation failed: {str(exc)}"
         )
 

@@ -82,7 +82,7 @@ async def classify_peak_endpoint(req: ClassifyPeakRequest) -> PeakClassification
         return FragsifierRandomForestClassifier.classify_peak(fv)
     except Exception as e:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Peak classification failed: {str(e)}"
         )
 

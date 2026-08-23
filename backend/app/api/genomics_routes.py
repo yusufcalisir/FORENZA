@@ -123,7 +123,7 @@ async def deconvolve_mixture(req: DeconvolveMixtureRequest) -> DeconvolveMixture
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Mixture deconvolution failed: {str(exc)}"
         )
 

@@ -89,7 +89,7 @@ async def compute_dropout_model(body: DropoutModelRequest) -> DropoutModelRespon
             )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Dropout model computation failed: {str(exc)}"
         )
     return DropoutModelResponse(
@@ -138,7 +138,7 @@ async def compute_dropin_model(body: DropinModelRequest) -> DropinModelResponse:
             )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Drop-in model computation failed: {str(exc)}"
         )
     return DropinModelResponse(
@@ -176,7 +176,7 @@ async def evaluate_heterozygote_balance(body: HeterozygoteBalanceRequest) -> Het
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Heterozygote balance evaluation failed: {str(exc)}"
         )
     return HeterozygoteBalanceResponse(
@@ -228,7 +228,7 @@ async def compute_stochastic_lr(body: StochasticLRRequest) -> StochasticLRRespon
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Stochastic LTDNA LR computation failed: {str(exc)}"
         )
     return StochasticLRResponse(
@@ -300,7 +300,7 @@ async def compute_multi_locus_lr(body: MultiLocusLTDNARequest) -> MultiLocusLTDN
         ]
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Multi-locus LTDNA LR computation failed: {str(exc)}"
         )
 
@@ -341,7 +341,7 @@ async def analyze_ltdna(body: AnalyzeLtdnaRequest) -> AnalyzeLtdnaResponse:
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Touch DNA LTDNA analysis failed: {str(exc)}"
         )
     return AnalyzeLtdnaResponse(
@@ -390,7 +390,7 @@ async def contributor_deconv(body: ContributorDeconvRequest) -> ContributorDecon
         log_lr = round(4.5 + 0.05 * body.recovered_mass_pg, 2)
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Touch DNA contributor deconvolution failed: {str(exc)}"
         )
     return ContributorDeconvResponse(

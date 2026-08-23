@@ -79,7 +79,7 @@ async def compute_tippett_curves(body: TippettCurveRequest) -> TippettCurveRespo
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Tippett curve computation failed: {str(exc)}"
         )
     return TippettCurveResponse(
@@ -122,7 +122,7 @@ async def compute_roc_analysis(body: ROCAnalysisRequest) -> ROCAnalysisResponse:
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"ROC analysis failed: {str(exc)}"
         )
     return ROCAnalysisResponse(
@@ -157,7 +157,7 @@ async def compute_cllr_score(body: CllrScoreRequest) -> CllrScoreResponse:
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Cllr computation failed: {str(exc)}"
         )
     return CllrScoreResponse(
@@ -191,7 +191,7 @@ async def compute_hpd_lower_bound(body: HPDLowerBoundRequest) -> HPDLowerBoundRe
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"HPD lower bound computation failed: {str(exc)}"
         )
     return HPDLowerBoundResponse(
@@ -226,7 +226,7 @@ async def map_enfsi_verbal_scale(body: ENFSIScaleRequest) -> ENFSIScaleResponse:
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"ENFSI verbal scale mapping failed: {str(exc)}"
         )
     return ENFSIScaleResponse(
@@ -303,7 +303,7 @@ async def generate_simulation_cohort(body: CohortGenerationRequest) -> CohortGen
 
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Cohort generation failed: {str(exc)}"
         )
 
@@ -338,7 +338,7 @@ async def evaluate_misleading_evidence(body: MisleadingEvidenceRequest) -> Misle
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Misleading evidence evaluation failed: {str(exc)}"
         )
     return MisleadingEvidenceResponse(

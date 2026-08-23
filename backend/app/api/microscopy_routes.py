@@ -34,7 +34,7 @@ async def classify_cell(body: ClassifyCellRequest) -> ClassifyCellResponse:
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Cell morphometry classification failed: {str(exc)}"
         )
 
@@ -65,7 +65,7 @@ async def analyze_hair_morphology(body: HairMorphologyRequest) -> HairMorphology
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Hair morphology analysis failed: {str(exc)}"
         )
 

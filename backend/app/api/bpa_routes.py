@@ -31,7 +31,7 @@ async def analyze_stain(body: AnalyzeStainRequest) -> AnalyzeStainResponse:
         res = _bpa_analyzer.analyze_stain(body.stain_id, body.width_mm, body.length_mm)
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"BPA stain morphometry analysis failed: {str(exc)}"
         )
 
@@ -72,7 +72,7 @@ async def verify_analyst(body: VerifyAnalystRequest) -> AnalyzeStainResponse:
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Analyst verification sign-off failed: {str(exc)}"
         )
 

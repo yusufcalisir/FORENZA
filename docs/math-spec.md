@@ -3247,5 +3247,51 @@ Using First-Order Logic modulo $\mathbb{F}_r$, the formal solver proves signal d
 $$\Phi(\mathbf{x}, \mathbf{w}) \land \Phi(\mathbf{x}, \mathbf{w}') \land (\mathbf{w} \neq \mathbf{w}') \implies \text{UNSAT}$$
 Ensuring zero adversarial degrees of freedom and mathematically unforgeable adli evidence proofs.
 
+---
+
+## 89. Metagenomic & Environmental DNA (eDNA) Taxonomic Classifiers in Forensic Soil Provenance & Palynology (Pillars 7.6 & 4.6)
+
+### 89.1 Exact $k$-mer Minimizer Hashing & LCA Path Scoring (Kraken 2)
+Given canonical $k$-mers ($k=35$) and sliding window minimizers ($m=31$):
+$$\text{Minimizer}(W_k) = \min_{0 \le j \le k-m} \{ \text{hash}(m\text{-mer}_{j}) \}$$
+Classification via weighted Lowest Common Ancestor (LCA) path scoring over rooted taxonomic tree $\mathcal{T}$:
+$$\text{Score}(\text{Path}_p) = \sum_{v \in \text{Path}_p} \text{Weight}(v)$$
+Confidence threshold filter ($C \in [0, 1]$):
+$$\frac{k_{\text{path}}(T)}{k_{\text{total}}} \ge C$$
+
+### 89.2 HyperLogLog Cardinality & Spurious Artifact Rejection (KrakenUniq)
+Unique $k$-mer cardinality estimator ($k_{\text{uniq}}$) with register array $M[0 \dots m-1]$:
+$$E = \alpha_m \cdot m^2 \cdot \left( \sum_{j=0}^{m-1} 2^{-M[j]} \right)^{-1}$$
+False-positive culling condition:
+$$\text{Taxon Valid} \iff k_{\text{uniq}} \ge 2,000 \quad \land \quad D_{\text{horiz}} \ge 0.05$$
+
+### 89.3 Bayesian Read Redistribution (Bracken)
+Iterative expectation-maximization read re-assignment to species-level nodes:
+$$P(S_i \mid G_j) = \frac{P(G_j \mid S_i) P(S_i)}{\sum_{k=1}^n P(G_j \mid S_k) P(S_k)}$$
+$$\hat{N}_{S_i \leftarrow G_j} = N_j \cdot P(S_i \mid G_j)$$
+Simplex sum-to-one abundance invariant:
+$$\sum_{i=1}^D A_i = 100.00\% \quad \left( \left| \sum A_i - 1.0 \right| \le 10^{-6} \right)$$
+
+### 89.4 Clade-Specific Marker Coverage (MetaPhlAn 4)
+Marker depth $C_j = X_j / L_j$. Robust interquartile truncated mean coverage $\bar{C}_i$ discarding top/bottom 20%:
+$$\bar{C}_i = \frac{1}{|M_i^*|} \sum_{j \in M_i^*} C_j, \quad A_i = \frac{\bar{C}_i}{\sum_k \bar{C}_k} \times 100\%$$
+
+### 89.5 Compositional Data Analysis (CoDa) in Aitchison Geometry
+Multiplicative zero replacement ($\delta = 0.5 / N_{\text{reads}}$) followed by Centered Log-Ratio (CLR) transformation:
+$$\text{clr}(\mathbf{x}) = \left[ \ln\left(\frac{x_1}{g(\mathbf{x})}\right), \dots, \ln\left(\frac{x_D}{g(\mathbf{x})}\right) \right], \quad g(\mathbf{x}) = \left( \prod_{i=1}^D x_i \right)^{1/D}$$
+Helmert zero-sum invariant:
+$$\sum_{i=1}^D \text{clr}(x_i) = 0.000000000 \quad (|\sum \text{clr}| < 10^{-9})$$
+Aitchison distance metric ($d_A$):
+$$d_A(\mathbf{x}, \mathbf{y}) = \|\text{clr}(\mathbf{x}) - \text{clr}(\mathbf{y})\|_2 = \sqrt{\sum_{i=1}^D \left( \ln\frac{x_i}{g(\mathbf{x})} - \ln\frac{y_i}{g(\mathbf{y})} \right)^2}$$
+
+### 89.6 Score-Based Likelihood Ratio (SLR) & Multi-Criteria Bayesian Fusion
+For distance metric $d = d_A(E, S)$, evaluated via within-source density $f(d \mid H_p)$ and between-source density $f(d \mid H_d)$:
+$$\text{LR}_{\text{meta}} = \frac{f(d_A(E, S) \mid H_p)}{f(d_A(E, S) \mid H_d)}$$
+Multi-omic forensic geo-fusion log-likelihood summation:
+$$\log_{10}(\text{LR}_{\text{fused}}) = \log_{10}(\text{LR}_{\text{meta}}) + \log_{10}(\text{LR}_{\text{geochem}}) + \log_{10}(\text{LR}_{\text{isoscape}})$$
+Translated to bilingual ENFSI (2017) 7-tier evaluative scale with active Prosecutor's Fallacy shield:
+$$P(E \mid H_p) / P(E \mid H_d) \neq P(H_p \mid E)$$
+
+
 
 

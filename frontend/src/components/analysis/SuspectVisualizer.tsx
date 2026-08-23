@@ -264,6 +264,7 @@ function GenerationLog({ isGenerating }: { isGenerating: boolean }) {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
+import { getApiBaseUrl } from "@/lib/api";
 
 interface ForensicIdentityCardProps {
     profileId?: string;
@@ -323,6 +324,77 @@ export default function SuspectVisualizer({
         rs10756819: 1,
     });
 
+    const [liveCranio, setLiveCranio] = useState<{
+        nasalIndex: number | null;
+        facialIndex: number | null;
+        nasalTypology: string | null;
+        facialTypology: string | null;
+        alarWidth: number | null;
+        nasalHeight: number | null;
+        facialHeight: number | null;
+        bizygomaticWidth: number | null;
+        landmarks: {
+            nasion?: { x: number; y: number; z: number };
+            pronasale?: { x: number; y: number; z: number };
+            subnasale?: { x: number; y: number; z: number };
+            alareLeft?: { x: number; y: number; z: number };
+            menton?: { x: number; y: number; z: number };
+        } | null;
+        isLoading: boolean;
+    }>({
+        nasalIndex: null,
+        facialIndex: null,
+        nasalTypology: null,
+        facialTypology: null,
+        alarWidth: null,
+        nasalHeight: null,
+        facialHeight: null,
+        bizygomaticWidth: null,
+        landmarks: null,
+        isLoading: false,
+    });
+
+    useEffect(() => {
+        const API_BASE = getApiBaseUrl();
+        fetch(`${API_BASE}/api/v1/forensic/phenotyping/craniofacial/reconstruct`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                snp_dosages: morphoSnps,
+                sex: "MALE",
+                age_years: 30.0,
+            }),
+            signal: AbortSignal.timeout(4000),
+        })
+            .then(async (res) => {
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+                const ind = data.anthropological_indices || {};
+                const lm = data.cephalometric_landmarks || {};
+                setLiveCranio({
+                    nasalIndex: ind.nasal_index ?? null,
+                    facialIndex: ind.facial_index ?? null,
+                    nasalTypology: ind.nasal_typology ?? null,
+                    facialTypology: ind.facial_typology ?? null,
+                    alarWidth: ind.alar_width_mm ?? null,
+                    nasalHeight: ind.nasal_height_mm ?? null,
+                    facialHeight: ind.facial_height_mm ?? null,
+                    bizygomaticWidth: ind.bizygomatic_width_mm ?? null,
+                    landmarks: {
+                        nasion: lm.nasion,
+                        pronasale: lm.pronasale,
+                        subnasale: lm.subnasale,
+                        alareLeft: lm.alare_left,
+                        menton: lm.menton,
+                    },
+                    isLoading: false,
+                });
+            })
+            .catch(() => {
+                setLiveCranio((prev) => ({ ...prev, isLoading: false }));
+            });
+    }, [morphoSnps]);
+
     const data = phenotypeReport;
     // Allow external control of loading state, fallback to heuristic if not provided
     const isLoading = externalLoading ?? (!data && !!profileId);
@@ -338,6 +410,7 @@ export default function SuspectVisualizer({
     // Reliability formatting and color logic
     const reliabilityValue = coherenceScore ? (coherenceScore * 100).toFixed(1) : "0.0";
     const reliabilityColor = coherenceScore
+
         ? coherenceScore > 0.8 ? "text-emerald-500"
             : coherenceScore > 0.6 ? "text-amber-500"
                 : "text-red-500"
@@ -617,7 +690,6 @@ export default function SuspectVisualizer({
                                 {(() => {
                                     const x_pax3 = morphoSnps.rs974448 || 0;
                                     const x_pax9 = morphoSnps.rs12882923 || 0;
-                                    const x_prdm16 = morphoSnps.rs11130635 || 0;
                                     const x_dchs2 = morphoSnps.rs13289 || 0;
                                     const x_pcdh15 = morphoSnps.rs7559252 || 0;
 
@@ -628,26 +700,26 @@ export default function SuspectVisualizer({
                                     const me_y = 18.20 + 1.85 * x_pcdh15;
                                     const me_z = -68.50 - 1.20 * x_pcdh15;
 
-                                    const alar_w = 2.0 * (18.50 + 0.95 * x_pax9);
-                                    const nasal_h = Math.sqrt(Math.pow(n_y - sn_y, 2) + Math.pow(n_z - sn_z, 2));
-                                    const nasal_idx = (alar_w / Math.max(nasal_h, 1e-6)) * 100.0;
+                                    const alar_w = liveCranio.alarWidth ?? (2.0 * (18.50 + 0.95 * x_pax9));
+                                    const nasal_h = liveCranio.nasalHeight ?? Math.sqrt(Math.pow(n_y - sn_y, 2) + Math.pow(n_z - sn_z, 2));
+                                    const nasal_idx = liveCranio.nasalIndex ?? ((alar_w / Math.max(nasal_h, 1e-6)) * 100.0);
 
-                                    const facial_h = Math.sqrt(Math.pow(n_y - me_y, 2) + Math.pow(n_z - me_z, 2));
-                                    const bizygomatic_w = 2.0 * (67.50 + 1.60 * x_pax9);
-                                    const facial_idx = (facial_h / Math.max(bizygomatic_w, 1e-6)) * 100.0;
+                                    const facial_h = liveCranio.facialHeight ?? Math.sqrt(Math.pow(n_y - me_y, 2) + Math.pow(n_z - me_z, 2));
+                                    const bizygomatic_w = liveCranio.bizygomaticWidth ?? (2.0 * (67.50 + 1.60 * x_pax9));
+                                    const facial_idx = liveCranio.facialIndex ?? ((facial_h / Math.max(bizygomatic_w, 1e-6)) * 100.0);
 
-                                    const nasal_typology = nasal_idx < 70.0
+                                    const nasal_typology = liveCranio.nasalTypology ?? (nasal_idx < 70.0
                                         ? (isTr ? "LEPTORRİN (Dar Burun)" : "LEPTORRHINE (Narrow)")
                                         : nasal_idx < 75.0
                                         ? (isTr ? "MEZORRİN (Orta Burun)" : "MESORRHINE (Medium)")
-                                        : (isTr ? "PLATİRRİN (Geniş Burun)" : "PLATYRRHINE (Broad)");
-                                    const facial_typology = facial_idx < 80.0
+                                        : (isTr ? "PLATİRRİN (Geniş Burun)" : "PLATYRRHINE (Broad)"));
+                                    const facial_typology = liveCranio.facialTypology ?? (facial_idx < 80.0
                                         ? (isTr ? "HİPERÖRİPROZOPOK (Geniş Yüz)" : "HYPEREURYPROSOPIC")
                                         : facial_idx < 85.0
                                         ? (isTr ? "ÖRİPROZOPOK" : "EURYPROSOPIC")
                                         : facial_idx < 90.0
                                         ? (isTr ? "MEZOPROZOPOK" : "MESOPROSOPIC")
-                                        : (isTr ? "LEPTOPROZOPOK (Dar Yüz)" : "LEPTOPROSOPIC");
+                                        : (isTr ? "LEPTOPROZOPOK (Dar Yüz)" : "LEPTOPROSOPIC"));
 
                                     return (
                                         <div className="grid grid-cols-2 gap-2">

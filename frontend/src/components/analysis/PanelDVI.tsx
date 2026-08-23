@@ -30,6 +30,7 @@ import {
   FolderSync,
 } from "lucide-react";
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
+import { getApiBaseUrl } from "@/lib/api";
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -185,46 +186,117 @@ export default function PanelDVI() {
     setPriorProb(currentPreset.prior);
   }, [currentPreset]);
 
-  // Compute Multi-Omic Joint LR
+  // Compute Multi-Omic Joint LR (Client Fallback)
   const lrY = hasYstr && ystrPUpper > 0 ? 1.0 / ystrPUpper : 1.0;
   const lrM = hasMtdna && mtdnaPUpper > 0 ? 1.0 / mtdnaPUpper : 1.0;
   const lrS = hasSnp ? snpLr : 1.0;
 
-  const jointLr = autoLr * lrY * lrM * lrS;
-  const log10Joint = jointLr > 0 ? Math.log10(jointLr) : -300.0;
+  const fallbackJointLr = autoLr * lrY * lrM * lrS;
+  const fallbackLog10Joint = fallbackJointLr > 0 ? Math.log10(fallbackJointLr) : -300.0;
+  const numFallback = fallbackJointLr * priorProb;
+  const denFallback = numFallback + (1.0 - priorProb);
+  const fallbackPosteriorW = fallbackJointLr > 0 ? numFallback / denFallback : 0.0;
 
-  // Bayesian Posterior Probability W = P(H1 | E)
-  const num = jointLr * priorProb;
-  const den = num + (1.0 - priorProb);
-  const posteriorW = jointLr > 0 ? num / den : 0.0;
+  const [liveDvi, setLiveDvi] = useState<{
+    jointLr: number;
+    log10Joint: number;
+    posteriorW: number;
+    decisionTier: "DEFINITIVE_IDENTIFICATION" | "PROBABLE_MATCH" | "INCONCLUSIVE" | "EXCLUSION";
+    judicialAction: string;
+    verbalEn: string;
+    verbalTr: string;
+  }>({
+    jointLr: fallbackJointLr,
+    log10Joint: fallbackLog10Joint,
+    posteriorW: fallbackPosteriorW,
+    decisionTier: currentPreset.expectedTier,
+    judicialAction: isTr ? "Adli kimliklendirme analizi yürütülüyor." : "Forensic identification analysis in progress.",
+    verbalEn: "Evaluation in progress",
+    verbalTr: "Değerlendirme sürüyor",
+  });
+
+  // Call FastAPI backend joint-lr endpoint
+  useEffect(() => {
+    const API_BASE = getApiBaseUrl();
+    fetch(`${API_BASE}/api/v1/forensic/dvi/joint-lr`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        autosomal_lr: autoLr,
+        ystr_p_upper: hasYstr ? ystrPUpper : null,
+        mtdna_p_upper: hasMtdna ? mtdnaPUpper : null,
+        snp_lr: hasSnp ? snpLr : 1.0,
+        has_ystr: hasYstr,
+        has_mtdna: hasMtdna,
+        has_snp: hasSnp,
+        prior_probability: priorProb,
+      }),
+      signal: AbortSignal.timeout(4000),
+    })
+      .then(async (res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        setLiveDvi({
+          jointLr: data.joint_lr,
+          log10Joint: data.log10_joint_lr,
+          posteriorW: data.posterior_probability_w,
+          decisionTier: data.decision_tier,
+          judicialAction: data.judicial_action,
+          verbalEn: data.verbal_predicate_en,
+          verbalTr: data.verbal_predicate_tr,
+        });
+      })
+      .catch(() => {
+        // Graceful fallback to client mathematics
+        let fbTier: "DEFINITIVE_IDENTIFICATION" | "PROBABLE_MATCH" | "INCONCLUSIVE" | "EXCLUSION" = "EXCLUSION";
+        if (fallbackJointLr >= 1.0e6) fbTier = "DEFINITIVE_IDENTIFICATION";
+        else if (fallbackJointLr >= 1.0e4) fbTier = "PROBABLE_MATCH";
+        else if (fallbackJointLr > 1.0e-2) fbTier = "INCONCLUSIVE";
+
+        setLiveDvi({
+          jointLr: fallbackJointLr,
+          log10Joint: fallbackLog10Joint,
+          posteriorW: fallbackPosteriorW,
+          decisionTier: fbTier,
+          judicialAction: isTr ? "Yerel istemci biyo-hesaplama motoruyla çözümlendi." : "Resolved via local client biocomputational engine.",
+          verbalEn: "Evaluated locally",
+          verbalTr: "Yerel olarak değerlendirildi",
+        });
+      });
+  }, [autoLr, hasYstr, ystrPUpper, hasMtdna, mtdnaPUpper, hasSnp, snpLr, priorProb, isTr, fallbackJointLr, fallbackLog10Joint, fallbackPosteriorW]);
+
+  const jointLr = liveDvi.jointLr;
+  const log10Joint = liveDvi.log10Joint;
+  const posteriorW = liveDvi.posteriorW;
 
   // Interpol DVI Decision Tier
-  let tier: "DEFINITIVE_IDENTIFICATION" | "PROBABLE_MATCH" | "INCONCLUSIVE" | "EXCLUSION";
+  let tier: "DEFINITIVE_IDENTIFICATION" | "PROBABLE_MATCH" | "INCONCLUSIVE" | "EXCLUSION" = liveDvi.decisionTier;
   let tierColor: string;
   let tierLabel: string;
-  let actionText: string;
+  let actionText: string = liveDvi.judicialAction;
 
-  if (jointLr >= 1.0e6) {
+  if (jointLr >= 1.0e6 || tier === "DEFINITIVE_IDENTIFICATION") {
     tier = "DEFINITIVE_IDENTIFICATION";
     tierColor = "bg-emerald-500/20 text-emerald-300 border-emerald-500/40";
     tierLabel = isTr ? "KESİN KİMLİKLENDİRME (LR ≥ 10⁶)" : "DEFINITIVE IDENTIFICATION (LR >= 10^6)";
-    actionText = isTr ? "Tek başına hukuki kimliklendirme için yeterli adli kanıt." : "Sufficient forensic proof for standalone legal identification.";
-  } else if (jointLr >= 1.0e4) {
+    if (!actionText) actionText = isTr ? "Tek başına hukuki kimliklendirme için yeterli adli kanıt." : "Sufficient forensic proof for standalone legal identification.";
+  } else if (jointLr >= 1.0e4 || tier === "PROBABLE_MATCH") {
     tier = "PROBABLE_MATCH";
     tierColor = "bg-cyan-500/20 text-cyan-300 border-cyan-500/40";
     tierLabel = isTr ? "OLASI EŞLEŞME (10⁴ ≤ LR < 10⁶)" : "PROBABLE MATCH (10^4 <= LR < 10^6)";
-    actionText = isTr ? "İkincil doğrulama gerektirir (adli odontoloji, implantlar, dövmeler)." : "Requires secondary corroboration (forensic odontology, implants, tattoos).";
-  } else if (jointLr > 1.0e-2) {
+    if (!actionText) actionText = isTr ? "İkincil doğrulama gerektirir (adli odontoloji, implantlar, dövmeler)." : "Requires secondary corroboration (forensic odontology, implants, tattoos).";
+  } else if (jointLr > 1.0e-2 || tier === "INCONCLUSIVE") {
     tier = "INCONCLUSIVE";
     tierColor = "bg-amber-500/20 text-amber-300 border-amber-500/40";
     tierLabel = isTr ? "SONUÇSUZ (10⁻² < LR < 10⁴)" : "INCONCLUSIVE (10^-2 < LR < 10^4)";
-    actionText = isTr ? "Yetersiz veri; ek STR veya NGS SNP testi gereklidir." : "Insufficient data; requires additional STR or NGS SNP testing.";
+    if (!actionText) actionText = isTr ? "Yetersiz veri; ek STR veya NGS SNP testi gereklidir." : "Insufficient data; requires additional STR or NGS SNP testing.";
   } else {
     tier = "EXCLUSION";
     tierColor = "bg-rose-500/20 text-rose-300 border-rose-500/40";
     tierLabel = isTr ? "KESİN DIŞLAMA (LR ≤ 10⁻²)" : "DEFINITIVE EXCLUSION (LR <= 10^-2)";
-    actionText = isTr ? "Kayıp şahıs referans soybağından kesin olarak dışlama." : "Definite exclusion from missing person reference pedigree.";
+    if (!actionText) actionText = isTr ? "Kayıp şahıs referans soybağından kesin olarak dışlama." : "Definite exclusion from missing person reference pedigree.";
   }
+
 
   // Simulated 3x3 Mass Disaster Reconciliation Matrix
   const simulatedPMs = isTr

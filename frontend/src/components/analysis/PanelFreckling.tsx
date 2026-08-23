@@ -11,6 +11,7 @@ import {
     ShieldCheck,
 } from "lucide-react";
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
+import { getApiBaseUrl } from "@/lib/api";
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // TYPES
@@ -243,10 +244,12 @@ export default function PanelFreckling() {
         setLoading(true);
         setError(null);
         try {
-            const resp = await fetch("/api/v1/forensic/phenotyping/ephelides/freckling-and-uv", {
+            const API_BASE = getApiBaseUrl();
+            const resp = await fetch(`${API_BASE}/api/v1/forensic/phenotyping/ephelides/freckling-and-uv`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ snp_dosages: dosages }),
+                signal: AbortSignal.timeout(4000),
             });
             if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
             setResult(await resp.json());

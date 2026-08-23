@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { Eye, Palette, Sparkles, CheckCircle2, AlertTriangle, ShieldCheck } from "lucide-react";
+import { useState, useMemo, useEffect } from "react";
+import { Eye, Palette, Sparkles, CheckCircle2, AlertTriangle, ShieldCheck, Loader2 } from "lucide-react";
 import { useForensicCaseStore } from "@/store/forensicCaseStore";
 import { validateProbabilityDistribution } from "@/lib/forensicStatusUtils";
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
+import { getApiBaseUrl } from "@/lib/api";
 
 // ─── Walsh et al. (2018) HIrisPlex-S Multinomial Softmax Architecture ───────────
 
@@ -195,9 +196,114 @@ export default function HIrisPlexPanel() {
         }
     });
 
-    const eyeProbs = computeEyeProbabilities(snpDosages);
-    const hairProbs = computeHairProbabilities(snpDosages);
-    const skinTone = computeSkinToneProbabilities(snpDosages, isTr);
+    const fbEye = computeEyeProbabilities(snpDosages);
+    const fbHair = computeHairProbabilities(snpDosages);
+    const fbSkin = computeSkinToneProbabilities(snpDosages, isTr);
+
+    const [liveData, setLiveData] = useState<{
+        eye: { blue: number; intermediate: number; brown: number } | null;
+        hair: { blond: number; brown: number; red: number; black: number } | null;
+        skin: { pVeryFair: number; pFair: number; pMedium: number; pDark: number; type: string; color: string; conf: number } | null;
+        globalConfidence: number;
+        prosecutorShield: string;
+        isLoading: boolean;
+    }>({
+        eye: null,
+        hair: null,
+        skin: null,
+        globalConfidence: 0.95,
+        prosecutorShield: "",
+        isLoading: false,
+    });
+
+    useEffect(() => {
+        setLiveData((prev) => ({ ...prev, isLoading: true }));
+        const API_BASE = getApiBaseUrl();
+
+        fetch(`${API_BASE}/api/v1/forensic/phenotyping/hirisplex/predict-full`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                genotype_dosages: snpDosages,
+                enable_imputation: true,
+            }),
+            signal: AbortSignal.timeout(4000),
+        })
+            .then(async (res) => {
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+                
+                const eyeP = data.eye_color?.probabilities || {};
+                const hairP = data.hair_color?.probabilities || {};
+                const skinP = data.skin_phototype?.probabilities || {};
+
+                // Map probabilities to percentages
+                const eye = {
+                    blue: Math.round((eyeP.Blue ?? (fbEye.blue / 100)) * 1000) / 10,
+                    intermediate: Math.round((eyeP.Intermediate ?? (fbEye.intermediate / 100)) * 1000) / 10,
+                    brown: Math.round((eyeP.Brown ?? (fbEye.brown / 100)) * 1000) / 10,
+                };
+
+                const hair = {
+                    blond: Math.round((hairP.Blond ?? (fbHair.blond / 100)) * 1000) / 10,
+                    brown: Math.round((hairP.Brown ?? (fbHair.brown / 100)) * 1000) / 10,
+                    red: Math.round((hairP.Red ?? (fbHair.red / 100)) * 1000) / 10,
+                    black: Math.round((hairP.Black ?? (fbHair.black / 100)) * 1000) / 10,
+                };
+
+                const pVF = ((skinP.Very_Pale_I ?? 0) + (skinP.Pale_II ?? 0)) * 100;
+                const pMed = (skinP.Intermediate_III_IV ?? 0) * 100;
+                const pDk = ((skinP.Dark_V ?? 0) + (skinP.Dark_to_Black_VI ?? 0)) * 100;
+
+                let skinTypeStr = isTr ? "Tip II (Açık)" : "Type II (Fair)";
+                let skinColorStr = "text-amber-300";
+                let skinConfVal = Math.round(Math.max(pVF, pMed, pDk));
+
+                if (pDk > pVF && pDk > pMed) {
+                    skinTypeStr = isTr ? "Tip V / VI (Koyu / Siyah)" : "Type V / VI (Dark / Black)";
+                    skinColorStr = "text-amber-600";
+                } else if (pMed > pVF && pMed > pDk) {
+                    skinTypeStr = isTr ? "Tip III / IV (Buğday / Zeytin)" : "Type III / IV (Medium / Olive)";
+                    skinColorStr = "text-amber-400";
+                } else {
+                    skinTypeStr = isTr ? "Tip I / II (Çok Açık / Beyaz)" : "Type I / II (Very Pale / Fair)";
+                    skinColorStr = "text-amber-300";
+                }
+
+                const skin = {
+                    pVeryFair: Math.round(pVF * 0.5 * 10) / 10,
+                    pFair: Math.round(pVF * 0.5 * 10) / 10,
+                    pMedium: Math.round(pMed * 10) / 10,
+                    pDark: Math.round(pDk * 10) / 10,
+                    type: skinTypeStr,
+                    color: skinColorStr,
+                    conf: skinConfVal,
+                };
+
+                setLiveData({
+                    eye,
+                    hair,
+                    skin,
+                    globalConfidence: data.global_confidence_score ?? 0.95,
+                    prosecutorShield: data.prosecutors_fallacy_shield ?? "",
+                    isLoading: false,
+                });
+            })
+            .catch(() => {
+                setLiveData({
+                    eye: fbEye,
+                    hair: fbHair,
+                    skin: fbSkin,
+                    globalConfidence: 0.92,
+                    prosecutorShield: "",
+                    isLoading: false,
+                });
+            });
+    }, [snpDosages, isTr]);
+
+    const eyeProbs = liveData.eye ?? fbEye;
+    const hairProbs = liveData.hair ?? fbHair;
+    const skinTone = liveData.skin ?? fbSkin;
 
     // ── Biostatistical Distribution Integrity Validation ────────────────────
     // Each multinomial distribution must sum to 100% ± 1% to be forensically valid.
@@ -221,6 +327,7 @@ export default function HIrisPlexPanel() {
     ), [skinTone]);
 
     const allValid = eyeValid && hairValid && skinValid;
+
 
     const toggleDosage = (rsid: string) => {
         setSnpDosages((prev) => ({

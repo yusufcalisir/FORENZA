@@ -23,6 +23,7 @@ import {
   Atom,
 } from "lucide-react";
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
+import { getApiBaseUrl } from "@/lib/api";
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -160,19 +161,97 @@ export default function PanelADNA() {
     setPurineRatio(currentPreset.purineMinus1);
   }, [currentPreset]);
 
-  // Compute 25-bp deamination curves
-  const curve5p: number[] = [];
-  const curve3p: number[] = [];
+  // Compute 25-bp deamination curves (Client Fallback)
+  const fbCurve5p: number[] = [];
+  const fbCurve3p: number[] = [];
   for (let k = 1; k <= 25; k++) {
     const rate5p = delta0 * Math.exp(-decayAlpha * (k - 1)) + 0.005;
-    curve5p.push(Math.min(1.0, rate5p));
-    curve3p.push(Math.min(1.0, rate5p * 0.98));
+    fbCurve5p.push(Math.min(1.0, rate5p));
+    fbCurve3p.push(Math.min(1.0, rate5p * 0.98));
   }
 
-  // Fragment length stats
-  const meanLen = (1.0 / lambdaFrag) + 30.0;
-  const medianLen = (Math.log(2.0) / lambdaFrag) + 30.0;
-  const fracBelow100 = 100.0 >= 30.0 ? 1.0 - Math.exp(-lambdaFrag * (100.0 - 30.0)) : 0.0;
+  // Fragment length stats (Client Fallback)
+  const fbMeanLen = (1.0 / lambdaFrag) + 30.0;
+  const fbMedianLen = (Math.log(2.0) / lambdaFrag) + 30.0;
+  const fbFracBelow100 = 100.0 >= 30.0 ? 1.0 - Math.exp(-lambdaFrag * (100.0 - 30.0)) : 0.0;
+
+  const [liveAdna, setLiveAdna] = useState<{
+    curve5p: number[];
+    curve3p: number[];
+    meanLen: number;
+    medianLen: number;
+    fracBelow100: number;
+    degradationTier: string;
+  }>({
+    curve5p: fbCurve5p,
+    curve3p: fbCurve3p,
+    meanLen: fbMeanLen,
+    medianLen: fbMedianLen,
+    fracBelow100: fbFracBelow100,
+    degradationTier: currentPreset.tier,
+  });
+
+  // Call FastAPI backend for deamination curves & fragmentation stats
+  useEffect(() => {
+    const API_BASE = getApiBaseUrl();
+
+    Promise.all([
+      fetch(`${API_BASE}/api/v1/forensic/adna/mapdamage-profile`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          delta_0: delta0,
+          decay_alpha: decayAlpha,
+          baseline_error: 0.005,
+          max_position: 25,
+          g_to_a_ratio: 1.0,
+        }),
+        signal: AbortSignal.timeout(4000),
+      }).then(async (r) => (r.ok ? r.json() : null)),
+      fetch(`${API_BASE}/api/v1/forensic/adna/fragmentation`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          lambda_param: lambdaFrag,
+          l_min: 30.0,
+        }),
+        signal: AbortSignal.timeout(4000),
+      }).then(async (r) => (r.ok ? r.json() : null)),
+    ])
+      .then(([mapData, fragData]) => {
+        let new5p = fbCurve5p;
+        let new3p = fbCurve3p;
+        if (mapData && mapData.curve_5p_c_to_t) {
+          new5p = Object.values(mapData.curve_5p_c_to_t) as number[];
+          new3p = Object.values(mapData.curve_3p_g_to_a) as number[];
+        }
+
+        setLiveAdna({
+          curve5p: new5p,
+          curve3p: new3p,
+          meanLen: fragData?.mean_length ?? fbMeanLen,
+          medianLen: fragData?.median_length ?? fbMedianLen,
+          fracBelow100: fragData?.fraction_below_100bp ?? fbFracBelow100,
+          degradationTier: fragData?.degradation_tier ?? currentPreset.tier,
+        });
+      })
+      .catch(() => {
+        setLiveAdna({
+          curve5p: fbCurve5p,
+          curve3p: fbCurve3p,
+          meanLen: fbMeanLen,
+          medianLen: fbMedianLen,
+          fracBelow100: fbFracBelow100,
+          degradationTier: currentPreset.tier,
+        });
+      });
+  }, [delta0, decayAlpha, lambdaFrag, fbMeanLen, fbMedianLen, fbFracBelow100, currentPreset.tier]);
+
+  const curve5p = liveAdna.curve5p;
+  const curve3p = liveAdna.curve3p;
+  const meanLen = liveAdna.meanLen;
+  const medianLen = liveAdna.medianLen;
+  const fracBelow100 = liveAdna.fracBelow100;
 
   // True ancient deamination after contamination subtraction
   const modernRate = 0.002;
@@ -205,6 +284,7 @@ export default function PanelADNA() {
     tierColor = "bg-emerald-500/20 text-emerald-300 border-emerald-500/40";
     tierLabel = isTr ? "BOZULMAMIŞ MODERN DNA (> 150 bp)" : "PRISTINE MODERN DNA (> 150 bp)";
   }
+
 
   return (
     <div className="space-y-6 text-slate-100 font-mono pb-12">

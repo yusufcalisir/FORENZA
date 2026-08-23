@@ -22,6 +22,7 @@ import {
   Info
 } from "lucide-react";
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
+import { getApiBaseUrl } from "@/lib/api";
 
 // ─── Golden Benchmark Presets ──────────────────────────────────────────────────
 const MPS_GOLDEN_PRESETS = [
@@ -109,6 +110,39 @@ export const PanelMPSSTR: React.FC = () => {
   const [activePreset, setActivePreset] = useState(MPS_GOLDEN_PRESETS[0]);
   const [selectedPopulation, setSelectedPopulation] = useState<string>("CAUCASIAN");
   const [activeTab, setActiveTab] = useState<"dualTrack" | "isoalleles" | "biostatistics" | "linkage">("dualTrack");
+  const [liveMpsData, setLiveMpsData] = useState<any>(null);
+
+  // Live Backend Query on Preset Change
+  React.useEffect(() => {
+    let isMounted = true;
+    async function fetchMpsData() {
+      try {
+        const API_BASE = getApiBaseUrl();
+        const res = await fetch(`${API_BASE}/api/v1/forensic/mps-str/se33/analyze`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            sample_id: activePreset.id,
+            sequence_1: activePreset.seqAlleles[0] || "",
+            sequence_2: activePreset.seqAlleles[1] || "",
+            population: activePreset.population,
+          }),
+          signal: AbortSignal.timeout(4000),
+        });
+        if (res.ok && isMounted) {
+          const data = await res.json();
+          setLiveMpsData(data);
+        }
+      } catch {
+        // Fallback to active preset
+      }
+    }
+    fetchMpsData();
+    return () => {
+      isMounted = false;
+    };
+  }, [activePreset]);
+
 
   return (
     <div className="space-y-6 text-tactical-text">

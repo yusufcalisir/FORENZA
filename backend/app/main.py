@@ -142,12 +142,14 @@ app.add_middleware(
         "https://forenza-xi.vercel.app",
         "https://vantage-str.vercel.app",
         "https://str-analysis.vercel.app",
+        "https://forenza-frontend.onrender.com",
     ],
-    allow_origin_regex=r"https:\/\/.*\.vercel\.app|http:\/\/localhost:\d+",
+    allow_origin_regex=r"https:\/\/.*\.vercel\.app|https:\/\/.*\.onrender\.com|http:\/\/localhost:\d+|http:\/\/127\.0\.0\.1:\d+",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 # --- Security Middleware ---
 app.add_middleware(ForenzaAuthMiddleware)
@@ -539,6 +541,15 @@ try:
 except Exception as _cranio_import_err:
     logger.warning(f"[boot] Craniofacial router not loaded: {_cranio_import_err}")
 
+# --- Forensic Phenotyping & Morphometrics Extended Router (Modules 3.3, 3.4, 3.5) ---
+try:
+    from app.api.phenotype_routes import router as phenotype_router
+    app.include_router(phenotype_router, prefix="/api/v1")
+    logger.info("[boot] Forensic Phenotyping Extended API router registered at /api/v1/forensic/phenotyping")
+except Exception as _pheno_import_err:
+    logger.warning(f"[boot] Phenotype router not loaded: {_pheno_import_err}")
+
+
 # --- Massively Parallel Sequencing (MPS / NGS) STR Sequence Lab Router ---
 try:
     from app.api.mps_str_routes import router as mps_str_router
@@ -559,9 +570,11 @@ except Exception as _ml_str_import_err:
 try:
     from app.api.forensic_fgg_routes import router as fgg_router
     app.include_router(fgg_router, prefix="/api/forensic/fgg")
-    logger.info("[boot] Forensic Genetic Genealogy (FGG) API router registered at /api/forensic/fgg")
+    app.include_router(fgg_router, prefix="/api/v1/forensic/fgg")
+    logger.info("[boot] Forensic Genetic Genealogy (FGG) API router registered at /api/forensic/fgg and /api/v1/forensic/fgg")
 except Exception as _fgg_import_err:
     logger.warning(f"[boot] FGG router not loaded: {_fgg_import_err}")
+
 
 # --- Expanded Biogeographical Ancestry (BGA) & gnomAD Population Matrix Router ---
 try:
@@ -574,33 +587,52 @@ try:
 except Exception as _bga_exp_import_err:
     logger.warning(f"[boot] Expanded BGA router not loaded: {_bga_exp_import_err}")
 
+# --- Forensic Metagenomic Soil & Palynology Router ---
+try:
+    try:
+        from app.api.forensic_metagenomics_routes import router as metagenomics_router
+    except ImportError:
+        from backend.app.api.forensic_metagenomics_routes import router as metagenomics_router
+    app.include_router(metagenomics_router)
+    logger.info("[boot] Forensic Metagenomic Soil & Palynology API router registered at /api/v1/forensic/metagenomics")
+except Exception as _meta_import_err:
+    logger.warning(f"[boot] Metagenomics router not loaded: {_meta_import_err}")
 
+# --- AURA LOGIC AI Copilot Router ---
+try:
+    try:
+        from app.api.aura_logic_routes import router as aura_logic_router
+    except ImportError:
+        from backend.app.api.aura_logic_routes import router as aura_logic_router
+    app.include_router(aura_logic_router)
+    app.include_router(aura_logic_router, prefix="/api/aura-logic")
+    logger.info("[boot] AURA LOGIC AI API router registered at /api/v1/aura-logic and /api/aura-logic")
+except Exception as _aura_import_err:
+    logger.warning(f"[boot] Aura Logic router not loaded: {_aura_import_err}")
 
+# --- Genomic Vector Search Router ---
+try:
+    try:
+        from app.api.search import router as search_router
+    except ImportError:
+        from backend.app.api.search import router as search_router
+    app.include_router(search_router, prefix="/api/v1")
+    app.include_router(search_router, prefix="/api")
+    logger.info("[boot] Search API router registered at /api/v1/search and /api/search")
+except Exception as _search_import_err:
+    logger.warning(f"[boot] Search router not loaded: {_search_import_err}")
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# --- Inter-Agency Law Enforcement Gateway Router ---
+try:
+    try:
+        from app.api.gateway import gateway_router
+    except ImportError:
+        from backend.app.api.gateway import gateway_router
+    app.include_router(gateway_router, prefix="/api/v1")
+    app.include_router(gateway_router, prefix="/api")
+    logger.info("[boot] Gateway API router registered at /api/v1/gateway and /api/gateway")
+except Exception as _gw_import_err:
+    logger.warning(f"[boot] Gateway router not loaded: {_gw_import_err}")
 
 
 

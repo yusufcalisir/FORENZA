@@ -730,3 +730,25 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
   - [x] `EC-FUSION-04`: Composite LR mapped to ENFSI 7-tier verbal scale statement.
   - [x] `EC-FUSION-05`: FastAPI `/fuse-evidence-layers` REST endpoint integration.
   - **Full test run:** `pytest backend/node/services/forensic/geoint/test_geo_fusion_engine.py -v` → **5 passed in ~0.3s**
+
+---
+
+### Module 7.6: META-SOIL-PALYNO — Metagenomic Taxonomic Classifiers & eDNA Soil/Palynology [VERIFIED 2026-08-23]
+- [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-23]:**
+  - [x] Synthetic Forensic Metagenomic Cohort (`VECTOR_META_01` to `VECTOR_META_05`): Forest soil ($N=100,000$ reads), Arid desert ($N=75,000$ reads), Alpine pinewood ($N=50,000$ reads), Degraded low-biomass casework ($N=2,000$ reads), Cross-contamination control.
+  - [x] GTDB / SILVA 138.1 / PlanT ITS2 reference databases with taxonomic hierarchies.
+- [x] **Criterion 2 (Independent Tool Cross-Check) ✅ COMPLETE [2026-08-23]:**
+  - [x] Kraken 2 exact $k$-mer minimizer hashing ($k=35, m=31$) & weighted LCA classification concordance.
+  - [x] KrakenUniq HyperLogLog cardinality estimation ($k_{\text{uniq}} \ge 2,000$) & false-positive culling ($D_{\text{horiz}} \ge 0.05$).
+  - [x] Bracken Bayesian read redistribution & simplex sum-to-one invariant ($|\sum A_i - 1.0| \le 10^{-6}$).
+  - [x] MetaPhlAn 4 clade-specific robust interquartile truncated mean coverage ($\bar{C}_i$).
+  - [x] CoDa Aitchison geometry CLR transformation zero-sum invariant ($|\sum \text{clr}_i| < 10^{-9}$) and Aitchison distance metric ($d_A$).
+  - [x] ISO 17025:2017 & ENFSI 2017 7-tier evaluative reporting and active Prosecutor's Fallacy shield in English and Turkish.
+- [x] **Criterion 3 (5 Documented Edge Cases) ✅ COMPLETE [2026-08-23]:**
+  - [x] `EC-META-01`: Exact $k$-mer minimizer matching and robust LCA fallback on ambiguity.
+  - [x] `EC-META-02`: KrakenUniq HyperLogLog low-complexity / uniform coverage artifact rejection.
+  - [x] `EC-META-03`: Bracken Bayesian redistribution simplex closure ($\sum A_i = 100.00\%$).
+  - [x] `EC-META-04`: CoDa CLR Helmert zero-sum condition & Aitchison distance metric triangle inequality.
+  - [x] `EC-META-05`: ISO 17025 certificate generation with active Prosecutor's Fallacy shield.
+  - **Full test run:** `pytest backend/node/services/forensic/metagenomics/ backend/app/api/test_forensic_metagenomics_routes.py -v` → **35 passed in ~3.2s**
+

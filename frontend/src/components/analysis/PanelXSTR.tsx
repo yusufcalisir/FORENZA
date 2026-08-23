@@ -26,6 +26,7 @@ import {
   Check,
 } from "lucide-react";
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
+import { getApiBaseUrl } from "@/lib/api";
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -250,7 +251,8 @@ export default function PanelXSTR() {
   const runEvaluation = async () => {
     startTransition(async () => {
       try {
-        const response = await fetch("/api/v1/forensic/lineage/xstr/evaluate-kinship", {
+        const API_BASE = getApiBaseUrl();
+        const response = await fetch(`${API_BASE}/api/v1/forensic/lineage/xstr/evaluate-kinship`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -260,6 +262,7 @@ export default function PanelXSTR() {
             sex_b: sexB,
             relationship: relationshipType,
           }),
+          signal: AbortSignal.timeout(4000),
         });
 
         if (response.ok) {
@@ -288,6 +291,7 @@ export default function PanelXSTR() {
       }
     });
   };
+
 
   const fallbackLocalEvaluation = () => {
     let matchCount = 0;

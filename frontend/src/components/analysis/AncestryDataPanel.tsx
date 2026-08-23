@@ -18,6 +18,7 @@ import {
     Lock
 } from "lucide-react";
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
+import { getApiBaseUrl } from "@/lib/api";
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // TYPES & POPULATION METRICS
@@ -175,7 +176,78 @@ export default function AncestryDataPanel({
         }
     }, [activeProfile?.profileId, activeProfile?.sampleType]);
 
-    const bga = useMemo(() => computeBGA(snpDosages, selectedRefPanel), [snpDosages, selectedRefPanel]);
+    const fbBga = useMemo(() => computeBGA(snpDosages, selectedRefPanel), [snpDosages, selectedRefPanel]);
+
+    const [liveBga, setLiveBga] = useState<{
+        props: Record<string, number>;
+        domPop: string;
+        lat: number;
+        lng: number;
+        entropy: number;
+        simpsonDiversity: number;
+        semiMajorKm: number;
+        semiMinorKm: number;
+        isLoading: boolean;
+    }>({
+        props: fbBga.props,
+        domPop: fbBga.domPop,
+        lat: fbBga.lat,
+        lng: fbBga.lng,
+        entropy: fbBga.entropy,
+        simpsonDiversity: fbBga.simpsonDiversity,
+        semiMajorKm: fbBga.semiMajorKm,
+        semiMinorKm: fbBga.semiMinorKm,
+        isLoading: false,
+    });
+
+    useEffect(() => {
+        setLiveBga((prev) => ({ ...prev, isLoading: true }));
+        const API_BASE = getApiBaseUrl();
+
+        fetch(`${API_BASE}/api/v1/forensic/phenotyping/bga/predict-full`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                snp_dosages: snpDosages,
+                populations: ["EUR", "AFR", "EAS", "SAS", "AMR", "MID"],
+            }),
+            signal: AbortSignal.timeout(4000),
+        })
+            .then(async (res) => {
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+                const adm = data.admixture || {};
+                const gis = data.gis || {};
+                const ell = gis.confidence_ellipse || {};
+
+                setLiveBga({
+                    props: adm.proportions || fbBga.props,
+                    domPop: adm.dominant_population || fbBga.domPop,
+                    lat: gis.latitude ?? fbBga.lat,
+                    lng: gis.longitude ?? fbBga.lng,
+                    entropy: Math.round((adm.shannon_entropy ?? fbBga.entropy) * 1000) / 1000,
+                    simpsonDiversity: Math.round((adm.simpson_diversity ?? fbBga.simpsonDiversity) * 1000) / 1000,
+                    semiMajorKm: ell.semi_major_km ?? fbBga.semiMajorKm,
+                    semiMinorKm: ell.semi_minor_km ?? fbBga.semiMinorKm,
+                    isLoading: false,
+                });
+            })
+            .catch(() => {
+                setLiveBga({
+                    props: fbBga.props,
+                    domPop: fbBga.domPop,
+                    lat: fbBga.lat,
+                    lng: fbBga.lng,
+                    entropy: fbBga.entropy,
+                    simpsonDiversity: fbBga.simpsonDiversity,
+                    semiMajorKm: fbBga.semiMajorKm,
+                    semiMinorKm: fbBga.semiMinorKm,
+                    isLoading: false,
+                });
+            });
+    }, [snpDosages, selectedRefPanel, fbBga]);
+
+    const bga = liveBga;
 
     const toggleDosage = (rsid: string) => {
         setSnpDosages((prev) => ({
@@ -183,6 +255,7 @@ export default function AncestryDataPanel({
             [rsid]: ((prev[rsid] ?? 0) + 1) % 3,
         }));
     };
+
 
     // Phenotype heuristic estimation (HIrisPlex-S 41-SNP alignment)
     const eyePrediction = useMemo(() => {

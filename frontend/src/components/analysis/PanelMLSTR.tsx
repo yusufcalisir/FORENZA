@@ -25,6 +25,7 @@ import {
   Scissors
 } from "lucide-react";
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
+import { getApiBaseUrl } from "@/lib/api";
 
 // ─── Golden Benchmark Presets ──────────────────────────────────────────────────
 const MLSTR_GOLDEN_PRESETS = [
@@ -107,6 +108,47 @@ export const PanelMLSTR: React.FC = () => {
 
   const [activePreset, setActivePreset] = useState(MLSTR_GOLDEN_PRESETS[0]);
   const [activeTab, setActiveTab] = useState<"classifier" | "isfg3tier" | "mcmcTelemetry" | "features">("classifier");
+  const [liveMlData, setLiveMlData] = useState<any>(null);
+
+  // Live Backend Query on Preset Change
+  React.useEffect(() => {
+    let isMounted = true;
+    async function fetchMlData() {
+      try {
+        const API_BASE = getApiBaseUrl();
+        const firstPeak = activePreset.rawPeaks[0];
+        if (!firstPeak) return;
+
+        const res = await fetch(`${API_BASE}/api/v1/forensic/ml-str/classify-peak`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            locus_name: activePreset.locus,
+            peak_id: firstPeak.id,
+            peak_height: firstPeak.h,
+            peak_area: firstPeak.h * 8.5,
+            fwhm: 1.25,
+            bp_position: firstPeak.bp,
+            major_allele_bp: firstPeak.bp,
+            major_allele_height: firstPeak.h,
+            repeat_unit_len: 4,
+          }),
+          signal: AbortSignal.timeout(4000),
+        });
+        if (res.ok && isMounted) {
+          const data = await res.json();
+          setLiveMlData(data);
+        }
+      } catch {
+        // Fallback
+      }
+    }
+    fetchMlData();
+    return () => {
+      isMounted = false;
+    };
+  }, [activePreset]);
+
 
   return (
     <div className="space-y-6 text-tactical-text">

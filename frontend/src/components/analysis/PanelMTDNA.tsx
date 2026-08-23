@@ -28,6 +28,7 @@ import {
   Globe2,
 } from "lucide-react";
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
+import { getApiBaseUrl } from "@/lib/api";
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -166,6 +167,7 @@ export default function PanelMTDNA() {
   const [databaseN, setDatabaseN] = useState<number>(48200);
   const [activeDomainTab, setActiveDomainTab] = useState<"ALL" | "HV1" | "HV2" | "HV3">("ALL");
   const [isPending, startTransition] = useTransition();
+  const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
 
   const currentPreset = MTDNA_PRESETS.find((p) => p.id === selectedPresetId) || MTDNA_PRESETS[0];
 
@@ -185,7 +187,7 @@ export default function PanelMTDNA() {
     return Math.min(Math.max(pUp, k / n), 1.0);
   };
 
-  const pUpper = computeClopperPearsonBound(observedK, databaseN);
+  const pUpperFallback = computeClopperPearsonBound(observedK, databaseN);
 
   // Evaluate maternal differences
   const setA = new Set(currentPreset.variantsA);
@@ -204,9 +206,74 @@ export default function PanelMTDNA() {
       ? 0
       : uniqueA.length + uniqueB.length;
 
-  const isExclusion = homoplasmicDiffCount >= 2 && currentPreset.expectedVerdict === "EXCLUSION";
-  const maternalLr = isExclusion ? 0.0 : Math.round(1.0 / pUpper);
-  const log10Lr = isExclusion ? -300.0 : Math.log10(maternalLr > 0 ? maternalLr : 1.0);
+  const isExclusionFallback = homoplasmicDiffCount >= 2 && currentPreset.expectedVerdict === "EXCLUSION";
+  const maternalLrFallback = isExclusionFallback ? 0.0 : Math.round(1.0 / pUpperFallback);
+  const log10LrFallback = isExclusionFallback ? -300.0 : Math.log10(maternalLrFallback > 0 ? maternalLrFallback : 1.0);
+
+  const [liveMetrics, setLiveMetrics] = useState<{
+    maternalLr: number;
+    log10Lr: number;
+    pUpper: number;
+    isExclusion: boolean;
+    verdict: string;
+    differencesCount: number;
+  }>({
+    maternalLr: maternalLrFallback,
+    log10Lr: log10LrFallback,
+    pUpper: pUpperFallback,
+    isExclusion: isExclusionFallback,
+    verdict: currentPreset.expectedVerdict,
+    differencesCount: homoplasmicDiffCount,
+  });
+
+  // Execute live API call with fallback
+  useEffect(() => {
+    setIsAnalyzing(true);
+    const API_BASE = getApiBaseUrl();
+
+    fetch(`${API_BASE}/api/v1/forensic/lineage/mtdna/evaluate-maternal-match`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        variants_a: currentPreset.variantsA,
+        variants_b: currentPreset.variantsB,
+        n_empop: databaseN,
+        empop_observed_k: observedK,
+      }),
+      signal: AbortSignal.timeout(4000),
+    })
+      .then(async (res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        setLiveMetrics({
+          maternalLr: data.min_lr,
+          log10Lr: data.log10_lr,
+          pUpper: data.p_upper_95,
+          isExclusion: data.verdict === "EXCLUSION",
+          verdict: data.verdict,
+          differencesCount: data.differences_count,
+        });
+      })
+      .catch(() => {
+        setLiveMetrics({
+          maternalLr: maternalLrFallback,
+          log10Lr: log10LrFallback,
+          pUpper: pUpperFallback,
+          isExclusion: isExclusionFallback,
+          verdict: currentPreset.expectedVerdict,
+          differencesCount: homoplasmicDiffCount,
+        });
+      })
+      .finally(() => {
+        setIsAnalyzing(false);
+      });
+  }, [currentPreset, databaseN, observedK]);
+
+  const pUpper = liveMetrics.pUpper;
+  const isExclusion = liveMetrics.isExclusion;
+  const maternalLr = liveMetrics.maternalLr;
+  const log10Lr = liveMetrics.log10Lr;
+
 
   return (
     <div className="space-y-6 text-slate-100 font-mono pb-12">

@@ -23,6 +23,7 @@ import {
   Layers,
 } from "lucide-react";
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
+import { getApiBaseUrl } from "@/lib/api";
 
 // Standard 25-system / 27-locus Y-FILER Plus Registry Metadata
 export interface YStrLocusVisual {
@@ -257,14 +258,12 @@ export default function PanelYSTR() {
   // Calculate live results whenever parameters or cohort changes
   const runLiveAnalysis = (cohort: PresetCohort, popSize: number, curTheta: number, m: number, k: number) => {
     setIsAnalyzing(true);
-    setCalcProgress(10);
+    setCalcProgress(15);
 
-    const timer1 = setTimeout(() => setCalcProgress(55), 150);
-    const timer2 = setTimeout(() => {
-      setCalcProgress(100);
-      setIsAnalyzing(false);
+    const API_BASE = getApiBaseUrl();
+    const t1 = setTimeout(() => setCalcProgress(60), 180);
 
-      // Perform biocomputational synthesis based on profile differences
+    const fallbackCalculation = () => {
       const profA = cohort.profileA;
       const profB = cohort.profileB;
 
@@ -309,7 +308,6 @@ export default function PanelYSTR() {
         : (k + 1.96 * Math.sqrt((k * (1.0 - k / popSize)) / popSize)) / popSize;
 
       const brennerProb = (k + curTheta) / (popSize + curTheta);
-
       const isExcluded = stdMuts >= 3 || totalDist >= 5;
 
       let pLR = 0.0;
@@ -338,7 +336,6 @@ export default function PanelYSTR() {
         }
       }
 
-      // Haplogroup inference
       const isO2a = cohort.id === "UNRELATED_EXCLUSION";
       const predHaplo = isO2a ? "O2a (M324)" : "R1b (M269)";
       const topHaplos = isO2a
@@ -374,13 +371,72 @@ export default function PanelYSTR() {
         primarySnp: isO2a ? "M324" : "M269",
         topPosteriors: topHaplos,
       });
-    }, 350);
-
-    return () => {
-      clearTimeout(timer1);
-      clearTimeout(timer2);
     };
+
+    fetch(`${API_BASE}/api/v1/forensic/lineage/ystr/evaluate-paternal-kinship`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        evidence_id: "EVIDENCE_A",
+        suspect_id: "SUSPECT_B",
+        evidence_markers: cohort.profileA,
+        suspect_markers: cohort.profileB,
+        meioses_m: m,
+        database_size_n: popSize,
+        theta: curTheta,
+      }),
+      signal: AbortSignal.timeout(4000),
+    })
+      .then(async (res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+
+        const isO2a = cohort.id === "UNRELATED_EXCLUSION";
+        const predHaplo = isO2a ? "O2a (M324)" : "R1b (M269)";
+        const topHaplos = isO2a
+          ? [
+              { clade: "O2a (M324)", prob: 0.912 },
+              { clade: "O1b (M268)", prob: 0.054 },
+              { clade: "C2 (M217)", prob: 0.021 },
+              { clade: "N1 (M231)", prob: 0.009 },
+              { clade: "Q1a (M120)", prob: 0.004 },
+            ]
+          : [
+              { clade: "R1b (M269)", prob: 0.942 },
+              { clade: "R1a (M420)", prob: 0.038 },
+              { clade: "I2a (P37.2)", prob: 0.012 },
+              { clade: "J2a (M410)", prob: 0.005 },
+              { clade: "E1b1b (M215)", prob: 0.003 },
+            ];
+
+        setKinshipResult({
+          matchingLoci: data.matching_loci_count,
+          mutatedLoci: data.mutated_loci_count,
+          rmMutations: data.rm_mutations_count,
+          standardMutations: data.standard_mutations_count,
+          paternalLR: data.paternal_lr,
+          log10LR: data.log10_paternal_lr,
+          pUpper: data.haplotype_p_upper,
+          brennerProb: (k + curTheta) / (popSize + curTheta),
+          isExcluded: data.is_lineage_excluded,
+          verbalEn: data.verbal_predicate_en,
+          verbalTr: data.verbal_predicate_tr,
+          predictedHaplogroup: predHaplo,
+          haplogroupConfidence: isO2a ? 0.912 : 0.942,
+          primarySnp: isO2a ? "M324" : "M269",
+          topPosteriors: topHaplos,
+        });
+      })
+      .catch(() => {
+        fallbackCalculation();
+      })
+      .finally(() => {
+        clearTimeout(t1);
+        setCalcProgress(100);
+        setIsAnalyzing(false);
+      });
   };
+
 
   useEffect(() => {
     runLiveAnalysis(selectedCohort, selectedPop.size, theta, meioses, observedK);

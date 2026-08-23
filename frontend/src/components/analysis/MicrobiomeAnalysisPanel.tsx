@@ -590,9 +590,10 @@ export default function MicrobiomeAnalysisPanel() {
                 </div>
 
                 <div className="pt-2 border-t border-tactical-border/30 flex items-center justify-between text-[9px] text-zinc-500 font-mono">
-                  <span>CLR Simplex Korunumu: Σ CLR = 0.0000</span>
-                  <span className="text-emerald-400 font-bold">ISO/IEC 17025 Onaylı</span>
+                  <span>{isTr ? "CLR Simplex Korunumu: Σ CLR = 0.0000" : "CLR Simplex Invariance: Σ CLR = 0.0000"}</span>
+                  <span className="text-emerald-400 font-bold">{isTr ? "ISO/IEC 17025 Onaylı" : "ISO/IEC 17025 Certified"}</span>
                 </div>
+
               </div>
             </div>
           </motion.div>

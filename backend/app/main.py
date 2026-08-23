@@ -520,6 +520,14 @@ try:
 except Exception as _cranio_import_err:
     logger.warning(f"[boot] Craniofacial router not loaded: {_cranio_import_err}")
 
+# --- Massively Parallel Sequencing (MPS / NGS) STR Sequence Lab Router ---
+try:
+    from app.api.mps_str_routes import router as mps_str_router
+    app.include_router(mps_str_router, prefix="/api/v1")
+    logger.info("[boot] MPS/NGS STR Sequence Analysis API router registered at /api/v1/forensic/mps-str")
+except Exception as _mps_import_err:
+    logger.warning(f"[boot] MPS STR router not loaded: {_mps_import_err}")
+
 
 
 

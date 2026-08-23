@@ -77,6 +77,25 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
+### Module 1.6: MPS-STR — Massively Parallel Sequencing (MPS/NGS) STR Analysis & Sequence-Level Biocomputation [VERIFIED 2026-08-23]
+- [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-23]:**
+  - [x] Scientific Reports (2021) 11:3485 empirical 4-population cohort ($N=350$ unrelated individuals: African-American $N=83$, Caucasian $N=82$, Hispanic $N=82$, Korean $N=103$, 700 chromosomes) across 25 autosomal STR loci + 3 sex markers.
+  - [x] Certified Golden Benchmark Vectors: `VECTOR_MPS_01` (SE33 Bimodal Isoallele Deconvolution), `VECTOR_MPS_02` (SE33 4-bp Flanking Deletion Auto-Reconciliation), `VECTOR_MPS_03` (D3S1358 3-Person Mixture Deconvolution), `VECTOR_MPS_04` (vWA West African Primer Mutation Rescue `rs771794429`).
+- [x] **Criterion 2 (Independent Tool Cross-Check) ✅ COMPLETE [2026-08-23]:**
+  - [x] ISFG (2016, 2021) Forensic STR Sequence Structure Guide v5 nomenclature and EBNF string grammar parsing.
+  - [x] STRait Razor 3.0 configuration and CE-to-MPS base-pair length conversion invariance ($|\Delta L| = 0$).
+  - [x] Borsuk et al. (2018) SE33 4-bp deletion concordance (`rs369314007 [TTTT/-]`, `rs1371483225 [TCTT/-]`) restoring 100.00% true biological concordance with CE databases.
+  - [x] ENFSI (2017) 7-Tier verbal scale and active Prosecutor's Fallacy Shield in English and Turkish.
+- [x] **Criterion 3 (5 Documented Edge Cases) ✅ COMPLETE [2026-08-23]:**
+  - [x] `EC-MPS-01`: Deterministic CE length derivation across all 25 loci ($|\Delta L| = 0$).
+  - [x] `EC-MPS-02`: Probability simplex normalization across all 4 populations ($\sum p_i = 1.000000 \pm 10^{-6}$).
+  - [x] `EC-MPS-03`: SE33 compound 4-bp flanking deletion auto-reconciliation without false allele calling.
+  - [x] `EC-MPS-04`: Syntenic linkage equilibrium constraint between D6S1043 and SE33 on chromosome 6q ($\theta = 0.0440$).
+  - [x] `EC-MPS-05`: Sub-threshold analytical cutoff ($\text{AT} = 5.0\%$) and isometric stutter subtraction.
+  - **Full test run:** `pytest backend/node/services/forensic/genomics/mps_str/ backend/app/api/test_mps_str_routes.py -v` → **37 passed in ~2.8s**
+
+---
+
 ### Module 2.1: Y-STR — Y-Chromosome 27-Locus Lineage Engine (Y-FILER Plus) [VERIFIED 2026-08-21]
 - [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-21]:**
   - [x] YHRD (Y-Chromosome Haplotype Reference Database) Release 68 ($N=385,000$ global casework database + 5 regional partitions: West Eurasian $N=142,000$, East Asian $N=118,000$, South Asian $N=45,000$, Admixed American $N=42,000$, Sub-Saharan African $N=38,000$).

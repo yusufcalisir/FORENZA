@@ -249,7 +249,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
   en: {
     header: {
       bioSimulator: "Bio-Simulator",
-      subsystems: "35 Subsystems",
+      subsystems: "37 Subsystems",
       architecture: "Evidence DAG",
       security: "Security & ISO",
       launchDemo: "Launch FORENZA OS",
@@ -258,9 +258,9 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       badge: "Multi-Omic Forensic Evidence OS",
       titleMain: "Integrated Biocomputational",
       titleHighlight: "Forensic Evidence OS",
-      subtitle: "Enterprise multi-omic biocomputational platform integrating Autosomal & Lineage STRs, MCMC Probabilistic Genotyping, HIrisPlex-S Phenotyping, Horvath Epigenetics, Physical Ballistics & BPA, Geo-Forensic GIS Intelligence, LIMS Workflow, and ISO 17025 Court Reporting.",
+      subtitle: "Enterprise multi-omic biocomputational platform integrating Autosomal & Lineage STRs, Massively Parallel Sequencing (MPS/NGS) STRs, MCMC Probabilistic Genotyping, HIrisPlex-S Phenotyping, Horvath Epigenetics, Forensic Microbiomics, Physical Ballistics & BPA, Geo-Forensic GIS Intelligence, LIMS Workflow, and ISO 17025 Court Reporting.",
       launchDemo: "Launch FORENZA OS",
-      exploreSubsystems: "Explore 35 Modules",
+      exploreSubsystems: "Explore 37 Modules",
       subsystemsStat: "Forensic Subsystems",
       invariantsStat: "Verified Invariants",
       courtStat: "Court Admissible",
@@ -617,12 +617,12 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       rights: "FORENZA Forensic Systems. All rights reserved.",
       tagline: "Enterprise Biocomputational Forensic Intelligence & Evidence Operating System.",
       brandSubtitle: "FORENSIC EVIDENCE OPERATING SYSTEM",
-      status: "35 Active Subsystems",
+      status: "37 Active Subsystems",
       columns: {
         col1Title: "Platform Subsystems",
-        col1Links: ["35 Subsystems Matrix", "Evidence OS DAG", "Multi-Omic Bio-Simulator", "ISO 17025 Court Mode"],
+        col1Links: ["37 Subsystems Matrix", "Evidence OS DAG", "Multi-Omic Bio-Simulator", "ISO 17025 Court Mode"],
         col2Title: "Core Capabilities",
-        col2Links: ["MCMC Probabilistic Genotyping", "HIrisPlex-S Phenotyping", "Horvath Epigenetic Clock", "Geo-Forensic Intelligence", "LIMS & Instrument Gateway"],
+        col2Links: ["MCMC Probabilistic Genotyping", "MPS/NGS STR Sequencing", "HIrisPlex-S Phenotyping", "Horvath Epigenetic Clock", "Geo-Forensic Intelligence", "LIMS & Instrument Gateway"],
         col3Title: "Admissibility & Standards",
         col3Links: ["ISO/IEC 17025:2017 Format", "SWGDAM & ENFSI Rules", "Circom ZKP Privacy Auditor", "HMAC Chain of Custody"],
       },
@@ -636,7 +636,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
     transition: {
       steps: [
         "INITIALIZING FORENZA BIOLOGICAL KERNEL...",
-        "CALIBRATING 24 CODIS CORE STR LOCI...",
+        "CALIBRATING 24 CODIS CORE STR LOCI & MPS ISOALLELES...",
         "LOADING HIrisPlex-S & BGA POPULATION PRIORS...",
         "VERIFYING ISO-21043 CHAIN OF CUSTODY LEDGER...",
         "SYSTEM OPERATIONAL — FORENSIC WORKSPACE READY"
@@ -650,7 +650,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       }
     },
     dashboardTopBar: {
-      subsystemsCount: "35 Subsystems",
+      subsystemsCount: "37 Subsystems",
       subsystemsOnline: "ONLINE",
       biocompEngine: "Biocomputational Engine",
       engineName: "FORENZA OS",
@@ -662,7 +662,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
     sidebarNav: {
       operations: "Operations",
       biocomputationalSuites: "Biocomputational Suites",
-      searchPlaceholder: "Search 35 Subsystems...",
+      searchPlaceholder: "Search 37 Subsystems...",
       landingPage: "Landing Page",
       activeEngine: "ACTIVE ENGINE",
       demoSimulator: "DEMO SIMULATOR"
@@ -671,7 +671,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
   tr: {
     header: {
       bioSimulator: "Bio-Simülatör",
-      subsystems: "35 Alt Sistem",
+      subsystems: "37 Alt Sistem",
       architecture: "DAG Mimarisi",
       security: "Güvenlik & ISO",
       launchDemo: "Demoyu Başlat",
@@ -680,9 +680,9 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       badge: "Çoklu-Omik Adli Delil İşletim Sistemi",
       titleMain: "Entegre Biyobilişimsel",
       titleHighlight: "Adli Delil İşletim Sistemi",
-      subtitle: "Otozomal ve soy STR analizleri, MCMC olasılıksal genotipleme, HIrisPlex-S fenotip tahmini, Horvath epigenetik yaş saati, fiziksel balistik ve BPA, Jeo-Adli CBS istihbaratı, LIMS veri zinciri ve ISO/IEC 17025 adli rapor standartlarını tek bir işlem hattında birleştiren çoklu-omik adli biyoloji platformu.",
+      subtitle: "Otozomal ve soy STR analizleri, MPS/NGS sekanslama, MCMC olasılıksal genotipleme, HIrisPlex-S fenotip tahmini, Horvath epigenetik yaş saati, adli mikrobiyom, fiziksel balistik ve BPA, Jeo-Adli CBS istihbaratı, LIMS veri zinciri ve ISO/IEC 17025 adli rapor standartlarını tek bir işlem hattında birleştiren çoklu-omik adli biyoloji platformu.",
       launchDemo: "Demoyu Başlat",
-      exploreSubsystems: "35 Modülü İncele",
+      exploreSubsystems: "37 Modülü İncele",
       subsystemsStat: "Adli Alt Sistem",
       invariantsStat: "Doğrulanmış İnvaryant",
       courtStat: "Mahkeme Uyumlu",
@@ -1039,12 +1039,12 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       rights: "FORENZA Forensic Systems. Tüm hakları saklıdır.",
       tagline: "Kurumsal Biyobilişimsel Adli İstihbarat ve Delil İşletim Sistemi.",
       brandSubtitle: "ADLİ DELİL İŞLETİM SİSTEMİ",
-      status: "35 Modül Aktif",
+      status: "37 Modül Aktif",
       columns: {
         col1Title: "Platform Modülleri",
-        col1Links: ["35 Alt Sistem Matrisi", "Delil İşleme Mimarisi (DAG)", "Bio-Simülatör", "ISO 17025 İfade Modu"],
+        col1Links: ["37 Alt Sistem Matrisi", "Delil İşleme Mimarisi (DAG)", "Bio-Simülatör", "ISO 17025 İfade Modu"],
         col2Title: "Temel Yetenekler",
-        col2Links: ["MCMC Olasılıksal Genotipleme", "HIrisPlex-S Fenotipleme", "Horvath Epigenetik Yaş Saati", "Jeo-Adli İstihbarat", "LIMS ve Cihaz Geçidi"],
+        col2Links: ["MCMC Olasılıksal Genotipleme", "MPS/NGS STR Sekanslama", "HIrisPlex-S Fenotipleme", "Horvath Epigenetik Yaş Saati", "Jeo-Adli İstihbarat", "LIMS ve Cihaz Geçidi"],
         col3Title: "Adli Standartlar ve Uyumluluk",
         col3Links: ["ISO/IEC 17025:2017 Formatı", "SWGDAM ve ENFSI Kuralları", "Circom ZKP Gizlilik Denetçisi", "HMAC Delil Zinciri"],
       },
@@ -1058,7 +1058,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
     transition: {
       steps: [
         "FORENZA BİYOLOJİK ÇEKİRDEĞİ BAŞLATILIYOR...",
-        "24 CODIS ÇEKİRDEK STR LOKUSU KALİBRE EDİLİYOR...",
+        "24 CODIS ÇEKİRDEK STR LOKUSU VE MPS İZOALLELLERİ KALİBRE EDİLİYOR...",
         "HIrisPlex-S VE BGA POPÜLASYON DAĞILIMLARI YÜKLENİYOR...",
         "ISO-21043 DELİL ZİNCİRİ DEFTERİ DOĞRULANIYOR...",
         "SİSTEM FAAL — ADLİ ÇALIŞMA ALANI HAZIR"
@@ -1072,7 +1072,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       }
     },
     dashboardTopBar: {
-      subsystemsCount: "35 Alt Sistem",
+      subsystemsCount: "37 Alt Sistem",
       subsystemsOnline: "ÇEVRİMİÇİ",
       biocompEngine: "Biyobilişimsel Motor",
       engineName: "FORENZA OS",
@@ -1084,7 +1084,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
     sidebarNav: {
       operations: "İşlem Merkezleri",
       biocomputationalSuites: "Biyobilişimsel Süitler",
-      searchPlaceholder: "35 Alt Sistemi Ara...",
+      searchPlaceholder: "37 Alt Sistemi Ara...",
       landingPage: "Ana Sayfa",
       activeEngine: "AKTİF MOTOR",
       demoSimulator: "DEMO SİMÜLATÖR"

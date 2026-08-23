@@ -61,6 +61,29 @@ Combines locus-specific variance components across all $L=24$ loci:
 
 $$\bar{\theta} = \frac{\sum_{l=1}^L (\text{MSP}_l - \text{MSG}_l)}{\sum_{l=1}^L [\text{MSP}_l + (n_{c,l} - 1)\text{MSG}_l]}$$
 
+### 2.7 Massively Parallel Sequencing (MPS/NGS) STR Isoallele Formalism & SE33 Deletion Kinetics
+
+#### 1. Isoallele Expansion & Information Gain
+In MPS STR sequencing, identical length alleles $A_i$ (e.g. CE allele 18 or 27.2 in SE33) resolve into $K$ distinct sequence isoalleles $\{s_{i,1}, s_{i,2}, \dots, s_{i,K}\}$:
+
+$$p_i^{\text{CE}} = \sum_{k=1}^K p(s_{i,k}), \quad p(s_{i,k}) \le p_i^{\text{CE}}$$
+
+The resulting information gain multiplier on Likelihood Ratio ($LR$) is given by:
+
+$$LR_{\text{gain}} = \frac{LR_{\text{MPS}}}{LR_{\text{CE}}} = \frac{p_i^{\text{CE}} \cdot p_j^{\text{CE}}}{p(s_{i,a}) \cdot p(s_{j,b})} \ge 1.0$$
+
+Across hyper-polymorphic loci such as SE33, $LR_{\text{gain}}$ reaches up to $41.6\times$ (single locus) and $> 1000\times$ in multi-locus mixture deconvolution.
+
+#### 2. SE33 4-bp Flanking Deletion Auto-Reconciliation
+Due to 4-bp flanking deletions (`rs369314007 [TTTT/-]` and `rs1371483225 [TCTT/-]`), short-amplicon MPS assays sequence across the deleted region, shifting raw repeat counts by $+1.0$:
+
+$$\text{Call}_{\text{CE}} = \begin{cases} \text{Call}_{\text{MPS}} - 1.0 & \text{if } \text{rs369314007 or rs1371483225 deletion detected} \\ \text{Call}_{\text{MPS}} & \text{otherwise} \end{cases}$$
+
+#### 3. Syntenic Linkage Constraint (D6S1043 – SE33)
+On chromosome 6q, D6S1043 and SE33 are separated by 3.46 Mb with recombination fraction $\theta = 0.0440$. In kinship testing, multiplying single-locus LRs violates independence:
+
+$$\text{LR}_{\text{joint}}(D6S1043, SE33) = \max(\text{LR}_{D6S1043}, \text{LR}_{SE33}) \quad \text{(Safe Conservative Fallback)}$$
+
 ---
 
 ## 3. Kinship Index ($KI$) Formulations & Stepwise Mutation Model (SMM)

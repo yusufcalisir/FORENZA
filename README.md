@@ -2,7 +2,7 @@
 
 <p align="center">
   <strong>Enterprise Multi-Omic Biocomputational Forensic Intelligence Platform</strong><br />
-  ISO/IEC 17025:2017 Aligned Architecture • 35 Integrated Subsystems (7 Pillars) • Zero-Knowledge Evidence Verification
+  ISO/IEC 17025:2017 Aligned Architecture • 37 Integrated Subsystems (7 Pillars) • Zero-Knowledge Evidence Verification
 </p>
 
 <p align="center">
@@ -21,7 +21,7 @@
 1. [Executive Summary & Architectural Vision](#1-executive-summary--architectural-vision)
 2. [Master System Architecture & Dataflow](#2-master-system-architecture--dataflow)
 3. [Complete Clean Architecture Directory Structure](#3-complete-clean-architecture-directory-structure)
-4. [35-Subsystem Reference Catalog](#4-35-subsystem-reference-catalog)
+4. [37-Subsystem Reference Catalog](#4-37-subsystem-reference-catalog)
    - [Pillar 1: Probabilistic Genotyping & Population Genetics](#pillar-1-probabilistic-genotyping--population-genetics)
    - [Pillar 2: Lineage Forensics & Kinship Inference](#pillar-2-lineage-forensics--kinship-inference)
    - [Pillar 3: Phenotyping & Biogeographic Ancestry](#pillar-3-phenotyping--biogeographic-ancestry)
@@ -48,7 +48,7 @@
 ### Architectural Objectives
 
 - **Unified Intelligence Platform:** Replaces standalone, single-purpose legacy desktop software with a distributed microservices gateway and interactive web workstation.
-- **Multi-Omic Analytical Scope:** Integrates 35 specialized subsystems spanning CODIS 24 Autosomal STRs, Y-STR & mtDNA lineages, MCMC probabilistic mixture deconvolution, HIrisPlex-S phenotyping, 55-SNP AIM biogeographic ancestry, Horvath 5-CpG epigenetic age estimation, skeletal morphometrics, entomological PMI, bloodstain pattern analysis (BPA), and multi-isotope spatial isoscapes.
+- **Multi-Omic Analytical Scope:** Integrates 37 specialized subsystems spanning CODIS 24 Autosomal STRs, Massively Parallel Sequencing (MPS/NGS) STR sequence analysis, Y-STR & mtDNA lineages, MCMC probabilistic mixture deconvolution, HIrisPlex-S phenotyping, 55-SNP AIM biogeographic ancestry, Horvath 5-CpG epigenetic age estimation, forensic microbiome/thanatometagenomics, skeletal morphometrics, entomological PMI, bloodstain pattern analysis (BPA), and multi-isotope spatial isoscapes.
 - **Court-Admissible Standardization:** Automated SWGDAM 2020 and ENFSI 2017 verbal scale report generation converting Likelihood Ratios into formal expert witness testimony documents.
 - **Dual-Engine Architecture (Demo vs. Live BYO-Key Mode):** Instant out-of-the-box operation with simulated biocomputational models, seamlessly upgrading to live production execution when users supply their custom API keys (Google Gemini 2.0 Flash, OpenAI GPT-4o, Groq LLaMA, NCBI E-utilities, Python FastAPI endpoints) via an interactive in-app modal or environment variables.
 - **Zero-Knowledge Privacy Preservation:** Employs Circom/Groth16 ZK-SNARK zero-knowledge proofs and Polygon blockchain anchor logging, enabling cross-border inter-agency profile matching without disclosing raw genomic profiles outside accredited laboratories.
@@ -413,6 +413,7 @@ FORENZA structures its 35 biocomputational subsystems into 7 canonical operation
 3. **Dirichlet Fst Population Genetics (`03`):** Calculates subpopulation coancestry corrections $(F_{st} = 0.01 / 0.03)$ and Dirichlet smoothing under NRC II Recommendations 4.1 & 4.2 for Hardy-Weinberg and Linkage Equilibrium models.
 4. **Touch DNA & Low-Template LTDNA Engine (`04`):** Models stochastic logistic allele dropout $(p_d)$, Poisson drop-in $(p_i)$, and peak height imbalance for low-template DNA (<100 pg) recovered from porous and non-porous substrates.
 5. **Tippett Calibration & Validation Lab (`05`):** Generates empirical Tippett calibration curves plotting $\log_{10}(LR)$ distributions under prosecution $(H_p)$ vs defense $(H_d)$ hypotheses with ROC curves and Cllr (Log-Likelihood Ratio Cost) calibration metrics.
+6. **Massively Parallel Sequencing (MPS/NGS) STR Sequence Lab (`06` / `1.6`):** Extends length-based STR typing to base-level nucleotide sequencing across 25 autosomal loci + SE33. Delivers a 2.18-fold allele expansion (332 to 725 unique alleles), 170 SE33 sequence alleles ($H_{\text{exp}} = 97.3\%$), automated 4-bp deletion reconciliation (`rs369314007 [delTTTT]` and `rs1371483225 [delTCTT]`), isoallele mixture deconvolution ($>1000\times$ LR gain), and syntenic linkage guard for D6S1043–SE33 ($\theta=0.0440$) and vWA African primer mutation rescue (`rs771794429`).
 
 ### Pillar 2: Lineage Forensics & Kinship Inference
 

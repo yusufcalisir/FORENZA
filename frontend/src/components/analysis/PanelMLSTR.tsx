@@ -108,7 +108,61 @@ export const PanelMLSTR: React.FC = () => {
 
   const [activePreset, setActivePreset] = useState(MLSTR_GOLDEN_PRESETS[0]);
   const [activeTab, setActiveTab] = useState<"classifier" | "isfg3tier" | "mcmcTelemetry" | "features">("classifier");
+  const [selectedPeakIndex, setSelectedPeakIndex] = useState<number>(0);
   const [liveMlData, setLiveMlData] = useState<any>(null);
+
+  // Reset selected peak index on preset change
+  React.useEffect(() => {
+    setSelectedPeakIndex(0);
+  }, [activePreset]);
+
+  // Current selected peak & major peak
+  const currentPeak = activePreset.rawPeaks[selectedPeakIndex] || activePreset.rawPeaks[0];
+  const majorPeak = React.useMemo(() => {
+    return activePreset.rawPeaks.reduce((max, p) => (p.h > max.h ? p : max), activePreset.rawPeaks[0]);
+  }, [activePreset]);
+
+  // 24D Feature metrics computed for current peak
+  const peakFeatures = React.useMemo(() => {
+    const h = currentPeak.h;
+    const fwhm = 1.0 + (h > 1500 ? 0.25 : 0.0);
+    const area = Number((h * 1.064 * fwhm).toFixed(1));
+    const sharpness = Number((Math.min(1.0, h / Math.max(1, area))).toFixed(4));
+    const snr = Number((h / 3.0).toFixed(1));
+    const deltaBp = Number((currentPeak.bp - majorPeak.bp).toFixed(2));
+    const isBackStutter = Math.abs(deltaBp + 4.0) < 0.8;
+    const isFwdStutter = Math.abs(deltaBp - 4.0) < 0.8;
+    const isPlusA = Math.abs(deltaBp - 1.0) < 0.6;
+    const sr = majorPeak.h > 0 ? Number(((h / majorPeak.h) * 100).toFixed(1)) : 0;
+
+    const locus = activePreset.locus;
+    const entropy = locus === "SE33" ? 1.942 : locus === "D21S11" ? 1.716 : locus === "TH01" ? 1.582 : 1.650;
+    const gcContent = locus === "D18S51" ? 32.5 : locus === "D21S11" ? 25.0 : locus === "TH01" ? 28.0 : 30.0;
+    const homopolymer = locus === "SE33" ? 4 : locus === "D21S11" ? 2 : 3;
+
+    const hb = Number((Math.min(1.0, h / Math.max(h, majorPeak.h))).toFixed(3));
+    const pullUp = currentPeak.class === "CLASS_PULL_UP_ARTIFACT" ? 8.5 : 0.0;
+    const atMargin = Math.max(0, h - 50.0);
+
+    return {
+      h,
+      area,
+      fwhm,
+      sharpness,
+      snr,
+      deltaBp,
+      isBackStutter,
+      isFwdStutter,
+      isPlusA,
+      sr,
+      entropy,
+      gcContent,
+      homopolymer,
+      hb,
+      pullUp,
+      atMargin,
+    };
+  }, [currentPeak, majorPeak, activePreset]);
 
   // Live Backend Query on Preset Change
   React.useEffect(() => {
@@ -148,6 +202,7 @@ export const PanelMLSTR: React.FC = () => {
       isMounted = false;
     };
   }, [activePreset]);
+
 
 
   return (
@@ -452,58 +507,333 @@ export const PanelMLSTR: React.FC = () => {
             exit={{ opacity: 0, y: -8 }}
             className="space-y-6"
           >
-            <div className="bg-tactical-surface/70 border border-tactical-border/80 rounded-2xl p-6 space-y-4">
-              <h3 className="text-base font-semibold text-white flex items-center gap-2">
-                <Sliders className="w-4 h-4 text-purple-400" />
-                {isTr ? "24-Boyutlu Özellik Vektörü Parametre Dağılımı" : "24-Dimensional Continuous Feature Space Vector"}
-              </h3>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
-                <div className="p-4 rounded-xl bg-slate-900/70 border border-slate-800 space-y-2">
-                  <div className="text-purple-300 font-bold">1. Signal Morphology & Kinetics (x1 - x6)</div>
-                  <div className="text-slate-400 pl-3">
-                    • Peak Height (h): 2,400 RFU<br />
-                    • Integrated Area (A): 2,553.6 RFU·s<br />
-                    • Sharpness (h/A): 0.9398<br />
-                    • Signal-to-Noise (SNR): 796.67<br />
-                    • FWHM Width: 1.00 bp
+            {/* Interactive 24D Feature Space Container */}
+            <div className="bg-tactical-surface/70 border border-tactical-border/80 rounded-2xl p-5 sm:p-6 space-y-6 shadow-2xl backdrop-blur-xl">
+              {/* Header & Peak Selector */}
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-tactical-border/60 pb-4">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="p-2 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-400">
+                      <Sliders className="w-5 h-5" />
+                    </span>
+                    <div>
+                      <h3 className="text-base sm:text-lg font-bold text-white tracking-wide">
+                        {isTr
+                          ? "24-Boyutlu Sürekli Özellik Uzayı Vektörü (24D Feature Space)"
+                          : "24-Dimensional Continuous Feature Space Vector"}
+                      </h3>
+                      <p className="text-xs text-slate-400">
+                        {isTr
+                          ? "Fragsifier rastgele orman (Random Forest) sınıflandırıcısına beslenen çok değişkenli biyofiziksel özellikler"
+                          : "Multivariate biophysical feature metrics ingested by Fragsifier RF Ensemble"}
+                      </p>
+                    </div>
                   </div>
                 </div>
 
-                <div className="p-4 rounded-xl bg-slate-900/70 border border-slate-800 space-y-2">
-                  <div className="text-amber-300 font-bold">2. Stutter & Artifact Proximity (x7 - x12)</div>
-                  <div className="text-slate-400 pl-3">
-                    • Delta Base-Pair (Δbp): 0.00 bp<br />
-                    • Back-Stutter Flag (I_-1): 0 (False)<br />
-                    • Forward-Stutter Flag (I_+1): 0 (False)<br />
-                    • Non-Template +A Flag (I_+A): 0 (False)<br />
-                    • Stutter Ratio (SR): 0.00%
+                {/* Candidate Peak Selector */}
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-xs text-slate-400 font-semibold">{isTr ? "Tepe Seç:" : "Select Peak:"}</span>
+                  <div className="flex items-center gap-1.5 bg-black/50 p-1 rounded-xl border border-tactical-border/60">
+                    {activePreset.rawPeaks.map((peak, idx) => {
+                      const isSelected = selectedPeakIndex === idx;
+                      return (
+                        <button
+                          key={peak.id}
+                          type="button"
+                          onClick={() => setSelectedPeakIndex(idx)}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                            isSelected
+                              ? "bg-purple-500 text-white shadow-[0_0_12px_rgba(168,85,247,0.4)]"
+                              : "text-slate-400 hover:text-slate-200 hover:bg-white/5"
+                          }`}
+                        >
+                          <span>{peak.id}</span>
+                          <span className="text-[10px] opacity-80">({peak.h.toLocaleString()} RFU)</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              {/* 24-Bar Spectral Feature Intensity Visualizer */}
+              <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-4 space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                  <span className="text-slate-300 font-bold flex items-center gap-2">
+                    <Activity className="w-4 h-4 text-purple-400" />
+                    {isTr ? "24-Boyutlu Özellik Yoğunluk Spektrumu" : "24D Feature Vector Intensity Spectrum"}
+                    <span className="font-mono text-purple-300 font-bold">[{currentPeak.id} • {currentPeak.bp} bp]</span>
+                  </span>
+                  <div className="flex items-center gap-3 text-[10px] font-mono text-slate-400">
+                    <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-purple-400" /> x1-x6 Morfoloji</span>
+                    <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-amber-400" /> x7-x12 Kekeleme</span>
+                    <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-blue-400" /> x13-x18 Dizi</span>
+                    <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-emerald-400" /> x19-x24 Karışım</span>
                   </div>
                 </div>
 
-                <div className="p-4 rounded-xl bg-slate-900/70 border border-slate-800 space-y-2">
-                  <div className="text-blue-300 font-bold">3. Sequence Complexity & Entropy (x13 - x18)</div>
-                  <div className="text-slate-400 pl-3">
-                    • Shannon Entropy (H(S)): 1.7158 bits<br />
-                    • Homopolymer Run (L_homo): 2 bp<br />
-                    • GC Content Fraction (f_GC): 25.0%<br />
-                    • Flanking SNP Distance: 100.0 bp
+                {/* 24 Normalized Bars */}
+                <div className="grid grid-cols-12 sm:grid-cols-24 gap-1 h-16 items-end pt-2 bg-black/40 rounded-lg p-2 border border-slate-900">
+                  {[
+                    // x1-x6: Morphology (Purple)
+                    { id: "x1", val: Math.min(100, (currentPeak.h / 3000) * 100), label: "Height", color: "bg-purple-500" },
+                    { id: "x2", val: Math.min(100, (peakFeatures.area / 3000) * 100), label: "Area", color: "bg-purple-500" },
+                    { id: "x3", val: peakFeatures.sharpness * 100, label: "Sharpness", color: "bg-purple-400" },
+                    { id: "x4", val: Math.min(100, (peakFeatures.snr / 800) * 100), label: "SNR", color: "bg-purple-400" },
+                    { id: "x5", val: Math.min(100, peakFeatures.fwhm * 50), label: "FWHM", color: "bg-purple-300" },
+                    { id: "x6", val: 85, label: "Symmetry", color: "bg-purple-300" },
+                    // x7-x12: Stutter & Proximity (Amber)
+                    { id: "x7", val: Math.abs(peakFeatures.deltaBp) * 15, label: "Δbp", color: "bg-amber-500" },
+                    { id: "x8", val: peakFeatures.isBackStutter ? 95 : 5, label: "I_-1", color: "bg-amber-500" },
+                    { id: "x9", val: peakFeatures.isFwdStutter ? 95 : 5, label: "I_+1", color: "bg-amber-400" },
+                    { id: "x10", val: peakFeatures.isPlusA ? 95 : 5, label: "I_+A", color: "bg-amber-400" },
+                    { id: "x11", val: Math.min(100, peakFeatures.sr * 3), label: "SR", color: "bg-amber-300" },
+                    { id: "x12", val: 25, label: "Proximity", color: "bg-amber-300" },
+                    // x13-x18: Sequence Complexity (Blue)
+                    { id: "x13", val: (peakFeatures.entropy / 2.0) * 100, label: "Entropy", color: "bg-blue-500" },
+                    { id: "x14", val: (peakFeatures.homopolymer / 6) * 100, label: "L_homo", color: "bg-blue-500" },
+                    { id: "x15", val: peakFeatures.gcContent * 2, label: "GC%", color: "bg-blue-400" },
+                    { id: "x16", val: 70, label: "SNP Dist", color: "bg-blue-400" },
+                    { id: "x17", val: 60, label: "MotifLen", color: "bg-blue-300" },
+                    { id: "x18", val: 75, label: "Tm Stability", color: "bg-blue-300" },
+                    // x19-x24: Mixture Dynamics (Emerald)
+                    { id: "x19", val: peakFeatures.hb * 100, label: "H_b Balance", color: "bg-emerald-500" },
+                    { id: "x20", val: peakFeatures.pullUp > 0 ? 80 : 5, label: "Pull-Up", color: "bg-emerald-500" },
+                    { id: "x21", val: 95, label: "Amp Eff", color: "bg-emerald-400" },
+                    { id: "x22", val: Math.min(100, (peakFeatures.atMargin / 2000) * 100), label: "AT Margin", color: "bg-emerald-400" },
+                    { id: "x23", val: 15, label: "Base Noise", color: "bg-emerald-300" },
+                    { id: "x24", val: 90, label: "Confidence", color: "bg-emerald-300" },
+                  ].map((bar) => (
+                    <div key={bar.id} className="h-full flex flex-col justify-end items-center group relative">
+                      <motion.div
+                        className={`w-full rounded-t ${bar.color} transition-all`}
+                        initial={{ height: 0 }}
+                        animate={{ height: `${Math.max(8, bar.val)}%` }}
+                        transition={{ duration: 0.3 }}
+                      />
+                      <span className="text-[8px] font-mono text-slate-500 mt-1 hidden sm:inline">{bar.id}</span>
+                      {/* Tooltip */}
+                      <div className="absolute bottom-full mb-1 hidden group-hover:flex flex-col items-center bg-slate-900 border border-slate-700 text-white text-[9px] px-2 py-1 rounded shadow-lg z-20 whitespace-nowrap pointer-events-none">
+                        <span className="font-bold">{bar.id}: {bar.label}</span>
+                        <span className="text-slate-400 font-mono">Skor: %{bar.val.toFixed(0)}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* 4 Interactive Categorical Quadrants */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* ── Quadrant 1: Sinyal Morfolojisi ── */}
+                <div className="p-4 rounded-2xl bg-gradient-to-b from-purple-950/20 to-slate-900/60 border border-purple-500/30 space-y-3.5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="p-1.5 rounded-lg bg-purple-500/20 text-purple-300">
+                        <Sparkles className="w-4 h-4" />
+                      </span>
+                      <span className="text-xs font-bold text-purple-200 tracking-wider">
+                        1. {isTr ? "Sinyal Morfolojisi & Kinetik (x1 - x6)" : "Signal Morphology & Kinetics (x1 - x6)"}
+                      </span>
+                    </div>
+                    <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-purple-500/20 text-purple-300 border border-purple-500/40">
+                      SNR {peakFeatures.snr}x
+                    </span>
+                  </div>
+
+                  <div className="space-y-2.5 text-xs">
+                    <div>
+                      <div className="flex justify-between text-[11px] mb-1">
+                        <span className="text-slate-400">{isTr ? "Tepe Yüksekliği (Peak Height - h):" : "Peak Height (h):"}</span>
+                        <span className="font-mono font-bold text-white">{currentPeak.h.toLocaleString()} RFU</span>
+                      </div>
+                      <div className="h-1.5 w-full rounded-full bg-slate-950 overflow-hidden">
+                        <div
+                          className="h-full bg-gradient-to-r from-purple-500 to-purple-300 rounded-full"
+                          style={{ width: `${Math.min(100, (currentPeak.h / 3000) * 100)}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2 pt-1 font-mono text-[11px]">
+                      <div className="p-2.5 rounded-xl bg-black/40 border border-slate-800 space-y-0.5">
+                        <div className="text-slate-400 text-[10px]">{isTr ? "İntegre Alan (A):" : "Integrated Area (A):"}</div>
+                        <div className="font-bold text-purple-300">{peakFeatures.area} RFU·s</div>
+                      </div>
+                      <div className="p-2.5 rounded-xl bg-black/40 border border-slate-800 space-y-0.5">
+                        <div className="text-slate-400 text-[10px]">{isTr ? "Keskinlik (h/A):" : "Sharpness (h/A):"}</div>
+                        <div className="font-bold text-purple-300">{peakFeatures.sharpness}</div>
+                      </div>
+                      <div className="p-2.5 rounded-xl bg-black/40 border border-slate-800 space-y-0.5">
+                        <div className="text-slate-400 text-[10px]">{isTr ? "FWHM Genişliği:" : "FWHM Peak Width:"}</div>
+                        <div className="font-bold text-purple-300">{peakFeatures.fwhm.toFixed(2)} bp</div>
+                      </div>
+                      <div className="p-2.5 rounded-xl bg-black/40 border border-slate-800 space-y-0.5">
+                        <div className="text-slate-400 text-[10px]">{isTr ? "Sinyal/Gürültü Oranı:" : "SNR Ratio:"}</div>
+                        <div className="font-bold text-emerald-400">{peakFeatures.snr}x</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                <div className="p-4 rounded-xl bg-slate-900/70 border border-slate-800 space-y-2">
-                  <div className="text-emerald-300 font-bold">4. Mixture Dynamics & Margin (x19 - x24)</div>
-                  <div className="text-slate-400 pl-3">
-                    • Heterozygote Balance (H_b): 1.000<br />
-                    • Spectral Pull-Up Ratio: 0.00%<br />
-                    • Locus Amplification Efficiency: 1.000<br />
-                    • Analytical Threshold Margin: +47.00
+                {/* ── Quadrant 2: Kekeleme & Artefakt Yakınlığı ── */}
+                <div className="p-4 rounded-2xl bg-gradient-to-b from-amber-950/20 to-slate-900/60 border border-amber-500/30 space-y-3.5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="p-1.5 rounded-lg bg-amber-500/20 text-amber-300">
+                        <AlertTriangle className="w-4 h-4" />
+                      </span>
+                      <span className="text-xs font-bold text-amber-200 tracking-wider">
+                        2. {isTr ? "Kekeleme & Artefakt Yakınlığı (x7 - x12)" : "Stutter & Artifact Proximity (x7 - x12)"}
+                      </span>
+                    </div>
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold ${peakFeatures.sr > 15 ? "bg-red-500/20 text-red-300 border border-red-500/40" : "bg-amber-500/20 text-amber-300 border border-amber-500/40"}`}>
+                      SR: %{peakFeatures.sr}
+                    </span>
+                  </div>
+
+                  <div className="space-y-2.5 text-xs">
+                    <div>
+                      <div className="flex justify-between text-[11px] mb-1">
+                        <span className="text-slate-400">{isTr ? "Kekeleme Oranı (Stutter Ratio - SR):" : "Stutter Ratio (SR):"}</span>
+                        <span className="font-mono font-bold text-amber-300">%{peakFeatures.sr} <span className="text-slate-500 text-[9px]">(Eşik: %15.0)</span></span>
+                      </div>
+                      <div className="h-1.5 w-full rounded-full bg-slate-950 overflow-hidden relative">
+                        <div
+                          className={`h-full rounded-full ${peakFeatures.sr > 15 ? "bg-red-500" : "bg-gradient-to-r from-amber-500 to-amber-300"}`}
+                          style={{ width: `${Math.min(100, peakFeatures.sr * 4)}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-2 pt-1 font-mono text-[10px]">
+                      <div className={`p-2.5 rounded-xl border flex flex-col items-center justify-center text-center ${peakFeatures.isBackStutter ? "bg-amber-500/15 border-amber-500/50 text-amber-300 font-bold" : "bg-black/40 border-slate-800 text-slate-500"}`}>
+                        <span>Geri-Kekeleme</span>
+                        <span className="text-[11px] mt-0.5">{peakFeatures.isBackStutter ? "EVET (I_-1)" : "HAYIR"}</span>
+                      </div>
+                      <div className={`p-2.5 rounded-xl border flex flex-col items-center justify-center text-center ${peakFeatures.isFwdStutter ? "bg-amber-500/15 border-amber-500/50 text-amber-300 font-bold" : "bg-black/40 border-slate-800 text-slate-500"}`}>
+                        <span>İleri-Kekeleme</span>
+                        <span className="text-[11px] mt-0.5">{peakFeatures.isFwdStutter ? "EVET (I_+1)" : "HAYIR"}</span>
+                      </div>
+                      <div className={`p-2.5 rounded-xl border flex flex-col items-center justify-center text-center ${peakFeatures.isPlusA ? "bg-purple-500/15 border-purple-500/50 text-purple-300 font-bold" : "bg-black/40 border-slate-800 text-slate-500"}`}>
+                        <span>+A Adenilasyon</span>
+                        <span className="text-[11px] mt-0.5">{peakFeatures.isPlusA ? "EVET (I_+A)" : "HAYIR"}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between px-3 py-1.5 rounded-lg bg-black/40 border border-slate-800 text-[11px] font-mono">
+                      <span className="text-slate-400">{isTr ? "Baz Çifti Farkı (Δbp):" : "Delta Base-Pair (Δbp):"}</span>
+                      <span className="font-bold text-white">{peakFeatures.deltaBp > 0 ? `+${peakFeatures.deltaBp}` : peakFeatures.deltaBp} bp</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* ── Quadrant 3: Dizi Karmaşıklığı & Entropi ── */}
+                <div className="p-4 rounded-2xl bg-gradient-to-b from-blue-950/20 to-slate-900/60 border border-blue-500/30 space-y-3.5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="p-1.5 rounded-lg bg-blue-500/20 text-blue-300">
+                        <Layers className="w-4 h-4" />
+                      </span>
+                      <span className="text-xs font-bold text-blue-200 tracking-wider">
+                        3. {isTr ? "Dizi Karmaşıklığı & Entropi (x13 - x18)" : "Sequence Complexity & Entropy (x13 - x18)"}
+                      </span>
+                    </div>
+                    <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/20 text-blue-300 border border-blue-500/40">
+                      H(S): {peakFeatures.entropy} bit
+                    </span>
+                  </div>
+
+                  <div className="space-y-2.5 text-xs">
+                    <div>
+                      <div className="flex justify-between text-[11px] mb-1">
+                        <span className="text-slate-400">{isTr ? "Shannon Bilgi Entropisi H(S):" : "Shannon Entropy H(S):"}</span>
+                        <span className="font-mono font-bold text-blue-300">{peakFeatures.entropy} bit <span className="text-slate-500 text-[9px]">(Maks: 2.0)</span></span>
+                      </div>
+                      <div className="h-1.5 w-full rounded-full bg-slate-950 overflow-hidden">
+                        <div
+                          className="h-full bg-gradient-to-r from-blue-500 to-cyan-300 rounded-full"
+                          style={{ width: `${(peakFeatures.entropy / 2.0) * 100}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2 pt-1 font-mono text-[11px]">
+                      <div className="p-2.5 rounded-xl bg-black/40 border border-slate-800 space-y-0.5">
+                        <div className="text-slate-400 text-[10px]">{isTr ? "GC İçerik Oranı (f_GC):" : "GC Fraction (f_GC):"}</div>
+                        <div className="font-bold text-cyan-300">%{peakFeatures.gcContent}</div>
+                      </div>
+                      <div className="p-2.5 rounded-xl bg-black/40 border border-slate-800 space-y-0.5">
+                        <div className="text-slate-400 text-[10px]">{isTr ? "Homopolimer Uzunluğu:" : "Homopolymer Run (L_homo):"}</div>
+                        <div className="font-bold text-cyan-300">{peakFeatures.homopolymer} bp</div>
+                      </div>
+                      <div className="p-2.5 rounded-xl bg-black/40 border border-slate-800 space-y-0.5">
+                        <div className="text-slate-400 text-[10px]">{isTr ? "Yan SNP Mesafesi:" : "Flanking SNP Dist:"}</div>
+                        <div className="font-bold text-blue-300">100.0 bp</div>
+                      </div>
+                      <div className="p-2.5 rounded-xl bg-black/40 border border-slate-800 space-y-0.5">
+                        <div className="text-slate-400 text-[10px]">{isTr ? "Tekrar Birimi:" : "Repeat Unit Len:"}</div>
+                        <div className="font-bold text-blue-300">4 bp (Tetra)</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* ── Quadrant 4: Karışım Dinamikleri & Eşik Marjı ── */}
+                <div className="p-4 rounded-2xl bg-gradient-to-b from-emerald-950/20 to-slate-900/60 border border-emerald-500/30 space-y-3.5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="p-1.5 rounded-lg bg-emerald-500/20 text-emerald-300">
+                        <ShieldCheck className="w-4 h-4" />
+                      </span>
+                      <span className="text-xs font-bold text-emerald-200 tracking-wider">
+                        4. {isTr ? "Karışım Dinamikleri & Marj (x19 - x24)" : "Mixture Dynamics & Margin (x19 - x24)"}
+                      </span>
+                    </div>
+                    <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                      H_b: {peakFeatures.hb}
+                    </span>
+                  </div>
+
+                  <div className="space-y-2.5 text-xs">
+                    <div>
+                      <div className="flex justify-between text-[11px] mb-1">
+                        <span className="text-slate-400">{isTr ? "Heterozigot Dengesi (H_b):" : "Heterozygote Balance (H_b):"}</span>
+                        <span className="font-mono font-bold text-emerald-300">{peakFeatures.hb} <span className="text-slate-500 text-[9px]">(Eşik: ≥ 0.60)</span></span>
+                      </div>
+                      <div className="h-1.5 w-full rounded-full bg-slate-950 overflow-hidden">
+                        <div
+                          className={`h-full rounded-full ${peakFeatures.hb >= 0.6 ? "bg-gradient-to-r from-emerald-500 to-teal-300" : "bg-amber-500"}`}
+                          style={{ width: `${Math.min(100, peakFeatures.hb * 100)}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2 pt-1 font-mono text-[11px]">
+                      <div className="p-2.5 rounded-xl bg-black/40 border border-slate-800 space-y-0.5">
+                        <div className="text-slate-400 text-[10px]">{isTr ? "Analitik Eşik Marjı:" : "AT Threshold Margin:"}</div>
+                        <div className="font-bold text-emerald-400">+{peakFeatures.atMargin.toLocaleString()} RFU</div>
+                      </div>
+                      <div className="p-2.5 rounded-xl bg-black/40 border border-slate-800 space-y-0.5">
+                        <div className="text-slate-400 text-[10px]">{isTr ? "Spektral Çekme (Pull-Up):" : "Spectral Pull-Up:"}</div>
+                        <div className="font-bold text-emerald-400">%{peakFeatures.pullUp}</div>
+                      </div>
+                      <div className="p-2.5 rounded-xl bg-black/40 border border-slate-800 space-y-0.5">
+                        <div className="text-slate-400 text-[10px]">{isTr ? "Amplifikasyon Verimi (e_l):" : "Locus Amp Efficiency (e_l):"}</div>
+                        <div className="font-bold text-teal-300">1.000</div>
+                      </div>
+                      <div className="p-2.5 rounded-xl bg-black/40 border border-slate-800 space-y-0.5">
+                        <div className="text-slate-400 text-[10px]">{isTr ? "Fragsifier Karar Güveni:" : "RF Ensemble Conf:"}</div>
+                        <div className="font-bold text-purple-300">%{(currentPeak.conf * 100).toFixed(1)}</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </motion.div>
         )}
+
       </AnimatePresence>
     </div>
   );

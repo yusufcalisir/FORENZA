@@ -42,12 +42,33 @@ class TestMLSTRApiEndpoints:
         )
         feat_data = feat_resp.json()
 
-        # Classify
+        # Classify via feature_vector
         resp = client.post("/api/v1/forensic/ml-str/classify-peak", json={"feature_vector": feat_data})
         assert resp.status_code == 200
         data = resp.json()
         assert data["predicted_class"] == "CLASS_TRUE_ALLELE"
         assert data["is_true_allele_candidate"] is True
+
+    def test_classify_peak_direct_payload(self):
+        # Direct raw properties payload
+        resp = client.post(
+            "/api/v1/forensic/ml-str/classify-peak",
+            json={
+                "locus_name": "D21S11",
+                "peak_id": "Peak_30",
+                "peak_height": 2400.0,
+                "peak_area": 20400.0,
+                "fwhm": 1.25,
+                "bp_position": 214.0,
+                "major_allele_bp": 214.0,
+                "major_allele_height": 2400.0,
+                "repeat_unit_len": 4
+            }
+        )
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["predicted_class"] == "CLASS_TRUE_ALLELE"
+
 
     def test_translate_isfg_endpoint(self):
         payload = {

@@ -35,14 +35,18 @@ class ParseSequenceRequest(BaseModel):
 
 class AnalyzeSE33Request(BaseModel):
     model_config = ConfigDict(protected_namespaces=())
-    sequence_alleles: List[str] = Field(
-        ...,
+    sequence_alleles: Optional[List[str]] = Field(
+        None,
         examples=[[
             "CTTC [CTTT]17_rs9362477[C>T]",
             "CTTC [CTTT]10 TT [CTTT]16_rs1277875566[T>C]"
         ]]
     )
+    sequence_1: Optional[str] = None
+    sequence_2: Optional[str] = None
+    sample_id: Optional[str] = None
     population: str = Field("GLOBAL_COMPOSITE", examples=["CAUCASIAN", "AFRICAN_AMERICAN", "GLOBAL_COMPOSITE"])
+
 
 
 class MixtureDeconvolutionRequest(BaseModel):

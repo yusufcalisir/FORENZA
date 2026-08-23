@@ -66,14 +66,24 @@ async def parse_isfg_sequence(body: ParseSequenceRequest) -> ParsedSTRSequence:
     description="Performs bimodal repeat classification, 7 flanking variant detection, and 4-bp deletion reconciliation.",
     status_code=status.HTTP_200_OK,
 )
+@router.post(
+    "/se33/analyze",
+    response_model=SE33GenotypeAnalysisReport,
+    include_in_schema=False,
+    status_code=status.HTTP_200_OK,
+)
 async def analyze_se33_genotype(body: AnalyzeSE33Request) -> SE33GenotypeAnalysisReport:
     try:
-        return SE33HyperPolymorphicEngine.analyze_se33_genotype(body.sequence_alleles, body.population)
+        alleles = body.sequence_alleles or [a for a in [body.sequence_1, body.sequence_2] if a]
+        if not alleles:
+            raise ValueError("No sequence alleles provided for SE33 analysis.")
+        return SE33HyperPolymorphicEngine.analyze_se33_genotype(alleles, body.population)
     except Exception as exc:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"SE33 analysis failed: {str(exc)}"
         )
+
 
 
 @router.post(

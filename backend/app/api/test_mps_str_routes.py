@@ -37,6 +37,20 @@ class TestMPSSTRApiEndpoints:
         assert data["information_gain_ratio"] >= 20.0
         assert data["is_fully_concordant"] is True
 
+    def test_analyze_se33_alias_endpoint(self):
+        # Test alias endpoint and separate sequence_1/sequence_2 fields
+        payload = {
+            "sequence_1": "CTTC [CTTT]17_rs9362477[C>T]",
+            "sequence_2": "CTTC [CTTT]10 TT [CTTT]16_rs1277875566[T>C]",
+            "population": "CAUCASIAN"
+        }
+        resp = client.post("/api/v1/forensic/mps-str/se33/analyze", json=payload)
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["locus"] == "SE33"
+        assert data["ce_genotype"] == "18, 27.2"
+
+
     def test_deconvolve_mixture_endpoint(self):
         payload = {
             "sample_id": "MIX_BENCHMARK_901",

@@ -114,10 +114,11 @@ export default function SyntheticCaseGeneratorPanel() {
 
     const interval = setInterval(() => {
       setSynthProgress((prev) => {
-        if (prev >= 90) return prev;
-        return prev + Math.floor(Math.random() * 25 + 15);
+        if (prev >= 90) return 90;
+        return Math.min(90, prev + Math.floor(Math.random() * 12 + 6));
       });
     }, 100);
+
 
     try {
       const res = await fetch(`${API_BASE}/api/v1/forensic/synthetic/generate-case`, {
@@ -161,10 +162,11 @@ export default function SyntheticCaseGeneratorPanel() {
 
     const interval = setInterval(() => {
       setEvalProgress((prev) => {
-        if (prev >= 90) return prev;
-        return prev + Math.floor(Math.random() * 20 + 15);
+        if (prev >= 90) return 90;
+        return Math.min(90, prev + Math.floor(Math.random() * 12 + 6));
       });
     }, 100);
+
 
     try {
       const calculatedLr = Number((caseData.ground_truth_metrics.true_log10_lr - (0.15 + Math.random() * 0.2)).toFixed(2));

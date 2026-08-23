@@ -118,17 +118,17 @@ export const PanelMPSSTR: React.FC = () => {
     async function fetchMpsData() {
       try {
         const API_BASE = getApiBaseUrl();
-        const res = await fetch(`${API_BASE}/api/v1/forensic/mps-str/se33/analyze`, {
+        const res = await fetch(`${API_BASE}/api/v1/forensic/mps-str/analyze-se33`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             sample_id: activePreset.id,
-            sequence_1: activePreset.seqAlleles[0] || "",
-            sequence_2: activePreset.seqAlleles[1] || "",
+            sequence_alleles: activePreset.seqAlleles,
             population: activePreset.population,
           }),
           signal: AbortSignal.timeout(4000),
         });
+
         if (res.ok && isMounted) {
           const data = await res.json();
           setLiveMpsData(data);

@@ -38,7 +38,20 @@ class ExtractFeaturesRequest(BaseModel):
 class ClassifyPeakRequest(BaseModel):
     model_config = ConfigDict(protected_namespaces=())
 
-    feature_vector: FeatureVector24D
+    feature_vector: Optional[FeatureVector24D] = None
+    locus_name: Optional[str] = None
+    peak_id: Optional[str] = None
+    peak_height: Optional[float] = None
+    peak_area: Optional[float] = None
+    fwhm: Optional[float] = 1.0
+    bp_position: Optional[float] = 150.0
+    major_allele_bp: Optional[float] = 150.0
+    major_allele_height: Optional[float] = None
+    repeat_unit_len: Optional[int] = 4
+    sequence_string: Optional[str] = ""
+    co_eluting_secondary_rfu: Optional[float] = 0.0
+    analytical_threshold: Optional[float] = 50.0
+
 
 
 class FilterLocusPeaksRequest(BaseModel):

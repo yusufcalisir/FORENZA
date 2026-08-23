@@ -60,12 +60,32 @@ async def classify_peak_endpoint(req: ClassifyPeakRequest) -> PeakClassification
     Classifies a candidate peak into one of 7 biophysical classes via Fragsifier ensemble.
     """
     try:
-        return FragsifierRandomForestClassifier.classify_peak(req.feature_vector)
+        if req.feature_vector is not None:
+            fv = req.feature_vector
+        else:
+            if req.locus_name is None or req.peak_id is None or req.peak_height is None:
+                raise ValueError("Either feature_vector or (locus_name, peak_id, peak_height) must be provided.")
+            fv = MLSTRFeatureExtractor.extract_features(
+                locus_name=req.locus_name,
+                peak_id=req.peak_id,
+                peak_height=req.peak_height,
+                peak_area=req.peak_area,
+                fwhm=req.fwhm if req.fwhm is not None else 1.0,
+                bp_position=req.bp_position if req.bp_position is not None else 150.0,
+                major_allele_bp=req.major_allele_bp if req.major_allele_bp is not None else 150.0,
+                major_allele_height=req.major_allele_height,
+                repeat_unit_len=req.repeat_unit_len if req.repeat_unit_len is not None else 4,
+                sequence_string=req.sequence_string or "",
+                co_eluting_secondary_rfu=req.co_eluting_secondary_rfu or 0.0,
+                analytical_threshold=req.analytical_threshold if req.analytical_threshold is not None else 50.0,
+            )
+        return FragsifierRandomForestClassifier.classify_peak(fv)
     except Exception as e:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Peak classification failed: {str(e)}"
         )
+
 
 
 @router.post("/filter-locus", response_model=LocusMLPreFilterReport)

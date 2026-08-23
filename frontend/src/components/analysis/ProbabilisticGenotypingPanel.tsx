@@ -146,12 +146,15 @@ export default function ProbabilisticGenotypingPanel() {
 
     const API_BASE = getApiBaseUrl();
 
+    // Monotonically progressive MCMC chain execution tracker bounded strictly to <= 92% until server completion
     const progressInterval = setInterval(() => {
       setSampleProgress((prev) => {
-        if (prev >= 90) return prev;
-        return prev + Math.floor(Math.random() * 20 + 15);
+        if (prev >= 92) return 92;
+        const stepIncrement = Math.floor(Math.random() * 10 + 6);
+        return Math.min(92, prev + stepIncrement);
       });
-    }, 120);
+    }, 100);
+
 
     try {
       // Build real request conforming to 1.2.5 MCMCMixtureRequest schema

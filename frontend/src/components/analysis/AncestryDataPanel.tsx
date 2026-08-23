@@ -15,7 +15,8 @@ import {
     Layers,
     Eye,
     Palette,
-    Lock
+    Lock,
+    Search
 } from "lucide-react";
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 import { getApiBaseUrl } from "@/lib/api";
@@ -53,14 +54,61 @@ const CONTINENTAL_CENTROIDS: Record<string, { name: string; nameTr: string; lat:
 };
 
 const AIM_SNPS: Record<string, { gene: string; allele: string; freqs: Record<string, number> }> = {
-    rs2814778:  { gene: "DARC (Duffy Null)", allele: "C", freqs: { EUR: 0.001, AFR: 0.992, EAS: 0.000, SAS: 0.002, AMR: 0.015, MID: 0.020 } },
-    rs1426654:  { gene: "SLC24A5",           allele: "A", freqs: { EUR: 0.998, AFR: 0.021, EAS: 0.000, SAS: 0.885, AMR: 0.115, MID: 0.950 } },
-    rs3827072:  { gene: "EDAR (370Ala)",     allele: "C", freqs: { EUR: 0.000, AFR: 0.000, EAS: 0.945, SAS: 0.012, AMR: 0.821, MID: 0.005 } },
-    rs1800414:  { gene: "OCA2 (His615Arg)",   allele: "C", freqs: { EUR: 0.000, AFR: 0.000, EAS: 0.725, SAS: 0.005, AMR: 0.041, MID: 0.000 } },
-    rs16891982: { gene: "SLC45A2",           allele: "G", freqs: { EUR: 0.984, AFR: 0.008, EAS: 0.000, SAS: 0.124, AMR: 0.032, MID: 0.720 } },
-    rs12913832: { gene: "HERC2 (Eye/Hair)",  allele: "G", freqs: { EUR: 0.790, AFR: 0.008, EAS: 0.000, SAS: 0.110, AMR: 0.320, MID: 0.250 } },
-    rs10424031: { gene: "MFSD12",            allele: "A", freqs: { EUR: 0.020, AFR: 0.850, EAS: 0.010, SAS: 0.050, AMR: 0.150, MID: 0.080 } },
-    rs885479:   { gene: "MC1R (R163Q)",       allele: "G", freqs: { EUR: 0.080, AFR: 0.050, EAS: 0.680, SAS: 0.120, AMR: 0.250, MID: 0.110 } },
+    rs3737576:  { gene: "CPM",       allele: "C", freqs: { AFR: 0.812, EUR: 0.221, EAS: 0.114, SAS: 0.325, AMR: 0.083, MID: 0.248 } },
+    rs7554936:  { gene: "Intergenic", allele: "T", freqs: { AFR: 0.941, EUR: 0.385, EAS: 0.021, SAS: 0.412, AMR: 0.052, MID: 0.391 } },
+    rs2814778:  { gene: "ACKR1 (DARC)", allele: "C", freqs: { AFR: 0.992, EUR: 0.001, EAS: 0.000, SAS: 0.003, AMR: 0.021, MID: 0.085 } },
+    rs798443:   { gene: "Intergenic", allele: "T", freqs: { AFR: 0.125, EUR: 0.781, EAS: 0.943, SAS: 0.612, AMR: 0.892, MID: 0.721 } },
+    rs1876482:  { gene: "Intergenic", allele: "C", freqs: { AFR: 0.884, EUR: 0.152, EAS: 0.061, SAS: 0.291, AMR: 0.041, MID: 0.183 } },
+    rs1834619:  { gene: "STAT4",     allele: "G", freqs: { AFR: 0.915, EUR: 0.283, EAS: 0.082, SAS: 0.394, AMR: 0.091, MID: 0.312 } },
+    rs3827760:  { gene: "EDAR (370Ala)", allele: "G", freqs: { AFR: 0.000, EUR: 0.002, EAS: 0.948, SAS: 0.015, AMR: 0.824, MID: 0.005 } },
+    rs260690:   { gene: "Intergenic", allele: "G", freqs: { AFR: 0.213, EUR: 0.724, EAS: 0.211, SAS: 0.512, AMR: 0.183, MID: 0.651 } },
+    rs6754311:  { gene: "Intergenic", allele: "G", freqs: { AFR: 0.852, EUR: 0.183, EAS: 0.031, SAS: 0.284, AMR: 0.052, MID: 0.211 } },
+    rs10497191: { gene: "Intergenic", allele: "T", freqs: { AFR: 0.112, EUR: 0.891, EAS: 0.982, SAS: 0.782, AMR: 0.951, MID: 0.842 } },
+    rs12498138: { gene: "Intergenic", allele: "G", freqs: { AFR: 0.021, EUR: 0.083, EAS: 0.192, SAS: 0.114, AMR: 0.912, MID: 0.071 } },
+    rs4833103:  { gene: "Intergenic", allele: "C", freqs: { AFR: 0.781, EUR: 0.214, EAS: 0.042, SAS: 0.312, AMR: 0.061, MID: 0.252 } },
+    rs1229984:  { gene: "ADH1B",     allele: "T", freqs: { AFR: 0.002, EUR: 0.041, EAS: 0.762, SAS: 0.112, AMR: 0.081, MID: 0.125 } },
+    rs3811801:  { gene: "Intergenic", allele: "G", freqs: { AFR: 0.081, EUR: 0.112, EAS: 0.894, SAS: 0.221, AMR: 0.783, MID: 0.142 } },
+    rs7657799:  { gene: "Intergenic", allele: "T", freqs: { AFR: 0.824, EUR: 0.191, EAS: 0.052, SAS: 0.315, AMR: 0.072, MID: 0.231 } },
+    rs16891982: { gene: "SLC45A2",   allele: "G", freqs: { AFR: 0.000, EUR: 0.968, EAS: 0.001, SAS: 0.082, AMR: 0.021, MID: 0.214 } },
+    rs7722456:  { gene: "Intergenic", allele: "A", freqs: { AFR: 0.091, EUR: 0.824, EAS: 0.912, SAS: 0.683, AMR: 0.851, MID: 0.762 } },
+    rs870347:   { gene: "Intergenic", allele: "T", freqs: { AFR: 0.892, EUR: 0.221, EAS: 0.071, SAS: 0.342, AMR: 0.082, MID: 0.261 } },
+    rs3823159:  { gene: "Intergenic", allele: "A", freqs: { AFR: 0.861, EUR: 0.142, EAS: 0.032, SAS: 0.251, AMR: 0.041, MID: 0.182 } },
+    rs192655:   { gene: "Intergenic", allele: "T", freqs: { AFR: 0.182, EUR: 0.712, EAS: 0.931, SAS: 0.582, AMR: 0.871, MID: 0.662 } },
+    rs917115:   { gene: "Intergenic", allele: "G", freqs: { AFR: 0.841, EUR: 0.172, EAS: 0.041, SAS: 0.272, AMR: 0.051, MID: 0.212 } },
+    rs1462906:  { gene: "Intergenic", allele: "A", freqs: { AFR: 0.112, EUR: 0.881, EAS: 0.962, SAS: 0.752, AMR: 0.921, MID: 0.812 } },
+    rs6990312:  { gene: "Intergenic", allele: "G", freqs: { AFR: 0.821, EUR: 0.201, EAS: 0.051, SAS: 0.321, AMR: 0.062, MID: 0.241 } },
+    rs2196051:  { gene: "Intergenic", allele: "T", freqs: { AFR: 0.872, EUR: 0.161, EAS: 0.042, SAS: 0.281, AMR: 0.051, MID: 0.201 } },
+    rs1871534:  { gene: "Intergenic", allele: "T", freqs: { AFR: 0.851, EUR: 0.182, EAS: 0.032, SAS: 0.291, AMR: 0.042, MID: 0.221 } },
+    rs3814134:  { gene: "Intergenic", allele: "G", freqs: { AFR: 0.891, EUR: 0.131, EAS: 0.021, SAS: 0.241, AMR: 0.031, MID: 0.171 } },
+    rs4918664:  { gene: "Intergenic", allele: "T", freqs: { AFR: 0.141, EUR: 0.761, EAS: 0.081, SAS: 0.491, AMR: 0.112, MID: 0.621 } },
+    rs174570:   { gene: "FADS2",      allele: "T", freqs: { AFR: 0.921, EUR: 0.312, EAS: 0.642, SAS: 0.521, AMR: 0.781, MID: 0.412 } },
+    rs1079597:  { gene: "ANKK1",      allele: "T", freqs: { AFR: 0.811, EUR: 0.212, EAS: 0.061, SAS: 0.331, AMR: 0.071, MID: 0.251 } },
+    rs2238151:  { gene: "Intergenic", allele: "A", freqs: { AFR: 0.131, EUR: 0.841, EAS: 0.951, SAS: 0.721, AMR: 0.912, MID: 0.791 } },
+    rs671:      { gene: "ALDH2",      allele: "A", freqs: { AFR: 0.000, EUR: 0.000, EAS: 0.312, SAS: 0.000, AMR: 0.000, MID: 0.000 } },
+    rs7997709:  { gene: "Intergenic", allele: "G", freqs: { AFR: 0.091, EUR: 0.861, EAS: 0.971, SAS: 0.761, AMR: 0.931, MID: 0.821 } },
+    rs1572018:  { gene: "Intergenic", allele: "T", freqs: { AFR: 0.071, EUR: 0.881, EAS: 0.981, SAS: 0.781, AMR: 0.941, MID: 0.831 } },
+    rs2166624:  { gene: "Intergenic", allele: "C", freqs: { AFR: 0.861, EUR: 0.171, EAS: 0.031, SAS: 0.271, AMR: 0.041, MID: 0.211 } },
+    rs7326934:  { gene: "Intergenic", allele: "T", freqs: { AFR: 0.841, EUR: 0.191, EAS: 0.041, SAS: 0.291, AMR: 0.051, MID: 0.231 } },
+    rs9522149:  { gene: "Intergenic", allele: "A", freqs: { AFR: 0.181, EUR: 0.721, EAS: 0.121, SAS: 0.481, AMR: 0.151, MID: 0.611 } },
+    rs200354:   { gene: "Intergenic", allele: "T", freqs: { AFR: 0.151, EUR: 0.751, EAS: 0.111, SAS: 0.461, AMR: 0.131, MID: 0.631 } },
+    rs1800414:  { gene: "OCA2",       allele: "T", freqs: { AFR: 0.041, EUR: 0.121, EAS: 0.782, SAS: 0.211, AMR: 0.312, MID: 0.151 } },
+    rs12913832: { gene: "HERC2",      allele: "G", freqs: { AFR: 0.012, EUR: 0.785, EAS: 0.002, SAS: 0.124, AMR: 0.081, MID: 0.235 } },
+    rs12439433: { gene: "Intergenic", allele: "A", freqs: { AFR: 0.831, EUR: 0.181, EAS: 0.041, SAS: 0.281, AMR: 0.051, MID: 0.221 } },
+    rs735480:   { gene: "Intergenic", allele: "T", freqs: { AFR: 0.121, EUR: 0.821, EAS: 0.931, SAS: 0.711, AMR: 0.891, MID: 0.771 } },
+    rs1426654:  { gene: "SLC24A5",    allele: "G", freqs: { AFR: 0.011, EUR: 0.991, EAS: 0.002, SAS: 0.882, AMR: 0.121, MID: 0.842 } },
+    rs459920:   { gene: "Intergenic", allele: "G", freqs: { AFR: 0.811, EUR: 0.211, EAS: 0.061, SAS: 0.321, AMR: 0.071, MID: 0.251 } },
+    rs4411548:  { gene: "Intergenic", allele: "T", freqs: { AFR: 0.851, EUR: 0.171, EAS: 0.031, SAS: 0.271, AMR: 0.041, MID: 0.211 } },
+    rs2593595:  { gene: "Intergenic", allele: "G", freqs: { AFR: 0.831, EUR: 0.191, EAS: 0.041, SAS: 0.291, AMR: 0.051, MID: 0.231 } },
+    rs17642714: { gene: "Intergenic", allele: "G", freqs: { AFR: 0.871, EUR: 0.151, EAS: 0.031, SAS: 0.261, AMR: 0.041, MID: 0.191 } },
+    rs4471745:  { gene: "Intergenic", allele: "A", freqs: { AFR: 0.841, EUR: 0.181, EAS: 0.041, SAS: 0.281, AMR: 0.051, MID: 0.221 } },
+    rs11652805: { gene: "Intergenic", allele: "T", freqs: { AFR: 0.821, EUR: 0.201, EAS: 0.051, SAS: 0.311, AMR: 0.061, MID: 0.241 } },
+    rs2042762:  { gene: "Intergenic", allele: "G", freqs: { AFR: 0.861, EUR: 0.161, EAS: 0.031, SAS: 0.271, AMR: 0.041, MID: 0.201 } },
+    rs7226659:  { gene: "Intergenic", allele: "T", freqs: { AFR: 0.881, EUR: 0.141, EAS: 0.021, SAS: 0.251, AMR: 0.031, MID: 0.181 } },
+    rs3916235:  { gene: "Intergenic", allele: "C", freqs: { AFR: 0.111, EUR: 0.851, EAS: 0.961, SAS: 0.741, AMR: 0.921, MID: 0.801 } },
+    rs4891825:  { gene: "Intergenic", allele: "T", freqs: { AFR: 0.831, EUR: 0.191, EAS: 0.041, SAS: 0.291, AMR: 0.051, MID: 0.231 } },
+    rs7251928:  { gene: "Intergenic", allele: "A", freqs: { AFR: 0.851, EUR: 0.171, EAS: 0.031, SAS: 0.271, AMR: 0.041, MID: 0.211 } },
+    rs310644:   { gene: "Intergenic", allele: "T", freqs: { AFR: 0.871, EUR: 0.151, EAS: 0.031, SAS: 0.261, AMR: 0.041, MID: 0.191 } },
+    rs2024566:  { gene: "Intergenic", allele: "A", freqs: { AFR: 0.841, EUR: 0.181, EAS: 0.041, SAS: 0.281, AMR: 0.051, MID: 0.221 } },
 };
 
 function computeBGA(snps: Record<string, number>, refPanel: RefPanel) {
@@ -146,16 +194,21 @@ export default function AncestryDataPanel({
     const [selectedRefPanel, setSelectedRefPanel] = useState<RefPanel>("gnomAD_v4");
     const [selectedAimPanel, setSelectedAimPanel] = useState<AIMPanel>("VISAGE_153");
     const [activeJurisdiction, setActiveJurisdiction] = useState<Jurisdiction>("ISFG");
+    const [locusSearch, setLocusSearch] = useState("");
 
     const [snpDosages, setSnpDosages] = useState<Record<string, number>>({
         rs1426654: 2,  // SLC24A5 European Light
         rs16891982: 2, // SLC45A2 European Light
         rs12913832: 2, // HERC2 Blue Eye
         rs2814778: 0,  // DARC non-African
-        rs3827072: 0,  // EDAR non-East Asian
+        rs3827760: 0,  // EDAR non-East Asian
         rs1800414: 0,
-        rs10424031: 0,
-        rs885479: 0,
+        rs10497191: 2,
+        rs798443: 2,
+        rs1462906: 2,
+        rs7997709: 2,
+        rs1572018: 2,
+        rs3916235: 2,
     });
 
     useEffect(() => {
@@ -357,7 +410,9 @@ export default function AncestryDataPanel({
                             type="button"
                             onClick={() => setSnpDosages({
                                 rs1426654: 2, rs16891982: 2, rs12913832: 2, rs2814778: 0,
-                                rs3827072: 0, rs1800414: 0, rs10424031: 0, rs885479: 0,
+                                rs10497191: 2, rs798443: 2, rs1462906: 2, rs7997709: 2,
+                                rs1572018: 2, rs3916235: 2, rs3827760: 0, rs1800414: 0,
+                                rs3737576: 0, rs7554936: 1, rs1876482: 0, rs1834619: 1,
                             })}
                             className="p-2.5 rounded-xl text-left transition-all border border-tactical-border/50 bg-black/30 hover:bg-white/5 hover:border-cyan-500/40 cursor-pointer flex flex-col justify-between"
                         >
@@ -370,8 +425,12 @@ export default function AncestryDataPanel({
                         <button
                             type="button"
                             onClick={() => setSnpDosages({
-                                rs2814778: 2, rs10424031: 2, rs1426654: 0, rs16891982: 0,
-                                rs12913832: 0, rs3827072: 0, rs1800414: 0, rs885479: 0,
+                                rs2814778: 2, rs3737576: 2, rs7554936: 2, rs1876482: 2,
+                                rs1834619: 2, rs6754311: 2, rs4833103: 2, rs7657799: 2,
+                                rs870347: 2, rs3823159: 2, rs917115: 2, rs6990312: 2,
+                                rs2196051: 2, rs1871534: 2, rs3814134: 2, rs174570: 2,
+                                rs1079597: 2, rs2166624: 2, rs7326934: 2, rs12439433: 2,
+                                rs1426654: 0, rs16891982: 0, rs12913832: 0, rs3827760: 0,
                             })}
                             className="p-2.5 rounded-xl text-left transition-all border border-tactical-border/50 bg-black/30 hover:bg-white/5 hover:border-amber-500/40 cursor-pointer flex flex-col justify-between"
                         >
@@ -384,8 +443,10 @@ export default function AncestryDataPanel({
                         <button
                             type="button"
                             onClick={() => setSnpDosages({
-                                rs3827072: 2, rs1800414: 2, rs885479: 2, rs1426654: 0,
-                                rs16891982: 0, rs12913832: 0, rs2814778: 0, rs10424031: 0,
+                                rs3827760: 2, rs1229984: 2, rs3811801: 2, rs1800414: 2,
+                                rs671: 1, rs10497191: 2, rs798443: 2, rs1462906: 2,
+                                rs7997709: 2, rs1572018: 2, rs3916235: 2, rs2814778: 0,
+                                rs1426654: 0, rs16891982: 0, rs12913832: 0,
                             })}
                             className="p-2.5 rounded-xl text-left transition-all border border-tactical-border/50 bg-black/30 hover:bg-white/5 hover:border-pink-500/40 cursor-pointer flex flex-col justify-between"
                         >
@@ -398,8 +459,9 @@ export default function AncestryDataPanel({
                         <button
                             type="button"
                             onClick={() => setSnpDosages({
-                                rs1426654: 2, rs16891982: 2, rs12913832: 1, rs2814778: 0,
-                                rs3827072: 0, rs1800414: 0, rs10424031: 0, rs885479: 0,
+                                rs1426654: 2, rs16891982: 1, rs12913832: 1, rs2814778: 0,
+                                rs260690: 2, rs4918664: 2, rs9522149: 2, rs200354: 2,
+                                rs735480: 2, rs3827760: 0, rs1800414: 0,
                             })}
                             className="p-2.5 rounded-xl text-left transition-all border border-tactical-border/50 bg-black/30 hover:bg-white/5 hover:border-cyan-500/40 cursor-pointer flex flex-col justify-between"
                         >
@@ -413,7 +475,8 @@ export default function AncestryDataPanel({
                             type="button"
                             onClick={() => setSnpDosages({
                                 rs2814778: 1, rs1426654: 1, rs16891982: 1, rs12913832: 1,
-                                rs3827072: 1, rs1800414: 0, rs10424031: 1, rs885479: 0,
+                                rs3827760: 1, rs1800414: 1, rs1229984: 1, rs1834619: 1,
+                                rs3737576: 1, rs7554936: 1,
                             })}
                             className="p-2.5 rounded-xl text-left transition-all border border-tactical-border/50 bg-black/30 hover:bg-white/5 hover:border-emerald-500/40 cursor-pointer flex flex-col justify-between"
                         >
@@ -572,42 +635,62 @@ export default function AncestryDataPanel({
 
             {/* ── Interactive AIM Mutation Laboratory ─────────────────────────── */}
             <div className="p-4 rounded-2xl border border-tactical-border/70 bg-tactical-surface/50 space-y-3 shadow-lg">
-                <div className="flex items-center justify-between border-b border-tactical-border/40 pb-2">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-tactical-border/40 pb-2.5">
                     <span className="text-xs font-bold text-white uppercase flex items-center gap-1.5">
                         <Activity className="w-4 h-4 text-emerald-400" />
                         {isTr
-                            ? "İnteraktif AIM Locus Laboratuvarı (Dozajı 0, 1, 2 değiştirmek için tıklayın)"
-                            : "Interactive AIM Locus Laboratory (Click locus to cycle dosage 0, 1, 2)"}
+                            ? "İnteraktif 55-AIM Locus Laboratuvarı (Dozajı 0, 1, 2 değiştirmek için tıklayın)"
+                            : "Interactive 55-AIM Locus Laboratory (Click locus to cycle dosage 0, 1, 2)"}
                     </span>
-                    <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-300">
-                        {Object.keys(snpDosages).length} {isTr ? "Lokus Aktif" : "Loci Active"}
-                    </span>
-
+                    <div className="flex items-center gap-2">
+                        <div className="relative">
+                            <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-500" />
+                            <input
+                                type="text"
+                                placeholder={isTr ? "Lokus veya gen ara..." : "Search locus / gene..."}
+                                value={locusSearch}
+                                onChange={(e) => setLocusSearch(e.target.value)}
+                                className="pl-8 pr-2.5 py-1 text-[11px] rounded-lg bg-black/50 border border-tactical-border/60 text-white placeholder:text-zinc-600 focus:outline-none focus:border-cyan-500/60 w-36 sm:w-48 font-sans"
+                            />
+                        </div>
+                        <span className="text-[9px] font-bold px-2 py-1 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 whitespace-nowrap">
+                            55 / 55 {isTr ? "Lokus Aktif" : "Loci Active"}
+                        </span>
+                    </div>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                    {Object.entries(AIM_SNPS).map(([rsid, info]) => {
-                        const d = snpDosages[rsid] ?? 0;
-                        return (
-                            <div
-                                key={rsid}
-                                onClick={() => toggleDosage(rsid)}
-                                className="p-3 rounded-xl bg-black/40 border border-tactical-border/50 hover:border-cyan-500/60 cursor-pointer space-y-1.5 transition-all flex flex-col justify-between"
-                            >
-                                <div className="flex justify-between items-center text-[10px]">
-                                    <span className="font-bold text-white font-mono">{rsid}</span>
-                                    <span className={`px-2 py-0.5 rounded font-bold font-mono text-[9px] ${
-                                        d === 2 ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40" :
-                                        d === 1 ? "bg-amber-500/20 text-amber-300 border border-amber-500/40" :
-                                        "bg-zinc-800 text-zinc-400 border border-zinc-700"
-                                    }`}>
-                                        d={d}
-                                    </span>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 max-h-[380px] overflow-y-auto pr-1">
+                    {Object.entries(AIM_SNPS)
+                        .filter(([rsid, info]) => {
+                            if (!locusSearch.trim()) return true;
+                            const q = locusSearch.toLowerCase();
+                            return rsid.toLowerCase().includes(q) || info.gene.toLowerCase().includes(q);
+                        })
+                        .map(([rsid, info]) => {
+                            const d = snpDosages[rsid] ?? 0;
+                            return (
+                                <div
+                                    key={rsid}
+                                    onClick={() => toggleDosage(rsid)}
+                                    className="p-2.5 rounded-xl bg-black/40 border border-tactical-border/50 hover:border-cyan-500/60 cursor-pointer space-y-1 transition-all flex flex-col justify-between select-none hover:bg-white/5"
+                                >
+                                    <div className="flex justify-between items-center text-[10px]">
+                                        <span className="font-bold text-white font-mono">{rsid}</span>
+                                        <span className={`px-1.5 py-0.5 rounded font-bold font-mono text-[9px] ${
+                                            d === 2 ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40" :
+                                            d === 1 ? "bg-amber-500/20 text-amber-300 border border-amber-500/40" :
+                                            "bg-zinc-800 text-zinc-400 border border-zinc-700"
+                                        }`}>
+                                            d={d}
+                                        </span>
+                                    </div>
+                                    <div className="flex justify-between items-center text-[9px] text-zinc-400">
+                                        <span className="truncate font-sans max-w-[80px]" title={info.gene}>{info.gene}</span>
+                                        <span className="font-mono text-zinc-500">{info.allele}</span>
+                                    </div>
                                 </div>
-                                <p className="text-[9px] text-zinc-400 truncate font-sans">{info.gene}</p>
-                            </div>
-                        );
-                    })}
+                            );
+                        })}
                 </div>
             </div>
 

@@ -470,9 +470,9 @@ export default function AncestryDataPanel({
                     {isGermanRedacted ? (
                         <div className="p-6 rounded-xl bg-black/40 border border-dashed border-rose-500/30 text-center space-y-2">
                             <Lock className="w-8 h-8 text-rose-400 mx-auto opacity-70" />
-                            <div className="text-xs font-bold text-rose-300">[REDACTED - § 81e (2) StPO]</div>
+                            <div className="text-xs font-bold text-rose-300">{isTr ? "[GİZLENDİ - § 81e (2) StPO]" : "[REDACTED - § 81e (2) StPO]"}</div>
                             <p className="text-[9px] text-zinc-400 font-sans">
-                                BGA yüzdeleri Alman yargı bölgesi kısıtlaması nedeniyle gizlenmiştir.
+                                {isTr ? "BGA yüzdeleri Alman yargı bölgesi kısıtlaması nedeniyle gizlenmiştir." : "BGA proportions are redacted under German statutory restrictions."}
                             </p>
                         </div>
                     ) : (
@@ -521,12 +521,13 @@ export default function AncestryDataPanel({
                         {isGermanRedacted ? (
                             <div className="p-6 rounded-xl bg-black/40 border border-dashed border-rose-500/30 text-center space-y-2 mt-3">
                                 <Lock className="w-8 h-8 text-rose-400 mx-auto opacity-70" />
-                                <div className="text-xs font-bold text-rose-300">[KOORDİNATLAR MASKELENDİ]</div>
+                                <div className="text-xs font-bold text-rose-300">{isTr ? "[KOORDİNATLAR MASKELENDİ]" : "[COORDINATES MASKED]"}</div>
                                 <p className="text-[9px] text-zinc-400 font-sans">
-                                    Coğrafi merkez ve %95 güvenilirlik elipsi gizlenmiştir.
+                                    {isTr ? "Coğrafi merkez ve %95 güvenilirlik elipsi gizlenmiştir." : "Geographic centroid and 95% confidence ellipse are redacted."}
                                 </p>
                             </div>
                         ) : (
+
                             <div className="p-3.5 rounded-xl bg-black/50 border border-tactical-border/60 space-y-2.5 mt-3">
                                 <div className="flex justify-between items-center text-xs">
                                     <span className="text-zinc-400">{isTr ? "Merkez Enlem:" : "Centroid Latitude:"}</span>

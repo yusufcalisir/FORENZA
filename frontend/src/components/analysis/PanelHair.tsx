@@ -308,7 +308,7 @@ export default function PanelHair() {
                     <div className="flex flex-wrap items-center gap-1.5 shrink-0">
                         <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[9px] font-bold bg-white/[0.03] border border-white/10 text-emerald-400">
                             <ShieldCheck className="w-3 h-3 text-emerald-400" />
-                            <span>ISO 17025 Doğrulandı</span>
+                            <span>{isTr ? "ISO 17025 Doğrulandı" : "ISO 17025 Validated"}</span>
                         </span>
                         <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[9px] font-bold bg-white/[0.03] border border-white/10 text-purple-400">
                             <span>Hamilton-Norwood</span>
@@ -320,8 +320,9 @@ export default function PanelHair() {
                 <div className="space-y-2">
                     <div className="flex items-center justify-between text-[9px] font-bold text-zinc-400 uppercase tracking-widest px-0.5">
                         <span>{isTr ? "Doğrulama Profili Seçin:" : "Select Casework Benchmark:"}</span>
-                        <span className="text-zinc-500 font-mono">4 Senaryo</span>
+                        <span className="text-zinc-500 font-mono">{isTr ? "4 Senaryo" : "4 Scenarios"}</span>
                     </div>
+
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
                         {PRESETS.map((p) => (

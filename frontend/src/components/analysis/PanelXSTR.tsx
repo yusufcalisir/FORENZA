@@ -342,7 +342,7 @@ export default function PanelXSTR() {
                   {isTr ? "Investigator Argus X-12 Bağlantı & Akrabalık" : "Investigator Argus X-12 Linkage & Kinship"}
                 </span>
                 <span className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-purple-500/10 border border-purple-500/30 text-purple-300">
-                  X-STR 12 LOKUS
+                  <span>{isTr ? "X-STR 12 LOKUS" : "X-STR 12 LOCI"}</span>
                 </span>
               </div>
             </div>
@@ -351,13 +351,13 @@ export default function PanelXSTR() {
           <div className="flex flex-wrap items-center gap-1.5 shrink-0">
             <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[9px] font-bold bg-white/[0.03] border border-white/10 text-emerald-400">
               <ShieldCheck className="w-3 h-3 text-emerald-400" />
-              <span>ISO 17025 Doğrulandı</span>
+              <span>{isTr ? "ISO 17025 Doğrulandı" : "ISO 17025 Validated"}</span>
             </span>
             <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[9px] font-bold bg-white/[0.03] border border-white/10 text-cyan-400">
               <span>ISFG (2012) X-STR</span>
             </span>
             <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[9px] font-bold bg-white/[0.03] border border-white/10 text-purple-400">
-              <span>LG1–LG4 Kümeleri</span>
+              <span>{isTr ? "LG1–LG4 Kümeleri" : "LG1–LG4 Clusters"}</span>
             </span>
           </div>
         </div>

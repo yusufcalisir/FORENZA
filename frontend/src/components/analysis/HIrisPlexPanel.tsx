@@ -419,8 +419,9 @@ export default function HIrisPlexPanel() {
                     <div className="flex flex-wrap items-center gap-2 shrink-0">
                         <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[9px] font-bold bg-white/[0.03] border border-white/10 text-emerald-400">
                             <ShieldCheck className="w-3 h-3 text-emerald-400" />
-                            <span>ISO 17025 Doğrulandı</span>
+                            <span>{isTr ? "ISO 17025 Doğrulandı" : "ISO 17025 Validated"}</span>
                         </span>
+
                         <div className="flex items-center gap-1.5 text-[9px] font-mono text-zinc-400 bg-black/40 px-2.5 py-1 rounded-lg border border-tactical-border/60">
                             <span>{isTr ? "Vaka:" : "Case:"}</span>
                             <strong className="text-purple-300">{activeCase.metadata.caseId}</strong>

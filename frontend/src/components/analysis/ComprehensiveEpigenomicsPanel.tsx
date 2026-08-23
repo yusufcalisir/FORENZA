@@ -408,7 +408,7 @@ export default function ComprehensiveEpigenomicsPanel() {
           <div className="flex flex-wrap items-center gap-1.5 shrink-0">
             <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[9px] font-bold bg-white/[0.03] border border-white/10 text-emerald-400">
               <ShieldCheck className="w-3 h-3 text-emerald-400" />
-              <span>ISO 17025 Doğrulandı</span>
+              <span>{isTr ? "ISO 17025 Doğrulandı" : "ISO 17025 Validated"}</span>
             </span>
           </div>
         </div>
@@ -417,8 +417,9 @@ export default function ComprehensiveEpigenomicsPanel() {
         <div className="space-y-2">
           <div className="flex items-center justify-between text-[9px] font-bold text-zinc-400 uppercase tracking-widest px-0.5">
             <span>{isTr ? "Epigenomik Alt Modül Seçin:" : "Select Epigenomics Subsystem:"}</span>
-            <span className="text-zinc-500 font-mono">5 Boyut</span>
+            <span className="text-zinc-500 font-mono">{isTr ? "5 Boyut" : "5 Dimensions"}</span>
           </div>
+
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
             {[

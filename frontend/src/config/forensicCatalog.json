@@ -181,11 +181,11 @@
         {
           "id": "age",
           "number": "16",
-          "name": "Horvath Epigenetic Age Clock",
-          "badge": "HORVATH",
-          "metrics": "5-CpG Methylation • Epigenetic Age ±2.8 yr",
-          "desc": "Quantifies DNA methylation levels at key CpG loci to estimate chronological age at time of deposition with ±2.8 year precision.",
-          "descTr": "Delil bırakma anındaki kronolojik yaşı ±2.8 yıl hassasiyetle tahmin etmek için temel CpG lokuslarındaki metilasyon seviyelerini ölçer."
+          "name": "Multi-Generation Epigenetic Clocks & PMI",
+          "badge": "EPI-CLOCKS",
+          "metrics": "Horvath • PhenoAge • GrimAge • DunedinPACE • PMI",
+          "desc": "Quantifies DNA methylation across 1st, 2nd, and 3rd generation clocks with ISO 17025 uncertainty and fuses multimodal PMI evidence.",
+          "descTr": "1., 2. ve 3. kuşak epigenetik saatler ve çok modlu Bayesyen PMI füzyon motoru ile ISO 17025 belirsizliğinde adli yaş ve ölüm zamanı tahmini yapar."
         },
         {
           "id": "bodyfluid",

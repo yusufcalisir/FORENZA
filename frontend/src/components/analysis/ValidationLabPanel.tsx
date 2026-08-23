@@ -156,8 +156,9 @@ function generateCalibratedDataset(
 }
 
 export default function ValidationLabPanel() {
-  const { lang, setLang } = useSaasLanguage();
+  const { lang } = useSaasLanguage();
   const isTr = lang === "tr";
+
 
   const [activeTab, setActiveTab] = useState<ActiveTab>("tippett");
   const [selectedPreset, setSelectedPreset] = useState<string>("VECTOR_05_TIPPETT_A");
@@ -507,26 +508,8 @@ export default function ValidationLabPanel() {
             </div>
           </div>
 
-          {/* Language Toggle for Court Reporting */}
-          <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-[10px] text-zinc-500 uppercase font-bold">{isTr ? "ENFSI Dili:" : "ENFSI Lang:"}</span>
-            <div className="flex items-center gap-1 bg-black/60 p-1 rounded-lg border border-tactical-border/50 flex-wrap">
-              {(["en", "tr"] as const).map((targetLang) => (
-                <button
-                  key={targetLang}
-                  onClick={() => setLang(targetLang)}
-                  className={`min-h-[30px] px-2 py-0.5 rounded text-[10px] font-bold uppercase transition-all cursor-pointer flex items-center justify-center ${
-                    lang === targetLang
-                      ? "bg-purple-500/20 text-purple-300 border border-purple-500/40"
-                      : "text-zinc-500 hover:text-zinc-300"
-                  }`}
-                >
-                  {targetLang.toUpperCase()}
-                </button>
-              ))}
-            </div>
-          </div>
         </div>
+
 
         {/* Telemetry Status */}
         <div className="flex items-center gap-2 text-[10px] text-zinc-400 shrink-0">

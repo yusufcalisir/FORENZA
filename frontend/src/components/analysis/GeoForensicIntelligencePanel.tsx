@@ -916,14 +916,16 @@ export default function GeoForensicIntelligencePanel({
                     >
                         {/* Mineralogy & CoDa Radar Input */}
                         <div className="lg:col-span-1 p-4 sm:p-5 rounded-2xl border border-tactical-border/60 bg-tactical-surface/50 space-y-4">
-                            <div className="flex items-center justify-between">
-                                <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                                    <Mountain className="w-4 h-4 text-amber-400" />
-                                    {isTr ? "Toprak QXRD Mineralleri (% ağırlık)" : "Soil QXRD Minerals (wt%)"}
+                            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                                <h3 className="text-sm font-bold text-white flex items-center gap-2 min-w-0">
+                                    <Mountain className="w-4 h-4 text-amber-400 shrink-0" />
+                                    <span className="truncate">
+                                        {isTr ? "Toprak QXRD Mineralleri (% ağırlık)" : "Soil QXRD Minerals (wt%)"}
+                                    </span>
                                 </h3>
                                 <button
                                     onClick={() => setIsDivergentSoil(!isDivergentSoil)}
-                                    className={`min-h-[36px] px-3 py-1.5 rounded-lg text-[10px] font-mono font-bold border cursor-pointer ${isDivergentSoil
+                                    className={`shrink-0 self-start sm:self-auto min-h-[32px] px-3 py-1.5 rounded-lg text-[10px] font-mono font-bold border cursor-pointer transition-all ${isDivergentSoil
                                             ? "bg-rose-500/10 text-rose-400 border-rose-500/30"
                                             : "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
                                         }`}

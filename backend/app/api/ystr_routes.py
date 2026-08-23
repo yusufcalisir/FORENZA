@@ -84,7 +84,7 @@ async def evaluate_paternal_kinship(body: PaternalKinshipRequest) -> PaternalKin
         shield = YStrCrossValidationEngine.get_isfg_patrilineal_disclaimer()
     except ValueError as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Y-STR paternal kinship evaluation error: {str(exc)}",
         )
     except Exception as exc:
@@ -145,7 +145,7 @@ async def get_clopper_pearson_bound(body: ClopperPearsonRequest) -> ClopperPears
         )
     except ValueError as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Clopper-Pearson parameter validation error: {str(exc)}",
         )
 
@@ -184,7 +184,7 @@ async def get_brenner_frequency(body: BrennerFrequencyRequest) -> BrennerFrequen
         )
     except ValueError as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Brenner parameter validation error: {str(exc)}",
         )
 
@@ -216,7 +216,7 @@ async def predict_y_haplogroup(body: HaplogroupPredictionRequest) -> HaplogroupP
         res = YStrMathematicalFormulation.predict_haplogroup(profile=body.y_str_markers)
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Haplogroup prediction failed: {str(exc)}",
         )
 
@@ -244,7 +244,7 @@ async def decouple_dys389_endpoint(body: DecoupleDys389Request) -> DecoupleDys38
         pure = YStrMathematicalFormulation.decouple_dys389(body.dys389i, body.dys389ii_total)
     except ValueError as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"DYS389 decoupling error: {str(exc)}",
         )
 
@@ -296,14 +296,14 @@ async def get_mixture_contributors(body: MixtureContributorsRequest) -> MixtureC
             )
         else:
             raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
                 detail="Either locus_allele_counts or locus_alleles must be provided.",
             )
     except HTTPException:
         raise
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Mixture contributor estimation error: {str(exc)}",
         )
 
@@ -329,7 +329,7 @@ async def compute_smm_transition(body: SMMTransitionRequest) -> SMMTransitionRes
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"SMM computation error: {str(exc)}",
         )
 
@@ -367,7 +367,7 @@ async def evaluate_match_endpoint(body: YSTRMatchRequest) -> YSTRMatchResponse:
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Match evaluation failed: {str(exc)}",
         )
 

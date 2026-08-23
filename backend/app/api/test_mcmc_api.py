@@ -101,7 +101,7 @@ def test_mixture_2p_basic_run():
         "K": 2,
         **FAST_PARAMS,
     }
-    r = client.post("/api/v1/forensic/mixture", json=payload, timeout=120.0)
+    r = client.post("/api/v1/forensic/mixture", json=payload)
     assert r.status_code == 200, f"Expected 200, got {r.status_code}: {r.text}"
     body = r.json()
     assert body["n_contributors"] == 2
@@ -131,7 +131,7 @@ def test_mixture_simplex_invariant():
         "K": 2,
         **FAST_PARAMS,
     }
-    r = client.post("/api/v1/forensic/mixture", json=payload, timeout=120.0)
+    r = client.post("/api/v1/forensic/mixture", json=payload)
     assert r.status_code == 200, r.text
     body = r.json()
     weights = body["posterior_mixture_weights"]
@@ -156,7 +156,7 @@ def test_mixture_convergence_diagnostics_present():
         "K": 2,
         **FAST_PARAMS,
     }
-    r = client.post("/api/v1/forensic/mixture", json=payload, timeout=120.0)
+    r = client.post("/api/v1/forensic/mixture", json=payload)
     assert r.status_code == 200, r.text
     conv = r.json()["convergence"]
     assert "r_hat_max" in conv
@@ -187,7 +187,7 @@ def test_mixture_enfsi_verbal_scale_bilingual():
         "K": 2,
         **FAST_PARAMS,
     }
-    r = client.post("/api/v1/forensic/mixture", json=payload, timeout=120.0)
+    r = client.post("/api/v1/forensic/mixture", json=payload)
     assert r.status_code == 200, r.text
     body = r.json()
     en = body["verbal_scale_en"]
@@ -255,7 +255,7 @@ def test_mixture_suspect_genotype_accepted():
         "suspect_genotype": SUSPECT_GT,
         **FAST_PARAMS,
     }
-    r = client.post("/api/v1/forensic/mixture", json=payload, timeout=120.0)
+    r = client.post("/api/v1/forensic/mixture", json=payload)
     assert r.status_code == 200, (
         f"suspect_genotype POST failed with {r.status_code}: {r.text}"
     )

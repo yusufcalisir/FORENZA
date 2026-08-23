@@ -41,7 +41,7 @@ async def register_evidence(body: RegisterEvidenceRequest) -> RegisterEvidenceRe
         summary = f"Evidence Registered: {body.evidence_id} ({body.evidence_type}) collected by {body.collector_id}."
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Evidence registration failed: {str(exc)}"
         )
 
@@ -78,7 +78,7 @@ async def transfer_custody(body: TransferCustodyRequest) -> TransferCustodyRespo
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Custody transfer failed: {str(exc)}"
         )
 

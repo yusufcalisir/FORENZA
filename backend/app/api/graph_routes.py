@@ -46,7 +46,7 @@ async def ingest_case_graph(body: IngestCaseGraphRequest) -> IngestCaseGraphResp
         summary = f"Case Graph Ingested for {body.case_id}: {len(body.nodes)} nodes, {len(body.edges)} edges added."
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Graph ingestion failed: {str(exc)}"
         )
 

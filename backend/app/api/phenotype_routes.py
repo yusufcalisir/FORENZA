@@ -45,7 +45,7 @@ async def predict_phenotype(body: PhenotypeRequest) -> PhenotypeResponse:
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Phenotype prediction failed: {str(exc)}"
         )
 
@@ -99,7 +99,7 @@ async def predict_extended_phenotype(body: PredictExtendedPhenotypeRequest) -> P
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Extended phenotype prediction failed: {str(exc)}"
         )
 
@@ -163,7 +163,7 @@ async def predict_hirisplex_s_full(body: HIrisPlexSPredictionRequest) -> HIrisPl
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"HIrisPlex-S prediction failed: {str(exc)}"
         )
 
@@ -210,7 +210,7 @@ async def predict_irisplex_eye_color(body: HIrisPlexSPredictionRequest) -> EyeCo
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Eye color prediction failed: {str(exc)}"
         )
 
@@ -237,7 +237,7 @@ async def predict_hirisplex_hair_color(body: HIrisPlexSPredictionRequest) -> Hai
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Hair color prediction failed: {str(exc)}"
         )
 
@@ -265,7 +265,7 @@ async def predict_hirisplex_skin_phototype(body: HIrisPlexSPredictionRequest) ->
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Skin phototype prediction failed: {str(exc)}"
         )
 
@@ -300,7 +300,7 @@ async def predict_55_aim_ancestry(body: AIMPredictionRequest) -> AIMPredictionRe
         res = _aim_bga_engine.analyze_bga_profile(body.snp_dosages)
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"55-AIM ancestry analysis failed: {str(exc)}"
         )
 
@@ -344,7 +344,7 @@ async def project_55_aim_gis_coordinates(body: AIMPredictionRequest) -> GISCoord
         res = _aim_bga_engine.analyze_bga_profile(body.snp_dosages)
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"GIS coordinate projection failed: {str(exc)}"
         )
 
@@ -387,7 +387,7 @@ async def reconstruct_craniofacial_3d(body: CraniofacialReconstructionRequest) -
         res = _morpho_engine.analyze_craniofacial_morphology(body.snp_dosages)
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"3D Craniofacial reconstruction failed: {str(exc)}"
         )
 
@@ -431,7 +431,7 @@ async def get_cephalometric_landmarks_only(body: CraniofacialReconstructionReque
         lm = _morpho_engine.reconstruct_3d_landmarks(body.snp_dosages)
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Landmark extraction failed: {str(exc)}"
         )
 
@@ -468,7 +468,7 @@ async def analyze_hair_morphology_and_balding(body: HairAnalysisRequest) -> Hair
         res = _hair_engine.analyze_hair_profile(body.snp_dosages)
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Hair analysis failed: {str(exc)}"
         )
 
@@ -502,7 +502,7 @@ async def get_hair_texture_index(body: HairAnalysisRequest) -> HairTextureRespon
         res = _hair_engine.compute_hair_texture(body.snp_dosages)
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Hair texture computation failed: {str(exc)}"
         )
 
@@ -526,7 +526,7 @@ async def get_balding_prs(body: HairAnalysisRequest) -> BaldingPRSResponse:
         res = _hair_engine.compute_balding_prs(body.snp_dosages)
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Balding PRS computation failed: {str(exc)}"
         )
 
@@ -561,7 +561,7 @@ async def analyze_freckling_and_uv(body: FrecklingAnalysisRequest) -> FrecklingA
         res = _freckle_engine.analyze_ephelides_profile(body.snp_dosages)
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Ephelides and UV analysis failed: {str(exc)}"
         )
 
@@ -600,7 +600,7 @@ async def get_mc1r_diplotype(body: FrecklingAnalysisRequest) -> MC1RDiplotypeRes
         res = _freckle_engine.determine_mc1r_diplotype(body.snp_dosages)
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"MC1R diplotype extraction failed: {str(exc)}"
         )
 

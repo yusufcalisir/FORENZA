@@ -1204,7 +1204,7 @@ async def get_phenotype(profile_id: str, request: Request) -> PhenotypeReport:
     snp_map = _SNP_STORE.get(profile_id)
     if snp_map is None:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail="No SNP data found for this profile. Phenotype prediction requires genomic input.",
         )
 

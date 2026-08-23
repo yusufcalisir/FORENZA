@@ -73,7 +73,7 @@ async def compute_mapdamage_profile(body: MapDamageProfileRequest) -> MapDamageP
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"MapDamage profile computation failed: {str(exc)}",
         )
 
@@ -102,7 +102,7 @@ async def compute_fragmentation(body: FragmentationRequest) -> FragmentationResp
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Fragmentation computation failed: {str(exc)}",
         )
 
@@ -141,7 +141,7 @@ async def compute_snp_likelihood(body: SNPLikelihoodRequest) -> SNPLikelihoodRes
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"SNP likelihood computation failed: {str(exc)}",
         )
 
@@ -169,7 +169,7 @@ async def subtract_contamination(body: ContaminationRequest) -> ContaminationRes
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Contamination subtraction failed: {str(exc)}",
         )
 
@@ -194,7 +194,7 @@ async def evaluate_purine_excess(body: PurineExcessRequest) -> PurineExcessRespo
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Purine excess evaluation failed: {str(exc)}",
         )
 

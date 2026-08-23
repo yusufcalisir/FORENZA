@@ -54,7 +54,7 @@ async def parse_isfg_sequence(body: ParseSequenceRequest) -> ParsedSTRSequence:
         return ISFGSequenceParser.parse_sequence_string(body.locus_name, body.sequence_string)
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"ISFG sequence parsing failed: {str(exc)}"
         )
 
@@ -80,7 +80,7 @@ async def analyze_se33_genotype(body: AnalyzeSE33Request) -> SE33GenotypeAnalysi
         return SE33HyperPolymorphicEngine.analyze_se33_genotype(alleles, body.population)
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"SE33 analysis failed: {str(exc)}"
         )
 
@@ -103,7 +103,7 @@ async def deconvolve_mps_mixture(body: MixtureDeconvolutionRequest) -> MultiLocu
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Mixture deconvolution failed: {str(exc)}"
         )
 
@@ -120,7 +120,7 @@ async def compute_biostatistics(body: BiostatisticsRequest) -> MultiLocusDiversi
         return ForensicBiostatisticsEngine.calculate_multi_locus_summary(body.locus_names, body.population)
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Biostatistics calculation failed: {str(exc)}"
         )
 
@@ -141,7 +141,7 @@ async def audit_syntenic_linkage(body: SyntenicLinkageRequest) -> SyntenicPairKi
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Linkage audit failed: {str(exc)}"
         )
 

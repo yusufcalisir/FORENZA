@@ -60,7 +60,7 @@ async def register_node(body: NodeRegistrationRequest) -> NodeRegistrationRespon
         is_new = _registry.register_node(node)
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Node registration failed: {str(exc)}"
         )
 
@@ -114,7 +114,7 @@ async def execute_federated_search(body: FederatedSearchRequest) -> FederatedSea
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Federated search failed: {str(exc)}"
         )
 

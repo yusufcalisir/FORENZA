@@ -233,7 +233,7 @@ async def evaluate_isoscape_provenance(
 
     except ValueError as ve:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Mathematical or schema input error: {str(ve)}",
         )
     except Exception as e:
@@ -330,7 +330,7 @@ async def evaluate_soil_comparison(
 
     except ValueError as ve:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Soil comparison mathematical error: {str(ve)}",
         )
     except Exception as e:
@@ -403,7 +403,7 @@ async def evaluate_palynology_edna(
 
     except ValueError as ve:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Palynology mathematical error: {str(ve)}",
         )
     except Exception as e:
@@ -483,7 +483,7 @@ async def evaluate_geographic_profile(
 
     except ValueError as ve:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Geographic profiling input error: {str(ve)}",
         )
     except Exception as e:
@@ -570,7 +570,7 @@ async def evaluate_geo_evidence_fusion(
 
     except ValueError as ve:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Evidence fusion input error: {str(ve)}",
         )
     except Exception as e:

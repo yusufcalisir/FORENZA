@@ -69,7 +69,7 @@ async def bound_frequency(body: FrequencyBoundRequest) -> FrequencyBoundResponse
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Frequency bounding failed: {str(exc)}"
         )
 
@@ -100,7 +100,7 @@ async def compute_fst_distance(body: FstDistanceRequest) -> FstDistanceResponse:
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"FST distance calculation failed: {str(exc)}"
         )
 
@@ -137,7 +137,7 @@ async def dirichlet_smooth(body: DirichletSmoothRequest) -> DirichletSmoothRespo
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Dirichlet smoothing failed: {str(exc)}"
         )
 
@@ -193,7 +193,7 @@ async def test_hwe(body: HWETestRequest) -> HWETestResponse:
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"HWE test failed: {str(exc)}"
         )
 
@@ -239,7 +239,7 @@ async def theta_corrected_lr(body: ThetaCorrectedLRRequest) -> ThetaCorrectedLRR
         log10_lr = -math.log10(max(match_prob, 1e-300))
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Theta-corrected LR failed: {str(exc)}"
         )
 
@@ -268,7 +268,7 @@ async def fst_matrix(body: FstMatrixRequest) -> FstMatrixResponse:
         result = _substructure_engine.compute_fst_matrix(populations=body.populations)
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"FST matrix computation failed: {str(exc)}"
         )
 
@@ -311,7 +311,7 @@ async def compute_profile_rmp(body: ProfileRMPRequest) -> ProfileRMPResponse:
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Profile RMP computation failed: {str(exc)}"
         )
 
@@ -359,7 +359,7 @@ async def compute_kinship_duo(body: KinshipDuoRequest) -> KinshipDuoResponse:
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Kinship duo calculation failed: {str(exc)}"
         )
 
@@ -429,7 +429,7 @@ async def compute_nrc_profile_lr(body: NRCProfileLRRequest) -> NRCProfileLRRespo
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"NRC Profile LR computation failed: {str(exc)}"
         )
 
@@ -476,7 +476,7 @@ async def compute_nrc_demographic_report(body: NRCProfileLRRequest) -> NRCDemogr
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Demographic stratification evaluation failed: {str(exc)}"
         )
 
@@ -513,7 +513,7 @@ async def compute_weir_cockerham_api(body: WeirCockerhamAPIRequest) -> WeirCocke
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Weir-Cockerham estimation failed: {str(exc)}"
         )
 
@@ -546,7 +546,7 @@ async def compute_dcm_api(body: DCMAPIRequest) -> DCMAPIResponse:
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"DCM evaluation failed: {str(exc)}"
         )
 
@@ -576,7 +576,7 @@ async def validate_simplex_api(body: SimplexValidateRequest) -> SimplexValidateR
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Simplex validation failed: {str(exc)}"
         )
 

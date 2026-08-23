@@ -41,7 +41,7 @@ async def generate_report(body: ReportGenerateRequest) -> ReportGenerateResponse
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Report generation failed: {str(exc)}"
         )
 
@@ -75,7 +75,7 @@ async def audit_compliance(body: AuditRequest) -> AuditResponse:
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Compliance audit failed: {str(exc)}"
         )
 

@@ -112,7 +112,7 @@ async def evaluate_maternal_match(body: MtDNAMatchRequest) -> MtDNAMatchResponse
             vars_b = [MtDnaMathematicalFormulation.parse_variant_string(s) for s in body.variants_b]
         else:
             raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
                 detail="Either (evidence, suspect) or (variants_a, variants_b) must be provided.",
             )
 
@@ -128,7 +128,7 @@ async def evaluate_maternal_match(body: MtDNAMatchRequest) -> MtDNAMatchResponse
         raise
     except ValueError as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"mtDNA variant parsing error: {str(exc)}",
         )
     except Exception as exc:
@@ -202,7 +202,7 @@ async def compute_empop_upper_bound(body: EMPOPProbabilityRequest) -> EMPOPProba
         )
     except ValueError as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"EMPOP calculation error: {str(exc)}",
         )
     lr = 1.0 / p_up if p_up > 0.0 else 1e9

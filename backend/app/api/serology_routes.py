@@ -38,7 +38,7 @@ async def evaluate_serology_phenotype(body: SerologyPhenotypeRequest) -> Serolog
         res = _serology_engine.evaluate_phenotype(sample_dom)
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Serology phenotype evaluation failed: {str(exc)}"
         )
 
@@ -73,7 +73,7 @@ async def integrate_serology_and_dna(body: SerologyDnaIntegrateRequest) -> Serol
         res = _integrator.integrate_serology_and_dna(body.sample.sample_id, ser_res, body.lr_str)
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Dual Serology + DNA integration failed: {str(exc)}"
         )
 

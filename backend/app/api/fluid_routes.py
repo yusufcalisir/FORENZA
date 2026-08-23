@@ -39,7 +39,7 @@ async def identify_biological_fluid(body: FluidIdentifyRequest) -> FluidIdentify
         res = _fluid_profiler.identify_body_fluid(sample_dom)
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Body fluid identification failed: {str(exc)}"
         )
 
@@ -72,7 +72,7 @@ async def audit_co_extraction(body: CoExtractionAuditRequest) -> CoExtractionAud
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Co-extraction audit failed: {str(exc)}"
         )
 

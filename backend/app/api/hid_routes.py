@@ -55,7 +55,7 @@ async def compute_damage_kinetics(body: MapDamageRequest) -> MapDamageResponse:
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"MapDamage kinetics calculation failed: {str(exc)}",
         )
 
@@ -90,7 +90,7 @@ async def compute_fragmentation(body: FragmentationDistributionRequest) -> Fragm
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Fragmentation calculation failed: {str(exc)}",
         )
 
@@ -134,7 +134,7 @@ async def compute_snp_genotype_likelihood(body: SNPLowCoverageGLRequest) -> SNPL
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"SNP Genotype Likelihood calculation failed: {str(exc)}",
         )
 
@@ -182,7 +182,7 @@ async def compute_multi_snp_lr(body: MultiSNPLRRequest) -> MultiSNPLRResponse:
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Multi-SNP LR calculation failed: {str(exc)}",
         )
 
@@ -214,7 +214,7 @@ async def audit_skeletal_remains(body: SkeletalDegradationAuditRequest) -> Skele
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Skeletal audit failed: {str(exc)}",
         )
 
@@ -275,7 +275,7 @@ async def evaluate_multimodal_remains(body: MultiModalRemainsRequest) -> MultiMo
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Remains evaluation failed: {str(exc)}",
         )
 
@@ -344,7 +344,7 @@ async def identify_legacy_remains(body: LegacyIdentifyRequest) -> MultiModalRema
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Remains identification failed: {str(exc)}",
         )
 
@@ -392,7 +392,7 @@ async def audit_legacy_degradation(body: LegacyDegradationAuditRequest) -> Legac
         res = evaluator.audit_skeletal_profile(str_prof, mean_rfu=body.mean_rfu)
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Degradation audit failed: {str(exc)}",
         )
 

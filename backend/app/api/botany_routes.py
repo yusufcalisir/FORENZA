@@ -40,7 +40,7 @@ async def identify_botanical_species(body: BotanyIdentifyRequest) -> BotanyIdent
         res = _botany_engine.identify_species(spec_dom)
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Botanical species identification failed: {str(exc)}"
         )
 
@@ -77,7 +77,7 @@ async def infer_botanical_habitat(body: HabitatInferenceRequest) -> HabitatInfer
         res = _habitat_auditor.infer_habitat(body.sample_id, assemblage)
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Habitat inference failed: {str(exc)}"
         )
 

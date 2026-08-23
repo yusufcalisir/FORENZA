@@ -46,7 +46,7 @@ async def predict_full_hirisplex(body: HIrisPlexPredictRequest) -> HIrisPlexFull
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"HIrisPlex-S prediction failed: {str(exc)}",
         )
 

@@ -41,7 +41,7 @@ async def estimate_biological_profile(body: BiologicalProfileRequest) -> Biologi
         res = _profile_estimator.estimate_biological_profile(m)
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Biological profile estimation failed: {str(exc)}"
         )
 
@@ -73,7 +73,7 @@ async def audit_skeletal_trauma(body: TraumaAuditRequest) -> TraumaAuditResponse
         res = _trauma_auditor.audit_trauma_lesions(body.sample_id, body.element_name, obs)
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Trauma audit failed: {str(exc)}"
         )
 

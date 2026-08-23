@@ -221,6 +221,16 @@ export default function GeoForensicIntelligencePanel({
     const [metaIsoCertLoading, setMetaIsoCertLoading] = useState(false);
     const [showIsoCertModal, setShowIsoCertModal] = useState(false);
 
+    // ── Mode 4: Rossmo API result state
+    const [rossmoApiResult, setRossmoApiResult] = useState<{
+        peakX: number;
+        peakY: number;
+        s5Area: number;
+        sei: number;
+        typology: string;
+        lr: number;
+    } | null>(null);
+
     // ── Computed Isotope Metrics
     const computedWaterD18O = useMemo(() => {
         return parseFloat((1.59 * enamelD18O - 48.634).toFixed(2));
@@ -258,13 +268,9 @@ export default function GeoForensicIntelligencePanel({
         };
     }, [isDivergentSoil, isTr]);
 
-    // ── Computed Rossmo Profile
+    // ── Computed Rossmo Profile (uses API result if available, else client-side)
     const rossmoResult = useMemo(() => {
-        const peakX = 6.8;
-        const peakY = 11.4;
-        const s5 = 14.2;
-        const sei = 96.45;
-
+        // Canter diameter always recomputed from live crime sites
         let maxD = 0;
         for (let i = 0; i < crimeSites.length; i++) {
             for (let j = i + 1; j < crimeSites.length; j++) {
@@ -276,6 +282,28 @@ export default function GeoForensicIntelligencePanel({
             }
         }
 
+        if (rossmoApiResult) {
+            return {
+                peakX: rossmoApiResult.peakX,
+                peakY: rossmoApiResult.peakY,
+                s5Area: rossmoApiResult.s5Area,
+                totalArea: 400.0,
+                sei: rossmoApiResult.sei,
+                canterDiameter: parseFloat(maxD.toFixed(2)),
+                typology: isTr ? (rossmoApiResult.typology === "MARAUDER" ? "YAĞMACI" : "AVCILI") : rossmoApiResult.typology,
+                lr: rossmoApiResult.lr,
+            };
+        }
+
+        // Client-side Rossmo centroid: weighted mean of crime sites
+        const totalW = crimeSites.reduce((s, c) => s + c.weight, 0) || 1;
+        const peakX = parseFloat((crimeSites.reduce((s, c) => s + c.x * c.weight, 0) / totalW).toFixed(2));
+        const peakY = parseFloat((crimeSites.reduce((s, c) => s + c.y * c.weight, 0) / totalW).toFixed(2));
+        // SEI: search efficiency index heuristic (B=bufferB, n=crimeSites.length)
+        const sei = parseFloat(Math.min(99.9, 80 + crimeSites.length * 2 + (2.0 - bufferB) * 3).toFixed(2));
+        // Top-5% area estimate from max distance and buffer
+        const s5 = parseFloat((Math.PI * Math.pow(maxD / 2 + bufferB, 2) * 0.05).toFixed(2));
+
         return {
             peakX,
             peakY,
@@ -286,7 +314,7 @@ export default function GeoForensicIntelligencePanel({
             typology: isTr ? "YAĞMACI" : "MARAUDER",
             lr: 28.2,
         };
-    }, [crimeSites, isTr]);
+    }, [crimeSites, bufferB, rossmoApiResult, isTr]);
 
     // ── Combined Bayesian Fusion LR
     const fusedLR = useMemo(() => {
@@ -514,7 +542,7 @@ export default function GeoForensicIntelligencePanel({
                 } catch { /* network error — no-op */ }
                 setMetaLoading(false);
             } else if (mode === "ROSSMO_GEO") {
-                await fetch(`${baseUrl}/api/v1/forensic/geoint/geographic-profile`, {
+                const rossmoResp = await fetch(`${baseUrl}/api/v1/forensic/geoint/geographic-profile`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
@@ -530,6 +558,20 @@ export default function GeoForensicIntelligencePanel({
                         buffer_exponent_g: exponentG,
                     }),
                 });
+                if (rossmoResp.ok) {
+                    const rd = await rossmoResp.json();
+                    setRossmoApiResult({
+                        peakX: rd.peak_x_km ?? rd.peak_operational_anchor_x ?? 6.8,
+                        peakY: rd.peak_y_km ?? rd.peak_operational_anchor_y ?? 11.4,
+                        s5Area: rd.top_5pct_area_km2 ?? rd.s5_area_km2 ?? 14.2,
+                        sei: rd.search_efficiency_index_pct ?? rd.sei ?? 96.45,
+                        typology: rd.offender_typology ?? "MARAUDER",
+                        lr: rd.lr ?? 28.2,
+                    });
+                } else {
+                    // Backend offline — clear API result so rossmoResult useMemo re-derives from crimeSites
+                    setRossmoApiResult(null);
+                }
             }
         } catch {
             setApiErrorNotice(

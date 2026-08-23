@@ -528,6 +528,14 @@ try:
 except Exception as _mps_import_err:
     logger.warning(f"[boot] MPS STR router not loaded: {_mps_import_err}")
 
+# --- Machine Learning STR Calling & Fragsifier Pre-Filtering Router ---
+try:
+    from app.api.ml_str_routes import router as ml_str_router
+    app.include_router(ml_str_router, prefix="/api/v1")
+    logger.info("[boot] ML STR Calling & Fragsifier API router registered at /api/v1/forensic/ml-str")
+except Exception as _ml_str_import_err:
+    logger.warning(f"[boot] ML STR router not loaded: {_ml_str_import_err}")
+
 
 
 

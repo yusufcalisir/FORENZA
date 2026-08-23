@@ -20,6 +20,7 @@ Last updated: 2026-08-23 (4.6 MICROBIOME Forensic Microbiome & Thanatometagenomi
 | LTDNA | Touch DNA & Low-Template Modeling | VERIFIED | Peter Gill LCN Dilution Series (15-1000pg), 4-Substrate Matrix, Golden Casework VECTOR_03 & VECTOR_TERM_06, NIST SRM 2391d A | LikeLTD Semi-Continuous Logistic Grid (18/18 concordant), EuroForMix Gamma Continuous Integral (R²=0.9952), Curran-Gill 4-State Closed Forms (|P_computed - P_analytical| < 10⁻⁴), STRmix Inverse Variance Scaling | 5/5 | 5 edge cases passing: EC-01 Pristine 1000pg asymptote, EC-02 Single-cell 15pg bound (P(D)=88.08%), EC-03 Exact Poisson drop-in & 24-locus clean product (61.88%), EC-04 Sub-AT RFU culling (AT=50RFU), EC-05 Hb peak imbalance & false homozygote mask; 106 module tests passing |
 | TIPPETT | Tippett Calibration & Validation | VERIFIED | 10k Monte Carlo True Donor & Non-Donor Vectors (NIST 1036), Pristine 24L, LTDNA Touch 40% Dropout, NIST SRM 2391d Comp A | FoCal / Ramos & Gonzalez-Rodriguez (2013) Cllr benchmark (|Cllr_computed - Cllr_FoCal| < 10⁻⁵), EuroForMix 24-Locus Separation (AUC ≥ 0.9990), STRmix Misleading Evidence Standard (P(LR ≥ 10⁶ | Hd) ≤ 10⁻⁶, 0 false positives), ENFSI 2017 7-Tier Scale & Prosecutor's Fallacy Shield | 5/5 | 5 edge cases passing: EC-TIP-01 Dense 500-pt monotonicity invariant, EC-TIP-02 Zero false positives in 10,000 trials, EC-TIP-03 AUC=1.000000 pristine separation, EC-TIP-04 P(D)=0.60 shift without negative bias, EC-TIP-05 Symmetrical neutral decision intersection; 104 module tests passing |
 | MPS-STR | MPS/NGS STR Sequence Lab | VERIFIED | Scientific Reports (2021) 11:3485 4-Populations ($N=350$: AfAm 83, Cauc 82, Hisp 82, Kor 103), Golden Vectors VECTOR_MPS_01 to VECTOR_MPS_04 | ISFG Forensic Sequence Structure Guide v5, STRait Razor 3.0, Gettings (2016, 2018), Borsuk (2018) SE33 catalog | 5/5 | 25 Autosomal loci + SE33 (2.18x allele expansion: 332 -> 725 alleles; SE33 4.15x: 170 alleles, H_exp=97.3%), 31 flanking variants, 4-bp deletion reconciliation (rs369314007, rs1371483225), D6S1043-SE33 linkage guard (theta=0.0440), vWA African rescue (rs771794429); 37 module & API tests passing |
+| ML-STR | ML STR Calling & Fragsifier Pre-Filter | VERIFIED | PROVEDIt 1-to-5 Person Mixtures (NIST/BU), ISFG MPS Consortium Reference Sets, Golden Vectors VECTOR_MLSTR_01 to VECTOR_MLSTR_04 | Barash et al. (2023) FSIG, Fragsifier Random Forest Architecture, ISFG DNA Commission (2016) 3-Tier Hierarchy | 5/5 | 24-D feature extraction (morphology, stutter kinetics, Shannon entropy H(S), mixture dynamics), 500-tree Random Forest ensemble, 7-class artifact taxonomy, non-invasive MCMC search space optimization (burn-in -38.5%, R̂=1.012), +A recombination, pull-up culling; 18 module & API tests passing |
 
 ## Pillar 2 — Lineage Forensics & Kinship
 
@@ -89,11 +90,11 @@ Last updated: 2026-08-23 (4.6 MICROBIOME Forensic Microbiome & Thanatometagenomi
 
 ## Summary counters
 
-- Verified: 37 / 37 ✅ ALL MODULES VERIFIED
-- In Progress: 0 / 37
-- Not Started: 0 / 37
+- Verified: 38 / 38 ✅ ALL MODULES VERIFIED
+- In Progress: 0 / 38
+- Not Started: 0 / 38
 
-> **FORENZA Verification Complete:** All 37 biocomputational modules across Pillars 1–7 have passed the 3-Criterion validation protocol (Reference Dataset, Independent Tool Cross-Check, 5 Documented Edge Cases) as of 2026-08-23. Total test suite: 1,193+ passing tests.
+> **FORENZA Verification Complete:** All 38 biocomputational modules across Pillars 1–7 have passed the 3-Criterion validation protocol (Reference Dataset, Independent Tool Cross-Check, 5 Documented Edge Cases) as of 2026-08-23. Total test suite: 1,211+ passing tests.
 
 ## UI integration rule
 

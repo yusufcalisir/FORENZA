@@ -617,12 +617,12 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       rights: "FORENZA Forensic Systems. All rights reserved.",
       tagline: "Enterprise Biocomputational Forensic Intelligence & Evidence Operating System.",
       brandSubtitle: "FORENSIC EVIDENCE OPERATING SYSTEM",
-      status: "37 Active Subsystems",
+      status: "38 Active Subsystems",
       columns: {
         col1Title: "Platform Subsystems",
-        col1Links: ["37 Subsystems Matrix", "Evidence OS DAG", "Multi-Omic Bio-Simulator", "ISO 17025 Court Mode"],
+        col1Links: ["38 Subsystems Matrix", "Evidence OS DAG", "Multi-Omic Bio-Simulator", "ISO 17025 Court Mode"],
         col2Title: "Core Capabilities",
-        col2Links: ["MCMC Probabilistic Genotyping", "MPS/NGS STR Sequencing", "HIrisPlex-S Phenotyping", "Horvath Epigenetic Clock", "Geo-Forensic Intelligence", "LIMS & Instrument Gateway"],
+        col2Links: ["MCMC Probabilistic Genotyping", "MPS/NGS STR Sequencing", "ML STR Calling & Fragsifier", "HIrisPlex-S Phenotyping", "Horvath Epigenetic Clock", "Geo-Forensic Intelligence"],
         col3Title: "Admissibility & Standards",
         col3Links: ["ISO/IEC 17025:2017 Format", "SWGDAM & ENFSI Rules", "Circom ZKP Privacy Auditor", "HMAC Chain of Custody"],
       },
@@ -636,7 +636,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
     transition: {
       steps: [
         "INITIALIZING FORENZA BIOLOGICAL KERNEL...",
-        "CALIBRATING 24 CODIS CORE STR LOCI & MPS ISOALLELES...",
+        "CALIBRATING 24 CODIS CORE STR LOCI, MPS ISOALLELES & ML FILTERS...",
         "LOADING HIrisPlex-S & BGA POPULATION PRIORS...",
         "VERIFYING ISO-21043 CHAIN OF CUSTODY LEDGER...",
         "SYSTEM OPERATIONAL — FORENSIC WORKSPACE READY"
@@ -650,7 +650,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       }
     },
     dashboardTopBar: {
-      subsystemsCount: "37 Subsystems",
+      subsystemsCount: "38 Subsystems",
       subsystemsOnline: "ONLINE",
       biocompEngine: "Biocomputational Engine",
       engineName: "FORENZA OS",
@@ -662,7 +662,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
     sidebarNav: {
       operations: "Operations",
       biocomputationalSuites: "Biocomputational Suites",
-      searchPlaceholder: "Search 37 Subsystems...",
+      searchPlaceholder: "Search 38 Subsystems...",
       landingPage: "Landing Page",
       activeEngine: "ACTIVE ENGINE",
       demoSimulator: "DEMO SIMULATOR"
@@ -1039,12 +1039,12 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       rights: "FORENZA Forensic Systems. Tüm hakları saklıdır.",
       tagline: "Kurumsal Biyobilişimsel Adli İstihbarat ve Delil İşletim Sistemi.",
       brandSubtitle: "ADLİ DELİL İŞLETİM SİSTEMİ",
-      status: "37 Modül Aktif",
+      status: "38 Modül Aktif",
       columns: {
         col1Title: "Platform Modülleri",
-        col1Links: ["37 Alt Sistem Matrisi", "Delil İşleme Mimarisi (DAG)", "Bio-Simülatör", "ISO 17025 İfade Modu"],
+        col1Links: ["38 Alt Sistem Matrisi", "Delil İşleme Mimarisi (DAG)", "Bio-Simülatör", "ISO 17025 İfade Modu"],
         col2Title: "Temel Yetenekler",
-        col2Links: ["MCMC Olasılıksal Genotipleme", "MPS/NGS STR Sekanslama", "HIrisPlex-S Fenotipleme", "Horvath Epigenetik Yaş Saati", "Jeo-Adli İstihbarat", "LIMS ve Cihaz Geçidi"],
+        col2Links: ["MCMC Olasılıksal Genotipleme", "MPS/NGS STR Sekanslama", "ML STR Çağırma & Fragsifier", "HIrisPlex-S Fenotipleme", "Horvath Epigenetik Yaş Saati", "Jeo-Adli İstihbarat"],
         col3Title: "Adli Standartlar ve Uyumluluk",
         col3Links: ["ISO/IEC 17025:2017 Formatı", "SWGDAM ve ENFSI Kuralları", "Circom ZKP Gizlilik Denetçisi", "HMAC Delil Zinciri"],
       },
@@ -1058,7 +1058,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
     transition: {
       steps: [
         "FORENZA BİYOLOJİK ÇEKİRDEĞİ BAŞLATILIYOR...",
-        "24 CODIS ÇEKİRDEK STR LOKUSU VE MPS İZOALLELLERİ KALİBRE EDİLİYOR...",
+        "24 CODIS ÇEKİRDEK STR LOKUSU, MPS İZOALLELLERİ & ML FİLTRELERİ KALİBRE EDİLİYOR...",
         "HIrisPlex-S VE BGA POPÜLASYON DAĞILIMLARI YÜKLENİYOR...",
         "ISO-21043 DELİL ZİNCİRİ DEFTERİ DOĞRULANIYOR...",
         "SİSTEM FAAL — ADLİ ÇALIŞMA ALANI HAZIR"
@@ -1072,7 +1072,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
       }
     },
     dashboardTopBar: {
-      subsystemsCount: "37 Alt Sistem",
+      subsystemsCount: "38 Alt Sistem",
       subsystemsOnline: "ÇEVRİMİÇİ",
       biocompEngine: "Biyobilişimsel Motor",
       engineName: "FORENZA OS",
@@ -1084,7 +1084,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
     sidebarNav: {
       operations: "İşlem Merkezleri",
       biocomputationalSuites: "Biyobilişimsel Süitler",
-      searchPlaceholder: "37 Alt Sistemi Ara...",
+      searchPlaceholder: "38 Alt Sistemi Ara...",
       landingPage: "Ana Sayfa",
       activeEngine: "AKTİF MOTOR",
       demoSimulator: "DEMO SİMÜLATÖR"

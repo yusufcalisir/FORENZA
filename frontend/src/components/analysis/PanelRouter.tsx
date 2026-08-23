@@ -104,6 +104,9 @@ const MicrobiomeAnalysisPanel = dynamic(() => import("@/components/analysis/Micr
 const PanelMPSSTR = dynamic(() => import("@/components/analysis/PanelMPSSTR"), {
   loading: () => <ModuleSkeletonLoader label="Loading MPS STR Sequence & Isoallele Engine..." />,
 });
+const PanelMLSTR = dynamic(() => import("@/components/analysis/PanelMLSTR"), {
+  loading: () => <ModuleSkeletonLoader label="Loading ML STR Calling & Fragsifier Engine..." />,
+});
 
 // ─── NIST 1036 Multi-Ethnic Reference Allele Frequency Matrix ─────────────────
 const NIST_1036_POP_FREQS: Record<string, Record<string, Record<string, number>>> = {
@@ -555,6 +558,11 @@ export function renderPanel(tabId: string) {
     case "ngs":
     case "sequence_str":
       return <PanelMPSSTR />;
+    case "ml_str":
+    case "ml_calling":
+    case "fragsifier":
+    case "ml_peak":
+      return <PanelMLSTR />;
 
     // Pillar 2: Lineage Forensics & Kinship
     case "lineage_y":

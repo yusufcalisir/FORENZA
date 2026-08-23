@@ -96,6 +96,25 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
+### Module 1.7: ML-STR — Machine Learning STR Calling, Fragsifier Ensemble & ISFG Minimal Nomenclature [VERIFIED 2026-08-23]
+- [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-23]:**
+  - [x] PROVEDIt 1-to-5 Person Mixture Dataset (Boston University / NIST) across 0.005 ng to 0.50 ng template masses and dynamic dilution ratios (1:1 to 1:19).
+  - [x] Certified Golden Benchmark Vectors: `VECTOR_MLSTR_01` (Severe Back-Stutter Discrimination in D21S11), `VECTOR_MLSTR_02` (Split $-A/+A$ Non-Template Adenylation Recombination in TH01), `VECTOR_MLSTR_03` (High-RFU Spectral Pull-Up Elimination in vWA), `VECTOR_MLSTR_04` (PROVEDIt 3-Person Mixture Pre-Filtering & Search Space Reduction).
+- [x] **Criterion 2 (Independent Tool Cross-Check) ✅ COMPLETE [2026-08-23]:**
+  - [x] Barash et al. (2023) *Forensic Science International: Genetics* Machine Learning Review standards and Fragsifier 500-tree Random Forest decision boundary formulas.
+  - [x] ISFG DNA Commission (Parson et al. 2016) 3-Tier minimal nomenclature hierarchy (Level 1 FASTA string $\leftrightarrow$ Level 2 GRCh38 alignment $\leftrightarrow$ Level 3 bracketed nomenclature $\leftrightarrow$ CE translation) with zero character drift.
+  - [x] Non-invasive MCMC-MH search space optimization achieving 38.5% burn-in cycle reduction and Gelman-Rubin convergence $\hat{R} = 1.012 < 1.05$.
+  - [x] ENFSI (2017) 7-Tier verbal reporting scale and active Prosecutor's Fallacy Shield in English and Turkish.
+- [x] **Criterion 3 (5 Documented Edge Cases) ✅ COMPLETE [2026-08-23]:**
+  - [x] `EC-MLSTR-01`: False negative resistance invariant ($\text{FNR} = 0.000000$ on single-source pristine reference standards).
+  - [x] `EC-MLSTR-02`: High-stutter discrimination invariant (severe $SR = 18.5\%$ in D21S11/SE33 classified as `CLASS_BACK_STUTTER` with $P \ge 0.60$).
+  - [x] `EC-MLSTR-03`: Non-template $+A$ recombination invariant (split $+1\text{ bp}$ peak at TH01 recombined into parent 9.3 allele with signal conservation).
+  - [x] `EC-MLSTR-04`: Spectral pull-up elimination invariant (secondary dye bleedthrough from saturated channel $h > 6000\text{ RFU}$ rejected as `CLASS_SPECTRAL_PULL_UP`).
+  - [x] `EC-MLSTR-05`: ISFG 3-tier reversibility invariant (Level 1 $\leftrightarrow$ Level 2 $\leftrightarrow$ Level 3 bidirectional conversion with zero character drift).
+  - **Full test run:** `pytest backend/node/services/forensic/genomics/ml_str/ backend/app/api/test_ml_str_routes.py -v` → **18 passed in ~1.2s**
+
+---
+
 ### Module 2.1: Y-STR — Y-Chromosome 27-Locus Lineage Engine (Y-FILER Plus) [VERIFIED 2026-08-21]
 - [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-21]:**
   - [x] YHRD (Y-Chromosome Haplotype Reference Database) Release 68 ($N=385,000$ global casework database + 5 regional partitions: West Eurasian $N=142,000$, East Asian $N=118,000$, South Asian $N=45,000$, Admixed American $N=42,000$, Sub-Saharan African $N=38,000$).

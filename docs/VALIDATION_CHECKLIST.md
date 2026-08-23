@@ -6,7 +6,7 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ## Pillar 1: Probabilistic Genotyping & Population Genetics
 
-### Module 1.1: STR-24 — Autosomal STR & Kinship Engine
+### Module 1.1: STR-24 — Autosomal STR & Kinship Engine ✅ [VERIFIED 2026-08-20]
 - [x] **Criterion 1 (Reference Dataset):** Ran NIST SRM 2391d (Components A–E), Promega PowerPlex Fusion 24, and QIAGEN Verogen ForenSeq MainstAY; verified genotype calls & peak heights.
 - [x] **Criterion 2 (Independent Tool Cross-Check):** Concordance verified with NIST 1036 PopGen frequency calculation table, FragalyseQt CE fragment sizing, and GeneMarker HID hybrid filters.
 - [x] **Criterion 3 (5 Documented Edge Cases):**
@@ -561,21 +561,27 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
-### Module 6.2: ZKP-BN254 — Circom / Groth16 Privacy-Preserving Blind Auditor [VERIFIED 2026-08-21]
-- [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-21]:**
-  - [x] SnarkJS BN254 elliptic curve pairing test vectors.
-  - [x] Circom 2.0 24-locus STR verification circuit constraints.
-  - [x] `VECTOR_27_ZKP_A` through `H` golden benchmark profiles.
-- [x] **Criterion 2 (Independent Tool Cross-Check) ✅ COMPLETE [2026-08-21]:**
-  - [x] Groth16 pairing verification equation: $e(A, B) = e(\alpha, \beta) \cdot e(vk_x, \gamma) \cdot e(C, \delta)$ on BN254.
-  - [x] Poseidon hash algebraic commitment on $\mathbb{F}_p$.
-- [x] **Criterion 3 (5 Documented Edge Cases) ✅ COMPLETE [2026-08-21]:**
-  - [x] `EC-ZKP-01`: 48/48 allele exact match generates valid proof and passes pairing verification.
-  - [x] `EC-ZKP-02`: Non-matching profile with matching alleles below threshold fails proof synthesis.
-  - [x] `EC-ZKP-03`: Zero-knowledge invariant: suspect private genotype unrecoverable from public proof $(A, B, C)$.
-  - [x] `EC-ZKP-04`: Tampered public commitment salt or evidence profile fails verification.
-  - [x] `EC-ZKP-05`: Boundary match threshold condition ($k = \text{threshold}$) passes cleanly.
-  - **Full test run:** `pytest backend/node/services/forensic/security/test_zkp_auditor_engine.py -v` → **12 passed in ~0.4s**
+### Module 6.2: ZKP-GROTH16 — ZK-SNARK Proving Systems & Verifiable Forensic Computation [VERIFIED 2026-08-23]
+- [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-23]:**
+  - [x] NIST SRM 2391d Component A (`VECTOR_ZK_CODIS_MATCH` $LR \ge 10^{18}$).
+  - [x] NA12878 vs NA19240 (`VECTOR_ZK_EXCLUSION` $LR < 10^{-6}$).
+  - [x] 2-Person 70:30 Mixture Casework (`VECTOR_ZK_MIXTURE_2P`).
+  - [x] 18pg Touch DNA Specimen (`VECTOR_ZK_TRACE_LOW_TEMPLATE`).
+  - [x] Interpol Red Notice Bilateral Blind Match Query (`VECTOR_ZK_INTERPOL_CROSS_BORDER`).
+- [x] **Criterion 2 (Independent Tool Cross-Check) ✅ COMPLETE [2026-08-23]:**
+  - [x] gnark Groth16 / arkworks BN254 3-pairing verification check ($|\text{residual}| == 0$).
+  - [x] PLONK-KZG Grand Product permutation polynomial & 2-pairing opening verifier.
+  - [x] Halo2 UltraPLONK custom gates & Plookup table lookup arguments.
+  - [x] VOLE (EMP-ZK) designated-verifier symmetric streaming correlations ($C = A \cdot \Delta + B$).
+  - [x] Z3 / QED2 SMT-based uniqueness inference solver for under-constrained circuit detection.
+  - [x] 1-of-N MPC Perpetual Powers of Tau transcript hash chain validator.
+- [x] **Criterion 3 (5 Documented Edge Cases) ✅ COMPLETE [2026-08-23]:**
+  - [x] `EC-ZK-01`: Remainder Upper Bound Saturation ($r = \hat{D} - 1$ accepts, $r = \hat{D}$ strictly fails).
+  - [x] `EC-ZK-02`: Field Modular Wrap-Around Underflow Attack Resistance (preventing negative dividend wrap-around).
+  - [x] `EC-ZK-03`: Scale Boundary Precision Invariant ($S=16$ vs $S=32$ analytical bounds $|x_{\text{rec}} - x| \le 2^{-S}$).
+  - [x] `EC-ZK-04`: Under-Constrained Signal Interception (SMT solver detects unconstrained advice signal).
+  - [x] `EC-ZK-05`: Corrupted Ceremony Transcript Rejection ($1\text{-of-}N$ MPC invalid accumulator rejected).
+  - **Full test run:** `pytest backend/app/api/test_forensic_zk_routes.py backend/node/services/forensic/zk/ -v` → **49 passed in ~6.0s**
 
 ---
 

@@ -385,6 +385,17 @@ try:
 except Exception as _zkp_import_err:
     logger.warning(f"[boot] ZKP Auditor router not loaded: {_zkp_import_err}")
 
+# --- ZK-SNARK Proving Systems & Verifiable Forensic Computation Router ---
+try:
+    try:
+        from app.api.forensic_zk_routes import router as zk_proving_router
+    except ImportError:
+        from backend.app.api.forensic_zk_routes import router as zk_proving_router
+    app.include_router(zk_proving_router)
+    logger.info("[boot] ZK-SNARK Proving Systems API router registered at /api/v1/forensic/zk")
+except Exception as _zk_proving_err:
+    logger.warning(f"[boot] ZK Proving Systems router not loaded: {_zk_proving_err}")
+
 # --- Geo-Forensic Intelligence & Spatial Biogeochemistry Router (Pillar 7 §1) ---
 try:
     try:

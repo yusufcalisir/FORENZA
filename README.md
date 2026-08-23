@@ -621,7 +621,12 @@ The FastAPI gateway exposes a clean `/api/v1` RESTful interface.
 | **BPA** | `/api/v1/bpa/impact-angle` | `POST` | Computes bloodstain droplet impact angle & 3D origin |
 | **Serology** | `/api/v1/fluid/identify` | `POST` | Predicts body fluid tissue origin from microRNA/methylation |
 | **Touch DNA** | `/api/v1/touch-dna/analyze` | `POST` | Deconvolutes low-copy number touch DNA samples |
-| **ZKP Audit** | `/api/v1/zkp/verify-proof` | `POST` | Verifies a Groth16 Zero-Knowledge SNARK proof |
+| **ZK-SNARK Catalog** | `/api/v1/forensic/zk/catalog` | `GET` | Retrieves catalog of proving systems (Groth16, PLONK, Halo2, VOLE), curves, and scales |
+| **ZK-SNARK Synthesize** | `/api/v1/forensic/zk/synthesize-proof` | `POST` | Generates Groth16, PLONK, Halo2, or VOLE proofs from forensic profiles & witnesses |
+| **ZK-SNARK Verify** | `/api/v1/forensic/zk/verify-proof` | `POST` | Verifies zero-knowledge proof against public instance on BN254 & generates ISO 17025 certificate |
+| **ZK-SNARK MPC Setup** | `/api/v1/forensic/zk/verify-ceremony-transcript` | `POST` | Verifies 1-of-N MPC Powers of Tau ceremony transcript & discrete log proofs |
+| **ZK-SNARK SMT Audit** | `/api/v1/forensic/zk/audit-smt-soundness` | `POST` | Executes SMT uniqueness inference analyzer (QED2/Ecne) to detect under-constrained signals |
+| **ZK-SNARK Vectors** | `/api/v1/forensic/zk/golden-vectors` | `GET` | Retrieves 5 certified multi-omic ZK golden reference standards |
 | **Geo-Forensics (Isoscapes)** | `/api/v1/forensic/geoint/isoscape-provenance` | `POST` | Multi-isotope spatial isoscape provenancing & Bayesian centroid resolution |
 | **Geo-Forensics (Soil CoDa)** | `/api/v1/forensic/geoint/soil-comparison` | `POST` | Forensic soil QXRD mineralogy, CoDa CLR transform & ASTM E3272-21 comparison |
 | **Geo-Forensics (Palynology/eDNA)** | `/api/v1/forensic/geoint/palynology-edna-analysis` | `POST` | Forensic palynology, 6-biome classification & 16S/ITS eDNA spatial regression |
@@ -636,7 +641,7 @@ The FastAPI gateway exposes a clean `/api/v1` RESTful interface.
 
 ## 8. Empirical Verification & Analytical Benchmarks
 
-FORENZA is engineered under strict biocomputational and metrological rigor. Every algorithm, statistical formulation, biophysical threshold, and forensic reporting scaler across all **35 integrated subsystems (7 architectural pillars)** is governed by a formal **3-Criterion Empirical Verification Protocol** and benchmarked against standardized reference datasets.
+FORENZA is engineered under strict biocomputational and metrological rigor. Every algorithm, statistical formulation, biophysical threshold, and forensic reporting scaler across all **38 integrated subsystems (7 architectural pillars)** is governed by a formal **3-Criterion Empirical Verification Protocol** and benchmarked against standardized reference datasets.
 
 ### 🔬 The 3-Criterion Empirical Verification Protocol
 
@@ -657,7 +662,7 @@ A biocomputational module in FORENZA is only certified as **`VERIFIED`** when it
 
 For complete mathematical derivations, test logs, and module-by-module audit records, refer to the dedicated validation resources:
 
-* 📊 **[Module Validation Status (`docs/VALIDATION_STATUS.md`)](file:///c:/Users/Yusuf/str-analysis/docs/VALIDATION_STATUS.md):** The live, single source of truth for platform readiness. Tracks verification criteria, reference datasets, cross-check tools, and passing edge cases across all 35 modules (**35/35 VERIFIED, 1,147 passing tests**).
+* 📊 **[Module Validation Status (`docs/VALIDATION_STATUS.md`)](file:///c:/Users/Yusuf/str-analysis/docs/VALIDATION_STATUS.md):** The live, single source of truth for platform readiness. Tracks verification criteria, reference datasets, cross-check tools, and passing edge cases across all 38 modules (**38/38 VERIFIED, 1,211+ passing tests**).
 * 📑 **[Validation Checklist & Audit Template (`docs/VALIDATION_CHECKLIST.md`)](file:///c:/Users/Yusuf/str-analysis/docs/VALIDATION_CHECKLIST.md):** Comprehensive 600+ line audit record detailing every test execution command, dataset accession, analytical cross-check, and edge-case boundary verification.
 * 📐 **[Mathematical Specification (`docs/math-spec.md`)](file:///c:/Users/Yusuf/str-analysis/docs/math-spec.md):** Complete mathematical and biocomputational specification covering all equations, probability distributions, Markov models, and uncertainty budgets.
 

@@ -107,6 +107,10 @@ const PanelMPSSTR = dynamic(() => import("@/components/analysis/PanelMPSSTR"), {
 const PanelMLSTR = dynamic(() => import("@/components/analysis/PanelMLSTR"), {
   loading: () => <ModuleSkeletonLoader label="Loading ML STR Calling & Fragsifier Engine..." />,
 });
+const PanelFGG = dynamic(() => import("@/components/analysis/PanelFGG"), {
+  loading: () => <ModuleSkeletonLoader label="Loading Forensic Genetic Genealogy Engine..." />,
+});
+
 
 // ─── NIST 1036 Multi-Ethnic Reference Allele Frequency Matrix ─────────────────
 const NIST_1036_POP_FREQS: Record<string, Record<string, Record<string, number>>> = {
@@ -581,8 +585,14 @@ export function renderPanel(tabId: string) {
     case "adna_snp":
     case "ancient_dna":
       return <PanelADNA />;
+    case "fgg":
+    case "igg":
+    case "genealogy":
+    case "investigative_genealogy":
+      return <PanelFGG />;
     case "humanid":
       return <HumanIdPanel />;
+
 
     // Pillar 3: Phenotyping & Ancestry
     case "hirisplex":

@@ -448,7 +448,8 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
             { id: "07", name: "X-STR Linkage & Kinship Index", badge: "X-STR", metrics: "Argus X-12 • LG1-LG4 Linkage • KI_X Kinship", desc: "Evaluates Argus X-12 4 linkage clusters with Kosambi map distance corrections and female kinship likelihood ratios (KI_X)." },
             { id: "08", name: "mtDNA Control Region rCRS/RSRS", badge: "mtDNA-rCRS", metrics: "EMPOP rCRS/RSRS • HV1-HV3 • Phylotree", desc: "Aligns hypervariable regions against revised Cambridge Reference Sequence (rCRS) and RSRS for maternal lineage assignment." },
             { id: "09", name: "Interpol DVI Mass Disaster Engine", badge: "DVI-PED", metrics: "Interpol Joint LR • N x M Matrix • 4 Tiers", desc: "Multi-omic joint likelihood ratio evaluation (LR_Joint = LR_Auto · LR_Y · LR_mt · LR_SNP) and N x M cross-reconciliation matrix." },
-            { id: "10", name: "Ancient DNA & Degraded Forensic SNP", badge: "aDNA-SNP", metrics: "MapDamage Kinetics • C->T • Fragmentation", desc: "Models Briggs deamination damage kinetics (C->T transitions) and exponential fragmentation length distributions for degraded skeletal remains." }
+            { id: "10", name: "Ancient DNA & Degraded Forensic SNP", badge: "aDNA-SNP", metrics: "MapDamage Kinetics • C->T • Fragmentation", desc: "Models Briggs deamination damage kinetics (C->T transitions) and exponential fragmentation length distributions for degraded skeletal remains." },
+            { id: "10-FGG", name: "Forensic Genetic Genealogy (FGG / IGG)", badge: "FGG-IGG", metrics: "IBIS IBD ≥ 7 cM • Bonsai DAG • US DOJ 2019", desc: "Executes phase-free IBS0 windowed IBD scanning, Shared cM relationship degree estimation, Bonsai composite pedigree graph assembly, and statutory US DOJ / MD Title 17 governance." }
           ]
         },
         {
@@ -870,7 +871,8 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
             { id: "07", name: "X-STR Bağlantılı Markör Analizi", badge: "X-STR", metrics: "Argus X-12 • LG1-LG4 Bağlantısı • KI_X Soybağı", desc: "Argus X-12 4 bağlantı kümesini Kosambi harita mesafesi düzeltmeleriyle değerlendirir ve kadın soybağı olabilirlik oranlarını (KI_X) hesaplar." },
             { id: "08", name: "mtDNA Kontrol Bölgesi rCRS/RSRS", badge: "mtDNA-rCRS", metrics: "EMPOP rCRS/RSRS • HV1-HV3 • Filotree", desc: "Anne soyu tespiti için hiperdeğişken bölgeleri revize edilmiş Cambridge Referans Dizisi (rCRS) ve RSRS ile hizalar." },
             { id: "09", name: "Interpol DVI ve Afet Kurbanı Kimliklendirme", badge: "DVI-PED", metrics: "Interpol Birleşik LR • N x M Matris • 4 Kademe", desc: "Çoklu-omik birleşik olabilirlik oranı (LR_Birleşik = LR_Oto · LR_Y · LR_mt · LR_SNP) ve N x M afet çapraz mutabakat matrisi hesaplar." },
-            { id: "10", name: "Antik DNA ve Adli SNP Deaminasyon Motoru", badge: "aDNA-SNP", metrics: "MapDamage Kinetiği • C->T • Fragmantasyon", desc: "Bozunmuş iskelet kalıntıları için Briggs deaminasyon hasar kinetiğini (C->T geçişleri) ve üstel fragmantasyon uzunluk dağılımını modeller." }
+            { id: "10", name: "Antik DNA ve Adli SNP Deaminasyon Motoru", badge: "aDNA-SNP", metrics: "MapDamage Kinetiği • C->T • Fragmantasyon", desc: "Bozunmuş iskelet kalıntıları için Briggs deaminasyon hasar kinetiğini (C->T geçişleri) ve üstel fragmantasyon uzunluk dağılımını modeller." },
+            { id: "10-FGG", name: "Adli Genetik Soybilim & Akrabalık Çözücüsü (FGG / IGG)", badge: "FGG-IGG", metrics: "IBIS IBD ≥ 7 cM • Bonsai DAG • US DOJ 2019", desc: "Yoğun SNP dizileri üzerinden fazsız IBS0 IBD taraması, Shared cM ilişki derecelendirmesi, Bonsai çok kuşaklı soy ağacı çözümü ve US DOJ / MD Başlık 17 yasal uyumluluğunu yönetir." }
           ]
         },
         {

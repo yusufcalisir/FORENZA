@@ -536,6 +536,15 @@ try:
 except Exception as _ml_str_import_err:
     logger.warning(f"[boot] ML STR router not loaded: {_ml_str_import_err}")
 
+# --- Forensic Genetic Genealogy (FGG / IGG) Router ---
+try:
+    from app.api.forensic_fgg_routes import router as fgg_router
+    app.include_router(fgg_router, prefix="/api/forensic/fgg")
+    logger.info("[boot] Forensic Genetic Genealogy (FGG) API router registered at /api/forensic/fgg")
+except Exception as _fgg_import_err:
+    logger.warning(f"[boot] FGG router not loaded: {_fgg_import_err}")
+
+
 
 
 

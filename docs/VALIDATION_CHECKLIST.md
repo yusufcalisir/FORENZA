@@ -213,6 +213,27 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
+### Module 2.6: FGG-IGG — Forensic Genetic Genealogy & Kinship Solver [VERIFIED 2026-08-23]
+- [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-23]:**
+  - [x] CEPH 1463 / GIAB NA12878 Trio (HG001, HG002, HG003) 100% IBD1 whole-genome parent-child standard (`VECTOR_FGG_01`).
+  - [x] GIAB Ashkenazi Trio (HG002, HG003, HG004) high-homozygosity ($F_{\text{ROH}} > 0.035$) endogamy benchmark (`VECTOR_FGG_02`).
+  - [x] Golden State Killer (GSK) Investigative Casework Benchmark (`VECTOR_FGG_03`: 3C match $\sim 90.5\text{ cM}$, 1845 MRCA couple, and Y-STR R1b-M269 concordance).
+- [x] **Criterion 2 (Independent Tool Cross-Check) ✅ COMPLETE [2026-08-23]:**
+  - [x] IBIS Phase-Free Windowed IBD Scanner concordance ($L_{\min} \ge 7.0\text{ cM}, N_{\text{SNP}} \ge 500$, IBS0 segment boundary detection).
+  - [x] Shared cM Project (Bettinger & Speed) empirical relationship degree log-normal distributions & Cotterman $k_0,k_1,k_2$ simplex validation.
+  - [x] Bonsai composite pedigree DAG solver (Jewett et al.) & DRUID ungenotyped ancestor profile pooling (Ramstetter et al.).
+  - [x] US DOJ (2019) Interim Policy & Maryland Title 17 Criminal Procedure statutory compliance engine & certification manager.
+- [x] **Criterion 3 (5 Documented Edge Cases) ✅ COMPLETE [2026-08-23]:**
+  - [x] `EC-FGG-01`: Sub-Threshold Noise Suppression (segments $< 7.0\text{ cM}$ or $< 500\text{ SNPs}$ strictly culled from total shared cM).
+  - [x] `EC-FGG-02`: Legal Inadmissibility Gate (CODIS STR database non-exhaustion strictly blocks FGG investigation under US DOJ Section V).
+  - [x] `EC-FGG-03`: Endogamy False 1st-Cousin Resistance ($F_{\text{ROH}} > 0.035$ applies background discount preventing false relationship assignment).
+  - [x] `EC-FGG-04`: Uniparental Lineage Marker Contradiction Pruning (conflicting Y-STR or mtDNA branches eliminated with $LR=0$).
+  - [x] `EC-FGG-05`: Severe Low-Pass Touch DNA Degradation Handling (SNP call rate $< 90\%$ triggers degradation alert and imputation warning).
+  - **Full test run:** `pytest backend/node/services/forensic/genomics/fgg/ backend/app/api/test_fgg_routes.py -v` → **55 passed in 7.15s**
+
+---
+
+
 ### Module 3.1: HIRISPLEX — HIrisPlex-S 41-SNP Pigmentation Multi-Nominal Regression [VERIFIED 2026-08-21]
 - [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-21]:**
   - [x] Walsh et al. (2018) HIrisPlex-S global validation cohort ($N=632$ subjects, PubMed 31518964).

@@ -311,14 +311,14 @@ export default function PanelADNA() {
           <div className="flex flex-wrap items-center gap-1.5 shrink-0">
             <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[9px] font-bold bg-white/[0.03] border border-white/10 text-amber-400">
               <ShieldCheck className="w-3 h-3 text-amber-400" />
-              <span>ISFG Paleogenomik</span>
+              <span>{isTr ? "ISFG Paleogenomik" : "ISFG Paleogenomics"}</span>
             </span>
             <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[9px] font-bold bg-white/[0.03] border border-white/10 text-cyan-400">
               <Activity className="w-3 h-3 text-cyan-400" />
               <span>MapDamage 2.0</span>
             </span>
             <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[9px] font-bold bg-white/[0.03] border border-white/10 text-purple-400">
-              <span>Depürinasyon Modeli</span>
+              <span>{isTr ? "Depürinasyon Modeli" : "Depurination Model"}</span>
             </span>
           </div>
         </div>
@@ -327,8 +327,9 @@ export default function PanelADNA() {
         <div className="space-y-2">
           <div className="flex items-center justify-between text-[9px] font-bold text-zinc-400 uppercase tracking-widest px-0.5">
             <span>{isTr ? "Sertifikalı Adli aDNA Senaryosu Seçin:" : "Select Certified aDNA Benchmark:"}</span>
-            <span className="text-zinc-500 font-mono">5 Senaryo</span>
+            <span className="text-zinc-500 font-mono">{isTr ? "5 Senaryo" : "5 Scenarios"}</span>
           </div>
+
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2">
             {ADNA_PRESETS.map((preset) => {

@@ -504,8 +504,9 @@ export default function PanelYSTR() {
         <div className="space-y-2">
           <div className="flex items-center justify-between text-[9px] font-bold text-zinc-400 uppercase tracking-widest px-0.5">
             <span>{isTr ? "Sertifikalı Vaka & Referans Kohortları:" : "Select Casework Cohort:"}</span>
-            <span className="text-zinc-500 font-mono">4 Senaryo</span>
+            <span className="text-zinc-500 font-mono">{isTr ? "4 Senaryo" : "4 Scenarios"}</span>
           </div>
+
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
             {PRESET_COHORTS.map((cohort) => {

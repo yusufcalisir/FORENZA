@@ -318,8 +318,9 @@ export default function PanelMTDNA() {
         <div className="space-y-2">
           <div className="flex items-center justify-between text-[9px] font-bold text-zinc-400 uppercase tracking-widest px-0.5">
             <span>{isTr ? "Doğrulama / Soy Kohortu Seçin:" : "Select Benchmark Cohort:"}</span>
-            <span className="text-zinc-500 font-mono">5 Senaryo</span>
+            <span className="text-zinc-500 font-mono">{isTr ? "5 Senaryo" : "5 Scenarios"}</span>
           </div>
+
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2">
             {MTDNA_PRESETS.map((preset) => {

@@ -554,8 +554,9 @@ ${isTr ? "Olabilirlik Oranı (LR), yarışan hipotezler (Hp ve Hd) altında dü�
         <div className="space-y-2">
           <div className="flex items-center justify-between text-[9px] font-bold text-zinc-400 uppercase tracking-widest px-0.5">
             <span>{isTr ? "Sertifikalı LTDNA Referans Kohortu Seçin:" : "Select Certified LTDNA Benchmark:"}</span>
-            <span className="text-zinc-500 font-mono">3 Senaryo</span>
+            <span className="text-zinc-500 font-mono">{isTr ? "3 Senaryo" : "3 Scenarios"}</span>
           </div>
+
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
             {(Object.keys(GOLDEN_PRESETS) as PresetKey[]).map((key) => {

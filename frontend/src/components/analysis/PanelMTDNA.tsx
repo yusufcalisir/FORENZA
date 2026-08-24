@@ -226,47 +226,57 @@ export default function PanelMTDNA() {
     differencesCount: homoplasmicDiffCount,
   });
 
-  // Execute live API call with fallback
+  // Execute live API call with fallback - debounced 500ms to avoid hammering backend on slider drag
   useEffect(() => {
-    setIsAnalyzing(true);
-    const API_BASE = getApiBaseUrl();
+    const controller = new AbortController();
 
-    fetch(`${API_BASE}/api/v1/forensic/lineage/mtdna/evaluate-maternal-match`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        variants_a: currentPreset.variantsA,
-        variants_b: currentPreset.variantsB,
-        n_empop: databaseN,
-        empop_observed_k: observedK,
-      }),
-      signal: AbortSignal.timeout(4000),
-    })
-      .then(async (res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-        setLiveMetrics({
-          maternalLr: data.min_lr,
-          log10Lr: data.log10_lr,
-          pUpper: data.p_upper_95,
-          isExclusion: data.verdict === "EXCLUSION",
-          verdict: data.verdict,
-          differencesCount: data.differences_count,
-        });
+    const timer = setTimeout(() => {
+      setIsAnalyzing(true);
+      const API_BASE = getApiBaseUrl();
+
+      fetch(`${API_BASE}/api/v1/forensic/lineage/mtdna/evaluate-maternal-match`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          variants_a: currentPreset.variantsA,
+          variants_b: currentPreset.variantsB,
+          n_empop: databaseN,
+          empop_observed_k: observedK,
+        }),
+        signal: controller.signal,
       })
-      .catch(() => {
-        setLiveMetrics({
-          maternalLr: maternalLrFallback,
-          log10Lr: log10LrFallback,
-          pUpper: pUpperFallback,
-          isExclusion: isExclusionFallback,
-          verdict: currentPreset.expectedVerdict,
-          differencesCount: homoplasmicDiffCount,
+        .then(async (res) => {
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const data = await res.json();
+          setLiveMetrics({
+            maternalLr: data.min_lr,
+            log10Lr: data.log10_lr,
+            pUpper: data.p_upper_95,
+            isExclusion: data.verdict === "EXCLUSION",
+            verdict: data.verdict,
+            differencesCount: data.differences_count,
+          });
+        })
+        .catch((err) => {
+          if (err?.name === "AbortError") return; // cancelled - ignore
+          setLiveMetrics({
+            maternalLr: maternalLrFallback,
+            log10Lr: log10LrFallback,
+            pUpper: pUpperFallback,
+            isExclusion: isExclusionFallback,
+            verdict: currentPreset.expectedVerdict,
+            differencesCount: homoplasmicDiffCount,
+          });
+        })
+        .finally(() => {
+          setIsAnalyzing(false);
         });
-      })
-      .finally(() => {
-        setIsAnalyzing(false);
-      });
+    }, 500);
+
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
   }, [currentPreset, databaseN, observedK]);
 
   const pUpper = liveMetrics.pUpper;

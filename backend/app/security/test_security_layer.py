@@ -101,6 +101,51 @@ class TestTrafficRiskEngine:
         assert res_b.risk_score < 30
         assert res_b.risk_tier == RiskTier.NORMAL
 
+    def test_headless_automation_detection(self):
+        """HeadlessChrome veya Playwright imzaları tespit edilmeli."""
+        engine = TrafficRiskEngine()
+        res = engine.evaluate_request(
+            ip="198.51.100.77",
+            path="/api/v1/forensic/population",
+            method="GET",
+            user_agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/120.0.0.0 Safari/537.36",
+        )
+        assert res.risk_score >= 40
+        assert any("headless" in r.lower() for r in res.reasons)
+
+    def test_header_inconsistency_missing_accept(self):
+        """Mozilla User-Agent ile gelip Accept başlığı göndermeyen şüpheli botlar puanlanmalı."""
+        engine = TrafficRiskEngine()
+        res = engine.evaluate_request(
+            ip="198.51.100.88",
+            path="/api/v1/forensic/population",
+            method="GET",
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+            headers={"Host": "localhost"},  # Missing Accept header
+        )
+        assert any("Accept" in r for r in res.reasons)
+
+    def test_machine_like_pacing_detection(self):
+        """Çok hızlı aralıklı makine benzeri istek dizilimi tespit edilmeli."""
+        engine = TrafficRiskEngine(base_burst_threshold=100)
+        client_ip = "198.51.100.99"
+        base_time = 1000.0
+
+        # Simulate 15 requests with 0.01s (10ms) intervals
+        res = None
+        for i in range(15):
+            res = engine.evaluate_request(
+                ip=client_ip,
+                path="/api/v1/forensic/population",
+                method="GET",
+                user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+                now=base_time + (i * 0.01),
+            )
+
+        assert res is not None
+        assert any("machine-like" in r.lower() or "micro-burst" in r.lower() for r in res.reasons)
+
+
 
 # ============================================================================
 # 2. Adaptive Rate Limiter Tests (Dimensions 3, 9)

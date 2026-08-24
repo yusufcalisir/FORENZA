@@ -84,6 +84,7 @@ class UnifiedSecurityMiddleware(BaseHTTPMiddleware):
             method=method,
             user_agent=user_agent,
             session_id=session_id,
+            headers=dict(request.headers),
         )
 
         request.state.risk_score = risk.risk_score

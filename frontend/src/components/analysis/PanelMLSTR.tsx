@@ -351,12 +351,12 @@ export const PanelMLSTR: React.FC = () => {
                 <table className="w-full text-xs font-mono text-left">
                   <thead className="bg-slate-900/80 text-slate-400 border-b border-slate-800">
                     <tr>
-                      <th className="p-3">PEAK ID</th>
-                      <th className="p-3">HEIGHT (RFU)</th>
-                      <th className="p-3">POSITION (BP)</th>
-                      <th className="p-3">PREDICTED CLASS</th>
-                      <th className="p-3">ML CONFIDENCE</th>
-                      <th className="p-3">QUALITY ACTION</th>
+                      <th className="p-3">{isTr ? "PİK ID" : "PEAK ID"}</th>
+                      <th className="p-3">{isTr ? "YÜKSEKLİK (RFU)" : "HEIGHT (RFU)"}</th>
+                      <th className="p-3">{isTr ? "POZİSYON (BP)" : "POSITION (BP)"}</th>
+                      <th className="p-3">{isTr ? "TAHMİNİ SINIF" : "PREDICTED CLASS"}</th>
+                      <th className="p-3">{isTr ? "ML GÜVENİ" : "ML CONFIDENCE"}</th>
+                      <th className="p-3">{isTr ? "KALİTE EYLEMİ" : "QUALITY ACTION"}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-800/60">
@@ -382,7 +382,15 @@ export const PanelMLSTR: React.FC = () => {
                         </td>
                         <td className="p-3 text-emerald-400 font-bold">{(pk.conf * 100).toFixed(1)}%</td>
                         <td className="p-3 text-slate-300">
-                          {pk.class === "CLASS_TRUE_ALLELE"
+                          {isTr
+                            ? pk.class === "CLASS_TRUE_ALLELE"
+                              ? "MCMC İçin Koru"
+                              : pk.class === "CLASS_BACK_STUTTER"
+                              ? "Kekeleme Sinyalini Çıkar"
+                              : pk.class === "CLASS_PLUS_A_ARTIFACT"
+                              ? "Ana Pikle Yeniden Birleştir"
+                              : "Artefaktı Ele"
+                            : pk.class === "CLASS_TRUE_ALLELE"
                             ? "Retain for MCMC Likelihood"
                             : pk.class === "CLASS_BACK_STUTTER"
                             ? "Subtract Stutter Signal"
@@ -566,10 +574,10 @@ export const PanelMLSTR: React.FC = () => {
                     <span className="font-mono text-purple-300 font-bold">[{currentPeak.id} • {currentPeak.bp} bp]</span>
                   </span>
                   <div className="flex items-center gap-3 text-[10px] font-mono text-slate-400">
-                    <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-purple-400" /> x1-x6 Morfoloji</span>
-                    <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-amber-400" /> x7-x12 Kekeleme</span>
-                    <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-blue-400" /> x13-x18 Dizi</span>
-                    <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-emerald-400" /> x19-x24 Karışım</span>
+                    <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-purple-400" /> {isTr ? "x1-x6 Morfoloji" : "x1-x6 Morphology"}</span>
+                    <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-amber-400" /> {isTr ? "x7-x12 Kekeleme" : "x7-x12 Stutter"}</span>
+                    <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-blue-400" /> {isTr ? "x13-x18 Dizi" : "x13-x18 Sequence"}</span>
+                    <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-emerald-400" /> {isTr ? "x19-x24 Karışım" : "x19-x24 Mixture"}</span>
                   </div>
                 </div>
 
@@ -616,7 +624,7 @@ export const PanelMLSTR: React.FC = () => {
                       {/* Tooltip */}
                       <div className="absolute bottom-full mb-1 hidden group-hover:flex flex-col items-center bg-slate-900 border border-slate-700 text-white text-[9px] px-2 py-1 rounded shadow-lg z-20 whitespace-nowrap pointer-events-none">
                         <span className="font-bold">{bar.id}: {bar.label}</span>
-                        <span className="text-slate-400 font-mono">Skor: %{bar.val.toFixed(0)}</span>
+                        <span className="text-slate-400 font-mono">{isTr ? `Skor: %${bar.val.toFixed(0)}` : `Score: ${bar.val.toFixed(0)}%`}</span>
                       </div>
                     </div>
                   ))}
@@ -688,7 +696,7 @@ export const PanelMLSTR: React.FC = () => {
                       </span>
                     </div>
                     <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold ${peakFeatures.sr > 15 ? "bg-red-500/20 text-red-300 border border-red-500/40" : "bg-amber-500/20 text-amber-300 border border-amber-500/40"}`}>
-                      SR: %{peakFeatures.sr}
+                      {isTr ? `SR: %${peakFeatures.sr}` : `SR: ${peakFeatures.sr}%`}
                     </span>
                   </div>
 
@@ -696,7 +704,7 @@ export const PanelMLSTR: React.FC = () => {
                     <div>
                       <div className="flex justify-between text-[11px] mb-1">
                         <span className="text-slate-400">{isTr ? "Kekeleme Oranı (Stutter Ratio - SR):" : "Stutter Ratio (SR):"}</span>
-                        <span className="font-mono font-bold text-amber-300">%{peakFeatures.sr} <span className="text-slate-500 text-[9px]">(Eşik: %15.0)</span></span>
+                        <span className="font-mono font-bold text-amber-300">{isTr ? `%${peakFeatures.sr}` : `${peakFeatures.sr}%`} <span className="text-slate-500 text-[9px]">({isTr ? "Eşik: %15.0" : "Threshold: 15.0%"})</span></span>
                       </div>
                       <div className="h-1.5 w-full rounded-full bg-slate-950 overflow-hidden relative">
                         <div
@@ -708,16 +716,16 @@ export const PanelMLSTR: React.FC = () => {
 
                     <div className="grid grid-cols-3 gap-2 pt-1 font-mono text-[10px]">
                       <div className={`p-2.5 rounded-xl border flex flex-col items-center justify-center text-center ${peakFeatures.isBackStutter ? "bg-amber-500/15 border-amber-500/50 text-amber-300 font-bold" : "bg-black/40 border-slate-800 text-slate-500"}`}>
-                        <span>Geri-Kekeleme</span>
-                        <span className="text-[11px] mt-0.5">{peakFeatures.isBackStutter ? "EVET (I_-1)" : "HAYIR"}</span>
+                        <span>{isTr ? "Geri-Kekeleme" : "Back-Stutter"}</span>
+                        <span className="text-[11px] mt-0.5">{peakFeatures.isBackStutter ? (isTr ? "EVET (I_-1)" : "YES (I_-1)") : (isTr ? "HAYIR" : "NO")}</span>
                       </div>
                       <div className={`p-2.5 rounded-xl border flex flex-col items-center justify-center text-center ${peakFeatures.isFwdStutter ? "bg-amber-500/15 border-amber-500/50 text-amber-300 font-bold" : "bg-black/40 border-slate-800 text-slate-500"}`}>
-                        <span>İleri-Kekeleme</span>
-                        <span className="text-[11px] mt-0.5">{peakFeatures.isFwdStutter ? "EVET (I_+1)" : "HAYIR"}</span>
+                        <span>{isTr ? "İleri-Kekeleme" : "Forward-Stutter"}</span>
+                        <span className="text-[11px] mt-0.5">{peakFeatures.isFwdStutter ? (isTr ? "EVET (I_+1)" : "YES (I_+1)") : (isTr ? "HAYIR" : "NO")}</span>
                       </div>
                       <div className={`p-2.5 rounded-xl border flex flex-col items-center justify-center text-center ${peakFeatures.isPlusA ? "bg-purple-500/15 border-purple-500/50 text-purple-300 font-bold" : "bg-black/40 border-slate-800 text-slate-500"}`}>
-                        <span>+A Adenilasyon</span>
-                        <span className="text-[11px] mt-0.5">{peakFeatures.isPlusA ? "EVET (I_+A)" : "HAYIR"}</span>
+                        <span>{isTr ? "+A Adenilasyon" : "+A Adenylation"}</span>
+                        <span className="text-[11px] mt-0.5">{peakFeatures.isPlusA ? (isTr ? "EVET (I_+A)" : "YES (I_+A)") : (isTr ? "HAYIR" : "NO")}</span>
                       </div>
                     </div>
 
@@ -748,7 +756,7 @@ export const PanelMLSTR: React.FC = () => {
                     <div>
                       <div className="flex justify-between text-[11px] mb-1">
                         <span className="text-slate-400">{isTr ? "Shannon Bilgi Entropisi H(S):" : "Shannon Entropy H(S):"}</span>
-                        <span className="font-mono font-bold text-blue-300">{peakFeatures.entropy} bit <span className="text-slate-500 text-[9px]">(Maks: 2.0)</span></span>
+                        <span className="font-mono font-bold text-blue-300">{peakFeatures.entropy} bit <span className="text-slate-500 text-[9px]">({isTr ? "Maks: 2.0" : "Max: 2.0"})</span></span>
                       </div>
                       <div className="h-1.5 w-full rounded-full bg-slate-950 overflow-hidden">
                         <div
@@ -761,7 +769,7 @@ export const PanelMLSTR: React.FC = () => {
                     <div className="grid grid-cols-2 gap-2 pt-1 font-mono text-[11px]">
                       <div className="p-2.5 rounded-xl bg-black/40 border border-slate-800 space-y-0.5">
                         <div className="text-slate-400 text-[10px]">{isTr ? "GC İçerik Oranı (f_GC):" : "GC Fraction (f_GC):"}</div>
-                        <div className="font-bold text-cyan-300">%{peakFeatures.gcContent}</div>
+                        <div className="font-bold text-cyan-300">{isTr ? `%${peakFeatures.gcContent}` : `${peakFeatures.gcContent}%`}</div>
                       </div>
                       <div className="p-2.5 rounded-xl bg-black/40 border border-slate-800 space-y-0.5">
                         <div className="text-slate-400 text-[10px]">{isTr ? "Homopolimer Uzunluğu:" : "Homopolymer Run (L_homo):"}</div>
@@ -799,7 +807,7 @@ export const PanelMLSTR: React.FC = () => {
                     <div>
                       <div className="flex justify-between text-[11px] mb-1">
                         <span className="text-slate-400">{isTr ? "Heterozigot Dengesi (H_b):" : "Heterozygote Balance (H_b):"}</span>
-                        <span className="font-mono font-bold text-emerald-300">{peakFeatures.hb} <span className="text-slate-500 text-[9px]">(Eşik: ≥ 0.60)</span></span>
+                        <span className="font-mono font-bold text-emerald-300">{peakFeatures.hb} <span className="text-slate-500 text-[9px]">({isTr ? "Eşik: ≥ 0.60" : "Threshold: ≥ 0.60"})</span></span>
                       </div>
                       <div className="h-1.5 w-full rounded-full bg-slate-950 overflow-hidden">
                         <div
@@ -816,7 +824,7 @@ export const PanelMLSTR: React.FC = () => {
                       </div>
                       <div className="p-2.5 rounded-xl bg-black/40 border border-slate-800 space-y-0.5">
                         <div className="text-slate-400 text-[10px]">{isTr ? "Spektral Çekme (Pull-Up):" : "Spectral Pull-Up:"}</div>
-                        <div className="font-bold text-emerald-400">%{peakFeatures.pullUp}</div>
+                        <div className="font-bold text-emerald-400">{isTr ? `%${peakFeatures.pullUp}` : `${peakFeatures.pullUp}%`}</div>
                       </div>
                       <div className="p-2.5 rounded-xl bg-black/40 border border-slate-800 space-y-0.5">
                         <div className="text-slate-400 text-[10px]">{isTr ? "Amplifikasyon Verimi (e_l):" : "Locus Amp Efficiency (e_l):"}</div>
@@ -824,7 +832,7 @@ export const PanelMLSTR: React.FC = () => {
                       </div>
                       <div className="p-2.5 rounded-xl bg-black/40 border border-slate-800 space-y-0.5">
                         <div className="text-slate-400 text-[10px]">{isTr ? "Fragsifier Karar Güveni:" : "RF Ensemble Conf:"}</div>
-                        <div className="font-bold text-purple-300">%{(currentPeak.conf * 100).toFixed(1)}</div>
+                        <div className="font-bold text-purple-300">{isTr ? `%${(currentPeak.conf * 100).toFixed(1)}` : `${(currentPeak.conf * 100).toFixed(1)}%`}</div>
                       </div>
                     </div>
                   </div>

@@ -16,6 +16,7 @@ from .concurrency_guard import BiocomputationalResourceGuard, get_resource_guard
 from .app_shield import ApplicationShield
 from .audit_logger import SecurityAuditLogger, security_logger
 from .ddos_shield import DDoSShield, ddos_shield
+from .session_guard import SessionSecurityManager, session_manager, SessionAuthLevel
 
 __all__ = [
     "TrafficRiskEngine",
@@ -31,5 +32,9 @@ __all__ = [
     "security_logger",
     "DDoSShield",
     "ddos_shield",
+    "SessionSecurityManager",
+    "session_manager",
+    "SessionAuthLevel",
 ]
+
 

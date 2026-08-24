@@ -22,6 +22,7 @@ from .waf_tuner import WAFRuleEngine, waf_engine, WAFAction
 from .api_security_engine import APISecurityEngine, api_security_engine, UserRole
 from .circuit_breaker import CircuitBreaker, CircuitBreakerConfig, CircuitState, circuit_registry
 from .infra_guard import InfrastructureGuard, infra_guard
+from .cache_shield import CacheShield, cache_shield
 
 __all__ = [
     "TrafficRiskEngine",
@@ -55,7 +56,10 @@ __all__ = [
     "circuit_registry",
     "InfrastructureGuard",
     "infra_guard",
+    "CacheShield",
+    "cache_shield",
 ]
+
 
 
 

@@ -154,16 +154,19 @@ class UnifiedSecurityMiddleware(BaseHTTPMiddleware):
                     details={"reasons": risk.reasons},
                     duration_ms=(time.time() - start_time) * 1000,
                 )
+                retry_sec = risk.retry_after_seconds or 60
                 resp = JSONResponse(
                     status_code=status.HTTP_429_TOO_MANY_REQUESTS,
                     content={
-                        "detail": "Traffic anomaly detected. Temporary cooling period active.",
+                        "detail": f"Traffic anomaly detected ({risk.risk_tier.value}). Temporary cooling period active.",
                         "correlation_id": correlation_id,
+                        "retry_after_seconds": retry_sec,
                     },
-                    headers={"Retry-After": "60", "X-Correlation-ID": correlation_id},
+                    headers={"Retry-After": str(retry_sec), "X-Correlation-ID": correlation_id},
                 )
                 self._apply_security_headers(resp, path)
                 return resp
+
 
             # 5. Adaptive Rate Limiting Evaluation
             rl_res = adaptive_rate_limiter.check_rate_limit(

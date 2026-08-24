@@ -145,6 +145,43 @@ class TestTrafficRiskEngine:
         assert res is not None
         assert any("machine-like" in r.lower() or "micro-burst" in r.lower() for r in res.reasons)
 
+    def test_progressive_response_graduated_continuum(self):
+        """Kademeli tepki matrisi (Normal -> Suspicious -> Challenged -> Blocked -> Quarantined) doğrulanmalı."""
+        engine = TrafficRiskEngine()
+        clean_ip = "203.0.113.55"
+
+        # 1. Normal Tier (R < 30)
+        res_normal = engine.evaluate_request(clean_ip, "/api/v1/forensic/population")
+        assert res_normal.risk_tier == RiskTier.NORMAL
+        assert res_normal.delay_ms == 0
+        assert res_normal.requires_pow is False
+        assert res_normal.is_blocked is False
+
+        # 2. Suspicious Tier (3 failed auths)
+        for _ in range(3):
+            engine.record_auth_failure(clean_ip)
+
+        res_suspicious = engine.evaluate_request(clean_ip, "/api/v1/forensic/population")
+        assert res_suspicious.risk_score >= 50
+        assert res_suspicious.risk_tier in (RiskTier.SUSPICIOUS, RiskTier.HIGHLY_SUSPICIOUS, RiskTier.CLEARLY_MALICIOUS, RiskTier.PERSISTENT_MALICIOUS)
+
+    def test_reputation_decay_and_pow_recovery(self):
+        """Proof-of-Work çözümü ve iyi davranış risk cezasını temizlemeli."""
+        engine = TrafficRiskEngine()
+        client_ip = "203.0.113.88"
+
+        # Inject penalty
+        engine.record_auth_failure(client_ip)
+        res_before = engine.evaluate_request(client_ip, "/api/v1/forensic/population")
+        assert res_before.risk_score >= 15
+
+        # Solve PoW
+        engine.record_pow_solved(client_ip)
+        res_after = engine.evaluate_request(client_ip, "/api/v1/forensic/population")
+        assert res_after.risk_score < res_before.risk_score
+
+
+
 
 
 # ============================================================================

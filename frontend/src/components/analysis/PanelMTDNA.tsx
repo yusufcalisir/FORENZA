@@ -274,6 +274,24 @@ export default function PanelMTDNA() {
   const maternalLr = liveMetrics.maternalLr;
   const log10Lr = liveMetrics.log10Lr;
 
+  // ISFG domain filter: parse numeric position from variant string (e.g. "16519C" -> 16519)
+  const getVariantPosition = (v: string): number => {
+    const match = v.match(/^(\d+)/);
+    return match ? parseInt(match[1], 10) : 0;
+  };
+
+  const variantMatchesDomain = (v: string, tab: "ALL" | "HV1" | "HV2" | "HV3"): boolean => {
+    if (tab === "ALL") return true;
+    const pos = getVariantPosition(v);
+    if (tab === "HV1") return pos >= 16024 && pos <= 16365;
+    if (tab === "HV2") return pos >= 73 && pos <= 340;
+    if (tab === "HV3") return pos >= 438 && pos <= 574;
+    return true;
+  };
+
+  const filteredVariantsA = currentPreset.variantsA.filter((v) => variantMatchesDomain(v, activeDomainTab));
+  const filteredVariantsB = currentPreset.variantsB.filter((v) => variantMatchesDomain(v, activeDomainTab));
+
 
   return (
     <div className="space-y-6 text-slate-100 font-mono pb-12">
@@ -504,14 +522,17 @@ export default function PanelMTDNA() {
               <div>
                 <span className="text-xs font-semibold text-slate-400 block mb-1.5 flex items-center justify-between">
                   <span>
-                    {isTr ? "Sorgulanan Örnek A" : "Questioned Sample A"} ({currentPreset.variantsA.length} {isTr ? "Varyant" : "Variants"}):
+                    {isTr ? "Sorgulanan Örnek A" : "Questioned Sample A"} ({filteredVariantsA.length}{activeDomainTab !== "ALL" ? `/${currentPreset.variantsA.length}` : ""} {isTr ? "Varyant" : "Variants"}):
                   </span>
                   <span className="text-emerald-400 font-mono text-[11px]">
                     {isTr ? "Haplogrup" : "Haplogroup"} {currentPreset.expectedHgA}
                   </span>
                 </span>
+                {filteredVariantsA.length === 0 ? (
+                  <p className="text-xs text-slate-500 italic">{isTr ? `Bu bölgede varyant yok (${activeDomainTab})` : `No variants in this region (${activeDomainTab})`}</p>
+                ) : (
                 <div className="flex flex-wrap gap-1.5">
-                  {currentPreset.variantsA.map((v) => {
+                  {filteredVariantsA.map((v) => {
                     const isShared = setB.has(v) || isPhpCompatible;
                     return (
                       <span
@@ -530,19 +551,23 @@ export default function PanelMTDNA() {
                     );
                   })}
                 </div>
+                )}
               </div>
 
               <div>
                 <span className="text-xs font-semibold text-slate-400 block mb-1.5 flex items-center justify-between">
                   <span>
-                    {isTr ? "Referans Örnek B" : "Reference Sample B"} ({currentPreset.variantsB.length} {isTr ? "Varyant" : "Variants"}):
+                    {isTr ? "Referans Örnek B" : "Reference Sample B"} ({filteredVariantsB.length}{activeDomainTab !== "ALL" ? `/${currentPreset.variantsB.length}` : ""} {isTr ? "Varyant" : "Variants"}):
                   </span>
                   <span className="text-cyan-400 font-mono text-[11px]">
                     {isTr ? "Haplogrup" : "Haplogroup"} {currentPreset.expectedHgB}
                   </span>
                 </span>
+                {filteredVariantsB.length === 0 ? (
+                  <p className="text-xs text-slate-500 italic">{isTr ? `Bu bölgede varyant yok (${activeDomainTab})` : `No variants in this region (${activeDomainTab})`}</p>
+                ) : (
                 <div className="flex flex-wrap gap-1.5">
-                  {currentPreset.variantsB.map((v) => {
+                  {filteredVariantsB.map((v) => {
                     const isShared = setA.has(v) || isPhpCompatible;
                     return (
                       <span
@@ -561,6 +586,7 @@ export default function PanelMTDNA() {
                     );
                   })}
                 </div>
+                )}
               </div>
             </div>
           </div>

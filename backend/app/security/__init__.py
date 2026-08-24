@@ -14,7 +14,7 @@ from .risk_engine import TrafficRiskEngine, TrafficRiskAssessment, RiskTier
 from .rate_limiter import AdaptiveRateLimiter, RateLimitCategory, RateLimitResult
 from .concurrency_guard import BiocomputationalResourceGuard, get_resource_guard
 from .app_shield import ApplicationShield, app_shield
-from .audit_logger import SecurityAuditLogger, security_logger
+from .audit_logger import SecurityAuditLogger, SecurityEventType, security_logger
 from .ddos_shield import DDoSShield, ddos_shield
 from .session_guard import SessionSecurityManager, session_manager, SessionAuthLevel
 from .auth_shield import AuthenticationShield, auth_shield
@@ -37,6 +37,7 @@ __all__ = [
     "ApplicationShield",
     "app_shield",
     "SecurityAuditLogger",
+    "SecurityEventType",
     "security_logger",
     "DDoSShield",
     "ddos_shield",
@@ -62,6 +63,7 @@ __all__ = [
     "SecurityHeadersManager",
     "headers_guard",
 ]
+
 
 
 

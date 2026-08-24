@@ -400,78 +400,89 @@ export default function PanelMTDNA() {
               <span className="text-xs font-mono text-slate-400">rCRS NC_012920.1</span>
             </div>
 
-            {/* SVG Circular Visualization */}
+            {/* SVG Circular Visualization - Dynamic variant position markers */}
             <div className="relative w-full h-48 sm:h-64 flex items-center justify-center my-2">
-              <svg viewBox="0 0 200 200" className="w-full h-full max-w-[240px]">
-                {/* Background Ring (Full 16,569 bp Genome) */}
-                <circle
-                  cx="100"
-                  cy="100"
-                  r="75"
-                  fill="none"
-                  stroke="#1e293b"
-                  strokeWidth="14"
-                />
+              {(() => {
+                const GENOME_SIZE = 16569;
+                const cx = 100, cy = 100, r = 75;
 
-                {/* Protein Coding & rRNA/tRNA regions */}
-                <circle
-                  cx="100"
-                  cy="100"
-                  r="75"
-                  fill="none"
-                  stroke="#334155"
-                  strokeWidth="14"
-                  strokeDasharray="420 450"
-                  strokeDashoffset="60"
-                />
+                // Convert genomic position to SVG coordinate (start at top / 12 o'clock)
+                const posToXY = (pos: number, radius: number) => {
+                  const angle = (pos / GENOME_SIZE) * 2 * Math.PI - Math.PI / 2;
+                  return {
+                    x: cx + radius * Math.cos(angle),
+                    y: cy + radius * Math.sin(angle),
+                  };
+                };
 
-                {/* D-Loop Control Region (Highlighted) */}
-                <circle
-                  cx="100"
-                  cy="100"
-                  r="75"
-                  fill="none"
-                  stroke="#10b981"
-                  strokeWidth="16"
-                  strokeDasharray="45 450"
-                  strokeDashoffset="15"
-                />
+                // Render a tick line from inner radius to outer radius
+                const renderTick = (pos: number, color: string, key: string, innerR = 66, outerR = 84) => {
+                  const inner = posToXY(pos, innerR);
+                  const outer = posToXY(pos, outerR);
+                  return (
+                    <line
+                      key={key}
+                      x1={inner.x} y1={inner.y}
+                      x2={outer.x} y2={outer.y}
+                      stroke={color}
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                    />
+                  );
+                };
 
-                {/* HV1 Region (Emerald) */}
-                <circle
-                  cx="100"
-                  cy="100"
-                  r="75"
-                  fill="none"
-                  stroke="#059669"
-                  strokeWidth="14"
-                  strokeDasharray="18 450"
-                  strokeDashoffset="25"
-                />
+                const sharedVariants = currentPreset.variantsA.filter((v) => setB.has(v));
+                const onlyInA = currentPreset.variantsA.filter((v) => !setB.has(v));
+                const onlyInB = currentPreset.variantsB.filter((v) => !setA.has(v));
 
-                {/* HV2 Region (Cyan) */}
-                <circle
-                  cx="100"
-                  cy="100"
-                  r="75"
-                  fill="none"
-                  stroke="#06b6d4"
-                  strokeWidth="14"
-                  strokeDasharray="15 450"
-                  strokeDashoffset="6"
-                />
+                return (
+                  <svg viewBox="0 0 200 200" className="w-full h-full max-w-[240px]">
+                    {/* Background Ring */}
+                    <circle cx={cx} cy={cy} r={r} fill="none" stroke="#1e293b" strokeWidth="14" />
+                    {/* Protein coding / rRNA regions */}
+                    <circle cx={cx} cy={cy} r={r} fill="none" stroke="#334155" strokeWidth="14"
+                      strokeDasharray="420 450" strokeDashoffset="60" />
+                    {/* D-Loop region (emerald glow) */}
+                    <circle cx={cx} cy={cy} r={r} fill="none" stroke="#10b981" strokeWidth="16"
+                      strokeDasharray="45 450" strokeDashoffset="15" opacity="0.5" />
+                    {/* HV1 arc */}
+                    <circle cx={cx} cy={cy} r={r} fill="none" stroke="#059669" strokeWidth="14"
+                      strokeDasharray="18 450" strokeDashoffset="25" />
+                    {/* HV2 arc */}
+                    <circle cx={cx} cy={cy} r={r} fill="none" stroke="#06b6d4" strokeWidth="14"
+                      strokeDasharray="15 450" strokeDashoffset="6" />
 
-                {/* Center Stats */}
-                <text x="100" y="92" textAnchor="middle" fill="#ffffff" fontSize="11" fontWeight="bold" fontFamily="monospace">
-                  D-LOOP
-                </text>
-                <text x="100" y="106" textAnchor="middle" fill="#94a3b8" fontSize="8" fontFamily="monospace">
-                  16024-576 bp
-                </text>
-                <text x="100" y="120" textAnchor="middle" fill="#10b981" fontSize="9" fontWeight="bold" fontFamily="monospace">
-                  {currentPreset.expectedHgA}
-                </text>
-              </svg>
+                    {/* Dynamic variant tick marks */}
+                    {sharedVariants.map((v) => renderTick(getVariantPosition(v), "#10b981", `sh-${v}`))}
+                    {onlyInA.map((v) => renderTick(getVariantPosition(v), "#f59e0b", `a-${v}`))}
+                    {onlyInB.map((v) => renderTick(getVariantPosition(v), "#f43f5e", `b-${v}`))}
+
+                    {/* Center label */}
+                    <text x="100" y="90" textAnchor="middle" fill="#ffffff" fontSize="10" fontWeight="bold" fontFamily="monospace">
+                      D-LOOP
+                    </text>
+                    <text x="100" y="103" textAnchor="middle" fill="#94a3b8" fontSize="7.5" fontFamily="monospace">
+                      16024-576 bp
+                    </text>
+                    <text x="100" y="115" textAnchor="middle" fill="#10b981" fontSize="8.5" fontWeight="bold" fontFamily="monospace">
+                      {currentPreset.expectedHgA}
+                    </text>
+                    {currentPreset.expectedHgA !== currentPreset.expectedHgB && (
+                      <text x="100" y="126" textAnchor="middle" fill="#06b6d4" fontSize="7.5" fontWeight="bold" fontFamily="monospace">
+                        vs {currentPreset.expectedHgB}
+                      </text>
+                    )}
+
+                    {/* Legend dots */}
+                    <circle cx="22" cy="178" r="3" fill="#10b981" />
+                    <text x="27" y="181" fill="#94a3b8" fontSize="6" fontFamily="monospace">Shared</text>
+                    <circle cx="58" cy="178" r="3" fill="#f59e0b" />
+                    <text x="63" y="181" fill="#94a3b8" fontSize="6" fontFamily="monospace">A only</text>
+                    <circle cx="92" cy="178" r="3" fill="#f43f5e" />
+                    <text x="97" y="181" fill="#94a3b8" fontSize="6" fontFamily="monospace">B only</text>
+                  </svg>
+                );
+              })()}
             </div>
           </div>
 

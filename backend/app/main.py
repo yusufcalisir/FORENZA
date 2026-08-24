@@ -430,6 +430,17 @@ try:
 except Exception as _terminal_import_err:
     logger.warning(f"[boot] Terminal router not loaded: {_terminal_import_err}")
 
+# --- Forensic Genetic Genealogy (FGG / IGG) Router ---
+try:
+    try:
+        from app.api.forensic_fgg_routes import router as fgg_router
+    except ImportError:
+        from backend.app.api.forensic_fgg_routes import router as fgg_router
+    app.include_router(fgg_router, prefix="/api")
+    app.include_router(fgg_router, prefix="/api/v1")
+    logger.info("[boot] Forensic Genetic Genealogy (FGG) API router registered at /api/v1/forensic/fgg")
+except Exception as _fgg_import_err:
+    logger.warning(f"[boot] FGG router not loaded: {_fgg_import_err}")
 
 # --- Automated Analytical Instrument Gateway Router ---
 try:

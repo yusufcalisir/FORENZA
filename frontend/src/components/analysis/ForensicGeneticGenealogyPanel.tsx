@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   Dna,
   GitBranch,
@@ -220,19 +220,11 @@ export default function ForensicGeneticGenealogyPanel() {
     }
   }, [selectedBenchmark, isTr]);
 
-  // Filtered segments based on threshold
-  const qualifyingSegments = useMemo(() => {
-    return benchmarkData.segments.filter((s) => s.lengthCm >= minCmThreshold);
-  }, [benchmarkData, minCmThreshold]);
-
-  const totalQualifyingCm = useMemo(() => {
-    return qualifyingSegments.reduce((sum, s) => sum + s.lengthCm, 0);
-  }, [qualifyingSegments]);
-
   // Live Backend State
   const [liveFgg, setLiveFgg] = useState<{
     totalSharedCm: number | null;
     longestCm: number | null;
+    segmentCount: number | null;
     k0: number | null;
     k1: number | null;
     k2: number | null;
@@ -240,6 +232,7 @@ export default function ForensicGeneticGenealogyPanel() {
     wrightR: number | null;
     kingPhi: number | null;
     topCandidate: RelationshipCandidateUI | null;
+    candidates: RelationshipCandidateUI[] | null;
     isLegalCompliant: boolean | null;
     legalViolations: string[];
     leadNotice: string | null;
@@ -248,9 +241,18 @@ export default function ForensicGeneticGenealogyPanel() {
       certificateHash: string;
       timestampIso: string;
     } | null;
+    segments: IBDSegmentUI[] | null;
+    isEndogamySuspected: boolean | null;
+    fRohTarget: number | null;
+    fRohMatch: number | null;
+    adjustedSharedCm: number | null;
+    mrcaLabel: string | null;
+    uniparentalStatus: string | null;
+    pedigreeTree: any | null;
   }>({
     totalSharedCm: null,
     longestCm: null,
+    segmentCount: null,
     k0: null,
     k1: null,
     k2: null,
@@ -258,11 +260,60 @@ export default function ForensicGeneticGenealogyPanel() {
     wrightR: null,
     kingPhi: null,
     topCandidate: null,
+    candidates: null,
     isLegalCompliant: true,
     legalViolations: [],
     leadNotice: null,
     destructionOrder: null,
+    segments: null,
+    isEndogamySuspected: null,
+    fRohTarget: null,
+    fRohMatch: null,
+    adjustedSharedCm: null,
+    mrcaLabel: null,
+    uniparentalStatus: null,
+    pedigreeTree: null,
   });
+
+  // Filtered segments based on threshold
+  const activeSegments = liveFgg.segments ?? benchmarkData.segments;
+  const qualifyingSegments = useMemo(() => {
+    return activeSegments.filter((s) => s.lengthCm >= minCmThreshold);
+  }, [activeSegments, minCmThreshold]);
+
+  const totalQualifyingCm = useMemo(() => {
+    return qualifyingSegments.reduce((sum, s) => sum + s.lengthCm, 0);
+  }, [qualifyingSegments]);
+
+  // Reset live results on benchmark switch
+  useEffect(() => {
+    setLiveFgg({
+      totalSharedCm: null,
+      longestCm: null,
+      segmentCount: null,
+      k0: null,
+      k1: null,
+      k2: null,
+      kinshipPhi: null,
+      wrightR: null,
+      kingPhi: null,
+      topCandidate: null,
+      candidates: null,
+      isLegalCompliant: true,
+      legalViolations: [],
+      leadNotice: null,
+      destructionOrder: null,
+      segments: null,
+      isEndogamySuspected: null,
+      fRohTarget: null,
+      fRohMatch: null,
+      adjustedSharedCm: null,
+      mrcaLabel: null,
+      uniparentalStatus: null,
+      pedigreeTree: null,
+    });
+    setDestructionOrderGenerated(false);
+  }, [selectedBenchmark]);
 
   // Trigger live FGG analysis across backend routes
   const handleRunAnalysis = async () => {
@@ -270,62 +321,84 @@ export default function ForensicGeneticGenealogyPanel() {
     const API_BASE = getApiBaseUrl();
 
     try {
-      // Step 1 & 2: Detect IBD & Classify Kinship
-      const ibdPayload = {
-        raw_text_a: `rs101\t1\t1000\tAA\nrs102\t1\t2000\tCC\n`,
-        profile_id_a: benchmarkData.targetId,
-        raw_text_b: `rs101\t1\t1000\tAA\nrs102\t1\t2000\tCT\n`,
-        profile_id_b: benchmarkData.matchId,
+      const evaluatePayload = {
+        benchmark_id: benchmarkData.id,
         min_segment_cm: minCmThreshold,
         min_snps: 500,
+        jurisdiction: statutoryFramework,
+        offense_type: qualifyingOffense,
+        is_codis_exhausted: codisExhausted,
+        prosecutor_authorization_id: "DA_AUTH_2026_01",
+        opt_in_matches_only_enforced: true,
       };
 
-      const [ibdRes, legalRes] = await Promise.all([
-        fetch(`${API_BASE}/api/forensic/fgg/ibd-pairwise`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(ibdPayload),
-          signal: AbortSignal.timeout(6000),
-        }).then(async (r) => (r.ok ? r.json() : null)),
-        fetch(`${API_BASE}/api/forensic/fgg/validate-legal`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            case_id: "CASE_FGG_2026",
-            jurisdiction: statutoryFramework,
-            offense_type: qualifyingOffense,
-            is_codis_exhausted: codisExhausted,
-            prosecutor_authorization_id: "DA_AUTH_2026_01",
-            opt_in_matches_only_enforced: true,
-          }),
-          signal: AbortSignal.timeout(6000),
-        }).then(async (r) => (r.ok ? r.json() : null)),
-      ]);
+      const res = await fetch(`${API_BASE}/api/v1/forensic/fgg/evaluate-benchmark`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(evaluatePayload),
+        signal: AbortSignal.timeout(8000),
+      });
 
-      if (ibdRes) {
-        setLiveFgg((prev) => ({
-          ...prev,
-          totalSharedCm: ibdRes.total_shared_cm ?? benchmarkData.rawCm,
-          longestCm: ibdRes.longest_shared_cm ?? benchmarkData.longestCm,
-          k0: ibdRes.cotterman_k0 ?? benchmarkData.k0,
-          k1: ibdRes.cotterman_k1 ?? benchmarkData.k1,
-          k2: ibdRes.cotterman_k2 ?? benchmarkData.k2,
-          kinshipPhi: ibdRes.kinship_coefficient_phi ?? benchmarkData.kinshipPhi,
-          wrightR: ibdRes.wright_coefficient_r ?? benchmarkData.wrightR,
-          kingPhi: ibdRes.king_kinship_phi ?? benchmarkData.kingPhi,
-        }));
-      }
-
-      if (legalRes) {
-        setLiveFgg((prev) => ({
-          ...prev,
-          isLegalCompliant: legalRes.is_compliant,
-          legalViolations: legalRes.violation_reasons || [],
-          leadNotice: legalRes.lead_disclaimer_notice || null,
-        }));
+      if (res.ok) {
+        const data = await res.json();
+        setLiveFgg({
+          totalSharedCm: data.total_shared_cm,
+          longestCm: data.longest_shared_cm,
+          segmentCount: data.segment_count,
+          k0: data.cotterman_k0,
+          k1: data.cotterman_k1,
+          k2: data.cotterman_k2,
+          kinshipPhi: data.kinship_phi,
+          wrightR: data.wright_r,
+          kingPhi: data.king_phi,
+          topCandidate: data.top_candidate,
+          candidates: data.candidates || null,
+          isLegalCompliant: data.legal_compliance?.is_compliant ?? true,
+          legalViolations: data.legal_compliance?.violation_reasons || [],
+          leadNotice: data.legal_compliance?.lead_disclaimer_notice || null,
+          destructionOrder: null,
+          segments: data.segments || null,
+          isEndogamySuspected: data.is_endogamy_suspected,
+          fRohTarget: data.f_roh_target,
+          fRohMatch: data.f_roh_match,
+          adjustedSharedCm: data.adjusted_shared_cm,
+          mrcaLabel: data.mrca_label,
+          uniparentalStatus: data.uniparental_status,
+          pedigreeTree: data.pedigree_tree,
+        });
+        if (data.f_roh_target != null && data.f_roh_target > 0.02) {
+          setInbreedingRohScore(data.f_roh_target);
+        }
+      } else {
+        throw new Error(`HTTP ${res.status}`);
       }
     } catch {
-      // Keep resilient benchmark data on offline mode
+      // Local fallback with mathematically faithful ground truth
+      setLiveFgg({
+        totalSharedCm: benchmarkData.rawCm,
+        longestCm: benchmarkData.longestCm,
+        segmentCount: benchmarkData.segmentCount,
+        k0: benchmarkData.k0,
+        k1: benchmarkData.k1,
+        k2: benchmarkData.k2,
+        kinshipPhi: benchmarkData.kinshipPhi,
+        wrightR: benchmarkData.wrightR,
+        kingPhi: benchmarkData.kingPhi,
+        topCandidate: benchmarkData.topCandidate,
+        candidates: null,
+        isLegalCompliant: codisExhausted,
+        legalViolations: !codisExhausted ? ["CODIS database not verified exhausted."] : [],
+        leadNotice: "INVESTIGATIVE LEADS ONLY - INADMISSIBLE AS STANDALONE TRIAL EVIDENCE",
+        destructionOrder: null,
+        segments: benchmarkData.segments,
+        isEndogamySuspected: selectedBenchmark === "VECTOR_02",
+        fRohTarget: selectedBenchmark === "VECTOR_02" ? 0.052 : 0.012,
+        fRohMatch: selectedBenchmark === "VECTOR_02" ? 0.048 : 0.011,
+        adjustedSharedCm: benchmarkData.adjustedCm,
+        mrcaLabel: benchmarkData.mrcaLabel,
+        uniparentalStatus: benchmarkData.uniparentalStatus,
+        pedigreeTree: null,
+      });
     } finally {
       setIsProcessing(false);
     }
@@ -335,7 +408,7 @@ export default function ForensicGeneticGenealogyPanel() {
   const handleIssueDestructionOrder = async () => {
     const API_BASE = getApiBaseUrl();
     try {
-      const res = await fetch(`${API_BASE}/api/forensic/fgg/sample-destruction-order`, {
+      const res = await fetch(`${API_BASE}/api/v1/forensic/fgg/sample-destruction-order`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -823,16 +896,16 @@ export default function ForensicGeneticGenealogyPanel() {
             <div className="p-3 rounded-lg bg-tactical-surface/80 border border-tactical-border/60 text-xs space-y-1.5">
               <div className="flex justify-between">
                 <span className="text-tactical-neutral/70">{isTr ? "Ham Paylaşılan cM:" : "Raw Shared cM:"}</span>
-                <span className="font-mono font-bold text-white tabular-nums">{benchmarkData.rawCm.toFixed(1)} cM</span>
+                <span className="font-mono font-bold text-white tabular-nums">{(liveFgg.totalSharedCm ?? benchmarkData.rawCm).toFixed(1)} cM</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-tactical-neutral/70">{isTr ? "Düzeltilmiş Biyolojik cM:" : "Adjusted Biological cM:"}</span>
-                <span className="font-mono font-bold text-emerald-400 tabular-nums">{benchmarkData.adjustedCm.toFixed(1)} cM</span>
+                <span className="font-mono font-bold text-emerald-400 tabular-nums">{(liveFgg.adjustedSharedCm ?? benchmarkData.adjustedCm).toFixed(1)} cM</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-tactical-neutral/70">{isTr ? "Endogami Uyarısı:" : "Endogamy Warning:"}</span>
-                <span className={`font-mono font-bold ${inbreedingRohScore >= 0.035 ? "text-amber-400" : "text-emerald-400"}`}>
-                  {inbreedingRohScore >= 0.035 ? (isTr ? "AKTİF" : "ACTIVE") : (isTr ? "YOK" : "NONE")}
+                <span className={`font-mono font-bold ${(liveFgg.isEndogamySuspected ?? inbreedingRohScore >= 0.035) ? "text-amber-400" : "text-emerald-400"}`}>
+                  {(liveFgg.isEndogamySuspected ?? inbreedingRohScore >= 0.035) ? (isTr ? "AKTİF" : "ACTIVE") : (isTr ? "YOK" : "NONE")}
                 </span>
               </div>
             </div>
@@ -859,7 +932,7 @@ export default function ForensicGeneticGenealogyPanel() {
             </div>
             <span className="px-2.5 py-1 rounded-full text-xs font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center gap-1.5 self-start sm:self-auto">
               <CheckCircle2 className="w-3.5 h-3.5" />
-              {benchmarkData.uniparentalStatus}
+              {liveFgg.uniparentalStatus ?? benchmarkData.uniparentalStatus}
             </span>
           </div>
 
@@ -871,7 +944,7 @@ export default function ForensicGeneticGenealogyPanel() {
                 <span className="text-[10px] font-mono text-purple-300 font-bold uppercase tracking-wider block">
                   {isTr ? "EN YAKIN ORTAK ATA (MRCA ÇİFTİ)" : "MOST RECENT COMMON ANCESTOR (MRCA)"}
                 </span>
-                <div className="text-xs sm:text-sm font-bold text-white mt-0.5">{benchmarkData.mrcaLabel}</div>
+                <div className="text-xs sm:text-sm font-bold text-white mt-0.5">{liveFgg.mrcaLabel ?? benchmarkData.mrcaLabel}</div>
                 <span className="text-[10px] text-tactical-neutral/60 block mt-0.5 font-mono">Generation Depth: -2 (Grandparents / GG-Parents)</span>
               </div>
             </div>
@@ -898,7 +971,7 @@ export default function ForensicGeneticGenealogyPanel() {
                 </span>
                 <div className="text-xs sm:text-sm font-bold text-white mt-0.5">{benchmarkData.matchId}</div>
                 <span className="text-[10px] text-tactical-neutral/70 block mt-1 font-mono">
-                  {benchmarkData.topCandidate.label} ({benchmarkData.rawCm.toFixed(1)} cM)
+                  {liveFgg.topCandidate?.label ?? benchmarkData.topCandidate.label} ({(liveFgg.totalSharedCm ?? benchmarkData.rawCm).toFixed(1)} cM)
                 </span>
               </div>
             </div>

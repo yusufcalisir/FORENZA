@@ -81,3 +81,24 @@ class TestFGGAPIEndpoints:
         data = resp.json()
         assert data["is_destruction_verified"] is True
         assert len(data["certificate_hash"]) == 64
+
+    def test_evaluate_benchmark_endpoint(self):
+        # Test VECTOR_FGG_01 (CEPH Parent-Child)
+        resp1 = client.post("/api/forensic/fgg/evaluate-benchmark", json={"benchmark_id": "VECTOR_FGG_01"})
+        assert resp1.status_code == 200
+        d1 = resp1.json()
+        assert d1["total_shared_cm"] > 1500.0
+        assert d1["top_candidate"]["degree"] == "DEGREE_1_PARENT_CHILD"
+        assert d1["legal_compliance"]["is_compliant"] is True
+
+        # Test VECTOR_FGG_02 (Ashkenazi Endogamy)
+        resp2 = client.post("/api/forensic/fgg/evaluate-benchmark", json={"benchmark_id": "VECTOR_FGG_02"})
+        assert resp2.status_code == 200
+        d2 = resp2.json()
+        assert d2["is_endogamy_suspected"] is True
+
+        # Test VECTOR_FGG_03 (GSK Investigative Case)
+        resp3 = client.post("/api/forensic/fgg/evaluate-benchmark", json={"benchmark_id": "VECTOR_FGG_03"})
+        assert resp3.status_code == 200
+        d3 = resp3.json()
+        assert d3["pedigree_tree"] is not None

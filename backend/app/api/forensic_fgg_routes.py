@@ -21,6 +21,7 @@ from backend.node.services.forensic.genomics.fgg.schemas import (
     JurisdictionStatuteEnum,
     SexEnum
 )
+from backend.node.services.forensic.genomics.fgg.endogamy_filter import FGGEndogamyFilter
 from backend.node.services.forensic.genomics.fgg.parser import FGGGenotypeParser
 from backend.node.services.forensic.genomics.fgg.ibd_detector import FGGIBDDetector
 from backend.node.services.forensic.genomics.fgg.kinship_classifier import FGGKinshipClassifier
@@ -30,7 +31,10 @@ from backend.node.services.forensic.genomics.fgg.legal_compliance import FGGLega
 from backend.node.services.forensic.genomics.fgg.sample_destruction_manager import FGGSampleDestructionManager, SampleDestructionOrder
 from backend.node.services.forensic.genomics.fgg.golden_vectors import FGGGoldenVectors
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/forensic/fgg",
+    tags=["Forensic Genetic Genealogy (FGG / IGG)"],
+)
 
 
 class IngestRawTextRequest(BaseModel):
@@ -182,6 +186,172 @@ async def generate_sample_destruction_order(req: SampleDestructionRequest) -> Sa
         reference_sample_ids=req.reference_sample_ids,
         certifying_officer=req.certifying_officer
     )
+
+
+class EvaluateBenchmarkRequest(BaseModel):
+    """Full FGG workflow benchmark execution request."""
+    model_config = ConfigDict(protected_namespaces=())
+
+    benchmark_id: str = Field("VECTOR_FGG_01", description="Benchmark vector ID (VECTOR_FGG_01, VECTOR_FGG_02, VECTOR_FGG_03)")
+    min_segment_cm: float = Field(7.0, ge=3.0, le=50.0)
+    min_snps: int = Field(500, ge=100)
+    jurisdiction: JurisdictionStatuteEnum = JurisdictionStatuteEnum.US_DOJ_INTERIM_2019
+    offense_type: QualifyingOffenseEnum = QualifyingOffenseEnum.HOMICIDE
+    is_codis_exhausted: bool = True
+    prosecutor_authorization_id: str = "DA_AUTH_2026_01"
+    opt_in_matches_only_enforced: bool = True
+
+
+@router.post("/evaluate-benchmark", summary="Evaluate full FGG biocomputational benchmark pipeline")
+async def evaluate_fgg_benchmark(req: EvaluateBenchmarkRequest) -> Dict[str, Any]:
+    """
+    Executes the full Forensic Genetic Genealogy (FGG) pipeline on certified golden vectors:
+    - Phase-free windowed IBS0/IBD scanning
+    - Cotterman (k0, k1, k2), Kinship Phi, Wright's r, and KING-robust estimation
+    - Endogamy ROH filtering (F_ROH)
+    - MRCA Triangulation & Bonsai Composite Pedigree DAG assembly
+    - Statutory Legal Compliance Gatekeeping (US DOJ / Maryland Title 17 / Montana MCA)
+    """
+    bench_id = req.benchmark_id.upper()
+    if "02" in bench_id:
+        vec = FGGGoldenVectors.get_vector_02_ashkenazi_endogamy_trio()
+        target = vec["son"]
+        match = vec["father"]
+        target_id = "HG002_ASHKENAZI_SON"
+        match_id = "HG003_ASHKENAZI_FATHER"
+        platform_name = "Illumina Global Diversity Array GDA (~1.8M SNPs)"
+        mrca_label = "Ashkenazi Lineage Paternal Anchor"
+        uniparental = "CONCORDANT"
+    elif "03" in bench_id:
+        vec = FGGGoldenVectors.get_vector_03_gsk_investigative_case()
+        target = vec["crime_scene"]
+        match = vec["cousin1"]
+        target_id = "CRIME_SCENE_GSK_EVID_01"
+        match_id = "GEDMATCH_COUSIN_1"
+        platform_name = "Illumina Omni2.5 / WGS Phased (~2.4M SNPs)"
+        mrca_label = "1840s Great-Great-Grandparents (John & Rebecca)"
+        uniparental = "Y-STR R1b Concordant"
+    else:
+        vec = FGGGoldenVectors.get_vector_01_ceph_trio()
+        target = vec["target"]
+        match = vec["father"]
+        target_id = "NA12878_DAUGHTER"
+        match_id = "NA12877_FATHER"
+        platform_name = "Illumina Infinium GSA (~654k SNPs)"
+        mrca_label = "Direct Generation"
+        uniparental = "CONCORDANT"
+
+    # Step 1: IBD Detection
+    ibd_res = FGGIBDDetector.detect_pairwise_ibd(
+        target, match, min_cm=req.min_segment_cm, min_snps=req.min_snps
+    )
+
+    # Step 2: Kinship Classification
+    kinship_res = FGGKinshipClassifier.classify_kinship(ibd_res, target, match)
+
+    # Step 3: Endogamy ROH evaluation
+    f_roh_target = FGGEndogamyFilter.compute_individual_f_roh(target)
+    f_roh_match = FGGEndogamyFilter.compute_individual_f_roh(match)
+
+    # Step 4: Bonsai Pedigree Assembly
+    if "03" in bench_id:
+        c2 = vec["cousin2"]
+        ibd_c2 = FGGIBDDetector.detect_pairwise_ibd(target, c2, min_cm=req.min_segment_cm, min_snps=req.min_snps)
+        kin_c2 = FGGKinshipClassifier.classify_kinship(ibd_c2, target, c2)
+        match_seg_map = {match_id: ibd_res.segments, "GEDMATCH_COUSIN_2": ibd_c2.segments}
+        mrca_clusters = FGGMRCATriangulator.triangulate_clusters(match_seg_map, target_y_haplogroup="R1b")
+        pedigree_tree = FGGBonsaiSolver.reconstruct_pedigree(
+            target_id=target_id,
+            target_birth_year=1945,
+            target_sex=SexEnum.MALE,
+            target_y_hap="R1b",
+            target_mt_hap="U5b",
+            match_results=[kinship_res, kin_c2],
+            mrca_clusters=mrca_clusters
+        )
+    else:
+        match_seg_map = {match_id: ibd_res.segments}
+        mrca_clusters = FGGMRCATriangulator.triangulate_clusters(match_seg_map)
+        pedigree_tree = FGGBonsaiSolver.reconstruct_pedigree(
+            target_id=target_id,
+            target_birth_year=1980,
+            target_sex=SexEnum.FEMALE if "01" in bench_id else SexEnum.MALE,
+            target_y_hap=None if "01" in bench_id else "J2a",
+            target_mt_hap="H1" if "01" in bench_id else "K1a",
+            match_results=[kinship_res],
+            mrca_clusters=mrca_clusters
+        )
+
+    # Step 5: Statutory Legal Compliance Validation
+    case = LegalComplianceCase(
+        case_id="CASE_FGG_2026",
+        jurisdiction=req.jurisdiction,
+        offense_type=req.offense_type,
+        is_codis_exhausted=req.is_codis_exhausted,
+        prosecutor_authorization_id=req.prosecutor_authorization_id,
+        opt_in_matches_only_enforced=req.opt_in_matches_only_enforced
+    )
+    legal_val = FGGLegalComplianceEngine.validate_case(case)
+
+    # Convert segments to UI-friendly format
+    segments_ui = [
+        {
+            "chr": s.chromosome,
+            "startBp": s.start_bp,
+            "endBp": s.end_bp,
+            "startCm": s.start_cm,
+            "endCm": s.end_cm,
+            "lengthCm": s.length_cm,
+            "snpCount": s.snp_count,
+            "type": "IBD2" if s.ibd_state.value == 2 else "IBD1"
+        }
+        for s in ibd_res.segments
+    ]
+
+    top_cand = kinship_res.top_candidate
+    candidates_list = [
+        {
+            "degree": c.degree.value,
+            "label": c.relationship_label or c.degree.name.replace("_", " "),
+            "probability": c.probability,
+            "expectedMeanCm": c.expected_mean_cm,
+            "range": f"{c.typical_cm_range_min:.1f} - {c.typical_cm_range_max:.1f} cM"
+        }
+        for c in kinship_res.all_candidates
+    ]
+
+    return {
+        "benchmark_id": req.benchmark_id,
+        "target_id": target_id,
+        "match_id": match_id,
+        "platform": platform_name,
+        "total_shared_cm": ibd_res.total_shared_cm,
+        "longest_shared_cm": ibd_res.longest_segment_cm,
+        "segment_count": ibd_res.segment_count,
+        "segments": segments_ui,
+        "cotterman_k0": ibd_res.cotterman_k0,
+        "cotterman_k1": ibd_res.cotterman_k1,
+        "cotterman_k2": ibd_res.cotterman_k2,
+        "kinship_phi": ibd_res.kinship_phi,
+        "wright_r": ibd_res.wright_r,
+        "king_phi": ibd_res.king_phi,
+        "top_candidate": {
+            "degree": top_cand.degree.value,
+            "label": top_cand.relationship_label or top_cand.degree.name.replace("_", " "),
+            "probability": top_cand.probability,
+            "expectedMeanCm": top_cand.expected_mean_cm,
+            "range": f"{top_cand.typical_cm_range_min:.1f} - {top_cand.typical_cm_range_max:.1f} cM"
+        } if top_cand else None,
+        "candidates": candidates_list,
+        "is_endogamy_suspected": kinship_res.is_endogamy_suspected,
+        "f_roh_target": f_roh_target,
+        "f_roh_match": f_roh_match,
+        "adjusted_shared_cm": kinship_res.adjusted_shared_cm,
+        "mrca_label": mrca_label,
+        "uniparental_status": uniparental,
+        "pedigree_tree": pedigree_tree.model_dump() if pedigree_tree else None,
+        "legal_compliance": legal_val.model_dump()
+    }
 
 
 @router.get("/benchmarks", summary="List available FGG golden standard benchmarks")

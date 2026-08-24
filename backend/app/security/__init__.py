@@ -13,7 +13,7 @@ Provides multi-layered threat protection with zero legitimate user friction:
 from .risk_engine import TrafficRiskEngine, TrafficRiskAssessment, RiskTier
 from .rate_limiter import AdaptiveRateLimiter, RateLimitCategory, RateLimitResult
 from .concurrency_guard import BiocomputationalResourceGuard, get_resource_guard
-from .app_shield import ApplicationShield
+from .app_shield import ApplicationShield, app_shield
 from .audit_logger import SecurityAuditLogger, security_logger
 from .ddos_shield import DDoSShield, ddos_shield
 from .session_guard import SessionSecurityManager, session_manager, SessionAuthLevel
@@ -29,6 +29,7 @@ __all__ = [
     "BiocomputationalResourceGuard",
     "get_resource_guard",
     "ApplicationShield",
+    "app_shield",
     "SecurityAuditLogger",
     "security_logger",
     "DDoSShield",
@@ -39,6 +40,7 @@ __all__ = [
     "AuthenticationShield",
     "auth_shield",
 ]
+
 
 
 

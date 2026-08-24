@@ -720,7 +720,7 @@ export default function PanelMTDNA() {
                   {isExclusion ? "0.00" : (maternalLr ?? 1).toLocaleString()}
                 </div>
                 <div className="text-xs font-mono text-slate-400 mt-1">
-                  log10(LR) = {isExclusion ? "-300.0" : log10Lr.toFixed(4)}
+                  log10(LR) = {isExclusion ? "-300.0" : (log10Lr ?? 0).toFixed(4)}
                 </div>
               </div>
 

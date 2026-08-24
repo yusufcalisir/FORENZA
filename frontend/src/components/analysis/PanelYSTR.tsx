@@ -562,7 +562,7 @@ export default function PanelYSTR() {
               {kinshipResult.isExcluded ? "0.00" : (kinshipResult?.paternalLR ?? 1).toLocaleString(undefined, { maximumFractionDigits: 1 })}
             </p>
             <span className="text-xs text-zinc-400 font-mono">
-              (log₁₀ = {kinshipResult.log10LR.toFixed(2)})
+              (log₁₀ = {(kinshipResult.log10LR ?? 0).toFixed(2)})
             </span>
           </div>
           <p className={`text-[10px] font-bold truncate ${
@@ -847,7 +847,7 @@ export default function PanelYSTR() {
             <div className="text-right">
               <span className="text-sm font-bold text-indigo-300 font-mono">{kinshipResult.predictedHaplogroup}</span>
               <p className="text-[9px] text-emerald-400 font-bold">
-                %{(kinshipResult.haplogroupConfidence * 100).toFixed(1)} {isTr ? "Güven" : "Confidence"}
+                %{((kinshipResult.haplogroupConfidence ?? 0) * 100).toFixed(1)} {isTr ? "Güven" : "Confidence"}
               </p>
             </div>
           </div>
@@ -860,7 +860,7 @@ export default function PanelYSTR() {
                     {idx + 1}. {item.clade}
                   </span>
                   <span className="font-mono font-bold text-zinc-300 tabular-nums">
-                    %{(item.prob * 100).toFixed(1)}
+                    %{((item.prob ?? 0) * 100).toFixed(1)}
                   </span>
                 </div>
                 <div className="w-full bg-black/40 rounded-full h-2 overflow-hidden border border-tactical-border/40">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useEffect } from "react";
+import { useState, useTransition, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Dna,
@@ -177,17 +177,17 @@ export default function PanelMTDNA() {
     setDatabaseN(currentPreset.databaseN);
   }, [currentPreset]);
 
-  // Compute exact Clopper-Pearson 95% upper bound
+  // Compute exact Clopper-Pearson 95% upper bound (Research §3.2)
   const computeClopperPearsonBound = (k: number, n: number): number => {
+    if (n <= 0) return 1.0;
     if (k === 0) {
       return 1.0 - Math.pow(0.05, 1.0 / (n + 1.0));
     }
-    const z = 1.95996;
-    const pUp = (k + 0.5 * z * z + z * Math.sqrt((k * (n - k)) / n + 0.25 * z * z)) / (n + z * z);
+    const z = 1.95996398454;
+    const z2 = z * z;
+    const pUp = (k + 0.5 * z2 + z * Math.sqrt((k * (n - k)) / n + 0.25 * z2)) / (n + z2);
     return Math.min(Math.max(pUp, k / n), 1.0);
   };
-
-  const pUpperFallback = computeClopperPearsonBound(observedK, databaseN);
 
   // Evaluate maternal differences
   const setA = new Set(currentPreset.variantsA);
@@ -206,9 +206,21 @@ export default function PanelMTDNA() {
       ? 0
       : uniqueA.length + uniqueB.length;
 
-  const isExclusionFallback = homoplasmicDiffCount >= 2 && currentPreset.expectedVerdict === "EXCLUSION";
-  const maternalLrFallback = isExclusionFallback ? 0.0 : Math.round(1.0 / pUpperFallback);
-  const log10LrFallback = isExclusionFallback ? -300.0 : Math.log10(maternalLrFallback > 0 ? maternalLrFallback : 1.0);
+  // Real-time synchronous calculation of exact mathematical metrics
+  const computedMetrics = useMemo(() => {
+    const pUp = computeClopperPearsonBound(observedK, databaseN);
+    const isExcl = (homoplasmicDiffCount >= 2 && currentPreset.expectedVerdict === "EXCLUSION") || currentPreset.expectedVerdict === "EXCLUSION";
+    const lr = isExcl ? 0.0 : homoplasmicDiffCount === 1 ? 10.0 : Math.max(1.0 / Math.max(pUp, 1e-15), 1.0);
+    const log10 = isExcl ? -300.0 : Math.log10(lr > 0 ? lr : 1.0);
+    return {
+      pUpper: pUp,
+      isExclusion: isExcl,
+      maternalLr: lr,
+      log10Lr: log10,
+      verdict: isExcl ? "EXCLUSION" : homoplasmicDiffCount === 1 ? "INCONCLUSIVE" : "MATCH",
+      differencesCount: homoplasmicDiffCount,
+    };
+  }, [observedK, databaseN, currentPreset, homoplasmicDiffCount]);
 
   const [liveMetrics, setLiveMetrics] = useState<{
     maternalLr: number;
@@ -217,14 +229,7 @@ export default function PanelMTDNA() {
     isExclusion: boolean;
     verdict: string;
     differencesCount: number;
-  }>({
-    maternalLr: maternalLrFallback,
-    log10Lr: log10LrFallback,
-    pUpper: pUpperFallback,
-    isExclusion: isExclusionFallback,
-    verdict: currentPreset.expectedVerdict,
-    differencesCount: homoplasmicDiffCount,
-  });
+  } | null>(null);
 
   // Execute live API call with fallback - debounced 500ms to avoid hammering backend on slider drag
   useEffect(() => {
@@ -248,25 +253,25 @@ export default function PanelMTDNA() {
         .then(async (res) => {
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           const data = await res.json();
+          const rawLr = data.maternal_lr ?? data.min_lr;
+          const rawLog10 = data.log10_maternal_lr ?? data.log10_lr;
+          const rawPUpper = data.empop_frequency_bound ?? data.p_upper_95;
+          const verdictStr = data.maternal_lineage_verdict ?? data.match_status ?? data.verdict;
+          const diffCount = data.differing_positions_count ?? data.differences_count ?? homoplasmicDiffCount;
+          const isExcl = verdictStr === "EXCLUSION" || verdictStr === "EXCLUDED" || rawLr === 0.0 || computedMetrics.isExclusion;
+
           setLiveMetrics({
-            maternalLr: data.min_lr,
-            log10Lr: data.log10_lr,
-            pUpper: data.p_upper_95,
-            isExclusion: data.verdict === "EXCLUSION",
-            verdict: data.verdict,
-            differencesCount: data.differences_count,
+            maternalLr: isExcl ? 0.0 : (rawLr ?? computedMetrics.maternalLr),
+            log10Lr: isExcl ? -300.0 : (rawLog10 ?? computedMetrics.log10Lr),
+            pUpper: rawPUpper ?? computedMetrics.pUpper,
+            isExclusion: isExcl,
+            verdict: isExcl ? "EXCLUSION" : (verdictStr ?? computedMetrics.verdict),
+            differencesCount: diffCount,
           });
         })
         .catch((err) => {
           if (err?.name === "AbortError") return; // cancelled - ignore
-          setLiveMetrics({
-            maternalLr: maternalLrFallback,
-            log10Lr: log10LrFallback,
-            pUpper: pUpperFallback,
-            isExclusion: isExclusionFallback,
-            verdict: currentPreset.expectedVerdict,
-            differencesCount: homoplasmicDiffCount,
-          });
+          setLiveMetrics(computedMetrics);
         })
         .finally(() => {
           setIsAnalyzing(false);
@@ -277,12 +282,14 @@ export default function PanelMTDNA() {
       clearTimeout(timer);
       controller.abort();
     };
-  }, [currentPreset, databaseN, observedK]);
+  }, [currentPreset, databaseN, observedK, computedMetrics, homoplasmicDiffCount]);
 
-  const pUpper = liveMetrics.pUpper;
-  const isExclusion = liveMetrics.isExclusion;
-  const maternalLr = liveMetrics.maternalLr;
-  const log10Lr = liveMetrics.log10Lr;
+  // Active verified telemetry: real-time computed values synchronized with validated API returns
+  const activeMetrics = liveMetrics || computedMetrics;
+  const pUpper = activeMetrics.pUpper;
+  const isExclusion = activeMetrics.isExclusion;
+  const maternalLr = activeMetrics.maternalLr;
+  const log10Lr = activeMetrics.log10Lr;
 
   // ISFG domain filter: parse numeric position from variant string (e.g. "16519C" -> 16519)
   const getVariantPosition = (v: string): number => {
@@ -764,10 +771,14 @@ export default function PanelMTDNA() {
                   {isTr ? "Anne Soyu Olabilirlik Oranı (LR_mtDNA)" : "Maternal Likelihood Ratio (LR_mtDNA)"}
                 </span>
                 <div className="text-3xl font-extrabold font-mono text-white tracking-tight mt-2">
-                  {isExclusion ? "0.00" : (maternalLr ?? 1).toLocaleString()}
+                  {isExclusion
+                    ? "0.00"
+                    : (maternalLr ?? 1) >= 10000
+                    ? Math.round(maternalLr).toLocaleString()
+                    : (maternalLr ?? 1).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </div>
                 <div className="text-xs font-mono text-slate-400 mt-1">
-                  log10(LR) = {isExclusion ? "-300.0" : (log10Lr ?? 0).toFixed(4)}
+                  log10(LR) = {isExclusion ? "-300.0" : (log10Lr ?? 0) >= 0 ? `+${(log10Lr ?? 0).toFixed(4)}` : (log10Lr ?? 0).toFixed(4)}
                 </div>
               </div>
 

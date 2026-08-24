@@ -26,6 +26,7 @@ from .cache_shield import CacheShield, cache_shield
 from .headers_guard import SecurityHeadersManager, headers_guard
 from .security_telemetry import SecurityTelemetryEngine, telemetry_engine, AlertSeverity, SecurityAlert
 from .failsafe_manager import FailSafeManager, failsafe_manager, OperationSensitivity
+from .zero_friction_auditor import ZeroFrictionAuditor, zero_friction_auditor, UserFrictionReport
 
 __all__ = [
     "TrafficRiskEngine",
@@ -71,7 +72,11 @@ __all__ = [
     "FailSafeManager",
     "failsafe_manager",
     "OperationSensitivity",
+    "ZeroFrictionAuditor",
+    "zero_friction_auditor",
+    "UserFrictionReport",
 ]
+
 
 
 

@@ -416,7 +416,7 @@ export function PanelSTR() {
                   <td className="p-3 text-[10px] text-zinc-400">
                     p₁={row.p1.toFixed(4)}, p₂={row.p2.toFixed(4)}
                   </td>
-                  <td className="p-3 text-[10px] text-amber-300/90">{row.pg ? row.pg.toExponential(4) : "—"}</td>
+                  <td className="p-3 text-[10px] text-amber-300/90">{row.pg ? row.pg.toExponential(4) : "-"}</td>
                   <td className="p-3 text-emerald-400 font-bold">{row.lr.toFixed(2)}</td>
                   <td className="p-3 text-emerald-300">+{row.log10Lr.toFixed(3)}</td>
                   <td className="p-3 font-extrabold text-cyan-400">10^{row.cumLog10.toFixed(2)}</td>

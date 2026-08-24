@@ -17,7 +17,7 @@ function computeEyeProbabilities(snps: Record<string, number>) {
     let logit_inter = b0_inter;
 
     const coefs: Record<string, [number, number]> = {
-        rs12913832: [4.512, 1.895],   // HERC2 — dominant blue predictor
+        rs12913832: [4.512, 1.895],   // HERC2  -  dominant blue predictor
         rs1800407: [-0.812, 0.341],  // OCA2
         rs12896399: [0.421, 0.215],   // SLC24A4
         rs16891982: [-1.105, -0.452], // SLC45A2

@@ -38,7 +38,7 @@ interface BroadcastWave {
     sourceNodeId: string;
     targetNodeIds: string[];
     startedAt: number;
-    progress: number; // 0–1
+    progress: number; // 0-1
 }
 
 interface PulseStats {
@@ -216,7 +216,7 @@ function PulseMap({
                         </text>
                         {/* RTT badge */}
                         <text x={x + 10} y={y + 3} textAnchor="start" fill="#888" fontSize="6" fontFamily="monospace">
-                            {node.activeTunnel ? `${node.avgRttMs}ms` : "—"}
+                            {node.activeTunnel ? `${node.avgRttMs}ms` : "-"}
                         </text>
                     </g>
                 );
@@ -479,7 +479,7 @@ export default function GlobalPulse() {
                                                 className="font-data text-xs font-bold tabular-nums"
                                                 style={{ color: healthColor(node.health) }}
                                             >
-                                                {node.activeTunnel ? `${node.avgRttMs}` : "—"}
+                                                {node.activeTunnel ? `${node.avgRttMs}` : "-"}
                                             </p>
                                             <p className="font-data text-[7px] text-zinc-600">
                                                 {node.health}

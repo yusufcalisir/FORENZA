@@ -438,7 +438,7 @@ export default function PanelMTDNA() {
                   D-LOOP
                 </text>
                 <text x="100" y="106" textAnchor="middle" fill="#94a3b8" fontSize="8" fontFamily="monospace">
-                  16024–576 bp
+                  16024-576 bp
                 </text>
                 <text x="100" y="120" textAnchor="middle" fill="#10b981" fontSize="9" fontWeight="bold" fontFamily="monospace">
                   {currentPreset.expectedHgA}
@@ -450,15 +450,15 @@ export default function PanelMTDNA() {
           <div className="grid grid-cols-3 gap-2 pt-3 border-t border-slate-800 text-center text-xs">
             <div className="p-2 rounded bg-slate-800/50 border border-emerald-500/20">
               <span className="text-[10px] text-emerald-400 font-bold block">HV1</span>
-              <span className="font-mono text-slate-300">16024–16365</span>
+              <span className="font-mono text-slate-300">16024-16365</span>
             </div>
             <div className="p-2 rounded bg-slate-800/50 border border-cyan-500/20">
               <span className="text-[10px] text-cyan-400 font-bold block">HV2</span>
-              <span className="font-mono text-slate-300">73–340</span>
+              <span className="font-mono text-slate-300">73-340</span>
             </div>
             <div className="p-2 rounded bg-slate-800/50 border border-purple-500/20">
               <span className="text-[10px] text-purple-400 font-bold block">HV3</span>
-              <span className="font-mono text-slate-300">438–574</span>
+              <span className="font-mono text-slate-300">438-574</span>
             </div>
           </div>
         </div>

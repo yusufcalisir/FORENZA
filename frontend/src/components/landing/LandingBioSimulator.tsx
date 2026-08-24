@@ -269,7 +269,7 @@ function StrTab() {
                     <div className="flex items-center gap-1.5 min-w-0">
                         <Activity className="h-4 w-4 text-[#06B6D4] shrink-0" />
                         <span className="font-bold text-white uppercase tracking-wider truncate">
-                            {sTab.electropherogramTitle} — {currentStr.name}
+                            {sTab.electropherogramTitle}  -  {currentStr.name}
                         </span>
                     </div>
                     <span className="text-tactical-text-dim text-[8px] sm:text-[10px] shrink-0">{sTab.codisPanel}</span>

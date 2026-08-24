@@ -27,13 +27,13 @@ export default function AnthropologyPanel() {
     : (isTr ? "ERKEK (Subpubik Açı < 75°)" : "MALE (Subpubic Angle < 75°)");
 
   const ageRange = symphysisPhase === 1
-    ? (isTr ? "15–19 yaş" : "15–19 yrs")
+    ? (isTr ? "15-19 yaş" : "15-19 yrs")
     : symphysisPhase === 2
-    ? (isTr ? "20–24 yaş" : "20–24 yrs")
+    ? (isTr ? "20-24 yaş" : "20-24 yrs")
     : symphysisPhase === 3
-    ? (isTr ? "25–34 yaş" : "25–34 yrs")
+    ? (isTr ? "25-34 yaş" : "25-34 yrs")
     : symphysisPhase === 4
-    ? (isTr ? "35–45 yaş" : "35–45 yrs")
+    ? (isTr ? "35-45 yaş" : "35-45 yrs")
     : (isTr ? "46+ yaş" : "46+ yrs");
 
   // Trauma Observations
@@ -194,7 +194,7 @@ export default function AnthropologyPanel() {
                 {isTr ? "Tahmini Boy" : "Estimated Stature"}
               </span>
               <p className="text-sm font-bold text-emerald-400 font-mono">{estimatedStature} cm</p>
-              <p className="text-[9px] text-zinc-400">{isTr ? "Aralık:" : "Range:"} {minStature} – {maxStature} cm (%95 GA)</p>
+              <p className="text-[9px] text-zinc-400">{isTr ? "Aralık:" : "Range:"} {minStature} - {maxStature} cm (%95 GA)</p>
             </div>
             <div className="rounded-xl border border-tactical-border/60 bg-tactical-surface/40 p-4 space-y-1">
               <span className="text-[10px] text-zinc-500 font-bold uppercase">

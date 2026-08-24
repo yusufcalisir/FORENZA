@@ -30,7 +30,7 @@ export const LAB_NODES: LabNode[] = [
     { id: "node-04", name: "BORDER-FORENSICS-NODE", type: "Field Collection Point", typeTr: "Saha Örnek Toplama Noktası", status: "ONLINE", pingMs: 28, profilesCount: 3420, location: "Port Authority Lab", locationTr: "Liman Otoritesi Laboratuvarı", lastBlock: "0x2b91…4d7f", iso: false },
     { id: "node-05", name: "COLD-CASE-ARCHIVE-NODE", type: "Historical Evidence Archive", typeTr: "Tarihi Delil Arşivi", status: "SYNCING", pingMs: 45, profilesCount: 92500, location: "National Archive Vault", locationTr: "Ulusal Arşiv Kasası", lastBlock: "0xa3c2…9f1e", iso: true },
     { id: "node-06", name: "TOXICOLOGY-HUB-NODE", type: "Toxicology Reference Lab", typeTr: "Toksikoloji Referans Laboratuvarı", status: "ONLINE", pingMs: 14, profilesCount: 7200, location: "Forensic Chemistry Division", locationTr: "Adli Kimya Bölümü", lastBlock: "0x6e5b…c782", iso: true },
-    { id: "node-07", name: "MOBILE-LAB-UNIT-01", type: "Rapid Deployment Kit", typeTr: "Hızlı Konuşlandırma Kiti", status: "DEGRADED", pingMs: 112, profilesCount: 180, location: "Field Operations — Active", locationTr: "Saha Operasyonları — Aktif", lastBlock: "0xb8d4…e043", iso: false },
+    { id: "node-07", name: "MOBILE-LAB-UNIT-01", type: "Rapid Deployment Kit", typeTr: "Hızlı Konuşlandırma Kiti", status: "DEGRADED", pingMs: 112, profilesCount: 180, location: "Field Operations  -  Active", locationTr: "Saha Operasyonları  -  Aktif", lastBlock: "0xb8d4…e043", iso: false },
 ];
 
 const STATUS_CONFIG = {

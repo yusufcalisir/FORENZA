@@ -179,7 +179,7 @@ export default function DNAIngestForm({ selectedNodeId, onNodeChange }: DNAInges
             setLastIngested(data.profile_id, originNode, validRows.length);
 
             setResult(
-                `✓ Profile accepted — ${validRows.length} markers validated from node "${originNode}" [${data.profile_id}]`
+                `✓ Profile accepted  -  ${validRows.length} markers validated from node "${originNode}" [${data.profile_id}]`
             );
             setSubmitting(false);
             setRedirectCountdown(3);

@@ -149,7 +149,7 @@ function LocusCell({ detail, index }: { detail: LocusDetail; index: number }) {
                             </div>
                             <div>
                                 <span className="text-zinc-600 block">Geno. Prob.</span>
-                                <span className="text-cyan-400">{detail.genotype_probability ? detail.genotype_probability.toExponential(2) : "—"}</span>
+                                <span className="text-cyan-400">{detail.genotype_probability ? detail.genotype_probability.toExponential(2) : "-"}</span>
                             </div>
 
                             <div>

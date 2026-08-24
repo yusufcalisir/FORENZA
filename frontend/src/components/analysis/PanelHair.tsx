@@ -240,20 +240,20 @@ export default function PanelHair() {
 
             let grade = "GRADE_I_II",
                 desc = isTr
-                    ? "Hamilton-Norwood Evre I / II — Minimal veya Saç Dökülmesi Yok"
-                    : "Hamilton-Norwood Grade I / II — Minimal or No Hair Loss",
+                    ? "Hamilton-Norwood Evre I / II  -  Minimal veya Saç Dökülmesi Yok"
+                    : "Hamilton-Norwood Grade I / II  -  Minimal or No Hair Loss",
                 risk = "LOW_RISK";
             if (prs >= 2.10) {
                 grade = "GRADE_VI_VII";
-                desc = isTr ? "Hamilton-Norwood Evre VI / VII — Şiddetli / İleri Derece Kellik" : "Hamilton-Norwood Grade VI / VII — Severe / Extensive Balding";
+                desc = isTr ? "Hamilton-Norwood Evre VI / VII  -  Şiddetli / İleri Derece Kellik" : "Hamilton-Norwood Grade VI / VII  -  Severe / Extensive Balding";
                 risk = "HIGH_RISK";
             } else if (prs >= 1.20) {
                 grade = "GRADE_IV_V";
-                desc = isTr ? "Hamilton-Norwood Evre IV / V — Orta Derecede Tepe Dökülmesi" : "Hamilton-Norwood Grade IV / V — Moderate Vertex Loss";
+                desc = isTr ? "Hamilton-Norwood Evre IV / V  -  Orta Derecede Tepe Dökülmesi" : "Hamilton-Norwood Grade IV / V  -  Moderate Vertex Loss";
                 risk = "ELEVATED_RISK";
             } else if (prs >= 0.50) {
                 grade = "GRADE_III";
-                desc = isTr ? "Hamilton-Norwood Evre III — Hafif Şakak / Tepe Açılması" : "Hamilton-Norwood Grade III — Slight Temporal / Vertex Recess";
+                desc = isTr ? "Hamilton-Norwood Evre III  -  Hafif Şakak / Tepe Açılması" : "Hamilton-Norwood Grade III  -  Slight Temporal / Vertex Recess";
                 risk = "MODERATE_RISK";
             }
 

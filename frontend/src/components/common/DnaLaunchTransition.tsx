@@ -28,7 +28,7 @@ export default function DnaLaunchTransition({ onComplete, autoStart = true }: Dn
     "CALIBRATING 24 CODIS CORE STR LOCI...",
     "LOADING HIrisPlex-S & BGA POPULATION PRIORS...",
     "VERIFYING ISO-21043 CHAIN OF CUSTODY LEDGER...",
-    "SYSTEM OPERATIONAL — FORENSIC WORKSPACE READY"
+    "SYSTEM OPERATIONAL  -  FORENSIC WORKSPACE READY"
   ];
 
   useEffect(() => {
@@ -40,7 +40,7 @@ export default function DnaLaunchTransition({ onComplete, autoStart = true }: Dn
           return prev + 1;
         }
         clearInterval(interval);
-        // Notify parent to navigate — do NOT hide overlay here.
+        // Notify parent to navigate  -  do NOT hide overlay here.
         // The overlay disappears naturally when Next.js unmounts this page.
         setTimeout(() => {
           if (onComplete) onComplete();

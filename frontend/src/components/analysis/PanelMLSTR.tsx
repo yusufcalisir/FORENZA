@@ -435,7 +435,7 @@ export const PanelMLSTR: React.FC = () => {
                     <span className="text-slate-400">Chromosome:</span> <span className="text-white font-bold">chr3</span>
                   </div>
                   <div className="p-2.5 rounded bg-slate-950 border border-slate-800">
-                    <span className="text-slate-400">Coordinates:</span> <span className="text-white font-bold">45,540,700 – 45,540,770</span>
+                    <span className="text-slate-400">Coordinates:</span> <span className="text-white font-bold">45,540,700 - 45,540,770</span>
                   </div>
                   <div className="p-2.5 rounded bg-slate-950 border border-slate-800">
                     <span className="text-slate-400">Strand:</span> <span className="text-emerald-400 font-bold">+ (Forward)</span>

@@ -80,31 +80,31 @@ const PRESETS: PresetItem[] = [
     {
         label: "Wild-Type",
         labelTr: "Yabanıl Tip (wt/wt)",
-        desc: "wt/wt — F_score=7.59%",
+        desc: "wt/wt  -  F_score=7.59%",
         dosages: {},
     },
     {
         label: "R151C Hom",
         labelTr: "R151C Homozigot (R/R)",
-        desc: "R/R — Dense Freckles / MED<20",
+        desc: "R/R  -  Dense Freckles / MED<20",
         dosages: { rs1805007: 2 },
     },
     {
         label: "R/r Compound",
         labelTr: "R/r Birleşik Heterozigot",
-        desc: "R151C + V60L — F_score=94.44%",
+        desc: "R151C + V60L  -  F_score=94.44%",
         dosages: { rs1805007: 1, rs1805005: 1 },
     },
     {
         label: "V60L Hom",
         labelTr: "V60L Homozigot (r/r)",
-        desc: "r/r — Moderate / MED 35-50",
+        desc: "r/r  -  Moderate / MED 35-50",
         dosages: { rs1805005: 2 },
     },
     {
         label: "ASIP+BNC2 Max",
         labelTr: "ASIP+BNC2 Epistatik Maksimum",
-        desc: "Epistatic boost — F_score=62.25%",
+        desc: "Epistatic boost  -  F_score=62.25%",
         dosages: { rs1015362: 2, rs10756819: 2 },
     },
 ];

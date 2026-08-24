@@ -69,7 +69,7 @@ const MOCK_STEPS: ThoughtStep[] = [
     {
         stepNumber: 2,
         phase: "SCORE_EVALUATION",
-        content: "Analyzed 12 results from global broadcast. Top-10 extracted. High-confidence (≥0.95): 1 hit — Node EUROPOL-NL. Familial range (0.85–0.95): 2 hits — Node BKA-DE (0.912), Node NCA-UK (0.887). Ambiguous (0.78–0.85): 3 hits below actionable threshold.",
+        content: "Analyzed 12 results from global broadcast. Top-10 extracted. High-confidence (≥0.95): 1 hit  -  Node EUROPOL-NL. Familial range (0.85-0.95): 2 hits  -  Node BKA-DE (0.912), Node NCA-UK (0.887). Ambiguous (0.78-0.85): 3 hits below actionable threshold.",
         durationMs: 12.8,
         confidence: 0.95,
         timestamp: Date.now(),

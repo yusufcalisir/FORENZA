@@ -42,25 +42,25 @@ export default function EntomologyPanel() {
   const successionWaves = [
     {
       wave: isTr ? "Taze Evre Dalgası" : "Fresh Stage Wave",
-      period: isTr ? "1–3 Gün" : "1–3 Days",
+      period: isTr ? "1-3 Gün" : "1-3 Days",
       families: isTr ? ["Calliphoridae (Leş Sinekleri)", "Muscidae (Karasinekler)"] : ["Calliphoridae (Blowflies)", "Muscidae (Houseflies)"],
       status: isTr ? "MEVCUT" : "PRESENT"
     },
     {
       wave: isTr ? "Şişme Evresi Dalgası" : "Bloated Stage Wave",
-      period: isTr ? "3–7 Gün" : "3–7 Days",
+      period: isTr ? "3-7 Gün" : "3-7 Days",
       families: isTr ? ["Silphidae (Leş Böcekleri)", "Histeridae (Palyaço Böcekleri)"] : ["Silphidae (Carrion Beetles)", "Histeridae (Clown Beetles)"],
       status: isTr ? "AKTİF" : "ACTIVE"
     },
     {
       wave: isTr ? "Aktif Çürüme Dalgası" : "Active Decay Wave",
-      period: isTr ? "8–20 Gün" : "8–20 Days",
+      period: isTr ? "8-20 Gün" : "8-20 Days",
       families: isTr ? ["Piophilidae (Peynir Sinekleri)", "Staphylinidae (Kısa Kanatlılar)"] : ["Piophilidae (Cheese Skippers)", "Staphylinidae (Rove Beetles)"],
       status: isTr ? "BELİREN" : "EMERGING"
     },
     {
       wave: isTr ? "İleri / Kuru Çürüme" : "Advanced / Dry Decay",
-      period: isTr ? "25–50+ Gün" : "25–50+ Days",
+      period: isTr ? "25-50+ Gün" : "25-50+ Days",
       families: isTr ? ["Dermestidae (Deri Böcekleri)", "Tineidae (Güveler)"] : ["Dermestidae (Skin Beetles)", "Tineidae (Moths)"],
       status: isTr ? "YOK" : "ABSENT"
     },
@@ -206,8 +206,8 @@ export default function EntomologyPanel() {
               <span className="text-[10px] text-zinc-500 font-bold uppercase">
                 {isTr ? "PMI_min Aralığı (Gün)" : "PMI_min Range (Days)"}
               </span>
-              <p className="text-base font-bold text-emerald-400 font-mono">{minDays} – {maxDays} {isTr ? "Gün" : "Days"}</p>
-              <p className="text-[9px] text-zinc-400">{isTr ? "%90 – %110 termal güven aralığı" : "90% – 110% thermal confidence interval"}</p>
+              <p className="text-base font-bold text-emerald-400 font-mono">{minDays} - {maxDays} {isTr ? "Gün" : "Days"}</p>
+              <p className="text-[9px] text-zinc-400">{isTr ? "%90 - %110 termal güven aralığı" : "90% - 110% thermal confidence interval"}</p>
             </div>
           </div>
         </div>

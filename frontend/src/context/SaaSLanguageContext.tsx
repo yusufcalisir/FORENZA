@@ -14,7 +14,7 @@ interface SaasLanguageContextType {
 const SaasLanguageContext = createContext<SaasLanguageContextType | undefined>(undefined);
 
 const COOKIE_NAME = "forenza_saas_lang_user"; // Only written on explicit user toggle
-const STORAGE_KEY = "forenza_saas_lang_user";  // Same — never auto-set
+const STORAGE_KEY = "forenza_saas_lang_user";  // Same  -  never auto-set
 
 function getCookie(name: string): string | null {
   if (typeof document === "undefined") return null;
@@ -76,7 +76,7 @@ export function SaasLanguageProvider({
     } catch (_) {}
 
     // Phase 2: No explicit user preference found.
-    // Use server-detected initialLang (from IP / Accept-Language header) — state only,
+    // Use server-detected initialLang (from IP / Accept-Language header)  -  state only,
     // do NOT persist to localStorage/cookie so other users / future sessions start fresh.
     if (initialLang === "tr" || initialLang === "en") {
       setLangState(initialLang);
@@ -85,7 +85,7 @@ export function SaasLanguageProvider({
     }
 
     // Phase 3: Client-side browser fallback (no cookie, no server hint).
-    // Apply to state only — no persistence.
+    // Apply to state only  -  no persistence.
     try {
       const navLang = (navigator.language || "").toLowerCase();
       const navLangs = Array.from(navigator.languages || []).map((l) => l.toLowerCase());
@@ -98,7 +98,7 @@ export function SaasLanguageProvider({
         tz.includes("Turkey");
 
       setLangState(isTurkish ? "tr" : "en");
-      // Still no persistence — only explicit user action persists.
+      // Still no persistence  -  only explicit user action persists.
     } catch (e) {
       console.warn("Language detection fallback error", e);
     }

@@ -107,7 +107,7 @@ export default function ForensicGeneticGenealogyPanel() {
           label: isTr ? "Ebeveyn / Çocuk (100% IBD1)" : "Parent / Child (100% IBD1)",
           probability: 0.998,
           expectedMeanCm: 3450.0,
-          range: "3300 – 3600 cM"
+          range: "3300 - 3600 cM"
         },
         segments: segs,
         mrcaLabel: "Direct Generation",
@@ -148,7 +148,7 @@ export default function ForensicGeneticGenealogyPanel() {
           label: isTr ? "Ebeveyn / Çocuk (Endogami Düzeltmeli)" : "Parent / Child (Endogamy Compensated)",
           probability: 0.985,
           expectedMeanCm: 3450.0,
-          range: "3300 – 3600 cM"
+          range: "3300 - 3600 cM"
         },
         segments: segs,
         mrcaLabel: "Ashkenazi Lineage Paternal Anchor",
@@ -211,7 +211,7 @@ export default function ForensicGeneticGenealogyPanel() {
           label: isTr ? "3. Derece Kuzen (3C) / 2C1R" : "3rd Cousin (3C) / 2C1R",
           probability: 0.842,
           expectedMeanCm: 70.0,
-          range: "15 – 200 cM"
+          range: "15 - 200 cM"
         },
         segments: segs,
         mrcaLabel: "John DeAngelo & Rebecca (m. 1845, New York)",

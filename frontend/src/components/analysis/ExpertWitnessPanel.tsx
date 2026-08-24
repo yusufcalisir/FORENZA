@@ -360,8 +360,8 @@ export default function ExpertWitnessPanel() {
                     <div>
                       <span className={`text-[10px] font-bold uppercase tracking-widest block mb-1 ${activeTier?.color}`}>
                         {isTr
-                          ? `ENFSI 2017 — DÜZEY ${reportData.verbal_tier} / 6 • ${reportData.reporting_standard}`
-                          : `ENFSI 2017 — TIER ${reportData.verbal_tier} OF 6 • ${reportData.reporting_standard}`}
+                          ? `ENFSI 2017  -  DÜZEY ${reportData.verbal_tier} / 6 • ${reportData.reporting_standard}`
+                          : `ENFSI 2017  -  TIER ${reportData.verbal_tier} OF 6 • ${reportData.reporting_standard}`}
                       </span>
                       <span className={`text-2xl font-black font-mono ${activeTier?.color}`}>
                         {isTr ? activeTier?.labelTr : activeTier?.label}
@@ -593,7 +593,7 @@ export default function ExpertWitnessPanel() {
                   </div>
 
                   <div className={`mt-3 p-2.5 rounded-xl border text-center text-xs font-bold ${daubertData.frye_general_acceptance ? "border-sky-500/30 bg-sky-500/10 text-sky-300" : "border-rose-500/30 bg-rose-500/10 text-rose-300"}`}>
-                    {isTr ? "Frye Standardı — Genel Bilimsel Kabul:" : "Frye Standard — General Scientific Acceptance:"}{" "}
+                    {isTr ? "Frye Standardı  -  Genel Bilimsel Kabul:" : "Frye Standard  -  General Scientific Acceptance:"}{" "}
                     {daubertData.frye_general_acceptance
                       ? (isTr ? "✓ SAĞLANDI" : "✓ ESTABLISHED")
                       : (isTr ? "✗ SAĞLANMADI" : "✗ NOT ESTABLISHED")}

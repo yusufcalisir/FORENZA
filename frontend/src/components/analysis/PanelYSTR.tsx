@@ -749,7 +749,7 @@ export default function PanelYSTR() {
             const valA = selectedCohort.profileA[loc.name];
             const valB = selectedCohort.profileB[loc.name];
 
-            const formatVal = (v: any) => (Array.isArray(v) ? v.join(", ") : String(v ?? "—"));
+            const formatVal = (v: any) => (Array.isArray(v) ? v.join(", ") : String(v ?? "-"));
             const strA = formatVal(valA);
             const strB = formatVal(valB);
 

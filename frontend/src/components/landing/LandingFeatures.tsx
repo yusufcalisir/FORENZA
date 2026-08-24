@@ -58,7 +58,7 @@ export default function LandingFeatures() {
                     </p>
                 </div>
 
-                {/* ── MOBILE ACCORDION (lg:hidden) — Titles expand inline with downward arrow ── */}
+                {/* ── MOBILE ACCORDION (lg:hidden)  -  Titles expand inline with downward arrow ── */}
                 <div className="lg:hidden space-y-3">
                     {pillars.map((p, idx) => {
                         const isOpen = mobileOpenPillar === idx;

@@ -134,11 +134,11 @@ export default function MerkleLedgerPanel() {
   const getLocalizedNotes = (notes?: string) => {
     if (!notes) return "";
     if (!isTr) return notes;
-    if (notes.includes("Toxicology LC-MS/MS & Widmark BAC: Morphine 0.85 mg/L — FATAL threshold exceeded")) {
-      return "Toksikoloji LC-MS/MS & Widmark BAC: Morfin 0.85 mg/L — ÖLÜMCÜL eşik aşıldı";
+    if (notes.includes("Toxicology LC-MS/MS & Widmark BAC: Morphine 0.85 mg/L  -  FATAL threshold exceeded")) {
+      return "Toksikoloji LC-MS/MS & Widmark BAC: Morfin 0.85 mg/L  -  ÖLÜMCÜL eşik aşıldı";
     }
-    if (notes.includes("STR 24-locus profile verified — CASE-2026-EU-GERMANIC-01")) {
-      return "24 lokus STR profili doğrulandı — CASE-2026-EU-GERMANIC-01";
+    if (notes.includes("STR 24-locus profile verified  -  CASE-2026-EU-GERMANIC-01")) {
+      return "24 lokus STR profili doğrulandı  -  CASE-2026-EU-GERMANIC-01";
     }
     if (notes.includes("HIrisPlex-S 24-SNP phenotype report compiled")) {
       return "HIrisPlex-S 24-SNP fenotip raporu derlendi";
@@ -533,7 +533,7 @@ export default function MerkleLedgerPanel() {
                       : "border-tactical-border/40 bg-black/40 text-zinc-400 hover:text-zinc-200"
                   }`}
                 >
-                  <div className="text-xs font-bold">{ev.event_id} — {getLocalizedActionType(ev.action_type)}</div>
+                  <div className="text-xs font-bold">{ev.event_id}  -  {getLocalizedActionType(ev.action_type)}</div>
                   <div className="text-[10px] text-zinc-400">{ev.officer_id}</div>
                 </button>
               ))}
@@ -564,7 +564,7 @@ export default function MerkleLedgerPanel() {
                           : "bg-rose-500/20 text-rose-300 border-rose-500/40"
                       }`}>
                         {isTr
-                          ? (verifyResult.is_valid ? "GEÇERLİ — İNKAR EDİLEMEZ İSPAT" : "GEÇERSİZ — BOZULMUŞ KÖK")
+                          ? (verifyResult.is_valid ? "GEÇERLİ  -  İNKAR EDİLEMEZ İSPAT" : "GEÇERSİZ  -  BOZULMUŞ KÖK")
                           : verifyResult.verdict}
                       </span>
                     </div>

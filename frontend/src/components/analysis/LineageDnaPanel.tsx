@@ -136,28 +136,28 @@ export default function LineageDnaPanel({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
               {[
                 {
-                  group: isTr ? "Bağlantı Grubu 1 (LG1 — Xp22.2)" : "Linkage Group 1 (LG1 — Xp22.2)",
+                  group: isTr ? "Bağlantı Grubu 1 (LG1  -  Xp22.2)" : "Linkage Group 1 (LG1  -  Xp22.2)",
                   loci: "DXS10148 (12.42 Mb) • DXS10135 (13.15 Mb) • DXS8378 (14.90 Mb)",
                   recomb: "r₁₋₂ = 0.003, r₂₋₃ = 0.022",
                   ki: "KI_LG1 = 20.75",
                   status: isTr ? "Baba X Paylaşıldı" : "Paternal X Shared",
                 },
                 {
-                  group: isTr ? "Bağlantı Grubu 2 (LG2 — Xq12)" : "Linkage Group 2 (LG2 — Xq12)",
+                  group: isTr ? "Bağlantı Grubu 2 (LG2  -  Xq12)" : "Linkage Group 2 (LG2  -  Xq12)",
                   loci: "DXS7132 (68.10 Mb) • DXS10074 (70.80 Mb) • DXS10079 (71.35 Mb)",
                   recomb: "r₁₋₂ = 0.015, r₂₋₃ = 0.020",
                   ki: "KI_LG2 = 20.75",
                   status: isTr ? "Baba X Paylaşıldı" : "Paternal X Shared",
                 },
                 {
-                  group: isTr ? "Bağlantı Grubu 3 (LG3 — Xq26)" : "Linkage Group 3 (LG3 — Xq26)",
+                  group: isTr ? "Bağlantı Grubu 3 (LG3  -  Xq26)" : "Linkage Group 3 (LG3  -  Xq26)",
                   loci: "DXS10103 (133.50 Mb) • HPRTB (133.90 Mb) • DXS10101 (134.60 Mb)",
                   recomb: "r₁₋₂ = 0.001, r₂₋₃ = 0.012",
                   ki: "KI_LG3 = 20.75",
                   status: isTr ? "Baba X Paylaşıldı" : "Paternal X Shared",
                 },
                 {
-                  group: isTr ? "Bağlantı Grubu 4 (LG4 — Xq28)" : "Linkage Group 4 (LG4 — Xq28)",
+                  group: isTr ? "Bağlantı Grubu 4 (LG4  -  Xq28)" : "Linkage Group 4 (LG4  -  Xq28)",
                   loci: "DXS10146 (148.20 Mb) • DXS10134 (149.10 Mb) • DXS7423 (150.05 Mb)",
                   recomb: "r₁₋₂ = 0.005, r₂₋₃ = 0.008",
                   ki: "KI_LG4 = 20.75",

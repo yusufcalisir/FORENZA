@@ -1033,7 +1033,7 @@ export default function DnaProfileInspectorModal() {
             { id: `out-${Date.now()}-1`, type: "info", text: "╔══════════════════════════════════════════════════════════════════════╗" },
             { id: `out-${Date.now()}-2`, type: "info", text: "║ BENCHMARK PEDIGREE-01: Father-Son RM Y-STR Mutation Verification      ║" },
             { id: `out-${Date.now()}-3`, type: "info", text: "╚══════════════════════════════════════════════════════════════════════╝" },
-            { id: `out-${Date.now()}-4`, type: "output", text: "  • Mutation Locus: DYS570 (Father: 17, Son: 18) — 1-step repeat transition" },
+            { id: `out-${Date.now()}-4`, type: "output", text: "  • Mutation Locus: DYS570 (Father: 17, Son: 18)  -  1-step repeat transition" },
             { id: `out-${Date.now()}-5`, type: "output", text: "  • Locus Mutation Rate μ_DYS570: 0.012 (Rapidly Mutating Y-STR)" },
             { id: `out-${Date.now()}-6`, type: "success", text: "  • Transition Probability: P(18 | 17, m=1) = 0.0060" },
             { id: `out-${Date.now()}-7`, type: "success", text: "  • Combined Kinship Likelihood Ratio (CPI_YSTR): 61.97 [CONFIRMED PATERNITY]" },
@@ -1536,7 +1536,7 @@ export default function DnaProfileInspectorModal() {
             })}
           </div>
 
-          {/* ── Navigation Tab Bar — horizontal scroll on mobile, icon+badge only < sm ── */}
+          {/* ── Navigation Tab Bar  -  horizontal scroll on mobile, icon+badge only < sm ── */}
           <div className="flex items-center justify-between gap-0 border-b border-tactical-border/70 bg-[#080d19] shrink-0 min-w-0">
             <div className="flex items-center gap-1 overflow-x-auto scrollbar-none px-2 sm:px-3 py-2 flex-1 min-w-0">
               {[
@@ -2317,7 +2317,7 @@ export default function DnaProfileInspectorModal() {
                                   <input
                                     type="text"
                                     value={item.a2}
-                                    placeholder={isMulti ? "Allele 2" : "—"}
+                                    placeholder={isMulti ? "Allele 2" : "-"}
                                     onChange={(e) => {
                                       const val = e.target.value;
                                       setYstrList((prev) => prev.map((it, i) => (i === idx ? { ...it, a2: val } : it)));
@@ -2450,25 +2450,25 @@ export default function DnaProfileInspectorModal() {
                 {/* ── D-Loop Structural Domains Track ── */}
                 <div className="p-3 rounded-xl border border-tactical-border/70 bg-black/40 space-y-2">
                   <div className="flex items-center justify-between text-[10px] text-zinc-400 font-bold">
-                    <span className="text-white">{isTr ? "mtDNA Kontrol Bölgesi Yapısal Mimarisi (16024–16569 / 1–576)" : "mtDNA Control Region Structural Architecture (16024–16569 / 1–576)"}</span>
+                    <span className="text-white">{isTr ? "mtDNA Kontrol Bölgesi Yapısal Mimarisi (16024-16569 / 1-576)" : "mtDNA Control Region Structural Architecture (16024-16569 / 1-576)"}</span>
                     <span className="text-zinc-500">{isTr ? "Uzunluk: 1.122 bç" : "Length: 1,122 bp"}</span>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-5 gap-2 text-center text-xs">
                     <div className="p-2 rounded-lg bg-cyan-950/40 border border-cyan-500/30 space-y-1">
-                      <span className="text-[9px] text-cyan-400 font-bold block">HV1 (16024–16365)</span>
+                      <span className="text-[9px] text-cyan-400 font-bold block">HV1 (16024-16365)</span>
                       <span className="text-sm font-extrabold text-white font-mono">
                         {liveMtdnaAligned.filter(m => m.domain === "HV1").length} {isTr ? "Mut" : "Mut"}
                       </span>
                     </div>
                     <div className="p-2 rounded-lg bg-teal-950/40 border border-teal-500/30 space-y-1">
-                      <span className="text-[9px] text-teal-400 font-bold block">HV2 (73–340)</span>
+                      <span className="text-[9px] text-teal-400 font-bold block">HV2 (73-340)</span>
                       <span className="text-sm font-extrabold text-white font-mono">
                         {liveMtdnaAligned.filter(m => m.domain === "HV2").length} {isTr ? "Mut" : "Mut"}
                       </span>
                     </div>
                     <div className="p-2 rounded-lg bg-purple-950/40 border border-purple-500/30 space-y-1">
-                      <span className="text-[9px] text-purple-400 font-bold block">HV3 (438–574)</span>
+                      <span className="text-[9px] text-purple-400 font-bold block">HV3 (438-574)</span>
                       <span className="text-sm font-extrabold text-white font-mono">
                         {liveMtdnaAligned.filter(m => m.domain === "HV3").length} {isTr ? "Mut" : "Mut"}
                       </span>
@@ -2794,7 +2794,7 @@ export default function DnaProfileInspectorModal() {
                 {/* Continuous SVG Electropherogram Waveform */}
                 <div className="rounded-xl border border-tactical-border/70 bg-[#040810] p-3 space-y-2 overflow-hidden">
                   <div className="flex items-center justify-between text-[10px] text-zinc-400 border-b border-tactical-border/50 pb-1.5">
-                    <span className="font-bold text-white">{isTr ? "Sürekli RFU Elektroferogram Dalgası (50 bç – 500 bç)" : "Continuous RFU Electropherogram Waveform (50 bp – 500 bp)"}</span>
+                    <span className="font-bold text-white">{isTr ? "Sürekli RFU Elektroferogram Dalgası (50 bç - 500 bç)" : "Continuous RFU Electropherogram Waveform (50 bp - 500 bp)"}</span>
                     <span className="text-zinc-500 font-mono">AT: 50 RFU • ST: 200 RFU • SAT: 8000 RFU</span>
                   </div>
 

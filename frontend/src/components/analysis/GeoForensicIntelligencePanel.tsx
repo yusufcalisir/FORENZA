@@ -450,7 +450,7 @@ export default function GeoForensicIntelligencePanel({
                             fUnclass: isDivergentSoil ? 0.91 : 0.65,
                         });
                     } else {
-                        // Backend offline — deterministic client-side CLR simulation
+                        // Backend offline  -  deterministic client-side CLR simulation
                         const epsilon = 0.001;
                         const qArr = Object.values(qAbundance);
                         const rArr = Object.values(rAbundance);
@@ -468,7 +468,7 @@ export default function GeoForensicIntelligencePanel({
                             fUnclass: isDivergentSoil ? 0.91 : 0.65,
                         });
                     }
-                } catch { /* network error — no-op, metaResult unchanged */ }
+                } catch { /* network error  -  no-op, metaResult unchanged */ }
                 setMetaLoading(false);
             } else if (mode === "PALYNOLOGY_EDNA") {
                 // ── Palynology & eDNA: Bray-Curtis + 16S metagenomic calibrated-LR ──
@@ -528,7 +528,7 @@ export default function GeoForensicIntelligencePanel({
                             fUnclass: 0.72,
                         });
                     } else {
-                        // Backend offline — deterministic client CLR Bray-Curtis simulation
+                        // Backend offline  -  deterministic client CLR Bray-Curtis simulation
                         const epsilon = 0.001;
                         const qArr = Object.values(qAbundance);
                         const rArr = Object.values(rAbundance);
@@ -548,7 +548,7 @@ export default function GeoForensicIntelligencePanel({
                             fUnclass: 0.72,
                         });
                     }
-                } catch { /* network error — no-op */ }
+                } catch { /* network error  -  no-op */ }
                 setMetaLoading(false);
             } else if (mode === "ROSSMO_GEO") {
                 const rossmoResp = await fetch(`${baseUrl}/api/v1/forensic/geoint/geographic-profile`, {
@@ -578,7 +578,7 @@ export default function GeoForensicIntelligencePanel({
                         lr: rd.lr ?? 28.2,
                     });
                 } else {
-                    // Backend offline — clear API result so rossmoResult useMemo re-derives from crimeSites
+                    // Backend offline  -  clear API result so rossmoResult useMemo re-derives from crimeSites
                     setRossmoApiResult(null);
                 }
             } else if (mode === "BAYESIAN_FUSION") {
@@ -707,7 +707,7 @@ export default function GeoForensicIntelligencePanel({
                         report_type: "METAGENOMIC_SOIL_PALYNOLOGY_EVIDENCE",
                     },
                     evidence_chain: {
-                        evidence_type: "Environmental DNA — Metagenomic Soil / Palynological Trace",
+                        evidence_type: "Environmental DNA  -  Metagenomic Soil / Palynological Trace",
                         lims_accessioning_timestamp: new Date().toISOString(),
                         chain_of_custody_status: "HMAC_INTACT_VERIFIED",
                         sample_matrix: "Soil / Pollen / eDNA",
@@ -1398,7 +1398,7 @@ export default function GeoForensicIntelligencePanel({
                                                 : "Run Execute Solver to compute →")}
                                     </p>
                                 </div>
-                                {/* Biome badge — derived from log10LR */}
+                                {/* Biome badge  -  derived from log10LR */}
                                 {metaResult ? (
                                     <span className={`px-3 py-1 rounded-full border font-mono text-xs font-bold w-fit shrink-0 ${
                                         metaResult.log10lr >= 2.0
@@ -1804,7 +1804,7 @@ export default function GeoForensicIntelligencePanel({
                                     </div>
                                     <div className="p-2 rounded bg-black/60 border border-zinc-800">
                                         <p className="text-[9px] text-zinc-500">LR RATIO</p>
-                                        <p className="text-sm font-bold text-amber-400">{metaIsoCert.statistical_interpretation?.lr_value ? Number(metaIsoCert.statistical_interpretation.lr_value).toExponential(2) : "—"}</p>
+                                        <p className="text-sm font-bold text-amber-400">{metaIsoCert.statistical_interpretation?.lr_value ? Number(metaIsoCert.statistical_interpretation.lr_value).toExponential(2) : "-"}</p>
                                     </div>
 
                                     <div className="p-2 rounded bg-black/60 border border-zinc-800">

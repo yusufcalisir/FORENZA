@@ -289,7 +289,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
             "Immutable blockchain report for court admissibility",
           ],
           sampleMetric: "1.42e8 Likelihood Ratio",
-          sampleCode: "CASE_2026_COLD_09 — NDIS CODIS Core 20 Loci Database Hit",
+          sampleCode: "CASE_2026_COLD_09  -  NDIS CODIS Core 20 Loci Database Hit",
           label: "Law Enforcement",
         },
         {
@@ -304,7 +304,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
             "Interpol DVI compatible report export",
           ],
           sampleMetric: "99.999% Match Probability",
-          sampleCode: "DVI_BATCH_402 — Interpol Section 4 Standard",
+          sampleCode: "DVI_BATCH_402  -  Interpol Section 4 Standard",
           label: "DVI Operations",
         },
         {
@@ -319,7 +319,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
             "Real-time processing with node-distributed computation",
           ],
           sampleMetric: "Zero Data Exposure (ZKP)",
-          sampleCode: "BORDER_CHECK_882 — Groth16 Verified",
+          sampleCode: "BORDER_CHECK_882  -  Groth16 Verified",
           label: "Border Security",
         },
         {
@@ -334,7 +334,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
             "Population stratification analysis and theta correction",
           ],
           sampleMetric: "54 Tissue eQTL Mapped",
-          sampleCode: "GENOMICS_STUDY_V2 — Balding-Nichols theta=0.03",
+          sampleCode: "GENOMICS_STUDY_V2  -  Balding-Nichols theta=0.03",
           label: "Research Labs",
         },
       ],
@@ -642,7 +642,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
         "CALIBRATING 24 CODIS CORE STR LOCI, MPS ISOALLELES & ML FILTERS...",
         "LOADING HIrisPlex-S & BGA POPULATION PRIORS...",
         "VERIFYING ISO-21043 CHAIN OF CUSTODY LEDGER...",
-        "SYSTEM OPERATIONAL — FORENSIC WORKSPACE READY"
+        "SYSTEM OPERATIONAL  -  FORENSIC WORKSPACE READY"
       ],
       subtitle: "Forensic Biology & DNA Intelligence Operating System",
       badges: {
@@ -714,7 +714,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
             "Mahkeme delil standartlarına uygun adli raporlama",
           ],
           sampleMetric: "1.42e8 Olabilirlik Oranı (LR)",
-          sampleCode: "CASE_2026_COLD_09 — NDIS CODIS Çekirdek 20 Lokus Veritabanı Eşleşmesi",
+          sampleCode: "CASE_2026_COLD_09  -  NDIS CODIS Çekirdek 20 Lokus Veritabanı Eşleşmesi",
           label: "Kolluk Kuvvetleri",
         },
         {
@@ -729,7 +729,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
             "Interpol DVI Bölüm 4 standartlarında adli rapor çıktısı",
           ],
           sampleMetric: "%99.999 Eşleşme Olasılığı",
-          sampleCode: "DVI_BATCH_402 — Interpol Bölüm 4 Standardı",
+          sampleCode: "DVI_BATCH_402  -  Interpol Bölüm 4 Standardı",
           label: "DVI Operasyonları",
         },
         {
@@ -744,7 +744,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
             "Dağıtık bilişim mimarisiyle gerçek zamanlı analiz",
           ],
           sampleMetric: "Sıfır Veri Açığı (ZKP)",
-          sampleCode: "BORDER_CHECK_882 — Groth16 Doğrulandı",
+          sampleCode: "BORDER_CHECK_882  -  Groth16 Doğrulandı",
           label: "Sınır Güvenliği",
         },
         {
@@ -759,7 +759,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
             "Popülasyon yapısı analizi ve Fst (theta) düzeltmesi",
           ],
           sampleMetric: "54 Doku eQTL Haritalandı",
-          sampleCode: "GENOMICS_STUDY_V2 — Balding-Nichols theta=0.03",
+          sampleCode: "GENOMICS_STUDY_V2  -  Balding-Nichols theta=0.03",
           label: "Araştırma Laboratuvarları",
         },
       ],
@@ -1067,7 +1067,7 @@ export const saasTranslations: Record<SaasLanguage, SaasTranslation> = {
         "24 CODIS ÇEKİRDEK STR LOKUSU, MPS İZOALLELLERİ & ML FİLTRELERİ KALİBRE EDİLİYOR...",
         "HIrisPlex-S VE BGA POPÜLASYON DAĞILIMLARI YÜKLENİYOR...",
         "ISO-21043 DELİL ZİNCİRİ DEFTERİ DOĞRULANIYOR...",
-        "SİSTEM FAAL — ADLİ ÇALIŞMA ALANI HAZIR"
+        "SİSTEM FAAL  -  ADLİ ÇALIŞMA ALANI HAZIR"
       ],
       subtitle: "Adli Biyoloji ve DNA İstihbarat İşletim Sistemi",
       badges: {

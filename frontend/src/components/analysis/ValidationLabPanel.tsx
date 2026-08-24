@@ -754,7 +754,7 @@ export default function ValidationLabPanel() {
                     : calculations.fpr_at_zero.toFixed(6)}
                 </p>
                 <p className="text-[10px] text-zinc-500">
-                  {isTr ? "P(log₁₀ LR > 0 | H_d) — Savunma aleyhine yanıltıcı delil oranı" : "P(log₁₀ LR > 0 | H_d) — Misleading evidence rate vs defense"}
+                  {isTr ? "P(log₁₀ LR > 0 | H_d)  -  Savunma aleyhine yanıltıcı delil oranı" : "P(log₁₀ LR > 0 | H_d)  -  Misleading evidence rate vs defense"}
                 </p>
               </div>
 
@@ -768,7 +768,7 @@ export default function ValidationLabPanel() {
                     : calculations.fnr_at_zero.toFixed(6)}
                 </p>
                 <p className="text-[10px] text-zinc-500">
-                  {isTr ? "P(log₁₀ LR < 0 | H_p) — İddia aleyhine yanıltıcı delil oranı" : "P(log₁₀ LR < 0 | H_p) — Misleading evidence rate vs prosecution"}
+                  {isTr ? "P(log₁₀ LR < 0 | H_p)  -  İddia aleyhine yanıltıcı delil oranı" : "P(log₁₀ LR < 0 | H_p)  -  Misleading evidence rate vs prosecution"}
                 </p>
               </div>
 
@@ -1051,11 +1051,11 @@ export default function ValidationLabPanel() {
                 <tbody className="divide-y divide-tactical-border/40 text-[11px]">
                   {[
                     { tier: 0, range: "LR = 1", log: "0.0", en: "Inconclusive / Neutral", tr: "Sonuçsuz / Nötr" },
-                    { tier: 1, range: "1 < LR ≤ 10", log: "0.0 – 1.0", en: "Weak Support for H_p", tr: "İddia Lehine Zayıf Destek" },
-                    { tier: 2, range: "10 < LR ≤ 100", log: "1.0 – 2.0", en: "Moderate Support for H_p", tr: "İddia Lehine Orta Destek" },
-                    { tier: 3, range: "100 < LR ≤ 10,000", log: "2.0 – 4.0", en: "Moderately Strong Support for H_p", tr: "İddia Lehine Orta-Güçlü Destek" },
-                    { tier: 4, range: "10,000 < LR ≤ 10⁶", log: "4.0 – 6.0", en: "Strong Support for H_p", tr: "İddia Lehine Güçlü Destek" },
-                    { tier: 5, range: "10⁶ < LR ≤ 10⁹", log: "6.0 – 9.0", en: "Very Strong Support for H_p", tr: "İddia Lehine Çok Güçlü Destek" },
+                    { tier: 1, range: "1 < LR ≤ 10", log: "0.0 - 1.0", en: "Weak Support for H_p", tr: "İddia Lehine Zayıf Destek" },
+                    { tier: 2, range: "10 < LR ≤ 100", log: "1.0 - 2.0", en: "Moderate Support for H_p", tr: "İddia Lehine Orta Destek" },
+                    { tier: 3, range: "100 < LR ≤ 10,000", log: "2.0 - 4.0", en: "Moderately Strong Support for H_p", tr: "İddia Lehine Orta-Güçlü Destek" },
+                    { tier: 4, range: "10,000 < LR ≤ 10⁶", log: "4.0 - 6.0", en: "Strong Support for H_p", tr: "İddia Lehine Güçlü Destek" },
+                    { tier: 5, range: "10⁶ < LR ≤ 10⁹", log: "6.0 - 9.0", en: "Very Strong Support for H_p", tr: "İddia Lehine Çok Güçlü Destek" },
                     { tier: 6, range: "LR > 10⁹", log: "> 9.0", en: "Extremely Strong Support for H_p", tr: "İddia Lehine Son Derece Güçlü Destek" },
                   ].map((row) => {
                     const isCurrent =

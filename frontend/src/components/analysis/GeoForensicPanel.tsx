@@ -10,7 +10,7 @@ import { useIngestStore } from "@/store/ingestStore";
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// DYNAMIC IMPORT — Leaflet must be loaded client-side only (no SSR)
+// DYNAMIC IMPORT  -  Leaflet must be loaded client-side only (no SSR)
 // ═══════════════════════════════════════════════════════════════════════════════
 
 const ForensicMap = dynamic(() => import("./ForensicMap"), {
@@ -181,7 +181,7 @@ function ScanStatusTicker({ phase, region }: { phase: ScanPhase; region?: GeoPro
             </span>
             {isLocked && region && (
                 <span className="font-mono text-[8px] font-bold text-tactical-primary">
-                    — {displayRegion} ({(region.probability * 100).toFixed(1)}%)
+                     -  {displayRegion} ({(region.probability * 100).toFixed(1)}%)
                 </span>
             )}
         </div>
@@ -324,7 +324,7 @@ export default function GeoForensicPanel({
                 <ScanningMapLoader />
             ) : (
                 <>
-                    {/* ── Map Section — Fixed Height for Stability ── */}
+                    {/* ── Map Section  -  Fixed Height for Stability ── */}
                     <div className="relative h-[300px] md:h-[350px] bg-[#070709]">
                         {/* Corner brackets */}
                         <div className="absolute top-2 left-2 w-4 h-4 border-l-2 border-t-2 border-tactical-primary/40 z-[1000] pointer-events-none" />
@@ -345,7 +345,7 @@ export default function GeoForensicPanel({
                         />
                     </div>
 
-                    {/* ── Data Panel — Auto Height ── */}
+                    {/* ── Data Panel  -  Auto Height ── */}
                     <div className="h-fit border-t border-tactical-border">
                         <AncestryDataPanel
                             data={sortedData}

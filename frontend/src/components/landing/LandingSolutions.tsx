@@ -46,7 +46,7 @@ export default function LandingSolutions() {
                     </p>
                 </div>
 
-                {/* ── MOBILE ACCORDION (lg:hidden) — 1st title open by default, downward arrow expands in-place ── */}
+                {/* ── MOBILE ACCORDION (lg:hidden)  -  1st title open by default, downward arrow expands in-place ── */}
                 <div className="lg:hidden space-y-3">
                     {solutions.map((s, i) => {
                         const SIcon = s.icon;

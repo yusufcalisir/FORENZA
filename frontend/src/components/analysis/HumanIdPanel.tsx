@@ -168,7 +168,7 @@ export default function HumanIdPanel() {
                   : "Low-Coverage Forensic SNP Genotype Likelihoods (Damage-Compensated)"}
               </span>
               <span className="text-[9px] text-emerald-400 font-bold bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded">
-                {isTr ? "40–70 bp Kısa Amplikolar" : "40–70 bp Short Amplicons"}
+                {isTr ? "40-70 bp Kısa Amplikolar" : "40-70 bp Short Amplicons"}
               </span>
             </div>
 

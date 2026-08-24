@@ -284,7 +284,7 @@ interface GoldenPreset {
 const GOLDEN_PRESETS: Record<PresetKey, GoldenPreset> = {
   VECTOR_03: {
     id: "VECTOR_03",
-    name: "VECTOR_03 — vWA Single Dropout (Touch DNA)",
+    name: "VECTOR_03  -  vWA Single Dropout (Touch DNA)",
     badge: "LTDNA Benchmark",
     badgeColor: "text-amber-400 bg-amber-500/10 border-amber-500/30",
     substrateId: "TEXTURED_NON_POROUS",
@@ -299,7 +299,7 @@ const GOLDEN_PRESETS: Record<PresetKey, GoldenPreset> = {
   },
   VECTOR_TERM_06: {
     id: "VECTOR_TERM_06",
-    name: "VECTOR_TERM_06 — 24-Locus Touch Profile (31.25 pg)",
+    name: "VECTOR_TERM_06  -  24-Locus Touch Profile (31.25 pg)",
     badge: "Severe LTDNA Touch",
     badgeColor: "text-rose-400 bg-rose-500/10 border-rose-500/30",
     substrateId: "TEXTURED_NON_POROUS",
@@ -352,7 +352,7 @@ const GOLDEN_PRESETS: Record<PresetKey, GoldenPreset> = {
   },
   LCN_15PG: {
     id: "LCN_15PG",
-    name: "LCN 15 pg — Single-Cell Physical Limit",
+    name: "LCN 15 pg  -  Single-Cell Physical Limit",
     badge: "Single-Cell (2.2 Cells)",
     badgeColor: "text-purple-400 bg-purple-500/10 border-purple-500/30",
     substrateId: "POROUS_FABRIC",
@@ -485,7 +485,7 @@ export default function TouchDnaPanel() {
   // Copy Juror Report
   const copyJurorReport = () => {
     const reportText = `
-FORENZA FORENSIC EVIDENCE OS — TOUCH DNA & LTDNA REPORT
+FORENZA FORENSIC EVIDENCE OS  -  TOUCH DNA & LTDNA REPORT
 ============================================================
 Case Protocol: Module 1.4 Low-Template Stochastic Modeling
 Reference Preset: ${GOLDEN_PRESETS[selectedPreset].name}

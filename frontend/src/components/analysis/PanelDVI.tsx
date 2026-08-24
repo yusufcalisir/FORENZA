@@ -32,7 +32,7 @@ import {
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 import { getApiBaseUrl } from "@/lib/api";
 
-function formatExp(val: number | undefined | null, digits = 2, fallback = "—"): string {
+function formatExp(val: number | undefined | null, digits = 2, fallback = "-"): string {
   if (val === undefined || val === null || isNaN(val)) return fallback;
   return Number(val).toExponential(digits);
 }
@@ -579,7 +579,7 @@ export default function PanelDVI() {
                   <span className="text-[11px] text-slate-400">
                     {isTr ? "YHRD Frekansı (p_Y):" : "YHRD Frequency (p_Y):"}
                   </span>
-                  <span className="text-sm font-bold font-mono text-cyan-300">{hasYstr ? formatExp(ystrPUpper, 1) : "—"}</span>
+                  <span className="text-sm font-bold font-mono text-cyan-300">{hasYstr ? formatExp(ystrPUpper, 1) : "-"}</span>
                 </div>
                 <div className="text-[10px] font-mono text-slate-400 text-right">
                   LR_Y = {hasYstr ? lrY.toLocaleString() : "1.00"}
@@ -603,7 +603,7 @@ export default function PanelDVI() {
                   <span className="text-[11px] text-slate-400">
                     {isTr ? "EMPOP Frekansı (p_M):" : "EMPOP Frequency (p_M):"}
                   </span>
-                  <span className="text-sm font-bold font-mono text-purple-300">{hasMtdna ? formatExp(mtdnaPUpper, 1) : "—"}</span>
+                  <span className="text-sm font-bold font-mono text-purple-300">{hasMtdna ? formatExp(mtdnaPUpper, 1) : "-"}</span>
 
                 </div>
                 <div className="text-[10px] font-mono text-slate-400 text-right">
@@ -626,7 +626,7 @@ export default function PanelDVI() {
                 </div>
                 <div className="flex justify-between items-baseline mt-2">
                   <span className="text-[11px] text-slate-400">LR_SNP:</span>
-                  <span className="text-sm font-bold font-mono text-amber-300">{hasSnp ? snpLr.toFixed(1) : "—"}</span>
+                  <span className="text-sm font-bold font-mono text-amber-300">{hasSnp ? snpLr.toFixed(1) : "-"}</span>
                 </div>
                 <div className="text-[10px] font-mono text-slate-400 text-right">
                   log10 = {hasSnp ? Math.log10(snpLr).toFixed(2) : "0.00"}

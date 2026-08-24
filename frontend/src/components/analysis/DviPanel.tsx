@@ -178,8 +178,8 @@ export default function DviPanel() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
             {[
               { tier: "Definitive Match", range: "LR ≥ 10⁶ (log₁₀ ≥ 6.0)", color: "text-emerald-400 border-emerald-500/30 bg-emerald-500/5", desc: "Standalone legal identification" },
-              { tier: "Probable Match", range: "10⁴ ≤ LR < 10⁶ (4.0–6.0)", color: "text-indigo-300 border-indigo-500/30 bg-indigo-500/5", desc: "Secondary corroboration required" },
-              { tier: "Inconclusive", range: "10⁻² < LR < 10⁴ (-2.0–4.0)", color: "text-amber-400 border-amber-500/30 bg-amber-500/5", desc: "Additional STR / SNP panels required" },
+              { tier: "Probable Match", range: "10⁴ ≤ LR < 10⁶ (4.0-6.0)", color: "text-indigo-300 border-indigo-500/30 bg-indigo-500/5", desc: "Secondary corroboration required" },
+              { tier: "Inconclusive", range: "10⁻² < LR < 10⁴ (-2.0-4.0)", color: "text-amber-400 border-amber-500/30 bg-amber-500/5", desc: "Additional STR / SNP panels required" },
               { tier: "Exclusion", range: "LR ≤ 10⁻² (log₁₀ ≤ -2.0)", color: "text-rose-400 border-rose-500/30 bg-rose-500/5", desc: "Definite pedigree exclusion" },
             ].map((t) => (
               <div key={t.tier} className={`rounded-xl border p-3 space-y-1 ${t.color}`}>

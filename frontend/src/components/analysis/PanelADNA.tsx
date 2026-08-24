@@ -384,7 +384,7 @@ export default function PanelADNA() {
                 </p>
               </div>
               <span className="text-xs font-mono px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-amber-300">
-                {isTr ? "Pozisyonlar 1 – 25 bp" : "Positions 1 – 25 bp"}
+                {isTr ? "Pozisyonlar 1 - 25 bp" : "Positions 1 - 25 bp"}
               </span>
             </div>
 

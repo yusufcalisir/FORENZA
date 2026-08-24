@@ -76,7 +76,7 @@ const TIER_CONFIG = {
         border: "border-amber-500/20",
         barColor: "bg-amber-500",
         icon: AlertTriangle,
-        description: `${PARTIAL_LOCI_THRESHOLD}–${COMPLETE_LOCI_THRESHOLD - 1} markers compared`,
+        description: `${PARTIAL_LOCI_THRESHOLD}-${COMPLETE_LOCI_THRESHOLD - 1} markers compared`,
     },
     degraded: {
         label: "Critically Degraded",
@@ -581,7 +581,7 @@ export function MatchResultCardDemo() {
             <div className="flex items-center gap-2 mb-2">
                 <Shield className="w-4 h-4 text-tactical-primary" />
                 <h2 className="font-data text-[10px] font-bold tracking-[0.15em] uppercase text-tactical-text">
-                    Search Results — Completeness-Aware Ranking
+                    Search Results  -  Completeness-Aware Ranking
                 </h2>
             </div>
             {DEMO_MATCHES.map((m) => (

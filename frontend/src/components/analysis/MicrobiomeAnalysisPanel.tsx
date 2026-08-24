@@ -435,7 +435,7 @@ export default function MicrobiomeAnalysisPanel() {
                   {pmiCalculations.predictedAdd} <span className="text-xs font-normal text-emerald-300">ADD</span>
                 </p>
                 <p className="text-[10px] text-emerald-400/90 font-mono">
-                  {isTr ? "95% Konformal Bant:" : "95% Conformal Band:"} [{pmiCalculations.addLow} – {pmiCalculations.addHigh} ADD]
+                  {isTr ? "95% Konformal Bant:" : "95% Conformal Band:"} [{pmiCalculations.addLow} - {pmiCalculations.addHigh} ADD]
                 </p>
               </div>
 
@@ -448,7 +448,7 @@ export default function MicrobiomeAnalysisPanel() {
                   {pmiCalculations.pmiHours} <span className="text-xs font-normal text-zinc-400">hrs</span>
                 </p>
                 <p className="text-[10px] text-zinc-400 font-mono">
-                  ≈ {pmiCalculations.pmiDays} {isTr ? "gün" : "days"} (95% CI: [{pmiCalculations.hoursLow} – {pmiCalculations.hoursHigh} h])
+                  ≈ {pmiCalculations.pmiDays} {isTr ? "gün" : "days"} (95% CI: [{pmiCalculations.hoursLow} - {pmiCalculations.hoursHigh} h])
                 </p>
               </div>
 

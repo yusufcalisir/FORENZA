@@ -86,7 +86,7 @@ export default async function RootLayout({
   let initialLang: SaasLanguage = "en";
 
   if (savedLangCookie === "tr" || savedLangCookie === "en") {
-    // Explicit user preference — always honour it
+    // Explicit user preference  -  always honour it
     initialLang = savedLangCookie;
   } else {
     // No explicit preference → detect from IP / Accept-Language header

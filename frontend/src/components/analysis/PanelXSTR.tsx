@@ -80,8 +80,8 @@ const PRESET_COHORTS: PresetCohort[] = [
     id: "VECTOR_P2_02",
     labelEn: "VECTOR_P2_02 Paternal Half-Sisters Benchmark",
     labelTr: "VECTOR_P2_02 Baba Bir Üvey Kız Kardeş Doğrulama Seti",
-    descriptionEn: "True paternal half-sisters sharing unbroken paternal X-chromosome across LG1–LG4 (Target KI ≈ 1.854 × 10⁵).",
-    descriptionTr: "LG1–LG4 bağlantı gruplarında kesintisiz baba X-kromozomu paylaşan gerçek üvey kız kardeşler (Hedef KI ≈ 1.854 × 10⁵).",
+    descriptionEn: "True paternal half-sisters sharing unbroken paternal X-chromosome across LG1-LG4 (Target KI ≈ 1.854 × 10⁵).",
+    descriptionTr: "LG1-LG4 bağlantı gruplarında kesintisiz baba X-kromozomu paylaşan gerçek üvey kız kardeşler (Hedef KI ≈ 1.854 × 10⁵).",
     badge: "GOLD VECTOR P2_02",
     badgeColor: "bg-emerald-500/20 text-emerald-300 border-emerald-500/40",
     relationship: "PATERNAL_HALF_SISTERS",
@@ -357,7 +357,7 @@ export default function PanelXSTR() {
               <span>ISFG (2012) X-STR</span>
             </span>
             <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[9px] font-bold bg-white/[0.03] border border-white/10 text-purple-400">
-              <span>{isTr ? "LG1–LG4 Kümeleri" : "LG1–LG4 Clusters"}</span>
+              <span>{isTr ? "LG1-LG4 Kümeleri" : "LG1-LG4 Clusters"}</span>
             </span>
           </div>
         </div>
@@ -441,7 +441,7 @@ export default function PanelXSTR() {
             </span>
           </div>
           <p className="mt-1 text-[11px] text-slate-400">
-            {isTr ? "4 Bağımsız Bağlantı Grubu (LG1–LG4)" : "4 Independent Linkage Groups (LG1–LG4)"}
+            {isTr ? "4 Bağımsız Bağlantı Grubu (LG1-LG4)" : "4 Independent Linkage Groups (LG1-LG4)"}
           </p>
         </div>
 
@@ -544,8 +544,8 @@ export default function PanelXSTR() {
           <h3 className="text-sm font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
             <Dna className="h-4 w-4 text-cyan-400" />
             {isTr
-              ? "Argus X-12 Kromozomal Bağlantı Kümeleri (LG1–LG4)"
-              : "Argus X-12 Chromosomal Linkage Clusters (LG1–LG4)"}
+              ? "Argus X-12 Kromozomal Bağlantı Kümeleri (LG1-LG4)"
+              : "Argus X-12 Chromosomal Linkage Clusters (LG1-LG4)"}
           </h3>
           <span className="text-xs text-slate-500 font-mono">
             {isTr ? "Toplam LR Çarpımı = ∏ KI_LG" : "Total LR Product = ∏ KI_LG"}
@@ -657,8 +657,8 @@ export default function PanelXSTR() {
             </h4>
             <p className="text-[11px] leading-relaxed text-amber-200/80">
               {isTr
-                ? "X-kromozomal STR belirteçleri cinsiyete bağlı kalıtım dinamikleri sergiler. Biyolojik babalar tek X-kromozomlarını mayotik rekombinasyon olmadan tüm kız çocuklarına tam olarak aktardığından, baba bir üvey kız kardeşler sıkı bağlantılı kümelerde (LG1–LG4) özdeş haplotipler miras alır. İstatistiki Olabilirlik Oranları (KI_X), iddia edilen akrabalık hipotezi altında paylaşılan haplotiplerin olasılığını akraba olmayan bireylere karşı değerlendirir."
-                : "X-chromosomal STR markers exhibit sex-linked inheritance dynamics. Because biological fathers transmit their single X-chromosome intact without meiotic recombination to all daughters, paternal half-sisters inherit identical haplotypes across tightly linked clusters (LG1–LG4). Statistical Likelihood Ratios (KI_X) assess the probability of observed shared haplotypes under the alleged paternal relationship versus unrelated individuals."}
+                ? "X-kromozomal STR belirteçleri cinsiyete bağlı kalıtım dinamikleri sergiler. Biyolojik babalar tek X-kromozomlarını mayotik rekombinasyon olmadan tüm kız çocuklarına tam olarak aktardığından, baba bir üvey kız kardeşler sıkı bağlantılı kümelerde (LG1-LG4) özdeş haplotipler miras alır. İstatistiki Olabilirlik Oranları (KI_X), iddia edilen akrabalık hipotezi altında paylaşılan haplotiplerin olasılığını akraba olmayan bireylere karşı değerlendirir."
+                : "X-chromosomal STR markers exhibit sex-linked inheritance dynamics. Because biological fathers transmit their single X-chromosome intact without meiotic recombination to all daughters, paternal half-sisters inherit identical haplotypes across tightly linked clusters (LG1-LG4). Statistical Likelihood Ratios (KI_X) assess the probability of observed shared haplotypes under the alleged paternal relationship versus unrelated individuals."}
             </p>
           </div>
         </div>

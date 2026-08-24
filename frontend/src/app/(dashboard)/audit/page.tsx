@@ -81,7 +81,7 @@ export default function AuditPage() {
                         <Hash className="w-4 h-4" />
                     </div>
                     <div className="min-w-0">
-                        <span className="text-xs font-bold text-white truncate block">{activeCase.metadata.caseId} — {activeCase.metadata.caseTitle}</span>
+                        <span className="text-xs font-bold text-white truncate block">{activeCase.metadata.caseId}  -  {activeCase.metadata.caseTitle}</span>
                         <span className="text-[10px] text-zinc-400">{activeCase.metadata.jurisdiction} • Lead: {activeCase.metadata.leadAnalyst}</span>
                     </div>
                 </div>

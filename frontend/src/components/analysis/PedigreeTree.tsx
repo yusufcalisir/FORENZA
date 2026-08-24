@@ -41,7 +41,7 @@ interface PedigreeTreeProps {
 // ─── Styling ─────────────────────────────────────────────────────────────────
 
 const REL_STYLES: Record<string, { color: string; label: string; labelTr: string; icon: typeof Users }> = {
-    PARENT_CHILD: { color: "#34d399", label: "Parent–Child", labelTr: "Ebeveyn–Çocuk", icon: Users },
+    PARENT_CHILD: { color: "#34d399", label: "Parent-Child", labelTr: "Ebeveyn-Çocuk", icon: Users },
     FULL_SIBLING: { color: "#fbbf24", label: "Full Sibling", labelTr: "Öz Kardeş", icon: Users },
     HALF_SIBLING: { color: "#22d3ee", label: "Half Sibling", labelTr: "Üvey Kardeş", icon: Users },
     SELF: { color: "#a78bfa", label: "Self / Identical", labelTr: "Kendisi / Özdeş", icon: CheckCircle },
@@ -198,7 +198,7 @@ export default function PedigreeTree({ kinshipData, profileAId, profileBId }: Pe
             {/* SVG Pedigree Diagram */}
             <div className="flex items-center justify-center py-3 px-4">
                 <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-                    {/* Connecting line — dotted */}
+                    {/* Connecting line  -  dotted */}
                     <motion.line
                         initial={{ pathLength: 0, opacity: 0 }}
                         animate={{ pathLength: 1, opacity: 1 }}
@@ -213,7 +213,7 @@ export default function PedigreeTree({ kinshipData, profileAId, profileBId }: Pe
                         opacity={0.6}
                     />
 
-                    {/* Midpoint label — relationship + KI */}
+                    {/* Midpoint label  -  relationship + KI */}
                     <rect
                         x={svgWidth / 2 - 60}
                         y={svgHeight / 2 - 16}

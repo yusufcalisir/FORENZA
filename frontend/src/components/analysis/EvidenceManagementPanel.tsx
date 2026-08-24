@@ -674,8 +674,8 @@ export default function EvidenceManagementPanel() {
                 <RotateCw className="w-4 h-4 text-indigo-400 shrink-0" />
                 <span className="text-xs font-bold text-white uppercase tracking-wider">
                   {isTr
-                    ? "SE(3) Kinematik Dönüşüm — R = R_z(ψ) · R_y(θ) · R_x(φ)"
-                    : "SE(3) Kinematic Transform — R = R_z(ψ) · R_y(θ) · R_x(φ)"}
+                    ? "SE(3) Kinematik Dönüşüm  -  R = R_z(ψ) · R_y(θ) · R_x(φ)"
+                    : "SE(3) Kinematic Transform  -  R = R_z(ψ) · R_y(θ) · R_x(φ)"}
                 </span>
               </div>
               <button
@@ -904,8 +904,8 @@ export default function EvidenceManagementPanel() {
           <Layers className="w-4 h-4 text-indigo-400" />
           <span className="text-xs font-bold text-white uppercase tracking-wider">
             {isTr
-              ? `Olay Yeri Füzyon Özeti — ${ITEMS.length} Delil Noktası Kayıtlı (ISO 21043)`
-              : `Scene Fusion Summary — ${ITEMS.length} Evidence Points Registered (ISO 21043)`}
+              ? `Olay Yeri Füzyon Özeti  -  ${ITEMS.length} Delil Noktası Kayıtlı (ISO 21043)`
+              : `Scene Fusion Summary  -  ${ITEMS.length} Evidence Points Registered (ISO 21043)`}
           </span>
         </div>
 

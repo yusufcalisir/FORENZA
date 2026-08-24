@@ -193,7 +193,7 @@ export default function BotanyPanel() {
                   {isTr ? "Mevsimsel Çiçeklenme Penceresi" : "Seasonal Bloom Window"}
                 </span>
                 <p className="text-sm font-bold text-amber-300 font-mono">
-                  {isTr ? "Mayıs – Temmuz (İlkbahar Sonu / Yaz Başı)" : "May – July (Late Spring / Early Summer)"}
+                  {isTr ? "Mayıs - Temmuz (İlkbahar Sonu / Yaz Başı)" : "May - July (Late Spring / Early Summer)"}
                 </p>
                 <p className="text-[10px] text-zinc-400">
                   {isTr ? "Zirve palinolojik yayılım dönemi" : "Peak palynological dissemination"}

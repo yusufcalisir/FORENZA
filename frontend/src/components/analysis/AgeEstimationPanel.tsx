@@ -386,7 +386,7 @@ export default function AgeEstimationPanel() {
                       {isTr ? "ISO/IEC 17025 %95 Tahmin Aralığı" : "ISO/IEC 17025 95% Prediction Interval"}
                     </span>
                     <span className="text-base sm:text-lg font-bold text-emerald-400 font-mono">
-                      [{result.prediction_interval_lower.toFixed(2)} – {result.prediction_interval_upper.toFixed(2)} {isTr ? "yaş" : "yrs"}]
+                      [{result.prediction_interval_lower.toFixed(2)} - {result.prediction_interval_upper.toFixed(2)} {isTr ? "yaş" : "yrs"}]
                     </span>
                     <span className="text-[9px] text-zinc-500 block mt-0.5">
                       {isTr ? "Genişletilmiş Belirsizlik" : "Expanded Uncertainty"} U95% = ±{result.expanded_uncertainty_95.toFixed(2)} {isTr ? "yaş" : "yrs"}

@@ -114,14 +114,14 @@ const computeClientProficiency = (xLab: number, mean: number, std: number): Prof
   const z = (xLab - mean) / safeStd;
   const absZ = Math.abs(z);
   let tier = "SATISFACTORY";
-  let verdict = "Satisfactory Performance — ISO/IEC 17025 Compliant";
+  let verdict = "Satisfactory Performance  -  ISO/IEC 17025 Compliant";
 
   if (absZ > 3.0) {
     tier = "UNSATISFACTORY";
-    verdict = "Unsatisfactory Performance — Corrective Action Required (FRE 702 breach)";
+    verdict = "Unsatisfactory Performance  -  Corrective Action Required (FRE 702 breach)";
   } else if (absZ > 2.0) {
     tier = "QUESTIONABLE";
-    verdict = "Questionable Performance — Warning Issued (Investigate laboratory bias)";
+    verdict = "Questionable Performance  -  Warning Issued (Investigate laboratory bias)";
   }
 
   return {
@@ -579,10 +579,10 @@ export default function MeasurementUncertaintyPanel() {
                       <span className="text-zinc-200 font-bold">
                         {isTr
                           ? (proficiencyData.performance_tier === "SATISFACTORY"
-                              ? "Tatmin Edici Performans — ISO/IEC 17025 Uyumu Doğrulandı"
+                              ? "Tatmin Edici Performans  -  ISO/IEC 17025 Uyumu Doğrulandı"
                               : proficiencyData.performance_tier === "QUESTIONABLE"
-                              ? "Şüpheli Performans — Uyarı Bildirildi"
-                              : "Yetersiz Performans — Düzeltici Faaliyet Gerekli")
+                              ? "Şüpheli Performans  -  Uyarı Bildirildi"
+                              : "Yetersiz Performans  -  Düzeltici Faaliyet Gerekli")
                           : proficiencyData.verdict}
                       </span>
                     </div>

@@ -177,7 +177,7 @@ class TerminalHIrisPlexResponse(BaseModel):
 
 class TerminalComprehensiveRequest(BaseModel):
     model_config = ConfigDict(protected_namespaces=())
-    sample_id: Optional[str] = Field(default="SAMPLE_RECALCULATE", description="Sample identifier")
+    sample_id: Optional[str] = Field(default=None, description="Sample identifier")
     file_content: Optional[str] = Field(default=None, description="Raw file text to parse")
     str_profile: Optional[Dict[str, Any]] = Field(default=None, description="Explicit STR profile dictionary or locus map")
     snp_dosages: Optional[Dict[str, int]] = Field(default=None, description="Explicit SNP dosages for BGA and HIrisPlex")

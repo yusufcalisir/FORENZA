@@ -410,7 +410,7 @@ def run_comprehensive_terminal_analysis(req: TerminalComprehensiveRequest) -> Te
         else:
             profile_obj = DnaTerminalParser.parse_genemapper(content)
 
-    sample_id = req.sample_id or (profile_obj.sample_id if profile_obj else "COMPREHENSIVE_SAMPLE")
+    sample_id = profile_obj.sample_id if (profile_obj and profile_obj.sample_id) else (req.sample_id or "COMPREHENSIVE_SAMPLE")
     coc_hash = profile_obj.chain_of_custody_hash if profile_obj else ""
 
     # Build STR dict with flexible format normalization

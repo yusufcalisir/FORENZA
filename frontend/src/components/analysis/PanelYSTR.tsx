@@ -439,7 +439,10 @@ export default function PanelYSTR() {
 
 
   useEffect(() => {
-    runLiveAnalysis(selectedCohort, selectedPop.size, theta, meioses, observedK);
+    const timer = setTimeout(() => {
+      runLiveAnalysis(selectedCohort, selectedPop.size, theta, meioses, observedK);
+    }, 500);
+    return () => clearTimeout(timer);
   }, [selectedCohort, selectedPop, theta, meioses, observedK]);
 
   return (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useEffect } from "react";
+import { useState, useTransition, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Users,
@@ -192,16 +192,34 @@ export default function PanelDVI() {
     setPriorProb(currentPreset.prior);
   }, [currentPreset]);
 
-  // Compute Multi-Omic Joint LR (Client Fallback)
+  // Multi-Omic Component LRs
   const lrY = hasYstr && ystrPUpper > 0 ? 1.0 / ystrPUpper : 1.0;
   const lrM = hasMtdna && mtdnaPUpper > 0 ? 1.0 / mtdnaPUpper : 1.0;
   const lrS = hasSnp ? snpLr : 1.0;
 
-  const fallbackJointLr = autoLr * lrY * lrM * lrS;
-  const fallbackLog10Joint = fallbackJointLr > 0 ? Math.log10(fallbackJointLr) : -300.0;
-  const numFallback = fallbackJointLr * priorProb;
-  const denFallback = numFallback + (1.0 - priorProb);
-  const fallbackPosteriorW = fallbackJointLr > 0 ? numFallback / denFallback : 0.0;
+  // Compute Multi-Omic Joint LR (Instant Zero-Latency Synchronous Engine)
+  const computedDvi = useMemo(() => {
+    const joint = autoLr * lrY * lrM * lrS;
+    const log10 = joint > 0 ? Math.log10(joint) : -300.0;
+    const num = joint * priorProb;
+    const den = num + (1.0 - priorProb);
+    const w = joint > 0 ? num / den : 0.0;
+
+    let fbTier: "DEFINITIVE_IDENTIFICATION" | "PROBABLE_MATCH" | "INCONCLUSIVE" | "EXCLUSION" = "EXCLUSION";
+    if (joint >= 1.0e6) fbTier = "DEFINITIVE_IDENTIFICATION";
+    else if (joint >= 1.0e4) fbTier = "PROBABLE_MATCH";
+    else if (joint > 1.0e-2) fbTier = "INCONCLUSIVE";
+
+    return {
+      jointLr: joint,
+      log10Joint: log10,
+      posteriorW: w,
+      decisionTier: fbTier,
+      judicialAction: isTr ? "Adli kimliklendirme analizi yürütülüyor." : "Forensic identification analysis in progress.",
+      verbalEn: "Evaluation in progress",
+      verbalTr: "Değerlendirme sürüyor",
+    };
+  }, [autoLr, hasYstr, ystrPUpper, hasMtdna, mtdnaPUpper, hasSnp, snpLr, priorProb, isTr]);
 
   const [liveDvi, setLiveDvi] = useState<{
     jointLr: number;
@@ -211,76 +229,64 @@ export default function PanelDVI() {
     judicialAction: string;
     verbalEn: string;
     verbalTr: string;
-  }>({
-    jointLr: fallbackJointLr,
-    log10Joint: fallbackLog10Joint,
-    posteriorW: fallbackPosteriorW,
-    decisionTier: currentPreset.expectedTier,
-    judicialAction: isTr ? "Adli kimliklendirme analizi yürütülüyor." : "Forensic identification analysis in progress.",
-    verbalEn: "Evaluation in progress",
-    verbalTr: "Değerlendirme sürüyor",
-  });
+  } | null>(null);
 
-  // Call FastAPI backend joint-lr endpoint
+  // Call FastAPI backend joint-lr endpoint - debounced 500ms to eliminate 429 errors on slider drag
   useEffect(() => {
-    const API_BASE = getApiBaseUrl();
-    fetch(`${API_BASE}/api/v1/forensic/dvi/joint-lr`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        autosomal_lr: autoLr,
-        ystr_p_upper: hasYstr ? ystrPUpper : null,
-        mtdna_p_upper: hasMtdna ? mtdnaPUpper : null,
-        snp_lr: hasSnp ? snpLr : 1.0,
-        has_ystr: hasYstr,
-        has_mtdna: hasMtdna,
-        has_snp: hasSnp,
-        prior_probability: priorProb,
-      }),
-      signal: AbortSignal.timeout(4000),
-    })
-      .then(async (res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-        setLiveDvi({
-          jointLr: Number(data.joint_lr ?? fallbackJointLr),
-          log10Joint: Number(data.log10_joint_lr ?? fallbackLog10Joint),
-          posteriorW: Number(data.posterior_probability_w ?? fallbackPosteriorW),
-          decisionTier: data.decision_tier || currentPreset.expectedTier,
-          judicialAction: data.judicial_action || (isTr ? "Analiz tamamlandı." : "Analysis completed."),
-          verbalEn: data.verbal_predicate_en || "Evaluated",
-          verbalTr: data.verbal_predicate_tr || "Değerlendirildi",
-        });
+    const controller = new AbortController();
+
+    const timer = setTimeout(() => {
+      const API_BASE = getApiBaseUrl();
+      fetch(`${API_BASE}/api/v1/forensic/dvi/joint-lr`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          autosomal_lr: autoLr,
+          ystr_p_upper: hasYstr ? ystrPUpper : null,
+          mtdna_p_upper: hasMtdna ? mtdnaPUpper : null,
+          snp_lr: hasSnp ? snpLr : 1.0,
+          has_ystr: hasYstr,
+          has_mtdna: hasMtdna,
+          has_snp: hasSnp,
+          prior_probability: priorProb,
+        }),
+        signal: controller.signal,
       })
-
-      .catch(() => {
-        // Graceful fallback to client mathematics
-        let fbTier: "DEFINITIVE_IDENTIFICATION" | "PROBABLE_MATCH" | "INCONCLUSIVE" | "EXCLUSION" = "EXCLUSION";
-        if (fallbackJointLr >= 1.0e6) fbTier = "DEFINITIVE_IDENTIFICATION";
-        else if (fallbackJointLr >= 1.0e4) fbTier = "PROBABLE_MATCH";
-        else if (fallbackJointLr > 1.0e-2) fbTier = "INCONCLUSIVE";
-
-        setLiveDvi({
-          jointLr: fallbackJointLr,
-          log10Joint: fallbackLog10Joint,
-          posteriorW: fallbackPosteriorW,
-          decisionTier: fbTier,
-          judicialAction: isTr ? "Yerel istemci biyo-hesaplama motoruyla çözümlendi." : "Resolved via local client biocomputational engine.",
-          verbalEn: "Evaluated locally",
-          verbalTr: "Yerel olarak değerlendirildi",
+        .then(async (res) => {
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const data = await res.json();
+          setLiveDvi({
+            jointLr: Number(data.joint_lr ?? computedDvi.jointLr),
+            log10Joint: Number(data.log10_joint_lr ?? computedDvi.log10Joint),
+            posteriorW: Number(data.posterior_probability_w ?? computedDvi.posteriorW),
+            decisionTier: data.decision_tier || computedDvi.decisionTier,
+            judicialAction: data.judicial_action || (isTr ? "Analiz tamamlandı." : "Analysis completed."),
+            verbalEn: data.verbal_predicate_en || "Evaluated",
+            verbalTr: data.verbal_predicate_tr || "Değerlendirildi",
+          });
+        })
+        .catch((err) => {
+          if (err?.name === "AbortError") return;
+          setLiveDvi(computedDvi);
         });
-      });
-  }, [autoLr, hasYstr, ystrPUpper, hasMtdna, mtdnaPUpper, hasSnp, snpLr, priorProb, isTr, fallbackJointLr, fallbackLog10Joint, fallbackPosteriorW]);
+    }, 500);
 
-  const jointLr = liveDvi.jointLr;
-  const log10Joint = liveDvi.log10Joint;
-  const posteriorW = liveDvi.posteriorW;
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [autoLr, hasYstr, ystrPUpper, hasMtdna, mtdnaPUpper, hasSnp, snpLr, priorProb, isTr, computedDvi]);
+
+  const activeDvi = liveDvi || computedDvi;
+  const jointLr = activeDvi.jointLr;
+  const log10Joint = activeDvi.log10Joint;
+  const posteriorW = activeDvi.posteriorW;
 
   // Interpol DVI Decision Tier
-  let tier: "DEFINITIVE_IDENTIFICATION" | "PROBABLE_MATCH" | "INCONCLUSIVE" | "EXCLUSION" = liveDvi.decisionTier;
+  let tier: "DEFINITIVE_IDENTIFICATION" | "PROBABLE_MATCH" | "INCONCLUSIVE" | "EXCLUSION" = activeDvi.decisionTier;
   let tierColor: string;
   let tierLabel: string;
-  let actionText: string = liveDvi.judicialAction;
+  let actionText: string = activeDvi.judicialAction;
 
   if (jointLr >= 1.0e6 || tier === "DEFINITIVE_IDENTIFICATION") {
     tier = "DEFINITIVE_IDENTIFICATION";

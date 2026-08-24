@@ -193,58 +193,68 @@ export default function PanelADNA() {
 
   // Call FastAPI backend for deamination curves & fragmentation stats
   useEffect(() => {
-    const API_BASE = getApiBaseUrl();
+    const controller = new AbortController();
 
-    Promise.all([
-      fetch(`${API_BASE}/api/v1/forensic/adna/mapdamage-profile`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          delta_0: delta0,
-          decay_alpha: decayAlpha,
-          baseline_error: 0.005,
-          max_position: 25,
-          g_to_a_ratio: 1.0,
-        }),
-        signal: AbortSignal.timeout(4000),
-      }).then(async (r) => (r.ok ? r.json() : null)),
-      fetch(`${API_BASE}/api/v1/forensic/adna/fragmentation`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          lambda_param: lambdaFrag,
-          l_min: 30.0,
-        }),
-        signal: AbortSignal.timeout(4000),
-      }).then(async (r) => (r.ok ? r.json() : null)),
-    ])
-      .then(([mapData, fragData]) => {
-        let new5p = fbCurve5p;
-        let new3p = fbCurve3p;
-        if (mapData && mapData.curve_5p_c_to_t) {
-          new5p = Object.values(mapData.curve_5p_c_to_t) as number[];
-          new3p = Object.values(mapData.curve_3p_g_to_a) as number[];
-        }
+    const timer = setTimeout(() => {
+      const API_BASE = getApiBaseUrl();
 
-        setLiveAdna({
-          curve5p: new5p,
-          curve3p: new3p,
-          meanLen: fragData?.mean_length ?? fbMeanLen,
-          medianLen: fragData?.median_length ?? fbMedianLen,
-          fracBelow100: fragData?.fraction_below_100bp ?? fbFracBelow100,
-          degradationTier: fragData?.degradation_tier ?? currentPreset.tier,
+      Promise.all([
+        fetch(`${API_BASE}/api/v1/forensic/adna/mapdamage-profile`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            delta_0: delta0,
+            decay_alpha: decayAlpha,
+            baseline_error: 0.005,
+            max_position: 25,
+            g_to_a_ratio: 1.0,
+          }),
+          signal: controller.signal,
+        }).then(async (r) => (r.ok ? r.json() : null)),
+        fetch(`${API_BASE}/api/v1/forensic/adna/fragmentation`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            lambda_param: lambdaFrag,
+            l_min: 30.0,
+          }),
+          signal: controller.signal,
+        }).then(async (r) => (r.ok ? r.json() : null)),
+      ])
+        .then(([mapData, fragData]) => {
+          let new5p = fbCurve5p;
+          let new3p = fbCurve3p;
+          if (mapData && mapData.curve_5p_c_to_t) {
+            new5p = Object.values(mapData.curve_5p_c_to_t) as number[];
+            new3p = Object.values(mapData.curve_3p_g_to_a) as number[];
+          }
+
+          setLiveAdna({
+            curve5p: new5p,
+            curve3p: new3p,
+            meanLen: fragData?.mean_length ?? fbMeanLen,
+            medianLen: fragData?.median_length ?? fbMedianLen,
+            fracBelow100: fragData?.fraction_below_100bp ?? fbFracBelow100,
+            degradationTier: fragData?.degradation_tier ?? currentPreset.tier,
+          });
+        })
+        .catch((err) => {
+          if (err?.name === "AbortError") return;
+          setLiveAdna({
+            curve5p: fbCurve5p,
+            curve3p: fbCurve3p,
+            meanLen: fbMeanLen,
+            medianLen: fbMedianLen,
+            fracBelow100: fbFracBelow100,
+            degradationTier: currentPreset.tier,
+          });
         });
-      })
-      .catch(() => {
-        setLiveAdna({
-          curve5p: fbCurve5p,
-          curve3p: fbCurve3p,
-          meanLen: fbMeanLen,
-          medianLen: fbMedianLen,
-          fracBelow100: fbFracBelow100,
-          degradationTier: currentPreset.tier,
-        });
-      });
+    }, 500);
+
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
   }, [delta0, decayAlpha, lambdaFrag, fbMeanLen, fbMedianLen, fbFracBelow100, currentPreset.tier]);
 
   const curve5p = liveAdna.curve5p;

@@ -63,9 +63,9 @@ jobs:
       - name: Run Frontend NPM Audit Security Check
         run: npm --prefix frontend audit --audit-level=high || echo "NPM Security Audit Completed"
 
-  # ── Job 3: Python 35-Subsystem Biocomputational Test Suite (pytest) ──
-  biocomputational-test-suite:
-    name: 3. Python 35-Subsystem Biocomputational Test Suite (Pillars 1–7)
+  # ── Job 3: 18-Dimension Enterprise Security & Red-Team Test Suite ──
+  security-and-red-team-tests:
+    name: 3. Enterprise Security & Red-Team Test Suite (108 Tests)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -83,15 +83,43 @@ jobs:
           pip install -r backend/requirements.txt
           pip install pytest pytest-asyncio pytest-cov hypothesis
 
-      - name: Execute Full 35-Subsystem Test Suite (Pillars 1–7)
+      - name: Execute 18-Dimension Security & Red-Team Test Suite (108 Tests)
+        env:
+          PYTHONPATH: ".:backend:backend/app"
+          FORENZA_ENV: "test"
+          FORENZA_ADMIN_KEY: "FORENZA_ADMIN_METRICS_KEY_2026"
+        run: |
+          pytest backend/app/security/ -v --tb=short
+
+  # ── Job 4: Python 35-Subsystem Biocomputational Test Suite (pytest) ──
+  biocomputational-test-suite:
+    name: 4. Python 35-Subsystem Biocomputational Test Suite (Pillars 1-7)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install Core & Test Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r backend/requirements.txt
+          pip install pytest pytest-asyncio pytest-cov hypothesis
+
+      - name: Execute Full Biocomputational & Forensic Test Suite
         env:
           PYTHONPATH: ".:backend:backend/app"
         run: |
           pytest backend/ -v --tb=short
 
-  # ── Job 4: Smart Contracts & Zero-Knowledge Circuits Verification ──
+  # ── Job 5: Smart Contracts & Zero-Knowledge Circuits Verification ──
   smart-contracts-and-circuits:
-    name: 4. Smart Contracts & Zero-Knowledge Circuits Verification
+    name: 5. Smart Contracts & Zero-Knowledge Circuits Verification
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository

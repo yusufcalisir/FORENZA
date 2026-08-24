@@ -63,7 +63,7 @@ export default function SystemPulse() {
                     </div>
                     <div>
                         <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">Block Height</p>
-                        <p className="text-sm font-mono text-zinc-300">#{metrics.blockHeight.toLocaleString()}</p>
+                        <p className="text-sm font-mono text-zinc-300">#{(metrics?.blockHeight ?? 0).toLocaleString()}</p>
                     </div>
                 </div>
             </motion.div>

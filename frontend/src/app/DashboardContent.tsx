@@ -235,7 +235,7 @@ function GlobalNodes({ onSelectNode }: GlobalNodesProps) {
                 <div className="flex justify-between items-end">
                     <div className="flex flex-col">
                         <span className="font-data text-[14px] lg:text-[16px] font-bold text-emerald-500 tabular-nums">
-                            {stats.loaded ? stats.profiles.toLocaleString() : "..."}
+                            {stats.loaded ? (stats?.profiles ?? 0).toLocaleString() : "..."}
                         </span>
                         <span className="font-data text-[7px] text-zinc-600 uppercase tracking-tighter">Profiles</span>
                     </div>
@@ -293,11 +293,11 @@ function StatsGrid() {
     }, []);
 
     const statItems = [
-        { label: "Total Profiles", value: stats.loaded ? stats.profiles.toLocaleString() : "...", color: "text-tactical-text", icon: Database },
+        { label: "Total Profiles", value: stats.loaded ? (stats?.profiles ?? 0).toLocaleString() : "...", color: "text-tactical-text", icon: Database },
         { label: "Latency", value: `${stats.latency} ms`, color: stats.latency > 50 ? "text-amber-500" : "text-emerald-500", icon: Activity },
         { label: "Queries/Sec", value: stats.qps.toString(), color: "text-blue-400", icon: Zap },
         { label: "Nodes Online", value: stats.nodes.toString(), color: "text-emerald-500", icon: Network },
-        { label: "Validated Today", value: stats.validated.toLocaleString(), color: "text-emerald-500", icon: CheckCircle },
+        { label: "Validated Today", value: (stats?.validated ?? 0).toLocaleString(), color: "text-emerald-500", icon: CheckCircle },
         { label: "Quarantined", value: stats.quarantined.toString(), color: "text-amber-500", icon: ShieldAlert },
     ];
 

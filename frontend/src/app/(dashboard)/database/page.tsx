@@ -226,7 +226,7 @@ export default function DatabasePage() {
                     <Database className="w-3.5 h-3.5" />
                     <span>{isTr ? "DNA Veritabanı Kayıt Defteri" : "DNA Database Registry"}</span>
                     <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
-                        {stats.total.toLocaleString()}
+                        {(stats?.total ?? 0).toLocaleString()}
                     </span>
                 </button>
 
@@ -241,7 +241,7 @@ export default function DatabasePage() {
                     <Network className="w-3.5 h-3.5" />
                     <span>{isTr ? "Federe Laboratuvar Ağı" : "Federated Lab Network"}</span>
                     <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">
-                        {stats.uniqueNodes} {isTr ? "Düğüm" : "Nodes"}
+                        {stats?.uniqueNodes ?? 0} {isTr ? "Düğüm" : "Nodes"}
                     </span>
                 </button>
             </div>
@@ -264,13 +264,13 @@ export default function DatabasePage() {
                                 {isTr ? (
                                     <>
                                         Bu kayıt defteri, eğitim ve simülasyon amacıyla oluşturulmuş{" "}
-                                        <strong className="text-amber-300">{stats.total.toLocaleString()} sentetik profili</strong>{" "}
+                                        <strong className="text-amber-300">{(stats?.total ?? 0).toLocaleString()} sentetik profili</strong>{" "}
                                         içerir. Öne çıkan 2 vaka (EU, AA) gerçek kalibrasyon ölçütleridir. Hiçbir gerçek adli DNA verisi saklanmaz veya iletilmez.
                                     </>
                                 ) : (
                                     <>
                                         This registry displays{" "}
-                                        <strong className="text-amber-300">{stats.total.toLocaleString()} deterministically seeded synthetic profiles</strong>{" "}
+                                        <strong className="text-amber-300">{(stats?.total ?? 0).toLocaleString()} deterministically seeded synthetic profiles</strong>{" "}
                                         generated for demonstration and training purposes. The 2 featured cases (EU, AA) are real calibration benchmarks.
                                         No actual forensic DNA records are stored or transmitted.
                                     </>
@@ -285,11 +285,11 @@ export default function DatabasePage() {
                     {/* ── Bio-Forensic Stats Strip ── */}
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
                         {[
-                            { label: isTr ? "Toplam Profil" : "Total Profiles", value: stats.total.toLocaleString(), color: "#FAFAFA", bg: "#111113", border: "#27272A" },
-                            { label: isTr ? "Tam Profil (24 Lokus)" : "Complete (24 Loci)", value: stats.complete.toLocaleString(), color: "#22C55E", bg: "rgba(34,197,94,0.06)", border: "rgba(34,197,94,0.25)" },
-                            { label: isTr ? "Kısmi Profil (14-23 Lokus)" : "Partial (14-23 Loci)", value: stats.partial.toLocaleString(), color: "#06B6D4", bg: "rgba(6,182,212,0.06)", border: "rgba(6,182,212,0.25)" },
-                            { label: isTr ? "Bozulmuş Profil (<14 Lokus)" : "Degraded (<14 Loci)", value: stats.degraded.toLocaleString(), color: "#EF4444", bg: "rgba(239,68,68,0.06)", border: "rgba(239,68,68,0.25)" },
-                            { label: isTr ? "Aktif Ağ Düğümleri" : "Active Network Nodes", value: stats.uniqueNodes.toString(), color: "#8B5CF6", bg: "rgba(139,92,246,0.06)", border: "rgba(139,92,246,0.25)" },
+                            { label: isTr ? "Toplam Profil" : "Total Profiles", value: (stats?.total ?? 0).toLocaleString(), color: "#FAFAFA", bg: "#111113", border: "#27272A" },
+                            { label: isTr ? "Tam Profil (24 Lokus)" : "Complete (24 Loci)", value: (stats?.complete ?? 0).toLocaleString(), color: "#22C55E", bg: "rgba(34,197,94,0.06)", border: "rgba(34,197,94,0.25)" },
+                            { label: isTr ? "Kısmi Profil (14-23 Lokus)" : "Partial (14-23 Loci)", value: (stats?.partial ?? 0).toLocaleString(), color: "#06B6D4", bg: "rgba(6,182,212,0.06)", border: "rgba(6,182,212,0.25)" },
+                            { label: isTr ? "Bozulmuş Profil (<14 Lokus)" : "Degraded (<14 Loci)", value: (stats?.degraded ?? 0).toLocaleString(), color: "#EF4444", bg: "rgba(239,68,68,0.06)", border: "rgba(239,68,68,0.25)" },
+                            { label: isTr ? "Aktif Ağ Düğümleri" : "Active Network Nodes", value: (stats?.uniqueNodes ?? 0).toString(), color: "#8B5CF6", bg: "rgba(139,92,246,0.06)", border: "rgba(139,92,246,0.25)" },
                         ].map((s) => (
                             <div
                                 key={s.label}
@@ -488,15 +488,15 @@ export default function DatabasePage() {
                             <div>
                                 {isTr ? (
                                     <>
-                                        Toplam <span className="text-white font-bold">{filtered.length.toLocaleString()}</span> kayıttan{" "}
-                                        <span className="text-white font-bold">{filtered.length === 0 ? 0 : page * PAGE_SIZE + 1}</span> -{" "}
-                                        <span className="text-white font-bold">{Math.min((page + 1) * PAGE_SIZE, filtered.length)}</span> arası gösteriliyor
+                                        Toplam <span className="text-white font-bold">{(filtered?.length ?? 0).toLocaleString()}</span> kayıttan{" "}
+                                        <span className="text-white font-bold">{filtered?.length === 0 ? 0 : page * PAGE_SIZE + 1}</span> -{" "}
+                                        <span className="text-white font-bold">{Math.min((page + 1) * PAGE_SIZE, filtered?.length ?? 0)}</span> arası gösteriliyor
                                     </>
                                 ) : (
                                     <>
-                                        Showing <span className="text-white font-bold">{filtered.length === 0 ? 0 : page * PAGE_SIZE + 1}</span> to{" "}
-                                        <span className="text-white font-bold">{Math.min((page + 1) * PAGE_SIZE, filtered.length)}</span> of{" "}
-                                        <span className="text-white font-bold">{filtered.length.toLocaleString()}</span> entries
+                                        Showing <span className="text-white font-bold">{filtered?.length === 0 ? 0 : page * PAGE_SIZE + 1}</span> to{" "}
+                                        <span className="text-white font-bold">{Math.min((page + 1) * PAGE_SIZE, filtered?.length ?? 0)}</span> of{" "}
+                                        <span className="text-white font-bold">{(filtered?.length ?? 0).toLocaleString()}</span> entries
                                     </>
                                 )}
                             </div>

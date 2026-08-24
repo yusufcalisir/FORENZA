@@ -249,7 +249,7 @@ export const PanelMPSSTR: React.FC = () => {
               <div className="bg-tactical-surface/50 border border-tactical-border/60 rounded-xl p-4">
                 <div className="text-xs text-slate-400 font-mono mb-1">{isTr ? "CE OLABİLİRLİK ORANI" : "CE LIKELIHOOD RATIO"}</div>
                 <div className="text-xl font-bold text-amber-300 font-mono">
-                  {activePreset.lrCe.toLocaleString()}
+                  {(activePreset?.lrCe ?? 0).toLocaleString()}
                 </div>
                 <div className="text-xs text-slate-400 mt-2">
                   {isTr ? "Sadece uzunluk/boyut frekansı" : "Length-only size frequency"}
@@ -259,7 +259,7 @@ export const PanelMPSSTR: React.FC = () => {
               <div className="bg-tactical-surface/50 border border-emerald-500/40 rounded-xl p-4 bg-emerald-950/20">
                 <div className="text-xs text-emerald-400 font-mono mb-1">{isTr ? "MPS SEKANS LIKELIHOOD" : "MPS SEQUENCE LR"}</div>
                 <div className="text-xl font-bold text-emerald-300 font-mono">
-                  {activePreset.lrMps.toLocaleString()}
+                  {(activePreset?.lrMps ?? 0).toLocaleString()}
                 </div>
                 <div className="text-xs text-emerald-400/80 mt-2">
                   {isTr ? "Sekans izoallel frekansı" : "Sequence isoallele frequency"}

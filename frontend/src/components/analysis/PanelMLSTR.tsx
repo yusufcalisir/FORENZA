@@ -116,32 +116,35 @@ export const PanelMLSTR: React.FC = () => {
     setSelectedPeakIndex(0);
   }, [activePreset]);
 
-  // Current selected peak & major peak
-  const currentPeak = activePreset.rawPeaks[selectedPeakIndex] || activePreset.rawPeaks[0];
+  // Current selected peak & major peak with safe fallback
+  const defaultPeak = { id: "Peak_1", h: 1000, bp: 100, class: "CLASS_TRUE_ALLELE", conf: 0.95 };
+  const rawPeaks = activePreset?.rawPeaks || [];
+  const currentPeak = rawPeaks[selectedPeakIndex] || rawPeaks[0] || defaultPeak;
   const majorPeak = React.useMemo(() => {
-    return activePreset.rawPeaks.reduce((max, p) => (p.h > max.h ? p : max), activePreset.rawPeaks[0]);
-  }, [activePreset]);
+    if (!rawPeaks.length) return defaultPeak;
+    return rawPeaks.reduce((max, p) => (p.h > max.h ? p : max), rawPeaks[0]);
+  }, [rawPeaks]);
 
   // 24D Feature metrics computed for current peak
   const peakFeatures = React.useMemo(() => {
-    const h = currentPeak.h;
+    const h = currentPeak?.h ?? 1000;
     const fwhm = 1.0 + (h > 1500 ? 0.25 : 0.0);
     const area = Number((h * 1.064 * fwhm).toFixed(1));
     const sharpness = Number((Math.min(1.0, h / Math.max(1, area))).toFixed(4));
     const snr = Number((h / 3.0).toFixed(1));
-    const deltaBp = Number((currentPeak.bp - majorPeak.bp).toFixed(2));
+    const deltaBp = Number(((currentPeak?.bp ?? 100) - (majorPeak?.bp ?? 100)).toFixed(2));
     const isBackStutter = Math.abs(deltaBp + 4.0) < 0.8;
     const isFwdStutter = Math.abs(deltaBp - 4.0) < 0.8;
     const isPlusA = Math.abs(deltaBp - 1.0) < 0.6;
-    const sr = majorPeak.h > 0 ? Number(((h / majorPeak.h) * 100).toFixed(1)) : 0;
+    const sr = (majorPeak?.h ?? 0) > 0 ? Number(((h / majorPeak.h) * 100).toFixed(1)) : 0;
 
-    const locus = activePreset.locus;
+    const locus = activePreset?.locus ?? "D21S11";
     const entropy = locus === "SE33" ? 1.942 : locus === "D21S11" ? 1.716 : locus === "TH01" ? 1.582 : 1.650;
     const gcContent = locus === "D18S51" ? 32.5 : locus === "D21S11" ? 25.0 : locus === "TH01" ? 28.0 : 30.0;
     const homopolymer = locus === "SE33" ? 4 : locus === "D21S11" ? 2 : 3;
 
-    const hb = Number((Math.min(1.0, h / Math.max(h, majorPeak.h))).toFixed(3));
-    const pullUp = currentPeak.class === "CLASS_PULL_UP_ARTIFACT" ? 8.5 : 0.0;
+    const hb = Number((Math.min(1.0, h / Math.max(h, majorPeak?.h ?? h))).toFixed(3));
+    const pullUp = currentPeak?.class === "CLASS_PULL_UP_ARTIFACT" ? 8.5 : 0.0;
     const atMargin = Math.max(0, h - 50.0);
 
     return {
@@ -543,11 +546,11 @@ export const PanelMLSTR: React.FC = () => {
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="text-xs text-slate-400 font-semibold">{isTr ? "Tepe Seç:" : "Select Peak:"}</span>
                   <div className="flex items-center gap-1.5 bg-black/50 p-1 rounded-xl border border-tactical-border/60">
-                    {activePreset.rawPeaks.map((peak, idx) => {
+                    {rawPeaks.map((peak, idx) => {
                       const isSelected = selectedPeakIndex === idx;
                       return (
                         <button
-                          key={peak.id}
+                          key={peak?.id || idx}
                           type="button"
                           onClick={() => setSelectedPeakIndex(idx)}
                           className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
@@ -556,8 +559,8 @@ export const PanelMLSTR: React.FC = () => {
                               : "text-slate-400 hover:text-slate-200 hover:bg-white/5"
                           }`}
                         >
-                          <span>{peak.id}</span>
-                          <span className="text-[10px] opacity-80">({peak.h.toLocaleString()} RFU)</span>
+                          <span>{peak?.id ?? `Peak_${idx + 1}`}</span>
+                          <span className="text-[10px] opacity-80">({(peak?.h ?? 0).toLocaleString()} RFU)</span>
                         </button>
                       );
                     })}
@@ -571,7 +574,7 @@ export const PanelMLSTR: React.FC = () => {
                   <span className="text-slate-300 font-bold flex items-center gap-2">
                     <Activity className="w-4 h-4 text-purple-400" />
                     {isTr ? "24-Boyutlu Özellik Yoğunluk Spektrumu" : "24D Feature Vector Intensity Spectrum"}
-                    <span className="font-mono text-purple-300 font-bold">[{currentPeak.id} • {currentPeak.bp} bp]</span>
+                    <span className="font-mono text-purple-300 font-bold">[{currentPeak?.id ?? "Peak"} • {currentPeak?.bp ?? 0} bp]</span>
                   </span>
                   <div className="flex items-center gap-3 text-[10px] font-mono text-slate-400">
                     <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-purple-400" /> {isTr ? "x1-x6 Morfoloji" : "x1-x6 Morphology"}</span>
@@ -585,7 +588,7 @@ export const PanelMLSTR: React.FC = () => {
                 <div className="grid grid-cols-12 sm:grid-cols-24 gap-1 h-16 items-end pt-2 bg-black/40 rounded-lg p-2 border border-slate-900">
                   {[
                     // x1-x6: Morphology (Purple)
-                    { id: "x1", val: Math.min(100, (currentPeak.h / 3000) * 100), label: "Height", color: "bg-purple-500" },
+                    { id: "x1", val: Math.min(100, ((currentPeak?.h ?? 0) / 3000) * 100), label: "Height", color: "bg-purple-500" },
                     { id: "x2", val: Math.min(100, (peakFeatures.area / 3000) * 100), label: "Area", color: "bg-purple-500" },
                     { id: "x3", val: peakFeatures.sharpness * 100, label: "Sharpness", color: "bg-purple-400" },
                     { id: "x4", val: Math.min(100, (peakFeatures.snr / 800) * 100), label: "SNR", color: "bg-purple-400" },
@@ -653,12 +656,12 @@ export const PanelMLSTR: React.FC = () => {
                     <div>
                       <div className="flex justify-between text-[11px] mb-1">
                         <span className="text-slate-400">{isTr ? "Tepe Yüksekliği (Peak Height - h):" : "Peak Height (h):"}</span>
-                        <span className="font-mono font-bold text-white">{currentPeak.h.toLocaleString()} RFU</span>
+                        <span className="font-mono font-bold text-white">{(currentPeak?.h ?? 0).toLocaleString()} RFU</span>
                       </div>
                       <div className="h-1.5 w-full rounded-full bg-slate-950 overflow-hidden">
                         <div
                           className="h-full bg-gradient-to-r from-purple-500 to-purple-300 rounded-full"
-                          style={{ width: `${Math.min(100, (currentPeak.h / 3000) * 100)}%` }}
+                          style={{ width: `${Math.min(100, ((currentPeak?.h ?? 0) / 3000) * 100)}%` }}
                         />
                       </div>
                     </div>
@@ -820,7 +823,7 @@ export const PanelMLSTR: React.FC = () => {
                     <div className="grid grid-cols-2 gap-2 pt-1 font-mono text-[11px]">
                       <div className="p-2.5 rounded-xl bg-black/40 border border-slate-800 space-y-0.5">
                         <div className="text-slate-400 text-[10px]">{isTr ? "Analitik Eşik Marjı:" : "AT Threshold Margin:"}</div>
-                        <div className="font-bold text-emerald-400">+{peakFeatures.atMargin.toLocaleString()} RFU</div>
+                        <div className="font-bold text-emerald-400">+{(peakFeatures?.atMargin ?? 0).toLocaleString()} RFU</div>
                       </div>
                       <div className="p-2.5 rounded-xl bg-black/40 border border-slate-800 space-y-0.5">
                         <div className="text-slate-400 text-[10px]">{isTr ? "Spektral Çekme (Pull-Up):" : "Spectral Pull-Up:"}</div>
@@ -832,7 +835,7 @@ export const PanelMLSTR: React.FC = () => {
                       </div>
                       <div className="p-2.5 rounded-xl bg-black/40 border border-slate-800 space-y-0.5">
                         <div className="text-slate-400 text-[10px]">{isTr ? "Fragsifier Karar Güveni:" : "RF Ensemble Conf:"}</div>
-                        <div className="font-bold text-purple-300">{isTr ? `%${(currentPeak.conf * 100).toFixed(1)}` : `${(currentPeak.conf * 100).toFixed(1)}%`}</div>
+                        <div className="font-bold text-purple-300">{isTr ? `%${((currentPeak?.conf ?? 0.95) * 100).toFixed(1)}` : `${((currentPeak?.conf ?? 0.95) * 100).toFixed(1)}%`}</div>
                       </div>
                     </div>
                   </div>

@@ -162,12 +162,12 @@ export default function LocalNodeStatus() {
             {/* ── Stats Grid ── */}
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">
                 {[
-                    { label: "Local Database", value: stats.localDatabaseSize.toLocaleString(), sub: "profiles", icon: Database, accent: "text-tactical-primary" },
-                    { label: "Queries (24h)", value: stats.incomingQueriesLast24h.toString(), sub: "incoming", icon: Search, accent: "text-cyan-400" },
-                    { label: "Matches Found", value: stats.successfulMatches.toString(), sub: "above 0.90", icon: CheckCircle, accent: "text-emerald-400" },
-                    { label: "Blocked by Law", value: stats.blockedByLaw.toString(), sub: "sovereignty", icon: Lock, accent: "text-amber-400" },
-                    { label: "Active Tokens", value: stats.tokensActive.toString(), sub: "ephemeral", icon: Eye, accent: "text-violet-400" },
-                    { label: "Avg Latency", value: `${stats.avgSearchLatencyMs.toFixed(1)}ms`, sub: "per search", icon: Zap, accent: "text-tactical-primary" },
+                    { label: "Local Database", value: (stats?.localDatabaseSize ?? 0).toLocaleString(), sub: "profiles", icon: Database, accent: "text-tactical-primary" },
+                    { label: "Queries (24h)", value: (stats?.incomingQueriesLast24h ?? 0).toString(), sub: "incoming", icon: Search, accent: "text-cyan-400" },
+                    { label: "Matches Found", value: (stats?.successfulMatches ?? 0).toString(), sub: "above 0.90", icon: CheckCircle, accent: "text-emerald-400" },
+                    { label: "Blocked by Law", value: (stats?.blockedByLaw ?? 0).toString(), sub: "sovereignty", icon: Lock, accent: "text-amber-400" },
+                    { label: "Active Tokens", value: (stats?.tokensActive ?? 0).toString(), sub: "ephemeral", icon: Eye, accent: "text-violet-400" },
+                    { label: "Avg Latency", value: `${(stats?.avgSearchLatencyMs ?? 0).toFixed(1)}ms`, sub: "per search", icon: Zap, accent: "text-tactical-primary" },
                 ].map(stat => (
                     <div key={stat.label} className="flex flex-col gap-1 bg-tactical-surface border border-tactical-border rounded px-3 py-2.5">
                         <div className="flex items-center gap-1.5">

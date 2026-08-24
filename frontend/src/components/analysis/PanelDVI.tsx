@@ -582,7 +582,7 @@ export default function PanelDVI() {
                   <span className="text-sm font-bold font-mono text-cyan-300">{hasYstr ? formatExp(ystrPUpper, 1) : "-"}</span>
                 </div>
                 <div className="text-[10px] font-mono text-slate-400 text-right">
-                  LR_Y = {hasYstr ? lrY.toLocaleString() : "1.00"}
+                  LR_Y = {hasYstr ? (lrY ?? 1).toLocaleString() : "1.00"}
                 </div>
               </div>
 
@@ -607,7 +607,7 @@ export default function PanelDVI() {
 
                 </div>
                 <div className="text-[10px] font-mono text-slate-400 text-right">
-                  LR_mtDNA = {hasMtdna ? lrM.toLocaleString() : "1.00"}
+                  LR_mtDNA = {hasMtdna ? (lrM ?? 1).toLocaleString() : "1.00"}
                 </div>
               </div>
 

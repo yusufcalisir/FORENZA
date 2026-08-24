@@ -64,7 +64,7 @@ export default function FederatedNetworkPanel() {
                 {[
                     { label: isTr ? "Toplam Düğüm" : "Total Nodes", value: `${LAB_NODES.length}`, icon: Server, color: "text-purple-400" },
                     { label: isTr ? "Çevrimiçi Düğüm" : "Nodes Online", value: `${online}`, icon: CheckCircle, color: "text-emerald-400" },
-                    { label: isTr ? "Toplam Profil" : "Total Profiles", value: totalProfiles.toLocaleString(), icon: Database, color: "text-cyan-400" },
+                    { label: isTr ? "Toplam Profil" : "Total Profiles", value: (totalProfiles ?? 0).toLocaleString(), icon: Database, color: "text-cyan-400" },
                     { label: isTr ? "Ort. Gecikme" : "Avg Latency", value: "28ms", icon: Zap, color: "text-amber-400" },
                 ].map((m, i) => {
                     const Icon = m.icon;
@@ -132,7 +132,7 @@ export default function FederatedNetworkPanel() {
                                 </div>
                                 <div className="p-1.5 rounded-lg bg-black/40 border border-tactical-border/40">
                                     <span className="text-zinc-500 block">{isTr ? "Profiller" : "Profiles"}</span>
-                                    <span className="font-bold text-zinc-300 font-mono">{node.profilesCount.toLocaleString()}</span>
+                                    <span className="font-bold text-zinc-300 font-mono">{(node?.profilesCount ?? 0).toLocaleString()}</span>
                                 </div>
                                 <div className="p-1.5 rounded-lg bg-black/40 border border-tactical-border/40 col-span-2">
                                     <span className="text-zinc-500 block">{isTr ? "Son Blok Hashi" : "Last Block Hash"}</span>

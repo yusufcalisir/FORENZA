@@ -417,9 +417,9 @@ export default function PanelXSTR() {
           </div>
           <div className="mt-2 flex items-baseline gap-2">
             <span className="text-2xl font-bold font-mono text-cyan-300 tabular-nums">
-              {combinedKi >= 1e6
-                ? combinedKi.toExponential(4)
-                : combinedKi.toLocaleString("en-US", { maximumFractionDigits: 2 })}
+              {(combinedKi ?? 0) >= 1e6
+                ? (combinedKi ?? 0).toExponential(4)
+                : (combinedKi ?? 0).toLocaleString("en-US", { maximumFractionDigits: 2 })}
             </span>
           </div>
           <p className="mt-1 text-[11px] font-mono text-slate-500">
@@ -579,7 +579,7 @@ export default function PanelXSTR() {
                   <div className="text-right shrink-0">
                     <span className="text-xs text-slate-400 block font-mono">KI_{lg.id}</span>
                     <span className="font-mono font-bold text-cyan-300 text-sm">
-                      {grpRes.ki.toLocaleString("en-US", { maximumFractionDigits: 2 })}
+                      {(grpRes?.ki ?? 0).toLocaleString("en-US", { maximumFractionDigits: 2 })}
                     </span>
                     <span className="text-[10px] text-slate-500 font-mono block">
                       (log₁₀ = {grpRes.log10.toFixed(2)})

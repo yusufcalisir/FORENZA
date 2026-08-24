@@ -559,7 +559,7 @@ export default function PanelYSTR() {
             <p className={`text-xl sm:text-2xl font-bold font-mono tabular-nums ${
               kinshipResult.isExcluded ? "text-rose-400" : "text-emerald-400"
             }`}>
-              {kinshipResult.isExcluded ? "0.00" : kinshipResult.paternalLR.toLocaleString(undefined, { maximumFractionDigits: 1 })}
+              {kinshipResult.isExcluded ? "0.00" : (kinshipResult?.paternalLR ?? 1).toLocaleString(undefined, { maximumFractionDigits: 1 })}
             </p>
             <span className="text-xs text-zinc-400 font-mono">
               (log₁₀ = {kinshipResult.log10LR.toFixed(2)})
@@ -583,8 +583,8 @@ export default function PanelYSTR() {
           </p>
           <p className="text-[10px] text-zinc-400">
             {isTr
-              ? `${Math.round(1.0 / (kinshipResult.pUpper || 0.0001)).toLocaleString()} erkekte 1 (N=${selectedPop.size.toLocaleString()})`
-              : `1 in ${Math.round(1.0 / (kinshipResult.pUpper || 0.0001)).toLocaleString()} males (N=${selectedPop.size.toLocaleString()})`}
+              ? `${Math.round(1.0 / (kinshipResult.pUpper || 0.0001)).toLocaleString()} erkekte 1 (N=${(selectedPop?.size ?? 125000).toLocaleString()})`
+              : `1 in ${Math.round(1.0 / (kinshipResult.pUpper || 0.0001)).toLocaleString()} males (N=${(selectedPop?.size ?? 125000).toLocaleString()})`}
           </p>
         </div>
 
@@ -638,7 +638,7 @@ export default function PanelYSTR() {
               >
                 {YHRD_METAPOPULATIONS.map((p) => (
                   <option key={p.code} value={p.code} className="bg-zinc-900 text-zinc-200">
-                    {p.name} (N = {p.size.toLocaleString()})
+                    {p.name} (N = {(p?.size ?? 0).toLocaleString()})
                   </option>
                 ))}
               </select>

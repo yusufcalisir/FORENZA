@@ -381,13 +381,13 @@ export default function GlobalPulse() {
             {/* ── Telemetry Bar ── */}
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2">
                 {[
-                    { label: isTr ? "Ort. Yanıt" : "Avg Response", value: `${stats.avgGlobalRtt}ms`, icon: Clock, accent: "text-tactical-primary" },
-                    { label: isTr ? "Aktif Tüneller" : "Active Tunnels", value: stats.activeTunnels.toString(), icon: Lock, accent: "text-emerald-400" },
-                    { label: isTr ? "Toplam Ping" : "Total Pings", value: stats.totalPings.toLocaleString(), icon: Radio, accent: "text-cyan-400" },
-                    { label: isTr ? "Hatalar" : "Failures", value: stats.totalFailures.toString(), icon: AlertTriangle, accent: "text-red-400" },
-                    { label: isTr ? "Darboğazlar" : "Bottlenecks", value: stats.bottleneckCount.toString(), icon: TrendingUp, accent: "text-orange-400" },
-                    { label: isTr ? "En Hızlı Düğüm" : "Fastest Node", value: stats.healthiestNode, icon: Zap, accent: "text-emerald-400" },
-                    { label: isTr ? "En Yavaş Düğüm" : "Slowest Node", value: stats.slowestNode, icon: WifiOff, accent: "text-amber-400" },
+                    { label: isTr ? "Ort. Yanıt" : "Avg Response", value: `${stats?.avgGlobalRtt ?? 0}ms`, icon: Clock, accent: "text-tactical-primary" },
+                    { label: isTr ? "Aktif Tüneller" : "Active Tunnels", value: (stats?.activeTunnels ?? 0).toString(), icon: Lock, accent: "text-emerald-400" },
+                    { label: isTr ? "Toplam Ping" : "Total Pings", value: (stats?.totalPings ?? 0).toLocaleString(), icon: Radio, accent: "text-cyan-400" },
+                    { label: isTr ? "Hatalar" : "Failures", value: (stats?.totalFailures ?? 0).toString(), icon: AlertTriangle, accent: "text-red-400" },
+                    { label: isTr ? "Darboğazlar" : "Bottlenecks", value: (stats?.bottleneckCount ?? 0).toString(), icon: TrendingUp, accent: "text-orange-400" },
+                    { label: isTr ? "En Hızlı Düğüm" : "Fastest Node", value: stats?.healthiestNode ?? "-", icon: Zap, accent: "text-emerald-400" },
+                    { label: isTr ? "En Yavaş Düğüm" : "Slowest Node", value: stats?.slowestNode ?? "-", icon: WifiOff, accent: "text-amber-400" },
                 ].map((s) => (
                     <div key={s.label} className="flex flex-col gap-0.5 bg-tactical-surface border border-tactical-border rounded px-2.5 py-2">
                         <div className="flex items-center gap-1">

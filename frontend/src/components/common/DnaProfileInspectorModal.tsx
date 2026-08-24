@@ -813,7 +813,7 @@ export default function DnaProfileInspectorModal() {
           outputLines = [
             { id: `out-${Date.now()}-1`, type: "info", text: `Executing YHRD v60 Paternal Lineage Match Statistics (Database N=35,000, k=0, θ=${thetaVal})...` },
             { id: `out-${Date.now()}-2`, type: "success", text: `  • Clopper-Pearson 95% Upper Bound: ${clopper.upperBound.toExponential(4)}` },
-            { id: `out-${Date.now()}-3`, type: "success", text: `  • Y-STR Likelihood Ratio (LR_YSTR): ${clopper.likelihoodRatio.toLocaleString()} (1 in ${(1 / clopper.upperBound).toFixed(0)})` },
+            { id: `out-${Date.now()}-3`, type: "success", text: `  • Y-STR Likelihood Ratio (LR_YSTR): ${(clopper?.likelihoodRatio ?? 0).toLocaleString()} (1 in ${(1 / (clopper?.upperBound || 0.0001)).toFixed(0)})` },
             { id: `out-${Date.now()}-4`, type: "output", text: `  • Brenner Subpopulation Correction P(E): ${brenner.toExponential(4)}` },
             { id: `out-${Date.now()}-5`, type: "output", text: `  • ENFSI 2017 Verbal Scale: ${clopper.enfsiVerbalScale}` },
           ];
@@ -2187,10 +2187,10 @@ export default function DnaProfileInspectorModal() {
                       {isTr ? "Babasal Olabilirlik Oranı (LR_YSTR)" : "Paternal Likelihood Ratio (LR_YSTR)"}
                     </span>
                     <p className="text-base sm:text-lg font-extrabold text-emerald-400 font-mono">
-                      {liveYstrStats.clopper.likelihoodRatio.toLocaleString()}
+                      {(liveYstrStats?.clopper?.likelihoodRatio ?? 0).toLocaleString()}
                     </p>
                     <p className="text-[9px] text-zinc-400 truncate">
-                      {isTr ? `${(1 / liveYstrStats.clopper.upperBound).toFixed(0)} Erkekte 1` : `1 in ${(1 / liveYstrStats.clopper.upperBound).toFixed(0)} Males`}
+                      {isTr ? `${(1 / (liveYstrStats?.clopper?.upperBound || 0.0001)).toFixed(0)} Erkekte 1` : `1 in ${(1 / (liveYstrStats?.clopper?.upperBound || 0.0001)).toFixed(0)} Males`}
                     </p>
                   </div>
 

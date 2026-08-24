@@ -278,7 +278,7 @@ export default function ExpertWitnessPanel() {
               <div>
                 <label className="text-zinc-400 block mb-1">
                   log₁₀(LR) = <span className="text-amber-300 font-bold">{log10LR.toFixed(4)}</span>
-                  <span className="text-zinc-500 ml-2">(LR ≈ {computedLR >= 1e6 ? computedLR.toExponential(2) : computedLR.toLocaleString()})</span>
+                  <span className="text-zinc-500 ml-2">(LR ≈ {(computedLR ?? 1) >= 1e6 ? (computedLR ?? 1).toExponential(2) : (computedLR ?? 1).toLocaleString()})</span>
                 </label>
                 <input
                   type="range"

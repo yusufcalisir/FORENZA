@@ -633,7 +633,7 @@ export default function PanelMTDNA() {
               {isTr ? "Veritabanı Boyutu (N)" : "Database Size (N)"}
             </span>
             <span className="text-sm font-mono font-bold text-emerald-400">
-              {databaseN.toLocaleString()} {isTr ? "Mitogenom" : "Mitogenomes"}
+              {(databaseN ?? 48500).toLocaleString()} {isTr ? "Mitogenom" : "Mitogenomes"}
             </span>
           </div>
         </div>
@@ -670,7 +670,7 @@ export default function PanelMTDNA() {
                 <span className="font-semibold text-slate-300">
                   {isTr ? "Veritabanı Kohort Boyutu (N):" : "Database Cohort Size (N):"}
                 </span>
-                <span className="font-mono text-cyan-400 font-bold">{databaseN.toLocaleString()}</span>
+                <span className="font-mono text-cyan-400 font-bold">{(databaseN ?? 48500).toLocaleString()}</span>
               </div>
               <input
                 type="range"
@@ -702,8 +702,8 @@ export default function PanelMTDNA() {
                 <span>{isTr ? "Eşdeğer Eşleşme Oranı:" : "Equivalent Match Ratio:"}</span>
                 <span className="font-mono text-cyan-400 font-bold">
                   {isTr
-                    ? `${Math.round(1 / pUpper).toLocaleString()} kişide 1`
-                    : `1 in ${Math.round(1 / pUpper).toLocaleString()}`}
+                    ? `${Math.round(1 / (pUpper || 0.0001)).toLocaleString()} kişide 1`
+                    : `1 in ${Math.round(1 / (pUpper || 0.0001)).toLocaleString()}`}
                 </span>
               </div>
             </div>
@@ -717,7 +717,7 @@ export default function PanelMTDNA() {
                   {isTr ? "Anne Soyu Olabilirlik Oranı (LR_mtDNA)" : "Maternal Likelihood Ratio (LR_mtDNA)"}
                 </span>
                 <div className="text-3xl font-extrabold font-mono text-white tracking-tight mt-2">
-                  {isExclusion ? "0.00" : maternalLr.toLocaleString()}
+                  {isExclusion ? "0.00" : (maternalLr ?? 1).toLocaleString()}
                 </div>
                 <div className="text-xs font-mono text-slate-400 mt-1">
                   log10(LR) = {isExclusion ? "-300.0" : log10Lr.toFixed(4)}

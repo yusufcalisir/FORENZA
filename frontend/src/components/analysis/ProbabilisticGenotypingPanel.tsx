@@ -302,7 +302,7 @@ export default function ProbabilisticGenotypingPanel() {
       assumptions: [
         `Model: ${modelEngine}`,
         `K contributors: ${numContributors}`,
-        `MCMC iterations: ${mcmcSteps.toLocaleString()}`,
+        `MCMC iterations: ${(mcmcSteps ?? 10000).toLocaleString()}`,
         "Gelman-Rubin R̂ < 1.05 converged"
       ]
     });
@@ -374,8 +374,8 @@ export default function ProbabilisticGenotypingPanel() {
               <span className="flex items-center gap-2 font-bold truncate">
                 <Cpu className="w-4 h-4 animate-pulse text-amber-400 shrink-0" />
                 {isTr
-                  ? `3 Paralel MCMC Zinciri Yürütülüyor (${mcmcSteps.toLocaleString()} iterasyon, 500 ısınma)...`
-                  : `Executing 3 Parallel MCMC Chains (${mcmcSteps.toLocaleString()} iterations, burn-in 500)...`}
+                  ? `3 Paralel MCMC Zinciri Yürütülüyor (${(mcmcSteps ?? 10000).toLocaleString()} iterasyon, 500 ısınma)...`
+                  : `Executing 3 Parallel MCMC Chains (${(mcmcSteps ?? 10000).toLocaleString()} iterations, burn-in 500)...`}
               </span>
               <span className="font-mono font-black">{sampleProgress}%</span>
             </div>
@@ -417,7 +417,7 @@ export default function ProbabilisticGenotypingPanel() {
             {isTr ? "Etkin Örneklem Büyüklüğü:" : "Effective Sample Size:"}
           </span>
           <span className="text-xs font-bold text-amber-400 tabular-nums shrink-0">
-            ESS_min = {mcmcState.ess_min.toLocaleString()} &gt; 1,000
+            ESS_min = {(mcmcState?.ess_min ?? 0).toLocaleString()} &gt; 1,000
           </span>
         </div>
       </div>
@@ -566,7 +566,7 @@ export default function ProbabilisticGenotypingPanel() {
             </div>
             <div className="flex justify-between text-[11px] pt-1">
               <span className="text-zinc-400">{isTr ? "İterasyon Sayısı:" : "Iterations:"}</span>
-              <span className="text-emerald-400 font-bold tabular-nums">{mcmcSteps.toLocaleString()}</span>
+              <span className="text-emerald-400 font-bold tabular-nums">{(mcmcSteps ?? 10000).toLocaleString()}</span>
             </div>
             <input
               type="range"
@@ -594,7 +594,7 @@ export default function ProbabilisticGenotypingPanel() {
         <div className="rounded-xl border border-tactical-border/60 bg-black/30 p-3 text-center space-y-1">
           <span className="text-[9px] text-zinc-400 uppercase tracking-wider block">{isTr ? "Min ESS" : "Min ESS"}</span>
           <span className="text-sm font-black text-amber-400 tabular-nums">
-            {mcmcState.ess_min.toLocaleString()}
+            {(mcmcState?.ess_min ?? 0).toLocaleString()}
           </span>
           <span className="text-[8px] text-zinc-500 block">{isTr ? "> 1000 Gerekli" : "> 1000 Required"}</span>
         </div>

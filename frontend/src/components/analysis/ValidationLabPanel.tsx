@@ -302,16 +302,16 @@ export default function ValidationLabPanel() {
       setProgress(25);
       setStageText(
         isTr
-          ? `${nPairs.toLocaleString()} Gerçek Donör Çifti (Hp) Üretiliyor...`
-          : `Generating ${nPairs.toLocaleString()} True Donor Pairs (Hp)...`
+          ? `${(nPairs ?? 1000).toLocaleString()} Gerçek Donör Çifti (Hp) Üretiliyor...`
+          : `Generating ${(nPairs ?? 1000).toLocaleString()} True Donor Pairs (Hp)...`
       );
 
       await new Promise((r) => setTimeout(r, 250));
       setProgress(60);
       setStageText(
         isTr
-          ? `${nPairs.toLocaleString()} Donör-Dışı Çift (Hd, θ=${theta}) Üretiliyor...`
-          : `Generating ${nPairs.toLocaleString()} Non-Donor Pairs (Hd, θ=${theta})...`
+          ? `${(nPairs ?? 1000).toLocaleString()} Donör-Dışı Çift (Hd, θ=${theta}) Üretiliyor...`
+          : `Generating ${(nPairs ?? 1000).toLocaleString()} Non-Donor Pairs (Hd, θ=${theta})...`
       );
 
       await new Promise((r) => setTimeout(r, 250));

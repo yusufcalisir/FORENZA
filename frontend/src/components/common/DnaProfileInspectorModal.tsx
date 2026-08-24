@@ -1228,10 +1228,14 @@ export default function DnaProfileInspectorModal() {
 
     const apiBase = getApiBaseUrl();
     const endpointCandidates = [
-      `${apiBase}/api/terminal/recalculate`,
-      `${apiBase}/api/forensic/dag/execute`,
       "/api/terminal/recalculate",
+      "/api/forensic/terminal/comprehensive",
       "/api/forensic-recalculate",
+      "/api/forensic/dag/execute",
+      `${apiBase}/api/terminal/recalculate`,
+      `${apiBase}/api/v1/forensic/terminal/comprehensive`,
+      `${apiBase}/api/v1/forensic/terminal/recalculate`,
+      `${apiBase}/api/forensic/dag/execute`,
     ];
 
     let backendRes: any = null;
@@ -1246,14 +1250,18 @@ export default function DnaProfileInspectorModal() {
 
         if (resp.ok) {
           backendRes = await resp.json();
-          executedProvider = "FastAPI Terminal Engine";
-          combinedLRStr = Number(backendRes?.popgen?.combined_lr || livePopGen?.combinedLr || 1.0).toExponential(2);
+          executedProvider = backendRes?.provider || (backendRes?._proxiedVia ? `FastAPI Engine (${backendRes._proxiedVia})` : "FORENZA Native Biocomputational Engine");
+          const matchProb = backendRes?.popgen?.combined_match_probability;
+          if (typeof matchProb === "number" && matchProb > 0) {
+            combinedLRStr = (1.0 / matchProb).toExponential(2);
+          } else if (backendRes?.popgen?.combined_lr) {
+            combinedLRStr = Number(backendRes.popgen.combined_lr).toExponential(2);
+          }
           cocProofHash = backendRes?.chain_of_custody_hash || cocProofHash;
           break;
-
         }
-      } catch (e) {
-        console.warn(`[FORENZA] Endpoint ${url} unreachable:`, e);
+      } catch {
+        // Silently continue to next resilient candidate
       }
     }
 
@@ -1288,14 +1296,14 @@ export default function DnaProfileInspectorModal() {
           executedProvider = `${executedProvider} & ${proxyJson.provider}`;
         }
       }
-    } catch (proxyError) {
-      console.warn("Proxy execution warning:", proxyError);
+    } catch {
+      // Continue without interruption
     }
 
     setCalcProgress(85);
     setCalcStage("Stage 5/6: Synthesizing Continuous 6-Dye EPG & Degradation Index...");
 
-    await new Promise(r => setTimeout(r, 250));
+    await new Promise(r => setTimeout(r, 150));
 
     setCalcProgress(100);
     setCalcStage("Stage 6/6: Sealing ISO/IEC 17025 Certificate & HMAC Merkle Ledger Proof...");

@@ -107,3 +107,57 @@ class TestGatewayRoutes:
             headers={"X-API-Key": "INVALID_KEY_12345"}
         )
         assert resp.status_code == 401
+
+
+class TestTerminalRecalculateRoutes:
+    """Tests for DNA & SNP Terminal Recalculate and DAG Execution Endpoints."""
+
+    @pytest.fixture
+    def sample_payload(self):
+        return {
+            "sample_id": "VECTOR_TEST_01",
+            "str_profile": {
+                "D3S1358": {"allele1": 15, "allele2": 16, "rfu1": 1200, "rfu2": 1150},
+                "vWA": {"allele1": 17, "allele2": 18, "rfu1": 1400, "rfu2": 1350},
+                "FGA": {"allele1": 21, "allele2": 24, "rfu1": 980, "rfu2": 950},
+                "Amelogenin": {"allele1": "X", "allele2": "Y", "rfu1": 1500, "rfu2": 1450},
+            },
+            "snp_dosages": {
+                "rs12913832": 2,
+                "rs1800407": 1,
+                "rs16891982": 0,
+            },
+            "population": "Caucasian",
+            "theta": 0.01,
+            "degradation_rate": 0.0,
+            "template_ng": 1.0,
+        }
+
+    def test_recalculate_root_endpoint(self, sample_payload):
+        resp = client.post("/api/terminal/recalculate", json=sample_payload)
+        assert resp.status_code == 200
+        data = resp.json()
+        assert "popgen" in data
+        assert "bga" in data
+        assert "hirisplex" in data
+        assert "chain_of_custody_hash" in data
+        assert data["sample_id"] == "VECTOR_TEST_01"
+
+    def test_forensic_recalculate_alias(self, sample_payload):
+        resp = client.post("/api/forensic-recalculate", json=sample_payload)
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["popgen"]["population"] == "Caucasian"
+
+    def test_forensic_dag_execute_alias(self, sample_payload):
+        resp = client.post("/api/forensic/dag/execute", json=sample_payload)
+        assert resp.status_code == 200
+        data = resp.json()
+        assert "popgen" in data
+
+    def test_v1_terminal_comprehensive_endpoint(self, sample_payload):
+        resp = client.post("/api/v1/forensic/terminal/comprehensive", json=sample_payload)
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["bga"]["dominant_ancestry"] is not None
+

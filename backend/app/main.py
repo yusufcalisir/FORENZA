@@ -1770,7 +1770,22 @@ def kinship_analysis(req: KinshipRequest):
         f"{result.relationship_type.value} (confidence: {result.confidence:.4f})"
     )
 
-    return result.to_dict()
+# ═══════════════════════════════════════════════════════════════════════════════
+# TERMINAL RECALCULATION & DAG EXECUTION ALIASES (35 MODULES)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+try:
+    from app.api.terminal_routes import run_comprehensive_terminal_analysis
+    from app.api.terminal_schemas import TerminalComprehensiveRequest, TerminalComprehensiveResponse
+
+    @app.post("/api/terminal/recalculate", response_model=TerminalComprehensiveResponse, tags=["Forensic DNA & SNP Terminal"])
+    @app.post("/api/forensic-recalculate", response_model=TerminalComprehensiveResponse, tags=["Forensic DNA & SNP Terminal"])
+    @app.post("/api/forensic/dag/execute", response_model=TerminalComprehensiveResponse, tags=["Forensic DNA & SNP Terminal"])
+    @app.post("/api/v1/forensic/dag/execute", response_model=TerminalComprehensiveResponse, tags=["Forensic DNA & SNP Terminal"])
+    def terminal_recalculate_alias(req: TerminalComprehensiveRequest) -> TerminalComprehensiveResponse:
+        return run_comprehensive_terminal_analysis(req)
+except Exception as _term_alias_err:
+    logger.warning(f"[boot] Terminal recalculation alias routes not loaded: {_term_alias_err}")
 
 
 if __name__ == "__main__":

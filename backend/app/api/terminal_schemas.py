@@ -177,11 +177,16 @@ class TerminalHIrisPlexResponse(BaseModel):
 
 class TerminalComprehensiveRequest(BaseModel):
     model_config = ConfigDict(protected_namespaces=())
+    sample_id: Optional[str] = Field(default="SAMPLE_RECALCULATE", description="Sample identifier")
     file_content: Optional[str] = Field(default=None, description="Raw file text to parse")
-    str_profile: Optional[Dict[str, Dict[str, Any]]] = Field(default=None, description="Explicit STR profile")
+    str_profile: Optional[Dict[str, Any]] = Field(default=None, description="Explicit STR profile dictionary or locus map")
     snp_dosages: Optional[Dict[str, int]] = Field(default=None, description="Explicit SNP dosages for BGA and HIrisPlex")
+    ystr_profile: Optional[Dict[str, Any]] = Field(default=None, description="Y-STR marker dictionary")
+    mtdna_mutations: Optional[List[str]] = Field(default=None, description="mtDNA mutation list")
     population: str = Field(default="Caucasian")
     theta: float = Field(default=0.01)
+    degradation_rate: float = Field(default=0.0)
+    template_ng: float = Field(default=1.0)
 
 
 class TerminalComprehensiveResponse(BaseModel):
@@ -193,6 +198,8 @@ class TerminalComprehensiveResponse(BaseModel):
     qc: TerminalQualityAssessmentResponse
     bga: TerminalBgaResponse
     hirisplex: TerminalHIrisPlexResponse
+    epg: Optional[SynthesizeEpgResponse] = Field(default=None)
+    provider: str = Field(default="FORENZA FastAPI Biocomputational Engine")
 
 
 # --- EPG Synthesis & Spectral Artifact Schemas ---

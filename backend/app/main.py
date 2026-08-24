@@ -454,6 +454,18 @@ try:
 except Exception as _epi_import_err:
     logger.warning(f"[boot] Epigenetics router not loaded: {_epi_import_err}")
 
+# --- Forensic Physical Evidence, BPA & Ballistics Router (Pillar 5) ---
+try:
+    try:
+        from app.api.physical_routes import router as physical_router
+    except ImportError:
+        from backend.app.api.physical_routes import router as physical_router
+    app.include_router(physical_router, prefix="/api")
+    app.include_router(physical_router, prefix="/api/v1")
+    logger.info("[boot] Forensic Physical Evidence & BPA API router registered at /api/v1/forensic/physical")
+except Exception as _phys_import_err:
+    logger.warning(f"[boot] Physical evidence router not loaded: {_phys_import_err}")
+
 # --- Automated Analytical Instrument Gateway Router ---
 try:
     from app.api.instrument_routes import router as instrument_router

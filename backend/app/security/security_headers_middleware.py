@@ -170,7 +170,9 @@ class UnifiedSecurityMiddleware(BaseHTTPMiddleware):
                 client_key=risk.client_key,
                 path=path,
                 method=method,
+                risk_score=risk.risk_score,
             )
+
 
             if not rl_res.allowed:
                 retry_seconds = rl_res.retry_after or 30
@@ -237,7 +239,9 @@ class UnifiedSecurityMiddleware(BaseHTTPMiddleware):
             response.headers["X-RateLimit-Limit"] = str(rl_res.limit)
             response.headers["X-RateLimit-Remaining"] = str(rl_res.remaining)
             response.headers["X-RateLimit-Reset"] = str(rl_res.reset_seconds)
+            response.headers["X-RateLimit-Category"] = rl_res.category.value
             response.headers["X-Risk-Tier"] = risk.risk_tier.value
+
 
             # 10. Record Successful Audit Telemetry
             duration_ms = (time.time() - start_time) * 1000

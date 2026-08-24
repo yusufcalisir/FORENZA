@@ -175,15 +175,51 @@ class TestAdaptiveRateLimiter:
 
         assert throttled_hit is True
 
-    def test_static_asset_permissive_quota(self):
-        """Statik varlıklar yüksek burst kapasitesine sahip olmalı."""
+    def test_password_reset_endpoint_strict_limiting(self):
+        """Şifre sıfırlama uç noktaları son derece sıkı (3 req/5min) sınırına uymalı."""
         limiter = AdaptiveRateLimiter()
-        client_key = "test_static_client"
+        client_key = "test_pw_reset_client"
 
-        for _ in range(30):
-            res = limiter.check_rate_limit(client_key, "/static/styles.css", "GET")
+        # 1st request (burst capacity = 1) passes
+        res1 = limiter.check_rate_limit(client_key, "/api/v1/auth/reset-password", "POST")
+        assert res1.allowed is True
+        assert res1.category == RateLimitCategory.PASSWORD_RESET
+
+        # 2nd immediate request must be blocked
+        res2 = limiter.check_rate_limit(client_key, "/api/v1/auth/reset-password", "POST")
+        assert res2.allowed is False
+        assert res2.retry_after is not None
+        assert res2.retry_after > 0
+
+    def test_heavy_compute_rate_limiting(self):
+        """MCMC ve ZKP gibi ağır matematiksel uç noktalar 10 req/min ile sınırlandırılmalı."""
+        limiter = AdaptiveRateLimiter()
+        client_key = "test_compute_client"
+
+        # Burst of 4 passes
+        for _ in range(4):
+            res = limiter.check_rate_limit(client_key, "/api/v1/forensic/mixture", "POST")
             assert res.allowed is True
-            assert res.category == RateLimitCategory.STATIC_ASSET
+            assert res.category == RateLimitCategory.HEAVY_COMPUTE
+
+        # 5th immediate exceeds burst capacity
+        res = limiter.check_rate_limit(client_key, "/api/v1/forensic/mixture", "POST")
+        assert res.allowed is False
+
+    def test_risk_modulated_quota_scaling(self):
+        """Yüksek risk skoruna sahip istemcilerin kota ve burst kapasitesi dinamik daraltılmalı."""
+        limiter = AdaptiveRateLimiter()
+        low_risk_client = "client_low_risk"
+        high_risk_client = "client_high_risk"
+
+        # Low risk (R=10) gets full burst
+        res_low = limiter.check_rate_limit(low_risk_client, "/api/v1/forensic/population", "GET", risk_score=10)
+        assert res_low.limit == 120
+
+        # High risk (R=85) gets scaled down quota
+        res_high = limiter.check_rate_limit(high_risk_client, "/api/v1/forensic/population", "GET", risk_score=85)
+        assert res_high.limit < 120
+
 
 
 # ============================================================================

@@ -51,7 +51,7 @@ flowchart TD
 4. **Progressive Response (`risk_engine.py`):** 6-tier continuum (`NORMAL` to `PERSISTENT_MALICIOUS`), exponential reputation decay ($R(t) = R_0 \cdot e^{-\lambda t}$).
 5. **Session & Device Intelligence (`session_guard.py`):** Ephemeral context hashing, 15m access tokens, Refresh Token Rotation (RTR).
 6. **Authentication Security (`auth_shield.py`):** Dual-axis throttling, constant-time dummy verification, PBKDF2 600k hashing, Double Submit Cookie CSRF.
-7. **Web Application Protection (`app_shield.py`):** SQLi, NoSQL, command injection, XSS, SSRF DNS rebinding, path traversal jail, HTTP request smuggling.
+7. **Web Application Protection (`app_shield.py`):** SQLi, NoSQL, command injection, XSS, SSRF DNS rebinding, path traversal jail, HTTP request smuggling, XXE & CSV formula injection defenses.
 8. **WAF Configuration (`waf_tuner.py`):** Verified search engine spider whitelist, forensic DNA allele invariants, managed challenge.
 9. **API Security (`api_security_engine.py`):** BOLA/IDOR case ownership, BFLA/RBAC permissions, pagination bounds ($\le 100$), compute quotas.
 10. **Infrastructure Protection (`circuit_breaker.py`, `infra_guard.py`):** 3-state Circuit Breaker, secrets hygiene auditor, 4-tier network segmentation.
@@ -61,31 +61,35 @@ flowchart TD
 14. **Logging & Detection (`audit_logger.py`):** ISO 27001 / ISO 21043 structured JSON logs, 12 event taxonomies, deep password/token redaction.
 15. **Monitoring & Alerting (`security_telemetry.py`):** Sliding window metrics (RPS, P50/P95 latency, error %), noise-free multi-condition alerts.
 16. **Fail-Safe Behavior (`failsafe_manager.py`):** Dual-mode degradation (Fail-Open for public content, Fail-Closed for sensitive auth/crypto), emergency cryptographic bypass.
-17. **Resilience Testing (`test_security_resilience_harness.py`):** Automated load spikes, bot vs human pacing, queue saturation, circuit recovery.
+17. **Resilience Testing (`test_security_resilience_harness.py`, `test_red_team_hardened_security.py`):** Automated load spikes, bot vs human pacing, queue saturation, circuit recovery, SSRF permutations, PoW anti-replay.
 18. **Zero-Friction Guarantees (`zero_friction_auditor.py`):** Zero added latency ($0.0\text{ms}$), zero CAPTCHA on regular visits, zero shared NAT collateral damage.
 
 ---
 
-## 4. Production Configuration & Parameter Registry
+## 4. Red-Team Audit Findings & Hardening Matrix
+
+| Vulnerability Vector | Initial Risk | Root Cause | Hardened Production Defense |
+| :--- | :--- | :--- | :--- |
+| **IP Header Spoofing** | High | Forwarding headers (`CF-Connecting-IP`, `XFF`) trusted unconditionally. | Peer IP validated against `TRUSTED_PROXY_NETWORKS` CIDRs; public peers fall back to socket IP. |
+| **PoW CPU Exhaustion & Replay** | High | Verification looped 190 times for timestamp offset; nonces were replayable. | $O(1)$ constant-time HMAC with `expires_at` payload; anti-replay ring buffer rejects reused nonces. |
+| **Advanced SSRF Encodings** | High | Standard regex bypassed via decimal integers, octal, hex, or IPv4-mapped IPv6. | `socket.getaddrinfo` socket resolution with `ipaddress.IPv4Address/IPv6Address` checks against all private and cloud metadata blocks (`169.254.169.254`). |
+| **XML Entity Bombs (XXE)** | Medium | XML uploads permitted custom DOCTYPE/ENTITY declarations. | `detect_xml_xxe_or_entity_expansion` scans header bytes for `<!DOCTYPE` and `<!ENTITY` and rejects unsafe structures. |
+| **CSV Formula Injection** | Medium | CSV cells starting with `=cmd`, `=HYPERLINK` could trigger execution in spreadsheet tools. | `detect_csv_formula_injection` scans first 50 rows; `sanitize_csv_cell` neutralizes formulas while preserving scientific negative floats (`-0.05`). |
+| **Security Telemetry Leakage** | Low | Unauthenticated access to `/metrics` leaked concurrency semaphore states. | `/metrics` restricted via RBAC / `X-Admin-Key`; `/health` sanitized to minimal liveness boolean. |
+
+---
+
+## 5. Production Configuration & Parameter Registry
 
 | Environment Variable | Recommended Production Value | Description |
 | :--- | :--- | :--- |
 | `FORENZA_ENV` | `production` | Enables strict production security mode. |
 | `FORENZA_SECRET_KEY` | `[64-byte random hex]` | Master cryptographic signing key. |
+| `FORENZA_ADMIN_KEY` | `[32-byte random hex]` | Administrative key for `/security/metrics` telemetry access. |
 | `FORENZA_ORIGIN_VERIFY_SECRET` | `[32-byte random hex]` | Shared secret between Cloudflare/CDN and Origin reverse proxy. |
 | `FORENZA_EMERGENCY_OVERRIDE_KEY` | `[32-byte high-entropy key]` | Cryptographic administrative key for emergency bypass. |
 | `FORENZA_ENABLE_ORIGIN_ENFORCEMENT` | `true` | Drops any request bypassing Cloudflare/CDN. |
 | `FORENZA_CORS_ALLOWED_ORIGINS` | `https://forenza.org` | Strict CORS origin whitelist. |
-
----
-
-## 5. Security Audit Findings & Defenses
-
-1. **False Positives:** Completely eliminated for scientific forensic payloads by whitelisting autosomal STR alleles (`13,14,15.2`), SNP rsIDs (`rs12913832`), and Bayesian likelihood ratio queries.
-2. **Bypasses & Direct Access:** Origin cloaking (`x-origin-verify-secret`) rejects direct IP scans trying to circumvent Cloudflare WAF.
-3. **Race Conditions & Thundering Herds:** `SingleFlight` coalescing and async mutexes prevent cache stampedes and duplicate MCMC solver invocations.
-4. **Privilege Escalation:** BFLA role scope checks combined with BOLA IDOR case ownership verification at the service layer prevent horizontal and vertical privilege escalation.
-5. **Performance Regressions:** In-memory lightweight sliding windows and token-bucket algorithms add $<0.05\text{ms}$ computational overhead, ensuring maximum throughput.
 
 ---
 
@@ -98,3 +102,4 @@ flowchart TD
 - [x] **Step 5: TLS & Cipher Suites:** Enforce TLS 1.3 with HSTS Preload (`max-age=63072000; includeSubDomains; preload`).
 - [x] **Step 6: Health & Telemetry Verification:** Verify `/security/health` and `/security/metrics` endpoints are monitored by Prometheus/Grafana.
 - [x] **Step 7: Zero-Friction Validation:** Run `pytest backend/app/security/test_zero_friction_ux.py` to confirm 100% friction-free experience for legitimate traffic.
+- [x] **Step 8: Red-Team Validation:** Run `pytest backend/app/security/test_red_team_hardened_security.py` to verify full resistance against advanced attack vectors.

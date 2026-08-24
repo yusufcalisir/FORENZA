@@ -12,6 +12,8 @@ Connects:
 
 import asyncio
 import hashlib
+import ipaddress
+import os
 import time
 from typing import Optional
 
@@ -41,27 +43,47 @@ class UnifiedSecurityMiddleware(BaseHTTPMiddleware):
         "/docs",
     )
 
+    TRUSTED_PROXY_NETWORKS = [
+        ipaddress.ip_network("127.0.0.0/8"),
+        ipaddress.ip_network("10.0.0.0/8"),
+        ipaddress.ip_network("172.16.0.0/12"),
+        ipaddress.ip_network("192.168.0.0/16"),
+        ipaddress.ip_network("::1/128"),
+    ]
+
+    def is_trusted_peer(self, peer_ip: str) -> bool:
+        """Verifies if direct peer TCP socket originates from trusted proxy/load-balancer."""
+        if not peer_ip:
+            return False
+        try:
+            peer_obj = ipaddress.ip_address(peer_ip)
+            return any(peer_obj in net for net in self.TRUSTED_PROXY_NETWORKS)
+        except ValueError:
+            return False
+
     def extract_client_ip(self, request: Request) -> str:
         """
         Extracts real client IP from Cloudflare or reverse proxy headers.
+        Only trusts forwarding headers if direct peer connection is a verified trusted proxy.
         """
-        # 1. Cloudflare Connecting IP
-        cf_ip = request.headers.get("CF-Connecting-IP")
-        if cf_ip and cf_ip.strip():
-            return cf_ip.strip()
+        direct_peer = request.client.host if (request.client and request.client.host) else "127.0.0.1"
 
-        # 2. X-Forwarded-For (leftmost client address)
-        xff = request.headers.get("X-Forwarded-For")
-        if xff and xff.strip():
-            client_ip = xff.split(",")[0].strip()
-            if client_ip:
-                return client_ip
+        # In dev/test or when peer is trusted proxy, evaluate proxy headers
+        if self.is_trusted_peer(direct_peer) or os.getenv("FORENZA_ENV") != "production":
+            # 1. Cloudflare Connecting IP
+            cf_ip = request.headers.get("CF-Connecting-IP")
+            if cf_ip and cf_ip.strip():
+                return cf_ip.strip()
 
-        # 3. Direct client host fallback
-        if request.client and request.client.host:
-            return request.client.host
+            # 2. X-Forwarded-For (leftmost client address)
+            xff = request.headers.get("X-Forwarded-For")
+            if xff and xff.strip():
+                client_ip = xff.split(",")[0].strip()
+                if client_ip:
+                    return client_ip
 
-        return "127.0.0.1"
+        return direct_peer
+
 
     async def dispatch(self, request: Request, call_next) -> Response:
         start_time = time.time()

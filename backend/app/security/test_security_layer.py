@@ -388,11 +388,12 @@ class TestSecurityIntegration:
         assert r.status_code == 200
         data = r.json()
         assert data["status"] == "HEALTHY"
-        assert data["zero_friction_mode"] is True
+        assert data["service"] == "forenza-security-layer"
+
 
     def test_security_metrics_endpoint(self, client):
-        """GET /api/v1/security/metrics telemetri dönmeli."""
-        r = client.get("/api/v1/security/metrics")
+        """GET /api/v1/security/metrics yetkili admin çağrısında telemetri dönmeli."""
+        r = client.get("/api/v1/security/metrics", headers={"X-Admin-Key": "FORENZA_ADMIN_METRICS_KEY_2026"})
         assert r.status_code == 200
         data = r.json()
         assert "compute_semaphores" in data
@@ -437,10 +438,12 @@ class TestSecurityIntegration:
                 "salt": salt,
                 "nonce": str(nonce),
                 "difficulty": diff,
+                "expires_at": chal_data["expires_at"],
                 "signature": chal_data["signature"],
             },
         )
         assert verify_resp.status_code == 200
         verify_data = verify_resp.json()
         assert verify_data["verified"] is True
+
         assert verify_data["reduced_risk_score"] <= 10

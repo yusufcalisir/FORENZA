@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json.schemastore.org/waf-rules.json",
+  "name": "FORENZA Cloudflare & Edge WAF Specification",
+  "version": "2.0.0",
+  "description": "OWASP CRS v3.3 Tuned WAF rules with search engine whitelisting and zero legitimate user friction.",
+  "managed_rulesets": [
+    {
+      "id": "cloudflare_managed_ruleset",
+      "status": "active",
+      "action": "log_and_challenge",
+      "sensitivity": "medium",
+      "overrides": [
+        {
+          "rule_id": "942100_sqli_detection",
+          "action": "managed_challenge",
+          "description": "Challenge rather than hard block on borderline SQLi heuristics to protect scientific DNA queries"
+        },
+        {
+          "rule_id": "941100_xss_detection",
+          "action": "managed_challenge",
+          "description": "Managed challenge on borderline XSS heuristics"
+        }
+      ]
+    }
+  ],
+  "custom_firewall_rules": [
+    {
+      "id": "RULE_WAF_01_SEARCH_ENGINE_EXEMPTION",
+      "description": "Allow verified search engine bots and accessibility spiders without friction",
+      "expression": "cf.client.bot or (ip.geoip.asnum in {15169, 8075, 32934} and http.user_agent contains (\"Googlebot\", \"Bingbot\", \"DuckDuckBot\", \"Applebot\"))",
+      "action": "bypass"
+    },
+    {
+      "id": "RULE_WAF_02_BLOCK_PROBES",
+      "description": "Immediately block malicious scanner probes (.env, .git, config files)",
+      "expression": "http.request.uri.path contains \".env\" or http.request.uri.path contains \".git/\" or http.request.uri.path contains \"/etc/passwd\"",
+      "action": "block"
+    },
+    {
+      "id": "RULE_WAF_03_ZKP_PROOF_CORRUPTION_GUARD",
+      "description": "Rate-limit and challenge abnormal payload sizes to ZKP verification endpoints",
+      "expression": "http.request.uri.path contains \"/api/v1/forensic/zk/\" and http.request.body.size > 2000000",
+      "action": "managed_challenge"
+    }
+  ]
+}

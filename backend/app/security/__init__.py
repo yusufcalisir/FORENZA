@@ -18,6 +18,7 @@ from .audit_logger import SecurityAuditLogger, security_logger
 from .ddos_shield import DDoSShield, ddos_shield
 from .session_guard import SessionSecurityManager, session_manager, SessionAuthLevel
 from .auth_shield import AuthenticationShield, auth_shield
+from .waf_tuner import WAFRuleEngine, waf_engine, WAFAction
 
 __all__ = [
     "TrafficRiskEngine",
@@ -39,7 +40,11 @@ __all__ = [
     "SessionAuthLevel",
     "AuthenticationShield",
     "auth_shield",
+    "WAFRuleEngine",
+    "waf_engine",
+    "WAFAction",
 ]
+
 
 
 

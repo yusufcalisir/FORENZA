@@ -408,10 +408,10 @@ export default function PanelMTDNA() {
             </div>
 
             {/* SVG Circular Visualization - Dynamic variant position markers */}
-            <div className="relative w-full h-48 sm:h-64 flex items-center justify-center my-2">
+            <div className="relative w-full h-44 sm:h-56 flex items-center justify-center my-1">
               {(() => {
                 const GENOME_SIZE = 16569;
-                const cx = 100, cy = 100, r = 75;
+                const cx = 100, cy = 100, r = 74;
 
                 // Convert genomic position to SVG coordinate (start at top / 12 o'clock)
                 const posToXY = (pos: number, radius: number) => {
@@ -423,7 +423,7 @@ export default function PanelMTDNA() {
                 };
 
                 // Render a tick line from inner radius to outer radius
-                const renderTick = (pos: number, color: string, key: string, innerR = 66, outerR = 84) => {
+                const renderTick = (pos: number, color: string, key: string, innerR = 65, outerR = 83) => {
                   const inner = posToXY(pos, innerR);
                   const outer = posToXY(pos, outerR);
                   return (
@@ -461,35 +461,43 @@ export default function PanelMTDNA() {
 
                     {/* Dynamic variant tick marks */}
                     {sharedVariants.map((v) => renderTick(getVariantPosition(v), "#10b981", `sh-${v}`))}
-                    {onlyInA.map((v) => renderTick(getVariantPosition(v), "#f59e0b", `a-${v}`))}
+                    {onlyInA.map((v) => renderTick(getVariantPosition(v), "#22d3ee", `a-${v}`))}
                     {onlyInB.map((v) => renderTick(getVariantPosition(v), "#f43f5e", `b-${v}`))}
 
                     {/* Center label */}
-                    <text x="100" y="90" textAnchor="middle" fill="#ffffff" fontSize="10" fontWeight="bold" fontFamily="monospace">
+                    <text x="100" y="88" textAnchor="middle" fill="#ffffff" fontSize="10.5" fontWeight="bold" fontFamily="monospace">
                       D-LOOP
                     </text>
-                    <text x="100" y="103" textAnchor="middle" fill="#94a3b8" fontSize="7.5" fontFamily="monospace">
+                    <text x="100" y="102" textAnchor="middle" fill="#94a3b8" fontSize="8" fontFamily="monospace">
                       16024-576 bp
                     </text>
-                    <text x="100" y="115" textAnchor="middle" fill="#10b981" fontSize="8.5" fontWeight="bold" fontFamily="monospace">
+                    <text x="100" y="116" textAnchor="middle" fill="#10b981" fontSize="9" fontWeight="bold" fontFamily="monospace">
                       {currentPreset.expectedHgA}
                     </text>
                     {currentPreset.expectedHgA !== currentPreset.expectedHgB && (
-                      <text x="100" y="126" textAnchor="middle" fill="#06b6d4" fontSize="7.5" fontWeight="bold" fontFamily="monospace">
+                      <text x="100" y="128" textAnchor="middle" fill="#06b6d4" fontSize="8" fontWeight="bold" fontFamily="monospace">
                         vs {currentPreset.expectedHgB}
                       </text>
                     )}
-
-                    {/* Legend dots */}
-                    <circle cx="22" cy="178" r="3" fill="#10b981" />
-                    <text x="27" y="181" fill="#94a3b8" fontSize="6" fontFamily="monospace">Shared</text>
-                    <circle cx="58" cy="178" r="3" fill="#f59e0b" />
-                    <text x="63" y="181" fill="#94a3b8" fontSize="6" fontFamily="monospace">A only</text>
-                    <circle cx="92" cy="178" r="3" fill="#f43f5e" />
-                    <text x="97" y="181" fill="#94a3b8" fontSize="6" fontFamily="monospace">B only</text>
                   </svg>
                 );
               })()}
+            </div>
+
+            {/* Dedicated HTML Variant Legend */}
+            <div className="flex items-center justify-center gap-3 sm:gap-4 py-1.5 px-2 bg-slate-950/60 rounded-lg border border-slate-800/80 text-[10px] font-mono mb-2">
+              <div className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.5)] shrink-0" />
+                <span className="text-emerald-300 font-semibold">{isTr ? "Ortak" : "Shared"}</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.5)] shrink-0" />
+                <span className="text-cyan-300 font-semibold">{isTr ? "Sadece A" : "A only"}</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.5)] shrink-0" />
+                <span className="text-rose-300 font-semibold">{isTr ? "Sadece B" : "B only"}</span>
+              </div>
             </div>
           </div>
 

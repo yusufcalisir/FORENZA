@@ -1,5 +1,4 @@
 {
-  "$schema": "https://json.schemastore.org/architecture-topology.json",
   "name": "FORENZA Production Infrastructure & Multi-Tier Segmentation Topology",
   "version": "2.0.0",
   "layers": [

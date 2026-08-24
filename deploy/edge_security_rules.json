@@ -1,5 +1,4 @@
 {
-  "$schema": "https://json.schemastore.org/waf-rules.json",
   "name": "FORENZA Production Edge DDoS & WAF Shield",
   "version": "2.0.0",
   "description": "Layer 3, Layer 4, and Layer 7 DDoS mitigation and Edge WAF rules for FORENZA forensic platform.",

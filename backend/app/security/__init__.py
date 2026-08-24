@@ -25,6 +25,7 @@ from .infra_guard import InfrastructureGuard, infra_guard
 from .cache_shield import CacheShield, cache_shield
 from .headers_guard import SecurityHeadersManager, headers_guard
 from .security_telemetry import SecurityTelemetryEngine, telemetry_engine, AlertSeverity, SecurityAlert
+from .failsafe_manager import FailSafeManager, failsafe_manager, OperationSensitivity
 
 __all__ = [
     "TrafficRiskEngine",
@@ -67,7 +68,11 @@ __all__ = [
     "telemetry_engine",
     "AlertSeverity",
     "SecurityAlert",
+    "FailSafeManager",
+    "failsafe_manager",
+    "OperationSensitivity",
 ]
+
 
 
 

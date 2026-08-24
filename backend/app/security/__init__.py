@@ -23,6 +23,7 @@ from .api_security_engine import APISecurityEngine, api_security_engine, UserRol
 from .circuit_breaker import CircuitBreaker, CircuitBreakerConfig, CircuitState, circuit_registry
 from .infra_guard import InfrastructureGuard, infra_guard
 from .cache_shield import CacheShield, cache_shield
+from .headers_guard import SecurityHeadersManager, headers_guard
 
 __all__ = [
     "TrafficRiskEngine",
@@ -58,7 +59,10 @@ __all__ = [
     "infra_guard",
     "CacheShield",
     "cache_shield",
+    "SecurityHeadersManager",
+    "headers_guard",
 ]
+
 
 
 

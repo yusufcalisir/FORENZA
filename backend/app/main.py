@@ -442,6 +442,18 @@ try:
 except Exception as _fgg_import_err:
     logger.warning(f"[boot] FGG router not loaded: {_fgg_import_err}")
 
+# --- Forensic Epigenetics & Epigenetic Aging Clock Router (Pillar 4) ---
+try:
+    try:
+        from app.api.epigenetics_routes import router as epigenetics_router
+    except ImportError:
+        from backend.app.api.epigenetics_routes import router as epigenetics_router
+    app.include_router(epigenetics_router, prefix="/api")
+    app.include_router(epigenetics_router, prefix="/api/v1")
+    logger.info("[boot] Forensic Epigenetics & Aging Clock API router registered at /api/v1/forensic/epigenetics")
+except Exception as _epi_import_err:
+    logger.warning(f"[boot] Epigenetics router not loaded: {_epi_import_err}")
+
 # --- Automated Analytical Instrument Gateway Router ---
 try:
     from app.api.instrument_routes import router as instrument_router

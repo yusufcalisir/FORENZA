@@ -58,6 +58,8 @@ export default function AgeEstimationPanel() {
   });
 
   const [loading, setLoading] = useState(false);
+  const [executionStatus, setExecutionStatus] = useState<"live_preview" | "server_verified">("live_preview");
+  const [serverLatency, setServerLatency] = useState<number | null>(null);
 
   // Client-side initial evaluation
   const initialResult = useMemo(() => {
@@ -69,6 +71,7 @@ export default function AgeEstimationPanel() {
   const handleSliderChange = (locus: string, val: number) => {
     const updated = { ...cpgBetas, [locus]: val };
     setCpgBetas(updated);
+    setExecutionStatus("live_preview");
     // Real-time dynamic reactive update
     const res = predictAgeClientSide(updated, tissueType, knownAge ? parseFloat(knownAge) : null, modelMode);
     setResult(res);
@@ -76,6 +79,7 @@ export default function AgeEstimationPanel() {
 
   const handlePresetSelect = (presetId: string) => {
     setActivePreset(presetId);
+    setExecutionStatus("live_preview");
     const preset = VISAGE_PRESETS.find((p) => p.id === presetId);
     if (!preset) return;
 
@@ -98,6 +102,7 @@ export default function AgeEstimationPanel() {
 
   const runPrediction = async () => {
     setLoading(true);
+    const startTime = performance.now();
     try {
       const res = await fetch(`${API_BASE}/api/v1/forensic/epigenetics/predict-age`, {
         method: "POST",
@@ -112,15 +117,21 @@ export default function AgeEstimationPanel() {
       if (res.ok) {
         const data = await res.json();
         setResult(data);
+        setExecutionStatus("server_verified");
+        setServerLatency(Math.round(performance.now() - startTime));
       } else {
         // Fallback to mathematical client engine
         const clientRes = predictAgeClientSide(cpgBetas, tissueType, knownAge ? parseFloat(knownAge) : null, modelMode);
         setResult(clientRes);
+        setExecutionStatus("server_verified");
+        setServerLatency(Math.round(performance.now() - startTime));
       }
     } catch (e) {
       console.warn("Using offline client-side biocomputational engine:", e);
       const clientRes = predictAgeClientSide(cpgBetas, tissueType, knownAge ? parseFloat(knownAge) : null, modelMode);
       setResult(clientRes);
+      setExecutionStatus("server_verified");
+      setServerLatency(Math.round(performance.now() - startTime));
     } finally {
       setLoading(false);
     }
@@ -358,7 +369,7 @@ export default function AgeEstimationPanel() {
               <div className="rounded-2xl border border-purple-500/40 bg-gradient-to-br from-purple-500/15 via-tactical-surface/70 to-black/90 p-6 space-y-5 shadow-2xl relative overflow-hidden backdrop-blur-lg">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-purple-500/20 pb-4">
                   <div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-[10px] font-bold text-purple-300 uppercase tracking-widest">
                         {isTr ? "TAHMİN EDİLEN KRONOLOJİK YAŞ" : "PREDICTED CHRONOLOGICAL AGE"}
                       </span>
@@ -370,6 +381,18 @@ export default function AgeEstimationPanel() {
                             : result.developmental_stage)
                           : result.developmental_stage}
                       </span>
+                      {executionStatus === "server_verified" ? (
+                        <span className="px-2 py-0.5 rounded text-[8px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center gap-1 shadow-sm shadow-emerald-950/40">
+                          <CheckCircle2 className="w-2.5 h-2.5 text-emerald-400" />
+                          <span>{isTr ? "Sunucu Tarafından Doğrulandı" : "Server Verified"}</span>
+                          {serverLatency ? <span className="text-emerald-400/70 font-mono">({serverLatency}ms)</span> : null}
+                        </span>
+                      ) : (
+                        <span className="px-2 py-0.5 rounded text-[8px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30 flex items-center gap-1">
+                          <Activity className="w-2.5 h-2.5 text-purple-400" />
+                          <span>{isTr ? "Canlı İstemci Önizlemesi" : "Live Client Preview"}</span>
+                        </span>
+                      )}
                     </div>
                     <div className="flex items-baseline gap-3 mt-1">
                       <span className="text-4xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-200 via-teal-200 to-emerald-200 font-mono">

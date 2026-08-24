@@ -535,24 +535,24 @@ export default function EvidenceManagementPanel() {
         </div>
 
         {/* Sensor Spectrum Mini-Summary Row */}
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 pt-1">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 pt-1">
           {Object.entries(SENSOR_CONFIG).map(([type, cfg]) => {
             const count = ITEMS.filter((i) => i.type === type).length;
             return (
               <div
                 key={type}
-                className={`p-2.5 rounded-xl border ${cfg.border} ${cfg.bg} flex items-center justify-between shadow-sm`}
+                className={`p-3 rounded-xl border ${cfg.border} ${cfg.bg} flex items-center justify-between shadow-sm`}
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 min-w-0">
                   <Circle className={`w-2.5 h-2.5 fill-current ${cfg.color} shrink-0`} />
-                  <div>
-                    <span className="text-[11px] font-bold text-white block leading-tight">
+                  <div className="min-w-0">
+                    <span className="text-[11px] font-bold text-white block leading-tight truncate">
                       {isTr ? cfg.labelTr : cfg.label}
                     </span>
-                    <span className="text-[9px] text-zinc-400 font-mono">±{cfg.precision * 1000}mm</span>
+                    <span className="text-[9px] text-zinc-400 font-mono block">±{cfg.precision * 1000}mm</span>
                   </div>
                 </div>
-                <span className={`text-xs font-black ${cfg.color} font-mono px-2 py-0.5 rounded bg-black/40 border border-white/10`}>
+                <span className={`text-xs font-black ${cfg.color} font-mono px-2 py-0.5 rounded bg-black/40 border border-white/10 shrink-0 ml-2`}>
                   N={count}
                 </span>
               </div>
@@ -640,14 +640,15 @@ export default function EvidenceManagementPanel() {
             </div>
 
             {/* 3D Canvas Box */}
-            <div className="rounded-xl border border-tactical-border/70 bg-[#050914] overflow-hidden shadow-inner relative flex justify-center items-center">
+            <div className="rounded-xl border border-tactical-border/70 bg-[#050914] overflow-hidden shadow-inner relative flex justify-center items-center p-1">
               <canvas
                 ref={canvasRef}
                 width={640}
                 height={380}
-                className="w-full h-auto block max-h-[420px]"
+                className="w-full h-auto block max-h-[380px] rounded-lg"
               />
             </div>
+
 
             {/* Canvas Legend Bar */}
             <div className="flex flex-wrap items-center justify-between gap-2 p-2.5 rounded-xl bg-black/50 border border-tactical-border/40 text-[10px] font-mono">
@@ -674,8 +675,8 @@ export default function EvidenceManagementPanel() {
                 <RotateCw className="w-4 h-4 text-indigo-400 shrink-0" />
                 <span className="text-xs font-bold text-white uppercase tracking-wider">
                   {isTr
-                    ? "SE(3) Kinematik Dönüşüm  -  R = R_z(ψ) · R_y(θ) · R_x(φ)"
-                    : "SE(3) Kinematic Transform  -  R = R_z(ψ) · R_y(θ) · R_x(φ)"}
+                    ? "SE(3) Kinematik Dönüşüm: R = R_z(ψ) · R_y(θ) · R_x(φ)"
+                    : "SE(3) Kinematic Transform: R = R_z(ψ) · R_y(θ) · R_x(φ)"}
                 </span>
               </div>
               <button
@@ -904,8 +905,8 @@ export default function EvidenceManagementPanel() {
           <Layers className="w-4 h-4 text-indigo-400" />
           <span className="text-xs font-bold text-white uppercase tracking-wider">
             {isTr
-              ? `Olay Yeri Füzyon Özeti  -  ${ITEMS.length} Delil Noktası Kayıtlı (ISO 21043)`
-              : `Scene Fusion Summary  -  ${ITEMS.length} Evidence Points Registered (ISO 21043)`}
+              ? `Olay Yeri Füzyon Özeti: ${ITEMS.length} Delil Noktası Kayıtlı (ISO 21043)`
+              : `Scene Fusion Summary: ${ITEMS.length} Evidence Points Registered (ISO 21043)`}
           </span>
         </div>
 

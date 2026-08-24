@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json.schemastore.org/waf-rules.json",
+  "name": "FORENZA Production Edge DDoS & WAF Shield",
+  "version": "2.0.0",
+  "description": "Layer 3, Layer 4, and Layer 7 DDoS mitigation and Edge WAF rules for FORENZA forensic platform.",
+  "edge_waf_rules": [
+    {
+      "id": "RULE_DDOS_01_L7_HTTP_FLOOD",
+      "description": "Rate-limit excessive HTTP requests per IP to block volumetric L7 floods",
+      "action": "block",
+      "expression": "http.request.uri.path contains '/api/' and rate_limit(http.request.client_ip, 120, 60)",
+      "response": {
+        "status_code": 429,
+        "content_type": "application/json",
+        "body": "{\"error\":\"Too Many Requests\",\"detail\":\"Edge volumetric rate limit exceeded.\"}"
+      }
+    },
+    {
+      "id": "RULE_DDOS_02_ORIGIN_CLOAKING",
+      "description": "Ensure incoming traffic contains valid edge proxy verification token",
+      "action": "challenge",
+      "expression": "not (http.request.headers[\"x-origin-verify-secret\"][0] eq \"${FORENZA_ORIGIN_VERIFY_SECRET}\") and not (ip.src in $CLOUDFLARE_IPS)",
+      "response": {
+        "status_code": 403,
+        "content_type": "application/json",
+        "body": "{\"error\":\"Forbidden\",\"detail\":\"Direct origin access prohibited.\"}"
+      }
+    },
+    {
+      "id": "RULE_DDOS_03_SLOW_HTTP_SLOWLORIS",
+      "description": "Mitigate Slowloris and Slow POST attacks with aggressive header/body timeouts",
+      "action": "drop",
+      "timeout_settings": {
+        "client_header_timeout_seconds": 10,
+        "client_body_timeout_seconds": 15,
+        "keep_alive_timeout_seconds": 5,
+        "min_data_rate_bps": 100
+      }
+    },
+    {
+      "id": "RULE_DDOS_04_KNOWN_BOTNET_ASN",
+      "description": "Filter traffic from known bulletproof hosting and scanner ASNs",
+      "action": "managed_challenge",
+      "expression": "ip.geoip.asnum in {9009, 14061, 202425, 49870} and not (http.request.uri.path contains '/static/')"
+    }
+  ],
+  "caching_policies": [
+    {
+      "pattern": "/api/v1/forensic/population/*",
+      "edge_ttl_seconds": 86400,
+      "browser_ttl_seconds": 3600,
+      "stale_while_revalidate_seconds": 86400
+    },
+    {
+      "pattern": "/api/v1/forensic/phenotype/standards/*",
+      "edge_ttl_seconds": 86400,
+      "browser_ttl_seconds": 3600
+    }
+  ]
+}

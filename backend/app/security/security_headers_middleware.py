@@ -11,16 +11,20 @@ Connects:
 """
 
 import asyncio
+import hashlib
 import time
 from typing import Optional
+
 
 from fastapi import Request, Response, status
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from .audit_logger import security_logger
+from .ddos_shield import ddos_shield
 from .rate_limiter import adaptive_rate_limiter
 from .risk_engine import RiskTier, traffic_risk_engine
+
 
 
 class UnifiedSecurityMiddleware(BaseHTTPMiddleware):
@@ -77,135 +81,184 @@ class UnifiedSecurityMiddleware(BaseHTTPMiddleware):
         path = request.url.path
         method = request.method
 
-        # 1. Traffic Risk Assessment (Passive background scoring)
-        risk = traffic_risk_engine.evaluate_request(
-            ip=client_ip,
-            path=path,
-            method=method,
-            user_agent=user_agent,
-            session_id=session_id,
-            headers=dict(request.headers),
-        )
-
-        request.state.risk_score = risk.risk_score
-        request.state.risk_tier = risk.risk_tier.value
-        request.state.ip_hash = risk.ip_hash
-
-        # 2. Check for Immediate Malicious Block (Tier 4: R >= 95)
-        if risk.is_blocked:
+        # 1. DDoS Origin Verification (Prevents direct IP bypass of CDN/Edge WAF)
+        origin_ok, origin_err = ddos_shield.verify_origin_headers(dict(request.headers))
+        if not origin_ok:
             security_logger.log_event(
-                event_type="TRAFFIC_BLOCKED_HIGH_RISK",
+                event_type="ORIGIN_BYPASS_ATTEMPT_BLOCKED",
                 path=path,
                 method=method,
-                ip_hash=risk.ip_hash,
-                risk_score=risk.risk_score,
-                risk_tier=risk.risk_tier.value,
+                ip_hash=hashlib.sha256(client_ip.encode("utf-8")).hexdigest()[:16],
+                risk_score=95,
+                risk_tier="BLOCKED",
                 correlation_id=correlation_id,
-                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-                details={"reasons": risk.reasons},
-                duration_ms=(time.time() - start_time) * 1000,
+                status_code=status.HTTP_403_FORBIDDEN,
+                details={"reason": origin_err},
             )
             resp = JSONResponse(
-                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-                content={
-                    "detail": "Traffic anomaly detected. Temporary cooling period active.",
-                    "correlation_id": correlation_id,
-                },
-                headers={"Retry-After": "60", "X-Correlation-ID": correlation_id},
+                status_code=status.HTTP_403_FORBIDDEN,
+                content={"detail": origin_err, "correlation_id": correlation_id},
+                headers={"X-Correlation-ID": correlation_id},
             )
             self._apply_security_headers(resp, path)
             return resp
 
-        # 3. Adaptive Rate Limiting Evaluation
-        rl_res = adaptive_rate_limiter.check_rate_limit(
-            client_key=risk.client_key,
-            path=path,
-            method=method,
-        )
-
-        if not rl_res.allowed:
-            retry_seconds = rl_res.retry_after or 30
+        # 2. DDoS Volumetric & Connection Exhaustion Check (Layer 7 Flood / Slowloris)
+        conn_ok, conn_err = ddos_shield.acquire_connection(client_ip)
+        if not conn_ok:
             security_logger.log_event(
-                event_type="RATE_LIMIT_EXCEEDED",
+                event_type="DDOS_FLOOD_OR_CONNECTION_EXHAUSTION_BLOCKED",
                 path=path,
                 method=method,
-                ip_hash=risk.ip_hash,
-                risk_score=risk.risk_score,
-                risk_tier=risk.risk_tier.value,
+                ip_hash=hashlib.sha256(client_ip.encode("utf-8")).hexdigest()[:16],
+                risk_score=100,
+                risk_tier="BLOCKED",
                 correlation_id=correlation_id,
                 status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-                details={"category": rl_res.category.value, "limit": rl_res.limit},
-                duration_ms=(time.time() - start_time) * 1000,
+                details={"reason": conn_err},
             )
             resp = JSONResponse(
                 status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-                content={
-                    "detail": f"Rate limit quota reached for {rl_res.category.value}. Please retry in {retry_seconds}s.",
-                    "correlation_id": correlation_id,
-                    "retry_after_seconds": retry_seconds,
-                },
-                headers={
-                    "Retry-After": str(retry_seconds),
-                    "X-RateLimit-Limit": str(rl_res.limit),
-                    "X-RateLimit-Remaining": "0",
-                    "X-RateLimit-Reset": str(rl_res.reset_seconds),
-                    "X-Correlation-ID": correlation_id,
-                },
+                content={"detail": conn_err, "correlation_id": correlation_id},
+                headers={"Retry-After": "120", "X-Correlation-ID": correlation_id},
             )
             self._apply_security_headers(resp, path)
             return resp
 
-        # 4. Micro-Throttling Execution (Tier 2: 60 <= R < 80)
-        if risk.delay_ms > 0:
-            await asyncio.sleep(risk.delay_ms / 1000.0)
-
-        # 5. Execute Downstream Handlers
         try:
-            response = await call_next(request)
-        except Exception as exc:
-            traffic_risk_engine.record_error(client_ip, user_agent, session_id)
-            security_logger.log_event(
-                event_type="UNHANDLED_SERVER_EXCEPTION",
+            # 3. Traffic Risk Assessment (Passive background scoring)
+            risk = traffic_risk_engine.evaluate_request(
+                ip=client_ip,
                 path=path,
                 method=method,
-                ip_hash=risk.ip_hash,
-                risk_score=risk.risk_score,
-                risk_tier=risk.risk_tier.value,
-                correlation_id=correlation_id,
-                status_code=500,
-                details={"error": str(exc)},
-                duration_ms=(time.time() - start_time) * 1000,
+                user_agent=user_agent,
+                session_id=session_id,
+                headers=dict(request.headers),
             )
-            raise exc
 
-        # 6. Track 4xx/5xx Errors in Risk Engine
-        if response.status_code >= 400:
-            traffic_risk_engine.record_error(client_ip, user_agent, session_id)
+            request.state.risk_score = risk.risk_score
+            request.state.risk_tier = risk.risk_tier.value
+            request.state.ip_hash = risk.ip_hash
 
-        # 7. Apply Security, Rate-Limit and Telemetry Headers
-        self._apply_security_headers(response, path)
-        response.headers["X-Correlation-ID"] = correlation_id
-        response.headers["X-RateLimit-Limit"] = str(rl_res.limit)
-        response.headers["X-RateLimit-Remaining"] = str(rl_res.remaining)
-        response.headers["X-RateLimit-Reset"] = str(rl_res.reset_seconds)
-        response.headers["X-Risk-Tier"] = risk.risk_tier.value
+            # 4. Check for Immediate Malicious Block (Tier 4: R >= 95)
+            if risk.is_blocked:
+                security_logger.log_event(
+                    event_type="TRAFFIC_BLOCKED_HIGH_RISK",
+                    path=path,
+                    method=method,
+                    ip_hash=risk.ip_hash,
+                    risk_score=risk.risk_score,
+                    risk_tier=risk.risk_tier.value,
+                    correlation_id=correlation_id,
+                    status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                    details={"reasons": risk.reasons},
+                    duration_ms=(time.time() - start_time) * 1000,
+                )
+                resp = JSONResponse(
+                    status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                    content={
+                        "detail": "Traffic anomaly detected. Temporary cooling period active.",
+                        "correlation_id": correlation_id,
+                    },
+                    headers={"Retry-After": "60", "X-Correlation-ID": correlation_id},
+                )
+                self._apply_security_headers(resp, path)
+                return resp
 
-        # 8. Record Successful Audit Telemetry
-        duration_ms = (time.time() - start_time) * 1000
-        if risk.risk_score >= 30 or response.status_code >= 400:
-            security_logger.log_event(
-                event_type="HTTP_REQUEST_AUDIT",
+            # 5. Adaptive Rate Limiting Evaluation
+            rl_res = adaptive_rate_limiter.check_rate_limit(
+                client_key=risk.client_key,
                 path=path,
                 method=method,
-                ip_hash=risk.ip_hash,
-                risk_score=risk.risk_score,
-                risk_tier=risk.risk_tier.value,
-                correlation_id=correlation_id,
-                status_code=response.status_code,
-                duration_ms=duration_ms,
             )
 
-        return response
+            if not rl_res.allowed:
+                retry_seconds = rl_res.retry_after or 30
+                security_logger.log_event(
+                    event_type="RATE_LIMIT_EXCEEDED",
+                    path=path,
+                    method=method,
+                    ip_hash=risk.ip_hash,
+                    risk_score=risk.risk_score,
+                    risk_tier=risk.risk_tier.value,
+                    correlation_id=correlation_id,
+                    status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                    details={"category": rl_res.category.value, "limit": rl_res.limit},
+                    duration_ms=(time.time() - start_time) * 1000,
+                )
+                resp = JSONResponse(
+                    status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                    content={
+                        "detail": f"Rate limit quota reached for {rl_res.category.value}. Please retry in {retry_seconds}s.",
+                        "correlation_id": correlation_id,
+                        "retry_after_seconds": retry_seconds,
+                    },
+                    headers={
+                        "Retry-After": str(retry_seconds),
+                        "X-RateLimit-Limit": str(rl_res.limit),
+                        "X-RateLimit-Remaining": "0",
+                        "X-RateLimit-Reset": str(rl_res.reset_seconds),
+                        "X-Correlation-ID": correlation_id,
+                    },
+                )
+                self._apply_security_headers(resp, path)
+                return resp
+
+            # 6. Micro-Throttling Execution (Tier 2: 60 <= R < 80)
+            if risk.delay_ms > 0:
+                await asyncio.sleep(risk.delay_ms / 1000.0)
+
+            # 7. Execute Downstream Handlers
+            try:
+                response = await call_next(request)
+            except Exception as exc:
+                traffic_risk_engine.record_error(client_ip, user_agent, session_id)
+                security_logger.log_event(
+                    event_type="UNHANDLED_SERVER_EXCEPTION",
+                    path=path,
+                    method=method,
+                    ip_hash=risk.ip_hash,
+                    risk_score=risk.risk_score,
+                    risk_tier=risk.risk_tier.value,
+                    correlation_id=correlation_id,
+                    status_code=500,
+                    details={"error": str(exc)},
+                    duration_ms=(time.time() - start_time) * 1000,
+                )
+                raise exc
+
+            # 8. Track 4xx/5xx Errors in Risk Engine
+            if response.status_code >= 400:
+                traffic_risk_engine.record_error(client_ip, user_agent, session_id)
+
+            # 9. Apply Security, Rate-Limit and Telemetry Headers
+            self._apply_security_headers(response, path)
+            response.headers["X-Correlation-ID"] = correlation_id
+            response.headers["X-RateLimit-Limit"] = str(rl_res.limit)
+            response.headers["X-RateLimit-Remaining"] = str(rl_res.remaining)
+            response.headers["X-RateLimit-Reset"] = str(rl_res.reset_seconds)
+            response.headers["X-Risk-Tier"] = risk.risk_tier.value
+
+            # 10. Record Successful Audit Telemetry
+            duration_ms = (time.time() - start_time) * 1000
+            if risk.risk_score >= 30 or response.status_code >= 400:
+                security_logger.log_event(
+                    event_type="HTTP_REQUEST_AUDIT",
+                    path=path,
+                    method=method,
+                    ip_hash=risk.ip_hash,
+                    risk_score=risk.risk_score,
+                    risk_tier=risk.risk_tier.value,
+                    correlation_id=correlation_id,
+                    status_code=response.status_code,
+                    duration_ms=duration_ms,
+                )
+
+            return response
+        finally:
+            ddos_shield.release_connection(client_ip)
+
+
 
     def _apply_security_headers(self, response: Response, path: str):
         """

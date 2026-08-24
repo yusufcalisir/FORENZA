@@ -15,6 +15,7 @@ from .rate_limiter import AdaptiveRateLimiter, RateLimitCategory, RateLimitResul
 from .concurrency_guard import BiocomputationalResourceGuard, get_resource_guard
 from .app_shield import ApplicationShield
 from .audit_logger import SecurityAuditLogger, security_logger
+from .ddos_shield import DDoSShield, ddos_shield
 
 __all__ = [
     "TrafficRiskEngine",
@@ -28,4 +29,7 @@ __all__ = [
     "ApplicationShield",
     "SecurityAuditLogger",
     "security_logger",
+    "DDoSShield",
+    "ddos_shield",
 ]
+

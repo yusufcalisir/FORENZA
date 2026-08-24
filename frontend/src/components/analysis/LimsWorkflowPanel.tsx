@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { PackageCheck, ShieldCheck, CheckCircle2, AlertTriangle, RefreshCw, FileText, User, Tag, Clock } from "lucide-react";
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
+import { getApiBaseUrl } from "@/lib/api";
 
 interface WorkflowStep {
   step_name: string;
@@ -68,7 +69,7 @@ export default function LimsWorkflowPanel() {
     }
   ]);
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+  const API_BASE = getApiBaseUrl();
 
   const recordNextStep = async (stepName: string) => {
     setLoading(true);

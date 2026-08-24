@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { ShieldCheck, CheckCircle2, AlertTriangle, XCircle, RefreshCw, Activity, Layers } from "lucide-react";
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
+import { getApiBaseUrl } from "@/lib/api";
 
 interface InspectionDimension {
   dimension: string;
@@ -64,7 +65,7 @@ export default function QualityAssurancePanel() {
     iso_17025_provenance: "FORENZA QA/QC Gatekeeper Engine v1.0"
   });
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+  const API_BASE = getApiBaseUrl();
 
   const evaluateQc = async () => {
     setLoading(true);

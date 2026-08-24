@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Dna, Layers, ShieldCheck, Activity, RefreshCw, ChevronRight, CheckCircle2, AlertTriangle } from "lucide-react";
+import { getApiBaseUrl } from "@/lib/api";
 
 interface LayerDetail {
   layer_name: string;
@@ -46,7 +47,7 @@ export default function MultiLayerGenomicsPanel() {
     architecture_provenance: "FORENZA 5-Tier Multi-Omic Genomic Synthesizer"
   });
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+  const API_BASE = getApiBaseUrl();
 
   const runSynthesis = async () => {
     setLoading(true);

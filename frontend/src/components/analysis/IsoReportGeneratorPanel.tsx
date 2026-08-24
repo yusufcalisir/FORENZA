@@ -6,6 +6,7 @@ import { FileText, Printer, ShieldCheck, CheckCircle2, Lock, RefreshCw, Layers }
 import { useForensicCaseStore } from "@/store/forensicCaseStore";
 import { calculateCombinedLikelihoodRatio } from "@/lib/forensicStatusUtils";
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
+import { getApiBaseUrl } from "@/lib/api";
 
 interface ReportData {
   certificate_title: string;
@@ -154,7 +155,7 @@ export default function IsoReportGeneratorPanel() {
     court_admissibility_certified: true
   });
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+  const API_BASE = getApiBaseUrl();
 
   const handleCompileReport = async () => {
     setLoading(true);

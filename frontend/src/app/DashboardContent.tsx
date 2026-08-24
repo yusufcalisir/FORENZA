@@ -14,6 +14,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import DNAIngestForm from "@/components/forms/DNAIngestForm";
 import ModuleAiBanner from "@/components/common/ModuleAiBanner";
+import { getApiBaseUrl } from "@/lib/api";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -175,7 +176,7 @@ function GlobalNodes({ onSelectNode }: GlobalNodesProps) {
     useEffect(() => {
         const fetchStats = async () => {
             try {
-                const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+                const API_BASE = getApiBaseUrl();
                 const res = await fetch(`${API_BASE}/system/stats`);
                 if (res.ok) {
                     const data = await res.json();
@@ -267,7 +268,7 @@ function StatsGrid() {
         const fetchStats = async () => {
             try {
                 // We reuse the same endpoint. In a real app, we might want a SWR hook or context.
-                const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+                const API_BASE = getApiBaseUrl();
                 const res = await fetch(`${API_BASE}/system/stats`);
                 if (res.ok) {
                     const data = await res.json();

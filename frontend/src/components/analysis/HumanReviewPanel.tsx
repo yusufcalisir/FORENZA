@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { UserCheck, ShieldCheck, CheckCircle2, AlertTriangle, RefreshCw, FileText, User, Lock } from "lucide-react";
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
+import { getApiBaseUrl } from "@/lib/api";
 
 interface ReviewRecord {
   review_id: string;
@@ -50,7 +51,7 @@ export default function HumanReviewPanel() {
     hmac_signature: "7f8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b"
   });
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+  const API_BASE = getApiBaseUrl();
 
   const submitDecision = async () => {
     setLoading(true);

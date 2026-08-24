@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Cpu, Play, CheckCircle2, ShieldCheck, Activity, Layers, Network, Lock, RefreshCw } from "lucide-react";
+import { getApiBaseUrl } from "@/lib/api";
 
 interface PipelineResult {
   pipeline_id: string;
@@ -33,7 +34,7 @@ export default function ForensicEvidenceOSPanel() {
     master_os_hmac_hash: "e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2"
   });
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+  const API_BASE = getApiBaseUrl();
 
   const handleRunPipeline = async () => {
     setLoading(true);

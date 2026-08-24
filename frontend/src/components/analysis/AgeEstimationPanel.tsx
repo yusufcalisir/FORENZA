@@ -27,6 +27,7 @@ import {
   VisagePredictionResult
 } from "@/utils/visageAgeEngine";
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
+import { getApiBaseUrl } from "@/lib/api";
 
 type ModelMode = "VISAGE_5CPG_ELASTIC_NET" | "VISAGE_5CPG_MLR_POWER" | "EXTENDED_10CPG_CLOCK";
 
@@ -93,7 +94,7 @@ export default function AgeEstimationPanel() {
     setResult(res);
   };
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+  const API_BASE = getApiBaseUrl();
 
   const runPrediction = async () => {
     setLoading(true);

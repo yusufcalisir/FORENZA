@@ -14,6 +14,7 @@ import {
 
 import { generateUUID } from "@/lib/utils";
 import { useIngestStore } from "@/store/ingestStore";
+import { getApiBaseUrl } from "@/lib/api";
 
 /* ── Standard CODIS markers for quick-add ── */
 const CODIS_MARKERS = [
@@ -138,9 +139,7 @@ export default function DNAIngestForm({ selectedNodeId, onNodeChange }: DNAInges
 
         try {
             // Real API Call
-            // Real API Call
-            // Use environment variable or default to localhost:8000
-            const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+            const API_BASE = getApiBaseUrl();
             const res = await fetch(`${API_BASE}/profile/ingest`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },

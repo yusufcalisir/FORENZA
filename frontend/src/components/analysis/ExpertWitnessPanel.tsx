@@ -15,6 +15,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
+import { getApiBaseUrl } from "@/lib/api";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -156,7 +157,7 @@ export default function ExpertWitnessPanel() {
   const [reportData, setReportData] = useState<EvaluativeReportResponse | null>(null);
   const [daubertData, setDaubertData] = useState<DaubertResponse | null>(null);
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+  const API_BASE = getApiBaseUrl();
 
   const computedLR = Math.pow(10, log10LR);
 

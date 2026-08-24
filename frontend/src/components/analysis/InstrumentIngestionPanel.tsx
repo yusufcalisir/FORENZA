@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Cpu, Upload, FileCode, CheckCircle2, AlertTriangle, RefreshCw, Layers } from "lucide-react";
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
+import { getApiBaseUrl } from "@/lib/api";
 
 interface ParsedPeak {
   sample_id: string;
@@ -51,7 +52,7 @@ export default function InstrumentIngestionPanel() {
     ingestion_provenance: "FORENZA Automated Analytical Instrument Gateway v1.0"
   });
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+  const API_BASE = getApiBaseUrl();
 
   const handleIngest = async () => {
     setLoading(true);

@@ -17,6 +17,7 @@ from .app_shield import ApplicationShield
 from .audit_logger import SecurityAuditLogger, security_logger
 from .ddos_shield import DDoSShield, ddos_shield
 from .session_guard import SessionSecurityManager, session_manager, SessionAuthLevel
+from .auth_shield import AuthenticationShield, auth_shield
 
 __all__ = [
     "TrafficRiskEngine",
@@ -35,6 +36,9 @@ __all__ = [
     "SessionSecurityManager",
     "session_manager",
     "SessionAuthLevel",
+    "AuthenticationShield",
+    "auth_shield",
 ]
+
 
 

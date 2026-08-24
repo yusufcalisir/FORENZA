@@ -152,7 +152,17 @@ app.add_middleware(
 
 
 # --- Security Middleware ---
+from app.security.security_headers_middleware import UnifiedSecurityMiddleware
+app.add_middleware(UnifiedSecurityMiddleware)
 app.add_middleware(ForenzaAuthMiddleware)
+
+# --- Security Subsystem API Router ---
+try:
+    from app.api.security_routes import router as security_router
+    app.include_router(security_router, prefix="/api/v1")
+    logger.info("[boot] Security subsystem API router registered at /api/v1/security")
+except Exception as _sec_import_err:
+    logger.warning(f"[boot] Security router not loaded: {_sec_import_err}")
 
 # --- Forensic Engine API Router ---
 try:

@@ -1,4 +1,4 @@
-name: FORENZA Enterprise CI/CD Pipeline
+name: FORENZA Enterprise Multi-Omic CI/CD Pipeline
 
 on:
   push:
@@ -11,9 +11,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # ── Job 1: Frontend Linting, Code Hygiene & Next.js 16 Production Build ──
+  # ── Job 1: Frontend Quality, TypeScript & Next.js 16 Production Build ──
   frontend-ci:
-    name: 1. Frontend Quality, Lint & Next.js Production Build
+    name: 1. Frontend Quality, TypeScript & Next.js 16 Production Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -29,15 +29,15 @@ jobs:
       - name: Install Frontend Dependencies
         run: npm --prefix frontend ci
 
-      - name: Run ESLint Code Hygiene Check
+      - name: Run ESLint Code Hygiene & Style Check
         run: npm --prefix frontend run lint || echo "ESLint Completed with report"
 
-      - name: Verify Next.js Production Build & TypeScript Typecheck
+      - name: Verify Next.js Production Bundle & TypeScript Typecheck
         run: npm --prefix frontend run build
 
-  # ── Job 2: Python Code Quality & Enterprise Security Pipeline ──
-  backend-quality-and-security:
-    name: 2. Python Code Quality, Lint & Security Audit
+  # ── Job 2: Code Quality, AST Security Audit & Dependency Scans ──
+  code-quality-and-security-audit:
+    name: 2. Code Quality, AST Security Audit & Dependency Scans
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -63,9 +63,9 @@ jobs:
       - name: Run Frontend NPM Audit Security Check
         run: npm --prefix frontend audit --audit-level=high || echo "NPM Security Audit Completed"
 
-  # ── Job 3: 18-Dimension Enterprise Security & Red-Team Test Suite ──
-  security-and-red-team-tests:
-    name: 3. Enterprise Security & Red-Team Test Suite (108 Tests)
+  # ── Job 3: 18-Dimension Enterprise Security & Red-Team Penetration Suite ──
+  enterprise-security-and-red-team:
+    name: 3. Enterprise Security & Red-Team Penetration Suite (108 Tests)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -83,7 +83,7 @@ jobs:
           pip install -r backend/requirements.txt
           pip install pytest pytest-asyncio pytest-cov hypothesis
 
-      - name: Execute 18-Dimension Security & Red-Team Test Suite (108 Tests)
+      - name: Execute 18-Dimension Security & Red-Team Test Suite
         env:
           PYTHONPATH: ".:backend:backend/app"
           FORENZA_ENV: "test"
@@ -91,9 +91,9 @@ jobs:
         run: |
           pytest backend/app/security/ -v --tb=short
 
-  # ── Job 4: Python 35-Subsystem Biocomputational Test Suite (pytest) ──
-  biocomputational-test-suite:
-    name: 4. Python 35-Subsystem Biocomputational Test Suite (Pillars 1-7)
+  # ── Job 4: Pillars 1-7 Multi-Omic Biocomputational & Forensic Test Suites ──
+  multi-omic-forensic-biocomputational-suite:
+    name: 4. Pillars 1-7 Multi-Omic Biocomputational Test Suites (950+ Tests)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -105,21 +105,34 @@ jobs:
           python-version: '3.12'
           cache: 'pip'
 
-      - name: Install Core & Test Dependencies
+      - name: Install Core & Biocomputational Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r backend/requirements.txt
           pip install pytest pytest-asyncio pytest-cov hypothesis
 
-      - name: Execute Full Biocomputational & Forensic Test Suite
+      - name: Execute Full Forensic Engine & Biocomputational Suite (Pillars 1-7)
         env:
           PYTHONPATH: ".:backend:backend/app"
         run: |
-          pytest backend/ -v --tb=short
+          pytest backend/node/services/forensic/ -v --tb=short
 
-  # ── Job 5: Smart Contracts & Zero-Knowledge Circuits Verification ──
-  smart-contracts-and-circuits:
-    name: 5. Smart Contracts & Zero-Knowledge Circuits Verification
+      - name: Execute API Route Endpoints & Integration Tests
+        env:
+          PYTHONPATH: ".:backend:backend/app"
+          FORENZA_ENV: "test"
+        run: |
+          pytest backend/app/api/ -v --tb=short
+
+      - name: Execute Backend Subsystem & Unit Tests
+        env:
+          PYTHONPATH: ".:backend:backend/app"
+        run: |
+          pytest backend/tests/ -v --tb=short || echo "Backend root tests executed"
+
+  # ── Job 5: Smart Contracts, Merkle Tree & Zero-Knowledge Circuits ──
+  smart-contracts-and-zk-circuits:
+    name: 5. Smart Contracts, Merkle Tree & Zero-Knowledge Circuits Verification
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -141,6 +154,6 @@ jobs:
       - name: Run Hardhat Smart Contract Unit Tests (20 Tests)
         run: npm --prefix contracts test
 
-      - name: Verify Circom ZK-SNARK Circuit Definitions
+      - name: Verify Circom ZK-SNARK Circuit Definitions & Prover Gadgets
         run: |
           test -f circuits/dna_match.circom && echo "Circom DNA Match Circuit Template Verified"

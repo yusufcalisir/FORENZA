@@ -89,7 +89,8 @@ flowchart TD
 | `FORENZA_ORIGIN_VERIFY_SECRET` | `[32-byte random hex]` | Shared secret between Cloudflare/CDN and Origin reverse proxy. |
 | `FORENZA_EMERGENCY_OVERRIDE_KEY` | `[32-byte high-entropy key]` | Cryptographic administrative key for emergency bypass. |
 | `FORENZA_ENABLE_ORIGIN_ENFORCEMENT` | `true` | Drops any request bypassing Cloudflare/CDN. |
-| `FORENZA_CORS_ALLOWED_ORIGINS` | `https://forenza.org` | Strict CORS origin whitelist. |
+| `FORENZA_CORS_ALLOWED_ORIGINS` | `https://forenzaos.vercel.app,http://localhost:3000` | Allowed web origins (e.g. Vercel deployment, localhost, or custom domain). |
+
 
 ---
 

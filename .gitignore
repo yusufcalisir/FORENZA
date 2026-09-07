@@ -95,6 +95,7 @@ circuits/*.sym
 *.sublime-project
 *.sublime-workspace
 scratch/
+phase/
 AGENTS.md
 *roadmap*.md
 ROADMAP.md

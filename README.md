@@ -621,6 +621,12 @@ The FastAPI gateway exposes a clean `/api/v1` RESTful interface.
 | **BPA** | `/api/v1/bpa/impact-angle` | `POST` | Computes bloodstain droplet impact angle & 3D origin |
 | **Serology** | `/api/v1/fluid/identify` | `POST` | Predicts body fluid tissue origin from microRNA/methylation |
 | **Touch DNA** | `/api/v1/touch-dna/analyze` | `POST` | Deconvolutes low-copy number touch DNA samples |
+| **Validation Lab (Tippett Curves)** | `/api/v1/forensic/validation/tippett-curve` | `POST` | Computes Hp and Hd Tippett empirical complementary CDF (ECCDF) calibration curves |
+| **Validation Lab (ROC & AUC)** | `/api/v1/forensic/validation/roc-analysis` | `POST` | Evaluates empirical ROC curves, FPR/FNR at LR=1, and Mann-Whitney AUC |
+| **Validation Lab (Cllr Cost)** | `/api/v1/forensic/validation/cllr-score` | `POST` | Computes Log-Likelihood-Ratio Cost (Cllr) and PAV isotonic calibration loss |
+| **Validation Lab (HPD Lower Bound)** | `/api/v1/forensic/validation/hpd-lower-bound` | `POST` | Computes conservative 95% HPD lower bound (LR_court) from MCMC posterior samples |
+| **Validation Lab (ENFSI Scale)** | `/api/v1/forensic/validation/enfsi-verbal-scale` | `POST` | Maps continuous LRs to ENFSI 2017 7-tier verbal scale with Prosecutor's Fallacy Shield |
+| **Validation Lab (Simulation Cohorts)** | `/api/v1/forensic/validation/generate-cohort` | `POST` | Generates on-demand reference casework simulation cohorts (Pristine, LTDNA, SRM 2391d) |
 | **ZK-SNARK Catalog** | `/api/v1/forensic/zk/catalog` | `GET` | Retrieves catalog of proving systems (Groth16, PLONK, Halo2, VOLE), curves, and scales |
 | **ZK-SNARK Synthesize** | `/api/v1/forensic/zk/synthesize-proof` | `POST` | Generates Groth16, PLONK, Halo2, or VOLE proofs from forensic profiles & witnesses |
 | **ZK-SNARK Verify** | `/api/v1/forensic/zk/verify-proof` | `POST` | Verifies zero-knowledge proof against public instance on BN254 & generates ISO 17025 certificate |

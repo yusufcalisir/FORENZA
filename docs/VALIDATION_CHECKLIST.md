@@ -58,7 +58,7 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
-### Module 1.5: TIPPETT — Tippett Plot ROC Calibration & Misleading Evidence Lab [VERIFIED 2026-08-20]
+### Module 1.5: TIPPETT : Tippett Plot ROC Calibration & Misleading Evidence Lab [VERIFIED 2026-08-20]
 - [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-20]:**
   - [x] Ran 10,000 synthetic true-donor ($H_p$) vs 10,000 non-donor ($H_d$) Monte Carlo vectors from NIST 1036 24-locus frequencies with Balding-Nichols $\theta = 0.03$.
   - [x] Evaluated multi-tier casework cohorts: Pristine 24-locus standard (`COHORT_PRISTINE_24L`), Low-template degraded touch (`COHORT_LTDNA_DEGRADED`, $P(D)=0.40$), and Certified Reference NIST SRM 2391d Component A (`COHORT_NIST_SRM2391D_COMP_A`).

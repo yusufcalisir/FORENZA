@@ -620,7 +620,12 @@ The FastAPI gateway exposes a clean `/api/v1` RESTful interface.
 | **Entomology** | `/api/v1/entomology/pmi` | `POST` | Calculates Accumulated Degree Hours (ADH) post-mortem interval |
 | **BPA** | `/api/v1/bpa/impact-angle` | `POST` | Computes bloodstain droplet impact angle & 3D origin |
 | **Serology** | `/api/v1/fluid/identify` | `POST` | Predicts body fluid tissue origin from microRNA/methylation |
-| **Touch DNA** | `/api/v1/touch-dna/analyze` | `POST` | Deconvolutes low-copy number touch DNA samples |
+| **Touch DNA (Multi-Locus LR)** | `/api/v1/forensic/touch/multi-locus-lr` | `POST` | Computes 24-locus stochastic Curran-Gill profile LR with log-additivity verification |
+| **Touch DNA (Substrate & LTDNA)** | `/api/v1/forensic/touch/analyze-ltdna` | `POST` | Evaluates forensic substrate recovery efficiency, diploid cell count, and P(D) |
+| **Touch DNA (Dropout Model)** | `/api/v1/forensic/touch/dropout-model` | `POST` | Evaluates calibrated logistic allele dropout P(D) for template mass or RFU |
+| **Touch DNA (Drop-in & Height PDF)** | `/api/v1/forensic/touch/dropin-model` | `POST` | Computes Poisson drop-in PMF P(C=k) and truncated exponential height PDF f(h_C) |
+| **Touch DNA (Heterozygote Balance)** | `/api/v1/forensic/touch/heterozygote-balance` | `POST` | Evaluates peak balance ratio H_b and flags stochastic threshold violations |
+| **Touch DNA (Single-Locus LR)** | `/api/v1/forensic/touch/stochastic-lr` | `POST` | Computes Curran-Gill stochastic single-source LR across 4 Markov observation states |
 | **Validation Lab (Tippett Curves)** | `/api/v1/forensic/validation/tippett-curve` | `POST` | Computes Hp and Hd Tippett empirical complementary CDF (ECCDF) calibration curves |
 | **Validation Lab (ROC & AUC)** | `/api/v1/forensic/validation/roc-analysis` | `POST` | Evaluates empirical ROC curves, FPR/FNR at LR=1, and Mann-Whitney AUC |
 | **Validation Lab (Cllr Cost)** | `/api/v1/forensic/validation/cllr-score` | `POST` | Computes Log-Likelihood-Ratio Cost (Cllr) and PAV isotonic calibration loss |

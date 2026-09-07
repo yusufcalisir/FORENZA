@@ -2,16 +2,16 @@
 FORENZA Touch DNA & Low-Template API Router (Module 04).
 
 Exposes endpoints for LTDNA Stochastic Phenomenon Modeling (Pillar 1 §4):
-  POST /forensic/touch/dropout-model        — Logistic P(D) for RFU or DNA mass
-  POST /forensic/touch/dropin-model         — Poisson P(C=k) and exponential height PDF
-  POST /forensic/touch/heterozygote-balance — H_b balance evaluation and stochastic flags
-  POST /forensic/touch/stochastic-lr        — Curran-Gill stochastic single-locus LR
-  POST /forensic/touch/multi-locus-lr       — Multi-locus 24-locus profile stochastic LR
-  POST /forensic/touch/analyze-ltdna        — Full substrate recovery + stochastic analysis
-  POST /forensic/touch/contributor-deconv   — MCMC Touch DNA mixture deconvolution
-  GET  /forensic/touch/dilution-tiers       — 6 Peter Gill LCN dilution benchmark tiers
-  GET  /forensic/touch/substrates           — 4 Forensic substrate recovery materials
-  GET  /forensic/touch/benchmark-vectors    — Golden casework benchmark vectors
+  POST /forensic/touch/dropout-model        : Logistic P(D) for RFU or DNA mass
+  POST /forensic/touch/dropin-model         : Poisson P(C=k) and exponential height PDF
+  POST /forensic/touch/heterozygote-balance : H_b balance evaluation and stochastic flags
+  POST /forensic/touch/stochastic-lr        : Curran-Gill stochastic single-locus LR
+  POST /forensic/touch/multi-locus-lr       : Multi-locus 24-locus profile stochastic LR
+  POST /forensic/touch/analyze-ltdna        : Full substrate recovery + stochastic analysis
+  POST /forensic/touch/contributor-deconv   : MCMC Touch DNA mixture deconvolution
+  GET  /forensic/touch/dilution-tiers       : 6 Peter Gill LCN dilution benchmark tiers
+  GET  /forensic/touch/substrates           : 4 Forensic substrate recovery materials
+  GET  /forensic/touch/benchmark-vectors    : Golden casework benchmark vectors
 """
 
 from fastapi import APIRouter, HTTPException, status

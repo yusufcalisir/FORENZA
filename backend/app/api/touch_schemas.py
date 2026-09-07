@@ -1,10 +1,10 @@
 """
-FORENZA Touch DNA & Low-Template API — Pydantic v2 Schemas (Module 04).
+FORENZA Touch DNA & Low-Template API : Pydantic v2 Schemas (Module 04).
 
 Covers all LTDNA stochastic phenomenon endpoints verbatim from Pillar 1 §4:
-  - Logistic Dropout P(D) — RFU-based and DNA mass-based calibration curves
-  - Poisson Drop-in P(C=k) — count probability and exponential height PDF
-  - Heterozygote Balance H_b — peak balance and stochastic quality flags
+  - Logistic Dropout P(D) : RFU-based and DNA mass-based calibration curves
+  - Poisson Drop-in P(C=k) : count probability and exponential height PDF
+  - Heterozygote Balance H_b : peak balance and stochastic quality flags
   - Curran-Gill Stochastic LTDNA Likelihood Ratio
   - Multi-Locus LTDNA Profile Likelihood Ratio
   - Substrate recovery and full LTDNA analysis

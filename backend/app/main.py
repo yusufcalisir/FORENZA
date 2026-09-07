@@ -477,6 +477,18 @@ try:
 except Exception as _zk_import_err:
     logger.warning(f"[boot] Forensic ZK router not loaded: {_zk_import_err}")
 
+# --- Empirical Validation Lab & Tippett ROC Calibration Router (Module 04 / Pillar 1 §5) ---
+try:
+    try:
+        from app.api.tippett_routes import router as tippett_router
+    except ImportError:
+        from backend.app.api.tippett_routes import router as tippett_router
+    app.include_router(tippett_router, prefix="/api")
+    app.include_router(tippett_router, prefix="/api/v1")
+    logger.info("[boot] Empirical Validation Lab API router registered at /api/v1/forensic/validation")
+except Exception as _tippett_import_err:
+    logger.warning(f"[boot] Tippett validation router not loaded: {_tippett_import_err}")
+
 # --- Automated Analytical Instrument Gateway Router ---
 try:
     from app.api.instrument_routes import router as instrument_router

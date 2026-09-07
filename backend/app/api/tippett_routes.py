@@ -2,14 +2,14 @@
 FORENZA Tippett Calibration & ENFSI Evaluative Reporting API Router (Module 05).
 
 Exposes endpoints for Tippett ROC Calibration and Evaluative Reporting (Pillar 1 §5):
-  POST /forensic/validation/tippett-curve      — Tippett ECCDF Hp/Hd curves
-  POST /forensic/validation/roc-analysis       — Empirical ROC & AUC
-  POST /forensic/validation/cllr-score         — Log-Likelihood-Ratio Cost Cllr
-  POST /forensic/validation/hpd-lower-bound    — Conservative 95% HPD LR_court
-  POST /forensic/validation/enfsi-verbal-scale — ENFSI 2017 7-Tier EN/TR verbal scale
-  GET  /forensic/validation/benchmarks         — Certified Golden Benchmark Vectors
-  POST /forensic/validation/generate-cohort    — Deterministic Reference Casework Cohorts
-  POST /forensic/validation/misleading-evidence — Royall's Misleading Evidence Evaluator
+  POST /forensic/validation/tippett-curve      : Tippett ECCDF Hp/Hd curves
+  POST /forensic/validation/roc-analysis       : Empirical ROC & AUC
+  POST /forensic/validation/cllr-score         : Log-Likelihood-Ratio Cost Cllr
+  POST /forensic/validation/hpd-lower-bound    : Conservative 95% HPD LR_court
+  POST /forensic/validation/enfsi-verbal-scale : ENFSI 2017 7-Tier EN/TR verbal scale
+  GET  /forensic/validation/benchmarks         : Certified Golden Benchmark Vectors
+  POST /forensic/validation/generate-cohort    : Deterministic Reference Casework Cohorts
+  POST /forensic/validation/misleading-evidence : Royall's Misleading Evidence Evaluator
 """
 
 import math
@@ -307,8 +307,8 @@ async def generate_simulation_cohort(body: CohortGenerationRequest) -> CohortGen
             detail=f"Cohort generation failed: {str(exc)}"
         )
 
-    # Return summary with small sample arrays for UI responsiveness
-    sample_len = min(50, len(cohort.hp_log10_lrs))
+    # Return cohort arrays for accurate UI distributions (up to n_pairs)
+    sample_len = min(body.n_pairs, len(cohort.hp_log10_lrs))
     return CohortGenerationResponse(
         cohort_id=cohort.cohort_id,
         name=cohort.name,

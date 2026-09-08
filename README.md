@@ -631,7 +631,10 @@ The FastAPI gateway exposes a clean `/api/v1` RESTful interface.
 | **HIrisPlex-S (Certified Standards)** | `/api/v1/forensic/phenotyping/hirisplex/standards` | `GET` | Retrieves 5 certified multi-omic pigmentation reference standards (NA12878, NA19240, etc.) |
 | **HIrisPlex-S (Cross-Validation)** | `/api/v1/forensic/phenotyping/hirisplex/cross-validation` | `GET` | Evaluates concordance against Erasmus MC HIrisPlex webtool & VISAGE standards |
 | **HIrisPlex-S (Reporting Shield)** | `/api/v1/forensic/phenotyping/hirisplex/reporting-shield` | `GET` | Generates bilingual ISFG 2018 / VISAGE 2020 evaluative statement & Prosecutor's Fallacy Shield |
-| **Ancestry (55-AIM)** | `/api/v1/forensic/ancestry/55-aim/predict` | `POST` | Evaluates 55-SNP AIM biogeographic ancestry clusters and continental centroids |
+| **Ancestry (55-AIM Full Analysis)** | `/api/v1/forensic/phenotyping/bga/predict-full` | `POST` | Simultaneously estimates 6-continental Dirichlet admixture proportions & 3D WGS84 geodesic coordinates |
+| **Ancestry (55-AIM Certified Standards)** | `/api/v1/forensic/phenotyping/bga/standards` | `GET` | Retrieves 5 certified multi-omic continental reference standards (NA12878, NA19240, etc.) |
+| **Ancestry (55-AIM Cross-Validation)** | `/api/v1/forensic/phenotyping/bga/cross-validation` | `GET` | Evaluates concordance against FROG-kb & STRUCTURE 2.3.4 benchmarks (residual < 0.005) |
+| **Ancestry (55-AIM Reporting Shield)** | `/api/v1/forensic/phenotyping/bga/reporting-shield` | `GET` | Generates bilingual ISFG 2020 / ENFSI 2017 evaluative reporting statements & Prosecutor's Fallacy Shield |
 | **Ancestry (Expanded BGA & gnomAD)** | `/api/forensic/bga/analyze` | `POST` | Evaluates 165-SNP AIM / gnomAD continental centroid projections & Euclidean distances |
 | **Hair & Balding PRS** | `/api/v1/forensic/phenotyping/hair/morphology-and-balding` | `POST` | Evaluates fiber cross-sectional area, curl density index, and balding PRS |
 | **Freckling & MC1R Epistasis** | `/api/v1/forensic/phenotyping/ephelides/freckling-and-uv` | `POST` | Quantifies MC1R epistatic loss-of-function weights, ASIP/BNC2 modifiers, and MED |

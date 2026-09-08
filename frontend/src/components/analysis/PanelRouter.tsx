@@ -6,7 +6,7 @@ import { useForensicCaseStore } from "@/store/forensicCaseStore";
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 import { ModuleSkeletonLoader } from "@/components/analysis/ModuleSkeletonLoader";
 
-const AncestryDataPanel = dynamic(() => import("@/components/analysis/AncestryDataPanel"), {
+const PanelBGA = dynamic(() => import("@/components/analysis/PanelBGA"), {
   loading: () => <ModuleSkeletonLoader label="Loading Biogeographical Ancestry Engine..." />,
 });
 const PanelYSTR = dynamic(() => import("@/components/analysis/PanelYSTR"), {
@@ -601,7 +601,7 @@ export function renderPanel(tabId: string) {
     case "bga":
     case "bga_55":
     case "aims":
-      return <AncestryDataPanel />;
+      return <PanelBGA />;
     case "craniofacial":
     case "morphometrics":
     case "cranio":

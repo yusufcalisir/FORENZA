@@ -25,9 +25,12 @@ import {
   Check,
   Play,
   Loader2,
+  Database,
+  BookmarkCheck,
 } from "lucide-react";
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 import { getApiBaseUrl } from "@/lib/api";
+import { useForensicCaseStore } from "@/store/forensicCaseStore";
 
 // ===========================================================================
 // 1. Exact Biocomputational Research Constants (Pillar 1 §4 & Artifact D)
@@ -405,10 +408,13 @@ const GOLDEN_PRESETS: Record<PresetKey, GoldenPreset> = {
 export default function TouchDnaPanel() {
   const { lang } = useSaasLanguage();
   const isTr = lang === "tr";
+  const { activeCase } = useForensicCaseStore();
 
   // State
   const [activeTab, setActiveTab] = useState<"SUBSTRATE" | "CURVES" | "DROPIN" | "HETEROZYGOTE" | "PROFILE">("SUBSTRATE");
   const [selectedPreset, setSelectedPreset] = useState<PresetKey>("VECTOR_03");
+  const [customProfile, setCustomProfile] = useState<Record<string, { suspect: [number, number]; observed: Record<number, number> }> | null>(null);
+  const [isCaseworkLinked, setIsCaseworkLinked] = useState<boolean>(false);
 
   const [selectedSubstrateId, setSelectedSubstrateId] = useState<string>("TEXTURED_NON_POROUS");
   const [initialMassPg, setInitialMassPg] = useState<number>(80.0);
@@ -448,17 +454,38 @@ export default function TouchDnaPanel() {
 
   const isLtdnaRegime = recoveredMassPg < 100.0;
 
-  // Active preset profile data
+  // Active preset or custom profile data
   const currentProfile = useMemo(() => {
-    return GOLDEN_PRESETS[selectedPreset].locusProfiles;
-  }, [selectedPreset]);
+    return customProfile || GOLDEN_PRESETS[selectedPreset].locusProfiles;
+  }, [customProfile, selectedPreset]);
 
   // Load Preset
   const handleLoadPreset = (presetKey: PresetKey) => {
+    setCustomProfile(null);
+    setIsCaseworkLinked(false);
     const preset = GOLDEN_PRESETS[presetKey];
     setSelectedPreset(presetKey);
     setSelectedSubstrateId(preset.substrateId);
     setInitialMassPg(preset.initialMassPg);
+  };
+
+  // Load Active Casework Profile from Forensic Case Store
+  const handleLoadCaseworkProfile = () => {
+    if (!activeCase?.profile?.strMarkers) return;
+    const newProfile: Record<string, { suspect: [number, number]; observed: Record<number, number> }> = {};
+    for (const [locus, m] of Object.entries(activeCase.profile.strMarkers)) {
+      const a1 = Number(m.allele1);
+      const a2 = Number(m.allele2);
+      if (a1 === a2) {
+        newProfile[locus] = { suspect: [a1, a2], observed: { [a1]: 85 } };
+      } else {
+        newProfile[locus] = { suspect: [a1, a2], observed: { [a1]: 95, [a2]: 70 } };
+      }
+    }
+    if (Object.keys(newProfile).length > 0) {
+      setCustomProfile(newProfile);
+      setIsCaseworkLinked(true);
+    }
   };
 
   // Live backend execution
@@ -651,6 +678,7 @@ ${isTr ? "Olabilirlik Oranı (LR), yarışan hipotezler (Hp ve Hd) altında dü�
 
           <div className="flex flex-wrap items-center gap-2 shrink-0">
             <button
+              id="execute-touch-analysis-btn"
               onClick={executeServerAnalysis}
               disabled={isExecuting}
               className="min-h-[36px] px-3.5 py-1.5 rounded-xl bg-orange-500/20 hover:bg-orange-500/30 border border-orange-500/40 text-orange-300 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer disabled:opacity-50 shadow-md shadow-orange-500/10"
@@ -691,18 +719,40 @@ ${isTr ? "Olabilirlik Oranı (LR), yarışan hipotezler (Hp ve Hd) altında dü�
 
         {/* Bottom: Casework Benchmark Scenario Cards */}
         <div className="space-y-2">
-          <div className="flex items-center justify-between text-[9px] font-bold text-zinc-400 uppercase tracking-widest px-0.5">
-            <span>{isTr ? "Sertifikalı LTDNA Referans Kohortu Seçin:" : "Select Certified LTDNA Benchmark:"}</span>
-            <span className="text-zinc-500 font-mono">{isTr ? "4 Senaryo" : "4 Scenarios"}</span>
+          <div className="flex flex-wrap items-center justify-between gap-2 text-[9px] font-bold text-zinc-400 uppercase tracking-widest px-0.5">
+            <div className="flex items-center gap-2">
+              <span>{isTr ? "Sertifikalı LTDNA Referans Kohortu Seçin:" : "Select Certified LTDNA Benchmark:"}</span>
+              <span className="text-zinc-500 font-mono">{isTr ? "4 Senaryo" : "4 Scenarios"}</span>
+            </div>
+            {activeCase?.profile?.strMarkers && Object.keys(activeCase.profile.strMarkers).length > 0 && (
+              <button
+                id="load-casework-profile-btn"
+                onClick={handleLoadCaseworkProfile}
+                className={`px-2.5 py-1 rounded-lg border text-[10px] font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                  isCaseworkLinked
+                    ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-300 shadow-sm"
+                    : "bg-white/[0.04] border-white/15 text-zinc-300 hover:text-white hover:border-white/30"
+                }`}
+              >
+                <Database className="w-3 h-3 text-emerald-400" />
+                <span>
+                  {isCaseworkLinked
+                    ? (isTr ? `Vaka Bağlandı (${activeCase.metadata.caseId})` : `Case Linked (${activeCase.metadata.caseId})`)
+                    : (isTr ? `Aktif Vaka Profilini Yükle (${activeCase.metadata.caseId})` : `Load Active Case Profile (${activeCase.metadata.caseId})`)}
+                </span>
+                {isCaseworkLinked && <BookmarkCheck className="w-3 h-3 text-emerald-400" />}
+              </button>
+            )}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
             {(Object.keys(GOLDEN_PRESETS) as PresetKey[]).map((key) => {
               const p = GOLDEN_PRESETS[key];
-              const isSelected = selectedPreset === key;
+              const isSelected = !isCaseworkLinked && selectedPreset === key;
               return (
                 <button
                   type="button"
+                  id={`preset-${key.toLowerCase().replace(/_/g, '-')}`}
                   key={key}
                   onClick={() => handleLoadPreset(key)}
                   className={`p-3 rounded-xl text-left transition-all border cursor-pointer flex flex-col justify-between space-y-1.5 ${
@@ -743,6 +793,7 @@ ${isTr ? "Olabilirlik Oranı (LR), yarışan hipotezler (Hp ve Hd) altında dü�
           const isActive = activeTab === tab.id;
           return (
             <button
+              id={`tab-${tab.id.toLowerCase()}`}
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
               className={`min-h-[44px] px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all border cursor-pointer ${
@@ -759,17 +810,9 @@ ${isTr ? "Olabilirlik Oranı (LR), yarışan hipotezler (Hp ve Hd) altında dü�
       </div>
 
       {/* ── Tab Content ─────────────────────────────────────────────────────── */}
-      <AnimatePresence mode="wait">
-        {/* TAB 1: SUBSTRATE TRANSFER & RECOVERY SIMULATION */}
-        {activeTab === "SUBSTRATE" && (
-          <motion.div
-            key="tab-substrate"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.15 }}
-            className="space-y-6"
-          >
+      {/* TAB 1: SUBSTRATE TRANSFER & RECOVERY SIMULATION */}
+      {activeTab === "SUBSTRATE" && (
+        <div className="space-y-6">
             {/* Live Telemetry Summary Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-4 space-y-1 shadow-md">
@@ -953,19 +996,12 @@ ${isTr ? "Olabilirlik Oranı (LR), yarışan hipotezler (Hp ve Hd) altında dü�
                 </div>
               </div>
             </div>
-          </motion.div>
-        )}
+        </div>
+      )}
 
-        {/* TAB 2: LOGISTIC DROPOUT CURVES VISUALIZER (INTERACTIVE SVG) */}
-        {activeTab === "CURVES" && (
-          <motion.div
-            key="tab-curves"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.15 }}
-            className="space-y-6"
-          >
+      {/* TAB 2: LOGISTIC DROPOUT CURVES VISUALIZER (INTERACTIVE SVG) */}
+      {activeTab === "CURVES" && (
+        <div className="space-y-6">
             <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 space-y-5 shadow-lg">
               {/* Curve Controls */}
               <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-tactical-border/40 pb-3 min-w-0">
@@ -1087,19 +1123,12 @@ ${isTr ? "Olabilirlik Oranı (LR), yarışan hipotezler (Hp ve Hd) altında dü�
                 </div>
               </div>
             </div>
-          </motion.div>
-        )}
+        </div>
+      )}
 
-        {/* TAB 3: POISSON DROP-IN & EXPONENTIAL HEIGHT PDF */}
-        {activeTab === "DROPIN" && (
-          <motion.div
-            key="tab-dropin"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.15 }}
-            className="space-y-6"
-          >
+      {/* TAB 3: POISSON DROP-IN & EXPONENTIAL HEIGHT PDF */}
+      {activeTab === "DROPIN" && (
+        <div className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Left Col: Discrete Poisson PMF */}
               <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 space-y-4 shadow-lg">
@@ -1239,19 +1268,12 @@ ${isTr ? "Olabilirlik Oranı (LR), yarışan hipotezler (Hp ve Hd) altında dü�
                 </div>
               </div>
             </div>
-          </motion.div>
-        )}
+        </div>
+      )}
 
-        {/* TAB 4: HETEROZYGOTE BALANCE & CURRAN-GILL LR CALCULATOR */}
-        {activeTab === "HETEROZYGOTE" && (
-          <motion.div
-            key="tab-hb"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.15 }}
-            className="space-y-6"
-          >
+      {/* TAB 4: HETEROZYGOTE BALANCE & CURRAN-GILL LR CALCULATOR */}
+      {activeTab === "HETEROZYGOTE" && (
+        <div className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Left Col: Heterozygote Balance Interactive Sliders */}
               <div className="rounded-2xl border border-tactical-border/80 bg-tactical-surface/50 p-5 space-y-5 shadow-lg">
@@ -1379,19 +1401,12 @@ ${isTr ? "Olabilirlik Oranı (LR), yarışan hipotezler (Hp ve Hd) altında dü�
                 </div>
               </div>
             </div>
-          </motion.div>
-        )}
+        </div>
+      )}
 
-        {/* TAB 5: 24-LOCUS MULTI-MARKER STOCHASTIC EPG & JUROR REPORT */}
-        {activeTab === "PROFILE" && (
-          <motion.div
-            key="tab-profile"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.15 }}
-            className="space-y-6"
-          >
+      {/* TAB 5: 24-LOCUS MULTI-MARKER STOCHASTIC EPG & JUROR REPORT */}
+      {activeTab === "PROFILE" && (
+        <div className="space-y-6">
             {/* Total Likelihood Ratio & Verbal Summary */}
             <div className="rounded-2xl border border-orange-500/40 bg-gradient-to-r from-orange-500/10 via-tactical-surface/80 to-black/60 p-5 space-y-4 shadow-xl">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-tactical-border/40 pb-3">
@@ -1552,9 +1567,8 @@ ${isTr ? "Olabilirlik Oranı (LR), yarışan hipotezler (Hp ve Hd) altında dü�
                 </tbody>
               </table>
             </div>
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
-    </div>
+      </div>
   );
 }

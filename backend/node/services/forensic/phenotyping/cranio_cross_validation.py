@@ -1,6 +1,6 @@
 """
 FORENZA Craniofacial Morphometrics Independent Tool Cross-Validation & Reporting Shield.
-Module 3.3 — Pillar 3: Phenotyping, Biogeographic Ancestry & Morphometrics.
+Module 3.3: Pillar 3: Phenotyping, Biogeographic Ancestry & Morphometrics.
 
 Validates against:
   - Morpho / Morphometrics 3D Procrustes Superposition benchmark algorithms
@@ -106,5 +106,5 @@ class CraniofacialCrossValidation:
                 "and an evidence-derived morphometric estimate does NOT equal the probability that the suspect was the source of the biological sample. "
                 "Environmental factors (nutrition, trauma, dental status, BMI, aging) significantly modulate soft tissue phenotype."
             ),
-            "validation_authority": "FORENZA Forensic Evidence OS — Module 3.3 Craniofacial Engine (ISO/IEC 17025:2017 Aligned)",
+            "validation_authority": "FORENZA Forensic Evidence OS: Module 3.3 Craniofacial Engine (ISO/IEC 17025:2017 Aligned)",
         }

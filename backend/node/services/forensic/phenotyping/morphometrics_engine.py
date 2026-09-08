@@ -1,5 +1,5 @@
 """
-FORENZA Craniofacial Morphometrics & 3D Shape Space Reconstruction Engine — Module 13.
+FORENZA Craniofacial Morphometrics & 3D Shape Space Reconstruction Engine: Module 13.
 
 Implements verbatim from Pillar 3 Research §3:
   - §3.1 Primary Craniofacial Predictor Loci (PAX3, PAX9, PRDM16, DCHS2, PCDH15)

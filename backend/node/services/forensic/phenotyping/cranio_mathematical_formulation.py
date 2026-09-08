@@ -1,6 +1,6 @@
 """
 FORENZA Craniofacial Morphometry & Anthropological Landmarks Mathematical Formulation Engine.
-Module 3.3 — Pillar 3: Phenotyping, Biogeographic Ancestry & Morphometrics.
+Module 3.3: Pillar 3: Phenotyping, Biogeographic Ancestry & Morphometrics.
 
 Derives verbatim from:
   - Pillar 3 Research Specification (§3: 3D Craniofacial Morphology & Cephalometric Reconstruction)

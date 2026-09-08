@@ -84,9 +84,9 @@ const PedigreeTree = dynamic(() => import("@/components/analysis/PedigreeTree"),
 const PanelHIrisPlex = dynamic(() => import("@/components/analysis/PanelHIrisPlex"), {
   loading: () => <ModuleSkeletonLoader label="Loading HIrisPlex-S 41-SNP Phenotype Model..." />,
 });
-const SuspectVisualizer = dynamic(() => import("@/components/analysis/SuspectVisualizer"), {
+const PanelCraniofacial = dynamic(() => import("@/components/analysis/PanelCraniofacial"), {
   ssr: false,
-  loading: () => <ModuleSkeletonLoader label="Loading 3D Craniofacial Morphometry Renderer..." />,
+  loading: () => <ModuleSkeletonLoader label="Loading 3D Craniofacial Morphometry Studio..." />,
 });
 const GeoForensicIntelligencePanel = dynamic(() => import("@/components/analysis/GeoForensicIntelligencePanel"), {
   ssr: false,
@@ -606,7 +606,7 @@ export function renderPanel(tabId: string) {
     case "morphometrics":
     case "cranio":
     case "suspect":
-      return <SuspectVisualizer />;
+      return <PanelCraniofacial />;
     case "hair":
       return <PanelHair />;
     case "freckling":

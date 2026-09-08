@@ -322,9 +322,12 @@ str-analysis/
 │       │   │   ├── PanelRouter.tsx        # Centralized Biocomputational Panel Router
 │       │   │   ├── PanelYSTR.tsx          # Y-STR 27-Locus Multi-Panel Tactical Visualizer
 │       │   │   ├── PanelXSTR.tsx          # X-STR 12-Locus Argus X-12 5-Tab Forensic Studio
+│       │   │   ├── PanelHIrisPlex.tsx     # HIrisPlex-S 41-SNP Pigmentation 5-Tab Forensic Studio
+│       │   │   ├── PanelBGA.tsx           # 55-SNP AIM Biogeographic Ancestry & Live GIS Studio
+│       │   │   ├── PanelCraniofacial.tsx  # 3D Craniofacial Morphometry & Anthropological Studio
+│       │   │   ├── SuspectVisualizer.tsx  # Backward-Compatible Re-Export Bridge for PanelCraniofacial
 │       │   │   ├── PanelFreckling.tsx     # MC1R Epistasis & UV Sensitivity Tactical Panel
 │       │   │   ├── PanelHair.tsx          # Hair Texture & Balding PRS Tactical Panel
-│       │   │   ├── SuspectVisualizer.tsx  # 3D Craniofacial Cephalometric Visualizer
 │       │   │   └── GeoForensicIntelligencePanel.tsx # Multi-Modal Geo-Forensic Platform
 │       │   ├── common/                    # Shared Modals & Telemetry Banners
 │       │   │   ├── DnaProfileInspectorModal.tsx # DNA & SNP Terminal with Interactive CLI
@@ -636,6 +639,11 @@ The FastAPI gateway exposes a clean `/api/v1` RESTful interface.
 | **Ancestry (55-AIM Cross-Validation)** | `/api/v1/forensic/phenotyping/bga/cross-validation` | `GET` | Evaluates concordance against FROG-kb & STRUCTURE 2.3.4 benchmarks (residual < 0.005) |
 | **Ancestry (55-AIM Reporting Shield)** | `/api/v1/forensic/phenotyping/bga/reporting-shield` | `GET` | Generates bilingual ISFG 2020 / ENFSI 2017 evaluative reporting statements & Prosecutor's Fallacy Shield |
 | **Ancestry (Expanded BGA & gnomAD)** | `/api/forensic/bga/analyze` | `POST` | Evaluates 165-SNP AIM / gnomAD continental centroid projections & Euclidean distances |
+| **Craniofacial (3D Reconstruction)** | `/api/v1/forensic/phenotyping/craniofacial/reconstruct` | `POST` | Reconstructs 11 3D cephalometric landmarks, anthropological indices, and facial typology |
+| **Craniofacial (3D Procrustes Superposition)** | `/api/v1/forensic/phenotyping/craniofacial/superposition` | `POST` | Executes 3D Generalized Orthogonal Procrustes Superposition (GPA) via Kabsch SVD alignment |
+| **Craniofacial (Certified Standards)** | `/api/v1/forensic/phenotyping/craniofacial/standards` | `GET` | Retrieves 5 certified cephalometric reference standards (NA12878, NA19240, NA18507, etc.) |
+| **Craniofacial (Cross-Validation)** | `/api/v1/forensic/phenotyping/craniofacial/cross-validation` | `GET` | Evaluates concordance against MorphoJ and Claes et al. 3D SVD morphometrics benchmarks |
+| **Craniofacial (Reporting Shield)** | `/api/v1/forensic/phenotyping/craniofacial/reporting-shield` | `GET` | Generates ENFSI 2017 / §81e StPO evaluative statements and active Prosecutor's Fallacy Shield |
 | **Hair & Balding PRS** | `/api/v1/forensic/phenotyping/hair/morphology-and-balding` | `POST` | Evaluates fiber cross-sectional area, curl density index, and balding PRS |
 | **Freckling & MC1R Epistasis** | `/api/v1/forensic/phenotyping/ephelides/freckling-and-uv` | `POST` | Quantifies MC1R epistatic loss-of-function weights, ASIP/BNC2 modifiers, and MED |
 | **Epigenetics (Age Clock)** | `/api/v1/forensic/epigenetics/predict-age` | `POST` | Estimates biological age from 5 CpG methylation sites |

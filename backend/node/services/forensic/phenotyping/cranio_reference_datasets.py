@@ -1,6 +1,6 @@
 """
 FORENZA Craniofacial Reference Standards & Anthropological Casework Cohorts.
-Module 3.3 — Pillar 3: Phenotyping, Biogeographic Ancestry & Morphometrics.
+Module 3.3: Pillar 3: Phenotyping, Biogeographic Ancestry & Morphometrics.
 
 Contains certified reference individuals and standard benchmark cohorts:
   - NA12878 (CEU European Reference - Leptorrhine Nasal Morphology)

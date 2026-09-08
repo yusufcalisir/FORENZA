@@ -1,5 +1,5 @@
 """
-FORENZA Population Genetics API — Pydantic v2 Schemas.
+FORENZA Population Genetics API: Pydantic v2 Schemas.
 Module 03: Dirichlet Smoothing, HWE, Linkage Equilibrium, FST Matrix.
 """
 

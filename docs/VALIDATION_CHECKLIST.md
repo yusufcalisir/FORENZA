@@ -41,7 +41,7 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
   - [x] `EC-NRC-03`: Complete probability simplex normalization ($\sum_{i \le j} P(A_i A_j \mid \theta) = 1.00000000 \pm 10^{-6}$) verified across > 700 diploid genotypes on all 24 loci.
   - [x] `EC-NRC-04`: Subpopulation demographic stratification cross-comparison ratio ($|\Delta \log_{10} LR| > 0.5$) for NIST SRM 2391d Component B across demographic databases.
   - [x] `EC-NRC-05`: Reciprocal hypothesis balance invariant ($LR(H_p/H_d) \times LR(H_d/H_p) = 1.0000000 \pm 10^{-6}$) and exact log-space multi-locus additivity.
-  - **Full test run:** `pytest backend/node/services/forensic/population/test_nrc_*.py backend/node/services/forensic/kinship/test_nrc.py -v` → **47 passed in 6.41s**
+  - **Full test run:** `pytest backend/node/services/forensic/population/test_population.py backend/node/services/forensic/population/test_nrc_*.py backend/node/services/forensic/kinship/test_nrc.py -v` → **73 passed in 11.32s**
 
 ---
 

@@ -1,5 +1,5 @@
 """
-FORENZA Ancient DNA & Degraded Forensic SNP API — Pydantic v2 Schemas (Module 2.5).
+FORENZA Ancient DNA & Degraded Forensic SNP API : Pydantic v2 Schemas (Module 2.5).
 Standards Compliance: ISFG Recommendations (2021), mapDamage 2.0 (2013), Briggs et al. (2007).
 """
 

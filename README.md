@@ -675,7 +675,10 @@ The FastAPI gateway exposes a clean `/api/v1` RESTful interface.
 | **Lineage (mtDNA EMPOP)** | `/api/v1/forensic/lineage/mtdna/empop-upper-bound` | `POST` | Aligns HV1/HV2/HV3 to rCRS/RSRS with EMPOP 3'-right alignment & haplogroups |
 | **Lineage (mtDNA Haplogroup)** | `/api/v1/forensic/lineage/mtdna/predict-haplogroup` | `POST` | Predicts PhyloTree Build 17 macrohaplogroup from diagnostic control region mutations |
 | **Disaster Victim ID (DVI)** | `/api/v1/forensic/dvi/joint-lr` | `POST` | Computes multi-omic joint LR and Hungarian ante/post-mortem reconciliation |
-| **Ancient DNA (aDNA / HID)** | `/api/v1/forensic/hid/damage-kinetics` | `POST` | Evaluates MapDamage deamination kinetics, fragment length decay, and SNP likelihoods |
+| **Ancient DNA (MapDamage Kinetics)** | `/api/v1/forensic/adna/mapdamage-profile` | `POST` | Computes Briggs 5' C->T and 3' G->A deamination curves & overhang kinetics |
+| **Ancient DNA (Fragmentation Decay)** | `/api/v1/forensic/adna/fragmentation` | `POST` | Calculates exponential fragment length decay P(L) and degradation risk tiers |
+| **Ancient DNA (SNP Likelihood)** | `/api/v1/forensic/adna/snp-likelihood` | `POST` | Evaluates damage-compensated degraded SNP genotype calling & misincorporation LR |
+| **Ancient DNA (Contamination Subtraction)** | `/api/v1/forensic/adna/contamination-subtraction` | `POST` | Culls modern exogenous DNA contamination to rescue authentic ancient deamination |
 | **Forensic Genetic Genealogy (IBD)** | `/api/v1/forensic/fgg/ibd-pairwise` | `POST` | Executes phase-free windowed IBS0 IBD scanning & Shared cM degree classification |
 | **FGG Pedigree Solver (Bonsai)** | `/api/v1/forensic/fgg/reconstruct-pedigree` | `POST` | Solves composite likelihood pedigree DAG and generates MRCA triangulation |
 | **Forensic Microbiome** | `/api/v1/forensic/microbiology/thanato-pmi` | `POST` | Evaluates 16S/ITS CoDa CLR transformation, ADD thermal clock & hidSkinPlex+ touch LR |

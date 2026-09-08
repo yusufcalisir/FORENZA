@@ -3,13 +3,13 @@ FORENZA Ancient DNA & Degraded Forensic SNP API Router (Module 2.5).
 Standards Compliance: ISFG Recommendations (2021), mapDamage 2.0 (2013), Briggs et al. (2007).
 
 Exposes endpoints for Paleogenomics & Skeletal DNA Damage Modeling:
-  POST /forensic/adna/mapdamage-profile        — Briggs 5' C->T and 3' G->A deamination curves
-  POST /forensic/adna/fragmentation           — Exponential & log-normal fragment length distributions
-  POST /forensic/adna/snp-likelihood          — Low-coverage damage-compensated SNP genotype calling
-  POST /forensic/adna/contamination-subtraction— Culling of modern un-deaminated DNA contamination
-  POST /forensic/adna/purine-excess           — Depurination pre-break site purine excess test
-  GET  /forensic/adna/casework-cohorts        — Certified casework benchmark cohorts (Columbus, Briggs, etc.)
-  GET  /forensic/adna/reporting-disclaimer    — ISFG Paleogenomics & aDNA Reporting Disclaimer
+  POST /forensic/adna/mapdamage-profile        : Briggs 5' C->T and 3' G->A deamination curves
+  POST /forensic/adna/fragmentation           : Exponential & log-normal fragment length distributions
+  POST /forensic/adna/snp-likelihood          : Low-coverage damage-compensated SNP genotype calling
+  POST /forensic/adna/contamination-subtraction: Culling of modern un-deaminated DNA contamination
+  POST /forensic/adna/purine-excess           : Depurination pre-break site purine excess test
+  GET  /forensic/adna/casework-cohorts        : Certified casework benchmark cohorts (Columbus, Briggs, etc.)
+  GET  /forensic/adna/reporting-disclaimer    : ISFG Paleogenomics & aDNA Reporting Disclaimer
 """
 
 from typing import Dict, List, Any

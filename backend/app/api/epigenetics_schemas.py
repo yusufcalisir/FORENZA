@@ -76,6 +76,7 @@ class DeconvolveTissueRequest(BaseModel):
 
 
 class DeconvolveTissueResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
     top_predicted_tissue: str
     top_tissue_probability: float
     tissue_probabilities: Dict[str, float]
@@ -85,6 +86,61 @@ class DeconvolveTissueResponse(BaseModel):
     tdmr_loci_evaluated: int
     deconvolution_method: str
     prosecutors_fallacy_shield: Optional[str] = None
+
+
+class MinorContributorDetail(BaseModel):
+    tissue: str
+    fraction: float
+
+
+class DeconvolveMixtureRequest(BaseModel):
+    tdmr_methylation: Dict[str, float] = Field(
+        default={
+            "cg09652652": 0.862,
+            "cg19406367": 0.902,
+            "cg17610929": 0.298,
+            "cg23521140": 0.308,
+            "cg26763284": 0.299,
+            "cg23576855": 0.857,
+            "cg00399818": 0.827,
+            "cg04382942": 0.682,
+            "cg11624633": 0.677,
+            "cg00854446": 0.814,
+            "cg18063373": 0.809,
+            "cg07823520": 0.920
+        },
+        description="Dictionary mapping tDMR locus names to methylation beta values in [0.0, 1.0]."
+    )
+
+
+class DeconvolveMixtureResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    is_mixture: bool
+    major_contributor: str
+    major_fraction: float
+    minor_contributors: List[MinorContributorDetail]
+    tissue_proportions: Dict[str, float]
+    sum_proportions: float
+    residual_sum_of_squares: float
+    tdmr_loci_evaluated: int
+    deconvolution_method: str
+    enfsi_statement_en: str
+    enfsi_statement_tr: str
+    prosecutors_fallacy_shield: Optional[str] = None
+
+
+class TdmrReferenceMatrixResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    tissues: List[str]
+    loci_count: int
+    reference_loci: List[Dict[str, Any]]
+
+
+class TdmrGoldenVectorsResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    total_vectors: int
+    vectors: Dict[str, Any]
+
 
 
 

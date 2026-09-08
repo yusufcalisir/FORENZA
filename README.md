@@ -330,6 +330,8 @@ str-analysis/
 │       │   │   ├── PanelHair.tsx          # Hair Texture & Balding PRS 5-Tab Forensic Studio
 │       │   │   ├── PanelEpigeneticClocks.tsx # Multi-Generation Epigenetic Clocks & PMI 5-Tab Forensic Studio
 │       │   │   ├── AgeEstimationPanel.tsx # Backward-Compatible Re-Export Bridge for PanelEpigeneticClocks
+│       │   │   ├── PanelBodyFluid.tsx     # Body Fluid & Tissue Origin tDMR 5-Tab Forensic Studio
+│       │   │   ├── BodyFluidPanel.tsx     # Backward-Compatible Re-Export Bridge for PanelBodyFluid
 │       │   │   └── GeoForensicIntelligencePanel.tsx # Multi-Modal Geo-Forensic Platform
 │       │   ├── common/                    # Shared Modals & Telemetry Banners
 │       │   │   ├── DnaProfileInspectorModal.tsx # DNA & SNP Terminal with Interactive CLI
@@ -666,9 +668,12 @@ The FastAPI gateway exposes a clean `/api/v1` RESTful interface.
 | **Epigenetic Multimodal PMI** | `/api/v1/forensic/epigenetics/clocks/multimodal-pmi` | `POST` | Multimodal Bayesian evidence fusion of Henssge, Vitreous K+, and Entomology for PMI |
 | **Anthropology** | `/api/v1/forensic/anthropology/biological-profile` | `POST` | Computes skeletal stature, biological profile, and sex estimation |
 | **Entomology** | `/api/v1/forensic/entomology/pmi` | `POST` | Calculates Accumulated Degree Hours (ADH) post-mortem interval |
-| **BPA (Stain Analysis)** | `/api/v1/forensic/bpa/analyze-stain` | `POST` | Computes bloodstain droplet impact angle & 3D origin |
-| **Serology & Body Fluid** | `/api/v1/forensic/fluid/identify` | `POST` | Predicts body fluid tissue origin from microRNA/methylation |
-| **Touch DNA (Multi-Locus LR)** | `/api/v1/forensic/touch/multi-locus-lr` | `POST` | Computes 24-locus stochastic Curran-Gill profile LR with log-additivity verification |
+| **Serology & Body Fluid (mRNA)** | `/api/v1/forensic/fluid/identify` | `POST` | Predicts body fluid tissue origin from mRNA expression profiles |
+| **Body Fluid (Co-Extraction)** | `/api/v1/forensic/fluid/co-extraction-audit` | `POST` | Audits RNA yield and RIN integrity score for STR co-extraction compatibility |
+| **Body Fluid (tDMR QDA)** | `/api/v1/forensic/epigenetics/deconvolve-tissue` | `POST` | Bayesian QDA Gaussian mixture deconvolution for 6 body fluids across 12 tDMR loci |
+| **Body Fluid (tDMR NNLS)** | `/api/v1/forensic/epigenetics/deconvolve-mixture-nnls` | `POST` | NNLS mixture deconvolution with simplex sum-to-one invariant (Sum = 1.0) |
+| **Body Fluid (tDMR Matrix)** | `/api/v1/forensic/epigenetics/tdmr/reference-matrix` | `GET` | Retrieves 12 diagnostic tDMR loci reference parameters across 6 body fluids |
+| **Body Fluid (Golden Vectors)** | `/api/v1/forensic/epigenetics/tdmr/golden-vectors` | `GET` | Retrieves 8 certified reference standards for body fluid deconvolution |
 | **Touch DNA (Substrate & LTDNA)** | `/api/v1/forensic/touch/analyze-ltdna` | `POST` | Evaluates forensic substrate recovery efficiency, diploid cell count, and P(D) |
 | **Touch DNA (Dropout Model)** | `/api/v1/forensic/touch/dropout-model` | `POST` | Evaluates calibrated logistic allele dropout P(D) for template mass or RFU |
 | **Touch DNA (Drop-in & Height PDF)** | `/api/v1/forensic/touch/dropin-model` | `POST` | Computes Poisson drop-in PMF P(C=k) and truncated exponential height PDF f(h_C) |

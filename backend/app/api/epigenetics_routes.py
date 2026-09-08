@@ -4,6 +4,10 @@ from backend.app.api.epigenetics_schemas import (
     PredictAgeResponse,
     DeconvolveTissueRequest,
     DeconvolveTissueResponse,
+    DeconvolveMixtureRequest,
+    DeconvolveMixtureResponse,
+    TdmrReferenceMatrixResponse,
+    TdmrGoldenVectorsResponse,
     LifestyleProfileRequest,
     LifestyleProfileResponse,
     TelomerePmiRequest,
@@ -78,6 +82,64 @@ async def deconvolve_tissue(req: DeconvolveTissueRequest) -> DeconvolveTissueRes
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Tissue deconvolution error: {str(e)}"
         )
+
+
+@router.post(
+    "/deconvolve-mixture-nnls",
+    response_model=DeconvolveMixtureResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Deconvolve mixed biological stains via Non-Negative Least Squares (NNLS)",
+    description="Deconvolutes mixed biological traces across 6 body fluids using NNLS with Sum-to-One simplex constraint."
+)
+async def deconvolve_mixture_nnls(req: DeconvolveMixtureRequest) -> DeconvolveMixtureResponse:
+    try:
+        result = _TISSUE_ENGINE.deconvolve_mixture_nnls(tdmr_methylation=req.tdmr_methylation)
+        return DeconvolveMixtureResponse(**result)
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Mixture deconvolution error: {str(e)}"
+        )
+
+
+@router.get(
+    "/tdmr/reference-matrix",
+    response_model=TdmrReferenceMatrixResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Get 12-tDMR locus reference parameters across 6 body fluids",
+    description="Retrieves parametric mean and standard deviation distributions across 6 body fluids for 12 diagnostic tDMR loci."
+)
+async def get_tdmr_reference_matrix() -> TdmrReferenceMatrixResponse:
+    try:
+        return TdmrReferenceMatrixResponse(**_TISSUE_ENGINE.get_reference_matrix())
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Reference matrix error: {str(e)}"
+        )
+
+
+@router.get(
+    "/tdmr/golden-vectors",
+    response_model=TdmrGoldenVectorsResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Get 8 certified reference golden standards for body fluid identification",
+    description="Retrieves certified single-source and mixture golden benchmark vectors with expected tissue calls."
+)
+async def get_tdmr_golden_vectors() -> TdmrGoldenVectorsResponse:
+    try:
+        return TdmrGoldenVectorsResponse(**_TISSUE_ENGINE.get_golden_vectors())
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Golden vectors error: {str(e)}"
+        )
+
 
 
 @router.post(

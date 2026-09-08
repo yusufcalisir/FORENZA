@@ -42,7 +42,7 @@ const PanelEpigeneticClocks = dynamic(() => import("@/components/analysis/PanelE
 const EntomologyPmiPanel = dynamic(() => import("@/components/analysis/EntomologyPmiPanel"), {
   loading: () => <ModuleSkeletonLoader label="Loading Forensic Entomology Thermal Summation..." />,
 });
-const BodyFluidPanel = dynamic(() => import("@/components/analysis/BodyFluidPanel"), {
+const PanelBodyFluid = dynamic(() => import("@/components/analysis/PanelBodyFluid"), {
   loading: () => <ModuleSkeletonLoader label="Loading tDMR Tissue Identification Engine..." />,
 });
 const BpaAreaOfOriginPanel = dynamic(() => import("@/components/analysis/BpaAreaOfOriginPanel"), {
@@ -634,13 +634,16 @@ export function renderPanel(tabId: string) {
     case "clocks":
       return <PanelEpigeneticClocks />;
     case "bodyfluid":
-      return <BodyFluidPanel />;
+    case "tdmr":
+    case "tissue":
+    case "tissue_origin":
+      return <PanelBodyFluid />;
     case "lifestyle":
       return <ComprehensiveEpigenomicsPanel />;
     case "telomere":
       return <PanelEpigeneticClocks />;
     case "mirna":
-      return <BodyFluidPanel />;
+      return <PanelBodyFluid />;
     case "microbiome":
     case "metagenomics":
     case "thanatomicrobiome":

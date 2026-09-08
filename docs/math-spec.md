@@ -2575,7 +2575,7 @@ Bidirectional parsing and serialization supporting standard capillary electropho
    - EMPOP 3'-right-alignment normalizer on light strand, IUPAC point heteroplasmy parser ($R, Y, M, K, S, W$), and PhyloTree Build 17 macro-haplogroup classification.
 
 ### 74.2 Bidirectional Reactive State Propagation
-Updates from `DnaProfileInspectorModal` propagate through `useIngestStore` and `useForensicCaseStore` to all 35 forensic biocomputational modules across the 7 architecture layers, guaranteeing full data integrity and instant UI synchrony.
+Updates from `DnaProfileInspectorModal` propagate through `useIngestStore` and `useForensicCaseStore` to all 38 forensic biocomputational subsystems across the 7 architecture layers, guaranteeing full data integrity and instant UI synchrony.
 
 ### 74.3 Human-Computer Interaction & Responsive Parity
 - Mobile ($\le 640\text{px}$): Minimum $\ge 44\text{px}$ touch targets, single-column flex layouts, non-overlapping tabs, sticky table headers.

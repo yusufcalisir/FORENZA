@@ -1,6 +1,6 @@
 """
-FORENZA Hair Morphology & Balding PRS — Certified Reference Standards.
-Module 3.4 — Pillar 3 Research §4.
+FORENZA Hair Morphology & Balding PRS - Certified Reference Standards.
+Module 3.4 - Pillar 3 Research §4.
 
 Five certified reference individuals with known genotypes and expected phenotypic outputs.
 
@@ -52,7 +52,7 @@ HAIR_STANDARDS: Dict[str, HairReferenceStandard] = {
     "NA18507_EAS_HAIR": HairReferenceStandard(
         standard_id="STD-HAIR-01",
         sample_name="NA18507_CHB_EAS_EDAR_HOM",
-        population="Han Chinese (CHB) — East Asian",
+        population="Han Chinese (CHB) - East Asian",
         sex="MALE",
         snp_dosages={
             "rs3827072": 2,    # EDAR Val370Ala homozygous derived (East Asian)
@@ -72,7 +72,7 @@ HAIR_STANDARDS: Dict[str, HairReferenceStandard] = {
         expected_prs_max=0.01,
         expected_hn_grade="GRADE_I_II",
         expected_risk_level="LOW_RISK",
-        description="VECTOR_P3_03: East Asian EDAR Val370Ala homozygous — thick, straight, coarse hair with clamped C_curl=0.00.",
+        description="VECTOR_P3_03: East Asian EDAR Val370Ala homozygous - thick, straight, coarse hair with clamped C_curl=0.00.",
     ),
 
     # STANDARD 2: Sub-Saharan African Kinky/Woolly Hair (TCHH + WNT10A derived)
@@ -83,7 +83,7 @@ HAIR_STANDARDS: Dict[str, HairReferenceStandard] = {
     "NA19240_YRI_KINKY": HairReferenceStandard(
         standard_id="STD-HAIR-02",
         sample_name="NA19240_YRI_AFR_KINKY",
-        population="Yoruba (YRI) — Sub-Saharan African",
+        population="Yoruba (YRI) - Sub-Saharan African",
         sex="FEMALE",
         snp_dosages={
             "rs3827072": 0,     # EDAR reference
@@ -140,7 +140,7 @@ HAIR_STANDARDS: Dict[str, HairReferenceStandard] = {
     "HG002_AJ_HIGH_AGA": HairReferenceStandard(
         standard_id="STD-HAIR-04",
         sample_name="HG002_AJ_MALE_HIGH_AGA",
-        population="Ashkenazi Jewish (AJ) — Reference",
+        population="Ashkenazi Jewish (AJ) - Reference",
         sex="MALE",
         snp_dosages={
             "rs3827072": 0,
@@ -164,7 +164,7 @@ HAIR_STANDARDS: Dict[str, HairReferenceStandard] = {
     ),
 
     # STANDARD 5: All-Zero Baseline Reference
-    # All SNPs at reference dosage (0) — Pure baseline intercept validation
+    # All SNPs at reference dosage (0) - Pure baseline intercept validation
     # Area = 3850.0, C_curl = 1.20, PRS = 0.00
     "BASELINE_REF": HairReferenceStandard(
         standard_id="STD-HAIR-05",

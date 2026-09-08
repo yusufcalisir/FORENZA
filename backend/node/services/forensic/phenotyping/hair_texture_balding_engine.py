@@ -1,5 +1,5 @@
 """
-FORENZA Hair Texture Dynamics & Androgenetic Alopecia (Balding Risk PRS) Engine — Module 14.
+FORENZA Hair Texture Dynamics & Androgenetic Alopecia (Balding Risk PRS) Engine - Module 14.
 
 Implements verbatim from Pillar 3 Research §4:
   - §4.1 Hair Fiber Cross-Sectional Geometry & Curl Density Index (C_curl) from EDAR, TCHH, WNT10A
@@ -135,19 +135,19 @@ class HairTextureBaldingEngine:
         # Hamilton-Norwood Scale Mapping
         if prs < 0.50:
             grade = "GRADE_I_II"
-            desc = "Hamilton-Norwood Grade I / II — Minimal or No Hair Loss"
+            desc = "Hamilton-Norwood Grade I / II - Minimal or No Hair Loss"
             risk = "LOW_RISK"
         elif prs < 1.20:
             grade = "GRADE_III"
-            desc = "Hamilton-Norwood Grade III — Slight Temporal / Vertex Recess"
+            desc = "Hamilton-Norwood Grade III - Slight Temporal / Vertex Recess"
             risk = "MODERATE_RISK"
         elif prs < 2.10:
             grade = "GRADE_IV_V"
-            desc = "Hamilton-Norwood Grade IV / V — Moderate Vertex Loss"
+            desc = "Hamilton-Norwood Grade IV / V - Moderate Vertex Loss"
             risk = "ELEVATED_RISK"
         else:
             grade = "GRADE_VI_VII"
-            desc = "Hamilton-Norwood Grade VI / VII — Severe / Extensive Balding"
+            desc = "Hamilton-Norwood Grade VI / VII - Severe / Extensive Balding"
             risk = "HIGH_RISK"
 
         assayed_count = sum(1 for rs in self.balding_loci if rs in snp_dosages)

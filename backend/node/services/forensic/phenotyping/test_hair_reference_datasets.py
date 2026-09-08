@@ -36,7 +36,7 @@ class TestHairReferenceStandardsRegistry:
 
 
 class TestStd01EASThickStraight:
-    """STD-HAIR-01: East Asian EDAR Val370Ala homozygous — VECTOR_P3_03."""
+    """STD-HAIR-01: East Asian EDAR Val370Ala homozygous - VECTOR_P3_03."""
 
     def test_fiber_area_6690(self):
         std = HAIR_STANDARDS["NA18507_EAS_HAIR"]
@@ -61,7 +61,7 @@ class TestStd01EASThickStraight:
 
 
 class TestStd02AFRKinkyWoolly:
-    """STD-HAIR-02: African YRI kinky/woolly hair — TCHH + WNT10A max curl."""
+    """STD-HAIR-02: African YRI kinky/woolly hair - TCHH + WNT10A max curl."""
 
     def test_curl_index_7_74(self):
         std = HAIR_STANDARDS["NA19240_YRI_KINKY"]
@@ -81,7 +81,7 @@ class TestStd02AFRKinkyWoolly:
 
 
 class TestStd03EURWavy:
-    """STD-HAIR-03: European wavy hair — TCHH heterozygous."""
+    """STD-HAIR-03: European wavy hair - TCHH heterozygous."""
 
     def test_curl_index_3_05(self):
         std = HAIR_STANDARDS["NA12878_EUR_WAVY"]
@@ -95,7 +95,7 @@ class TestStd03EURWavy:
 
 
 class TestStd04HighAGA:
-    """STD-HAIR-04: High AGA risk — AR + 20p11 homozygous."""
+    """STD-HAIR-04: High AGA risk - AR + 20p11 homozygous."""
 
     def test_prs_3_046(self):
         std = HAIR_STANDARDS["HG002_AJ_HIGH_AGA"]

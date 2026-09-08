@@ -1,12 +1,12 @@
 """
 FORENZA Hair Morphology, Cross-Sectional Curvature & Balding PRS Mathematical Formulation Engine.
-Module 3.4 — Pillar 3: Phenotyping, Biogeographic Ancestry & Morphometrics.
+Module 3.4 - Pillar 3: Phenotyping, Biogeographic Ancestry & Morphometrics.
 
 Derives verbatim from:
   - Pillar 3 Research Specification (§4: Hair Texture Dynamics & Androgenetic Alopecia PRS)
-  - Medland et al. (2009) Nat Genet — EDAR Val370Ala (rs3827072) East Asian hair morphology
-  - Adhikari et al. (2016) Nat Commun — TCHH (rs11803731), WNT10A (rs7349332) curl loci
-  - Li et al. (2022) PLOS Genetics — Hamilton-Norwood AGA GWAS (rs6152, rs2180439, rs1160312, rs756853)
+  - Medland et al. (2009) Nat Genet - EDAR Val370Ala (rs3827072) East Asian hair morphology
+  - Adhikari et al. (2016) Nat Commun - TCHH (rs11803731), WNT10A (rs7349332) curl loci
+  - Li et al. (2022) PLOS Genetics - Hamilton-Norwood AGA GWAS (rs6152, rs2180439, rs1160312, rs756853)
   - Martin & Saller (1957) Anthropological cephalometric reference baselines
 
 Constants:
@@ -41,7 +41,7 @@ HAIR_TEXTURE_LOCI: Dict[str, Dict] = {
     "rs11803731": {
         "gene": "TCHH (Trichohyalin)",
         "effect_allele": "T",
-        "trait": "Curl Induction — Cortical Fiber Curvature",
+        "trait": "Curl Induction - Cortical Fiber Curvature",
         "weight_area_um2": 0.0,
         "weight_curl": 1.85,
         "reference": "Adhikari et al. 2016 Nat Commun",
@@ -49,7 +49,7 @@ HAIR_TEXTURE_LOCI: Dict[str, Dict] = {
     "rs7349332": {
         "gene": "WNT10A",
         "effect_allele": "T",
-        "trait": "Curl Induction — Wnt Signaling Pathway",
+        "trait": "Curl Induction - Wnt Signaling Pathway",
         "weight_area_um2": 0.0,
         "weight_curl": 1.42,
         "reference": "Adhikari et al. 2016 Nat Commun",
@@ -142,7 +142,7 @@ class HairMathematicalFormulation:
     @staticmethod
     def compute_fiber_area_um2(x_edar: float) -> float:
         """
-        Research §4.1 — Biophysical Cross-Sectional Area Formula:
+        Research §4.1 - Biophysical Cross-Sectional Area Formula:
 
             Area(μm²) = 3850.0 + 1420.0 × X_EDAR
 
@@ -161,15 +161,15 @@ class HairMathematicalFormulation:
         x_wnt10a: float,
     ) -> tuple[float, float]:
         """
-        Research §4.1 — Curl Density Index Formula:
+        Research §4.1 - Curl Density Index Formula:
 
             C_curl_raw = 1.20 + 1.85 × X_TCHH + 1.42 × X_WNT10A - 2.10 × X_EDAR
             C_curl = clamp(C_curl_raw, 0.0, 10.0)
 
         SNP weights (verbatim):
-          +1.85 per TCHH derived allele (rs11803731) — Trichohyalin curvature induction
-          +1.42 per WNT10A derived allele (rs7349332) — Wnt signaling pathway
-          -2.10 per EDAR derived allele  (rs3827072)  — Val370Ala straightening force
+          +1.85 per TCHH derived allele (rs11803731) - Trichohyalin curvature induction
+          +1.42 per WNT10A derived allele (rs7349332) - Wnt signaling pathway
+          -2.10 per EDAR derived allele  (rs3827072)  - Val370Ala straightening force
 
         Returns: (c_curl_clamped, c_curl_raw)
         """
@@ -180,7 +180,7 @@ class HairMathematicalFormulation:
     @staticmethod
     def classify_texture_category(c_curl: float) -> str:
         """
-        Research §4.1 — Hair Texture Category Classification:
+        Research §4.1 - Hair Texture Category Classification:
 
             C_curl < 2.0 → STRAIGHT
             2.0 ≤ C_curl < 4.5 → WAVY
@@ -199,13 +199,13 @@ class HairMathematicalFormulation:
     @staticmethod
     def classify_fiber_diameter(x_edar: float, texture: str) -> str:
         """
-        Research §4.1 — Fiber Diameter Classification by EDAR dosage and texture:
+        Research §4.1 - Fiber Diameter Classification by EDAR dosage and texture:
 
-            EDAR ≥ 1.5 (thick Asian):  85.0 – 110.0 μm (Thick Straight / Asian Variant)
-            STRAIGHT (European):        70.0 – 85.0  μm (Fine / Medium Straight)
-            WAVY:                        65.0 – 80.0  μm (Wavy Texture)
-            CURLY:                       55.0 – 70.0  μm (Defined Curls)
-            KINKY_WOOLLY:                45.0 – 60.0  μm (Tight Coil / Afro-textured)
+            EDAR ≥ 1.5 (thick Asian):  85.0 - 110.0 μm (Thick Straight / Asian Variant)
+            STRAIGHT (European):        70.0 - 85.0  μm (Fine / Medium Straight)
+            WAVY:                        65.0 - 80.0  μm (Wavy Texture)
+            CURLY:                       55.0 - 70.0  μm (Defined Curls)
+            KINKY_WOOLLY:                45.0 - 60.0  μm (Tight Coil / Afro-textured)
         """
         if texture == "STRAIGHT" and x_edar >= 1.5:
             return "85.0 - 110.0 um (Thick Straight / Asian Variant)"
@@ -221,7 +221,7 @@ class HairMathematicalFormulation:
     @staticmethod
     def compute_balding_prs(snp_dosages: Dict[str, Union[int, float]]) -> float:
         """
-        Research §4.2 — Androgenetic Alopecia Polygenic Risk Score:
+        Research §4.2 - Androgenetic Alopecia Polygenic Risk Score:
 
             PRS_balding = 0.982 × X_rs6152 + 0.541 × X_rs2180439
                         + 0.485 × X_rs1160312 + 0.362 × X_rs756853
@@ -244,7 +244,7 @@ class HairMathematicalFormulation:
     @staticmethod
     def classify_hamilton_norwood(prs: float) -> tuple[str, str, str]:
         """
-        Research §4.2 — Hamilton-Norwood Grade Mapping:
+        Research §4.2 - Hamilton-Norwood Grade Mapping:
 
             PRS < 0.50       → GRADE_I_II   (Minimal or No Hair Loss)
             0.50 ≤ PRS < 1.20 → GRADE_III   (Slight Temporal / Vertex Recess)
@@ -256,25 +256,25 @@ class HairMathematicalFormulation:
         if prs < HN_GRADE_I_II_THRESHOLD:
             return (
                 "GRADE_I_II",
-                "Hamilton-Norwood Grade I / II — Minimal or No Hair Loss",
+                "Hamilton-Norwood Grade I / II - Minimal or No Hair Loss",
                 "LOW_RISK",
             )
         elif prs < HN_GRADE_III_THRESHOLD:
             return (
                 "GRADE_III",
-                "Hamilton-Norwood Grade III — Slight Temporal / Vertex Recess",
+                "Hamilton-Norwood Grade III - Slight Temporal / Vertex Recess",
                 "MODERATE_RISK",
             )
         elif prs < HN_GRADE_IV_V_THRESHOLD:
             return (
                 "GRADE_IV_V",
-                "Hamilton-Norwood Grade IV / V — Moderate Vertex Loss",
+                "Hamilton-Norwood Grade IV / V - Moderate Vertex Loss",
                 "ELEVATED_RISK",
             )
         else:
             return (
                 "GRADE_VI_VII",
-                "Hamilton-Norwood Grade VI / VII — Severe / Extensive Balding",
+                "Hamilton-Norwood Grade VI / VII - Severe / Extensive Balding",
                 "HIGH_RISK",
             )
 

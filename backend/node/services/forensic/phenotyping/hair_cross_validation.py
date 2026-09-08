@@ -1,11 +1,11 @@
 """
-FORENZA Hair Morphology & Balding PRS — Independent Tool Cross-Validation.
-Module 3.4 — Pillar 3 Research §4.
+FORENZA Hair Morphology & Balding PRS - Independent Tool Cross-Validation.
+Module 3.4 - Pillar 3 Research §4.
 
 Cross-validation against:
-  1. Medland et al. (2009) Nat Genet — EDAR Val370Ala effect size cross-check
+  1. Medland et al. (2009) Nat Genet - EDAR Val370Ala effect size cross-check
      Target: Area = 3850 + 1420*EDAR_dosage (Δ < 1 μm²)
-  2. Adhikari et al. (2016) Nat Commun — TCHH/WNT10A curl independence cross-check
+  2. Adhikari et al. (2016) Nat Commun - TCHH/WNT10A curl independence cross-check
      TCHH additive: +1.85/allele, WNT10A additive: +1.42/allele (|Δ| < 1e-6)
   3. Hamilton-Norwood AGA scale clinical threshold concordance
      Li et al. (2022) PLOS Genetics PRS weight fidelity (|Δ_w| < 1e-6 for each locus)
@@ -35,7 +35,7 @@ class HairCrossValidation:
     @staticmethod
     def validate_edar_area_concordance() -> Dict[str, Any]:
         """
-        Cross-Validation 1: EDAR Val370Ala Fiber Area — Medland et al. (2009)
+        Cross-Validation 1: EDAR Val370Ala Fiber Area - Medland et al. (2009)
 
         Expected biophysical cross-sectional areas:
           X_EDAR = 0: 3850.0 μm² (European baseline)
@@ -67,7 +67,7 @@ class HairCrossValidation:
 
         return {
             "cross_validation_id": "CV-HAIR-01",
-            "tool": "Medland et al. (2009) Nat Genet — EDAR Supplementary Table S2",
+            "tool": "Medland et al. (2009) Nat Genet - EDAR Supplementary Table S2",
             "method": "EDAR Val370Ala (rs3827072) Dosage → Fiber Area μm² (3 levels)",
             "results": results,
             "all_concordant": all_pass,
@@ -77,7 +77,7 @@ class HairCrossValidation:
     @staticmethod
     def validate_curl_independence_additivity() -> Dict[str, Any]:
         """
-        Cross-Validation 2: TCHH & WNT10A Curl Independence — Adhikari et al. (2016)
+        Cross-Validation 2: TCHH & WNT10A Curl Independence - Adhikari et al. (2016)
 
         Each locus contributes independently and additively:
           TCHH: |computed_delta - 1.85| < 1e-6 per allele
@@ -132,7 +132,7 @@ class HairCrossValidation:
         for dose in [1, 2]:
             c0, _ = HairMathematicalFormulation.compute_curl_density_index(0.0, 0.0, 0.0)
             cd, _ = HairMathematicalFormulation.compute_curl_density_index(float(dose), 0.0, 0.0)
-            # C_curl is clamped — use raw to measure expected delta
+            # C_curl is clamped - use raw to measure expected delta
             c0_r = 1.20  # raw baseline
             cd_r = 1.20 - 2.10 * dose  # raw
             expected_delta = -2.10 * dose
@@ -152,7 +152,7 @@ class HairCrossValidation:
 
         return {
             "cross_validation_id": "CV-HAIR-02",
-            "tool": "Adhikari et al. (2016) Nat Commun — TCHH/WNT10A Curl Locus Additivity",
+            "tool": "Adhikari et al. (2016) Nat Commun - TCHH/WNT10A Curl Locus Additivity",
             "method": "Pairwise single-locus curl delta versus published effect sizes",
             "results": results,
             "all_concordant": all_pass,
@@ -162,7 +162,7 @@ class HairCrossValidation:
     @staticmethod
     def validate_prs_weight_fidelity() -> Dict[str, Any]:
         """
-        Cross-Validation 3: Balding PRS Weight Fidelity — Li et al. (2022)
+        Cross-Validation 3: Balding PRS Weight Fidelity - Li et al. (2022)
 
         Each locus contributes exactly its published weight (|Δ_w| < 1e-6):
           AR (rs6152):       w = 0.982
@@ -231,7 +231,7 @@ class HairCrossValidation:
 
         return {
             "cross_validation_id": "CV-HAIR-03",
-            "tool": "Li et al. (2022) PLOS Genetics — AGA GWAS PRS Weight Fidelity",
+            "tool": "Li et al. (2022) PLOS Genetics - AGA GWAS PRS Weight Fidelity",
             "method": "Single-locus heterozygous PRS vs published effect allele weights",
             "locus_results": results,
             "max_prs_computed": round(max_prs, 6),
@@ -300,7 +300,7 @@ class HairCrossValidation:
         for Hair Morphology & Androgenetic Alopecia PRS.
         """
         return {
-            "module": "HAIR-TEX (Module 3.4) — Hair Morphology & Balding PRS",
+            "module": "HAIR-TEX (Module 3.4) - Hair Morphology & Balding PRS",
             "prosecutors_fallacy_shield": (
                 "IMPORTANT (Hair Morphology & Balding Legal Shield): "
                 "Hair texture metrics (Curl Density Index, Fiber Cross-Sectional Area) and "

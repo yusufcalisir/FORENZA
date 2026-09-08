@@ -644,7 +644,12 @@ The FastAPI gateway exposes a clean `/api/v1` RESTful interface.
 | **Craniofacial (Certified Standards)** | `/api/v1/forensic/phenotyping/craniofacial/standards` | `GET` | Retrieves 5 certified cephalometric reference standards (NA12878, NA19240, NA18507, etc.) |
 | **Craniofacial (Cross-Validation)** | `/api/v1/forensic/phenotyping/craniofacial/cross-validation` | `GET` | Evaluates concordance against MorphoJ and Claes et al. 3D SVD morphometrics benchmarks |
 | **Craniofacial (Reporting Shield)** | `/api/v1/forensic/phenotyping/craniofacial/reporting-shield` | `GET` | Generates ENFSI 2017 / §81e StPO evaluative statements and active Prosecutor's Fallacy Shield |
-| **Hair & Balding PRS** | `/api/v1/forensic/phenotyping/hair/morphology-and-balding` | `POST` | Evaluates fiber cross-sectional area, curl density index, and balding PRS |
+| **Hair Morphology & Balding PRS** | `/api/v1/forensic/phenotyping/hair/morphology-and-balding` | `POST` | Evaluates fiber cross-sectional area, curl density index, and balding PRS |
+| **Hair Texture Index** | `/api/v1/forensic/phenotyping/hair/texture-index` | `POST` | Computes curl density index (C_curl) and fiber cross-sectional area (A_fiber) |
+| **Hair Balding PRS** | `/api/v1/forensic/phenotyping/hair/balding-prs` | `POST` | Computes Hamilton-Norwood clinical grade and polygenic risk score (PRS) |
+| **Hair (Certified Standards)** | `/api/v1/forensic/phenotyping/hair/standards` | `GET` | Retrieves 5 certified multi-ethnic reference standards (NA18507, NA19240, NA12878, etc.) |
+| **Hair (Cross-Validation)** | `/api/v1/forensic/phenotyping/hair/cross-validation` | `GET` | Evaluates concordance against Medland (2009), Adhikari (2016), and Li (2022) |
+| **Hair (Reporting Shield)** | `/api/v1/forensic/phenotyping/hair/reporting-shield` | `GET` | Generates ENFSI 2017 / §81e StPO evaluative statements and active Prosecutor's Fallacy Shield |
 | **Freckling & MC1R Epistasis** | `/api/v1/forensic/phenotyping/ephelides/freckling-and-uv` | `POST` | Quantifies MC1R epistatic loss-of-function weights, ASIP/BNC2 modifiers, and MED |
 | **Epigenetics (Age Clock)** | `/api/v1/forensic/epigenetics/predict-age` | `POST` | Estimates biological age from 5 CpG methylation sites |
 | **Epigenetic Clocks (Multi-Gen)** | `/api/v1/forensic/epigenetics/clocks/estimate-age` | `POST` | Multi-generation epigenetic age estimation (Horvath, PhenoAge, GrimAge, VISAGE) |

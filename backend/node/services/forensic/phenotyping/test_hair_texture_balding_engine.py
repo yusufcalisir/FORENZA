@@ -1,5 +1,5 @@
 """
-Unit & Integration Tests for FORENZA Hair Texture Dynamics & Balding Risk PRS — Module 14.
+Unit & Integration Tests for FORENZA Hair Texture Dynamics & Balding Risk PRS - Module 14.
 
 Tests verbatim from Pillar 3 Research §4:
   - §4.1 Hair Fiber Cross-Sectional Area & Curl Density Index (C_curl)
@@ -28,7 +28,7 @@ client = TestClient(_app)
 engine = HairTextureBaldingEngine()
 
 
-# ── VECTOR_P3_03 — East Asian Thick Straight Hair & Low Balding Risk ─────────
+# ── VECTOR_P3_03 - East Asian Thick Straight Hair & Low Balding Risk ─────────
 
 class TestVectorP303:
     """Verifies golden vector VECTOR_P3_03 (East Asian EDAR Val370Ala derived genotype)."""
@@ -45,7 +45,7 @@ class TestVectorP303:
         assert "Thick Straight" in res.texture.estimated_fiber_diameter_um
 
 
-# ── VECTOR_14_HAIR_A — Baseline Reference Profile ──────────────────────────────
+# ── VECTOR_14_HAIR_A - Baseline Reference Profile ──────────────────────────────
 
 class TestVector14HairA:
     """Verifies baseline reference state when all effect dosages are 0."""
@@ -62,7 +62,7 @@ class TestVector14HairA:
         assert res.balding.risk_level == "LOW_RISK"
 
 
-# ── VECTOR_14_HAIR_B — EDAR Cross-Sectional Area Scaling ───────────────────────
+# ── VECTOR_14_HAIR_B - EDAR Cross-Sectional Area Scaling ───────────────────────
 
 class TestVector14HairB:
     """Verifies linear dosage scaling of fiber cross-sectional area via EDAR."""
@@ -78,7 +78,7 @@ class TestVector14HairB:
         assert (area_2 - area_1) == pytest.approx(1420.0, abs=1e-2)
 
 
-# ── VECTOR_14_HAIR_C — TCHH & WNT10A Curl Induction ───────────────────────────
+# ── VECTOR_14_HAIR_C - TCHH & WNT10A Curl Induction ───────────────────────────
 
 class TestVector14HairC:
     """Verifies high curl density index and kinky/woolly classification."""
@@ -91,7 +91,7 @@ class TestVector14HairC:
         assert res.texture_category == "KINKY_WOOLLY"
 
 
-# ── VECTOR_14_HAIR_D — Wavy and Curly Category Transitions ────────────────────
+# ── VECTOR_14_HAIR_D - Wavy and Curly Category Transitions ────────────────────
 
 class TestVector14HairD:
     """Verifies intermediate curl density thresholds for Wavy and Curly hair."""
@@ -109,7 +109,7 @@ class TestVector14HairD:
         assert res.texture_category == "CURLY"
 
 
-# ── VECTOR_14_HAIR_E — Balding PRS Mathematical Weights ───────────────────────
+# ── VECTOR_14_HAIR_E - Balding PRS Mathematical Weights ───────────────────────
 
 class TestVector14HairE:
     """Verifies exact additive weights for androgenetic alopecia PRS."""
@@ -124,7 +124,7 @@ class TestVector14HairE:
         assert prs_20p == pytest.approx(0.541, abs=1e-3)
 
 
-# ── VECTOR_14_HAIR_F — Hamilton-Norwood Grade Classification ──────────────────
+# ── VECTOR_14_HAIR_F - Hamilton-Norwood Grade Classification ──────────────────
 
 class TestVector14HairF:
     """Verifies 4-tier Hamilton-Norwood risk grade assignment."""
@@ -150,7 +150,7 @@ class TestVector14HairF:
         assert res.risk_level == "HIGH_RISK"
 
 
-# ── VECTOR_14_HAIR_G — Mathematical Invariants & Clamping ──────────────────────
+# ── VECTOR_14_HAIR_G - Mathematical Invariants & Clamping ──────────────────────
 
 class TestVector14HairG:
     """Verifies Curl Index bounds [0.0, 10.0] and PRS non-negativity."""
@@ -168,7 +168,7 @@ class TestVector14HairG:
         assert prs == pytest.approx(4.740, abs=1e-3)
 
 
-# ── VECTOR_14_HAIR_H — API Integration Tests ───────────────────────────────────
+# ── VECTOR_14_HAIR_H - API Integration Tests ───────────────────────────────────
 
 class TestVector14HairH:
     """Verifies FastAPI endpoints for hair morphology and balding PRS."""
@@ -198,3 +198,30 @@ class TestVector14HairH:
         assert resp.status_code == 200
         data = resp.json()
         assert data["hamilton_norwood_grade"] == "GRADE_VI_VII"
+
+    def test_api_standards_endpoint(self):
+        resp = client.get("/api/v1/forensic/phenotyping/hair/standards")
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["total_count"] == 5
+        keys = [s["key"] for s in data["standards"]]
+        assert "NA18507_EAS_HAIR" in keys
+        assert "NA19240_YRI_KINKY" in keys
+        assert "HG002_AJ_HIGH_AGA" in keys
+
+    def test_api_cross_validation_endpoint(self):
+        resp = client.get("/api/v1/forensic/phenotyping/hair/cross-validation")
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["status"] == "CONCORDANT"
+        assert data["all_concordant"] is True
+        assert data["concordance_rate_pct"] == 100.0
+
+    def test_api_reporting_shield_endpoint(self):
+        resp = client.get("/api/v1/forensic/phenotyping/hair/reporting-shield")
+        assert resp.status_code == 200
+        data = resp.json()
+        assert "prosecutors_fallacy_shield" in data
+        assert "enfsi_reporting_statement_en" in data
+        assert "enfsi_reporting_statement_tr" in data
+

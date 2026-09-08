@@ -608,6 +608,11 @@ export function renderPanel(tabId: string) {
     case "suspect":
       return <PanelCraniofacial />;
     case "hair":
+    case "hair_texture":
+    case "hair_morphology":
+    case "balding":
+    case "hair_balding":
+    case "aga":
       return <PanelHair />;
     case "freckling":
       return <PanelFreckling />;

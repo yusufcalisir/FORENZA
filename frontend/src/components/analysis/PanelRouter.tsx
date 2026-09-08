@@ -113,6 +113,9 @@ const PanelFGG = dynamic(() => import("@/components/analysis/PanelFGG"), {
 const PanelTelomere = dynamic(() => import("@/components/analysis/PanelTelomere"), {
   loading: () => <ModuleSkeletonLoader label="Loading Telomere Chronometer Engine..." />,
 });
+const PanelLifestyle = dynamic(() => import("@/components/analysis/PanelLifestyle"), {
+  loading: () => <ModuleSkeletonLoader label="Loading Lifestyle Epigenomics & AHRR Engine..." />,
+});
 
 
 // ─── NIST 1036 Multi-Ethnic Reference Allele Frequency Matrix ─────────────────
@@ -642,7 +645,9 @@ export function renderPanel(tabId: string) {
     case "tissue_origin":
       return <PanelBodyFluid />;
     case "lifestyle":
-      return <ComprehensiveEpigenomicsPanel />;
+    case "ahrr":
+    case "smoking":
+      return <PanelLifestyle />;
     case "telomere":
     case "telo_chrono":
     case "telomere_decay":

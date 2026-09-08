@@ -627,6 +627,7 @@ The FastAPI gateway exposes a clean `/api/v1` RESTful interface.
 | **ML STR Artifact Classifier** | `/api/v1/forensic/ml-str/classify-peak` | `POST` | Evaluates 24-D peak morphology and classifies true alleles vs CE/MPS artifacts |
 | **Phenotype** | `/api/v1/forensic/phenotype` | `POST` | Computes HIrisPlex-S eye, skin, and hair probabilities |
 | **Ancestry (55-AIM)** | `/api/v1/forensic/ancestry/55-aim/predict` | `POST` | Evaluates 55-SNP AIM biogeographic ancestry clusters and continental centroids |
+| **Ancestry (Expanded BGA & gnomAD)** | `/api/forensic/bga/analyze` | `POST` | Evaluates 165-SNP AIM / gnomAD continental centroid projections & Euclidean distances |
 | **Hair & Balding PRS** | `/api/v1/forensic/phenotyping/hair/morphology-and-balding` | `POST` | Evaluates fiber cross-sectional area, curl density index, and balding PRS |
 | **Freckling & MC1R Epistasis** | `/api/v1/forensic/phenotyping/ephelides/freckling-and-uv` | `POST` | Quantifies MC1R epistatic loss-of-function weights, ASIP/BNC2 modifiers, and MED |
 | **Epigenetics (Age Clock)** | `/api/v1/forensic/epigenetics/predict-age` | `POST` | Estimates biological age from 5 CpG methylation sites |
@@ -675,6 +676,7 @@ The FastAPI gateway exposes a clean `/api/v1` RESTful interface.
 | **Court Testimony & ENFSI** | `/api/v1/forensic/court/evaluative-report` | `POST` | Generates ISO 17025 / ENFSI 2017 7-tier bilingual evaluative statements with Fallacy Shield |
 | **Evidence OS Architecture** | `/api/v1/forensic/os/system-architecture` | `GET` | Returns master catalog status across all 38 biocomputational subsystems |
 | **System Health** | `/api/v1/system/health` | `GET` | Returns subsystem telemetry, memory, and probe status |
+| **Aura Logic AI Assistant** | `/api/v1/aura-logic/chat` | `POST` | Conversational multi-omic forensic AI assistant with bilingual reasoning & Fallacy Shield |
 
 ---
 

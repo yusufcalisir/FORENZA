@@ -3292,6 +3292,42 @@ $$\log_{10}(\text{LR}_{\text{fused}}) = \log_{10}(\text{LR}_{\text{meta}}) + \lo
 Translated to bilingual ENFSI (2017) 7-tier evaluative scale with active Prosecutor's Fallacy shield:
 $$P(E \mid H_p) / P(E \mid H_d) \neq P(H_p \mid E)$$
 
+---
+
+## 90. Spatial 3D Scene Registration, SE(3) Rigid Body Kinematics & Probabilistic Juror Visualizer (Pillar 6.5 / Subsystem 33)
+
+### 90.1 Special Euclidean SE(3) Spatial Transformation
+To register multi-sensor crime scene evidence (terrestrial LiDAR point clouds, BPA impact trajectories, ballistics striations, and biological touch DNA swabs) into a unified Cartesian datum $\mathbf{X}_{\text{scene}} \in \mathbb{R}^3$:
+$$\mathbf{X}_{\text{scene}} = \mathbf{R} \cdot \mathbf{X}_{\text{local}} + \mathbf{T}$$
+Where $\mathbf{T} = [t_x, t_y, t_z]^T \in \mathbb{R}^3$ is the translation vector and $\mathbf{R} \in SO(3)$ is the orthonormal rotation matrix parametrized by Euler yaw-pitch-roll angles $(\psi, \theta, \phi)$:
+$$\mathbf{R} = \mathbf{R}_z(\psi) \mathbf{R}_y(\theta) \mathbf{R}_x(\phi)$$
+$$\mathbf{R}_z(\psi) = \begin{bmatrix} \cos\psi & -\sin\psi & 0 \\ \sin\psi & \cos\psi & 0 \\ 0 & 0 & 1 \end{bmatrix}, \quad \mathbf{R}_y(\theta) = \begin{bmatrix} \cos\theta & 0 & \sin\theta \\ 0 & 1 & 0 \\ -\sin\theta & 0 & \cos\theta \end{bmatrix}, \quad \mathbf{R}_x(\phi) = \begin{bmatrix} 1 & 0 & 0 \\ 0 & \cos\phi & -\sin\phi \\ 0 & \sin\phi & \cos\phi \end{bmatrix}$$
+
+### 90.2 Probabilistic 95% Volumetric Ellipsoid Rendering (ISO/IEC 17025 & GUM)
+To eliminate misleading deterministic point perceptions for courtroom jurors, sensor measurement noise is rendered as a 95% volumetric probability ellipsoid:
+$$(\mathbf{X} - \boldsymbol{\mu})^T \boldsymbol{\Sigma}^{-1} (\mathbf{X} - \boldsymbol{\mu}) \le \chi^2_{3, 0.95}$$
+Where $\chi^2_{3, 0.95} = 7.815$ represents the critical value of the chi-squared distribution with 3 degrees of freedom at 95% confidence level.
+Semi-axis lengths $(a, b, c)$ along principal orthogonal eigenvectors $(\mathbf{v}_1, \mathbf{v}_2, \mathbf{v}_3)$ derived from spatial covariance matrix eigenvalues $(\lambda_1, \lambda_2, \lambda_3)$:
+$$a = \sqrt{\lambda_1 \cdot 7.815}, \quad b = \sqrt{\lambda_2 \cdot 7.815}, \quad c = \sqrt{\lambda_3 \cdot 7.815}$$
+Total volumetric spatial uncertainty boundary:
+$$V = \frac{4}{3} \pi a b c$$
+
+### 90.3 Multi-Sensor Measurement Precision Taxonomy
+In compliance with ISO 21043-2 and ASTM standards, sensor measurement standard deviations $\sigma_i$ are calibrated:
+- Terrestrial LiDAR TLS Point Cloud: $\sigma_{\text{LiDAR}} = \pm 0.002\text{ m}$ ($\pm 2.0\text{ mm}$)
+- Bloodstain Pattern Analysis (BPA) Flight Origin: $\sigma_{\text{BPA}} = \pm 0.012\text{ m}$ ($\pm 12.0\text{ mm}$)
+- Ballistics Congruent Matching Cells (CMC): $\sigma_{\text{CMC}} = \pm 0.005\text{ m}$ ($\pm 5.0\text{ mm}$)
+- Short Tandem Repeat (STR) Touch DNA Swabs: $\sigma_{\text{DNA}} = \pm 0.008\text{ m}$ ($\pm 8.0\text{ mm}$)
+- Skeletal Remains & Ancient DNA Bone Fragments: $\sigma_{\text{Bone}} = \pm 0.008\text{ m}$ ($\pm 8.0\text{ mm}$)
+
+### 90.4 Append-Only Cryptographic SHA-256 Chain of Custody Ledger
+Custody state transitions $E_k$ enforce strict cryptographic hash chaining from the genesis block ($H_0 = \text{GENESIS\_BLOCK}$):
+$$H_k = \text{SHA256}(H_{k-1} \parallel \text{Sender}_k \parallel \text{Receiver}_k \parallel \text{Reason}_k \parallel \text{Timestamp}_k)$$
+Tamper-evidence invariant:
+$$\forall i \in \{1, \dots, N\}, \quad \text{PreviousHash}(E_i) = \text{CurrentHash}(E_{i-1})$$
+Any alteration to container seal codes, officer IDs, or timestamps invalidates the downstream hash chain with probability $1 - 2^{-256}$.
+
+
 
 
 

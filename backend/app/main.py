@@ -220,6 +220,15 @@ try:
 except Exception as _batch_import_err:
     logger.warning(f"[boot] Batch router not loaded: {_batch_import_err}")
 
+# --- Crime Scene Biological Evidence Management Router ---
+try:
+    from app.api.evidence_routes import router as evidence_router
+    app.include_router(evidence_router, prefix="/api/v1")
+    logger.info("[boot] Biological evidence API router registered at /api/v1/forensic/evidence")
+except Exception as _evidence_import_err:
+    logger.warning(f"[boot] Evidence router not loaded: {_evidence_import_err}")
+
+
 # --- System Health & Diagnostics Router ---
 try:
     from app.api.health_routes import router as health_router

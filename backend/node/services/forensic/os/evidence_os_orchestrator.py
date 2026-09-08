@@ -1,7 +1,7 @@
 """
 FORENZA Master Forensic Evidence Operating System (Forensic Evidence OS).
 
-The grand unifying architecture consolidating 30 biocomputational & forensic subsystems:
+The grand unifying architecture consolidating 38 biocomputational & forensic subsystems:
 Multi-Omic Ingestion (DNA STR/SNP/mt/Y, Serology ABO/Rh, Biology RNA/Microbiology)
   -> Multi-Layer Inference Engine (Kinship, HIrisPlex-S Phenotyping, Dirichlet Population Fst)
   -> Directed Case Graph & LIMS Pathology Ledger (HMAC Accessioning)
@@ -56,7 +56,7 @@ class ForensicEvidenceOS:
             "platform_name": "FORENZA Forensic Evidence OS",
             "platform_version": "v3.0.0-PROD",
             "architecture_type": "Directed Acyclic Graph (DAG) Multi-Omic Engine",
-            "total_subsystems": 30,
+            "total_subsystems": 38,
             "layers": self.OS_LAYERS,
             "system_status": "OPERATIONAL_HEALTHY",
             "compliance_standards": ["ISO/IEC 17025:2017", "SWGDAM", "ENFSI", "ISFG"],

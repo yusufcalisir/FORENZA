@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import dynamic from "next/dynamic";
-import { useForensicCaseStore } from "@/store/forensicCaseStore";
-import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 import { ModuleSkeletonLoader } from "@/components/analysis/ModuleSkeletonLoader";
+
 
 const PanelBGA = dynamic(() => import("@/components/analysis/PanelBGA"), {
   loading: () => <ModuleSkeletonLoader label="Loading Biogeographical Ancestry Engine..." />,
@@ -75,9 +74,6 @@ const MeasurementUncertaintyPanel = dynamic(() => import("@/components/analysis/
 const EvidenceManagementPanel = dynamic(() => import("@/components/analysis/EvidenceManagementPanel"), {
   loading: () => <ModuleSkeletonLoader label="Loading 3D Spatial Evidence Visualizer..." />,
 });
-const PedigreeTree = dynamic(() => import("@/components/analysis/PedigreeTree"), {
-  loading: () => <ModuleSkeletonLoader label="Loading Kinship Pedigree Tree..." />,
-});
 const PanelHIrisPlex = dynamic(() => import("@/components/analysis/PanelHIrisPlex"), {
   loading: () => <ModuleSkeletonLoader label="Loading HIrisPlex-S 41-SNP Phenotype Model..." />,
 });
@@ -142,114 +138,6 @@ const PanelSTRKinship = dynamic(() => import("@/components/analysis/PanelSTRKins
 export const PanelSTR = PanelSTRKinship;
 
 
-// ─── Biocomputational Kinship X-STR Engine ────────────────────────────────────
-
-export function PanelKinship() {
-  const { activeCase } = useForensicCaseStore();
-  const { lang } = useSaasLanguage();
-  const isTr = lang === "tr";
-  const [hypo, setHypo] = useState<"paternity" | "full_sibs" | "half_sibs">("paternity");
-
-  const baseKinshipLR = Number(activeCase.profile.kinshipLR) || 4528900.0;
-  const lrMap: Record<string, number> = {
-    paternity: baseKinshipLR,
-    full_sibs: baseKinshipLR * 0.42,
-    half_sibs: Math.sqrt(baseKinshipLR),
-  };
-
-  const lr = lrMap[hypo];
-  const log10Lr = Math.log10(lr);
-
-  const mockKinshipData = {
-    relationship_type:
-      hypo === "paternity"
-        ? (isTr ? "Ebeveyn-Çocuk (PO)" : "Parent-Child (PO)")
-        : hypo === "full_sibs"
-        ? (isTr ? "Öz Kardeş (FS)" : "Full Sibling (FS)")
-        : (isTr ? "Üvey Kardeş (HS)" : "Half Sibling (HS)"),
-    confidence: 0.9999,
-    kinship_index_parent_child: lrMap.paternity,
-    kinship_index_full_sibling: lrMap.full_sibs,
-    kinship_index_half_sibling: lrMap.half_sibs,
-    log10_ki_parent_child: Math.log10(lrMap.paternity),
-    log10_ki_full_sibling: Math.log10(lrMap.full_sibs),
-    log10_ki_half_sibling: Math.log10(lrMap.half_sibs),
-    exclusion_count: 0,
-    loci_analyzed: 24,
-    ibd_summary: {
-      ibs0_proportion: 0.0,
-      ibs1_proportion: 0.5,
-      ibs2_proportion: 0.5,
-      ibs0_count: 0,
-      ibs1_count: 12,
-      ibs2_count: 12,
-    },
-    population_used: isTr ? "Kafkas NIST 2024 / NRC II" : "Caucasian NIST 2024 / NRC II",
-    reasoning: isTr ? "Hummel Yüklemi: Akrabalık İlişkisinde Fiili Kesinlik" : "Hummel's Predicate: Practical Certainty of Kinship Relation",
-  };
-
-  return (
-    <div className="space-y-5 font-mono">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl border border-tactical-border/60 bg-tactical-surface/50">
-        <div className="space-y-0.5">
-          <span className="text-xs font-bold text-white uppercase tracking-wider">
-            {isTr ? "Argus X-12 Akrabalık İndeksi & Soy Ağacı Motoru" : "Argus X-12 Kinship Index & Pedigree Engine"}
-          </span>
-          <p className="text-[10px] text-zinc-400">
-            {isTr
-              ? "Kümelenmiş bağlantı grupları üzerinden PHS (İkili Haplotipe Dayalı Paylaşım) akrabalık oranlarını hesaplar."
-              : "Computes PHS (Pairwise Haplotype Sharing) kinship ratios across clustered linkage groups."}
-          </p>
-        </div>
-        <div className="flex items-center gap-1.5 bg-black/60 p-1 rounded-xl border border-tactical-border/60 shrink-0">
-          {[
-            { id: "paternity", label: isTr ? "Babalık / Ebeveyn (PO)" : "Paternity (PO)" },
-            { id: "full_sibs", label: isTr ? "Öz Kardeşler (FS)" : "Full Siblings (FS)" },
-            { id: "half_sibs", label: isTr ? "Üvey Kardeşler (HS)" : "Half Siblings (HS)" },
-          ].map((btn) => (
-            <button
-              key={btn.id}
-              onClick={() => setHypo(btn.id as any)}
-              className={`px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase transition-all cursor-pointer ${
-                hypo === btn.id
-                  ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 shadow-sm"
-                  : "text-zinc-500 hover:text-zinc-300"
-              }`}
-            >
-              {btn.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="p-4 rounded-xl border border-emerald-500/30 bg-emerald-950/20 space-y-2">
-          <span className="text-[9px] text-emerald-400 font-bold uppercase">
-            {isTr ? "Akrabalık Olabilirlik Oranı (CPI)" : "Kinship Likelihood Ratio (CPI)"}
-          </span>
-          <p className="text-2xl font-mono font-extrabold text-white">{(lr ?? 1).toExponential(4)}</p>
-
-          <p className="text-xs text-emerald-300 font-bold">Log₁₀ CPI: +{log10Lr.toFixed(2)}</p>
-        </div>
-        <div className="p-4 rounded-xl border border-tactical-border/60 bg-black/40 space-y-2">
-          <span className="text-[9px] text-zinc-400 font-bold uppercase">
-            {isTr ? "W-Değeri (Akrabalık Olasılığı)" : "W-Value (Probability of Relation)"}
-          </span>
-          <p className="text-2xl font-mono font-extrabold text-white">99.9999%</p>
-          <p className="text-[10px] text-zinc-400">
-            {isTr ? "Hummel Yüklemi: Akrabalık İlişkisinde Fiili Kesinlik" : "Hummel’s Predicate: Practical Certainty of Relation"}
-          </p>
-        </div>
-      </div>
-
-      <PedigreeTree
-        kinshipData={mockKinshipData}
-        profileAId={activeCase.profile.profileId}
-        profileBId="REF-TARGET-KIN-02"
-      />
-    </div>
-  );
-}
 
 // ─── Panel Router (all 38 modules wired to dedicated components) ───────────
 

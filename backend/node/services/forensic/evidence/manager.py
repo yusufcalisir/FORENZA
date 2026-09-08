@@ -5,7 +5,7 @@ records 3D/GPS spatial coordinates, container seals, and enforces cryptographic 
   H_k = SHA256(H_{k-1} || Sender || Receiver || Timestamp)
 
 References:
-  ISO 21043-2 (2018) Forensic Sciences — Part 2: Recognition, recording, collecting, transport and storage of items.
+  ISO 21043-2 (2018) Forensic Sciences: Part 2: Recognition, recording, collecting, transport and storage of items.
   NIST Special Publication 800-86 (2006) Guide to Integrating Forensic Techniques into Incident Response.
 """
 
@@ -155,3 +155,78 @@ class BiologicalEvidenceManager:
             latest_custodian=latest_custodian,
             audit_summary=summary
         )
+
+    def get_all_evidence(self) -> List[BiologicalEvidenceItem]:
+        """Returns all registered evidence items, seeding standard presets if empty."""
+        if not self.registry:
+            self.seed_standard_evidence_items()
+        return list(self.registry.values())
+
+    def seed_standard_evidence_items(self) -> None:
+        """Seeds standard reference evidence items for crime scene reconstruction."""
+        standard_items = [
+            {
+                "evidence_id": "EVID-BLOOD-101",
+                "crime_scene_id": "SCENE-2026-001",
+                "evidence_type": "Bloodstain",
+                "collection_method": "Swab",
+                "collector_id": "INV-DOE-12",
+                "preservation_condition": "Dry Ambient",
+                "container_seal_code": "SEAL-112233",
+                "spatial_coordinates": {"x": 1.5, "y": 2.2, "z": 0.4},
+            },
+            {
+                "evidence_id": "EVID-HAIR-102",
+                "crime_scene_id": "SCENE-2026-001",
+                "evidence_type": "Hair",
+                "collection_method": "Forceps",
+                "collector_id": "INV-DOE-12",
+                "preservation_condition": "Room Temp",
+                "container_seal_code": "SEAL-445566",
+                "spatial_coordinates": {"x": 3.1, "y": 0.8, "z": 0.0},
+            },
+            {
+                "evidence_id": "EVID-TOUCH-103",
+                "crime_scene_id": "SCENE-2026-001",
+                "evidence_type": "TouchDNA",
+                "collection_method": "Tape Lift",
+                "collector_id": "INV-SMITH-44",
+                "preservation_condition": "Dry Ambient",
+                "container_seal_code": "SEAL-998877",
+                "spatial_coordinates": {"x": 0.9, "y": 1.4, "z": 1.1},
+            },
+            {
+                "evidence_id": "EVID-BONE-104",
+                "crime_scene_id": "SCENE-2026-002",
+                "evidence_type": "Bone",
+                "collection_method": "Excision",
+                "collector_id": "INV-SMITH-44",
+                "preservation_condition": "Frozen -20C",
+                "container_seal_code": "SEAL-334411",
+                "spatial_coordinates": {"x": 4.2, "y": 3.5, "z": 0.0},
+            },
+            {
+                "evidence_id": "EVID-LIDAR-001",
+                "crime_scene_id": "SCENE-2026-001",
+                "evidence_type": "Tissue",
+                "collection_method": "Swab",
+                "collector_id": "TECH-UNIT-03",
+                "preservation_condition": "Sealed CAD",
+                "container_seal_code": "SEAL-773311",
+                "spatial_coordinates": {"x": 2.5, "y": 3.8, "z": 1.5},
+            },
+            {
+                "evidence_id": "EVID-BALLISTIC",
+                "crime_scene_id": "SCENE-2026-001",
+                "evidence_type": "PlantMaterial",
+                "collection_method": "Forceps",
+                "collector_id": "TECH-UNIT-03",
+                "preservation_condition": "Dry Ambient",
+                "container_seal_code": "SEAL-229944",
+                "spatial_coordinates": {"x": 0.3, "y": 0.5, "z": 1.8},
+            },
+        ]
+        for item_data in standard_items:
+            if item_data["evidence_id"] not in self.registry:
+                self.register_evidence(**item_data)
+

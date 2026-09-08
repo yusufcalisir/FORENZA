@@ -162,7 +162,9 @@ str-analysis/
 │   │   │   ├── tippett_schemas.py         # Schemas for Tippett Calibration, ROC, Cllr & ENFSI
 │   │   │   ├── tippett_routes.py          # REST Gateway for Tippett ROC Calibration Lab
 │   │   │   ├── terminal_schemas.py        # Schemas for DNA & SNP Ingestion, BGA & HIrisPlex
-│   │   │   └── terminal_routes.py         # REST Gateway for DNA Terminal Ingestion Engine
+│   │   │   ├── terminal_routes.py         # REST Gateway for DNA Terminal Ingestion Engine
+│   │   │   ├── evidence_schemas.py        # Pydantic v2 Schemas for Custody Chain & 3D Registration
+│   │   │   └── evidence_routes.py         # REST Gateway for Physical & Biological Evidence Management
 │   │   ├── core/                          # Security, JWT, Config & HMAC Utilities
 │   │   ├── db/                            # Database Connection & Engine Setup
 │   │   ├── models/                        # Database Models
@@ -202,6 +204,7 @@ str-analysis/
 │           ├── qa_qc/                     # 25. Contamination & Negative Control QA/QC
 │           ├── governance/                # 26. Double-Blind Analyst Governance Engine
 │           ├── court/                     # 27. ISO 17025 Court Testimony Generator
+│           ├── evidence/                  # 27b. Physical & Biological Evidence Management, Custody Chain & SE(3) Scene Registration
 │           ├── geoint/                    # 28. Geo-Forensic Intelligence & Spatial Biogeochemistry
 │           │   ├── isoscape_provenance_engine.py # Continuous Multi-Isotope Provenance (H/O/Sr)
 │           │   ├── soil_mineralogy_engine.py     # Forensic Soil Pedology, QXRD & CoDa CLR
@@ -349,6 +352,7 @@ str-analysis/
 │       │   │   ├── PanelSoil.tsx          # Forensic Soil Pedology & Geochemical CoDa Panel
 │       │   │   ├── PanelPalynology.tsx    # Forensic Palynology & Environmental eDNA Panel
 │       │   │   ├── PanelRossmo.tsx        # Rossmo Bayesian Geographic Profiling Panel
+│       │   │   ├── EvidenceManagementPanel.tsx # 3D Spatial Evidence Presenter & Juror Visualizer (Subsystem 33)
 │       │   │   └── PanelGeoFusion.tsx     # Multi-Criteria Bayesian GIS Evidence Fusion Panel
 │       │   ├── common/                    # Shared Modals & Telemetry Banners
 │       │   │   ├── DnaProfileInspectorModal.tsx # DNA & SNP Terminal with Interactive CLI
@@ -363,7 +367,7 @@ str-analysis/
 │       ├── context/                       # React Context Providers
 │       ├── dictionaries/                  # Bilingual Translations (TR / EN)
 │       ├── lib/                           # Utility Functions & API Clients
-│       ├── test/                          # Automated Vitest Suite (69/69 Tests Passing across 12 Specs)
+│       ├── test/                          # Automated Vitest Suite (75/75 Tests Passing across 13 Specs)
 │       └── utils/                         # Client-Side Biocomputational Simulation Engines
 │           ├── strLocusRegistryEngine.ts  # 24-STR Locus Registry & CE Sizing TS Engine
 │           ├── forensicCliBatchParser.ts  # Forensic CLI Batch Lexer & Ingestion TS Engine
@@ -790,7 +794,12 @@ The FastAPI gateway exposes a clean `/api/v1` RESTful interface.
 | **LIMS Chain of Custody** | `/api/v1/forensic/lims/merkle/build-tree` | `POST` | Constructs binary Merkle tree and generates O(log2 N) inclusion proofs |
 | **Court Testimony & ENFSI** | `/api/v1/forensic/court/evaluative-report` | `POST` | Generates ISO 17025 / ENFSI 2017 7-tier bilingual evaluative statements with Fallacy Shield |
 | **Evidence OS Architecture** | `/api/v1/forensic/os/system-architecture` | `GET` | Returns master catalog status across all 38 biocomputational subsystems |
+| **Evidence Management (Catalog)** | `/api/v1/forensic/evidence/items` | `GET` | Retrieves all registered biological and physical crime scene evidence items |
+| **Evidence Management (Register)** | `/api/v1/forensic/evidence/register` | `POST` | Registers biological/physical evidence, 3D spatial coordinates, container seal, and genesis hash |
+| **Evidence Management (Transfer)** | `/api/v1/forensic/evidence/transfer-custody` | `POST` | Appends atomic custody transfer record and updates SHA-256 chain of custody hash |
+| **Evidence Management (Audit)** | `/api/v1/forensic/evidence/audit-chain/{evidence_id}` | `GET` | Verifies complete SHA-256 hash chain continuity and current custodian |
 | **System Health** | `/api/v1/system/health` | `GET` | Returns subsystem telemetry, memory, and probe status |
+
 | **Aura Logic AI Assistant** | `/api/v1/aura-logic/chat` | `POST` | Conversational multi-omic forensic AI assistant with bilingual reasoning & Fallacy Shield |
 
 ---

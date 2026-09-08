@@ -10,12 +10,54 @@ from node.services.forensic.evidence.manager import BiologicalEvidenceManager
 from .evidence_schemas import (
     RegisterEvidenceRequest, RegisterEvidenceResponse,
     TransferCustodyRequest, TransferCustodyResponse,
-    AuditChainResponse
+    AuditChainResponse, ListEvidenceResponse,
+    BiologicalEvidenceItemDetail, CustodyTransferRecordSchema,
 )
 
 router = APIRouter(prefix="/forensic/evidence", tags=["Crime Scene Biological Evidence Management"])
 
 _evidence_manager = BiologicalEvidenceManager()
+
+
+@router.get(
+    "/items",
+    response_model=ListEvidenceResponse,
+    summary="List All Registered Evidence Items",
+    description="Retrieves all registered biological and physical crime scene evidence items.",
+    status_code=status.HTTP_200_OK,
+)
+async def list_evidence_items() -> ListEvidenceResponse:
+    raw_items = _evidence_manager.get_all_evidence()
+    items = []
+    for item in raw_items:
+        history = [
+            CustodyTransferRecordSchema(
+                transfer_id=h.transfer_id,
+                sender_id=h.sender_id,
+                receiver_id=h.receiver_id,
+                timestamp_utc=h.timestamp_utc,
+                transfer_reason=h.transfer_reason,
+                previous_hash=h.previous_hash,
+                current_hash=h.current_hash,
+            )
+            for h in item.chain_of_custody_history
+        ]
+        items.append(
+            BiologicalEvidenceItemDetail(
+                evidence_id=item.evidence_id,
+                crime_scene_id=item.crime_scene_id,
+                evidence_type=item.evidence_type,
+                collection_method=item.collection_method,
+                collector_id=item.collector_id,
+                timestamp_utc=item.timestamp_utc,
+                preservation_condition=item.preservation_condition,
+                container_seal_code=item.container_seal_code,
+                spatial_coordinates=item.spatial_coordinates,
+                chain_of_custody_history=history,
+            )
+        )
+    return ListEvidenceResponse(total_count=len(items), items=items)
+
 
 
 @router.post(

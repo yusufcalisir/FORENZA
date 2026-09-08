@@ -1,5 +1,5 @@
 """
-FORENZA Crime Scene Biological Evidence Management API — Pydantic v2 Schemas.
+FORENZA Crime Scene Biological Evidence Management API: Pydantic v2 Schemas.
 """
 
 from typing import Dict, List, Optional
@@ -25,6 +25,24 @@ class CustodyTransferRecordSchema(BaseModel):
     transfer_reason: str
     previous_hash: str
     current_hash: str
+
+
+class BiologicalEvidenceItemDetail(BaseModel):
+    evidence_id: str
+    crime_scene_id: str
+    evidence_type: str
+    collection_method: str
+    collector_id: str
+    timestamp_utc: float
+    preservation_condition: str
+    container_seal_code: str
+    spatial_coordinates: Dict[str, float]
+    chain_of_custody_history: List[CustodyTransferRecordSchema] = Field(default_factory=list)
+
+
+class ListEvidenceResponse(BaseModel):
+    total_count: int
+    items: List[BiologicalEvidenceItemDetail]
 
 
 class RegisterEvidenceResponse(BaseModel):
@@ -58,3 +76,4 @@ class AuditChainResponse(BaseModel):
     total_transfers: int
     latest_custodian: str
     audit_summary: str
+

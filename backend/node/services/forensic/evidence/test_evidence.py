@@ -97,3 +97,15 @@ def test_api_audit_chain_endpoint():
     data = resp.json()
     assert data["chain_intact"] is True
     assert data["total_transfers"] == 2
+
+
+def test_api_list_evidence_items_endpoint():
+    resp = client.get("/api/v1/forensic/evidence/items")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "total_count" in data
+    assert data["total_count"] >= 1
+    assert len(data["items"]) >= 1
+    ids = [item["evidence_id"] for item in data["items"]]
+    assert "EVID-HAIR-901" in ids
+

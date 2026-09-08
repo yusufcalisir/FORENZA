@@ -612,7 +612,9 @@ The FastAPI gateway exposes a clean `/api/v1` RESTful interface.
 | **Kinship** | `/api/v1/forensics/kinship-lr` | `POST` | Computes parent-child, sibling, and extended kinship LRs |
 | **Population Genetics (RMP)** | `/api/v1/forensic/population/profile-rmp` | `POST` | Computes 24-locus NIST 1036 Combined Random Match Probability (RMP) & Single-Source LR with Balding-Nichols $\theta$ coancestry |
 | **Kinship (STR-24 Duo/Pedigree)** | `/api/v1/forensic/population/kinship-duo` | `POST` | Evaluates 24-locus Parent-Child / Sibling kinship LRs with IBD decomposition & Stepwise Mutation Model (SMM) rescue |
-| **Mixture** | `/api/v1/genomics/deconvolve` | `POST` | Runs MCMC probabilistic mixture deconvolution |
+| **Mixture (MCMC Deconvolution)** | `/api/v1/forensic/mixture` | `POST` | Runs 2-to-3 person continuous MCMC mixture deconvolution (EuroForMix Gamma / STRmix Log-Normal) with Gelman-Rubin convergence and per-locus calls |
+| **Mixture (Health Check)** | `/api/v1/forensic/mixture/health` | `GET` | Validates MCMC sampler initialization and locus stutter database |
+| **Mixture (Likelihood Models)** | `/api/v1/forensic/mixture/models` | `GET` | Lists available continuous biophysical peak models and parameters |
 | **Phenotype** | `/api/v1/phenotype/predict` | `POST` | Computes HIrisPlex-S eye, skin, and hair probabilities |
 | **Ancestry** | `/api/v1/phenotype/ancestry` | `POST` | Evaluates 55-SNP AIM biogeographic ancestry clusters |
 | **Epigenetics**| `/api/v1/epigenetics/age-clock` | `POST` | Estimates biological age from 5 CpG methylation sites |

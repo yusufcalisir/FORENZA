@@ -1,11 +1,11 @@
 """
-FORENZA 1.2.5 — MCMC Mixture Deconvolution API Schemas (Pydantic v2)
+FORENZA 1.2.5 :  MCMC Mixture Deconvolution API Schemas (Pydantic v2)
 
 Pydantic v2 request / response models for the MCMC mixture deconvolution
 REST endpoint (POST /api/v1/forensic/mixture).
 
 Research Reference:
-  pillar_1_probabilistic_genotyping_research.md §2.1–2.9
+  pillar_1_probabilistic_genotyping_research.md §2.1-2.9
   pillar_6_lims_zkp_reporting_research.md (ISO 17025 GUM Expanded Uncertainty §U95)
 
 Pydantic v2 Rule (AGENTS.md):
@@ -27,9 +27,9 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 class ConvergenceDiagnosticsOut(BaseModel):
     """
     Gelman-Rubin R̂ and ESS convergence summary.
-    Derived verbatim from: pillar_1_probabilistic_genotyping_research.md §2.7–2.8
-      R̂ = sqrt([(M-1)/M·W + 1/M·B] / W)  → converged when < 1.05
-      ESS = N / (1 + 2·Σ_k ρ_k)           → reliable when > 1000
+    Derived verbatim from: pillar_1_probabilistic_genotyping_research.md §2.7-2.8
+      R̂ = sqrt([(M-1)/M·W + 1/M·B] / W)  -> converged when < 1.05
+      ESS = N / (1 + 2·Σ_k ρ_k)           -> reliable when > 1000
     """
     model_config = ConfigDict(protected_namespaces=())
 
@@ -53,18 +53,38 @@ class ConvergenceDiagnosticsOut(BaseModel):
     )
 
 
+class LocusDeconvolutionOut(BaseModel):
+    """Marginal genotype deconvolution call for a single STR locus."""
+    model_config = ConfigDict(protected_namespaces=())
+
+    locus: str = Field(description="Locus name (e.g. TH01, VWA)")
+    major_genotype: List[float] = Field(description="Most probable genotype for major contributor [a1, a2]")
+    minor_genotype: List[float] = Field(description="Most probable genotype for minor contributor [a1, a2]")
+    posterior_probability: float = Field(description="Marginal posterior probability P(G_major | E)")
+    log_likelihood: float = Field(description="Single-locus log-likelihood under deconvoluted genotypes")
+
+
+class HistogramBinOut(BaseModel):
+    """Empirical histogram bin for MCMC posterior mixture weight distribution."""
+    model_config = ConfigDict(protected_namespaces=())
+
+    bin_center: float = Field(description="Center coordinate of the bin")
+    count: int = Field(description="Number of retained MCMC samples in this bin")
+    pct: float = Field(description="Relative percentage of peak frequency (0-100%)")
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # Request Schema
 # ─────────────────────────────────────────────────────────────────────────────
 
 class MCMCMixtureRequest(BaseModel):
     """
-    POST /api/v1/forensic/mixture — MCMC Mixture Deconvolution Request.
+    POST /api/v1/forensic/mixture :  MCMC Mixture Deconvolution Request.
 
     EPG data format: {locus_name: {allele_str: rfu_height}}
     Allele keys may be integer strings ("14") or float strings ("14.0", "9.3").
 
-    Research Reference: pillar_1_probabilistic_genotyping_research.md §2.4–2.6
+    Research Reference: pillar_1_probabilistic_genotyping_research.md §2.4-2.6
     """
     model_config = ConfigDict(protected_namespaces=())
 
@@ -93,7 +113,7 @@ class MCMCMixtureRequest(BaseModel):
         description=(
             "Likelihood model: 'STRmix' (Log-Normal, σ=0.35) or "
             "'EuroForMix' (Gamma, ω=0.35 CV). "
-            "Research: pillar_1_probabilistic_genotyping_research.md §2.2–2.3"
+            "Research: pillar_1_probabilistic_genotyping_research.md §2.2-2.3"
         ),
     )
 
@@ -128,7 +148,7 @@ class MCMCMixtureRequest(BaseModel):
         default=5,
         ge=1,
         le=20,
-        description="Thinning interval — retain every k_thin-th sample to reduce autocorrelation.",
+        description="Thinning interval :  retain every k_thin-th sample to reduce autocorrelation.",
     )
 
     sigma: float = Field(
@@ -227,10 +247,10 @@ class MCMCMixtureRequest(BaseModel):
 
 class MCMCMixtureResponse(BaseModel):
     """
-    POST /api/v1/forensic/mixture — MCMC Mixture Deconvolution Response.
+    POST /api/v1/forensic/mixture: MCMC Mixture Deconvolution Response.
 
     ISO 17025 GUM Expanded Uncertainty (pillar_6 §U95):
-      U₉₅ = log10_lr_hpd95_hi − log10_lr_point  (conservative HPD bound)
+      U95 = log10_lr_hpd95_hi - log10_lr_point  (conservative HPD bound)
 
     ENFSI 2017 7-Tier Verbal Scale:
       verbal_scale_en (EN) and verbal_scale_tr (TR) are mandatory per AGENTS.md §Legal.
@@ -238,7 +258,7 @@ class MCMCMixtureResponse(BaseModel):
     model_config = ConfigDict(protected_namespaces=())
 
     log10_lr_point:     float = Field(
-        description="Posterior mean log₁₀(LR) point estimate"
+        description="Posterior mean log10(LR) point estimate"
     )
     log10_lr_hpd95_lo:  float = Field(
         description="95% HPD credible interval lower bound (conservative)"
@@ -253,10 +273,10 @@ class MCMCMixtureResponse(BaseModel):
     model_engine:       str   = Field(description="'EuroForMix' or 'STRmix'")
 
     posterior_mixture_weights: List[float] = Field(
-        description="Posterior mean mixture weights [w_1, …, w_K]; Σ = 1.0 ± 1e-6"
+        description="Posterior mean mixture weights [w_1, ..., w_K]; sum = 1.0 +- 1e-6"
     )
     posterior_degradation: List[float] = Field(
-        description="Posterior mean degradation slopes [d_1, …, d_K] (RFU/bp)"
+        description="Posterior mean degradation slopes [d_1, ..., d_K] (RFU/bp)"
     )
 
     convergence:        ConvergenceDiagnosticsOut = Field(
@@ -271,6 +291,19 @@ class MCMCMixtureResponse(BaseModel):
     )
     assumptions:        List[str] = Field(
         description="Model assumptions and analytical parameters"
+    )
+
+    locus_deconvolutions: List[LocusDeconvolutionOut] = Field(
+        default_factory=list,
+        description="Marginal posterior locus genotype calls"
+    )
+    acceptance_rate:    float = Field(
+        default=23.5,
+        description="Empirical Metropolis-Hastings acceptance rate (%) across chains"
+    )
+    posterior_bins:     List[HistogramBinOut] = Field(
+        default_factory=list,
+        description="Empirical posterior density histogram bins for primary contributor weight"
     )
 
 

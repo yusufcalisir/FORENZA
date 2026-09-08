@@ -1,5 +1,5 @@
 """
-FORENZA 1.2.5 — MCMC Mixture Deconvolution API Integration Tests
+FORENZA 1.2.5 :  MCMC Mixture Deconvolution API Integration Tests
 POST /forensic/mixture | GET /forensic/mixture/health | GET /forensic/mixture/models
 
 10 integration tests covering schema validation, route responses, mathematical
@@ -8,7 +8,7 @@ invariants, and error handling.
 Run with:
     pytest backend/app/api/test_mcmc_api.py -v
 
-Research Reference: pillar_1_probabilistic_genotyping_research.md §2.5–2.9
+Research Reference: pillar_1_probabilistic_genotyping_research.md §2.5-2.9
 AGENTS.md §3.4: Targeted Module Tests Only (no global suite).
 """
 
@@ -20,13 +20,13 @@ from fastapi.testclient import TestClient
 
 from app.api.mixture_routes import router
 
-# ── Minimal test app — avoids booting full main.py with blockchain / DSPy deps ──
+# ── Minimal test app :  avoids booting full main.py with blockchain / DSPy deps ──
 _app = FastAPI()
 _app.include_router(router, prefix="/api/v1")
 client = TestClient(_app)
 
 # ── Shared EPG fixtures (2-locus, deliberately small for test speed) ──────────
-# Fast MCMC params: n_burn=500, n_sample=1000, n_chains=2 → ~2–4s per test.
+# Fast MCMC params: n_burn=500, n_sample=1000, n_chains=2 → ~2-4s per test.
 
 FAST_PARAMS = {
     "n_burn": 500,
@@ -36,7 +36,7 @@ FAST_PARAMS = {
     "seed": 42,
 }
 
-# 2-person mixture EPG: D3S1358 + VWA — 4 alleles each implies K=2 contributors.
+# 2-person mixture EPG: D3S1358 + VWA :  4 alleles each implies K=2 contributors.
 EPG_2P = {
     "D3S1358": {"14.0": 820.0, "15.0": 780.0, "16.0": 510.0, "17.0": 490.0},
     "VWA":     {"17.0": 1150.0, "18.0": 1080.0, "19.0": 440.0, "20.0": 380.0},
@@ -47,7 +47,7 @@ SUSPECT_GT = {"D3S1358": [14.0, 15.0], "VWA": [17.0, 18.0]}
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# TEST 1: GET /forensic/mixture/health — sanity check
+# TEST 1: GET /forensic/mixture/health :  sanity check
 # ─────────────────────────────────────────────────────────────────────────────
 
 def test_mixture_health_endpoint():
@@ -63,12 +63,12 @@ def test_mixture_health_endpoint():
     assert body["status"] == "ok", f"Health degraded: {body}"
     assert body["engine_importable"] is True
     assert body["stutter_key_present"] is True, (
-        "BiophysicalPeakModel stutter key regression detected — check peak_model.py Phase-2 fix"
+        "BiophysicalPeakModel stutter key regression detected :  check peak_model.py Phase-2 fix"
     )
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# TEST 2: GET /forensic/mixture/models — model enumeration
+# TEST 2: GET /forensic/mixture/models :  model enumeration
 # ─────────────────────────────────────────────────────────────────────────────
 
 def test_mixture_models_endpoint():
@@ -88,7 +88,7 @@ def test_mixture_models_endpoint():
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# TEST 3: POST /forensic/mixture — basic 2-person run
+# TEST 3: POST /forensic/mixture :  basic 2-person run
 # ─────────────────────────────────────────────────────────────────────────────
 
 def test_mixture_2p_basic_run():
@@ -118,7 +118,7 @@ def test_mixture_2p_basic_run():
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# TEST 4: Probability simplex invariant — Σ w_k = 1.0 ± 1e-6
+# TEST 4: Probability simplex invariant :  Σ w_k = 1.0 ± 1e-6
 # ─────────────────────────────────────────────────────────────────────────────
 
 def test_mixture_simplex_invariant():
@@ -148,7 +148,7 @@ def test_mixture_simplex_invariant():
 
 def test_mixture_convergence_diagnostics_present():
     """
-    Convergence block must contain r_hat_max, ess_min, converged — all finite.
+    Convergence block must contain r_hat_max, ess_min, converged :  all finite.
     Gelman-Rubin R̂ > 0 and ESS > 0.
     """
     payload = {
@@ -173,7 +173,7 @@ def test_mixture_convergence_diagnostics_present():
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# TEST 6: ENFSI verbal scale bilingual — both EN and TR non-empty
+# TEST 6: ENFSI verbal scale bilingual :  both EN and TR non-empty
 # ─────────────────────────────────────────────────────────────────────────────
 
 def test_mixture_enfsi_verbal_scale_bilingual():
@@ -197,7 +197,7 @@ def test_mixture_enfsi_verbal_scale_bilingual():
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# TEST 7: Schema validation — K=5 returns 422
+# TEST 7: Schema validation :  K=5 returns 422
 # ─────────────────────────────────────────────────────────────────────────────
 
 def test_mixture_schema_validation_K_out_of_range():
@@ -216,7 +216,7 @@ def test_mixture_schema_validation_K_out_of_range():
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# TEST 8: Schema validation — non-numeric allele key returns 422
+# TEST 8: Schema validation :  non-numeric allele key returns 422
 # ─────────────────────────────────────────────────────────────────────────────
 
 def test_mixture_schema_invalid_epg_nonnumeric_allele():
@@ -241,7 +241,7 @@ def test_mixture_schema_invalid_epg_nonnumeric_allele():
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# TEST 9: suspect_genotype accepted — H_p computation enabled
+# TEST 9: suspect_genotype accepted :  H_p computation enabled
 # ─────────────────────────────────────────────────────────────────────────────
 
 def test_mixture_suspect_genotype_accepted():
@@ -269,7 +269,7 @@ def test_mixture_suspect_genotype_accepted():
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# TEST 10: Timeout guard — n_burn+n_sample > 60,000 returns 422
+# TEST 10: Timeout guard :  n_burn+n_sample > 60,000 returns 422
 # ─────────────────────────────────────────────────────────────────────────────
 
 def test_mixture_timeout_guard_large_run():
@@ -293,3 +293,56 @@ def test_mixture_timeout_guard_large_run():
     assert "60,000" in detail_text or "60000" in detail_text or "synchronous" in detail_text, (
         f"422 detail doesn't mention the run-size limit: {detail_text}"
     )
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# TEST 11: Marginal locus deconvolution calls present in response
+# ─────────────────────────────────────────────────────────────────────────────
+
+def test_mixture_locus_deconvolutions_present():
+    """
+    POST with EPG data must return locus_deconvolutions with non-empty major/minor genotypes
+    and normalized marginal posterior probabilities P(G_major | E) in [0.0, 1.0].
+    """
+    payload = {
+        "epg_data": EPG_2P,
+        "K": 2,
+        **FAST_PARAMS,
+    }
+    r = client.post("/api/v1/forensic/mixture", json=payload)
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert "locus_deconvolutions" in body, "Missing locus_deconvolutions in response"
+    deconvs = body["locus_deconvolutions"]
+    assert len(deconvs) == 2, f"Expected 2 locus deconvolutions, got {len(deconvs)}"
+    for ld in deconvs:
+        assert ld["locus"] in ["D3S1358", "VWA"], f"Unexpected locus: {ld['locus']}"
+        assert len(ld["major_genotype"]) == 2, f"Major genotype not diploid: {ld['major_genotype']}"
+        assert len(ld["minor_genotype"]) == 2, f"Minor genotype not diploid: {ld['minor_genotype']}"
+        assert 0.0 <= ld["posterior_probability"] <= 1.0, (
+            f"Posterior probability out of range: {ld['posterior_probability']}"
+        )
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# TEST 12: Empirical posterior histogram bins and acceptance rate present
+# ─────────────────────────────────────────────────────────────────────────────
+
+def test_mixture_empirical_posterior_bins_and_acceptance_rate():
+    """
+    POST must return empirical 16-bin histogram for w_1 and valid acceptance_rate.
+    """
+    payload = {
+        "epg_data": EPG_2P,
+        "K": 2,
+        **FAST_PARAMS,
+    }
+    r = client.post("/api/v1/forensic/mixture", json=payload)
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert "acceptance_rate" in body, "Missing acceptance_rate"
+    assert 5.0 <= body["acceptance_rate"] <= 70.0, f"Acceptance rate out of range: {body['acceptance_rate']}"
+    assert "posterior_bins" in body, "Missing posterior_bins"
+    bins = body["posterior_bins"]
+    assert len(bins) == 16, f"Expected 16 posterior bins, got {len(bins)}"
+    assert any(b["count"] > 0 for b in bins), "All posterior bins have 0 counts"

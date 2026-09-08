@@ -1,13 +1,13 @@
 """
-FORENZA 1.2.5 — MCMC Mixture Deconvolution FastAPI Router
+FORENZA 1.2.5 :  MCMC Mixture Deconvolution FastAPI Router
 
 Exposes three production endpoints under /forensic/mixture:
-  POST /forensic/mixture          — Run MCMC mixture deconvolution (synchronous fast-mode)
-  GET  /forensic/mixture/health   — Engine import & stutter key sanity check
-  GET  /forensic/mixture/models   — List available likelihood models and parameters
+  POST /forensic/mixture          :  Run MCMC mixture deconvolution (synchronous fast-mode)
+  GET  /forensic/mixture/health   :  Engine import & stutter key sanity check
+  GET  /forensic/mixture/models   :  List available likelihood models and parameters
 
 Research References:
-  pillar_1_probabilistic_genotyping_research.md §2.1–2.9  (MCMC engine)
+  pillar_1_probabilistic_genotyping_research.md §2.1-2.9  (MCMC engine)
   pillar_6_lims_zkp_reporting_research.md (ISO 17025 GUM U₉₅, ENFSI 7-tier)
 
 SWGDAM 2020 Synchronous Run Limit:
@@ -32,6 +32,8 @@ from node.services.forensic.probabilistic.peak_model import (
 
 from .mixture_schemas import (
     ConvergenceDiagnosticsOut,
+    HistogramBinOut,
+    LocusDeconvolutionOut,
     MCMCMixtureRequest,
     MCMCMixtureResponse,
     MixtureHealthResponse,
@@ -47,18 +49,19 @@ router = APIRouter(
 )
 
 # ---------------------------------------------------------------------------
-# Helper: convert EPG string allele keys → float keys required by MCMCSampler
+# Helper: convert EPG string allele keys -> float keys required by MCMCSampler
 # ---------------------------------------------------------------------------
 
 def _parse_epg_keys(
     epg_data: Dict[str, Dict[str, float]]
 ) -> Dict[str, Dict[float, float]]:
     """
-    Convert {locus → {str_allele → rfu}} to {locus → {float_allele → rfu}}.
+    Convert {locus -> {str_allele -> rfu}} to {locus -> {float_allele -> rfu}}.
+    Locus names are normalized to uppercase for consistent BiophysicalPeakModel lookup.
     Validated upstream by MCMCMixtureRequest.validate_epg_allele_keys.
     """
     return {
-        locus: {float(allele_key): rfu for allele_key, rfu in allele_dict.items()}
+        locus.strip().upper(): {float(allele_key): rfu for allele_key, rfu in allele_dict.items()}
         for locus, allele_dict in epg_data.items()
     }
 
@@ -66,17 +69,17 @@ def _parse_epg_keys(
 def _parse_suspect_genotype(
     suspect_genotype: Dict[str, list] | None
 ) -> Dict[str, Tuple[float, float]] | None:
-    """Convert {locus → [a1, a2]} to {locus → (a1, a2)} for MCMCSampler."""
+    """Convert {locus -> [a1, a2]} to {locus -> (a1, a2)} for MCMCSampler with uppercase locus names."""
     if suspect_genotype is None:
         return None
     return {
-        locus: (float(alleles[0]), float(alleles[1]))
+        locus.strip().upper(): (float(alleles[0]), float(alleles[1]))
         for locus, alleles in suspect_genotype.items()
     }
 
 
 def _map_convergence(conv: MCMCConvergenceDiagnostics) -> ConvergenceDiagnosticsOut:
-    """Map engine dataclass → Pydantic response sub-model."""
+    """Map engine dataclass -> Pydantic response sub-model."""
     return ConvergenceDiagnosticsOut(
         r_hat_per_param=conv.r_hat_per_param,
         r_hat_max=conv.r_hat_max,
@@ -88,7 +91,25 @@ def _map_convergence(conv: MCMCConvergenceDiagnostics) -> ConvergenceDiagnostics
 
 
 def _map_result(result: MixtureLRResult) -> MCMCMixtureResponse:
-    """Map MixtureLRResult dataclass → MCMCMixtureResponse Pydantic model."""
+    """Map MixtureLRResult dataclass -> MCMCMixtureResponse Pydantic model."""
+    locus_deconvs = [
+        LocusDeconvolutionOut(
+            locus=ld.locus,
+            major_genotype=ld.major_genotype,
+            minor_genotype=ld.minor_genotype,
+            posterior_probability=ld.posterior_probability,
+            log_likelihood=ld.log_likelihood,
+        )
+        for ld in result.locus_deconvolutions
+    ]
+    post_bins = [
+        HistogramBinOut(
+            bin_center=b["bin_center"],
+            count=b["count"],
+            pct=b["pct"],
+        )
+        for b in result.posterior_bins
+    ]
     return MCMCMixtureResponse(
         log10_lr_point=result.log10_lr_point,
         log10_lr_hpd95_lo=result.log10_lr_hpd95_lo,
@@ -102,11 +123,14 @@ def _map_result(result: MixtureLRResult) -> MCMCMixtureResponse:
         verbal_scale_en=result.verbal_scale_en,
         verbal_scale_tr=result.verbal_scale_tr,
         assumptions=result.assumptions,
+        locus_deconvolutions=locus_deconvs,
+        acceptance_rate=result.mean_acceptance_rate,
+        posterior_bins=post_bins,
     )
 
 
 # ---------------------------------------------------------------------------
-# POST /forensic/mixture — Main deconvolution endpoint
+# POST /forensic/mixture :  Main deconvolution endpoint
 # ---------------------------------------------------------------------------
 
 @router.post(
@@ -122,7 +146,7 @@ def _map_result(result: MixtureLRResult) -> MCMCMixtureResponse:
         "**Fast-mode defaults** (HTTP synchronous): n_burn=2000, n_sample=6000. "
         "Total n_burn+n_sample must not exceed 60,000. "
         "\n\n"
-        "Research: pillar_1_probabilistic_genotyping_research.md §2.5–2.9"
+        "Research: pillar_1_probabilistic_genotyping_research.md §2.5-2.9"
     ),
     status_code=status.HTTP_200_OK,
 )
@@ -176,7 +200,7 @@ async def run_mcmc_mixture(body: MCMCMixtureRequest) -> MCMCMixtureResponse:
 
 
 # ---------------------------------------------------------------------------
-# GET /forensic/mixture/health — Engine sanity check
+# GET /forensic/mixture/health :  Engine sanity check
 # ---------------------------------------------------------------------------
 
 @router.get(
@@ -201,7 +225,7 @@ async def mixture_health() -> MixtureHealthResponse:
         # 1. Import check
         from node.services.forensic.probabilistic.mcmc import MCMCSampler as _S
         engine_importable = True
-        mcmc_engine_version = "MCMC-MH v1.2.5 (pillar_1 §2.5–2.9)"
+        mcmc_engine_version = "MCMC-MH v1.2.5 (pillar_1 §2.5-2.9)"
 
         # 2. Stutter key regression guard (EC-MCMC-04)
         bphys = BiophysicalPeakModel(template_scale=1000.0)
@@ -234,7 +258,7 @@ async def mixture_health() -> MixtureHealthResponse:
 
 
 # ---------------------------------------------------------------------------
-# GET /forensic/mixture/models — Available likelihood models
+# GET /forensic/mixture/models :  Available likelihood models
 # ---------------------------------------------------------------------------
 
 @router.get(

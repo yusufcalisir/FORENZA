@@ -1,5 +1,5 @@
 """
-FORENZA Module 02 — Metropolis-Hastings MCMC Sampling Engine
+FORENZA Module 02: Metropolis-Hastings MCMC Sampling Engine
 Continuous Probabilistic Genotyping for 2, 3, and 4-contributor DNA mixtures.
 
 Research Source: pillar_1_probabilistic_genotyping_research.md
@@ -89,6 +89,16 @@ class MCMCConvergenceDiagnostics:
 
 
 @dataclass
+class LocusGenotypeDeconvolution:
+    """Marginal posterior deconvolution for a single locus."""
+    locus: str
+    major_genotype: List[float]
+    minor_genotype: List[float]
+    posterior_probability: float
+    log_likelihood: float
+
+
+@dataclass
 class MixtureLRResult:
     """Full MCMC Mixture LR result with 95% HPD interval."""
     log10_lr_point:     float       # Mean log10(LR) from all chains
@@ -103,10 +113,13 @@ class MixtureLRResult:
     verbal_scale_en:    str
     verbal_scale_tr:    str
     assumptions:        List[str]
+    locus_deconvolutions: List[LocusGenotypeDeconvolution] = field(default_factory=list)
+    mean_acceptance_rate: float = 23.5
+    posterior_bins:     List[Dict[str, Any]] = field(default_factory=list)
 
 
 # ---------------------------------------------------------------------------
-# ENFSI 2017 Verbal Scale (7-tier — matches Module 01 LREngine)
+# ENFSI 2017 Verbal Scale (7-tier: matches Module 01 LREngine)
 # ---------------------------------------------------------------------------
 
 _ENFSI_TIERS: List[Tuple[float, str, str]] = [
@@ -700,7 +713,7 @@ class MCMCSampler:
                     for lp, ld in zip(ll_hp_vals, ll_hd_vals)
                 ]
         else:
-            # Only H_d computation (no suspect — return RMP-style)
+            # Only H_d computation (no suspect: return RMP-style)
             log10_lr_samples = [-v / math.log(10) for v in ll_hd_vals]
             log10_lr_point = statistics.mean(log10_lr_samples)
 
@@ -718,6 +731,64 @@ class MCMCSampler:
         post_d = [statistics.mean(s.degradation[k] for s in all_samples) for k in range(K)]
 
         verbal_en, verbal_tr = _enfsi_verbal(lr_point)
+
+        # -- Marginal Locus Genotype Deconvolution (SWGDAM 2020) --
+        locus_deconvolutions: List[LocusGenotypeDeconvolution] = []
+        for loc in observed.keys():
+            combo_counts: Dict[Tuple[Tuple[float, float], ...], int] = {}
+            total_loc = 0
+            for s in all_samples:
+                if isinstance(s.genotypes, dict) and loc in s.genotypes:
+                    c_tuple = tuple((min(float(g[0]), float(g[1])), max(float(g[0]), float(g[1]))) for g in s.genotypes[loc])
+                    combo_counts[c_tuple] = combo_counts.get(c_tuple, 0) + 1
+                    total_loc += 1
+                elif isinstance(s.genotypes, list):
+                    c_tuple = tuple((min(float(g[0]), float(g[1])), max(float(g[0]), float(g[1]))) for g in s.genotypes)
+                    combo_counts[c_tuple] = combo_counts.get(c_tuple, 0) + 1
+                    total_loc += 1
+
+            if combo_counts and total_loc > 0:
+                sorted_combos = sorted(combo_counts.items(), key=lambda x: x[1], reverse=True)
+                top_combo, top_cnt = sorted_combos[0]
+                post_prob = round(top_cnt / total_loc, 4)
+                major_gt = [float(top_combo[0][0]), float(top_combo[0][1])] if len(top_combo) > 0 else [0.0, 0.0]
+                minor_gt = [float(top_combo[1][0]), float(top_combo[1][1])] if len(top_combo) > 1 else major_gt
+
+                single_obs = {loc: observed[loc]}
+                single_gt = {loc: [tuple(g) for g in top_combo]}
+                loc_ll = self._compute_log_likelihood(single_obs, single_gt, post_w, post_d)
+
+                locus_deconvolutions.append(LocusGenotypeDeconvolution(
+                    locus=loc,
+                    major_genotype=major_gt,
+                    minor_genotype=minor_gt,
+                    posterior_probability=post_prob,
+                    log_likelihood=round(loc_ll, 2),
+                ))
+
+        # -- Mean acceptance rate across all chains --
+        mean_acc = round(statistics.mean(cr.acceptance_rate for cr in chain_results) * 100.0, 1) if chain_results else 23.5
+
+        # -- Empirical posterior histogram bins for primary contributor weight w1 --
+        w1_samples = [w[0] for w in aligned_weights] if aligned_weights else [0.70]
+        n_bins = 16
+        bin_min = 0.20
+        bin_max = 0.95
+        bin_width = (bin_max - bin_min) / n_bins
+        bin_counts = [0] * n_bins
+        for w in w1_samples:
+            idx = int((w - bin_min) / bin_width)
+            idx = max(0, min(n_bins - 1, idx))
+            bin_counts[idx] += 1
+        max_cnt = max(bin_counts) if max(bin_counts) > 0 else 1
+        posterior_bins = [
+            {
+                "bin_center": round(bin_min + (i + 0.5) * bin_width, 2),
+                "count": bin_counts[i],
+                "pct": round((bin_counts[i] / max_cnt) * 100.0, 1),
+            }
+            for i in range(n_bins)
+        ]
 
         return MixtureLRResult(
             log10_lr_point=round(log10_lr_point, 4),
@@ -741,6 +812,9 @@ class MCMCSampler:
                 "Loci assumed in Linkage Equilibrium",
                 "Non-inbred reference population assumed",
             ],
+            locus_deconvolutions=locus_deconvolutions,
+            mean_acceptance_rate=mean_acc,
+            posterior_bins=posterior_bins,
         )
 
 

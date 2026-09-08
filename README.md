@@ -302,7 +302,7 @@ str-analysis/
 │           │   ├── hirisplex_model.py     # HIrisPlex-S 41-SNP MLR Models & Intermediate Thresholds
 │           │   ├── governance_engine.py   # German § 81e StPO Ancestry Gate & ISFG Fallacy Shields
 │           │   └── golden_vectors.py      # 5 Certified Golden Standards (NA12878, NA19240, NA18507, HG002, Tri-Racial)
-│           └── tests/                     # Automated Test Suite (3,573 Automated Tests Passing)
+│           └── tests/                     # Automated Test Suite (2,100+ Automated Tests Passing)
 │
 ├── frontend/                              # Next.js 16 Workstation Dashboard
 │   ├── public/                            # Static Assets, Icons, Favicons
@@ -872,7 +872,7 @@ pytest backend/node/services/forensic/physical/ -v        # Pillar 5: Physical E
 pytest backend/node/services/forensic/security/ -v        # Pillar 6: LIMS & ZKP
 pytest backend/node/services/forensic/geoint/ -v          # Pillar 7: Geo-Forensics
 
-# Execute frontend tactical workstation test suite (87 tests across 15 test suites)
+# Execute frontend tactical workstation test suite (117 tests across 19 test suites)
 npm --prefix frontend test -- --run
 ```
 

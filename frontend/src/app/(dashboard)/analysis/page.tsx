@@ -75,7 +75,7 @@ export default function AnalysisPage() {
                       </div>
                     </div>
                     <span className="text-[8px] font-bold px-2 py-0.5 rounded-md bg-black/60 text-zinc-300 border border-white/10 shrink-0 whitespace-nowrap">
-                      {isTr ? "5 Modül" : "5 Modules"}
+                      {cat.tabs.length} {isTr ? "Modül" : "Modules"}
                     </span>
                   </div>
 

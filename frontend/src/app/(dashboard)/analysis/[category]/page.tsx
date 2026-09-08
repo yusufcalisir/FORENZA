@@ -62,7 +62,7 @@ export default function CategoryPage({
 
           <div className="flex items-center gap-2 flex-wrap shrink-0">
             <span className={`text-[9px] font-bold ${cc.text} ${cc.bg} border ${cc.border} px-3 py-1.5 rounded-xl uppercase whitespace-nowrap shadow-sm`}>
-              {isTr ? "5 Kalibre Modül" : "5 Calibrated Modules"}
+              {category.tabs.length} {isTr ? "Kalibre Modül" : "Calibrated Modules"}
             </span>
           </div>
         </div>

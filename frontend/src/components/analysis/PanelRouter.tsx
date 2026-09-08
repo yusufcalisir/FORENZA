@@ -60,9 +60,6 @@ const ToxicologyPmrPanel = dynamic(() => import("@/components/analysis/Toxicolog
 const ExpertWitnessPanel = dynamic(() => import("@/components/analysis/ExpertWitnessPanel"), {
   loading: () => <ModuleSkeletonLoader label="Loading ENFSI Court-Ready Statement Engine..." />,
 });
-const ComprehensiveEpigenomicsPanel = dynamic(() => import("@/components/analysis/ComprehensiveEpigenomicsPanel"), {
-  loading: () => <ModuleSkeletonLoader label="Loading Multi-Omic Lifestyle Biomarker Engine..." />,
-});
 const TouchDnaPanel = dynamic(() => import("@/components/analysis/TouchDnaPanel"), {
   loading: () => <ModuleSkeletonLoader label="Loading Touch & Low Template DNA Engine..." />,
 });

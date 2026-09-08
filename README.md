@@ -332,6 +332,7 @@ str-analysis/
 │       │   │   ├── AgeEstimationPanel.tsx # Backward-Compatible Re-Export Bridge for PanelEpigeneticClocks
 │       │   │   ├── PanelBodyFluid.tsx     # Body Fluid & Tissue Origin tDMR 5-Tab Forensic Studio
 │       │   │   ├── BodyFluidPanel.tsx     # Backward-Compatible Re-Export Bridge for PanelBodyFluid
+│       │   │   ├── PanelLifestyle.tsx     # Lifestyle Epigenomics & AHRR Biomarkers 5-Tab Forensic Studio
 │       │   │   ├── PanelTelomere.tsx      # Telomere Biological Chronometer & Somatic Mosaicism 5-Tab Forensic Studio
 │       │   │   └── GeoForensicIntelligencePanel.tsx # Multi-Modal Geo-Forensic Platform
 │       │   ├── common/                    # Shared Modals & Telemetry Banners

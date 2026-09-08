@@ -1,4 +1,4 @@
-# PHASE 0.2 — Academic Literature Review
+# PHASE 0.2 - Academic Literature Review
 
 **Project:** FORENZA (Forensic Biology & DNA Intelligence Platform)  
 **Author:** Yusuf Çalışır  
@@ -16,7 +16,7 @@ This document provides a systematic review of foundational literature, statistic
 ## 1. Forensic Short Tandem Repeat (STR) Analysis
 
 ### 1.1 Biological Mechanism & Expanded 24-STR Panel
-Short Tandem Repeats (STRs) consist of repetitive DNA sequences (typically 2–6 base pairs in length) located at specific polymorphic loci across the human genome. The Federal Bureau of Investigation (FBI) expanded the core Combined DNA Index System (CODIS) from 13 to **20 core loci** in 2017, and modern forensic kits (GlobalFiler, PowerPlex Fusion 6C) employ **24-locus multiplexes** to maximize discrimination power:
+Short Tandem Repeats (STRs) consist of repetitive DNA sequences (typically 2-6 base pairs in length) located at specific polymorphic loci across the human genome. The Federal Bureau of Investigation (FBI) expanded the core Combined DNA Index System (CODIS) from 13 to **20 core loci** in 2017, and modern forensic kits (GlobalFiler, PowerPlex Fusion 6C) employ **24-locus multiplexes** to maximize discrimination power:
 * **Autosomal STR Loci (22):** CSF1PO, FGA, TH01, TPOX, vWA, D3S1358, D5S818, D7S820, D8S1179, D13S317, D16S539, D18S51, D21S11, D1S1656, D2S1338, D2S441, D10S1248, D12S391, D19S433, D22S1045, Penta D, Penta E.
 * **Sex & Lineage Quality Markers (2):** Amelogenin (X/Y sex determination), DYS391 (Y-insertion verification for Amelogenin Y-null deletion anomalies), and SRY.
 * **Population Reference Matrix:** NIST 1036 revised U.S. population dataset (Caucasian, African American, Hispanic, Asian, Total $2N=2072$ alleles) with Dirichlet-Laplace smoothing and NRC II $p_{\min} = 0.00241$ empirical floors.
@@ -32,7 +32,7 @@ Capillary electrophoresis (CE) electropherograms (EPGs) display peak heights mea
 ## 2. Statistical Framework: Likelihood Ratios (LR)
 
 ### 2.1 The Bayesian LR Principle
-The evaluation of forensic DNA evidence ($E$) under two mutually exclusive hypotheses—Prosecution Hypothesis ($H_p$) and Defense Hypothesis ($H_d$)—is expressed via Bayes' Theorem in odds form:
+The evaluation of forensic DNA evidence ($E$) under two mutually exclusive hypotheses-Prosecution Hypothesis ($H_p$) and Defense Hypothesis ($H_d$)-is expressed via Bayes' Theorem in odds form:
 
 $$\frac{P(H_p \mid E)}{P(H_d \mid E)} = \frac{P(E \mid H_p)}{P(E \mid H_d)} \times \frac{P(H_p)}{P(H_d)}$$
 
@@ -121,7 +121,7 @@ The President's Council of Advisors on Science and Technology (PCAST) evaluated 
 * **Stepwise Mutation Model (SMM) Kinship:** Kinship index evaluation for father-son or brother-brother transmissions factoring locus-specific single/multi-step germline mutations.
 
 ### 7.2 Mitochondrial DNA (mtDNA) Control Region & EMPOP Framework
-* **rCRS vs. RSRS Alignment:** Sequence alignment against revised Cambridge Reference Sequence (rCRS, NC_012920.1) and Reconstructed Sapiens Reference Sequence (RSRS) across hypervariable segments HV1 (16024–16365), HV2 (73–340), and HV3 (438–574).
+* **rCRS vs. RSRS Alignment:** Sequence alignment against revised Cambridge Reference Sequence (rCRS, NC_012920.1) and Reconstructed Sapiens Reference Sequence (RSRS) across hypervariable segments HV1 (16024-16365), HV2 (73-340), and HV3 (438-574).
 * **EMPOP 3'-Right-Alignment Normalization:** Standardized shift of homopolymeric C-tracts (`315.1C`, `16193.1C`) and dinucleotide AC repeats (`524.1A`, `524del`) on the light strand (Parson et al., 2014).
 * **Point & Length Heteroplasmy (PHP/LHP):** IUPAC ambiguity representation (`R`, `Y`, `M`, `K`, `S`, `W`) with analytical threshold validation for mixed base calling.
 * **PhyloTree Build 17 Classification:** Hierarchical motif-matching algorithm classifying mtDNA sequences into 20 global maternal macro-haplogroups (`H`, `U`, `K`, `J`, `T`, `V`, `W`, `X`, `L0-L3`, `M`, `N`, `A2`, `B2`, `C1`) with Clopper-Pearson match bounds against EMPOP ($N=48,200$).

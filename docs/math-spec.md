@@ -1,4 +1,4 @@
-# PHASE 0.3 — Formal Mathematical Specification
+# PHASE 0.3 - Formal Mathematical Specification
 
 **Project:** FORENZA (Forensic Biology & DNA Intelligence Platform)  
 **Author:** Yusuf Çalışır  
@@ -79,7 +79,7 @@ Due to 4-bp flanking deletions (`rs369314007 [TTTT/-]` and `rs1371483225 [TCTT/-
 
 $$\text{Call}_{\text{CE}} = \begin{cases} \text{Call}_{\text{MPS}} - 1.0 & \text{if } \text{rs369314007 or rs1371483225 deletion detected} \\ \text{Call}_{\text{MPS}} & \text{otherwise} \end{cases}$$
 
-#### 3. Syntenic Linkage Constraint (D6S1043 – SE33)
+#### 3. Syntenic Linkage Constraint (D6S1043 - SE33)
 On chromosome 6q, D6S1043 and SE33 are separated by 3.46 Mb with recombination fraction $\theta = 0.0440$. In kinship testing, multiplying single-locus LRs violates independence:
 
 $$\text{LR}_{\text{joint}}(D6S1043, SE33) = \max(\text{LR}_{D6S1043}, \text{LR}_{SE33}) \quad \text{(Safe Conservative Fallback)}$$
@@ -203,7 +203,7 @@ $$\text{Recovered Mass: } m_{\text{rec}} = m_{\text{in}} \cdot \eta$$
 
 ---
 
-## 5. Continuous Peak Height Models — Module 02
+## 5. Continuous Peak Height Models - Module 02
 
 ### 5.1 Biophysical Expected Peak Height ($\mu_{l,a}$)
 
@@ -214,17 +214,17 @@ $w_k$, molecular-size degradation, and $n-1$ back-stutter:
 $$\mu_{l,a} = T_l \cdot A_l \cdot \sum_{k=1}^{K} w_k \cdot 10^{-d_k(S_{l,a} - S_0)} \cdot n_{k,l,a} + SR_l \cdot \mu_{l, a+1}$$
 
 Where:
-- $S_{l,a}$ — molecular size (bp) of allele $a$ at locus $l$
-- $S_0 = 100$ bp — reference molecular size
-- $d_k \ge 0$ — exponential degradation slope for contributor $k$
-- $n_{k,l,a} \in \{0, 1, 2\}$ — dosage (allele count) of contributor $k$ at allele $a$
-- $SR_l$ — locus-specific SWGDAM 2020 back-stutter ratio (e.g., $SR_{\text{TH01}}=0.025$, $SR_{\text{SE33}}=0.110$)
+- $S_{l,a}$ - molecular size (bp) of allele $a$ at locus $l$
+- $S_0 = 100$ bp - reference molecular size
+- $d_k \ge 0$ - exponential degradation slope for contributor $k$
+- $n_{k,l,a} \in \{0, 1, 2\}$ - dosage (allele count) of contributor $k$ at allele $a$
+- $SR_l$ - locus-specific SWGDAM 2020 back-stutter ratio (e.g., $SR_{\text{TH01}}=0.025$, $SR_{\text{SE33}}=0.110$)
 - $S_0 = 100$ bp reference ensures degradation factor $= 1$ for the smallest fragments
 
 ### 5.2 EuroForMix Gamma Likelihood ($§2.1$ Research)
 
 Peak height $h_{l,a}$ follows a Gamma distribution parameterized by the
-coefficient-of-variation $\omega$ (CV, 0.20–0.40):
+coefficient-of-variation $\omega$ (CV, 0.20-0.40):
 
 $$h_{l,a} \sim \text{Gamma}\!\left(\alpha = \frac{1}{\omega^2},\; \beta = \mu_{l,a} \cdot \omega^2\right)$$
 
@@ -252,11 +252,11 @@ Locus-specific $n-1$ stutter slope from SWGDAM 2020:
 | D21S11 | 0.085 | D12S391 | 0.112 |
 | FGA | 0.088 | D18S51 | 0.092 |
 | D1S1656 | 0.095 | D3S1358 | 0.082 |
-| PENTA E/D | 0.038–0.040 | AMEL | 0.000 |
+| PENTA E/D | 0.038-0.040 | AMEL | 0.000 |
 
 ---
 
-## 6. MCMC & Uncertainty Quantification — Module 02
+## 6. MCMC & Uncertainty Quantification - Module 02
 
 ### 6.1 3-Chain Metropolis-Hastings Algorithm
 
@@ -523,7 +523,7 @@ For father-daughter pair at locus $l$ where father possesses allele $A_f$ and da
 $$KI_X = \begin{cases} \frac{1}{2 p_f} & \text{if } A_f \in \{A_{d1}, A_{d2}\} \\ 0 & \text{if } A_f \notin \{A_{d1}, A_{d2}\} \end{cases}$$
 
 ### 9.3 mtDNA rCRS Distance & Decision Rule
-Let $E$ and $S$ be sets of hypervariable variants $(pos, alt)$ in HV1 (16024–16365), HV2 (73–340), and HV3 (438–574) relative to rCRS ($AC\_000021.2$).
+Let $E$ and $S$ be sets of hypervariable variants $(pos, alt)$ in HV1 (16024-16365), HV2 (73-340), and HV3 (438-574) relative to rCRS ($AC\_000021.2$).
 Symmetric difference count $d = |E \Delta S|$:
 
 $$\text{Verdict} = \begin{cases} \text{Cannot Be Excluded (Maternal Match)} & \text{if } d = 0 \\ \text{Inconclusive (Heteroplasmy / Mutation)} & \text{if } d = 1 \\ \text{Excluded (Different Lineages)} & \text{if } d \ge 2 \end{cases}$$
@@ -1107,7 +1107,7 @@ $$\log_{10}(LR) \in [-300, +300] \quad (\text{IEEE 754 precision clamp enforced}
 
 ## 39. Tippett Calibration Curves, ROC Analysis, $C_{\text{llr}}$ Cost, 95% HPD Lower Bound & ENFSI Evaluative Reporting (Module 05)
 
-### 39.1 Tippett Calibration Curves — Empirical Complementary CDF (ECCDF)
+### 39.1 Tippett Calibration Curves - Empirical Complementary CDF (ECCDF)
 
 $$\text{Hp Curve: } T_{H_p}(x) = P\left(\log_{10}(\text{LR}) \ge x \mid H_p\right) = \frac{1}{N_{H_p}} \sum_{i=1}^{N_{H_p}} \mathbf{1}\left[\log_{10}(\text{LR}_i) \ge x\right]$$
 
@@ -1133,7 +1133,7 @@ $$\text{AUC} = \int_0^1 \text{TPR}(\text{FPR}) \, d(\text{FPR}) \approx \sum_{k=
 
 $$\text{MER}_{\text{upper}} = \max\left(\text{FPR}_{\text{LR}=1},\ \text{FNR}_{\text{LR}=1}\right) \quad \text{(Maximum Misleading Evidence Rate)}$$
 
-### 39.3 Log-Likelihood-Ratio Cost ($C_{\text{llr}}$) — Calibration Score
+### 39.3 Log-Likelihood-Ratio Cost ($C_{\text{llr}}$) - Calibration Score
 
 $$C_{\text{llr}} = \frac{1}{2 N_{H_p}} \sum_{i=1}^{N_{H_p}} \log_2\!\left(1 + \frac{1}{\text{LR}_i}\right) + \frac{1}{2 N_{H_d}} \sum_{j=1}^{N_{H_d}} \log_2\!\left(1 + \text{LR}_j\right) \quad \text{(Brümmer \& du Preez 2006)}$$
 
@@ -1163,11 +1163,11 @@ The true $\log_{10}(\text{LR})$ exceeds $\text{LR}_{\text{court}}$ with **95% po
 | **Tier 3** | $2 < x \le 4$ | Strong support for prosecution | Güçlü destek (iddianame) |
 | **Tier 2** | $1 < x \le 2$ | Moderate support for prosecution | Orta düzeyde destek (iddianame) |
 | **Tier 1** | $0 < x \le 1$ | Limited support for prosecution | Sınırlı destek (iddianame) |
-| **Tier 0** | $x = 0$ | Neutral — no support for either | Tarafsız |
+| **Tier 0** | $x = 0$ | Neutral - no support for either | Tarafsız |
 | **Tier −1..−5** | $x < 0$ | Symmetric defence tiers | Savunma katmanları (simetrik) |
 
 **Prosecutor's Fallacy Shield (mandatory in all reports):**
-$$P(E \mid H_p) \neq P(H_p \mid E) \quad \text{(Transposed Conditional — inadmissible)}$$
+$$P(E \mid H_p) \neq P(H_p \mid E) \quad \text{(Transposed Conditional - inadmissible)}$$
 
 The LR measures $P(\text{Evidence} \mid \text{Hypothesis})$, **NOT** $P(\text{Hypothesis} \mid \text{Evidence})$.
 
@@ -1263,14 +1263,14 @@ $$r = \frac{1}{2} \tanh\left(\frac{2d}{100}\right) = \frac{1}{2} \frac{e^{4d/100
 ### 42.1 Hypervariable Regions & ISFG Right-Alignment Standard
 
 Mitochondrial DNA haplotypes are reported relative to the Revised Cambridge Reference Sequence (**rCRS**, GenBank `NC_012920.1` / `AC_000021.2`) across three hypervariable segments:
-- **HV1:** Nucleotide positions 16024–16365 nt
-- **HV2:** Nucleotide positions 73–340 nt
-- **HV3:** Nucleotide positions 438–574 nt
+- **HV1:** Nucleotide positions 16024-16365 nt
+- **HV2:** Nucleotide positions 73-340 nt
+- **HV3:** Nucleotide positions 438-574 nt
 
 #### ISFG 3' Right-Alignment Rules for Homopolymeric Tracts:
-- **HV1 Poly-C (16184–16193):** T $\to$ C transitions at 16189 generate length variants scored at the 3' extremity as `16189.1C, 16189.2C`.
-- **HV2 Poly-C (303–315):** Insertions scored as `309.1C, 309.2C, 315.1C`.
-- **Dinucleotide Repeats (522–523):** Scored as `522del, 523del` or `524.1AC, 524.2AC`.
+- **HV1 Poly-C (16184-16193):** T $\to$ C transitions at 16189 generate length variants scored at the 3' extremity as `16189.1C, 16189.2C`.
+- **HV2 Poly-C (303-315):** Insertions scored as `309.1C, 309.2C, 315.1C`.
+- **Dinucleotide Repeats (522-523):** Scored as `522del, 523del` or `524.1AC, 524.2AC`.
 
 ### 42.2 Point Heteroplasmy (PHP) & IUPAC Degeneracy
 
@@ -1330,7 +1330,7 @@ $$\text{Odds} = LR_{\text{Joint}} \times \frac{P(H_p)}{1 - P(H_p)}, \quad P(H_p 
 
 ## 44. Ancient DNA & Degraded Forensic SNP Damage Kinetics / Human ID (HID) Engine (Module 10)
 
-For heavily degraded skeletal remains where STR amplification fails due to extensive fragmentation ($> 100\text{ bp}$ dropout), short-amplicon ($40–70\text{ bp}$) SNP micro-multiplex panels are employed.
+For heavily degraded skeletal remains where STR amplification fails due to extensive fragmentation ($> 100\text{ bp}$ dropout), short-amplicon ($40-70\text{ bp}$) SNP micro-multiplex panels are employed.
 
 ### 44.1 Post-Mortem DNA Damage Kinetics (MapDamage / Briggs Model)
 
@@ -1568,7 +1568,7 @@ The Ephelides & UV Sensitivity Engine predicts quantitative freckling score ($F_
 | **V60L** | `rs1805005` | Val60Leu | 'r' Low Risk | $+1.10$ |
 | **V92M** | `rs2228479` | Val92Met | 'r' Low Risk | $+0.85$ |
 | **R163Q** | `rs885479` | Arg163Gln | 'r' Low Risk | $+0.75$ |
-| **Wild Type (wt)**| — | Consensus | Wild Type Baseline | $0.00$ |
+| **Wild Type (wt)**| - | Consensus | Wild Type Baseline | $0.00$ |
 
 ### 49.2 Compound Heterozygosity and Quantitative Freckling Score ($F_{\text{score}}$)
 
@@ -1916,7 +1916,7 @@ $$\text{HQI} = \frac{\left( \mathbf{S}_{\text{sample}} \cdot \mathbf{S}_{\text{r
 
 | Compound | Apparent $V_d$ | $\log P$ | $\text{p}K_a$ | Mean C/P Ratio ($C_{\text{heart}}/C_{\text{femoral}}$) | PMR Risk Tier | Elimination Model |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Ethanol** | $0.6 \text{ L/kg}$ | $-0.31$ | — | $1.00 \pm 0.10$ | Low / Minimal | Zero-Order ($\beta_{60} = 0.15 \text{ g/L/h}$) |
+| **Ethanol** | $0.6 \text{ L/kg}$ | $-0.31$ | - | $1.00 \pm 0.10$ | Low / Minimal | Zero-Order ($\beta_{60} = 0.15 \text{ g/L/h}$) |
 | **Acetaminophen** | $0.9 \text{ L/kg}$ | $0.46$ | $9.5$ | $1.05 \pm 0.12$ | Low | First-Order ($t_{1/2} = 2.5 \text{ h}$) |
 | **Morphine** | $3.5 \text{ L/kg}$ | $0.89$ | $8.0$ | $1.80 \pm 0.40$ | Moderate | First-Order ($t_{1/2} = 3.0 \text{ h}$) |
 | **Methamphetamine** | $4.0 \text{ L/kg}$ | $2.07$ | $9.9$ | $2.10 \pm 0.50$ | High | First-Order ($t_{1/2} = 10.0 \text{ h}$) |
@@ -2166,7 +2166,7 @@ $$V(LR_{\text{eff}}) = \begin{cases} \text{Tier 0: Inconclusive / Neutral}, & LR
 
 ### 63.4 Statutory Legal Admissibility Audit: Daubert FRE 702 & Frye (§4.3)
 
-**Daubert Standard (Federal Rule of Evidence 702) — 4 Pillars:**
+**Daubert Standard (Federal Rule of Evidence 702) - 4 Pillars:**
 
 | Pillar | Criterion | FORENZA Implementation |
 | :--- | :--- | :--- |
@@ -2185,9 +2185,9 @@ $$V(LR_{\text{eff}}) = \begin{cases} \text{Tier 0: Inconclusive / Neutral}, & LR
 | :--- | :--- | :--- | :---: |
 | `VECTOR_P6_03` | $LR = 3.5 \times 10^7$ Ground Truth | Tier 6; $\log_{10} LR \approx 7.544$; Turkish: "…aşırı güçlü destek sağlamaktadır." | ✅ Verified |
 | `VECTOR_29_ENFSI_A` | Neutral / Inconclusive ($LR = 1.0$) | Tier 0; $\log_{10} LR = 0.0$; "nötr" in statement | ✅ Verified |
-| `VECTOR_29_ENFSI_B` | All Tier 1–6 boundary transitions (12 parametrized cases) | Step-function strict partition verified at each threshold | ✅ Verified |
+| `VECTOR_29_ENFSI_B` | All Tier 1-6 boundary transitions (12 parametrized cases) | Step-function strict partition verified at each threshold | ✅ Verified |
 | `VECTOR_29_ENFSI_C` | Defense symmetric inversion ($LR = 0.0001 \to H_d$ Tier 4) | $LR_{\text{def}} = 10{,}000$; "savunma hipotezi (H_d)" in statement | ✅ Verified |
-| `VECTOR_29_ENFSI_D` | Bilingual concordance (EN & TR for Tiers 1–6) | EN and TR phrases concordant; language output exclusive | ✅ Verified |
+| `VECTOR_29_ENFSI_D` | Bilingual concordance (EN & TR for Tiers 1-6) | EN and TR phrases concordant; language output exclusive | ✅ Verified |
 | `VECTOR_29_ENFSI_E` | Daubert FRE 702 4-pillar & Frye audit | Full compliance passes; error rate $> 10^{-6}$ and missing standards fail | ✅ Verified |
 | `VECTOR_29_ENFSI_F` | Domain validation ($LR \le 0$) | $\texttt{ValueError}$ raised | ✅ Verified |
 | `VECTOR_29_ENFSI_G` | FastAPI REST pipeline (`/evaluative-report`, `/daubert-compliance`) | 200 OK end-to-end; 400 on invalid LR | ✅ Verified |
@@ -2196,7 +2196,7 @@ $$V(LR_{\text{eff}}) = \begin{cases} \text{Tier 0: Inconclusive / Neutral}, & LR
 
 ## 64. Module 30: 3D Spatial Crime Scene Reconstruction & Interactive Juror Visualizer Engine
 
-**Research Reference:** Pillar 6 §5.1–§5.2  
+**Research Reference:** Pillar 6 §5.1-§5.2  
 **Engine:** `backend/node/services/forensic/court/spatial_reconstruction_engine.py`  
 **API Endpoints:** `POST /forensic/court/spatial/transform-se3`, `/spatial/confidence-ellipsoid`, `/spatial/reconstruct-scene`  
 **UI Component:** `frontend/src/components/analysis/EvidenceManagementPanel.tsx` (Interactive 3D Juror Visualizer)
@@ -2527,14 +2527,14 @@ where $\sigma = 0.75\text{ bp}$ (capillary resolution bandwidth), $\eta = 0.85$ 
 
 ## 73. Casework Reference Library & Biocomputational Data Exchange
 
-### 73.1 Golden Benchmark Casework Vectors (`VECTOR_TERM_01` – `VECTOR_TERM_06`)
+### 73.1 Golden Benchmark Casework Vectors (`VECTOR_TERM_01` - `VECTOR_TERM_06`)
 Standard validation references across continental biogeographic ancestries and biophysical degradation states:
-1. **`VECTOR_TERM_01` (Sample EU — Northern European):** 24 STR loci, *HERC2* `rs12913832: A/A`, *SLC45A2* `rs16891982: C/C`, *SLC24A5* `rs1426654: A/A` $\implies P(\text{EUR}) > 98.5\%$, Blue Eyes ($0.982$), Blond Hair ($0.891$), Very Pale Skin ($0.912$), Centroid $52.52^\circ\text{N}, 13.40^\circ\text{E}$.
-2. **`VECTOR_TERM_02` (Sample AA — West African):** 24 STR loci, *HERC2* `rs12913832: G/G`, *SLC45A2* `rs16891982: G/G`, *DARC* `rs2814778: C/C` $\implies P(\text{AFR}) > 97.8\%$, Dark Brown Eyes ($0.994$), Black Hair ($0.982$), Dark Skin ($0.965$), Centroid $6.52^\circ\text{N}, 3.38^\circ\text{E}$.
-3. **`VECTOR_TERM_03` (Sample EAS — East Asian):** 24 STR loci, *EDAR* `rs3827760: G/G`, *OCA2* `rs1800414: C/C` $\implies P(\text{EAS}) > 99.1\%$, Thick Straight Black Hair ($0.991$), Centroid $31.23^\circ\text{N}, 121.47^\circ\text{E}$.
-4. **`VECTOR_TERM_04` (Sample SAS — South Asian with Y-Null Deletion):** Amelogenin single X ($106\text{ bp}, 1850\text{ RFU}$), Y absent ($0\text{ RFU}$), *DYS391* allele 11 ($820\text{ RFU}$) $\implies$ Male with Yp11.2 Interstitial Deletion ($P(\text{SAS}) > 96.4\%$), Centroid $28.61^\circ\text{N}, 77.20^\circ\text{E}$.
-5. **`VECTOR_TERM_05` (Sample DVI_DEGRADED — Severe Skeletal Degradation):** $10/24$ loci dropped out ($FGA, D21S11, D18S51, SE33, \text{Penta E}$), $DI = \frac{h(\text{D8S1179}, 125\text{ bp})}{h(\text{FGA}, 320\text{ bp})} = \frac{842}{100} = 8.42 > 5.0$.
-6. **`VECTOR_TERM_06` (Sample TOUCH_LTDNA — Low-Template Touch DNA Trace):** Template $< 62.5\text{ pg}$, $P(D) = 0.35$, $H_b = \frac{450}{1000} = 0.45 < 0.60$, triggering stochastic mixture alert.
+1. **`VECTOR_TERM_01` (Sample EU - Northern European):** 24 STR loci, *HERC2* `rs12913832: A/A`, *SLC45A2* `rs16891982: C/C`, *SLC24A5* `rs1426654: A/A` $\implies P(\text{EUR}) > 98.5\%$, Blue Eyes ($0.982$), Blond Hair ($0.891$), Very Pale Skin ($0.912$), Centroid $52.52^\circ\text{N}, 13.40^\circ\text{E}$.
+2. **`VECTOR_TERM_02` (Sample AA - West African):** 24 STR loci, *HERC2* `rs12913832: G/G`, *SLC45A2* `rs16891982: G/G`, *DARC* `rs2814778: C/C` $\implies P(\text{AFR}) > 97.8\%$, Dark Brown Eyes ($0.994$), Black Hair ($0.982$), Dark Skin ($0.965$), Centroid $6.52^\circ\text{N}, 3.38^\circ\text{E}$.
+3. **`VECTOR_TERM_03` (Sample EAS - East Asian):** 24 STR loci, *EDAR* `rs3827760: G/G`, *OCA2* `rs1800414: C/C` $\implies P(\text{EAS}) > 99.1\%$, Thick Straight Black Hair ($0.991$), Centroid $31.23^\circ\text{N}, 121.47^\circ\text{E}$.
+4. **`VECTOR_TERM_04` (Sample SAS - South Asian with Y-Null Deletion):** Amelogenin single X ($106\text{ bp}, 1850\text{ RFU}$), Y absent ($0\text{ RFU}$), *DYS391* allele 11 ($820\text{ RFU}$) $\implies$ Male with Yp11.2 Interstitial Deletion ($P(\text{SAS}) > 96.4\%$), Centroid $28.61^\circ\text{N}, 77.20^\circ\text{E}$.
+5. **`VECTOR_TERM_05` (Sample DVI_DEGRADED - Severe Skeletal Degradation):** $10/24$ loci dropped out ($FGA, D21S11, D18S51, SE33, \text{Penta E}$), $DI = \frac{h(\text{D8S1179}, 125\text{ bp})}{h(\text{FGA}, 320\text{ bp})} = \frac{842}{100} = 8.42 > 5.0$.
+6. **`VECTOR_TERM_06` (Sample TOUCH_LTDNA - Low-Template Touch DNA Trace):** Template $< 62.5\text{ pg}$, $P(D) = 0.35$, $H_b = \frac{450}{1000} = 0.45 < 0.60$, triggering stochastic mixture alert.
 
 ### 73.2 FBI CODIS CMF 3.2 / 4.0 XML Specification
 Grammar encapsulates `<CODISImportFile>` with `<HEADER>` (SourceLab, DestinationLab, BatchID, Timestamp) and hierarchical `<SPECIMEN>` $\implies$ `<BATCH>` $\implies$ `<READING>` $\implies$ `<LOCUS>` $\implies$ `<ALLELE>` tuples.
@@ -2647,10 +2647,10 @@ where $\text{Multi} = \{\text{DYS385a/b}, \text{DYF387S1a/b}\}$.
 ## 77. mtDNA Control Region D-Loop Biocomputation & EMPOP Normalization (`mtdna_empop_engine.py` & `mtdnaEmpopEngine.ts`)
 
 ### 77.1 EMPOP 3'-Right-Alignment & Light-Strand Standard
-Mitochondrial variants are normalized against rCRS (NC_012920.1) across the Control Region (16024–576):
-- Poly-C insertions in HV1 (16024–16365) are right-aligned to position 16193 (`16193.1C`).
-- Poly-C insertions in HV2 (73–340) are right-aligned to position 315 (`315.1C`).
-- Dinucleotide AC repeat insertions/deletions in HV3 (438–574) are right-aligned to position 524 (`524.1A`, `524.2C`, `524del`).
+Mitochondrial variants are normalized against rCRS (NC_012920.1) across the Control Region (16024-576):
+- Poly-C insertions in HV1 (16024-16365) are right-aligned to position 16193 (`16193.1C`).
+- Poly-C insertions in HV2 (73-340) are right-aligned to position 315 (`315.1C`).
+- Dinucleotide AC repeat insertions/deletions in HV3 (438-574) are right-aligned to position 524 (`524.1A`, `524.2C`, `524del`).
 
 ### 77.2 Point & Length Heteroplasmy Formalism
 Mixed base positions are parsed using standard IUPAC ambiguity codes:
@@ -2751,7 +2751,7 @@ All certified standards and analyzed case profiles support loss-less determinist
 
 ## 80. X-STR 12-Locus Linkage & Complex Female Kinship Engine (Argus X-12)
 
-### 80.1 Investigator Argus X-12 Linkage Clusters (LG1–LG4)
+### 80.1 Investigator Argus X-12 Linkage Clusters (LG1-LG4)
 The human X chromosome features unique sex-linked inheritance: hemizygous males ($46,XY$) transmit their single maternal X chromosome intact to all biological daughters without meiotic recombination. Heterozygous females ($46,XX$) undergo meiotic recombination between linked X-STR loci.
 
 The Investigator Argus X-12 panel partitions 12 highly polymorphic X-STR markers into 4 independent Linkage Groups:
@@ -2809,26 +2809,26 @@ $$\left| \log_{10} KI_{X, \text{Total}} - \sum_{g=1}^4 \log_{10} KI_{X, \text{LG
 
 ## 81. Mitochondrial DNA (mtDNA) EMPOP rCRS/RSRS Alignment & Lineage Engine (Module 2.3)
 
-Mitochondrial DNA (mtDNA) analysis provides essential maternal lineage forensics for degraded biological specimens (hair shafts, bones, teeth, and historical human remains) due to its high copy number ($10^2$–$10^4$ per cell), maternal transmission, and lack of meiotic recombination.
+Mitochondrial DNA (mtDNA) analysis provides essential maternal lineage forensics for degraded biological specimens (hair shafts, bones, teeth, and historical human remains) due to its high copy number ($10^2$-$10^4$ per cell), maternal transmission, and lack of meiotic recombination.
 
 ### 81.1 Control Region (D-Loop) Reference Architecture & Domains
 All sequence variants are aligned and reported relative to the Revised Cambridge Reference Sequence (**rCRS, GenBank NC_012920.1**, 16,569 bp) or Reconstructed Sapiens Reference Sequence (**RSRS**):
 
 | Structural Domain | Coordinate Boundaries (rCRS) | Biological Role & Diagnostic Forensic Value |
 | :--- | :--- | :--- |
-| **HV1 (Hypervariable 1)** | 16024–16365 | High mutational rate; diagnostic for major global macro-haplogroups. |
-| **HV2 (Hypervariable 2)** | 73–340 | Contains primary homopolymeric C-tracts (303–315) and insertion hotspots. |
-| **HV3 (Hypervariable 3)** | 438–574 | Contains variable dinucleotide AC repeat elements (522–524). |
-| **OHR** | 110–441 | Heavy-strand replication origin spanning Conserved Sequence Blocks. |
-| **CSB I / II / III** | 214–232 / 299–315 / 346–363 | Transcription termination and replication initiation regulatory sites. |
+| **HV1 (Hypervariable 1)** | 16024-16365 | High mutational rate; diagnostic for major global macro-haplogroups. |
+| **HV2 (Hypervariable 2)** | 73-340 | Contains primary homopolymeric C-tracts (303-315) and insertion hotspots. |
+| **HV3 (Hypervariable 3)** | 438-574 | Contains variable dinucleotide AC repeat elements (522-524). |
+| **OHR** | 110-441 | Heavy-strand replication origin spanning Conserved Sequence Blocks. |
+| **CSB I / II / III** | 214-232 / 299-315 / 346-363 | Transcription termination and replication initiation regulatory sites. |
 
 ---
 
 ### 81.2 ISFG (2014, 2020) & EMPOP 3'-Right Alignment Normalization
 To prevent artificial sequence discrepancies caused by 5'-shifted alignments, the FORENZA engine enforces 3'-most right-alignment on the light strand ($5' \to 3'$):
-- **HV2 Poly-C Tract (303–315):** Insertions in the 303–308 tract shift to `309.1C, 309.2C`. Insertions in the 311–314 tract shift to `315.1C`.
-- **HV1 Poly-C Tract (16184–16193):** Insertions in the 16184–16188 tract shift to `16189.1C, 16189.2C`.
-- **HV3 Dinucleotide Repeat (522–524):** Insertions at 522/523 shift to `524.1AC` (or `524.1A, 524.2C`).
+- **HV2 Poly-C Tract (303-315):** Insertions in the 303-308 tract shift to `309.1C, 309.2C`. Insertions in the 311-314 tract shift to `315.1C`.
+- **HV1 Poly-C Tract (16184-16193):** Insertions in the 16184-16188 tract shift to `16189.1C, 16189.2C`.
+- **HV3 Dinucleotide Repeat (522-524):** Insertions at 522/523 shift to `524.1AC` (or `524.1A, 524.2C`).
 
 ---
 
@@ -3097,14 +3097,14 @@ $$\theta_{\text{tilt}} = \frac{1}{2} \text{atan2}\left(2 \sigma_{\text{Lat,Lng}}
 
 ### 86.1 Cephalometric Baseline Coordinates & Additive Genetic Modulation
 The 3D craniofacial engine models human facial morphology via 7 primary cephalometric landmarks $(N, Prn, Sn, Al, Ls, Me, Zy)$ referenced in a 3D coordinate system (sagittal $X$, coronal $Y$, vertical $Z$ in millimeters):
-1. **Nasion ($N$):** $(0.0, 12.40, 45.20)$ — Nasofrontal suture midline anchor.
-2. **Pronasale ($Prn$):** $(0.0, 48.50, 12.10)$ — Anterior tip of the nasal cartilage.
-3. **Subnasale ($Sn$):** $(0.0, 38.20, -2.50)$ — Nasolabial junction base of columella.
-4. **Alare ($Al_L, Al_R$):** $(\pm 18.50, 36.10, 2.40)$ — Lateralmost alar wing boundaries.
-5. **Labiale Superius ($Ls$):** $(0.0, 34.50, -12.40)$ — Superior vermilion midpoint.
-6. **Menton ($Me$):** $(0.0, 18.20, -68.50)$ — Inferiormost chin soft tissue boundary.
-7. **Zygion ($Zy_L, Zy_R$):** $(\pm 67.50, 15.20, 10.50)$ — Lateralmost zygomatic arch points.
-8. **Cheilion ($Ch_L, Ch_R$):** $(\pm 25.40, 28.60, -18.20)$ — Oral commissure angles.
+1. **Nasion ($N$):** $(0.0, 12.40, 45.20)$ - Nasofrontal suture midline anchor.
+2. **Pronasale ($Prn$):** $(0.0, 48.50, 12.10)$ - Anterior tip of the nasal cartilage.
+3. **Subnasale ($Sn$):** $(0.0, 38.20, -2.50)$ - Nasolabial junction base of columella.
+4. **Alare ($Al_L, Al_R$):** $(\pm 18.50, 36.10, 2.40)$ - Lateralmost alar wing boundaries.
+5. **Labiale Superius ($Ls$):** $(0.0, 34.50, -12.40)$ - Superior vermilion midpoint.
+6. **Menton ($Me$):** $(0.0, 18.20, -68.50)$ - Inferiormost chin soft tissue boundary.
+7. **Zygion ($Zy_L, Zy_R$):** $(\pm 67.50, 15.20, 10.50)$ - Lateralmost zygomatic arch points.
+8. **Cheilion ($Ch_L, Ch_R$):** $(\pm 25.40, 28.60, -18.20)$ - Oral commissure angles.
 
 Additive genetic modulation across morphometric SNP effect dosages $X_s \in \{0, 1, 2\}$ modifies 3D coordinates:
 

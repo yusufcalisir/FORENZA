@@ -40,7 +40,7 @@ In accredited criminal justice institutions, police forensic departments, and na
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Field Investigation Laptop** | Crime scene mobile van / Portable forensic unit | 4 Cores (x86_64) | **4 GB** (8 GB recommended) | 20 GB SSD | Windows 10/11 Pro, Ubuntu 22.04 LTS |
 | **Forensic Laboratory Workstation** | DNA / Serology / Ballistics casework bench | 8 Cores (x86_64) | **16 GB** | 100 GB NVMe | Windows 11 Pro / Enterprise, Debian 12 |
-| **Central Institute Rack Server** | Institutional LIMS & Multi-Analyst Network | 16+ Cores | **32 GB – 64 GB** | 500 GB RAID-10 NVMe | Ubuntu Server 22.04/24.04, RHEL 9 |
+| **Central Institute Rack Server** | Institutional LIMS & Multi-Analyst Network | 16+ Cores | **32 GB - 64 GB** | 500 GB RAID-10 NVMe | Ubuntu Server 22.04/24.04, RHEL 9 |
 
 ---
 

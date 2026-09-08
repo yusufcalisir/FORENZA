@@ -1,4 +1,4 @@
-# FORENZA — Validation Checklist & Audit Template
+# FORENZA: Validation Checklist & Audit Template
 
 This document provides the mandatory 3-item checklist and 5-edge-case audit log for every module. A module status in `docs/VALIDATION_STATUS.md` is only changed to `VERIFIED` when all checkboxes for that module are checked `[x]`.
 
@@ -6,8 +6,8 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ## Pillar 1: Probabilistic Genotyping & Population Genetics
 
-### Module 1.1: STR-24 — Autosomal STR & Kinship Engine ✅ [VERIFIED 2026-08-20]
-- [x] **Criterion 1 (Reference Dataset):** Ran NIST SRM 2391d (Components A–E), Promega PowerPlex Fusion 24, and QIAGEN Verogen ForenSeq MainstAY; verified genotype calls & peak heights.
+### Module 1.1: STR-24: Autosomal STR & Kinship Engine ✅ [VERIFIED 2026-08-20]
+- [x] **Criterion 1 (Reference Dataset):** Ran NIST SRM 2391d (Components A-E), Promega PowerPlex Fusion 24, and QIAGEN Verogen ForenSeq MainstAY; verified genotype calls & peak heights.
 - [x] **Criterion 2 (Independent Tool Cross-Check):** Concordance verified with NIST 1036 PopGen frequency calculation table, FragalyseQt CE fragment sizing, and GeneMarker HID hybrid filters.
 - [x] **Criterion 3 (5 Documented Edge Cases):**
   - [x] `EC-STR-01`: Rare/Unseen allele minimum frequency floor ($p_{\min} = 0.00241$).
@@ -19,20 +19,20 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
-### Module 1.2: MCMC-MH — Continuous Metropolis-Hastings Mixture Deconvoluter ✅ [VERIFIED 2026-08-20]
+### Module 1.2: MCMC-MH: Continuous Metropolis-Hastings Mixture Deconvoluter ✅ [VERIFIED 2026-08-20]
 - [x] **Criterion 1 (Reference Dataset):** Zenodo BTSC 349/268 calibrated genotype profiles (DONOR_A = NIST SRM 2391d Comp A 9947A, DONOR_B = NIST SRM 2391d Comp B 9948) at true weight ratios 1:1, 3:1, 9:1, 19:1 and PROVEDIt 1:3 experimental degraded mixture.
 - [x] **Criterion 2 (Independent Tool Cross-Check):** STRmix Log-Normal (σ=0.35) and EuroForMix Gamma likelihood engines both implemented and producing concordant log-likelihoods; Gelman-Rubin R̂ metric concordant with published SWGDAM 2020 convergence standard.
 - [x] **Criterion 3 (5 Documented Edge Cases) ✅ COMPLETE [2026-08-20]:**
   - [x] `EC-MCMC-01`: 4-chain Gelman-Rubin convergence R̂ ≤ 1.10 (SWGDAM 2020 floor); overdispersed chains reach consensus. `test_4_chain_gelman_rubin_below_swgdam_threshold` + `test_overdispersed_initializations_reach_consensus` PASSED.
-  - [x] `EC-MCMC-02`: Extreme contributor imbalance (1:19, 5% minor) — major weight ≥ 0.88 recovered without allele swapping; structural non-collapse verified. `test_btsc_19_1_major_minor_separation` + `test_no_allele_swapping_under_severe_imbalance` PASSED.
-  - [x] `EC-MCMC-03`: Equal 1:1 mixture — STRmix LL([0.5,0.5]) > LL([0.9,0.1]) by > 1.0 nats (MLE symmetry invariant). `test_btsc_1_1_symmetric_posterior_weights` PASSED. Dirichlet mean = 0.50 ± 0.03. `test_symmetric_dirichlet_prior_invariance` PASSED.
+  - [x] `EC-MCMC-02`: Extreme contributor imbalance (1:19, 5% minor) - major weight ≥ 0.88 recovered without allele swapping; structural non-collapse verified. `test_btsc_19_1_major_minor_separation` + `test_no_allele_swapping_under_severe_imbalance` PASSED.
+  - [x] `EC-MCMC-03`: Equal 1:1 mixture - STRmix LL([0.5,0.5]) > LL([0.9,0.1]) by > 1.0 nats (MLE symmetry invariant). `test_btsc_1_1_symmetric_posterior_weights` PASSED. Dirichlet mean = 0.50 ± 0.03. `test_symmetric_dirichlet_prior_invariance` PASSED.
   - [x] `EC-MCMC-04`: Back-stutter at allele b−1 present in expected_peak_heights dict with amplitude SR_l × parent_height (±0.001 rel); LL(modeled) > LL(unmodeled). `test_back_stutter_peak_present_in_expected_dict` + `test_stutter_log_likelihood_dominance` PASSED.
   - [x] `EC-MCMC-05`: Adaptive MH acceptance rate in [0.10, 0.55] after n_burn=4000; Dirichlet asymmetry correction |Δ| < 10.0 (well-conditioned). `test_adaptive_mcmc_acceptance_rate_within_band` + `test_dirichlet_proposal_asymmetry_correction_invariance` PASSED.
   - **Full test run:** `pytest backend/node/services/forensic/probabilistic/test_mcmc_edge_cases.py -v` → **10 passed in 157.40s**
 
 ---
 
-### Module 1.3: NRC-II — Dirichlet $F_{st}$ / Balding-Nichols Subpopulation Corrections ✅ [VERIFIED 2026-08-20]
+### Module 1.3: NRC-II: Dirichlet $F_{st}$ / Balding-Nichols Subpopulation Corrections ✅ [VERIFIED 2026-08-20]
 - [x] **Criterion 1 (Reference Dataset):** Ran NIST 1036 4-population stratified dataset ($N_{\text{Caucasian}}=361, N_{\text{AfricanAmerican}}=342, N_{\text{Hispanic}}=236, N_{\text{Asian}}=97$, Total $N=1036$), 1000 Genomes Phase 3 (5 superpopulations), and standard reference individuals NIST SRM 2391d Components A/B/C and GIAB NA12878.
 - [x] **Criterion 2 (Independent Tool Cross-Check):** Verified against NRC II (1996) Recommendation 4.4 analytical tables (Chapter 4, Tables 4.1 & 4.2 grid across all frequencies and $\theta \in [0.00, 0.05]$ with $|\Delta| < 10^{-7}$), Curran & Buckleton (2007) multi-locus weighted ANOVA $\bar{\theta}$ estimator, and Familias 3 / EuroForMix PopGen coancestry models.
 - [x] **Criterion 3 (5 Documented Edge Cases) ✅ COMPLETE [2026-08-20]:**
@@ -45,7 +45,7 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
-### Module 1.4: LTDNA — Low-Template DNA Stochastic Dropout & Drop-in Engine ✅ [VERIFIED 2026-08-20]
+### Module 1.4: LTDNA: Low-Template DNA Stochastic Dropout & Drop-in Engine ✅ [VERIFIED 2026-08-20]
 - [x] **Criterion 1 (Reference Dataset):** Ran Peter Gill LCN 6-tier serial dilution series ($15\text{ pg} - 1000\text{ pg}$), 4-substrate recovery matrix (Smooth 60%, Textured 40%, Fabric 20%, Rough Wood 15%), Golden Casework Benchmarks `VECTOR_03` ($\log_{10} LR = 0.5604$) and `VECTOR_TERM_06` (24-locus touch profile with 7 masked dropouts and $H_b = 0.455 < 0.60$), and NIST SRM 2391d Component A control profile.
 - [x] **Criterion 2 (Independent Tool Cross-Check):** Verified against LikeLTD semi-continuous logistic grid (18/18 concordant mass and RFU test points, 100% agreement), EuroForMix continuous Gamma lower-tail cumulative integral ($R^2 = 0.9952 \ge 0.95, r = 0.9976 \ge 0.97$), Curran & Gill (2016) 4-state Markov analytical closed forms across Scenarios A, B, C, D ($|\Delta \log_{10} LR| < 10^{-4}$), and STRmix inverse template variance scaling $\sigma^2(T) = \sigma_0^2(1 + k/T)$.
 - [x] **Criterion 3 (5 Documented Edge Cases) ✅ COMPLETE [2026-08-20]:**
@@ -77,7 +77,7 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
-### Module 1.6: MPS-STR — Massively Parallel Sequencing (MPS/NGS) STR Analysis & Sequence-Level Biocomputation [VERIFIED 2026-08-23]
+### Module 1.6: MPS-STR: Massively Parallel Sequencing (MPS/NGS) STR Analysis & Sequence-Level Biocomputation [VERIFIED 2026-08-23]
 - [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-23]:**
   - [x] Scientific Reports (2021) 11:3485 empirical 4-population cohort ($N=350$ unrelated individuals: African-American $N=83$, Caucasian $N=82$, Hispanic $N=82$, Korean $N=103$, 700 chromosomes) across 25 autosomal STR loci + 3 sex markers.
   - [x] Certified Golden Benchmark Vectors: `VECTOR_MPS_01` (SE33 Bimodal Isoallele Deconvolution), `VECTOR_MPS_02` (SE33 4-bp Flanking Deletion Auto-Reconciliation), `VECTOR_MPS_03` (D3S1358 3-Person Mixture Deconvolution), `VECTOR_MPS_04` (vWA West African Primer Mutation Rescue `rs771794429`).
@@ -96,7 +96,7 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
-### Module 1.7: ML-STR — Machine Learning STR Calling, Fragsifier Ensemble & ISFG Minimal Nomenclature [VERIFIED 2026-08-23]
+### Module 1.7: ML-STR: Machine Learning STR Calling, Fragsifier Ensemble & ISFG Minimal Nomenclature [VERIFIED 2026-08-23]
 - [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-23]:**
   - [x] PROVEDIt 1-to-5 Person Mixture Dataset (Boston University / NIST) across 0.005 ng to 0.50 ng template masses and dynamic dilution ratios (1:1 to 1:19).
   - [x] Certified Golden Benchmark Vectors: `VECTOR_MLSTR_01` (Severe Back-Stutter Discrimination in D21S11), `VECTOR_MLSTR_02` (Split $-A/+A$ Non-Template Adenylation Recombination in TH01), `VECTOR_MLSTR_03` (High-RFU Spectral Pull-Up Elimination in vWA), `VECTOR_MLSTR_04` (PROVEDIt 3-Person Mixture Pre-Filtering & Search Space Reduction).
@@ -115,7 +115,7 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
-### Module 2.1: Y-STR — Y-Chromosome 27-Locus Lineage Engine (Y-FILER Plus) [VERIFIED 2026-08-21]
+### Module 2.1: Y-STR: Y-Chromosome 27-Locus Lineage Engine (Y-FILER Plus) [VERIFIED 2026-08-21]
 - [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-21]:**
   - [x] YHRD (Y-Chromosome Haplotype Reference Database) Release 68 ($N=385,000$ global casework database + 5 regional partitions: West Eurasian $N=142,000$, East Asian $N=118,000$, South Asian $N=45,000$, Admixed American $N=42,000$, Sub-Saharan African $N=38,000$).
   - [x] Certified Reference Standards: NIST SRM 2391d Component A (R1b1a1b), HG002 / NA24385 (J2a1a1), NA18507 / HG005 (O2a2b1), and female negative controls NA12878 and NA19240.
@@ -138,7 +138,7 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
-### Module 2.2: X-STR — X-Chromosome 12-Locus Linkage & Kinship Engine (Argus X-12) [VERIFIED 2026-08-21]
+### Module 2.2: X-STR: X-Chromosome 12-Locus Linkage & Kinship Engine (Argus X-12) [VERIFIED 2026-08-21]
 - [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-21]:**
   - [x] Tillmar et al. (2017) Argus X-12 European ($N=3,850$) & East Asian ($N=2,940$) population linkage group allele frequency distributions across all 12 loci.
   - [x] Certified Multi-Omic Reference Standards: NA12878 (46,XX CEU Female), NA19240 (46,XX YRI Female), NIST SRM 2391d Component A (46,XY Male), and HG002 / NA24385 (46,XY Ashkenazi Male).
@@ -149,7 +149,7 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
   - [x] ISFG (2012) & ENFSI (2017) 7-Tier Evaluative Reporting Disclaimer with active Prosecutor's Fallacy Shield for X-chromosomal inheritance.
 - [x] **Criterion 3 (5 Documented Edge Cases) ✅ COMPLETE [2026-08-21]:**
   - [x] `EC-XSTR-01`: Father-Daughter obligate match across all 12 loci yields massive kinship support ($LR > 3.5 \times 10^5, \log_{10} LR > 5.50$) in absence of mutation.
-  - [x] `EC-XSTR-02`: Tightly linked pair DXS10148–DXS10135 calculated with exact Kosambi recombination correction ($r=0.003$ vs $r=0.50$), verifying cluster linkage dependency.
+  - [x] `EC-XSTR-02`: Tightly linked pair DXS10148-DXS10135 calculated with exact Kosambi recombination correction ($r=0.003$ vs $r=0.50$), verifying cluster linkage dependency.
   - [x] `EC-XSTR-03`: Paternal half-sisters share full paternal X-chromosome ($LR > 10^4$), whereas unrelated females show non-matching alleles and exclusion.
   - [x] `EC-XSTR-04`: Hemizygous male profile containing $>1$ allele at any X-STR locus is rejected with HTTP 422 / ValueError validation exception.
   - [x] `EC-XSTR-05`: Total $KI_X = \prod_{k=1}^4 KI_{\text{LG}_k}$ preserves strict log-space additivity $|\log_{10} KI_X - \sum \log_{10} KI_{\text{LG}}| < 10^{-6}$.
@@ -158,7 +158,7 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
-### Module 2.3: mtDNA — Mitochondrial DNA EMPOP rCRS/RSRS Alignment & Lineage Engine [VERIFIED 2026-08-21]
+### Module 2.3: mtDNA: Mitochondrial DNA EMPOP rCRS/RSRS Alignment & Lineage Engine [VERIFIED 2026-08-21]
 - [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-21]:**
   - [x] EMPOP (EDNAP Mitochondrial DNA Population Database) Release 15 ($N=48,500$ mitogenomes across 5 regional metapopulations: West Eurasian $N=24,500$, East Asian $N=11,200$, African $N=6,400$, Admixed American $N=4,300$, South Asian $N=2,100$).
   - [x] Certified Multi-Omic Reference Standards: NA12878 (H1 CEU Female), NA19240 (L2a1 YRI Female), HG002 / NA24385 (T2b Ashkenazi Male), NA18507 / HG005 (D4a1 Han Chinese), and NIST SRM 2391d Component A (H1a1).
@@ -176,7 +176,7 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
   - [x] `EC-MT-06`: $\ge 2$ homoplasmic point differences triggers definitive SWGDAM maternal exclusion ($LR = 0.0, \log_{10} LR = -300.0$).
   - **Full test run:** `pytest backend/app/api/test_mtdna_routes.py backend/node/services/forensic/mtdna/ backend/node/services/forensic/dna/test_mtdna_forensics.py -v` → **56 passed in 9.36s**
 
-### Module 2.4: DVI-PED — Interpol Disaster Victim Identification & Complex Pedigrees [VERIFIED 2026-08-21]
+### Module 2.4: DVI-PED: Interpol Disaster Victim Identification & Complex Pedigrees [VERIFIED 2026-08-21]
 - [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-21]:**
   - [x] Interpol DVI Reference Standard Pedigree Templates (Direct AM Personal Item, Biological Parents Trio, Single Parent Deficiency Duo, Full Sibling Collateral Pair).
   - [x] Certified Golden Benchmark VECTOR_P2_03 (Severely degraded PM skeletal sample with Autosomal $LR = 5.2 \times 10^3$, Y-STR $p_{\text{upper}} = 0.0002 \implies LR_Y = 5,000$, mtDNA $p_{\text{upper}} = 0.0001 \implies LR_M = 10,000 \implies LR_{\text{Joint}} = 2.6 \times 10^{11}, \log_{10} LR = 11.4149$).
@@ -194,7 +194,7 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
   - [x] `EC-DVI-06`: Multi-omic fusion log-additivity invariant $|\log_{10} LR_{\text{Joint}} - \sum \log_{10} LR_i| < 10^{-6}$.
   - **Full test run:** `pytest backend/app/api/test_dvi_routes.py backend/node/services/forensic/dvi/ -v` → **48 passed in 5.83s**
 
-### Module 2.5: aDNA-SNP — Ancient/Degraded DNA Damage Kinetics Engine [VERIFIED 2026-08-21]
+### Module 2.5: aDNA-SNP: Ancient/Degraded DNA Damage Kinetics Engine [VERIFIED 2026-08-21]
 - [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-21]:**
   - [x] Christopher Columbus forensic genetics & archaeogenomics series (bioRxiv 2025.12.16.694569) with high terminal deamination ($\delta_0 = 0.38$) and severe fragmentation ($\bar{L} = 52.4\text{ bp}$).
   - [x] Briggs et al. (2007) Neandertal & ancient bone damage kinetics reference standard ($\delta_0 = 0.28, \alpha = 0.12$).
@@ -213,7 +213,7 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
-### Module 2.6: FGG-IGG — Forensic Genetic Genealogy & Kinship Solver [VERIFIED 2026-08-23]
+### Module 2.6: FGG-IGG: Forensic Genetic Genealogy & Kinship Solver [VERIFIED 2026-08-23]
 - [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-23]:**
   - [x] CEPH 1463 / GIAB NA12878 Trio (HG001, HG002, HG003) 100% IBD1 whole-genome parent-child standard (`VECTOR_FGG_01`).
   - [x] GIAB Ashkenazi Trio (HG002, HG003, HG004) high-homozygosity ($F_{\text{ROH}} > 0.035$) endogamy benchmark (`VECTOR_FGG_02`).
@@ -234,7 +234,7 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 ---
 
 
-### Module 3.1: HIRISPLEX — HIrisPlex-S 41-SNP Pigmentation Multi-Nominal Regression [VERIFIED 2026-08-21]
+### Module 3.1: HIRISPLEX: HIrisPlex-S 41-SNP Pigmentation Multi-Nominal Regression [VERIFIED 2026-08-21]
 - [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-21]:**
   - [x] Walsh et al. (2018) HIrisPlex-S global validation cohort ($N=632$ subjects, PubMed 31518964).
   - [x] Spanish population pigmentation empirical evaluation cohort ($N=450$, MDPI Genes 2024).
@@ -252,7 +252,7 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
-### Module 3.2: BGA-EXP — Expanded AIMs, High-Diversity gnomAD v4 Matrix & German §81e StPO Gate [VERIFIED 2026-08-23]
+### Module 3.2: BGA-EXP: Expanded AIMs, High-Diversity gnomAD v4 Matrix & German §81e StPO Gate [VERIFIED 2026-08-23]
 - [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-23]:**
   - [x] Multi-tier AIM panels: Kidd 55-AIM, Precision ID 165-SNP, VISAGE Basic 153, and Multiallelic Microhaplotypes (74/153-plex).
   - [x] High-diversity reference panels: gnomAD v4.1 ($N=807,162$ across 9 genetic ancestry groups), 1000 Genomes (NYGC 30x, 26 populations / 5 super-populations), and HGDP-CEPH ($N=929, 54\text{ pops}$).
@@ -272,7 +272,7 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
-### Module 3.3: CRANIO-3D — 3D Craniofacial Morphology & Anthropological Landmarks [VERIFIED 2026-08-21]
+### Module 3.3: CRANIO-3D: 3D Craniofacial Morphology & Anthropological Landmarks [VERIFIED 2026-08-21]
 - [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-21]:**
   - [x] Claes et al. (2014) & White et al. (2020) 3D Cephalometric Cohorts (20 landmarks, $N=3,500$).
   - [x] Certified Reference Standards: NA12878 (EUR Leptorrhine / Narrow Nose, $NI = 58.6$), NA19240 (AFR Platyrrhine / Broad Nose, $NI = 88.4$), NA18507 (EAS Mesorrhine / Medium Nose, $NI = 72.8$), HG002 (Ashkenazi Jewish / Mesoprosopic), NA24385 (Male Dimorphism Benchmark, $S = 1.055$).
@@ -290,7 +290,7 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
-### Module 3.4: HAIR-TEX — Hair Morphology, Curl Index & Balding PRS Engine [VERIFIED 2026-08-21]
+### Module 3.4: HAIR-TEX: Hair Morphology, Curl Index & Balding PRS Engine [VERIFIED 2026-08-21]
 - [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-21]:**
   - [x] Medland et al. (2009) Nat Genet Hair Morphology GWAS (EDAR, TCHH, WNT10A cohorts).
   - [x] Adhikari et al. (2016) Nat Commun Curliness GWAS with EDAR V370A area formula and TCHH curl coefficients.
@@ -304,13 +304,13 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
   - [x] `EC-HAIR-01`: EDAR G/G fully derived ($X_{EDAR}=2$) yields $C_{\text{curl}} \le 0.0$ clamped to $0.0$ and $\text{Area} = 6690\ \mu\text{m}^2$, texture `STRAIGHT`.
   - [x] `EC-HAIR-02`: TCHH T/T + WNT10A double activation yields curl additivity superposition ($C_{\text{curl}} = 1.20 + 1.85 + 1.42 = 4.47$), texture `KINKY/WOOLLY`.
   - [x] `EC-HAIR-03`: PRS monotonicity and non-negativity across all AR dosage steps ($0 \to 2$, $\Delta\text{PRS} = 0.982$ per allele).
-  - [x] `EC-HAIR-04`: Hamilton-Norwood boundary exactness — Grade III exact at PRS=1.026; Grade IV-V at PRS=1.512; Grade VI-VII at PRS=2.370.
-  - [x] `EC-HAIR-05`: VECTOR_P3_03 East Asian golden benchmark — EAS standard yields `STRAIGHT` texture, minimal AGA risk, and Grade I-II classification.
+  - [x] `EC-HAIR-04`: Hamilton-Norwood boundary exactness - Grade III exact at PRS=1.026; Grade IV-V at PRS=1.512; Grade VI-VII at PRS=2.370.
+  - [x] `EC-HAIR-05`: VECTOR_P3_03 East Asian golden benchmark - EAS standard yields `STRAIGHT` texture, minimal AGA risk, and Grade I-II classification.
   - **Full test run:** `pytest backend/node/services/forensic/phenotyping/test_hair_*.py -v` → **98 passed in 2.15s**
 
 ---
 
-### Module 3.5: MC1R-UV — MC1R Epistatic Variant Freckling & Fitzpatrick Phototype Engine [VERIFIED 2026-08-21]
+### Module 3.5: MC1R-UV: MC1R Epistatic Variant Freckling & Fitzpatrick Phototype Engine [VERIFIED 2026-08-21]
 - [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-21]:**
   - [x] Sulem et al. (2007) Nat Genet MC1R Red Hair GWAS (D84E, R142H, R151C, R160W, D294H strong R-variants; V60L, V92M, R163Q weak r-variants).
   - [x] Sulem et al. (2008) Nat Genet Ephelides/Freckling GWAS (ASIP rs1015362, BNC2 rs10756819 epistatic modifiers).
@@ -322,16 +322,16 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
   - [x] Valverde (1995) / Sulem (2007) freckling logistic formula cross-check (baseline 7.59%, R/R dense ≥99.45%, $|\Delta F| < 0.2\%$).
   - [x] Sulem (2008) ASIP/BNC2 epistatic modifier independence (logit delta $|\Delta| < 10^{-6}$).
 - [x] **Criterion 3 (5 Documented Edge Cases) ✅ COMPLETE [2026-08-21]:**
-  - [x] `EC-MC1R-01`: Freckling score clamping invariant — logit score strictly bounds $F_{\text{score}} \in [0.0\%, 100.0\%]$ without overflow.
-  - [x] `EC-MC1R-02`: MC1R score monotonicity — R151C/R160W compound $W_{\text{MC1R}}$ strictly exceeds V60L weak allele score.
-  - [x] `EC-MC1R-03`: ASIP+BNC2 modifier superposition — independent logit additivity verified ($|\Delta| < 10^{-6}$).
-  - [x] `EC-MC1R-04`: Fitzpatrick MED boundary exactness — R/R diplotype exactly maps to Phototype I MED < 20 mJ/cm², wt/wt to Phototype IV MED > 50 mJ/cm².
-  - [x] `EC-MC1R-05`: VECTOR_15_FRECKLE_B golden benchmark — expected freckling and phototype output verified against published Sulem (2007) reference values.
+  - [x] `EC-MC1R-01`: Freckling score clamping invariant - logit score strictly bounds $F_{\text{score}} \in [0.0\%, 100.0\%]$ without overflow.
+  - [x] `EC-MC1R-02`: MC1R score monotonicity - R151C/R160W compound $W_{\text{MC1R}}$ strictly exceeds V60L weak allele score.
+  - [x] `EC-MC1R-03`: ASIP+BNC2 modifier superposition - independent logit additivity verified ($|\Delta| < 10^{-6}$).
+  - [x] `EC-MC1R-04`: Fitzpatrick MED boundary exactness - R/R diplotype exactly maps to Phototype I MED < 20 mJ/cm², wt/wt to Phototype IV MED > 50 mJ/cm².
+  - [x] `EC-MC1R-05`: VECTOR_15_FRECKLE_B golden benchmark - expected freckling and phototype output verified against published Sulem (2007) reference values.
   - **Full test run:** `pytest backend/node/services/forensic/phenotyping/test_mc1r_*.py -v` → **96 passed in ~3s**
 
 ---
 
-### Module 4.1: EPI-CLOCKS — Multi-Generation Epigenetic Clocks & Multimodal PMI Solver [VERIFIED 2026-08-23]
+### Module 4.1: EPI-CLOCKS: Multi-Generation Epigenetic Clocks & Multimodal PMI Solver [VERIFIED 2026-08-23]
 - [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-23]:**
   - [x] VISAGE Consortium 5-CpG & 8-Marker/44-CpG MPS Cohorts (Zbieć-Piekarska 2015, Woźniak 2021).
   - [x] Horvath 353-CpG Pan-Tissue, Hannum 71-CpG Adult Blood, and PedBE 84-CpG Pediatric Buccal panels.
@@ -353,7 +353,7 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
-### Module 4.2: tDMR-FLUID — Tissue-Specific DMR QDA & Body Fluid Deconvolution [VERIFIED 2026-08-21]
+### Module 4.2: tDMR-FLUID: Tissue-Specific DMR QDA & Body Fluid Deconvolution [VERIFIED 2026-08-21]
 - [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-21]:**
   - [x] VISAGE Enhanced Body Fluid ID Marker Set (Blood, Saliva, Semen, Vaginal Fluid, Menstrual Blood, Skin, Sweat).
   - [x] VECTOR_P4_03 Semen Stain certified benchmark ($P(\text{Semen}) \ge 0.991, P(\text{Blood}) \le 0.005$).
@@ -362,16 +362,16 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
   - [x] EpiDISH / NNLS deconvolution R package concordance (sum-to-one simplex $|\sum w - 1| < 10^{-6}$).
   - [x] QDA posterior probability calibration against published tissue methylation signatures.
 - [x] **Criterion 3 (5 Documented Edge Cases) ✅ COMPLETE [2026-08-21]:**
-  - [x] `EC-TDMR-01`: Pure semen stain — $P(\text{Semen}) \ge 0.991, P(\text{Blood}) \le 0.005$ (VECTOR_P4_03).
-  - [x] `EC-TDMR-02`: Pure venous blood — leukocyte promoter hypomethylation yields $P(\text{Blood}) \ge 0.995$.
+  - [x] `EC-TDMR-01`: Pure semen stain - $P(\text{Semen}) \ge 0.991, P(\text{Blood}) \le 0.005$ (VECTOR_P4_03).
+  - [x] `EC-TDMR-02`: Pure venous blood - leukocyte promoter hypomethylation yields $P(\text{Blood}) \ge 0.995$.
   - [x] `EC-TDMR-03`: Saliva identification without buccal confusion.
-  - [x] `EC-TDMR-04`: Menstrual blood specificity — endometrial markers differentiate from peripheral venous blood.
+  - [x] `EC-TDMR-04`: Menstrual blood specificity - endometrial markers differentiate from peripheral venous blood.
   - [x] `EC-TDMR-05`: 60/40 Blood-Saliva mixture NNLS deconvolution.
   - **Full test run:** `pytest backend/node/services/forensic/epigenetics/test_tissue_deconv_engine.py -v` → **12 passed in ~0.5s**
 
 ---
 
-### Module 4.3: AHRR — AHRR cg05575921 Smoking & Alcohol Lifestyle Biomarker [VERIFIED 2026-08-21]
+### Module 4.3: AHRR: AHRR cg05575921 Smoking & Alcohol Lifestyle Biomarker [VERIFIED 2026-08-21]
 - [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-21]:**
   - [x] Philibert et al. (2015) AHRR smoking intensity cohort ($N=850, \text{cg05575921}$).
   - [x] Gao et al. (2016) SLC6A3 alcohol methylation cohort.
@@ -389,7 +389,7 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
-### Module 4.4: TELO-CHRONO — Telomere T/S Decay & Post-Mortem PMI Clock [VERIFIED 2026-08-21]
+### Module 4.4: TELO-CHRONO: Telomere T/S Decay & Post-Mortem PMI Clock [VERIFIED 2026-08-21]
 - [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-21]:**
   - [x] Cawthon (2002) qPCR T/S ratio calibration curve (birth baseline T/S = 1.00, elderly T/S ≈ 0.65).
   - [x] PMI residual methylation C/P ratio decay model.
@@ -407,7 +407,7 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
-### Module 4.5: miRNA/BMIQ — Bisulfite QC & BMIQ Normalization Engine [VERIFIED 2026-08-21]
+### Module 4.5: miRNA/BMIQ: Bisulfite QC & BMIQ Normalization Engine [VERIFIED 2026-08-21]
 - [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-21]:**
   - [x] Zubakov (2010) forensic miRNA body fluid panel.
   - [x] Bisulfite conversion efficiency QC (≥95% pass threshold, <95% fail).
@@ -425,7 +425,7 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
-### Module 4.6: MICROBIOME — Forensic Microbiome, Thanatometagenomics & Touch Microbial Intelligence [VERIFIED 2026-08-23]
+### Module 4.6: MICROBIOME: Forensic Microbiome, Thanatometagenomics & Touch Microbial Intelligence [VERIFIED 2026-08-23]
 - [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-23]:**
   - [x] Burcham, Belk et al. (2024, Nature Microbiology, PRJNA975312 / ERP142857) 36 human cadavers longitudinal taphonomic series (20 conserved decomposer taxa).
   - [x] Mason et al. (2024, PLoS ONE, PRJNA817528) soil necrobiome and cadaver decomposition island (CDI) 16S/ITS longitudinal series.
@@ -447,11 +447,11 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
-## Pillar 5 — Physical Evidence & Trace
+## Pillar 5: Physical Evidence & Trace
 
-### Module 5.1: BPA-3D — 3D Bloodstain Pattern Analysis & Area of Origin Engine [VERIFIED 2026-08-21]
+### Module 5.1: BPA-3D: 3D Bloodstain Pattern Analysis & Area of Origin Engine [VERIFIED 2026-08-21]
 - [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-21]:**
-  - [x] SWGSTAIN / IABPA Standard BPA Test Cards (impact angles 10°–90°, heights 0.5–2.5 m).
+  - [x] SWGSTAIN / IABPA Standard BPA Test Cards (impact angles 10°-90°, heights 0.5-2.5 m).
   - [x] `VECTOR_P5_01` 5-Stain 3D Area of Origin Ground Truth Convergence ($x=1.20, y=2.50, z=1.65\text{ m}, \text{RMS} < 0.04\text{ m}$).
   - [x] IABPA reference pattern library with varying wall/floor projection surfaces.
 - [x] **Criterion 2 (Independent Tool Cross-Check) ✅ COMPLETE [2026-08-21]:**
@@ -468,7 +468,7 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
-### Module 5.2: GSR-CMC — Ballistics Toolmarks & SEM-EDX GSR Classifier [VERIFIED 2026-08-21]
+### Module 5.2: GSR-CMC: Ballistics Toolmarks & SEM-EDX GSR Classifier [VERIFIED 2026-08-21]
 - [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-21]:**
   - [x] ASTM E1588-20 Standard Guide for GSR analysis by SEM-EDX.
   - [x] NIST Ballistics Toolmark Research Database (NBTRD) 3D topography profiles.
@@ -486,7 +486,7 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
-### Module 5.3: ENTO-PMI — Forensic Entomology & Thermal Energy PMI Engine [VERIFIED 2026-08-21]
+### Module 5.3: ENTO-PMI: Forensic Entomology & Thermal Energy PMI Engine [VERIFIED 2026-08-21]
 - [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-21]:**
   - [x] Greenberg & Kunich (2002) ADH/ADD thermal summation tables.
   - [x] *Lucilia sericata* 3rd instar feeding stage ($1254.5\text{ ADH}, T_{\text{base}}=9.0^\circ\text{C}$).
@@ -504,7 +504,7 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
-### Module 5.4: MSI-FTIR — Trace Spectroscopy & Hit Quality Index (HQI) [VERIFIED 2026-08-21]
+### Module 5.4: MSI-FTIR: Trace Spectroscopy & Hit Quality Index (HQI) [VERIFIED 2026-08-21]
 - [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-21]:**
   - [x] Zenodo FTIR-Plastics library (Polyester/PET, Nylon-6,6, Acrylic, Polypropylene).
   - [x] ATR-FTIR fiber & polymer reference spectrum library.
@@ -522,7 +522,7 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
-### Module 5.5: TOX-PMR — Post-Mortem Redistribution & Antemortem Toxicology [VERIFIED 2026-08-21]
+### Module 5.5: TOX-PMR: Post-Mortem Redistribution & Antemortem Toxicology [VERIFIED 2026-08-21]
 - [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-21]:**
   - [x] SOFT / AAFS PMR casework database (Central Heart / Peripheral Femoral $C_{\text{heart}}/C_{\text{femoral}}$ ratios).
   - [x] Ethanol Widmark elimination kinetic dataset ($\beta_{60} = 0.15\text{ g/L/h}$).
@@ -541,9 +541,9 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
-## Pillar 6 — Governance, LIMS & Cryptographic ZKP
+## Pillar 6: Governance, LIMS & Cryptographic ZKP
 
-### Module 6.1: MERKLE-COC — Binary Merkle Tree Chain of Custody Ledger [VERIFIED 2026-08-21]
+### Module 6.1: MERKLE-COC: Binary Merkle Tree Chain of Custody Ledger [VERIFIED 2026-08-21]
 - [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-21]:**
   - [x] NIST SP 800-106 binary hash ledger specification & RFC 6962 Merkle proof vectors.
   - [x] `VECTOR_P6_01` Tamper Detection Ground Truth (1-second timestamp alteration $\implies$ 100% root divergence).
@@ -561,7 +561,7 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
-### Module 6.2: ZKP-GROTH16 — ZK-SNARK Proving Systems & Verifiable Forensic Computation [VERIFIED 2026-08-23]
+### Module 6.2: ZKP-GROTH16: ZK-SNARK Proving Systems & Verifiable Forensic Computation [VERIFIED 2026-08-23]
 - [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-23]:**
   - [x] NIST SRM 2391d Component A (`VECTOR_ZK_CODIS_MATCH` $LR \ge 10^{18}$).
   - [x] NA12878 vs NA19240 (`VECTOR_ZK_EXCLUSION` $LR < 10^{-6}$).
@@ -585,7 +585,7 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
-### Module 6.3: ISO-17025 — ISO/IEC 17025 Uncertainty & Certificate Compiler [VERIFIED 2026-08-21]
+### Module 6.3: ISO-17025: ISO/IEC 17025 Uncertainty & Certificate Compiler [VERIFIED 2026-08-21]
 - [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-21]:**
   - [x] JCGM 100:2008 GUM (Guide to the Expression of Uncertainty in Measurement).
   - [x] FBI QAS 2025 quality assurance standards for forensic DNA testing laboratories.
@@ -603,7 +603,7 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
-### Module 6.4: COURT-MODE — Dynamic ENFSI 2017 Evaluative Reporting & Fallacy Shield [VERIFIED 2026-08-21]
+### Module 6.4: COURT-MODE: Dynamic ENFSI 2017 Evaluative Reporting & Fallacy Shield [VERIFIED 2026-08-21]
 - [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-21]:**
   - [x] ENFSI 2017 7-tier evaluative reporting scale.
   - [x] `VECTOR_P6_03` ($\text{LR} = 3.5 \times 10^7 \implies \text{Tier 6}$, Turkish & English phrases).
@@ -621,7 +621,7 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
-### Module 6.5: JUROR-3D — 3D Spatial Reconstruction & Interactive Juror Visualizer [VERIFIED 2026-08-21]
+### Module 6.5: JUROR-3D: 3D Spatial Reconstruction & Interactive Juror Visualizer [VERIFIED 2026-08-21]
 - [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-21]:**
   - [x] 3D crime scene demonstrative evidence benchmark points.
   - [x] `VECTOR_30_SPATIAL_A` through `G` golden test vectors.
@@ -639,9 +639,9 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
-## Pillar 7 — Geo-Forensic Intelligence & Bayesian Evidence Fusion
+## Pillar 7: Geo-Forensic Intelligence & Bayesian Evidence Fusion
 
-### Module 7.1: ISOTOPES — Multi-Isotope Isoscape Provenancing Engine [VERIFIED 2026-08-21]
+### Module 7.1: ISOTOPES: Multi-Isotope Isoscape Provenancing Engine [VERIFIED 2026-08-21]
 - [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-21]:**
   - [x] IAEA / GNIP Global Network of Isotopes in Precipitation dataset ($\delta^{18}\text{O}, \delta^2\text{H}$).
   - [x] Bataille et al. (2018) global $^{87}\text{Sr}/^{86}\text{Sr}$ strontium mixing model.
@@ -660,7 +660,7 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
-### Module 7.2: SOIL-CODA — Forensic Soil Mineralogy & QXRD Compositional Engine [VERIFIED 2026-08-21]
+### Module 7.2: SOIL-CODA: Forensic Soil Mineralogy & QXRD Compositional Engine [VERIFIED 2026-08-21]
 - [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-21]:**
   - [x] USGS National Soil Database & forensic mineralogy reference standards.
   - [x] `VECTOR_GEO_02` Soil Comparison Golden Benchmark.
@@ -679,7 +679,7 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
-### Module 7.3: PALYNO — Forensic Palynology (Pollen) & Soil eDNA Classifier [VERIFIED 2026-08-21]
+### Module 7.3: PALYNO: Forensic Palynology (Pollen) & Soil eDNA Classifier [VERIFIED 2026-08-21]
 - [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-21]:**
   - [x] European Pollen Database (EPD) reference assemblages.
   - [x] 6-Biome global botanical classification reference (Temperate Deciduous, Mediterranean, Boreal Conifer, Tropical, Semi-Arid, Tundra/Alpine).
@@ -697,7 +697,7 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
-### Module 7.4: ROSSMO — Rossmo Criminal Geographic Targeting (CGT) Profiling [VERIFIED 2026-08-21]
+### Module 7.4: ROSSMO: Rossmo Criminal Geographic Targeting (CGT) Profiling [VERIFIED 2026-08-21]
 - [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-21]:**
   - [x] Rossmo (1999) Criminal Geographic Targeting serial crime benchmark datasets.
   - [x] `VECTOR_GEO_03` Rossmo Geographic Profiling Golden Benchmark (5 crime scenes).
@@ -715,7 +715,7 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
-### Module 7.5: FUSION — 2D Adaptive KDE Multi-Criteria Bayesian Geo-Fusion [VERIFIED 2026-08-21]
+### Module 7.5: FUSION: 2D Adaptive KDE Multi-Criteria Bayesian Geo-Fusion [VERIFIED 2026-08-21]
 - [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-21]:**
   - [x] Multi-layer forensic geo-intelligence casework reference (Isotope + Soil + Palynology + Rossmo).
   - [x] 2D Gaussian Kernel Density Estimation (KDE) benchmark grid.
@@ -733,7 +733,7 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
 
 ---
 
-### Module 7.6: META-SOIL-PALYNO — Metagenomic Taxonomic Classifiers & eDNA Soil/Palynology [VERIFIED 2026-08-23]
+### Module 7.6: META-SOIL-PALYNO: Metagenomic Taxonomic Classifiers & eDNA Soil/Palynology [VERIFIED 2026-08-23]
 - [x] **Criterion 1 (Reference Dataset) ✅ COMPLETE [2026-08-23]:**
   - [x] Synthetic Forensic Metagenomic Cohort (`VECTOR_META_01` to `VECTOR_META_05`): Forest soil ($N=100,000$ reads), Arid desert ($N=75,000$ reads), Alpine pinewood ($N=50,000$ reads), Degraded low-biomass casework ($N=2,000$ reads), Cross-contamination control.
   - [x] GTDB / SILVA 138.1 / PlanT ITS2 reference databases with taxonomic hierarchies.

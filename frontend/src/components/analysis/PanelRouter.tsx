@@ -579,6 +579,7 @@ export function renderPanel(tabId: string) {
     case "dvi":
     case "dvi_ped":
       return <PanelDVI />;
+    case "humanid":
     case "adna":
     case "adna_snp":
     case "ancient_dna":
@@ -588,8 +589,6 @@ export function renderPanel(tabId: string) {
     case "genealogy":
     case "investigative_genealogy":
       return <PanelFGG />;
-    case "humanid":
-      return <HumanIdPanel />;
 
 
     // Pillar 3: Phenotyping & Ancestry

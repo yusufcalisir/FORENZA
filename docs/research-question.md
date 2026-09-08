@@ -1,4 +1,4 @@
-# PHASE 0.1 — Core Research Question & Scope
+# PHASE 0.1 - Core Research Question & Scope
 
 **Project:** FORENZA (Forensic Biology & DNA Intelligence Platform)  
 **Author:** Yusuf Çalışır  

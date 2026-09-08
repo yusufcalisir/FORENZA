@@ -1,5 +1,5 @@
 {
-  "version": "2.4.0",
+  "version": "2.5.0",
   "pillars": [
     {
       "id": "genotyping",
@@ -41,7 +41,7 @@
           "id": "touch",
           "number": "04",
           "name": "Touch DNA & Low-Template LTDNA",
-          "badge": "LTDNA-MOD",
+          "badge": "LTDNA",
           "metrics": "Dropout p_d • Drop-in p_i • Imbalance (<100 pg)",
           "desc": "Models stochastic allele dropout (p_d) and Poisson drop-in (p_i) for low-template touch DNA recovered from porous and non-porous evidence.",
           "descTr": "Gözenekli ve gözeneksiz delil yüzeylerinden elde edilen düşük şablonlu iz DNA'larda stokastik alel kaybolması (p_d) ve Poisson alel eklenmesini (p_i) modeller."
@@ -106,7 +106,7 @@
           "id": "lineage_mt",
           "number": "10",
           "name": "mtDNA Control Region rCRS/RSRS",
-          "badge": "mtDNA-rCRS",
+          "badge": "mtDNA",
           "metrics": "EMPOP rCRS/RSRS • HV1-HV3 • Phylotree",
           "desc": "Aligns hypervariable regions against revised Cambridge Reference Sequence (rCRS) and RSRS for maternal lineage assignment.",
           "descTr": "Anne soyu tespiti için hiperdeğişken bölgeleri revize edilmiş Cambridge Referans Dizisi (rCRS) ve RSRS ile hizalar."
@@ -162,7 +162,7 @@
           "id": "ancestry",
           "number": "15",
           "name": "55-SNP AIM Ancestry & Live GIS",
-          "badge": "BGA-55",
+          "badge": "BGA-EXP",
           "metrics": "55 AIMs • 7 Populations • 3D Spherical GIS",
           "desc": "Calculates posterior probabilities for 7 continental biogeographic populations and projects 3D Cartesian spherical GIS coordinates.",
           "descTr": "55 atasal bilgi markörü (AIM) kullanarak 7 küresel coğrafi popülasyon için sonralı olasılıkları hesaplar ve 3D Kartezyen küresel GIS koordinatlarına izdüşürür."
@@ -227,7 +227,7 @@
           "id": "lifestyle",
           "number": "21",
           "name": "Lifestyle Epigenomics & AHRR",
-          "badge": "AHRR-LIFE",
+          "badge": "AHRR",
           "metrics": "AHRR Smoking • Pack-Years • Epigenetic BMI",
           "desc": "Analyzes AHRR hypomethylation to quantify tobacco smoke pack-years, alcohol exposure indices, and epigenetic BMI.",
           "descTr": "Kronik tütün kullanım paket-yılını, alkol maruziyet indeksini ve epigenetik vücut kitle indeksini belirlemek için AHRR geni hipometilasyonunu analiz eder."

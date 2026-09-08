@@ -6,7 +6,7 @@ import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
 const TECH_BADGES = [
     { label: "ISO/IEC 17025" },
-    { label: "3,567 Doğrulanmış Test" },
+    { label: "3,573 Doğrulanmış Test" },
     { label: "zk-SNARK Gizlilik" },
     { label: "Merkle Delil Zinciri" },
 ];

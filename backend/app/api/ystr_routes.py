@@ -4,17 +4,17 @@ Standards Compliance: ISO/IEC 17025:2017, SWGDAM Lineage Guidelines (2020), ENFS
 Research Source: research/pillar_2_lineage_kinship_research.md & research/ystr_27_mtdna_empop_lineage_research.md
 
 Endpoints:
-  POST /forensic/lineage/ystr/evaluate-paternal-kinship — Full 27-Locus Paternal Lineage Kinship Evaluation
-  POST /forensic/lineage/ystr/clopper-pearson-bound     — Exact Binomial CI Upper Bound
-  POST /forensic/lineage/ystr/brenner-frequency         — Brenner theta subpopulation correction
-  POST /forensic/lineage/ystr/predict-haplogroup        — Bayesian Y-DNA Haplogroup Prediction
-  POST /forensic/lineage/ystr/decouple-dys389           — DYS389I / DYS389II nested repeat decoupling
-  POST /forensic/lineage/ystr/mixture-contributors      — Minimum Male Contributor Count (N_male)
-  GET  /forensic/lineage/ystr/panel-metadata            — Y-FILER Plus 27-Locus Panel Details
-  GET  /forensic/lineage/ystr/metapopulations           — YHRD Release 68 Database Partitions
-  GET  /forensic/lineage/ystr/gold-standards            — Certified Multi-Omic Gold Standards
-  GET  /forensic/lineage/ystr/casework-cohorts          — Certified Casework Benchmark Cohorts
-  GET  /forensic/lineage/ystr/patrilineal-disclaimer    — ISFG (2020) Patrilineal Evaluative Disclaimer
+  POST /forensic/lineage/ystr/evaluate-paternal-kinship : Full 27-Locus Paternal Lineage Kinship Evaluation
+  POST /forensic/lineage/ystr/clopper-pearson-bound     : Exact Binomial CI Upper Bound
+  POST /forensic/lineage/ystr/brenner-frequency         : Brenner theta subpopulation correction
+  POST /forensic/lineage/ystr/predict-haplogroup        : Bayesian Y-DNA Haplogroup Prediction
+  POST /forensic/lineage/ystr/decouple-dys389           : DYS389I / DYS389II nested repeat decoupling
+  POST /forensic/lineage/ystr/mixture-contributors      : Minimum Male Contributor Count (N_male)
+  GET  /forensic/lineage/ystr/panel-metadata            : Y-FILER Plus 27-Locus Panel Details
+  GET  /forensic/lineage/ystr/metapopulations           : YHRD Release 68 Database Partitions
+  GET  /forensic/lineage/ystr/gold-standards            : Certified Multi-Omic Gold Standards
+  GET  /forensic/lineage/ystr/casework-cohorts          : Certified Casework Benchmark Cohorts
+  GET  /forensic/lineage/ystr/patrilineal-disclaimer    : ISFG (2020) Patrilineal Evaluative Disclaimer
 """
 
 import math

@@ -1,5 +1,5 @@
 """
-FORENZA Y-STR Haplotype Forensics API — Pydantic v2 Schemas (Module 2.1).
+FORENZA Y-STR Haplotype Forensics API : Pydantic v2 Schemas (Module 2.1).
 Standards Compliance: ISO/IEC 17025:2017, SWGDAM Lineage Guidelines (2020), ENFSI Evaluative Reporting (2017).
 Research Source: research/pillar_2_lineage_kinship_research.md & research/ystr_27_mtdna_empop_lineage_research.md
 """

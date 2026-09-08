@@ -2,10 +2,10 @@
 Cross-Validation Tests for FORENZA MC1R Epistasis & UV Sensitivity (Module 3.5).
 
 Verifies concordance with:
-  - Sulem et al. (2007) — R-variant weight fidelity
-  - Valverde (1995) / Sulem (2007) — Freckling formula checkpoints
-  - Sulem et al. (2008) — ASIP/BNC2 epistatic modifier independence
-  - 5 Certified Reference Standards
+ - Sulem et al. (2007) -  R-variant weight fidelity
+ - Valverde (1995) / Sulem (2007) -  Freckling formula checkpoints
+ - Sulem et al. (2008) -  ASIP/BNC2 epistatic modifier independence
+ - 5 Certified Reference Standards
 """
 
 import pytest

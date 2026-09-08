@@ -34,7 +34,7 @@ class TestMC1RStandardsRegistry:
 
 
 class TestStd01WildTypeBaseline:
-    """STD-MC1R-01: Wild-type baseline — VECTOR_15_FRECKLE_A."""
+    """STD-MC1R-01: Wild-type baseline -  VECTOR_15_FRECKLE_A."""
 
     def test_diplotype_wildtype(self):
         std = FRECKLING_STANDARDS["WT_BASELINE"]
@@ -62,7 +62,7 @@ class TestStd01WildTypeBaseline:
 
 
 class TestStd02R151CHom:
-    """STD-MC1R-02: R151C homozygous red hair — VECTOR_15_FRECKLE_B."""
+    """STD-MC1R-02: R151C homozygous red hair -  VECTOR_15_FRECKLE_B."""
 
     def test_diplotype_rr(self):
         std = FRECKLING_STANDARDS["R151C_HOM_RED"]
@@ -90,7 +90,7 @@ class TestStd02R151CHom:
 
 
 class TestStd03CompoundHet:
-    """STD-MC1R-03: R151C + V60L compound het — VECTOR_15_FRECKLE_C."""
+    """STD-MC1R-03: R151C + V60L compound het -  VECTOR_15_FRECKLE_C."""
 
     def test_diplotype_r_r(self):
         std = FRECKLING_STANDARDS["R151C_V60L_COMPOUND"]
@@ -117,7 +117,7 @@ class TestStd03CompoundHet:
 
 
 class TestStd04V60LHom:
-    """STD-MC1R-04: V60L homozygous (r/r) — VECTOR_15_FRECKLE_D."""
+    """STD-MC1R-04: V60L homozygous (r/r) -  VECTOR_15_FRECKLE_D."""
 
     def test_diplotype_rr_lower(self):
         std = FRECKLING_STANDARDS["V60L_HOM_MILD"]
@@ -138,7 +138,7 @@ class TestStd04V60LHom:
 
 
 class TestStd05ASIPBNCEpistatic:
-    """STD-MC1R-05: ASIP+BNC2 pure epistatic boost — VECTOR_15_FRECKLE_F."""
+    """STD-MC1R-05: ASIP+BNC2 pure epistatic boost -  VECTOR_15_FRECKLE_F."""
 
     def test_diplotype_still_wildtype(self):
         std = FRECKLING_STANDARDS["ASIP_BNC2_EPISTATIC"]

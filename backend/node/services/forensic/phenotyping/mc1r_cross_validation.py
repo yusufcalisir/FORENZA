@@ -1,12 +1,12 @@
 """
-FORENZA MC1R Epistasis & UV Sensitivity — Independent Tool Cross-Validation.
-Module 3.5 — Pillar 3 Research §5.
+FORENZA MC1R Epistasis & UV Sensitivity -  Independent Tool Cross-Validation.
+Module 3.5 -  Pillar 3 Research §5.
 
 Cross-validation against:
-  1. Sulem et al. (2007) Nat Genet — R-variant weight fidelity (|Δ_w| < 1e-6)
-  2. Valverde et al. (1995) Nat Genet — Freckling logistic score formula cross-check
+  1. Sulem et al. (2007) Nat Genet -  R-variant weight fidelity (|Δ_w| < 1e-6)
+  2. Valverde et al. (1995) Nat Genet -  Freckling logistic score formula cross-check
      (baseline 7.59%, R/R dense, |Δ_F| < 0.1%)
-  3. Sulem et al. (2008) Nat Genet — ASIP/BNC2 epistatic modifier independence
+  3. Sulem et al. (2008) Nat Genet -  ASIP/BNC2 epistatic modifier independence
   4. All 5 certified reference standards concordance check
 """
 
@@ -40,7 +40,7 @@ class MC1RCrossValidation:
     @staticmethod
     def validate_r_variant_weight_fidelity() -> Dict[str, Any]:
         """
-        Cross-Validation 1: R-Variant Weight Fidelity — Sulem et al. (2007)
+        Cross-Validation 1: R-Variant Weight Fidelity -  Sulem et al. (2007)
 
         Each MC1R 'R' high-risk variant must produce exactly its published
         weight when assayed at dosage=1 (heterozygous):
@@ -93,7 +93,7 @@ class MC1RCrossValidation:
 
         return {
             "cross_validation_id": "CV-MC1R-01",
-            "tool": "Sulem et al. (2007) Nat Genet — MC1R Red Hair Variant Weight Fidelity",
+            "tool": "Sulem et al. (2007) Nat Genet -  MC1R Red Hair Variant Weight Fidelity",
             "method": "Heterozygous dosage=1 PRS vs published effect allele weights (|Δ| < 1e-6)",
             "results": results,
             "all_concordant": all_pass,
@@ -103,7 +103,7 @@ class MC1RCrossValidation:
     @staticmethod
     def validate_freckling_formula_concordance() -> Dict[str, Any]:
         """
-        Cross-Validation 2: Freckling Score Formula — Valverde (1995) & Sulem (2007)
+        Cross-Validation 2: Freckling Score Formula -  Valverde (1995) & Sulem (2007)
 
         Key analytical checkpoints:
           1. Wild-type baseline: logit=-2.50 → F_score = 100/(1+e^2.5) = 7.5932% (|Δ| < 0.01%)
@@ -157,7 +157,7 @@ class MC1RCrossValidation:
 
         return {
             "cross_validation_id": "CV-MC1R-02",
-            "tool": "Valverde (1995) Nat Genet / Sulem (2007) — Freckling Logistic Formula",
+            "tool": "Valverde (1995) Nat Genet / Sulem (2007) -  Freckling Logistic Formula",
             "method": "Analytical F_score vs computed at key MC1R genotype landmarks",
             "formula_checkpoints": results,
             "constant_fidelity": const_results,
@@ -168,7 +168,7 @@ class MC1RCrossValidation:
     @staticmethod
     def validate_asip_bnc2_independence() -> Dict[str, Any]:
         """
-        Cross-Validation 3: ASIP & BNC2 Epistatic Modifier Independence — Sulem (2008)
+        Cross-Validation 3: ASIP & BNC2 Epistatic Modifier Independence -  Sulem (2008)
 
         Each modifier contributes independently:
           ASIP (rs1015362) at dose=1: ΔF_logit = +0.85 exactly (|Δ| < 1e-6)
@@ -213,7 +213,7 @@ class MC1RCrossValidation:
 
         return {
             "cross_validation_id": "CV-MC1R-03",
-            "tool": "Sulem et al. (2008) Nat Genet — ASIP/BNC2 Modifier Independence",
+            "tool": "Sulem et al. (2008) Nat Genet -  ASIP/BNC2 Modifier Independence",
             "method": "Single-locus logit delta vs published effect coefficients",
             "locus_results": results,
             "combined_asip2_bnc2_2": {
@@ -289,7 +289,7 @@ class MC1RCrossValidation:
     def get_forensic_reporting_shield() -> Dict[str, str]:
         """ENFSI (2017) evaluative reporting shield for MC1R Epistasis & UV Sensitivity."""
         return {
-            "module": "MC1R-UV (Module 3.5) — Ephelides, MC1R Epistasis & UV Sensitivity",
+            "module": "MC1R-UV (Module 3.5) -  Ephelides, MC1R Epistasis & UV Sensitivity",
             "prosecutors_fallacy_shield": (
                 "IMPORTANT (MC1R Epistasis & UV Sensitivity Legal Shield): "
                 "MC1R diplotype classification, quantitative freckling scores (F_score), "

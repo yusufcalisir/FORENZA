@@ -651,6 +651,10 @@ The FastAPI gateway exposes a clean `/api/v1` RESTful interface.
 | **Hair (Cross-Validation)** | `/api/v1/forensic/phenotyping/hair/cross-validation` | `GET` | Evaluates concordance against Medland (2009), Adhikari (2016), and Li (2022) |
 | **Hair (Reporting Shield)** | `/api/v1/forensic/phenotyping/hair/reporting-shield` | `GET` | Generates ENFSI 2017 / §81e StPO evaluative statements and active Prosecutor's Fallacy Shield |
 | **Freckling & MC1R Epistasis** | `/api/v1/forensic/phenotyping/ephelides/freckling-and-uv` | `POST` | Quantifies MC1R epistatic loss-of-function weights, ASIP/BNC2 modifiers, and MED |
+| **MC1R Diplotype Extraction** | `/api/v1/forensic/phenotyping/ephelides/mc1r-genotype` | `POST` | Extracts MC1R loss-of-function weights, diplotype classification, and detected variants |
+| **Freckling (Certified Standards)** | `/api/v1/forensic/phenotyping/ephelides/standards` | `GET` | Retrieves 5 certified reference standards (WT Baseline, R151C Hom, R/r Het, V60L, ASIP+BNC2) |
+| **Freckling (Cross-Validation)** | `/api/v1/forensic/phenotyping/ephelides/cross-validation` | `GET` | Evaluates concordance against Sulem (2007/2008) and Valverde (1995) benchmarks |
+| **Freckling (Reporting Shield)** | `/api/v1/forensic/phenotyping/ephelides/reporting-shield` | `GET` | Generates ENFSI 2017 / §81e StPO evaluative statements and active Prosecutor's Fallacy Shield |
 | **Epigenetics (Age Clock)** | `/api/v1/forensic/epigenetics/predict-age` | `POST` | Estimates biological age from 5 CpG methylation sites |
 | **Epigenetic Clocks (Multi-Gen)** | `/api/v1/forensic/epigenetics/clocks/estimate-age` | `POST` | Multi-generation epigenetic age estimation (Horvath, PhenoAge, GrimAge, VISAGE) |
 | **Epigenetic Multimodal PMI** | `/api/v1/forensic/epigenetics/clocks/multimodal-pmi` | `POST` | Multimodal Bayesian evidence fusion of Henssge, Vitreous K+, and Entomology for PMI |

@@ -1,13 +1,13 @@
 """
-Unit & Integration Tests for FORENZA Ephelides (Freckling), MC1R Epistasis & UV Sensitivity — Module 15.
+Unit & Integration Tests for FORENZA Ephelides (Freckling), MC1R Epistasis & UV Sensitivity -  Module 15.
 
 Tests verbatim from Pillar 3 Research §5:
-  - §5.1 MC1R Functional Variant Classification Matrix ('R', 'r', wt)
-  - §5.2 Compound Heterozygosity and Quantitative Freckling Score (F_score)
-  - Minimal Erythema Dose (MED) & UV Sensitivity Tiers
+ - §5.1 MC1R Functional Variant Classification Matrix ('R', 'r', wt)
+ - §5.2 Compound Heterozygosity and Quantitative Freckling Score (F_score)
+ - Minimal Erythema Dose (MED) & UV Sensitivity Tiers
 
 Golden Benchmarks:
-  - VECTOR_15_FRECKLE_A through H
+ - VECTOR_15_FRECKLE_A through H
 """
 
 import math
@@ -30,7 +30,7 @@ client = TestClient(_app)
 engine = FrecklingMC1REngine()
 
 
-# ── VECTOR_15_FRECKLE_A — Baseline Wild-Type Profile ──────────────────────────
+# ── VECTOR_15_FRECKLE_A -  Baseline Wild-Type Profile ──────────────────────────
 
 class TestVector15FreckleA:
     """Verifies baseline wild-type state (wt/wt) with low freckling score and high MED."""
@@ -50,7 +50,7 @@ class TestVector15FreckleA:
         assert res.uv_sensitivity.tanning_capacity == "NORMAL_TAN_RARE_BURN"
 
 
-# ── VECTOR_15_FRECKLE_B — Homozygous 'R' High-Risk Allele ─────────────────────
+# ── VECTOR_15_FRECKLE_B -  Homozygous 'R' High-Risk Allele ─────────────────────
 
 class TestVector15FreckleB:
     """Verifies homozygous 'R' allele (R151C rs1805007 = 2) producing dense freckles."""
@@ -71,7 +71,7 @@ class TestVector15FreckleB:
         assert res.uv_sensitivity.tanning_capacity == "NEVER_TANS_ALWAYS_BURNS"
 
 
-# ── VECTOR_15_FRECKLE_C — Compound Heterozygosity R/r ─────────────────────────
+# ── VECTOR_15_FRECKLE_C -  Compound Heterozygosity R/r ─────────────────────────
 
 class TestVector15FreckleC:
     """Verifies compound heterozygosity with one 'R' and one 'r' variant."""
@@ -92,7 +92,7 @@ class TestVector15FreckleC:
         assert res.uv_sensitivity.tanning_capacity == "RARE_TAN_FREQUENT_BURN"
 
 
-# ── VECTOR_15_FRECKLE_D — Partial Loss r/r Diplotype ──────────────────────────
+# ── VECTOR_15_FRECKLE_D -  Partial Loss r/r Diplotype ──────────────────────────
 
 class TestVector15FreckleD:
     """Verifies homozygous 'r' low-risk variants (r/r diplotype)."""
@@ -113,7 +113,7 @@ class TestVector15FreckleD:
         assert "35 - 50 mJ/cm2" in res.uv_sensitivity.minimal_erythema_dose_category
 
 
-# ── VECTOR_15_FRECKLE_E — Single 'r' Variant Carrier r/wt ─────────────────────
+# ── VECTOR_15_FRECKLE_E -  Single 'r' Variant Carrier r/wt ─────────────────────
 
 class TestVector15FreckleE:
     """Verifies single 'r' carrier (r/wt diplotype)."""
@@ -131,7 +131,7 @@ class TestVector15FreckleE:
         assert res.freckling.freckling_intensity == "MINIMAL (Rare / No Visible Ephelides)"
 
 
-# ── VECTOR_15_FRECKLE_F — ASIP & BNC2 Epistatic Boosting ───────────────────────
+# ── VECTOR_15_FRECKLE_F -  ASIP & BNC2 Epistatic Boosting ───────────────────────
 
 class TestVector15FreckleF:
     """Verifies epistatic modifier boosting via ASIP rs1015362 and BNC2 rs10756819."""
@@ -145,7 +145,7 @@ class TestVector15FreckleF:
         assert res.freckling.freckling_score_pct > 7.59  # Substantial increase over pure wild-type
 
 
-# ── VECTOR_15_FRECKLE_G — Mathematical Invariants & Clamping ──────────────────
+# ── VECTOR_15_FRECKLE_G -  Mathematical Invariants & Clamping ──────────────────
 
 class TestVector15FreckleG:
     """Verifies F_score strictly clamped in [0.0, 100.0]%."""
@@ -159,7 +159,7 @@ class TestVector15FreckleG:
         assert 0.0 <= res.freckling.freckling_score_pct <= 100.0
 
 
-# ── VECTOR_15_FRECKLE_H — API Integration Tests ─────────────────────────────────
+# ── VECTOR_15_FRECKLE_H -  API Integration Tests ─────────────────────────────────
 
 class TestVector15FreckleH:
     """Verifies FastAPI endpoints for freckling score and MC1R diplotyping."""
@@ -182,3 +182,34 @@ class TestVector15FreckleH:
         data = resp.json()
         assert data["diplotype"] == "R/r"
         assert data["total_mc1r_loss_weight"] == pytest.approx(3.60, abs=1e-2)
+
+    def test_api_standards_endpoint(self):
+        resp = client.get("/api/v1/forensic/phenotyping/ephelides/standards")
+        assert resp.status_code == 200
+        data = resp.json()
+        assert "standards" in data
+        assert data["total_count"] == 5
+        assert len(data["standards"]) == 5
+        assert any(s["standard_id"] == "STD-MC1R-01" for s in data["standards"])
+
+    def test_api_cross_validation_endpoint(self):
+        resp = client.get("/api/v1/forensic/phenotyping/ephelides/cross-validation")
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["status"] == "CONCORDANT"
+        assert data["all_concordant"] is True
+        assert data["concordance_rate_pct"] == 100.0
+        assert "cv_r_weights" in data
+        assert "cv_freckling_formula" in data
+        assert "cv_asip_bnc2_modifiers" in data
+        assert "cv_reference_standards" in data
+
+    def test_api_reporting_shield_endpoint(self):
+        resp = client.get("/api/v1/forensic/phenotyping/ephelides/reporting-shield")
+        assert resp.status_code == 200
+        data = resp.json()
+        assert "prosecutors_fallacy_shield" in data
+        assert "enfsi_reporting_statement_en" in data
+        assert "enfsi_reporting_statement_tr" in data
+        assert data["validation_status"] == "VERIFIED"
+

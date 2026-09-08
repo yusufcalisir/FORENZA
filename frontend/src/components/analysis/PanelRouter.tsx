@@ -617,6 +617,12 @@ export function renderPanel(tabId: string) {
     case "aga":
       return <PanelHair />;
     case "freckling":
+    case "freckles":
+    case "ephelides":
+    case "mc1r":
+    case "mc1r_epistasis":
+    case "uv_sensitivity":
+    case "med":
       return <PanelFreckling />;
 
     // Pillar 4: Epigenetics, Microbiomics & Aging

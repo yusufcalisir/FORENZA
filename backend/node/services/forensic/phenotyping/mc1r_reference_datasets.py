@@ -1,14 +1,14 @@
 """
-FORENZA MC1R Epistasis & UV Sensitivity — Certified Reference Standards.
-Module 3.5 — Pillar 3 Research §5.
+FORENZA MC1R Epistasis & UV Sensitivity -  Certified Reference Standards.
+Module 3.5 -  Pillar 3 Research §5.
 
 Five certified reference individuals covering all MC1R diplotype classes.
 
 Sources:
-  - Sulem et al. (2007) Nat Genet — MC1R red hair GWAS (R/R, R/r cohorts)
-  - Sulem et al. (2008) Nat Genet — Ephelides GWAS (ASIP, BNC2 modifier validation)
-  - Valverde et al. (1995) Nat Genet — Original RHC classification
-  - Fitzpatrick (1988) — Skin phototype to MED mapping
+ - Sulem et al. (2007) Nat Genet -  MC1R red hair GWAS (R/R, R/r cohorts)
+ - Sulem et al. (2008) Nat Genet -  Ephelides GWAS (ASIP, BNC2 modifier validation)
+ - Valverde et al. (1995) Nat Genet -  Original RHC classification
+ - Fitzpatrick (1988) -  Skin phototype to MED mapping
 """
 
 from __future__ import annotations
@@ -65,12 +65,12 @@ FRECKLING_STANDARDS: Dict[str, MC1RReferenceStandard] = {
         expected_tanning="NORMAL_TAN_RARE_BURN",
     ),
 
-    # STD-MC1R-02: R151C Homozygous (R/R) — Sulem 2007 Red Hair Celtic
+    # STD-MC1R-02: R151C Homozygous (R/R) -  Sulem 2007 Red Hair Celtic
     # rs1805007 = 2 (R151C homozygous) → n_R=2, W=5.70, F_score ≈ 99.45%
     "R151C_HOM_RED": MC1RReferenceStandard(
         standard_id="STD-MC1R-02",
         sample_name="R151C_HOMOZYGOUS_CELTIC_RED",
-        population="Celtic European — Red Hair",
+        population="Celtic European -  Red Hair",
         description="VECTOR_15_FRECKLE_B: R151C homozygous. W=5.70, diplotype R/R, F_score≥99%, MED<20.",
         snp_dosages={"rs1805007": 2},
         expected_diplotype="R/R",
@@ -86,14 +86,14 @@ FRECKLING_STANDARDS: Dict[str, MC1RReferenceStandard] = {
         expected_tanning="NEVER_TANS_ALWAYS_BURNS",
     ),
 
-    # STD-MC1R-03: R151C (R) + V60L (r) — Compound Heterozygous
+    # STD-MC1R-03: R151C (R) + V60L (r) -  Compound Heterozygous
     # rs1805007=1 (R151C, R class, w=2.85) + rs1805005=1 (V60L, r class, w=1.10)
     # W = 3.95, diplotype R/r
     # F_score = 100/(1+exp(-(-2.5+1.35*3.95))) = 100/(1+exp(-2.8325)) = 94.44%
     "R151C_V60L_COMPOUND": MC1RReferenceStandard(
         standard_id="STD-MC1R-03",
         sample_name="R151C_V60L_COMPOUND_HET",
-        population="Northern European — Compound Heterozygous",
+        population="Northern European -  Compound Heterozygous",
         description="VECTOR_15_FRECKLE_C: R/r compound heterozygous. W=3.95, F_score=94.44%.",
         snp_dosages={"rs1805007": 1, "rs1805005": 1},
         expected_diplotype="R/r",
@@ -109,13 +109,13 @@ FRECKLING_STANDARDS: Dict[str, MC1RReferenceStandard] = {
         expected_tanning="RARE_TAN_FREQUENT_BURN",
     ),
 
-    # STD-MC1R-04: V60L Homozygous (r/r) — Mild Loss
+    # STD-MC1R-04: V60L Homozygous (r/r) -  Mild Loss
     # rs1805005=2 → n_r=2, W=2.20
     # F_score = 100/(1+exp(-(-2.5+1.35*2.2))) = 100/(1+exp(-0.47)) = 61.54%
     "V60L_HOM_MILD": MC1RReferenceStandard(
         standard_id="STD-MC1R-04",
         sample_name="V60L_HOMOZYGOUS_MILD_LOSS",
-        population="European — Mild MC1R Loss",
+        population="European -  Mild MC1R Loss",
         description="VECTOR_15_FRECKLE_D: V60L homozygous r/r. W=2.20, F_score=61.54%, MED 35-50.",
         snp_dosages={"rs1805005": 2},
         expected_diplotype="r/r",
@@ -138,7 +138,7 @@ FRECKLING_STANDARDS: Dict[str, MC1RReferenceStandard] = {
     "ASIP_BNC2_EPISTATIC": MC1RReferenceStandard(
         standard_id="STD-MC1R-05",
         sample_name="ASIP_BNC2_HOMOZYGOUS_BOOST",
-        population="Reference — ASIP+BNC2 Epistatic Modifier",
+        population="Reference -  ASIP+BNC2 Epistatic Modifier",
         description="VECTOR_15_FRECKLE_F: Pure ASIP+BNC2 epistatic boost. W=0, F_score=62.25%.",
         snp_dosages={"rs1015362": 2, "rs10756819": 2},
         expected_diplotype="wt/wt",

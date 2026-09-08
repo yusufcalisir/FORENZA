@@ -1,13 +1,13 @@
 """
-FORENZA MC1R Epistasis, Ephelides (Freckling) & UV Sensitivity — Mathematical Formulation Engine.
-Module 3.5 — Pillar 3: Phenotyping, Biogeographic Ancestry & Morphometrics.
+FORENZA MC1R Epistasis, Ephelides (Freckling) & UV Sensitivity -  Mathematical Formulation Engine.
+Module 3.5 -  Pillar 3: Phenotyping, Biogeographic Ancestry & Morphometrics.
 
 Derives verbatim from:
-  - Pillar 3 Research Specification (§5: MC1R Functional Variants, Ephelides & UV Sensitivity)
-  - Sulem et al. (2007) Nat Genet — MC1R 'R' high-risk variant (R151C, R160W, D294H) cohort
-  - Sulem et al. (2008) Nat Genet — Ephelides GWAS (ASIP, BNC2 modifier loci)
-  - Valverde et al. (1995) Nat Genet — Original MC1R Red Hair Color (RHC) classification matrix
-  - Mekkas et al. (2021) VISAGE Consortium — UV sensitivity MED thresholds
+ - Pillar 3 Research Specification (§5: MC1R Functional Variants, Ephelides & UV Sensitivity)
+ - Sulem et al. (2007) Nat Genet -  MC1R 'R' high-risk variant (R151C, R160W, D294H) cohort
+ - Sulem et al. (2008) Nat Genet -  Ephelides GWAS (ASIP, BNC2 modifier loci)
+ - Valverde et al. (1995) Nat Genet -  Original MC1R Red Hair Color (RHC) classification matrix
+ - Mekkas et al. (2021) VISAGE Consortium -  UV sensitivity MED thresholds
 
 Verbatim Constants (Research §5):
   Freckling intercept:  β₀ = -2.50
@@ -74,7 +74,7 @@ FRECKLING_MILD_THRESHOLD: float = 20.0      # F_score ≥ 20 → MILD
 #   n_R == 0, n_r == 1 → r/wt (MILD_LOSS)
 #   n_R == 0, n_r == 0 → wt/wt (WILD_TYPE)
 
-# ── MED Thresholds — (Research §5.2) ─────────────────────────────────────────
+# ── MED Thresholds -  (Research §5.2) ─────────────────────────────────────────
 MED_R_R_CATEGORY: str = "< 20 mJ/cm2 (Extremely Low MED / Severe Erythema Risk)"
 MED_R_HET_CATEGORY: str = "20 - 35 mJ/cm2 (Low MED / Frequent Erythema Risk)"
 MED_r_HOM_CATEGORY: str = "35 - 50 mJ/cm2 (Moderate MED / Moderate Erythema Risk)"
@@ -129,7 +129,7 @@ class MC1RMathematicalFormulation:
         snp_dosages: Dict[str, Union[int, float]],
     ) -> Tuple[float, int, int, List[str]]:
         """
-        Research §5.1 — Additive MC1R Loss-of-Function Weight:
+        Research §5.1 -  Additive MC1R Loss-of-Function Weight:
 
             W_MC1R = Σ_i (w_i * X_i)
 
@@ -162,7 +162,7 @@ class MC1RMathematicalFormulation:
     @staticmethod
     def classify_diplotype(n_R: int, n_r: int) -> Tuple[str, str]:
         """
-        Research §5.1 — MC1R Diplotype Classification:
+        Research §5.1 -  MC1R Diplotype Classification:
 
             n_R ≥ 2               → "R/R"  (SEVERE_LOSS)
             n_R ≥ 1 and n_r ≥ 1  → "R/r"  (MODERATE_LOSS)
@@ -193,7 +193,7 @@ class MC1RMathematicalFormulation:
         x_bnc2: float,
     ) -> Tuple[float, float]:
         """
-        Research §5.2 — Quantitative Freckling Score Formula:
+        Research §5.2 -  Quantitative Freckling Score Formula:
 
             logit = -2.50 + 1.35 × W_MC1R + 0.85 × X_ASIP + 0.65 × X_BNC2
             F_score = min(100.0, 100.0 / (1 + exp(-logit)))
@@ -214,7 +214,7 @@ class MC1RMathematicalFormulation:
     @staticmethod
     def classify_freckling_intensity(f_score: float) -> str:
         """
-        Research §5.2 — Freckling Intensity Classification:
+        Research §5.2 -  Freckling Intensity Classification:
 
             F_score ≥ 75.0 → DENSE (Extensive Ephelides)
             F_score ≥ 45.0 → MODERATE (Moderate Facial / Body Ephelides)
@@ -233,7 +233,7 @@ class MC1RMathematicalFormulation:
     @staticmethod
     def compute_uv_sensitivity(diplotype: str) -> Tuple[str, str, str]:
         """
-        Research §5.2 — MED Diplotype Mapping:
+        Research §5.2 -  MED Diplotype Mapping:
 
             R/R             → < 20 mJ/cm²  (NEVER_TANS_ALWAYS_BURNS)
             R/r or R/wt     → 20-35 mJ/cm² (RARE_TAN_FREQUENT_BURN)

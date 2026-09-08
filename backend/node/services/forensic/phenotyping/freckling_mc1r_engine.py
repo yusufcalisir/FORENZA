@@ -1,10 +1,10 @@
 """
-FORENZA Ephelides (Freckling), MC1R Epistasis & UV Sensitivity Index Engine — Module 15.
+FORENZA Ephelides (Freckling), MC1R Epistasis & UV Sensitivity Index Engine -  Module 15.
 
 Implements verbatim from Pillar 3 Research §5:
-  - §5.1 MC1R Variant Classification Matrix ('R' High Risk, 'r' Low Risk, wt)
-  - §5.2 Compound Heterozygosity and Quantitative Freckling Score (F_score)
-  - Minimal Erythema Dose (MED) & UV Sensitivity Tiers
+ - §5.1 MC1R Variant Classification Matrix ('R' High Risk, 'r' Low Risk, wt)
+ - §5.2 Compound Heterozygosity and Quantitative Freckling Score (F_score)
+ - Minimal Erythema Dose (MED) & UV Sensitivity Tiers
 """
 
 import math

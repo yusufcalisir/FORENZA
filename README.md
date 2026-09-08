@@ -326,8 +326,8 @@ str-analysis/
 │       │   │   ├── PanelBGA.tsx           # 55-SNP AIM Biogeographic Ancestry & Live GIS Studio
 │       │   │   ├── PanelCraniofacial.tsx  # 3D Craniofacial Morphometry & Anthropological Studio
 │       │   │   ├── SuspectVisualizer.tsx  # Backward-Compatible Re-Export Bridge for PanelCraniofacial
-│       │   │   ├── PanelFreckling.tsx     # MC1R Epistasis & UV Sensitivity Tactical Panel
-│       │   │   ├── PanelHair.tsx          # Hair Texture & Balding PRS Tactical Panel
+│       │   │   ├── PanelFreckling.tsx     # Ephelides, MC1R Epistasis & UV Sensitivity 5-Tab Forensic Studio
+│       │   │   ├── PanelHair.tsx          # Hair Texture & Balding PRS 5-Tab Forensic Studio
 │       │   │   └── GeoForensicIntelligencePanel.tsx # Multi-Modal Geo-Forensic Platform
 │       │   ├── common/                    # Shared Modals & Telemetry Banners
 │       │   │   ├── DnaProfileInspectorModal.tsx # DNA & SNP Terminal with Interactive CLI

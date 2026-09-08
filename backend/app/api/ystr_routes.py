@@ -230,6 +230,17 @@ async def predict_y_haplogroup(body: HaplogroupPredictionRequest) -> HaplogroupP
     )
 
 
+@router.post(
+    "/bayesian-haplogroup",
+    response_model=HaplogroupPredictionResponse,
+    summary="Bayesian Y-DNA Haplogroup Prediction (Alias)",
+    description="Alias for /predict-haplogroup predicting major Y-DNA haplogroup from 27-locus Y-STR vector.",
+    status_code=status.HTTP_200_OK,
+)
+async def predict_y_haplogroup_alias(body: HaplogroupPredictionRequest) -> HaplogroupPredictionResponse:
+    return await predict_y_haplogroup(body)
+
+
 # ── 4. Decoupling & Mixture Contributors ────────────────────────────────────
 
 @router.post(

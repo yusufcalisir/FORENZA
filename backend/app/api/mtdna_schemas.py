@@ -152,3 +152,24 @@ class MtDnaCaseworkCohortSchema(BaseModel):
     expected_min_lr: float
     profile_a_variants: List[str]
     profile_b_variants: List[str]
+
+
+# ── Haplogroup Prediction Schemas ───────────────────────────────────────────
+
+class MtDnaHaplogroupRequest(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
+    variants: List[str] = Field(
+        ...,
+        description="List of mtDNA variant strings (e.g. ['263G', '315.1C', '16519C']).",
+        examples=[["263G", "315.1C", "16519C"]],
+    )
+
+
+class MtDnaHaplogroupResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
+    predicted_haplogroup: str
+    diagnostic_mutations: List[str]
+    description: str
+

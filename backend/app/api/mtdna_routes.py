@@ -29,6 +29,7 @@ from node.services.forensic.mtdna.mtdna_mathematical_formulation import (
     MTDNA_CONTROL_REGION_DOMAINS,
     MTDNA_IUPAC_CODES,
     PhyloTreeHaplogroupPredictor,
+    PHYLOTREE_17_MOTIFS,
 )
 from node.services.forensic.mtdna.mtdna_reference_datasets import (
     MtDnaReferenceDatasets,
@@ -49,6 +50,8 @@ from .mtdna_schemas import (
     HypervariableRegionSchema,
     MtDnaGoldStandardSchema,
     MtDnaCaseworkCohortSchema,
+    MtDnaHaplogroupRequest,
+    MtDnaHaplogroupResponse,
 )
 
 router = APIRouter(
@@ -228,6 +231,32 @@ async def compute_empop_upper_bound(body: EMPOPProbabilityRequest) -> EMPOPProba
 )
 async def compute_database_frequency(body: EMPOPProbabilityRequest) -> EMPOPProbabilityResponse:
     return await compute_empop_upper_bound(body)
+
+
+@router.post(
+    "/predict-haplogroup",
+    response_model=MtDnaHaplogroupResponse,
+    summary="mtDNA Haplogroup Classification (PhyloTree Build 17)",
+    description="Predicts mtDNA haplogroup and geographic distribution from control region mutations.",
+    status_code=status.HTTP_200_OK,
+)
+async def predict_mtdna_haplogroup(body: MtDnaHaplogroupRequest) -> MtDnaHaplogroupResponse:
+    try:
+        parsed = [MtDnaMathematicalFormulation.parse_variant_string(v) for v in body.variants]
+        predicted_hg = PhyloTreeHaplogroupPredictor.predict_haplogroup(parsed)
+        motif_data = PHYLOTREE_17_MOTIFS.get(predicted_hg, {})
+        motif = sorted(list(motif_data.get("motif", set())))
+        desc = motif_data.get("region", "Unclassified mtDNA lineage")
+        return MtDnaHaplogroupResponse(
+            predicted_haplogroup=predicted_hg,
+            diagnostic_mutations=motif,
+            description=desc,
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Haplogroup prediction failed: {str(exc)}",
+        )
 
 
 # ── 3. Panel Metadata & Reference Catalogs ───────────────────────────────────

@@ -95,6 +95,16 @@ class TestYStrApiEndpoints:
         assert "M269" in data["primary_snp_marker"]
         assert abs(sum(data["bayesian_posteriors"].values()) - 1.0) < 1e-5
 
+    def test_bayesian_haplogroup_alias_endpoint(self):
+        ref = GOLD_STANDARD_INDIVIDUALS["SRM_2391d_COMP_A"].y_str_haplotype
+        payload = {
+            "y_str_markers": ref,
+        }
+        res = client.post("/api/v1/forensic/lineage/ystr/bayesian-haplogroup", json=payload)
+        assert res.status_code == 200
+        data = res.json()
+        assert data["predicted_haplogroup"] == "R1b"
+
     def test_decouple_dys389_endpoint(self):
         payload = {
             "dys389i": 13.0,

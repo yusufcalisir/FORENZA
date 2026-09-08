@@ -121,6 +121,15 @@ class TestMtDnaApiEndpoints:
         assert "ISFG" in data["disclaimer_text_en"]
         assert "ISFG" in data["disclaimer_text_tr"]
 
+    def test_predict_haplogroup_endpoint(self):
+        payload = {"variants": ["263G", "315.1C", "16519C"]}
+        res = client.post("/api/v1/forensic/lineage/mtdna/predict-haplogroup", json=payload)
+        assert res.status_code == 200
+        data = res.json()
+        assert data["predicted_haplogroup"] == "H1"
+        assert len(data["diagnostic_mutations"]) > 0
+        assert "Europe" in data["description"]
+
     def test_422_validation_errors(self):
         # Invalid variant notation
         bad_payload = {

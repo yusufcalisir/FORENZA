@@ -544,6 +544,7 @@ export function PanelKinship() {
 export function renderPanel(tabId: string) {
   switch (tabId) {
     // Pillar 1: Genotyping & Population
+    case "genotyping":
     case "str":
       return <PanelSTR />;
     case "mcmc":
@@ -567,6 +568,7 @@ export function renderPanel(tabId: string) {
       return <PanelMLSTR />;
 
     // Pillar 2: Lineage Forensics & Kinship
+    case "lineage":
     case "lineage_y":
     case "ystr":
       return <PanelYSTR />;
@@ -618,6 +620,7 @@ export function renderPanel(tabId: string) {
       return <PanelFreckling />;
 
     // Pillar 4: Epigenetics, Microbiomics & Aging
+    case "epigenetics":
     case "age":
       return <AgeEstimationPanel />;
     case "bodyfluid":
@@ -634,6 +637,7 @@ export function renderPanel(tabId: string) {
       return <MicrobiomeAnalysisPanel />;
 
     // Pillar 5: Pathology & Trace Forensics
+    case "pathology":
     case "bpa":
       return <BpaAreaOfOriginPanel />;
     case "microscopy":
@@ -646,6 +650,7 @@ export function renderPanel(tabId: string) {
       return <ToxicologyPmrPanel />;
 
     // Pillar 6: ISO 17025, LIMS & ZKP
+    case "lims_governance":
     case "lims":
       return <MerkleLedgerPanel />;
     case "zkp":
@@ -658,6 +663,7 @@ export function renderPanel(tabId: string) {
       return <EvidenceManagementPanel />;
 
     // Pillar 7: Geo-Forensics & Spatial Intelligence
+    case "geoint":
     case "geo_isoscape":
       return <GeoForensicIntelligencePanel initialMode="ISOSCAPES" hideHeaderTabs={true} />;
     case "geo_soil":

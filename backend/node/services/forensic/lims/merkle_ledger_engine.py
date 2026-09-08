@@ -1,5 +1,5 @@
 r"""
-FORENZA Cryptographic Chain of Custody (CoC) Immutable Merkle Tree Ledger Engine — Module 26.
+FORENZA Cryptographic Chain of Custody (CoC) Immutable Merkle Tree Ledger Engine: Module 26.
 
 Implements verbatim from Pillar 6 Research §1 & §6:
   - §1.1 Mathematical Formulation of the Binary Forensic Merkle Tree (Chained SHA-256 Leaves, Balanced Reduction)

@@ -791,7 +791,9 @@ The FastAPI gateway exposes a clean `/api/v1` RESTful interface.
 | **FGG Benchmark Evaluation** | `/api/v1/forensic/fgg/evaluate-benchmark` | `POST` | Evaluates full FGG pipeline across GIAB/GSK golden benchmark vectors |
 | **FGG Sample Destruction Order** | `/api/v1/forensic/fgg/sample-destruction-order` | `POST` | Generates SHA-256 sealed sample destruction certificate under MD Title 17 |
 | **Forensic Microbiome** | `/api/v1/forensic/microbiology/thanato-pmi` | `POST` | Evaluates 16S/ITS CoDa CLR transformation, ADD thermal clock & hidSkinPlex+ touch LR |
-| **LIMS Chain of Custody** | `/api/v1/forensic/lims/merkle/build-tree` | `POST` | Constructs binary Merkle tree and generates O(log2 N) inclusion proofs |
+| **LIMS Chain of Custody (Build Tree)** | `/api/v1/forensic/lims/merkle/build-tree` | `POST` | Constructs binary Merkle tree with chained SHA-256 leaves and root commitment |
+| **LIMS Inclusion Proof (Audit Path)** | `/api/v1/forensic/lims/merkle/generate-proof` | `POST` | Generates minimal O(log2 N) sibling audit path for courtroom evidence inclusion |
+| **LIMS Proof Verification** | `/api/v1/forensic/lims/merkle/verify-proof` | `POST` | Reconstructs root from leaf hash and sibling path to evaluate authenticity |
 | **Court Testimony & ENFSI** | `/api/v1/forensic/court/evaluative-report` | `POST` | Generates ISO 17025 / ENFSI 2017 7-tier bilingual evaluative statements with Fallacy Shield |
 | **Evidence OS Architecture** | `/api/v1/forensic/os/system-architecture` | `GET` | Returns master catalog status across all 38 biocomputational subsystems |
 | **Evidence Management (Catalog)** | `/api/v1/forensic/evidence/items` | `GET` | Retrieves all registered biological and physical crime scene evidence items |
@@ -867,6 +869,9 @@ pytest backend/node/services/forensic/epigenetics/ -v     # Pillar 4: Epigenetic
 pytest backend/node/services/forensic/physical/ -v        # Pillar 5: Physical Evidence
 pytest backend/node/services/forensic/security/ -v        # Pillar 6: LIMS & ZKP
 pytest backend/node/services/forensic/geoint/ -v          # Pillar 7: Geo-Forensics
+
+# Execute frontend tactical workstation test suite (81 tests across 14 test suites)
+npm --prefix frontend test -- --run
 ```
 
 ### Golden Ground-Truth Benchmark Test Vectors

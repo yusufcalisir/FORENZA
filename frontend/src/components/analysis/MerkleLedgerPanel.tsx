@@ -772,9 +772,6 @@ export default function MerkleLedgerPanel() {
                   key={ev.event_id}
                   onClick={() => {
                     setSelectedEventIndex(idx);
-                    if (activeTab === "proof") {
-                      generateProof(idx);
-                    }
                   }}
                   className={`min-h-[56px] p-3 rounded-xl border text-left transition-all cursor-pointer ${
                     selectedEventIndex === idx

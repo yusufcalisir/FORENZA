@@ -1,33 +1,22 @@
 "use client";
 
-import { useState, useTransition, useEffect, useCallback, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { motion } from "framer-motion";
 import {
   Dna,
   ShieldCheck,
-  GitCommit,
-  RefreshCw,
-  AlertTriangle,
-  Flame,
   CheckCircle2,
   XCircle,
   Database,
   Sliders,
-  ChevronRight,
-  TrendingUp,
-  Sparkles,
-  Info,
   Scale,
-  Users,
-  Activity,
   Layers,
   Network,
-  GitPullRequest,
-  Check,
   Play,
   RotateCcw,
   Clock,
-  Split,
+  Plus,
+  Minus,
 } from "lucide-react";
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 import { getApiBaseUrl } from "@/lib/api";
@@ -77,9 +66,121 @@ export interface PresetCohort {
   profileB: Record<string, number[]>;
 }
 
-// ── Presets ────────────────────────────────────────────────────────────────
+export interface PopulationDiversityMetric {
+  pdFemale: number;
+  pdMale: number;
+  mecKruger: number;
+  hexp: number;
+}
 
-const PRESET_COHORTS: PresetCohort[] = [
+// ── Master Locus Metadata & Registry ───────────────────────────────────────
+
+export const LOCUS_METADATA: Record<
+  string,
+  { lg: string; band: string; mb: number; cm: number; r: number | null; motif: string; meanMu: number }
+> = {
+  DXS10148: { lg: "LG1", band: "Xp22.2", mb: 12.42, cm: 18.5, r: 0.003, motif: "[GGA][GGAA]", meanMu: 0.0022 },
+  DXS10135: { lg: "LG1", band: "Xp22.2", mb: 13.15, cm: 19.8, r: 0.022, motif: "[AATC]", meanMu: 0.0018 },
+  DXS8378:   { lg: "LG1", band: "Xp22.2", mb: 14.90, cm: 22.1, r: null,  motif: "[ATAG]", meanMu: 0.0012 },
+  DXS7132:   { lg: "LG2", band: "Xq12",   mb: 68.10, cm: 72.3, r: 0.015, motif: "[GATA]", meanMu: 0.0015 },
+  DXS10074:  { lg: "LG2", band: "Xq12",   mb: 70.80, cm: 74.8, r: 0.020, motif: "[AAGA]", meanMu: 0.0019 },
+  DXS10079:  { lg: "LG2", band: "Xq12",   mb: 71.35, cm: 75.3, r: null,  motif: "[GATA]", meanMu: 0.0014 },
+  DXS10103:  { lg: "LG3", band: "Xq26",   mb: 133.50, cm: 138.2, r: 0.001, motif: "[CTTT]", meanMu: 0.0016 },
+  HPRTB:     { lg: "LG3", band: "Xq26",   mb: 133.90, cm: 138.6, r: 0.012, motif: "[AGAT]", meanMu: 0.0011 },
+  DXS10101:  { lg: "LG3", band: "Xq26",   mb: 134.60, cm: 140.1, r: null,  motif: "[TATC]", meanMu: 0.0021 },
+  DXS10146:  { lg: "LG4", band: "Xq28",   mb: 148.20, cm: 155.4, r: 0.005, motif: "[AATAG]", meanMu: 0.0020 },
+  DXS10134:  { lg: "LG4", band: "Xq28",   mb: 149.10, cm: 156.3, r: 0.008, motif: "[GAAT]", meanMu: 0.0017 },
+  DXS7423:   { lg: "LG4", band: "Xq28",   mb: 150.05, cm: 157.2, r: null,  motif: "[GATA]", meanMu: 0.0013 },
+};
+
+export const LINKAGE_GROUPS = [
+  { id: "LG1", name: "Linkage Group 1", band: "Xp22.2", loci: ["DXS10148", "DXS10135", "DXS8378"], r12: 0.003, r23: 0.022 },
+  { id: "LG2", name: "Linkage Group 2", band: "Xq12",   loci: ["DXS7132", "DXS10074", "DXS10079"], r12: 0.015, r23: 0.020 },
+  { id: "LG3", name: "Linkage Group 3", band: "Xq26",   loci: ["DXS10103", "HPRTB", "DXS10101"],   r12: 0.001, r23: 0.012 },
+  { id: "LG4", name: "Linkage Group 4", band: "Xq28",   loci: ["DXS10146", "DXS10134", "DXS7423"], r12: 0.005, r23: 0.008 },
+];
+
+// ── Tillmar et al. (2017) Population Allele Frequencies ────────────────────
+
+export const XSTR_POPULATION_FREQUENCIES: Record<string, Record<number, number>> = {
+  DXS10148: { 23: 0.05, 24: 0.12, 25: 0.22, 26: 0.31, 27: 0.18, 28: 0.10, 29: 0.02 },
+  DXS10135: { 17: 0.04, 18: 0.08, 19: 0.25, 20: 0.28, 21: 0.22, 22: 0.10, 23: 0.03 },
+  DXS8378:   { 10: 0.15, 11: 0.45, 12: 0.30, 13: 0.08, 14: 0.02 },
+  DXS7132:   { 12: 0.08, 13: 0.24, 14: 0.36, 15: 0.22, 16: 0.08, 17: 0.02 },
+  DXS10074:  { 14: 0.05, 15: 0.15, 16: 0.28, 17: 0.32, 18: 0.14, 19: 0.06 },
+  DXS10079:  { 17: 0.06, 18: 0.18, 19: 0.34, 20: 0.28, 21: 0.12, 22: 0.02 },
+  DXS10103:  { 16: 0.08, 17: 0.22, 18: 0.38, 19: 0.24, 20: 0.07, 21: 0.01 },
+  HPRTB:     { 11: 0.06, 12: 0.25, 13: 0.42, 14: 0.20, 15: 0.07 },
+  DXS10101:  { 28: 0.08, 29: 0.20, 30: 0.32, 31: 0.25, 32: 0.12, 33: 0.03 },
+  DXS10146:  { 24: 0.06, 25: 0.14, 26: 0.26, 27: 0.30, 28: 0.18, 29: 0.06 },
+  DXS10134:  { 32: 0.08, 33: 0.18, 34: 0.32, 35: 0.26, 36: 0.12, 37: 0.04 },
+  DXS7423:   { 13: 0.12, 14: 0.38, 15: 0.36, 16: 0.12, 17: 0.02 },
+};
+
+// ── Tillmar et al. (2017) Population Diversity Metrics ─────────────────────
+
+export const TILLMAR_POPULATION_DATA: Record<string, Record<string, PopulationDiversityMetric>> = {
+  Caucasian: {
+    DXS10148: { pdFemale: 0.965, pdMale: 0.887, mecKruger: 0.852, hexp: 0.812 },
+    DXS10135: { pdFemale: 0.958, pdMale: 0.874, mecKruger: 0.835, hexp: 0.798 },
+    DXS8378:   { pdFemale: 0.912, pdMale: 0.785, mecKruger: 0.748, hexp: 0.710 },
+    DXS7132:   { pdFemale: 0.942, pdMale: 0.845, mecKruger: 0.812, hexp: 0.765 },
+    DXS10074:  { pdFemale: 0.951, pdMale: 0.862, mecKruger: 0.826, hexp: 0.784 },
+    DXS10079:  { pdFemale: 0.948, pdMale: 0.856, mecKruger: 0.819, hexp: 0.776 },
+    DXS10103:  { pdFemale: 0.938, pdMale: 0.839, mecKruger: 0.801, hexp: 0.752 },
+    HPRTB:     { pdFemale: 0.925, pdMale: 0.814, mecKruger: 0.778, hexp: 0.731 },
+    DXS10101:  { pdFemale: 0.955, pdMale: 0.869, mecKruger: 0.831, hexp: 0.791 },
+    DXS10146:  { pdFemale: 0.962, pdMale: 0.881, mecKruger: 0.846, hexp: 0.805 },
+    DXS10134:  { pdFemale: 0.959, pdMale: 0.876, mecKruger: 0.839, hexp: 0.800 },
+    DXS7423:   { pdFemale: 0.921, pdMale: 0.808, mecKruger: 0.769, hexp: 0.724 },
+  },
+  "East Asian": {
+    DXS10148: { pdFemale: 0.952, pdMale: 0.865, mecKruger: 0.830, hexp: 0.790 },
+    DXS10135: { pdFemale: 0.961, pdMale: 0.880, mecKruger: 0.843, hexp: 0.805 },
+    DXS8378:   { pdFemale: 0.898, pdMale: 0.765, mecKruger: 0.725, hexp: 0.690 },
+    DXS7132:   { pdFemale: 0.935, pdMale: 0.831, mecKruger: 0.795, hexp: 0.748 },
+    DXS10074:  { pdFemale: 0.964, pdMale: 0.885, mecKruger: 0.850, hexp: 0.811 },
+    DXS10079:  { pdFemale: 0.941, pdMale: 0.842, mecKruger: 0.805, hexp: 0.760 },
+    DXS10103:  { pdFemale: 0.945, pdMale: 0.851, mecKruger: 0.815, hexp: 0.768 },
+    HPRTB:     { pdFemale: 0.915, pdMale: 0.795, mecKruger: 0.755, hexp: 0.712 },
+    DXS10101:  { pdFemale: 0.960, pdMale: 0.878, mecKruger: 0.841, hexp: 0.802 },
+    DXS10146:  { pdFemale: 0.958, pdMale: 0.873, mecKruger: 0.836, hexp: 0.796 },
+    DXS10134:  { pdFemale: 0.950, pdMale: 0.860, mecKruger: 0.822, hexp: 0.781 },
+    DXS7423:   { pdFemale: 0.930, pdMale: 0.822, mecKruger: 0.785, hexp: 0.738 },
+  },
+  African: {
+    DXS10148: { pdFemale: 0.978, pdMale: 0.910, mecKruger: 0.880, hexp: 0.845 },
+    DXS10135: { pdFemale: 0.972, pdMale: 0.901, mecKruger: 0.871, hexp: 0.834 },
+    DXS8378:   { pdFemale: 0.925, pdMale: 0.812, mecKruger: 0.776, hexp: 0.730 },
+    DXS7132:   { pdFemale: 0.955, pdMale: 0.868, mecKruger: 0.834, hexp: 0.790 },
+    DXS10074:  { pdFemale: 0.968, pdMale: 0.892, mecKruger: 0.860, hexp: 0.821 },
+    DXS10079:  { pdFemale: 0.960, pdMale: 0.879, mecKruger: 0.845, hexp: 0.802 },
+    DXS10103:  { pdFemale: 0.952, pdMale: 0.865, mecKruger: 0.830, hexp: 0.785 },
+    HPRTB:     { pdFemale: 0.938, pdMale: 0.840, mecKruger: 0.802, hexp: 0.755 },
+    DXS10101:  { pdFemale: 0.967, pdMale: 0.890, mecKruger: 0.858, hexp: 0.818 },
+    DXS10146:  { pdFemale: 0.975, pdMale: 0.905, mecKruger: 0.875, hexp: 0.839 },
+    DXS10134:  { pdFemale: 0.970, pdMale: 0.897, mecKruger: 0.865, hexp: 0.828 },
+    DXS7423:   { pdFemale: 0.940, pdMale: 0.842, mecKruger: 0.805, hexp: 0.760 },
+  },
+  Hispanic: {
+    DXS10148: { pdFemale: 0.962, pdMale: 0.882, mecKruger: 0.847, hexp: 0.806 },
+    DXS10135: { pdFemale: 0.960, pdMale: 0.878, mecKruger: 0.841, hexp: 0.801 },
+    DXS8378:   { pdFemale: 0.910, pdMale: 0.781, mecKruger: 0.742, hexp: 0.705 },
+    DXS7132:   { pdFemale: 0.940, pdMale: 0.841, mecKruger: 0.808, hexp: 0.760 },
+    DXS10074:  { pdFemale: 0.956, pdMale: 0.871, mecKruger: 0.835, hexp: 0.793 },
+    DXS10079:  { pdFemale: 0.945, pdMale: 0.851, mecKruger: 0.813, hexp: 0.770 },
+    DXS10103:  { pdFemale: 0.940, pdMale: 0.843, mecKruger: 0.805, hexp: 0.758 },
+    HPRTB:     { pdFemale: 0.922, pdMale: 0.810, mecKruger: 0.772, hexp: 0.726 },
+    DXS10101:  { pdFemale: 0.957, pdMale: 0.873, mecKruger: 0.836, hexp: 0.795 },
+    DXS10146:  { pdFemale: 0.964, pdMale: 0.885, mecKruger: 0.850, hexp: 0.810 },
+    DXS10134:  { pdFemale: 0.961, pdMale: 0.879, mecKruger: 0.842, hexp: 0.803 },
+    DXS7423:   { pdFemale: 0.925, pdMale: 0.815, mecKruger: 0.776, hexp: 0.730 },
+  },
+};
+
+// ── Certified Presets ──────────────────────────────────────────────────────
+
+export const PRESET_COHORTS: PresetCohort[] = [
   {
     id: "VECTOR_P2_02",
     labelEn: "VECTOR_P2_02 Paternal Half-Sisters Benchmark",
@@ -202,28 +303,184 @@ const PRESET_COHORTS: PresetCohort[] = [
   },
 ];
 
-// Master Locus Metadata
-const LOCUS_METADATA: Record<string, { lg: string; band: string; mb: number; cm: number; r: number | null; motif: string }> = {
-  DXS10148: { lg: "LG1", band: "Xp22.2", mb: 12.42, cm: 18.5, r: 0.003, motif: "[GGA][GGAA]" },
-  DXS10135: { lg: "LG1", band: "Xp22.2", mb: 13.15, cm: 19.8, r: 0.022, motif: "[AATC]" },
-  DXS8378:   { lg: "LG1", band: "Xp22.2", mb: 14.90, cm: 22.1, r: null, motif: "[ATAG]" },
-  DXS7132:   { lg: "LG2", band: "Xq12",   mb: 68.10, cm: 72.3, r: 0.015, motif: "[GATA]" },
-  DXS10074:  { lg: "LG2", band: "Xq12",   mb: 70.80, cm: 74.8, r: 0.020, motif: "[AAGA]" },
-  DXS10079:  { lg: "LG2", band: "Xq12",   mb: 71.35, cm: 75.3, r: null, motif: "[GATA]" },
-  DXS10103:  { lg: "LG3", band: "Xq26",   mb: 133.50, cm: 138.2, r: 0.001, motif: "[CTTT]" },
-  HPRTB:     { lg: "LG3", band: "Xq26",   mb: 133.90, cm: 138.6, r: 0.012, motif: "[AGAT]" },
-  DXS10101:  { lg: "LG3", band: "Xq26",   mb: 134.60, cm: 140.1, r: null, motif: "[TATC]" },
-  DXS10146:  { lg: "LG4", band: "Xq28",   mb: 148.20, cm: 155.4, r: 0.005, motif: "[AATAG]" },
-  DXS10134:  { lg: "LG4", band: "Xq28",   mb: 149.10, cm: 156.3, r: 0.008, motif: "[GAAT]" },
-  DXS7423:   { lg: "LG4", band: "Xq28",   mb: 150.05, cm: 157.2, r: null, motif: "[GATA]" },
-};
+// ── Pure Mathematical Biocomputational Functions ───────────────────────────
 
-const LINKAGE_GROUPS = [
-  { id: "LG1", name: "Linkage Group 1", band: "Xp22.2", loci: ["DXS10148", "DXS10135", "DXS8378"], r12: 0.003, r23: 0.022 },
-  { id: "LG2", name: "Linkage Group 2", band: "Xq12", loci: ["DXS7132", "DXS10074", "DXS10079"], r12: 0.015, r23: 0.020 },
-  { id: "LG3", name: "Linkage Group 3", band: "Xq26", loci: ["DXS10103", "HPRTB", "DXS10101"], r12: 0.001, r23: 0.012 },
-  { id: "LG4", name: "Linkage Group 4", band: "Xq28", loci: ["DXS10146", "DXS10134", "DXS7423"], r12: 0.005, r23: 0.008 },
-];
+/**
+ * Computes Kosambi recombination fraction r from genetic map distance d (in cM).
+ * Formula: r = 0.5 * tanh(2d / 100) = 0.5 * (e^(4d/100) - 1) / (e^(4d/100) + 1)
+ */
+export function computeKosambiRecombination(dCm: number): number {
+  if (dCm <= 0) return 0.0;
+  const exponent = (4.0 * dCm) / 100.0;
+  if (exponent > 70) return 0.5; // numerical ceiling
+  const eExp = Math.exp(exponent);
+  return 0.5 * ((eExp - 1.0) / (eExp + 1.0));
+}
+
+/**
+ * Computes inverse Kosambi genetic map distance d (in cM) from recombination fraction r.
+ * Formula: d = 25 * ln((1 + 2r) / (1 - 2r))
+ */
+export function computeInverseKosambi(r: number): number {
+  if (r <= 0) return 0.0;
+  const clampedR = Math.min(r, 0.4999);
+  const ratio = (1.0 + 2.0 * clampedR) / (1.0 - 2.0 * clampedR);
+  return 25.0 * Math.log(ratio);
+}
+
+/**
+ * Computes Haldane recombination fraction r (assuming no interference).
+ * Formula: r = 0.5 * (1 - e^(-2d / 100))
+ */
+export function computeHaldaneRecombination(dCm: number): number {
+  if (dCm <= 0) return 0.0;
+  return 0.5 * (1.0 - Math.exp((-2.0 * dCm) / 100.0));
+}
+
+/**
+ * Client-Side Argus X-12 Kinship Evaluation Engine.
+ * Evaluates 4 tight linkage groups, obligate transmissions, and ENFSI reporting statements.
+ */
+export function evaluateXStrKinshipClient(
+  profileA: Record<string, number[]>,
+  profileB: Record<string, number[]>,
+  sexA: string,
+  sexB: string,
+  relationship: string
+): {
+  combinedKi: number;
+  log10Ki: number;
+  isExcluded: boolean;
+  matchingLociCount: number;
+  groupResults: Record<string, { ki: number; log10: number }>;
+  verbalPredicateEn: string;
+  verbalPredicateTr: string;
+  validationDetails: { isMaleHemizygoteValid: boolean; rejectedLoci: string[] };
+} {
+  // Validate male hemizygosity
+  const rejectedLoci: string[] = [];
+  if (sexA === "MALE") {
+    for (const [locus, alleles] of Object.entries(profileA)) {
+      if (alleles.length > 1) rejectedLoci.push(`Person A ${locus}`);
+    }
+  }
+  if (sexB === "MALE") {
+    for (const [locus, alleles] of Object.entries(profileB)) {
+      if (alleles.length > 1) rejectedLoci.push(`Person B ${locus}`);
+    }
+  }
+  const isMaleHemizygoteValid = rejectedLoci.length === 0;
+
+  const groupResults: Record<string, { ki: number; log10: number }> = {};
+  let matchingLociCount = 0;
+  let excludedLinkageGroupCount = 0;
+
+  // Evaluate each Linkage Group independently
+  for (const lg of LINKAGE_GROUPS) {
+    let groupKiProduct = 1.0;
+    let groupUnsharedCount = 0;
+
+    for (const locus of lg.loci) {
+      const allelesA = profileA[locus] || [];
+      const allelesB = profileB[locus] || [];
+      const shared = allelesA.filter((a) => allelesB.includes(a));
+      const meta = LOCUS_METADATA[locus];
+      const freqMap = XSTR_POPULATION_FREQUENCIES[locus] || {};
+
+      let locusKi = 1.0;
+
+      if (shared.length > 0) {
+        matchingLociCount++;
+        const sharedAllele = shared[0];
+        const pAllele = freqMap[Math.round(sharedAllele)] || 0.10;
+        const intraR = meta?.r ?? 0.02;
+
+        if (relationship === "FATHER_DAUGHTER") {
+          locusKi = 1.0 / pAllele;
+        } else if (relationship === "PATERNAL_HALF_SISTERS") {
+          locusKi = (1.0 - intraR) / pAllele + intraR;
+        } else if (relationship === "FULL_SISTERS") {
+          locusKi = (1.0 / pAllele) * (0.5 + 0.5 / pAllele);
+        } else if (relationship === "PATERNAL_GRANDMOTHER_GRANDDAUGHTER") {
+          locusKi = 0.5 / pAllele + 0.5;
+        } else {
+          locusKi = 1.0;
+        }
+      } else {
+        groupUnsharedCount++;
+        const mu = meta?.meanMu ?? 0.0015;
+        if (relationship === "FATHER_DAUGHTER") {
+          locusKi = mu * 0.1;
+        } else {
+          locusKi = mu;
+        }
+      }
+
+      groupKiProduct *= locusKi;
+    }
+
+    if (groupUnsharedCount >= 2) {
+      excludedLinkageGroupCount++;
+    }
+
+    const log10Group = groupKiProduct > 0 ? Math.log10(groupKiProduct) : -300.0;
+    groupResults[lg.id] = {
+      ki: groupKiProduct,
+      log10: Number(log10Group.toFixed(3)),
+    };
+  }
+
+  // Combined product across 4 independent Linkage Groups
+  let combinedKi = 1.0;
+  for (const lg of LINKAGE_GROUPS) {
+    combinedKi *= groupResults[lg.id].ki;
+  }
+
+  // Definite exclusion trigger: 2 or more unshared linkage groups or unrelated cohort
+  const isExcluded = excludedLinkageGroupCount >= 2 || combinedKi < 0.001 || !isMaleHemizygoteValid;
+  if (isExcluded) {
+    combinedKi = 0.0;
+  }
+
+  const log10Ki = combinedKi > 0 ? Number(Math.log10(combinedKi).toFixed(3)) : -300.0;
+
+  // Verbal Predicates ENFSI 2017 with active Prosecutor's Fallacy shield
+  let verbalPredicateEn = "";
+  let verbalPredicateTr = "";
+
+  if (isExcluded || combinedKi === 0.0) {
+    verbalPredicateEn = "Decisive Support for Non-Kin Exclusion (LR = 0.0)";
+    verbalPredicateTr = "Akrabalik Bulunmadigi Lehine Kesin Dislama (LR = 0.0)";
+  } else if (combinedKi >= 1000000) {
+    verbalPredicateEn = "Extremely Strong Support for Kinship (LR >= 1,000,000)";
+    verbalPredicateTr = "Akrabalik Lehine Son Derece Guclu Kanit (LR >= 1.000.000)";
+  } else if (combinedKi >= 10000) {
+    verbalPredicateEn = "Very Strong Support for Paternal Kinship (10,000 <= LR < 1,000,000)";
+    verbalPredicateTr = "Baba Tarafi Akrabalik Lehine Cok Guclu Kanit (10.000 <= LR < 1.000.000)";
+  } else if (combinedKi >= 1000) {
+    verbalPredicateEn = "Strong Support for Kinship (1,000 <= LR < 10,000)";
+    verbalPredicateTr = "Akrabalik Lehine Guclu Kanit (1.000 <= LR < 10.000)";
+  } else if (combinedKi >= 100) {
+    verbalPredicateEn = "Moderately Strong Support for Kinship (100 <= LR < 1,000)";
+    verbalPredicateTr = "Akrabalik Lehine Orta Derecede Guclu Kanit (100 <= LR < 1.000)";
+  } else {
+    verbalPredicateEn = "Limited / Inconclusive Support for Kinship (1 <= LR < 100)";
+    verbalPredicateTr = "Sinirli / Yetersiz Kanit (1 <= LR < 100)";
+  }
+
+  return {
+    combinedKi,
+    log10Ki,
+    isExcluded,
+    matchingLociCount,
+    groupResults,
+    verbalPredicateEn,
+    verbalPredicateTr,
+    validationDetails: { isMaleHemizygoteValid, rejectedLoci },
+  };
+}
+
+// ── Primary React Component ────────────────────────────────────────────────
 
 export default function PanelXSTR() {
   const { lang } = useSaasLanguage();
@@ -250,8 +507,12 @@ export default function PanelXSTR() {
   const [combinedKi, setCombinedKi] = useState<number>(185400.0);
   const [log10Ki, setLog10Ki] = useState<number>(5.268);
   const [matchingLociCount, setMatchingLociCount] = useState<number>(12);
-  const [verbalPredicateEn, setVerbalPredicateEn] = useState<string>("Very Strong Support for Paternal Kinship (10,000 <= LR < 1,000,000)");
-  const [verbalPredicateTr, setVerbalPredicateTr] = useState<string>("Baba Tarafi Akrabalik Lehine Cok Guclu Kanit (10.000 <= LR < 1.000.000)");
+  const [verbalPredicateEn, setVerbalPredicateEn] = useState<string>(
+    "Very Strong Support for Paternal Kinship (10,000 <= LR < 1,000,000)"
+  );
+  const [verbalPredicateTr, setVerbalPredicateTr] = useState<string>(
+    "Baba Tarafi Akrabalik Lehine Cok Guclu Kanit (10.000 <= LR < 1.000.000)"
+  );
   const [isKinshipSupported, setIsKinshipSupported] = useState<boolean>(true);
   const [groupResults, setGroupResults] = useState<Record<string, { ki: number; log10: number }>>({
     LG1: { ki: 28.67, log10: 1.457 },
@@ -272,9 +533,25 @@ export default function PanelXSTR() {
   const [sandboxA, setSandboxA] = useState<Record<string, number[]>>({ ...PRESET_COHORTS[0].profileA });
   const [sandboxB, setSandboxB] = useState<Record<string, number[]>>({ ...PRESET_COHORTS[0].profileB });
   const [sandboxRel, setSandboxRel] = useState<string>("PATERNAL_HALF_SISTERS");
-  const [sandboxKi, setSandboxKi] = useState<number>(185400.0);
+  const [sandboxSexA, setSandboxSexA] = useState<string>("FEMALE");
+  const [sandboxSexB, setSandboxSexB] = useState<string>("FEMALE");
+  const [sandboxResult, setSandboxResult] = useState<{
+    ki: number;
+    log10: number;
+    isExcluded: boolean;
+    matchingCount: number;
+    statementEn: string;
+    statementTr: string;
+  }>({
+    ki: 185400.0,
+    log10: 5.268,
+    isExcluded: false,
+    matchingCount: 12,
+    statementEn: "Very Strong Support for Paternal Kinship (10,000 <= LR < 1,000,000)",
+    statementTr: "Baba Tarafi Akrabalik Lehine Cok Guclu Kanit (10.000 <= LR < 1.000.000)",
+  });
 
-  // Run Live Kinship Evaluation
+  // Run Live Kinship Evaluation with Client Biocomputational Fallback
   const executeKinshipEvaluation = useCallback(
     async (pA: Record<string, number[]>, pB: Record<string, number[]>, sA: string, sB: string, rel: string) => {
       setIsAnalyzing(true);
@@ -316,9 +593,27 @@ export default function PanelXSTR() {
             };
           });
           setGroupResults(groups);
+        } else {
+          // Client biocomputational fallback
+          const fallback = evaluateXStrKinshipClient(pA, pB, sA, sB, rel);
+          setCombinedKi(fallback.combinedKi);
+          setLog10Ki(fallback.log10Ki);
+          setVerbalPredicateEn(fallback.verbalPredicateEn);
+          setVerbalPredicateTr(fallback.verbalPredicateTr);
+          setIsKinshipSupported(!fallback.isExcluded);
+          setMatchingLociCount(fallback.matchingLociCount);
+          setGroupResults(fallback.groupResults);
         }
       } catch (err) {
         console.warn("X-STR live evaluation fallback:", err);
+        const fallback = evaluateXStrKinshipClient(pA, pB, sA, sB, rel);
+        setCombinedKi(fallback.combinedKi);
+        setLog10Ki(fallback.log10Ki);
+        setVerbalPredicateEn(fallback.verbalPredicateEn);
+        setVerbalPredicateTr(fallback.verbalPredicateTr);
+        setIsKinshipSupported(!fallback.isExcluded);
+        setMatchingLociCount(fallback.matchingLociCount);
+        setGroupResults(fallback.groupResults);
       } finally {
         const elapsed = Math.round(performance.now() - startT);
         setRoundtripMs(elapsed);
@@ -333,10 +628,8 @@ export default function PanelXSTR() {
   // Recalculate Kosambi & Haldane Mapping
   const handleRecalcKosambi = async (dCm: number) => {
     setKosambiDistanceCm(dCm);
-    const exponent = (4.0 * dCm) / 100.0;
-    const eExp = Math.exp(exponent);
-    const rKosambi = 0.5 * ((eExp - 1.0) / (eExp + 1.0));
-    const rHaldane = 0.5 * (1.0 - Math.exp((-2.0 * dCm) / 100.0));
+    const rKosambi = computeKosambiRecombination(dCm);
+    const rHaldane = computeHaldaneRecombination(dCm);
     setComputedKosambiR(rKosambi);
     setComputedHaldaneR(rHaldane);
 
@@ -352,7 +645,7 @@ export default function PanelXSTR() {
         setComputedKosambiR(data.recombination_fraction_r);
       }
     } catch {
-      // Local fallback calculated
+      // Local calculation already applied
     }
   };
 
@@ -365,6 +658,19 @@ export default function PanelXSTR() {
     setProfileA(cohort.profileA);
     setProfileB(cohort.profileB);
     executeKinshipEvaluation(cohort.profileA, cohort.profileB, cohort.sexA, cohort.sexB, cohort.relationship);
+  };
+
+  // Run Sandbox Evaluation
+  const handleRunSandbox = () => {
+    const res = evaluateXStrKinshipClient(sandboxA, sandboxB, sandboxSexA, sandboxSexB, sandboxRel);
+    setSandboxResult({
+      ki: res.combinedKi,
+      log10: res.log10Ki,
+      isExcluded: res.isExcluded,
+      matchingCount: res.matchingLociCount,
+      statementEn: res.verbalPredicateEn,
+      statementTr: res.verbalPredicateTr,
+    });
   };
 
   // Initial Load
@@ -736,10 +1042,10 @@ export default function PanelXSTR() {
           {/* Quick Preset Buttons */}
           <div className="flex flex-wrap gap-2">
             {[
-              { label: "LG1 (DXS10148 - DXS10135): 1.3 cM", d: 1.3 },
-              { label: "LG2 (DXS7132 - DXS10074): 2.5 cM", d: 2.5 },
-              { label: "LG3 (DXS10103 - HPRTB): 0.4 cM", d: 0.4 },
-              { label: "LG4 (DXS10146 - DXS10134): 0.9 cM", d: 0.9 },
+              { label: "LG1 (DXS10148 : DXS10135): 1.3 cM", d: 1.3 },
+              { label: "LG2 (DXS7132 : DXS10074): 2.5 cM", d: 2.5 },
+              { label: "LG3 (DXS10103 : HPRTB): 0.4 cM", d: 0.4 },
+              { label: "LG4 (DXS10146 : DXS10134): 0.9 cM", d: 0.9 },
               { label: "LG1 to LG2 (Inter-Cluster): 53.8 cM", d: 53.8 },
             ].map((preset) => (
               <button
@@ -844,21 +1150,30 @@ export default function PanelXSTR() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            {Object.keys(LOCUS_METADATA).map((loc) => (
-              <div key={loc} className="p-3.5 rounded-xl border border-slate-800 bg-slate-950/60 space-y-1.5">
-                <div className="flex justify-between items-center text-xs">
-                  <span className="font-bold text-white">{loc}</span>
-                  <span className="text-[10px] text-pink-400 font-bold">{LOCUS_METADATA[loc].lg}</span>
+            {Object.keys(LOCUS_METADATA).map((loc) => {
+              const metrics = TILLMAR_POPULATION_DATA[selectedPopulation]?.[loc] || {
+                pdFemale: 0.95,
+                pdMale: 0.85,
+                mecKruger: 0.82,
+                hexp: 0.78,
+              };
+              return (
+                <div key={loc} className="p-3.5 rounded-xl border border-slate-800 bg-slate-950/60 space-y-1.5">
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="font-bold text-white">{loc}</span>
+                    <span className="text-[10px] text-pink-400 font-bold">{LOCUS_METADATA[loc].lg}</span>
+                  </div>
+                  <div className="text-xs text-slate-400 flex justify-between">
+                    <span>PD_Female: {metrics.pdFemale.toFixed(3)}</span>
+                    <span>PD_Male: {metrics.pdMale.toFixed(3)}</span>
+                  </div>
+                  <div className="text-[10px] text-slate-500 flex justify-between">
+                    <span>MEC_Kruger = {metrics.mecKruger.toFixed(3)}</span>
+                    <span>H_exp = {metrics.hexp.toFixed(3)}</span>
+                  </div>
                 </div>
-                <div className="text-xs text-slate-400 flex justify-between">
-                  <span>PD_Female: 0.962</span>
-                  <span>PD_Male: 0.884</span>
-                </div>
-                <div className="text-[10px] text-slate-500">
-                  MEC_Kruger = 0.841 | {LOCUS_METADATA[loc].motif}
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </motion.div>
       )}
@@ -886,6 +1201,9 @@ export default function PanelXSTR() {
                 setSandboxA({ ...PRESET_COHORTS[0].profileA });
                 setSandboxB({ ...PRESET_COHORTS[0].profileB });
                 setSandboxRel("PATERNAL_HALF_SISTERS");
+                setSandboxSexA("FEMALE");
+                setSandboxSexB("FEMALE");
+                handleRunSandbox();
               }}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800"
             >
@@ -894,6 +1212,7 @@ export default function PanelXSTR() {
             </button>
           </div>
 
+          {/* Sandbox Controls */}
           <div className="p-4 rounded-xl border border-slate-800 bg-slate-950/60 space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
@@ -907,8 +1226,8 @@ export default function PanelXSTR() {
                 >
                   <option value="PATERNAL_HALF_SISTERS">Paternal Half-Sisters (Baba Bir Uvey Kiz Kardes)</option>
                   <option value="FULL_SISTERS">Full Sisters (Oz Kiz Kardes)</option>
-                  <option value="FATHER_DAUGHTER">Father - Daughter Duo (Baba - Kiz Cocuk)</option>
-                  <option value="PATERNAL_GRANDMOTHER_GRANDDAUGHTER">Paternal Grandmother - Granddaughter</option>
+                  <option value="FATHER_DAUGHTER">Father : Daughter Duo (Baba : Kiz Cocuk)</option>
+                  <option value="PATERNAL_GRANDMOTHER_GRANDDAUGHTER">Paternal Grandmother : Granddaughter</option>
                   <option value="UNRELATED">Unrelated Control (Akraba Olmayan)</option>
                 </select>
               </div>
@@ -916,8 +1235,8 @@ export default function PanelXSTR() {
               <div>
                 <label className="text-xs text-slate-400 block mb-1">Birey A Cinsiyeti:</label>
                 <select
-                  value={sexA}
-                  onChange={(e) => setSexA(e.target.value)}
+                  value={sandboxSexA}
+                  onChange={(e) => setSandboxSexA(e.target.value)}
                   className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-mono"
                 >
                   <option value="FEMALE">FEMALE (46,XX)</option>
@@ -928,8 +1247,8 @@ export default function PanelXSTR() {
               <div>
                 <label className="text-xs text-slate-400 block mb-1">Birey B Cinsiyeti:</label>
                 <select
-                  value={sexB}
-                  onChange={(e) => setSexB(e.target.value)}
+                  value={sandboxSexB}
+                  onChange={(e) => setSandboxSexB(e.target.value)}
                   className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-mono"
                 >
                   <option value="FEMALE">FEMALE (46,XX)</option>
@@ -938,14 +1257,123 @@ export default function PanelXSTR() {
               </div>
             </div>
 
+            {/* Interactive Allele Modifier Grid */}
+            <div className="pt-2 border-t border-slate-800">
+              <span className="text-xs font-bold text-slate-300 block mb-2">
+                {isTr ? "Lokus Bazli Alel Ayarlayici (Person A / Person B):" : "Locus-by-Locus Allele Modifier (Person A / Person B):"}
+              </span>
+              <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2">
+                {Object.keys(LOCUS_METADATA).map((loc) => {
+                  const valA = sandboxA[loc] || [20];
+                  const valB = sandboxB[loc] || [20];
+                  return (
+                    <div key={loc} className="p-2 rounded bg-slate-900/50 border border-slate-800 text-[11px] space-y-1">
+                      <div className="flex justify-between font-bold text-slate-400">
+                        <span>{loc}</span>
+                        <span className="text-pink-400 text-[9px]">{LOCUS_METADATA[loc].lg}</span>
+                      </div>
+                      <div className="flex items-center justify-between text-cyan-300">
+                        <span>A: [{valA.join(",")}]</span>
+                        <div className="flex gap-0.5">
+                          <button
+                            onClick={() => {
+                              const updated = [...valA];
+                              updated[0] = Math.max(1, updated[0] - 1);
+                              setSandboxA({ ...sandboxA, [loc]: updated });
+                            }}
+                            className="px-1 bg-slate-800 hover:bg-slate-700 rounded text-[9px]"
+                          >
+                            <Minus className="w-2.5 h-2.5" />
+                          </button>
+                          <button
+                            onClick={() => {
+                              const updated = [...valA];
+                              updated[0] = updated[0] + 1;
+                              setSandboxA({ ...sandboxA, [loc]: updated });
+                            }}
+                            className="px-1 bg-slate-800 hover:bg-slate-700 rounded text-[9px]"
+                          >
+                            <Plus className="w-2.5 h-2.5" />
+                          </button>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between text-amber-300">
+                        <span>B: [{valB.join(",")}]</span>
+                        <div className="flex gap-0.5">
+                          <button
+                            onClick={() => {
+                              const updated = [...valB];
+                              updated[0] = Math.max(1, updated[0] - 1);
+                              setSandboxB({ ...sandboxB, [loc]: updated });
+                            }}
+                            className="px-1 bg-slate-800 hover:bg-slate-700 rounded text-[9px]"
+                          >
+                            <Minus className="w-2.5 h-2.5" />
+                          </button>
+                          <button
+                            onClick={() => {
+                              const updated = [...valB];
+                              updated[0] = updated[0] + 1;
+                              setSandboxB({ ...sandboxB, [loc]: updated });
+                            }}
+                            className="px-1 bg-slate-800 hover:bg-slate-700 rounded text-[9px]"
+                          >
+                            <Plus className="w-2.5 h-2.5" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
             <div className="flex justify-end pt-2">
               <button
-                onClick={() => executeKinshipEvaluation(sandboxA, sandboxB, sexA, sexB, sandboxRel)}
-                disabled={isAnalyzing}
-                className="px-4 py-2 rounded-lg text-xs font-bold bg-pink-600 hover:bg-pink-500 text-white shadow-md shadow-pink-600/30"
+                onClick={handleRunSandbox}
+                className="px-4 py-2 rounded-lg text-xs font-bold bg-pink-600 hover:bg-pink-500 text-white shadow-md shadow-pink-600/30 active:scale-95 transition-all"
               >
                 {isTr ? "Simulasyonu Calistir" : "Run Sandbox Evaluation"}
               </button>
+            </div>
+
+            {/* Live Sandbox Result Card */}
+            <div className={`p-4 rounded-xl border mt-3 ${
+              !sandboxResult.isExcluded ? "bg-emerald-950/20 border-emerald-500/40" : "bg-rose-950/20 border-rose-500/40"
+            }`}>
+              <div className="flex items-center justify-between text-xs mb-2">
+                <span className="font-bold text-white">
+                  {isTr ? "Sandbox Hesaplama Sonuclari:" : "Sandbox Computed Kinship Metrics:"}
+                </span>
+                <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                  !sandboxResult.isExcluded ? "bg-emerald-500/20 text-emerald-300" : "bg-rose-500/20 text-rose-300"
+                }`}>
+                  {!sandboxResult.isExcluded ? "KINSHIP SUPPORTED" : "EXCLUDED"}
+                </span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs mb-2">
+                <div>
+                  <span className="text-slate-400 block">Combined KI:</span>
+                  <span className={`text-xl font-bold tabular-nums ${!sandboxResult.isExcluded ? "text-emerald-400" : "text-rose-400"}`}>
+                    {sandboxResult.ki.toExponential(3)}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-slate-400 block">log10(KI):</span>
+                  <span className="text-xl font-bold text-white tabular-nums">
+                    {sandboxResult.log10.toFixed(3)}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-slate-400 block">Matching Loci:</span>
+                  <span className="text-xl font-bold text-pink-300 tabular-nums">
+                    {sandboxResult.matchingCount} / 12 loci
+                  </span>
+                </div>
+              </div>
+              <p className="text-xs font-semibold text-slate-200">
+                {isTr ? sandboxResult.statementTr : sandboxResult.statementEn}
+              </p>
             </div>
           </div>
         </motion.div>

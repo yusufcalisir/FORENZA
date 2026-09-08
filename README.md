@@ -334,6 +334,8 @@ str-analysis/
 │       │   │   ├── BodyFluidPanel.tsx     # Backward-Compatible Re-Export Bridge for PanelBodyFluid
 │       │   │   ├── PanelLifestyle.tsx     # Lifestyle Epigenomics & AHRR Biomarkers 5-Tab Forensic Studio
 │       │   │   ├── PanelTelomere.tsx      # Telomere Biological Chronometer & Somatic Mosaicism 5-Tab Forensic Studio
+│       │   │   ├── PanelMicrobiome.tsx    # Forensic Microbiome & Thanatometagenomics 5-Tab Forensic Studio
+│       │   │   ├── MicrobiomeAnalysisPanel.tsx # Backward-Compatible Re-Export Bridge for PanelMicrobiome
 │       │   │   └── GeoForensicIntelligencePanel.tsx # Multi-Modal Geo-Forensic Platform
 │       │   ├── common/                    # Shared Modals & Telemetry Banners
 │       │   │   ├── DnaProfileInspectorModal.tsx # DNA & SNP Terminal with Interactive CLI

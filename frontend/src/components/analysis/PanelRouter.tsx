@@ -95,7 +95,7 @@ const PanelHair = dynamic(() => import("@/components/analysis/PanelHair"), {
 const PanelFreckling = dynamic(() => import("@/components/analysis/PanelFreckling"), {
   loading: () => <ModuleSkeletonLoader label="Loading MC1R Freckling & Epistasis Model..." />,
 });
-const MicrobiomeAnalysisPanel = dynamic(() => import("@/components/analysis/MicrobiomeAnalysisPanel"), {
+const PanelMicrobiome = dynamic(() => import("@/components/analysis/PanelMicrobiome"), {
   loading: () => <ModuleSkeletonLoader label="Loading Forensic Microbiome & Metagenomics Engine..." />,
 });
 const PanelMPSSTR = dynamic(() => import("@/components/analysis/PanelMPSSTR"), {
@@ -654,7 +654,7 @@ export function renderPanel(tabId: string) {
     case "microbiome":
     case "metagenomics":
     case "thanatomicrobiome":
-      return <MicrobiomeAnalysisPanel />;
+      return <PanelMicrobiome />;
 
     // Pillar 5: Pathology & Trace Forensics
     case "pathology":

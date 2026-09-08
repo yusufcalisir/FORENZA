@@ -236,7 +236,7 @@
           "id": "telomere",
           "number": "22",
           "name": "Telomere Length Decay & PMI",
-          "badge": "TELO-PMI",
+          "badge": "TELO-CHRONO",
           "metrics": "qPCR T/S Decay • ADH Thermal Summation",
           "desc": "Measures relative telomere-to-single-copy-gene (T/S) length ratio and calculates inverse Post-Mortem Interval (PMI) under ADH.",
           "descTr": "Göreceli telomer/tek kopya gen (T/S) uzunluk oranını ölçer ve ADH termal toplamı altında ters Ölüm Sonrası Zaman Aralığını (PMI) hesaplar."

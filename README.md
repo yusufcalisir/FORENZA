@@ -332,6 +332,7 @@ str-analysis/
 │       │   │   ├── AgeEstimationPanel.tsx # Backward-Compatible Re-Export Bridge for PanelEpigeneticClocks
 │       │   │   ├── PanelBodyFluid.tsx     # Body Fluid & Tissue Origin tDMR 5-Tab Forensic Studio
 │       │   │   ├── BodyFluidPanel.tsx     # Backward-Compatible Re-Export Bridge for PanelBodyFluid
+│       │   │   ├── PanelTelomere.tsx      # Telomere Biological Chronometer & Somatic Mosaicism 5-Tab Forensic Studio
 │       │   │   └── GeoForensicIntelligencePanel.tsx # Multi-Modal Geo-Forensic Platform
 │       │   ├── common/                    # Shared Modals & Telemetry Banners
 │       │   │   ├── DnaProfileInspectorModal.tsx # DNA & SNP Terminal with Interactive CLI
@@ -590,6 +591,37 @@ Maternal lineages are normalized against rCRS (NC_012920.1) across HV1 (16024-16
 - Dinucleotide AC repeats normalized to `524.1A` / `524del` (HV3).
 - Softmax posterior probabilities over 20 PhyloTree Build 17 macro-haplogroups evaluated against EMPOP global dataset ($N=48,200$).
 
+### 9. Telomere Shortening Kinetics & Post-Mortem Epigenetic Interval (PMI) ADH Model
+
+#### A. Relative Telomere Length (T/S Ratio) Decay Chronometer
+Quantitative PCR calculates relative telomere length (T/S ratio) via comparative $\Delta\Delta C_t$ analysis normalized against single-copy reference gene (36B4 / $\beta$-globin):
+
+$$T/S = 2^{-\Delta\Delta C_t}$$
+
+The empirical log-linear decay model estimates biological age with standard parameters $\alpha_0 = 1.420$ and annual shortening velocity $\alpha_1 = 0.0085\text{ year}^{-1}$ (~40-60 bp/year):
+
+$$\widehat{\text{Age}} = \max\left(0.0, \; \frac{1.420 - T/S}{0.0085}\right)$$
+
+Age classification boundaries: `NEWBORN_INFANT` ($T/S \ge 1.35$), `YOUNG_ADULT` ($T/S \ge 1.15$), `MIDDLE_AGED` ($T/S \ge 0.90$), and `ELDERLY` ($T/S < 0.90$).
+
+#### B. Post-Mortem Epigenetic De-Methylation & Accumulated Degree-Hours (ADH)
+Post-mortem DNA de-methylation follows first-order thermal kinetics under Accumulated Degree-Hours (ADH):
+
+$$\beta(\text{ADH}) = \beta_0 \cdot \exp(-\lambda \cdot \text{ADH}) + \beta_{\text{floor}}$$
+
+$$\text{ADH} = \frac{1}{\lambda} \ln\left(\frac{\beta_0}{\max(10^{-4}, \; \beta - \beta_{\text{floor}})}\right)$$
+
+$$\text{PMI (hours)} = \frac{\text{ADH}}{\max(0.1, \; T_{\text{ambient}} - T_{\text{base}})}$$
+
+Model parameters: $\beta_0 = 0.85$, $\lambda = 0.00045\text{ ADH}^{-1}$, $\beta_{\text{floor}} = 0.05$, and $T_{\text{base}} = 0.0^\circ\text{C}$.
+
+#### C. Somatic Mosaicism & Epigenetic Clonal Drift Index (M)
+Intra-individual epigenetic divergence between two tissue profiles or biological replicates is evaluated across $N$ diagnostic loci:
+
+$$M = \sqrt{\frac{1}{N} \sum_{i=1}^N (\beta_{1,i} - \beta_{2,i})^2}$$
+
+Categorical classification: `CLONAL_HOMOGENEITY` ($M < 0.05$), `LOW_SOMATIC_DRIFT` ($0.05 \le M \le 0.15$), and `HIGH_SOMATIC_MOSAICISM` ($M > 0.15$).
+
 See [Formal Mathematical Specification](file:///c:/Users/Yusuf/str-analysis/docs/math-spec.md) for full mathematical formalizations.
 
 ---
@@ -692,6 +724,7 @@ The FastAPI gateway exposes a clean `/api/v1` RESTful interface.
 | **Body Fluid (tDMR NNLS)** | `/api/v1/forensic/epigenetics/deconvolve-mixture-nnls` | `POST` | NNLS mixture deconvolution with simplex sum-to-one invariant (Sum = 1.0) |
 | **Body Fluid (tDMR Matrix)** | `/api/v1/forensic/epigenetics/tdmr/reference-matrix` | `GET` | Retrieves 12 diagnostic tDMR loci reference parameters across 6 body fluids |
 | **Body Fluid (Golden Vectors)** | `/api/v1/forensic/epigenetics/tdmr/golden-vectors` | `GET` | Retrieves 8 certified reference standards for body fluid deconvolution |
+| **Telomere & PMI Epigenetics** | `/api/v1/forensic/epigenetics/telomere-and-pmi` | `POST` | Cawthon qPCR T/S decay chronometer, ADH post-mortem interval, and somatic mosaicism index |
 | **Touch DNA (Substrate & LTDNA)** | `/api/v1/forensic/touch/analyze-ltdna` | `POST` | Evaluates forensic substrate recovery efficiency, diploid cell count, and P(D) |
 | **Touch DNA (Dropout Model)** | `/api/v1/forensic/touch/dropout-model` | `POST` | Evaluates calibrated logistic allele dropout P(D) for template mass or RFU |
 | **Touch DNA (Drop-in & Height PDF)** | `/api/v1/forensic/touch/dropin-model` | `POST` | Computes Poisson drop-in PMF P(C=k) and truncated exponential height PDF f(h_C) |

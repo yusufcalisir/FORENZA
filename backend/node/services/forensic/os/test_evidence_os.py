@@ -6,7 +6,7 @@ def test_system_architecture_topology_retrieval():
     os_engine = ForensicEvidenceOS()
     arch = os_engine.get_system_architecture()
     assert arch["platform_name"] == "FORENZA Forensic Evidence OS"
-    assert arch["total_subsystems"] == 30
+    assert arch["total_subsystems"] == 38
     assert len(arch["layers"]) == 6
     assert arch["system_status"] == "OPERATIONAL_HEALTHY"
 

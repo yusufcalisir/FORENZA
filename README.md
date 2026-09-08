@@ -48,7 +48,7 @@
 ### Architectural Objectives
 
 - **Unified Intelligence Platform:** Replaces standalone, single-purpose legacy desktop software with a distributed microservices gateway and interactive web workstation.
-- **Multi-Omic Analytical Scope:** Integrates 38 specialized subsystems spanning CODIS 24 Autosomal STRs, Massively Parallel Sequencing (MPS/NGS) STR sequence analysis, Y-STR & mtDNA lineages, MCMC probabilistic mixture deconvolution, HIrisPlex-S phenotyping, 55-SNP AIM biogeographic ancestry, Horvath 5-CpG epigenetic age estimation, forensic microbiome/thanatometagenomics, skeletal morphometrics, entomological PMI, bloodstain pattern analysis (BPA), and multi-isotope spatial isoscapes.
+- **Multi-Omic Analytical Scope:** Integrates 38 specialized subsystems spanning CODIS 24 Autosomal STRs, Massively Parallel Sequencing (MPS/NGS) STR sequence analysis, Y-STR & mtDNA lineages, MCMC probabilistic mixture deconvolution, HIrisPlex-S phenotyping, 55-SNP AIM biogeographic ancestry, multi-generation epigenetic age clocks (Horvath 353, Hannum 71, PhenoAge 513, GrimAge 1,030, DunedinPACE, VISAGE) & multimodal PMI, tDMR 6-tissue origin deconvolution (QDA/NNLS), forensic microbiome/thanatometagenomics, skeletal morphometrics, entomological PMI, bloodstain pattern analysis (BPA), and multi-isotope spatial isoscapes.
 - **Court-Admissible Standardization:** Automated SWGDAM 2020 and ENFSI 2017 verbal scale report generation converting Likelihood Ratios into formal expert witness testimony documents.
 - **Dual-Engine Architecture (Demo vs. Live BYO-Key Mode):** Instant out-of-the-box operation with simulated biocomputational models, seamlessly upgrading to live production execution when users supply their custom API keys (Google Gemini 2.0 Flash, OpenAI GPT-4o, Groq LLaMA, NCBI E-utilities, Python FastAPI endpoints) via an interactive in-app modal or environment variables.
 - **Zero-Knowledge Privacy Preservation:** Employs Circom/Groth16 ZK-SNARK zero-knowledge proofs and Polygon blockchain anchor logging, enabling cross-border inter-agency profile matching without disclosing raw genomic profiles outside accredited laboratories.
@@ -460,8 +460,8 @@ FORENZA structures its 38 biocomputational subsystems into 7 canonical operation
 
 ### Pillar 4: Epigenetics & Environmental Aging
 
-19. **Horvath / VISAGE Multi-Tissue Epigenetic Age Clock & Multimodal PMI (`19`):** Computes chronological age from core CpG methylation fractions (*ELOVL2, FHL2, PENK, TRIM59, KLF14, EDARADD, MIR29B2CHG, PDE4C, ASPA*) using Elastic Net piecewise linear-log transformations with tissue-specific offsets.
-20. **tDMR Body Fluid Identification (`20`):** Classifies biological trace tissue origin (Blood, Semen, Saliva, Vaginal Secretions, Menstrual Blood, Skin) using tissue-specific differentially methylated regions (tDMRs) and NNLS mixture deconvolution.
+19. **Multi-Generation Epigenetic Clocks & Multimodal PMI (`19`):** Computes chronological and biological age across 1st, 2nd, and 3rd generation clocks (Horvath 353-CpG, Hannum 71-CpG, Levine PhenoAge 513-CpG, Lu GrimAge 1,030-CpG, Belsky DunedinPACE pace-of-aging velocity, and VISAGE Enhanced) with GUM ISO 17025 expanded uncertainty and joint Bayesian multimodal PMI evidence fusion (Henssge, Vitreous K+, Entomology ADD).
+20. **tDMR Body Fluid & Tissue Provenance (`20`):** Classifies biological trace cellular origins (Venous Blood, Seminal Fluid, Oral Saliva, Vaginal Secretions, Menstrual Blood, Epidermal Skin) using 12 diagnostic tissue-specific differentially methylated regions (tDMRs), Bayesian Quadratic Discriminant Analysis (QDA), and Non-Negative Least Squares (NNLS) mixture deconvolution with exact simplex sum-to-one invariant ($\sum \theta_k = 1.0$).
 21. **Lifestyle Epigenomics & AHRR Biomarkers (`21`):** Predicts cigarette smoking history (pack-years) via *AHRR* `cg05575921` hypomethylation, heavy alcohol consumption, and BMI from blood methylation.
 22. **Telomere Length Chronometer & Decay (`22`):** Estimates biological senescence via quantitative $T/S$ ratio decay and post-mortem interval (PMI) via Accumulated Degree Hours (ADH) thermal decay kinetics.
 23. **Forensic Microbiomics, Thanatometagenomics & Touch Microbial Intelligence (`23`):** Integrates 16S rRNA / ITS amplicon and shotgun metagenomic sequencing for quantitative Post-Mortem Interval (PMI) thermal summation ($\text{ADD} = \sum \max(0, T_d - T_{\text{base}}), \; T_{\text{base}}=0.0^\circ\text{C}$), Inductive Conformal Prediction intervals (95% coverage), hidSkinPlex+ touch trace individualization with Score-Based Likelihood Ratios ($\text{SLR}$, $C_{\text{llr}} = 0.0842$), 6-class body fluid niche deconvolution, and Cadaver Decomposition Island (CDI) 5-stage taphonomy.
@@ -550,6 +550,24 @@ $$P(\text{PMI} \mid \mathbf{E}) \propto P(\text{PMI}) \cdot \mathcal{N}(\text{PM
 The impact angle $\alpha$ of a blood droplet striking a surface is computed from the minor axis width $(W)$ and major axis length $(L)$:
 
 $$\alpha = \arcsin\left(\frac{W}{L}\right)$$
+
+### 6. tDMR Body Fluid Bayesian QDA & NNLS Simplex Deconvolution
+
+#### A. Bayesian Quadratic Discriminant Analysis (QDA)
+For single-source biological traces across 12 diagnostic tDMR loci ($m$) and 6 core body fluid classes ($k \in \{\text{Blood, Semen, Saliva, Vaginal, Menstrual, Skin}\}$), the Gaussian log-likelihood is evaluated under class-specific parameters $(\mu_{k,m}, \sigma_{k,m}^2)$:
+
+$$\ln \mathcal{L}(T_k \mid \boldsymbol{\beta}^*) = \sum_{m=1}^{12} \left[ -\frac{1}{2}\ln(2\pi \sigma_{k,m}^2) - \frac{(\beta_m^* - \mu_{k,m})^2}{2\sigma_{k,m}^2} \right]$$
+
+$$P(T_k \mid \boldsymbol{\beta}^*) = \frac{\exp\left(\ln \mathcal{L}(T_k \mid \boldsymbol{\beta}^*)\right)}{\sum_{j=1}^6 \exp\left(\ln \mathcal{L}(T_j \mid \boldsymbol{\beta}^*)\right)}$$
+
+The Tissue Likelihood Ratio compares the top predicted fluid against the second most probable alternative:
+
+$$LR_{\text{tissue}} = \frac{P(T_{\text{top}} \mid \boldsymbol{\beta}^*)}{P(T_{\text{second}} \mid \boldsymbol{\beta}^*)}$$
+
+#### B. Non-Negative Least Squares (NNLS) Mixture Deconvolution
+For compound biological mixtures, the engine solves the constrained quadratic program against empirical reference matrix $\mathbf{M} \in \mathbb{R}^{12 \times 6}$:
+
+$$\min_{\boldsymbol{\theta}} \frac{1}{2} \|\boldsymbol{\beta}^* - \mathbf{M} \boldsymbol{\theta}\|_2^2 \quad \text{subject to} \quad \sum_{k=1}^6 \theta_k = 1.0 \quad \text{and} \quad \theta_k \ge 0 \quad \forall k$$
 
 ### 7. Y-STR 27-Locus Lineage Statistics & SMM Kinship
 

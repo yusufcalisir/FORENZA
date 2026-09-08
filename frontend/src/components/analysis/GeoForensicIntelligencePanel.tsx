@@ -96,7 +96,7 @@ const TELEMETRY_PHASES: TelemetryPhase[] = [
 
 // ── Canonical Golden Benchmark Presets ────────────────────────────────────────
 
-const GOLDEN_VECTOR_01 = {
+export const GOLDEN_VECTOR_01 = {
     sampleId: "UNIDENTIFIED_REMAINS_CH_01",
     hairD2H: -78.4,
     hairD18O: 11.8,
@@ -111,7 +111,7 @@ const GOLDEN_VECTOR_01 = {
     regionTr: "İsviçre Ön Alpleri / Orta Alpler (Uri/Schwyz Kantonları)",
 };
 
-const GOLDEN_VECTOR_02 = {
+export const GOLDEN_VECTOR_02 = {
     questionedId: "Q_BOOT_SUSPECT_01",
     controlId: "K_CRIME_SCENE_SOIL_01",
     qQuartz: 58.4,
@@ -143,13 +143,67 @@ const GOLDEN_VECTOR_02 = {
     expectedLR: 4500,
 };
 
-const GOLDEN_VECTOR_03: CrimeSite[] = [
+export const GOLDEN_VECTOR_03: CrimeSite[] = [
     { id: "C1", label: "Incident #1 (River Trail)", labelTr: "Olay #1 (Nehir Yolu)", x: 4.0, y: 12.0, weight: 1.0 },
     { id: "C2", label: "Incident #2 (Industrial Park)", labelTr: "Olay #2 (Sanayi Parkı)", x: 6.5, y: 14.2, weight: 1.0 },
     { id: "C3", label: "Incident #3 (Underpass Ave)", labelTr: "Olay #3 (Altgeçit Cad.)", x: 8.0, y: 9.5, weight: 1.0 },
     { id: "C4", label: "Incident #4 (Suburban Mall)", labelTr: "Olay #4 (Banliyö AVM)", x: 11.2, y: 13.0, weight: 1.0 },
     { id: "C5", label: "Incident #5 (Forest Border)", labelTr: "Olay #5 (Orman Sınırı)", x: 5.8, y: 8.1, weight: 1.0 },
 ];
+
+export function computeInferredWaterD18O(enamelD18O: number): number {
+    return parseFloat((1.59 * enamelD18O - 48.634).toFixed(2));
+}
+
+export function computeInferredWaterD2H(hairD2H: number): number {
+    return parseFloat(((hairD2H + 26.0) / 0.91).toFixed(2));
+}
+
+export function computeDeuteriumExcess(waterD2H: number, waterD18O: number): number {
+    return parseFloat((waterD2H - 8.0 * waterD18O).toFixed(2));
+}
+
+export function computeZtrIndex(zircon: number, tourmaline: number, rutile: number, totalHeavy: number): number {
+    if (totalHeavy <= 0) return 0;
+    return parseFloat((((zircon + tourmaline + rutile) / totalHeavy) * 100).toFixed(1));
+}
+
+export function computeBrayCurtis(u: number[], v: number[]): number {
+    let diff = 0;
+    let sum = 0;
+    const len = Math.min(u.length, v.length);
+    for (let i = 0; i < len; i++) {
+        diff += Math.abs(u[i] - v[i]);
+        sum += u[i] + v[i];
+    }
+    return sum > 0 ? parseFloat((diff / sum).toFixed(4)) : 0;
+}
+
+export function computeCanterDiameter(sites: CrimeSite[]): number {
+    let maxD = 0;
+    for (let i = 0; i < sites.length; i++) {
+        for (let j = i + 1; j < sites.length; j++) {
+            const d = Math.sqrt(Math.pow(sites[i].x - sites[j].x, 2) + Math.pow(sites[i].y - sites[j].y, 2));
+            if (d > maxD) maxD = d;
+        }
+    }
+    return parseFloat(maxD.toFixed(2));
+}
+
+export function computeFusedGeoLR(
+    lrIso: number,
+    lrSoil: number,
+    lrPalyno: number,
+    lrRossmo: number,
+    weights: { iso: number; soil: number; palyno: number; rossmo: number }
+): number {
+    const raw =
+        Math.pow(lrIso, weights.iso) *
+        Math.pow(lrSoil, weights.soil) *
+        Math.pow(lrPalyno, weights.palyno) *
+        Math.pow(lrRossmo, weights.rossmo);
+    return Math.min(1e12, Math.max(1, raw));
+}
 
 // ── Main Component ────────────────────────────────────────────────────────────
 

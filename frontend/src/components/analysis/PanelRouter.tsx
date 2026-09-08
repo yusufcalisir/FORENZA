@@ -89,6 +89,26 @@ const GeoForensicIntelligencePanel = dynamic(() => import("@/components/analysis
   ssr: false,
   loading: () => <ModuleSkeletonLoader label="Loading Geo-Forensic Spatial Intelligence..." />,
 });
+const PanelIsoscape = dynamic(() => import("@/components/analysis/PanelIsoscape"), {
+  ssr: false,
+  loading: () => <ModuleSkeletonLoader label="Loading Multi-Isotope Isoscape Engine..." />,
+});
+const PanelSoil = dynamic(() => import("@/components/analysis/PanelSoil"), {
+  ssr: false,
+  loading: () => <ModuleSkeletonLoader label="Loading Forensic Soil Pedology & CoDa Engine..." />,
+});
+const PanelPalynology = dynamic(() => import("@/components/analysis/PanelPalynology"), {
+  ssr: false,
+  loading: () => <ModuleSkeletonLoader label="Loading Forensic Palynology & eDNA Engine..." />,
+});
+const PanelRossmo = dynamic(() => import("@/components/analysis/PanelRossmo"), {
+  ssr: false,
+  loading: () => <ModuleSkeletonLoader label="Loading Rossmo Geographic Profiling Engine..." />,
+});
+const PanelGeoFusion = dynamic(() => import("@/components/analysis/PanelGeoFusion"), {
+  ssr: false,
+  loading: () => <ModuleSkeletonLoader label="Loading Multi-Criteria Bayesian Evidence Fusion Engine..." />,
+});
 const PanelHair = dynamic(() => import("@/components/analysis/PanelHair"), {
   loading: () => <ModuleSkeletonLoader label="Loading Hair Morphology PRS Model..." />,
 });
@@ -684,16 +704,16 @@ export function renderPanel(tabId: string) {
 
     // Pillar 7: Geo-Forensics & Spatial Intelligence
     case "geoint":
-    case "geo_isoscape":
-      return <GeoForensicIntelligencePanel initialMode="ISOSCAPES" hideHeaderTabs={true} />;
-    case "geo_soil":
-      return <GeoForensicIntelligencePanel initialMode="SOIL_CODA" hideHeaderTabs={true} />;
-    case "geo_palynology":
-      return <GeoForensicIntelligencePanel initialMode="PALYNOLOGY_EDNA" hideHeaderTabs={true} />;
-    case "geo_rossmo":
-      return <GeoForensicIntelligencePanel initialMode="ROSSMO_GEO" hideHeaderTabs={true} />;
     case "geo_fusion":
-      return <GeoForensicIntelligencePanel initialMode="BAYESIAN_FUSION" hideHeaderTabs={true} />;
+      return <PanelGeoFusion />;
+    case "geo_isoscape":
+      return <PanelIsoscape />;
+    case "geo_soil":
+      return <PanelSoil />;
+    case "geo_palynology":
+      return <PanelPalynology />;
+    case "geo_rossmo":
+      return <PanelRossmo />;
 
     default:
       return <PanelSTR />;
@@ -703,3 +723,7 @@ export function renderPanel(tabId: string) {
 // Canonical aliases for Pillar 1
 export { ProbabilisticGenotypingPanel as PanelMCMC };
 export { PanelNRC };
+
+// Canonical aliases for Pillar 7
+export { PanelIsoscape, PanelSoil, PanelPalynology, PanelRossmo, PanelGeoFusion };
+

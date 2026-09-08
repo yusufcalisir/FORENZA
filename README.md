@@ -336,7 +336,12 @@ str-analysis/
 │       │   │   ├── PanelTelomere.tsx      # Telomere Biological Chronometer & Somatic Mosaicism 5-Tab Forensic Studio
 │       │   │   ├── PanelMicrobiome.tsx    # Forensic Microbiome & Thanatometagenomics 5-Tab Forensic Studio
 │       │   │   ├── MicrobiomeAnalysisPanel.tsx # Backward-Compatible Re-Export Bridge for PanelMicrobiome
-│       │   │   └── GeoForensicIntelligencePanel.tsx # Multi-Modal Geo-Forensic Platform
+│       │   │   ├── GeoForensicIntelligencePanel.tsx # Multi-Modal Geo-Forensic Platform (Subsystems 34-38)
+│       │   │   ├── PanelIsoscape.tsx      # Multi-Isotope Isoscape Spatial Provenance Panel
+│       │   │   ├── PanelSoil.tsx          # Forensic Soil Pedology & Geochemical CoDa Panel
+│       │   │   ├── PanelPalynology.tsx    # Forensic Palynology & Environmental eDNA Panel
+│       │   │   ├── PanelRossmo.tsx        # Rossmo Bayesian Geographic Profiling Panel
+│       │   │   └── PanelGeoFusion.tsx     # Multi-Criteria Bayesian GIS Evidence Fusion Panel
 │       │   ├── common/                    # Shared Modals & Telemetry Banners
 │       │   │   ├── DnaProfileInspectorModal.tsx # DNA & SNP Terminal with Interactive CLI
 │       │   │   └── ActiveProfileBanner.tsx # Active Profile HUD & Live Leaflet GIS Map

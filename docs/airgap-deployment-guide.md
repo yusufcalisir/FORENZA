@@ -141,7 +141,7 @@ The script will automatically:
 +─────────────────────────────────────────+   +───────────────────────────────────────────+
 | CONTAINER 2: forenza-airgap-frontend    |   | CONTAINER 3: forenza-airgap-backend       |
 | • Next.js 16 Standalone Workstation UI  |   | • FastAPI Microservices Engine            |
-| • 35 Subsystem Analysis Dashboards      |   | • 35 Biocomputational Modules (Pillars 1-7|
+| • 38 Subsystem Analysis Dashboards      |   | • 38 Biocomputational Modules (Pillars 1-7|
 | • Offline Asset Cache (Tailwind/React)  |   | • Embedded Reference Datasets (NIST 1036) |
 +─────────────────────────────────────────+   +─────────────────────┬─────────────────────+
                                                                     |

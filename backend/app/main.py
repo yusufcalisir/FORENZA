@@ -1,5 +1,5 @@
 """
-FORENZA — Core API Entry Point.
+FORENZA : Core API Entry Point.
 
 Forensic Biology & DNA Intelligence Operating System.
 This module initializes the FastAPI application and registers the
@@ -7,7 +7,7 @@ primary operational endpoints for health monitoring and profile ingestion.
 
 Ingestion Pipeline:
     1. Pydantic validation (schema boundary)
-    2. ForensicValidator — rule-based + DSPy ChainOfThought assessment
+    2. ForensicValidator : rule-based + DSPy ChainOfThought assessment
     3. If validity_score >= 0.85 → ACCEPTED → vectorize + store
     4. If validity_score < 0.85  → QUARANTINED → flagged for review
 """
@@ -37,7 +37,7 @@ from app.schemas.genomic import GenomicProfileIngest, GenomicProfileOut, Phenoty
 try:
     from app.infrastructure.blockchain.web3_service import get_service, ForenzaWeb3Service
 except ImportError:
-    # web3 not installed — blockchain audit disabled
+    # web3 not installed : blockchain audit disabled
     def get_service(): return None
     ForenzaWeb3Service = None
 from app.middleware.forenza_auth import ForenzaAuthMiddleware, VantageAuthMiddleware
@@ -787,45 +787,45 @@ def _get_phenotype_analyst():
 # ═══════════════════════════════════════════════════════════════════════════════
 
 _SNP_STORE: Dict[str, Dict[str, str]] = {
-    # Pre-populated test profile: European phenotype — Blue eyes, Blond hair, Light skin
+    # Pre-populated test profile: European phenotype : Blue eyes, Blond hair, Light skin
     "test-profile-eu": {
-        "rs12913832": "GG",   # HERC2 — strong blue eye predictor
-        "rs16891982": "GG",   # SLC45A2 — light pigmentation
+        "rs12913832": "GG",   # HERC2 : strong blue eye predictor
+        "rs16891982": "GG",   # SLC45A2 : light pigmentation
         "rs1800407":  "GG",   # OCA2
-        "rs12896399": "GT",   # SLC24A4 — blond association
+        "rs12896399": "GT",   # SLC24A4 : blond association
         "rs12203592": "CC",   # IRF4
         "rs1393350":  "GA",   # TYR
-        "rs1805007":  "CC",   # MC1R — no red variant
-        "rs1805008":  "CC",   # MC1R — no red variant
-        "rs1805009":  "GG",   # MC1R — no red variant
-        "rs11547464": "GG",   # MC1R — no red variant
-        "rs1805006":  "CC",   # MC1R — no red variant
-        "rs1426654":  "AA",   # SLC24A5 — light skin (European)
-        "rs1042602":  "CA",   # TYR — heterozygous
+        "rs1805007":  "CC",   # MC1R : no red variant
+        "rs1805008":  "CC",   # MC1R : no red variant
+        "rs1805009":  "GG",   # MC1R : no red variant
+        "rs11547464": "GG",   # MC1R : no red variant
+        "rs1805006":  "CC",   # MC1R : no red variant
+        "rs1426654":  "AA",   # SLC24A5 : light skin (European)
+        "rs1042602":  "CA",   # TYR : heterozygous
         "rs6119471":  "GG",   # ASIP
     },
-    # Test profile: African phenotype — Brown eyes, Black hair, Dark skin
+    # Test profile: African phenotype : Brown eyes, Black hair, Dark skin
     "test-profile-af": {
-        "rs12913832": "AA",   # HERC2 — brown eye predictor
-        "rs16891982": "CC",   # SLC45A2 — dark pigmentation
+        "rs12913832": "AA",   # HERC2 : brown eye predictor
+        "rs16891982": "CC",   # SLC45A2 : dark pigmentation
         "rs1800407":  "GG",   # OCA2
         "rs12896399": "GG",   # SLC24A4
-        "rs1805007":  "CC",   # MC1R — no red variant
-        "rs1805008":  "CC",   # MC1R — no red variant
-        "rs1426654":  "GG",   # SLC24A5 — dark skin (African)
-        "rs1042602":  "CC",   # TYR — no light variant
+        "rs1805007":  "CC",   # MC1R : no red variant
+        "rs1805008":  "CC",   # MC1R : no red variant
+        "rs1426654":  "GG",   # SLC24A5 : dark skin (African)
+        "rs1042602":  "CC",   # TYR : no light variant
         "rs6119471":  "GG",   # ASIP
     },
 }
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# STR PROFILE STORE (Phase 3.5) — For LR Computation
+# STR PROFILE STORE (Phase 3.5) : For LR Computation
 # In production, these come from the ingest pipeline + Milvus.
 # ═══════════════════════════════════════════════════════════════════════════════
 
 _STR_STORE: Dict[str, Dict[str, tuple]] = {
-    # Test profile — European individual with realistic CODIS-20 genotypes
+    # Test profile : European individual with realistic CODIS-20 genotypes
     "test-profile-eu": {
         "CSF1PO": (10, 12), "D1S1656": (15, 17.3), "D2S441": (11, 14),
         "D2S1338": (17, 23), "D3S1358": (15, 16), "D5S818": (11, 12),
@@ -836,7 +836,7 @@ _STR_STORE: Dict[str, Dict[str, tuple]] = {
         "TH01": (6, 9.3), "TPOX": (8, 11), "VWA": (16, 17),
         "PENTA_D": (9, 13), "PENTA_E": (12, 17), "AMEL": (0, 1),
     },
-    # Test profile — African individual
+    # Test profile : African individual
     "test-profile-af": {
         "CSF1PO": (10, 13), "D1S1656": (16, 18.3), "D2S441": (11, 11),
         "D2S1338": (19, 20), "D3S1358": (15, 18), "D5S818": (12, 13),
@@ -915,7 +915,7 @@ def system_stats():
 @app.get("/")
 @app.head("/", include_in_schema=False)
 def root() -> dict:
-    """Root endpoint — confirms the API process is alive."""
+    """Root endpoint : confirms the API process is alive."""
     return {
         "service": "FORENZA Forensic Evidence OS Backend",
         "status": "tactical_online",
@@ -952,7 +952,7 @@ def request_access(req: AuthRequest):
     if not service or not service.is_connected():
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Blockchain service unavailable — cannot provision session."
+            detail="Blockchain service unavailable : cannot provision session."
         )
 
     # 1. Check if profile exists/is authorized
@@ -1055,7 +1055,7 @@ def ingest_profile(profile: GenomicProfileIngest) -> IngestResponse:
                 raise HTTPException(
                     status_code=status.HTTP_403_FORBIDDEN,
                     detail={
-                        "error": "Profile rejected — suspected data poisoning",
+                        "error": "Profile rejected : suspected data poisoning",
                         "validity_score": result.validity_score,
                         "anomaly_report": result.anomaly_report,
                         "is_poisoned": result.is_poisoned,
@@ -1499,11 +1499,11 @@ class AnalysisResponse(BaseModel):
     certainty_report: str
     thought_chain: list
     total_analysis_time_ms: float
-    # Phase 3.6 — Kinship
+    # Phase 3.6 : Kinship
     kinship_result: Optional[dict] = None
     familial_hit_detected: bool = False
     kinship_matches: List[KinshipMatch] = []
-    # Phase 3.7 — Bayesian Inference
+    # Phase 3.7 : Bayesian Inference
     bayesian_posterior: float = 0.0
     prior_hp: float = 0.5
     bayesian_ci_lower: float = 0.0
@@ -1513,10 +1513,10 @@ class AnalysisResponse(BaseModel):
     stutter_warnings: list = []
     iso17025_verbal: str = "INCONCLUSIVE"
     sensitivity_map: list = []
-    # Phase 4 — Geo-Forensic Intelligence
+    # Phase 4 : Geo-Forensic Intelligence
     geo_analysis_results: Optional[list] = None
     geo_reliability_score: float = 0.0
-    # Phase 4.5 — Synchronized Phenotype Report
+    # Phase 4.5 : Synchronized Phenotype Report
     phenotype_report: Optional[Dict[str, Any]] = None
     coherence_score: float = 0.0
     tx_hash: Optional[str] = None
@@ -1549,18 +1549,18 @@ async def analyze_profile(req: AnalysisRequest, request: Request) -> AnalysisRes
     profile_id = req.profile_id
     population = req.population
 
-    # — Stage 1: Retrieve STR markers —
+    # : Stage 1: Retrieve STR markers :
     str_markers = _STR_STORE.get(profile_id)
 
     if str_markers is None or len(str_markers) == 0:
         # Fallback to test-profile-eu rather than raising 422
         str_markers = _STR_STORE.get("test-profile-eu", {})
 
-    # — Stage 2: Compute LR —
+    # : Stage 2: Compute LR :
     from app.core.forensics.lr_calculator import compute_combined_lr
     lr_result = compute_combined_lr(str_markers, population)
 
-    # — Stage 2.5: Geo-Forensic Ancestry Analysis —
+    # : Stage 2.5: Geo-Forensic Ancestry Analysis :
     try:
         from app.services.geo_analyzer import (
             calculate_ancestry_probabilities,
@@ -1585,7 +1585,7 @@ async def analyze_profile(req: AnalysisRequest, request: Request) -> AnalysisRes
         geo_results = None
         geo_reliability = 0.0
 
-    # — Stage 3: Atomic Blockchain Audit —
+    # : Stage 3: Atomic Blockchain Audit :
     # We log BEFORE returning results (or AFTER computation but BEFORE response)
     # The requirement is "ONLY returned... if... successfully sent and mined"
     
@@ -1616,7 +1616,7 @@ async def analyze_profile(req: AnalysisRequest, request: Request) -> AnalysisRes
         # Fallback logic?
         pass
 
-    # — Stage 3: Run ForensicAnalyst with LR data —
+    # : Stage 3: Run ForensicAnalyst with LR data :
     import time as _time
     t_start = _time.perf_counter()
 
@@ -1670,7 +1670,7 @@ async def analyze_profile(req: AnalysisRequest, request: Request) -> AnalysisRes
 
     total_ms = (_time.perf_counter() - t_start) * 1000
 
-    # — Stage 4: Synchronized Phenotype Analysis —
+    # : Stage 4: Synchronized Phenotype Analysis :
     phenotype_report = None
     coherence_score = 0.0
     try:
@@ -1721,7 +1721,7 @@ async def analyze_profile(req: AnalysisRequest, request: Request) -> AnalysisRes
         total_analysis_time_ms=round(total_ms, 2),
         kinship_result=investigation.kinship_result,
         familial_hit_detected=investigation.familial_hit_detected,
-        # Phase 3.7 — Bayesian Inference
+        # Phase 3.7 : Bayesian Inference
         bayesian_posterior=lr_result.posterior_hp,
         prior_hp=lr_result.prior_hp,
         bayesian_ci_lower=lr_result.bayesian_ci_lower,
@@ -1731,14 +1731,14 @@ async def analyze_profile(req: AnalysisRequest, request: Request) -> AnalysisRes
         stutter_warnings=lr_result.stutter_warnings,
         iso17025_verbal=lr_result.iso17025_verbal,
         sensitivity_map=lr_result.sensitivity_map,
-        # Phase 4 — Geo-Forensic Intelligence
+        # Phase 4 : Geo-Forensic Intelligence
         geo_analysis_results=geo_results,
         geo_reliability_score=geo_reliability,
-        # Phase 4.5 — Sync Phenotype
+        # Phase 4.5 : Sync Phenotype
         phenotype_report=phenotype_report,
         coherence_score=coherence_score,
         tx_hash=tx_hash if 'tx_hash' in locals() else None,
-        # Phase 4.1 — Kinship Hotspots (Simulated for visualization)
+        # Phase 4.1 : Kinship Hotspots (Simulated for visualization)
         kinship_matches=[
             KinshipMatch(lat=48.8566, lng=2.3522, kinship_score=0.48, relationship_type="SIBLING", tx_hash="0x123...abc"),
             KinshipMatch(lat=51.5074, lng=-0.1278, kinship_score=0.22, relationship_type="HALF_SIBLING", tx_hash="0x456...def"),

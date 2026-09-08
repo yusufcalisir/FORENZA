@@ -46,7 +46,7 @@ For casework analysts working on air-gapped forensic laptops or workstations wit
                     +-------------------------------------+   +-------------------------------------+
                     |       STANDALONE DESKTOP UI         |   |    FASTAPI BIOCOMPUTATIONAL SIDECAR |
                     |      Chromium / Native Webview      |   |   uvicorn app.main:app (Port 8000)  |
-                    |    (Hardware Accelerated WebGL)     |   |   (35 Subsystems & PopGen Data)     |
+                    |    (Hardware Accelerated WebGL)     |   |   (38 Subsystems & PopGen Data)     |
                     +-------------------------------------+   +-------------------------------------+
                                         |                                 ^
                                         +─────────── Localhost ───────────+

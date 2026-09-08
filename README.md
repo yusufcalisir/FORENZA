@@ -299,7 +299,7 @@ str-analysis/
 │           │   ├── hirisplex_model.py     # HIrisPlex-S 41-SNP MLR Models & Intermediate Thresholds
 │           │   ├── governance_engine.py   # German § 81e StPO Ancestry Gate & ISFG Fallacy Shields
 │           │   └── golden_vectors.py      # 5 Certified Golden Standards (NA12878, NA19240, NA18507, HG002, Tri-Racial)
-│           └── tests/                     # Automated Test Suite (1200+ Tests Passing)
+│           └── tests/                     # Automated Test Suite (3,567 Automated Tests Passing)
 │
 ├── frontend/                              # Next.js 16 Workstation Dashboard
 │   ├── public/                            # Static Assets, Icons, Favicons
@@ -612,10 +612,18 @@ The FastAPI gateway exposes a clean `/api/v1` RESTful interface.
 | **Kinship** | `/api/v1/forensic/kinship` | `POST` | Computes parent-child, sibling, and extended kinship LRs |
 | **Population Genetics (RMP)** | `/api/v1/forensic/population/profile-rmp` | `POST` | Computes 24-locus NIST 1036 Combined Random Match Probability (RMP) & Single-Source LR with Balding-Nichols $\theta$ coancestry |
 | **Kinship (STR-24 Duo/Pedigree)** | `/api/v1/forensic/population/kinship-duo` | `POST` | Evaluates 24-locus Parent-Child / Sibling kinship LRs with IBD decomposition & Stepwise Mutation Model (SMM) rescue |
+| **Population Genetics (NRC-II Profile LR)** | `/api/v1/forensic/population/nrc/profile-lr` | `POST` | Computes 24-locus genotype probabilities under NRC-II Recommendation 4.10b |
+| **Population Genetics (Demographic Report)** | `/api/v1/forensic/population/nrc/demographic-report` | `POST` | Generates 4-population stratified Likelihood Ratios with Dirichlet smoothing |
+| **Population Genetics (Weir-Cockerham ANOVA)** | `/api/v1/forensic/population/nrc/weir-cockerham` | `POST` | Calculates dynamic multi-locus Fst variance decomposition across populations |
+| **Population Genetics (Simplex Validation)** | `/api/v1/forensic/population/nrc/simplex-validate` | `POST` | Validates diploid genotype probability simplex normalization invariant ($\sum P = 1.0$) |
 | **Mixture (MCMC Deconvolution)** | `/api/v1/forensic/mixture` | `POST` | Runs 2-to-3 person continuous MCMC mixture deconvolution (EuroForMix Gamma / STRmix Log-Normal) with Gelman-Rubin convergence and per-locus calls |
 | **Mixture (Health Check)** | `/api/v1/forensic/mixture/health` | `GET` | Validates MCMC sampler initialization and locus stutter database |
 | **Mixture (Likelihood Models)** | `/api/v1/forensic/mixture/models` | `GET` | Lists available continuous biophysical peak models and parameters |
 | **MPS/NGS STR Sequence Lab** | `/api/v1/forensic/mps-str/analyze-se33` | `POST` | Analyzes sequence-level isoalleles, flanking indels, and SE33 hyperpolymorphic motifs |
+| **MPS/NGS STR Biostatistics** | `/api/v1/forensic/mps-str/biostatistics` | `POST` | Computes 25-locus allele diversity and biostatistics across 4 global populations |
+| **MPS/NGS Syntenic Linkage Guard** | `/api/v1/forensic/mps-str/syntenic-linkage` | `POST` | Audits syntenic linkage between D6S1043 and SE33 using Kosambi map function ($\theta=0.0440$) |
+| **MPS/NGS Sequence Grammar Parser** | `/api/v1/forensic/mps-str/parse-sequence` | `POST` | Parses and tokenizes ISFG Level 3 repeat structures with reverse CE length conversion |
+| **MPS/NGS Mixture Deconvolution** | `/api/v1/forensic/mps-str/deconvolve-mixture` | `POST` | Resolves multi-contributor mixtures using base-level sequence isoallele expansion |
 | **ML STR Artifact Classifier** | `/api/v1/forensic/ml-str/classify-peak` | `POST` | Evaluates 24-D peak morphology and classifies true alleles vs CE/MPS artifacts |
 | **Phenotype** | `/api/v1/forensic/phenotype` | `POST` | Computes HIrisPlex-S eye, skin, and hair probabilities |
 | **Ancestry (55-AIM)** | `/api/v1/forensic/ancestry/55-aim/predict` | `POST` | Evaluates 55-SNP AIM biogeographic ancestry clusters and continental centroids |

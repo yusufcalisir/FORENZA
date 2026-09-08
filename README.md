@@ -578,18 +578,18 @@ $$\alpha = \arcsin\left(\frac{W}{L}\right)$$
 #### A. Bayesian Quadratic Discriminant Analysis (QDA)
 For single-source biological traces across 12 diagnostic tDMR loci ($m$) and 6 core body fluid classes ($k \in \{\text{Blood, Semen, Saliva, Vaginal, Menstrual, Skin}\}$), the Gaussian log-likelihood is evaluated under class-specific parameters $(\mu_{k,m}, \sigma_{k,m}^2)$:
 
-$$\ln \mathcal{L}(T_k \mid \boldsymbol{\beta}^*) = \sum_{m=1}^{12} \left[ -\frac{1}{2}\ln(2\pi \sigma_{k,m}^2) - \frac{(\beta_m^* - \mu_{k,m})^2}{2\sigma_{k,m}^2} \right]$$
+$$\ln \mathcal{L}(T_k \mid \boldsymbol{\beta}^{\ast}) = \sum_{m=1}^{12} \left[ -\frac{1}{2}\ln(2\pi \sigma_{k,m}^2) - \frac{(\beta_m^{\ast} - \mu_{k,m})^2}{2\sigma_{k,m}^2} \right]$$
 
-$$P(T_k \mid \boldsymbol{\beta}^*) = \frac{\exp\left(\ln \mathcal{L}(T_k \mid \boldsymbol{\beta}^*)\right)}{\sum_{j=1}^6 \exp\left(\ln \mathcal{L}(T_j \mid \boldsymbol{\beta}^*)\right)}$$
+$$P(T_k \mid \boldsymbol{\beta}^{\ast}) = \frac{\exp\left(\ln \mathcal{L}(T_k \mid \boldsymbol{\beta}^{\ast})\right)}{\sum_{j=1}^6 \exp\left(\ln \mathcal{L}(T_j \mid \boldsymbol{\beta}^{\ast})\right)}$$
 
 The Tissue Likelihood Ratio compares the top predicted fluid against the second most probable alternative:
 
-$$LR_{\text{tissue}} = \frac{P(T_{\text{top}} \mid \boldsymbol{\beta}^*)}{P(T_{\text{second}} \mid \boldsymbol{\beta}^*)}$$
+$$LR_{\text{tissue}} = \frac{P(T_{\text{top}} \mid \boldsymbol{\beta}^{\ast})}{P(T_{\text{second}} \mid \boldsymbol{\beta}^{\ast})}$$
 
 #### B. Non-Negative Least Squares (NNLS) Mixture Deconvolution
 For compound biological mixtures, the engine solves the constrained quadratic program against empirical reference matrix $\mathbf{M} \in \mathbb{R}^{12 \times 6}$:
 
-$$\min_{\boldsymbol{\theta}} \frac{1}{2} \|\boldsymbol{\beta}^* - \mathbf{M} \boldsymbol{\theta}\|_2^2 \quad \text{subject to} \quad \sum_{k=1}^6 \theta_k = 1.0 \quad \text{and} \quad \theta_k \ge 0 \quad \forall k$$
+$$\min_{\boldsymbol{\theta}} \frac{1}{2} \|\boldsymbol{\beta}^{\ast} - \mathbf{M} \boldsymbol{\theta}\|_2^2 \quad \text{subject to} \quad \sum_{k=1}^6 \theta_k = 1.0 \quad \text{and} \quad \theta_k \ge 0 \quad \forall k$$
 
 ### 7. Y-STR 27-Locus Lineage Statistics & SMM Kinship
 

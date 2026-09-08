@@ -1675,13 +1675,13 @@ The Body Fluid Identification Engine classifies cellular origins of forensic bio
 
 ### 51.2 Bayesian QDA Log-Likelihood & Posterior Probabilities
 
-For observed sample profile $\boldsymbol{\beta}^* = (\beta_1, \dots, \beta_M)^T$, the Gaussian log-likelihood for tissue class $T_k$ is:
+For observed sample profile $\boldsymbol{\beta}^{\ast} = (\beta_1, \dots, \beta_M)^T$, the Gaussian log-likelihood for tissue class $T_k$ is:
 
-$$\text{LL}_k(\boldsymbol{\beta}^*) = \sum_{m=1}^{12} \left[ -\frac{1}{2} \ln(2\pi \sigma_{k,m}^2) - \frac{(\beta_m^* - \mu_{k,m})^2}{2\sigma_{k,m}^2} \right]$$
+$$\text{LL}_k(\boldsymbol{\beta}^{\ast}) = \sum_{m=1}^{12} \left[ -\frac{1}{2} \ln(2\pi \sigma_{k,m}^2) - \frac{(\beta_m^{\ast} - \mu_{k,m})^2}{2\sigma_{k,m}^2} \right]$$
 
-$$P(T_k \mid \boldsymbol{\beta}^*) = \frac{\exp\left(\text{LL}_k(\boldsymbol{\beta}^*) - \max_j \text{LL}_j(\boldsymbol{\beta}^*)\right)}{\sum_{l=1}^{6} \exp\left(\text{LL}_l(\boldsymbol{\beta}^*) - \max_j \text{LL}_j(\boldsymbol{\beta}^*)\right)}$$
+$$P(T_k \mid \boldsymbol{\beta}^{\ast}) = \frac{\exp\left(\text{LL}_k(\boldsymbol{\beta}^{\ast}) - \max_j \text{LL}_j(\boldsymbol{\beta}^{\ast})\right)}{\sum_{l=1}^{6} \exp\left(\text{LL}_l(\boldsymbol{\beta}^{\ast}) - \max_j \text{LL}_j(\boldsymbol{\beta}^{\ast})\right)}$$
 
-$$\text{LR}_{\text{tissue}} = \frac{P(T_{\text{top}} \mid \boldsymbol{\beta}^*)}{P(T_{\text{second}} \mid \boldsymbol{\beta}^*)}, \quad \log_{10} \text{LR} = \log_{10}(P_{\text{top}}) - \log_{10}(\max(10^{-6}, P_{\text{second}}))$$
+$$\text{LR}_{\text{tissue}} = \frac{P(T_{\text{top}} \mid \boldsymbol{\beta}^{\ast})}{P(T_{\text{second}} \mid \boldsymbol{\beta}^{\ast})}, \quad \log_{10} \text{LR} = \log_{10}(P_{\text{top}}) - \log_{10}(\max(10^{-6}, P_{\text{second}}))$$
 
 ---
 

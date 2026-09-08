@@ -531,7 +531,7 @@ def run_comprehensive_terminal_analysis(req: TerminalComprehensiveRequest) -> Te
     )
 
 
-@router.post("/recalculate", response_model=TerminalComprehensiveResponse, summary="Recalculate 35 Biocomputational Modules")
+@router.post("/recalculate", response_model=TerminalComprehensiveResponse, summary="Recalculate 38 Biocomputational Modules")
 def recalculate_terminal_profile(req: TerminalComprehensiveRequest) -> TerminalComprehensiveResponse:
     """
     Executes full multi-omic recalculation across PopGen, BGA, HIrisPlex-S, Sex, QC, and EPG.

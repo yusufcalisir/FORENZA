@@ -6,14 +6,14 @@ ENFSI Guidelines for Evaluative Reporting in Forensic Science (2017).
 Research Source: research/pillar_2_lineage_kinship_research.md §4.
 
 Exposes endpoints for Mass Disaster Matching & Interpol Reconciliation:
-  POST /forensic/dvi/joint-lr            — Multi-omic joint LR computation & tier classification
-  POST /forensic/dvi/reconcile-matrix    — N x M AM vs PM cross-reconciliation matrix & Hungarian assignment
-  GET  /forensic/dvi/decision-tiers      — Interpol DVI 4-tier standards & judicial action criteria
-  GET  /forensic/dvi/pedigree-templates  — 4 Standard Interpol Pedigree Templates
-  GET  /forensic/dvi/casework-cohorts    — Certified Casework Benchmark Cohorts
-  GET  /forensic/dvi/reporting-disclaimer— Interpol & ENFSI Evaluative Reporting Disclaimer
-  POST /forensic/dvi/missing-person/search — Search missing persons database
-  POST /forensic/dvi/reconcile           — Standard AM/PM profile batch reconciliation
+  POST /forensic/dvi/joint-lr            : Multi-omic joint LR computation & tier classification
+  POST /forensic/dvi/reconcile-matrix    : N x M AM vs PM cross-reconciliation matrix & Hungarian assignment
+  GET  /forensic/dvi/decision-tiers      : Interpol DVI 4-tier standards & judicial action criteria
+  GET  /forensic/dvi/pedigree-templates  : 4 Standard Interpol Pedigree Templates
+  GET  /forensic/dvi/casework-cohorts    : Certified Casework Benchmark Cohorts
+  GET  /forensic/dvi/reporting-disclaimer: Interpol & ENFSI Evaluative Reporting Disclaimer
+  POST /forensic/dvi/missing-person/search : Search missing persons database
+  POST /forensic/dvi/reconcile           : Standard AM/PM profile batch reconciliation
 """
 
 import math

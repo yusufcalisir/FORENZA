@@ -1829,7 +1829,7 @@ def kinship_analysis(req: KinshipRequest):
     )
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# TERMINAL RECALCULATION & DAG EXECUTION ALIASES (35 MODULES)
+# TERMINAL RECALCULATION & DAG EXECUTION ALIASES (38 MODULES)
 # ═══════════════════════════════════════════════════════════════════════════════
 
 try:

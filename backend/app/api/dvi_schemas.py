@@ -1,5 +1,5 @@
 """
-FORENZA Interpol DVI (Disaster Victim Identification) API — Pydantic v2 Schemas (Module 2.4).
+FORENZA Interpol DVI (Disaster Victim Identification) API: Pydantic v2 Schemas (Module 2.4).
 Standards Compliance: ISO/IEC 17025:2017, Interpol DVI Guide Section 4 (2018, 2023),
 ENFSI Guidelines for Evaluative Reporting in Forensic Science (2017).
 

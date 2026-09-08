@@ -1,5 +1,5 @@
 """
-FORENZA X-STR Linkage & Female Kinship API — Pydantic v2 Schemas (Module 2.2).
+FORENZA X-STR Linkage & Female Kinship API : Pydantic v2 Schemas (Module 2.2).
 Standards Compliance: ISO/IEC 17025:2017, ISFG Recommendations on X-STR Testing (2012),
 ENFSI Evaluative Reporting (2017).
 

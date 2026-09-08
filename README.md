@@ -321,6 +321,7 @@ str-analysis/
 │       │   ├── analysis/                  # 38 Tactical Forensic Viewport Panels & Router
 │       │   │   ├── PanelRouter.tsx        # Centralized Biocomputational Panel Router
 │       │   │   ├── PanelYSTR.tsx          # Y-STR 27-Locus Multi-Panel Tactical Visualizer
+│       │   │   ├── PanelXSTR.tsx          # X-STR 12-Locus Argus X-12 5-Tab Forensic Studio
 │       │   │   ├── PanelFreckling.tsx     # MC1R Epistasis & UV Sensitivity Tactical Panel
 │       │   │   ├── PanelHair.tsx          # Hair Texture & Balding PRS Tactical Panel
 │       │   │   ├── SuspectVisualizer.tsx  # 3D Craniofacial Cephalometric Visualizer
@@ -665,7 +666,11 @@ The FastAPI gateway exposes a clean `/api/v1` RESTful interface.
 | **Forensic Terminal (PopGen Probability)** | `/api/v1/forensic/terminal/popgen-probability` | `POST` | Computes NIST 1036 Combined Match LR & RMP under NRC II 4.1 |
 | **Forensic Terminal (EPG Synth)** | `/api/v1/forensic/terminal/epg/synthesize` | `POST` | Synthesizes 5/6-dye capillary electropherograms with degradation & stutter modeling |
 | **Lineage (Y-STR Lineage Match)** | `/api/v1/forensic/lineage/ystr/evaluate-match` | `POST` | Evaluates Y-FILER Plus haplotype frequency, Clopper-Pearson 95% bound & SMM kinship |
+| **Lineage (Y-STR Bayesian Haplogroup)** | `/api/v1/forensic/lineage/ystr/bayesian-haplogroup` | `POST` | Predicts Y-DNA haplogroup clade probabilities from Y-STR haplotype profile |
 | **Lineage (X-STR Kinship)** | `/api/v1/forensic/lineage/xstr/evaluate-kinship` | `POST` | Evaluates Argus X-12 4 linkage groups with Kosambi mapping & female kinship PHS |
+| **Lineage (X-STR Kosambi Map)** | `/api/v1/forensic/lineage/xstr/kosambi-map` | `POST` | Translates genetic distance (cM) to recombination fraction (r) via Kosambi mapping function |
+| **Lineage (X-STR Linkage Groups)** | `/api/v1/forensic/lineage/xstr/linkage-groups` | `GET` | Retrieves Argus X-12 4 linkage groups (LG1-LG4) with recombination frequencies |
+| **Lineage (X-STR Pop Frequencies)** | `/api/v1/forensic/lineage/xstr/population-frequencies` | `GET` | Retrieves Tillmar et al. (2017) European and Asian population allele frequencies |
 | **Lineage (mtDNA EMPOP)** | `/api/v1/forensic/lineage/mtdna/empop-upper-bound` | `POST` | Aligns HV1/HV2/HV3 to rCRS/RSRS with EMPOP 3'-right alignment & haplogroups |
 | **Disaster Victim ID (DVI)** | `/api/v1/forensic/dvi/joint-lr` | `POST` | Computes multi-omic joint LR and Hungarian ante/post-mortem reconciliation |
 | **Ancient DNA (aDNA / HID)** | `/api/v1/forensic/hid/damage-kinetics` | `POST` | Evaluates MapDamage deamination kinetics, fragment length decay, and SNP likelihoods |

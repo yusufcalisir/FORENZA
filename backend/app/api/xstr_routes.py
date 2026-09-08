@@ -6,15 +6,15 @@ ENFSI Evaluative Reporting (2017).
 Research Source: research/pillar_2_lineage_kinship_research.md §2.1 & §2.2.
 
 Endpoints:
-  POST /forensic/lineage/xstr/evaluate-kinship     — Complex female kinship evaluation (PHS, Duo, PGM-GD, MS)
-  POST /forensic/lineage/xstr/kosambi-map          — Kosambi mapping function (cM -> r)
-  POST /forensic/lineage/xstr/kosambi-recombination— Kosambi mapping alias
-  GET  /forensic/lineage/xstr/panel-metadata       — Argus X-12 12-locus & 4 linkage groups metadata
-  GET  /forensic/lineage/xstr/linkage-groups       — 4 Linkage Groups (LG1–LG4) details
-  GET  /forensic/lineage/xstr/population-frequencies— Tillmar et al. (2017) population frequencies
-  GET  /forensic/lineage/xstr/gold-standards       — Certified multi-omic reference standards
-  GET  /forensic/lineage/xstr/casework-cohorts     — Certified casework benchmark cohorts
-  GET  /forensic/lineage/xstr/reporting-disclaimer — ISFG (2012) evaluative reporting disclaimer
+  POST /forensic/lineage/xstr/evaluate-kinship     : Complex female kinship evaluation (PHS, Duo, PGM-GD, MS)
+  POST /forensic/lineage/xstr/kosambi-map          : Kosambi mapping function (cM -> r)
+  POST /forensic/lineage/xstr/kosambi-recombination: Kosambi mapping alias
+  GET  /forensic/lineage/xstr/panel-metadata       : Argus X-12 12-locus & 4 linkage groups metadata
+  GET  /forensic/lineage/xstr/linkage-groups       : 4 Linkage Groups (LG1-LG4) details
+  GET  /forensic/lineage/xstr/population-frequencies: Tillmar et al. (2017) population frequencies
+  GET  /forensic/lineage/xstr/gold-standards       : Certified multi-omic reference standards
+  GET  /forensic/lineage/xstr/casework-cohorts     : Certified casework benchmark cohorts
+  GET  /forensic/lineage/xstr/reporting-disclaimer : ISFG (2012) evaluative reporting disclaimer
 """
 
 from typing import List, Dict, Any, Optional
@@ -264,7 +264,7 @@ async def get_panel_metadata() -> ArgusX12PanelMetadataResponse:
 @router.get(
     "/linkage-groups",
     response_model=List[LinkageGroupMetadataSchema],
-    summary="List Argus X-12 4 Linkage Groups (LG1–LG4)",
+    summary="List Argus X-12 4 Linkage Groups (LG1-LG4)",
     status_code=status.HTTP_200_OK,
 )
 async def list_linkage_groups() -> List[LinkageGroupMetadataSchema]:

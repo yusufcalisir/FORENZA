@@ -609,19 +609,25 @@ The FastAPI gateway exposes a clean `/api/v1` RESTful interface.
 
 | Domain | Route | Method | Description |
 | :--- | :--- | :--- | :--- |
-| **Kinship** | `/api/v1/forensics/kinship-lr` | `POST` | Computes parent-child, sibling, and extended kinship LRs |
+| **Kinship** | `/api/v1/forensic/kinship` | `POST` | Computes parent-child, sibling, and extended kinship LRs |
 | **Population Genetics (RMP)** | `/api/v1/forensic/population/profile-rmp` | `POST` | Computes 24-locus NIST 1036 Combined Random Match Probability (RMP) & Single-Source LR with Balding-Nichols $\theta$ coancestry |
 | **Kinship (STR-24 Duo/Pedigree)** | `/api/v1/forensic/population/kinship-duo` | `POST` | Evaluates 24-locus Parent-Child / Sibling kinship LRs with IBD decomposition & Stepwise Mutation Model (SMM) rescue |
 | **Mixture (MCMC Deconvolution)** | `/api/v1/forensic/mixture` | `POST` | Runs 2-to-3 person continuous MCMC mixture deconvolution (EuroForMix Gamma / STRmix Log-Normal) with Gelman-Rubin convergence and per-locus calls |
 | **Mixture (Health Check)** | `/api/v1/forensic/mixture/health` | `GET` | Validates MCMC sampler initialization and locus stutter database |
 | **Mixture (Likelihood Models)** | `/api/v1/forensic/mixture/models` | `GET` | Lists available continuous biophysical peak models and parameters |
-| **Phenotype** | `/api/v1/phenotype/predict` | `POST` | Computes HIrisPlex-S eye, skin, and hair probabilities |
-| **Ancestry** | `/api/v1/phenotype/ancestry` | `POST` | Evaluates 55-SNP AIM biogeographic ancestry clusters |
-| **Epigenetics**| `/api/v1/epigenetics/age-clock` | `POST` | Estimates biological age from 5 CpG methylation sites |
-| **Anthropology**|`/api/v1/anthropology/stature` | `POST` | Computes skeletal stature & sex estimation |
-| **Entomology** | `/api/v1/entomology/pmi` | `POST` | Calculates Accumulated Degree Hours (ADH) post-mortem interval |
-| **BPA** | `/api/v1/bpa/impact-angle` | `POST` | Computes bloodstain droplet impact angle & 3D origin |
-| **Serology** | `/api/v1/fluid/identify` | `POST` | Predicts body fluid tissue origin from microRNA/methylation |
+| **MPS/NGS STR Sequence Lab** | `/api/v1/forensic/mps-str/analyze-se33` | `POST` | Analyzes sequence-level isoalleles, flanking indels, and SE33 hyperpolymorphic motifs |
+| **ML STR Artifact Classifier** | `/api/v1/forensic/ml-str/classify-peak` | `POST` | Evaluates 24-D peak morphology and classifies true alleles vs CE/MPS artifacts |
+| **Phenotype** | `/api/v1/forensic/phenotype` | `POST` | Computes HIrisPlex-S eye, skin, and hair probabilities |
+| **Ancestry (55-AIM)** | `/api/v1/forensic/ancestry/55-aim/predict` | `POST` | Evaluates 55-SNP AIM biogeographic ancestry clusters and continental centroids |
+| **Hair & Balding PRS** | `/api/v1/forensic/phenotyping/hair/morphology-and-balding` | `POST` | Evaluates fiber cross-sectional area, curl density index, and balding PRS |
+| **Freckling & MC1R Epistasis** | `/api/v1/forensic/phenotyping/ephelides/freckling-and-uv` | `POST` | Quantifies MC1R epistatic loss-of-function weights, ASIP/BNC2 modifiers, and MED |
+| **Epigenetics (Age Clock)** | `/api/v1/forensic/epigenetics/predict-age` | `POST` | Estimates biological age from 5 CpG methylation sites |
+| **Epigenetic Clocks (Multi-Gen)** | `/api/v1/forensic/epigenetics/clocks/estimate-age` | `POST` | Multi-generation epigenetic age estimation (Horvath, PhenoAge, GrimAge, VISAGE) |
+| **Epigenetic Multimodal PMI** | `/api/v1/forensic/epigenetics/clocks/multimodal-pmi` | `POST` | Multimodal Bayesian evidence fusion of Henssge, Vitreous K+, and Entomology for PMI |
+| **Anthropology** | `/api/v1/forensic/anthropology/biological-profile` | `POST` | Computes skeletal stature, biological profile, and sex estimation |
+| **Entomology** | `/api/v1/forensic/entomology/pmi` | `POST` | Calculates Accumulated Degree Hours (ADH) post-mortem interval |
+| **BPA (Stain Analysis)** | `/api/v1/forensic/bpa/analyze-stain` | `POST` | Computes bloodstain droplet impact angle & 3D origin |
+| **Serology & Body Fluid** | `/api/v1/forensic/fluid/identify` | `POST` | Predicts body fluid tissue origin from microRNA/methylation |
 | **Touch DNA (Multi-Locus LR)** | `/api/v1/forensic/touch/multi-locus-lr` | `POST` | Computes 24-locus stochastic Curran-Gill profile LR with log-additivity verification |
 | **Touch DNA (Substrate & LTDNA)** | `/api/v1/forensic/touch/analyze-ltdna` | `POST` | Evaluates forensic substrate recovery efficiency, diploid cell count, and P(D) |
 | **Touch DNA (Dropout Model)** | `/api/v1/forensic/touch/dropout-model` | `POST` | Evaluates calibrated logistic allele dropout P(D) for template mass or RFU |
@@ -645,25 +651,22 @@ The FastAPI gateway exposes a clean `/api/v1` RESTful interface.
 | **Geo-Forensics (Palynology/eDNA)** | `/api/v1/forensic/geoint/palynology-edna-analysis` | `POST` | Forensic palynology, 6-biome classification & 16S/ITS eDNA spatial regression |
 | **Geo-Forensics (Rossmo Profiling)** | `/api/v1/forensic/geoint/geographic-profile` | `POST` | Bayesian Rossmo targeted hunting geographic profiling & Canter circle mobility |
 | **Geo-Forensics (Evidence Fusion)** | `/api/v1/forensic/geoint/fuse-evidence-layers` | `POST` | Multi-criteria Bayesian raster fusion, 2D adaptive KDE & SEI search prioritization |
+| **Metagenomics (Taxonomic Classifier)** | `/api/v1/forensic/metagenomics/classify-reads` | `POST` | Environmental eDNA and soil taxonomic classification via Kraken 2 and Bracken |
 | **Forensic Terminal (CLI Batch)** | `/api/v1/forensic/terminal/cli-batch` | `POST` | Executes multi-omic batch CLI ingestion commands (`str`, `ystr`, `mtdna`, `snp`, `cpg`) with ISO 17025 SHA-256 state hashing |
-| **Forensic Terminal (PopGen LR)** | `/api/v1/forensic/terminal/popgen-lr` | `POST` | Computes NIST 1036 Combined Match LR & RMP under NRC II 4.1 |
-| **Lineage (Y-STR 27-Loci)** | `/api/v1/forensic/dna/ystr-match` | `POST` | Evaluates Y-FILER Plus haplotype frequency, Clopper-Pearson 95% bound & SMM kinship |
-| **Lineage (X-STR Argus X-12)** | `/api/v1/forensic/dna/xstr-kinship` | `POST` | Evaluates Argus X-12 4 linkage groups with Kosambi mapping & female kinship PHS |
-| **Lineage (mtDNA EMPOP)** | `/api/v1/forensic/dna/mtdna-align` | `POST` | Aligns HV1/HV2/HV3 to rCRS/RSRS with EMPOP 3'-right alignment & haplogroups |
+| **Forensic Terminal (PopGen Probability)** | `/api/v1/forensic/terminal/popgen-probability` | `POST` | Computes NIST 1036 Combined Match LR & RMP under NRC II 4.1 |
+| **Forensic Terminal (EPG Synth)** | `/api/v1/forensic/terminal/epg/synthesize` | `POST` | Synthesizes 5/6-dye capillary electropherograms with degradation & stutter modeling |
+| **Lineage (Y-STR Lineage Match)** | `/api/v1/forensic/lineage/ystr/evaluate-match` | `POST` | Evaluates Y-FILER Plus haplotype frequency, Clopper-Pearson 95% bound & SMM kinship |
+| **Lineage (X-STR Kinship)** | `/api/v1/forensic/lineage/xstr/evaluate-kinship` | `POST` | Evaluates Argus X-12 4 linkage groups with Kosambi mapping & female kinship PHS |
+| **Lineage (mtDNA EMPOP)** | `/api/v1/forensic/lineage/mtdna/empop-upper-bound` | `POST` | Aligns HV1/HV2/HV3 to rCRS/RSRS with EMPOP 3'-right alignment & haplogroups |
 | **Disaster Victim ID (DVI)** | `/api/v1/forensic/dvi/joint-lr` | `POST` | Computes multi-omic joint LR and Hungarian ante/post-mortem reconciliation |
 | **Ancient DNA (aDNA / HID)** | `/api/v1/forensic/hid/damage-kinetics` | `POST` | Evaluates MapDamage deamination kinetics, fragment length decay, and SNP likelihoods |
-| **Forensic Genetic Genealogy** | `/api/v1/forensic/fgg/ibis-scan` | `POST` | Executes phase-free windowed IBS0 IBD scanning & Shared cM degree classification |
-| **FGG Pedigree Solver** | `/api/v1/forensic/fgg/bonsai-solve` | `POST` | Solves composite likelihood pedigree DAG and generates MRCA triangulation |
-| **Hair & Balding PRS** | `/api/v1/phenotype/hair/texture` | `POST` | Evaluates fiber cross-sectional area, curl density index, and balding PRS |
-| **Freckling & MC1R Epistasis** | `/api/v1/phenotype/ephelides/freckling-and-uv` | `POST` | Quantifies MC1R epistatic loss-of-function weights, ASIP/BNC2 modifiers, and MED |
-| **Epigenetic Clocks & PMI** | `/api/v1/forensic/epigenetics/clocks/predict-age` | `POST` | Multi-generation epigenetic age estimation (Horvath, PhenoAge, GrimAge, VISAGE) |
-| **Epigenetic Multimodal PMI** | `/api/v1/forensic/epigenetics/clocks/bayesian-pmi-fusion` | `POST` | Multimodal Bayesian evidence fusion of Henssge, Vitreous K+, and Entomology for PMI |
-| **Forensic Microbiome** | `/api/v1/forensic/microbiology/thanatomicrobiome-pmi` | `POST` | Evaluates 16S/ITS CoDa CLR transformation, ADD thermal clock & hidSkinPlex+ touch LR |
+| **Forensic Genetic Genealogy (IBD)** | `/api/v1/forensic/fgg/ibd-pairwise` | `POST` | Executes phase-free windowed IBS0 IBD scanning & Shared cM degree classification |
+| **FGG Pedigree Solver (Bonsai)** | `/api/v1/forensic/fgg/reconstruct-pedigree` | `POST` | Solves composite likelihood pedigree DAG and generates MRCA triangulation |
+| **Forensic Microbiome** | `/api/v1/forensic/microbiology/thanato-pmi` | `POST` | Evaluates 16S/ITS CoDa CLR transformation, ADD thermal clock & hidSkinPlex+ touch LR |
 | **LIMS Chain of Custody** | `/api/v1/forensic/lims/merkle/build-tree` | `POST` | Constructs binary Merkle tree and generates O(log2 N) inclusion proofs |
 | **Court Testimony & ENFSI** | `/api/v1/forensic/court/evaluative-report` | `POST` | Generates ISO 17025 / ENFSI 2017 7-tier bilingual evaluative statements with Fallacy Shield |
-| **Evidence OS Architecture** | `/api/v1/forensic/os/catalog` | `GET` | Returns master catalog status across all 38 biocomputational subsystems |
-| **Forensic Terminal (EPG Synth)** | `/api/v1/forensic/terminal/epg/synthesize` | `POST` | Synthesizes 5/6-dye capillary electropherograms with degradation & stutter modeling |
-| **System** | `/api/v1/system/health` | `GET` | Returns subsystem telemetry, memory, and probe status |
+| **Evidence OS Architecture** | `/api/v1/forensic/os/system-architecture` | `GET` | Returns master catalog status across all 38 biocomputational subsystems |
+| **System Health** | `/api/v1/system/health` | `GET` | Returns subsystem telemetry, memory, and probe status |
 
 ---
 
@@ -690,31 +693,32 @@ A biocomputational module in FORENZA is only certified as **`VERIFIED`** when it
 
 For complete mathematical derivations, test logs, and module-by-module audit records, refer to the dedicated validation resources:
 
-* 📊 **[Module Validation Status (`docs/VALIDATION_STATUS.md`)](file:///c:/Users/Yusuf/str-analysis/docs/VALIDATION_STATUS.md):** The live, single source of truth for platform readiness. Tracks verification criteria, reference datasets, cross-check tools, and passing edge cases across all 38 modules (**38/38 VERIFIED, 1,211+ passing tests**).
-* 📑 **[Validation Checklist & Audit Template (`docs/VALIDATION_CHECKLIST.md`)](file:///c:/Users/Yusuf/str-analysis/docs/VALIDATION_CHECKLIST.md):** Comprehensive 600+ line audit record detailing every test execution command, dataset accession, analytical cross-check, and edge-case boundary verification.
+* 📊 **[Module Validation Status (`docs/VALIDATION_STATUS.md`)](file:///c:/Users/Yusuf/str-analysis/docs/VALIDATION_STATUS.md):** The live, single source of truth for platform readiness. Tracks verification criteria, reference datasets, cross-check tools, and passing edge cases across all 40 research modules powering the 38 SaaS subsystems (**40/40 VERIFIED, 3,567 automated passing tests**).
+* 📑 **[Validation Checklist & Audit Template (`docs/VALIDATION_CHECKLIST.md`)](file:///c:/Users/Yusuf/str-analysis/docs/VALIDATION_CHECKLIST.md):** Comprehensive 750+ line audit record detailing every test execution command, dataset accession, analytical cross-check, and edge-case boundary verification across all 40 modules.
 * 📐 **[Mathematical Specification (`docs/math-spec.md`)](file:///c:/Users/Yusuf/str-analysis/docs/math-spec.md):** Complete mathematical and biocomputational specification covering all equations, probability distributions, Markov models, and uncertainty budgets.
 
 > [!NOTE]
 > **Scientific & Metrological Scope Notice (Developmental Verification vs. Casework Accreditation):**  
-> The 1,147 passing tests and golden benchmark vectors document **in silico developmental validation** demonstrating that FORENZA's software implementations reproduce published scientific formulas and standard reference vectors with mathematical exactness.  
+> The 3,567 passing tests and golden benchmark vectors document **in silico developmental validation** demonstrating that FORENZA's software implementations reproduce published scientific formulas and standard reference vectors with mathematical exactness.  
 > In accordance with **SWGDAM (2020)**, **ISFG (2020)**, and **ISO/IEC 17025:2017** quality standards, deploying any forensic computational tool for court-admissible casework requires **internal validation** by the accredited operational laboratory using its specific laboratory equipment (e.g., genetic analyzers, CE/NGS platforms, chemistries) and laboratory-specific analytical thresholds.
 
 ---
 
 ### 🧪 Automated Verification Test Suite Matrix
 
-FORENZA maintains **1,147 automated unit, integration, and invariant tests (100% passing)** across all 7 architectural pillars:
+FORENZA maintains **3,567 automated unit, integration, and invariant tests (100% passing)** across all 7 architectural pillars (245 test files):
 
 | Architectural Pillar | Core Test Modules | Verified Subsystems | Unit Tests | Coverage | Status |
 | :--- | :--- | :--- | :---: | :---: | :---: |
-| **Pillar 1: Probabilistic Genotyping & PopGen** | `test_forensic_engine.py`, `test_mcmc_edge_cases.py`, `test_nrc_*.py`, `test_touch.py`, `test_tippett_calibration.py` | 24-Locus STR, Balding-Nichols 4-State, IBD SMM Kinship, EuroForMix Gamma, STRmix Log-Normal, 4-Chain M-H MCMC, Gelman-Rubin, ESS, Tippett ECCDF/ROC-AUC/Cllr/HPD Bound, ENFSI 7-Tier EN+TR Verbal Scale, Prosecutor's Fallacy Shield, Dirichlet Bayesian Smoothing, Curran-Gill LTDNA Stochastic Dropout P(D) & Drop-in P(C), H_b Imbalance | **329** | 100% | `329/329 PASSED` |
-| **Pillar 2: Lineage Forensics & Kinship** | `test_ystr_routes.py`, `test_xstr_routes.py`, `test_mtdna_routes.py`, `test_dvi_routes.py`, `test_adna_routes.py`, `test_fgg_routes.py` | Y-FILER Plus 27 Loci (6 RM Loci), Clopper-Pearson 95% Bound, Brenner $\theta$, SMM Germline Mutation, Argus X-12 Linkage (LG1-LG4), Kosambi Map, PHS Kinship, mtDNA EMPOP/rCRS/RSRS, IUPAC Heteroplasmy, Interpol DVI Multi-Omic Joint LR, aDNA MapDamage Deamination & Fragmentation, FGG/IGG Phase-Free IBIS IBD, Shared cM, Bonsai Pedigree Solver | **321** | 100% | `321/321 PASSED` |
-| **Pillar 3: Phenotyping & Ancestry** | `test_hirisplex_routes.py`, `test_bga_routes.py`, `test_cranio_routes.py`, `test_hair_texture_balding.py`, `test_mc1r_freckling_uv.py` | HIrisPlex-S (Eye/Hair/Skin MLR), 55-AIM Continental GIS Centroid & Covariance Ellipses, 3D Craniofacial Procrustes Superposition, Hair Curliness & Balding PRS, MC1R Epistasis & Freckling | **302** | 100% | `302/302 PASSED` |
-| **Pillar 4: Epigenetics & Aging** | `test_epigenetics.py`, `test_epigenomics_extended.py`, `test_horvath_visage.py`, `test_tdmr_fluid.py`, `test_ahrr_lifestyle.py` | Horvath VISAGE 5-CpG Elastic Net Clock ($y_0=20.0$), tDMR 6-Tissue NNLS Deconvolution, AHRR Pack-Years & Alcohol, Telomere T/S Decay, Bisulfite QC & BMIQ | **77** | 100% | `77/77 PASSED` |
-| **Pillar 5: Physical Evidence & Pathology** | `test_bpa.py`, `test_toxicology.py`, `test_microscopy.py`, `test_entomology.py`, `test_botany.py`, `test_serology.py` | 3D BPA Area of Origin Least-Squares & RK4 Drag, SEM-EDX GSR Pb-Ba-Sb & CMC Striations, Entomology Thermal Summation (ADD/ADH), ATR-FTIR HQI Polymer Library, Post-Mortem Toxicology PMR C/P Ratios | **52** | 100% | `52/52 PASSED` |
-| **Pillar 6: LIMS, ISO 17025 & ZKP** | `test_zkp.py`, `test_lims.py`, `test_qc.py`, `test_iso_report_compiler.py`, `test_court_routes.py`, `test_juror_3d.py` | Binary Merkle Tree CoC Ledger, Circom Groth16 ZKP BN254 Pairings, ISO 17025 GUM Budget ($U_{95}=2.00 \cdot u_c$), ENFSI 2017 Verbal Scale & Fallacy Shield, 3D Juror Visualizer | **91** | 100% | `91/91 PASSED` |
-| **Pillar 7: Geo-Forensic Intelligence & Isoscapes** | `test_isoscape_provenance_engine.py`, `test_soil_mineralogy_engine.py`, `test_palynology_edna_engine.py`, `test_geographic_profiling_engine.py`, `test_geo_fusion_engine.py` | Multi-Isotope Precipitation Isoscapes ($\delta^{18}\text{O}, \delta^2\text{H}, ^{87}\text{Sr}/^{86}\text{Sr}$), Bataille Sr, QXRD Soil CoDa CLR & Mahalanobis ZTR, Palynology 6-Biome Bray-Curtis, Rossmo CGT Hunting Geodesics, 2D Adaptive Gaussian KDE Fusion Grid | **30** | 100% | `30/30 PASSED` |
-| **Total Automated Suite** | **38 Biocomputational Modules** | **7 Architectural Pillars (Full Platform Verified)** | **1,202** | **100%** | **`1,202/1,202 PASSED`** |
+| **Pillar 1: Probabilistic Genotyping & PopGen** | `test_forensic_engine.py`, `test_mcmc_edge_cases.py`, `test_nrc_*.py`, `test_touch.py`, `test_tippett_calibration.py`, `test_mps_str_*.py`, `test_ml_str_*.py` | 24-Locus STR, Balding-Nichols 4-State, IBD SMM Kinship, EuroForMix Gamma, STRmix Log-Normal, 4-Chain M-H MCMC, Gelman-Rubin, ESS, Tippett ECCDF/ROC-AUC/Cllr/HPD Bound, ENFSI 7-Tier EN+TR Verbal Scale, Prosecutor's Fallacy Shield, Dirichlet Bayesian Smoothing, Curran-Gill LTDNA Stochastic Dropout P(D) & Drop-in P(C), H_b Imbalance, MPS/NGS Isoalleles, ML Artifact Filtering | **805** | 100% | `805/805 PASSED` |
+| **Pillar 2: Lineage Forensics & Kinship** | `test_ystr_routes.py`, `test_xstr_routes.py`, `test_mtdna_routes.py`, `test_dvi_routes.py`, `test_adna_routes.py`, `test_fgg_routes.py` | Y-FILER Plus 27 Loci (6 RM Loci), Clopper-Pearson 95% Bound, Brenner $\theta$, SMM Germline Mutation, Argus X-12 Linkage (LG1-LG4), Kosambi Map, PHS Kinship, mtDNA EMPOP/rCRS/RSRS, IUPAC Heteroplasmy, Interpol DVI Multi-Omic Joint LR, aDNA MapDamage Deamination & Fragmentation, FGG/IGG Phase-Free IBIS IBD, Shared cM, Bonsai Pedigree Solver | **561** | 100% | `561/561 PASSED` |
+| **Pillar 3: Phenotyping & Ancestry** | `test_hirisplex_routes.py`, `test_bga_routes.py`, `test_cranio_routes.py`, `test_hair_texture_balding.py`, `test_mc1r_freckling_uv.py` | HIrisPlex-S (Eye/Hair/Skin MLR), 55-AIM Continental GIS Centroid & Covariance Ellipses, 3D Craniofacial Procrustes Superposition, Hair Curliness & Balding PRS, MC1R Epistasis & Freckling | **627** | 100% | `627/627 PASSED` |
+| **Pillar 4: Epigenetics & Aging** | `test_epigenetics.py`, `test_epigenomics_extended.py`, `test_horvath_visage.py`, `test_tdmr_fluid.py`, `test_ahrr_lifestyle.py`, `test_bisulfite_qc_engine.py`, `test_thanatomicrobiome_engine.py` | Horvath VISAGE 5-CpG Elastic Net Clock ($y_0=20.0$), tDMR 6-Tissue NNLS Deconvolution, AHRR Pack-Years & Alcohol, Telomere T/S Decay, Bisulfite QC & BMIQ, Thanatomicrobiome ADD Thermal Clock, hidSkinPlex+ Touch LR | **206** | 100% | `206/206 PASSED` |
+| **Pillar 5: Physical Evidence & Pathology** | `test_bpa.py`, `test_toxicology.py`, `test_microscopy.py`, `test_entomology.py`, `test_botany.py`, `test_serology.py` | 3D BPA Area of Origin Least-Squares & RK4 Drag, SEM-EDX GSR Pb-Ba-Sb & CMC Striations, Entomology Thermal Summation (ADD/ADH), ATR-FTIR HQI Polymer Library, Post-Mortem Toxicology PMR C/P Ratios | **119** | 100% | `119/119 PASSED` |
+| **Pillar 6: LIMS, ISO 17025 & ZKP** | `test_zkp.py`, `test_lims.py`, `test_qc.py`, `test_iso_report_compiler.py`, `test_court_routes.py`, `test_juror_3d.py` | Binary Merkle Tree CoC Ledger, Circom Groth16 ZKP BN254 Pairings, ISO 17025 GUM Budget ($U_{95}=2.00 \cdot u_c$), ENFSI 2017 Verbal Scale & Fallacy Shield, 3D Juror Visualizer | **225** | 100% | `225/225 PASSED` |
+| **Pillar 7: Geo-Forensic Intelligence & Isoscapes** | `test_isoscape_provenance_engine.py`, `test_soil_mineralogy_engine.py`, `test_palynology_edna_engine.py`, `test_geographic_profiling_engine.py`, `test_geo_fusion_engine.py`, `test_forensic_metagenomics_routes.py` | Multi-Isotope Precipitation Isoscapes ($\delta^{18}\text{O}, \delta^2\text{H}, ^{87}\text{Sr}/^{86}\text{Sr}$), Bataille Sr, QXRD Soil CoDa CLR & Mahalanobis ZTR, Palynology 6-Biome Bray-Curtis, Rossmo CGT Hunting Geodesics, 2D Adaptive Gaussian KDE Fusion Grid, Metagenomic Kraken 2 / Bracken Taxonomic Classification | **145** | 100% | `145/145 PASSED` |
+| **Platform Infrastructure & Multi-Node Gateway** | `test_forensic_terminal_*.py`, `test_security_*.py`, `test_federated_*.py`, `test_crypto_*.py` | Multi-Omic Batch Terminal CLI, State Hashes, Session Guards, AES-GCM Key Vault, Byzantine Federated Multi-Node Protocol | **879** | 100% | `879/879 PASSED` |
+| **Total Automated Suite** | **40 Validated Research Modules (38 SaaS Subsystems)** | **7 Architectural Pillars (Full Platform Verified)** | **3,567** | **100%** | **`3,567/3,567 PASSED`** |
 
 
 ```bash

@@ -672,7 +672,7 @@ export default function DnaProfileInspectorModal() {
           { id: `out-${Date.now()}-27`, type: "output", text: "  ancestry                        - Compute 55-SNP AIM continental centroid GIS coordinates" },
           { id: `out-${Date.now()}-28`, type: "output", text: "  benchmark lineage <a|b|c>       - Load verified multi-omic lineage benchmark vector" },
           { id: `out-${Date.now()}-29`, type: "output", text: "  preset list / load <ID>         - Manage Golden Casework Presets" },
-          { id: `out-${Date.now()}-30`, type: "output", text: "  recalc                          - Execute full 35-Module DAG recalculation sweep" },
+          { id: `out-${Date.now()}-30`, type: "output", text: "  recalc                          - Execute full 38-Module DAG recalculation sweep" },
           { id: `out-${Date.now()}-31`, type: "output", text: "  zkp verify                      - Verify Groth16 BN254 zero-knowledge proof witness" },
           { id: `out-${Date.now()}-32`, type: "output", text: "  clear                           - Clear terminal display buffer" },
         ];
@@ -1139,8 +1139,8 @@ export default function DnaProfileInspectorModal() {
       case "recalc":
         handleSaveAndCalculate();
         outputLines = [
-          { id: `out-${Date.now()}-1`, type: "info", text: "Dispatching 35-Module DAG Recalculation Sweep..." },
-          { id: `out-${Date.now()}-2`, type: "success", text: "All 7 Pillars and 35 Subsystems synchronizing with active case store." },
+          { id: `out-${Date.now()}-1`, type: "info", text: "Dispatching 38-Module DAG Recalculation Sweep..." },
+          { id: `out-${Date.now()}-2`, type: "success", text: "All 7 Pillars and 38 Subsystems synchronizing with active case store." },
         ];
         break;
 
@@ -1367,7 +1367,7 @@ export default function DnaProfileInspectorModal() {
     });
 
     useForensicCaseStore.getState().addAuditLog({
-      event: `35-Module DAG Recalculation & Biocomputational Sweep (${executedProvider})`,
+      event: `38-Module DAG Recalculation & Biocomputational Sweep (${executedProvider})`,
       module: "Evidence OS Master DAG",
       analyst: "Dr. Lead Forensic Geneticist (ISO 17025 Dual-Sign-Off)",
       status: "PASS",
@@ -1377,7 +1377,7 @@ export default function DnaProfileInspectorModal() {
     });
 
     setIsCalculating(false);
-    setBannerMessage(`✓ 35 Biocomputational Modules Successfully Recalculated via ${executedProvider} (LR: ${combinedLRStr})!`);
+    setBannerMessage(`✓ 38 Biocomputational Modules Successfully Recalculated via ${executedProvider} (LR: ${combinedLRStr})!`);
     setRecalculatedBanner(true);
     setTab("inferred");
   };
@@ -2933,12 +2933,12 @@ export default function DnaProfileInspectorModal() {
               {isCalculating ? (
                 <>
                   <RefreshCw className="w-4 h-4 shrink-0 animate-spin" />
-                  <span>{isTr ? "35-Modül DAG Yürütülüyor..." : "Executing 35-Module DAG..."}</span>
+                  <span>{isTr ? "38-Modül DAG Yürütülüyor..." : "Executing 38-Module DAG..."}</span>
                 </>
               ) : (
                 <>
                   <CheckCircle2 className="w-4 h-4 shrink-0" />
-                  <span>{isTr ? "35 Modülü Uygula & Yeniden Hesapla" : "Apply & Recalculate 35 Modules"}</span>
+                  <span>{isTr ? "38 Modülü Uygula & Yeniden Hesapla" : "Apply & Recalculate 38 Modules"}</span>
                 </>
               )}
             </button>

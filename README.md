@@ -671,7 +671,9 @@ The FastAPI gateway exposes a clean `/api/v1` RESTful interface.
 | **Lineage (X-STR Kosambi Map)** | `/api/v1/forensic/lineage/xstr/kosambi-map` | `POST` | Translates genetic distance (cM) to recombination fraction (r) via Kosambi mapping function |
 | **Lineage (X-STR Linkage Groups)** | `/api/v1/forensic/lineage/xstr/linkage-groups` | `GET` | Retrieves Argus X-12 4 linkage groups (LG1-LG4) with recombination frequencies |
 | **Lineage (X-STR Pop Frequencies)** | `/api/v1/forensic/lineage/xstr/population-frequencies` | `GET` | Retrieves Tillmar et al. (2017) European and Asian population allele frequencies |
+| **Lineage (mtDNA Maternal Match)** | `/api/v1/forensic/lineage/mtdna/evaluate-maternal-match` | `POST` | Evaluates pairwise maternal lineage match, SWGDAM differences, and LR |
 | **Lineage (mtDNA EMPOP)** | `/api/v1/forensic/lineage/mtdna/empop-upper-bound` | `POST` | Aligns HV1/HV2/HV3 to rCRS/RSRS with EMPOP 3'-right alignment & haplogroups |
+| **Lineage (mtDNA Haplogroup)** | `/api/v1/forensic/lineage/mtdna/predict-haplogroup` | `POST` | Predicts PhyloTree Build 17 macrohaplogroup from diagnostic control region mutations |
 | **Disaster Victim ID (DVI)** | `/api/v1/forensic/dvi/joint-lr` | `POST` | Computes multi-omic joint LR and Hungarian ante/post-mortem reconciliation |
 | **Ancient DNA (aDNA / HID)** | `/api/v1/forensic/hid/damage-kinetics` | `POST` | Evaluates MapDamage deamination kinetics, fragment length decay, and SNP likelihoods |
 | **Forensic Genetic Genealogy (IBD)** | `/api/v1/forensic/fgg/ibd-pairwise` | `POST` | Executes phase-free windowed IBS0 IBD scanning & Shared cM degree classification |

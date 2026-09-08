@@ -174,7 +174,7 @@ function SidebarContent({
   const { filteredCategories, totalMatches } = useMemo(() => {
     const q = searchQuery.trim();
     if (!q) {
-      return { filteredCategories: categories, totalMatches: 35 };
+      return { filteredCategories: categories, totalMatches: 38 };
     }
 
     const tokens = q
@@ -183,7 +183,7 @@ function SidebarContent({
       .filter(Boolean);
 
     if (tokens.length === 0) {
-      return { filteredCategories: categories, totalMatches: 35 };
+      return { filteredCategories: categories, totalMatches: 38 };
     }
 
     let matchCount = 0;
@@ -294,7 +294,7 @@ function SidebarContent({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={t.sidebarNav?.searchPlaceholder || "Search 35 Subsystems..."}
+              placeholder={t.sidebarNav?.searchPlaceholder || "Search 38 Subsystems..."}
               className="w-full pl-9 pr-8 py-2 min-h-[40px] bg-black/50 border border-tactical-border/70 rounded-xl text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-cyan-500/60 transition-colors"
             />
             {searchQuery && (
@@ -641,7 +641,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               </span>
             </div>
             <p className="font-mono text-[8px] text-zinc-400 mt-0.5 truncate">
-              {t.dashboardTopBar?.subsystemsCount || "35 Subsystems"}
+              {t.dashboardTopBar?.subsystemsCount || "38 Subsystems"}
             </p>
           </div>
         )}
@@ -712,7 +712,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <span className="animate-ping absolute inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400 opacity-60" />
               <Activity className="w-2.5 h-2.5 text-emerald-400 relative shrink-0" />
             </span>
-            <span className="font-mono text-[8px] text-zinc-500 tracking-wider whitespace-nowrap">{t.dashboardTopBar?.subsystemsCount || "35 Subsystems"}</span>
+            <span className="font-mono text-[8px] text-zinc-500 tracking-wider whitespace-nowrap">{t.dashboardTopBar?.subsystemsCount || "38 Subsystems"}</span>
             <span className="font-mono text-[8px] text-emerald-400 font-extrabold tracking-widest whitespace-nowrap">{t.dashboardTopBar?.subsystemsOnline || "ONLINE"}</span>
           </div>
           <div className="flex items-center gap-1.5 px-3 py-1.5 shrink-0">
@@ -735,7 +735,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <div className="flex items-center gap-1.5">
               <Activity className="w-3 h-3 text-emerald-400" />
               <span className="font-mono text-[9px] text-zinc-500 uppercase tracking-wider">
-                {t.dashboardTopBar?.subsystemsCount || "35 Subsystems"}
+                {t.dashboardTopBar?.subsystemsCount || "38 Subsystems"}
               </span>
               <span className="font-mono text-[9px] text-emerald-400 font-bold">
                 {t.dashboardTopBar?.subsystemsOnline || "ONLINE"}

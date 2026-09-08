@@ -1,5 +1,5 @@
 """
-FORENZA Mitochondrial DNA (mtDNA) Forensics API — Pydantic v2 Schemas (Module 2.3).
+FORENZA Mitochondrial DNA (mtDNA) Forensics API : Pydantic v2 Schemas (Module 2.3).
 Standards Compliance: ISO/IEC 17025:2017, ISFG Recommendations on Forensic mtDNA Testing (2014, 2020),
 SWGDAM Interpretation Guidelines for Mitochondrial DNA Analysis.
 

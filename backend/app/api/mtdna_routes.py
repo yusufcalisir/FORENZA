@@ -6,17 +6,17 @@ SWGDAM Interpretation Guidelines for Mitochondrial DNA Analysis.
 Research Source: research/ystr_27_mtdna_empop_lineage_research.md §3 & §4.
 
 Endpoints:
-  POST /forensic/lineage/mtdna/evaluate-maternal-match — Pairwise maternal lineage match evaluation
-  POST /forensic/lineage/mtdna/evaluate-kinship        — Alias for maternal match evaluation
-  POST /forensic/lineage/mtdna/empop-upper-bound       — Clopper-Pearson 95% upper bound for EMPOP
-  POST /forensic/lineage/mtdna/database-frequency      — Alias for EMPOP frequency bounds
-  POST /forensic/lineage/mtdna/predict-haplogroup      — PhyloTree 17 haplogroup classification
-  GET  /forensic/lineage/mtdna/panel-metadata         — rCRS Control Region (HV1/HV2/HV3) and ISFG rules
-  GET  /forensic/lineage/mtdna/reference-metadata     — Alias for reference metadata
-  GET  /forensic/lineage/mtdna/control-region-domains — 7 D-Loop functional domains
-  GET  /forensic/lineage/mtdna/gold-standards         — Certified multi-omic reference standards
-  GET  /forensic/lineage/mtdna/casework-cohorts        — Certified casework benchmark cohorts
-  GET  /forensic/lineage/mtdna/reporting-disclaimer   — ISFG (2020) mtDNA evaluative reporting disclaimer
+  POST /forensic/lineage/mtdna/evaluate-maternal-match : Pairwise maternal lineage match evaluation
+  POST /forensic/lineage/mtdna/evaluate-kinship        : Alias for maternal match evaluation
+  POST /forensic/lineage/mtdna/empop-upper-bound       : Clopper-Pearson 95% upper bound for EMPOP
+  POST /forensic/lineage/mtdna/database-frequency      : Alias for EMPOP frequency bounds
+  POST /forensic/lineage/mtdna/predict-haplogroup      : PhyloTree 17 haplogroup classification
+  GET  /forensic/lineage/mtdna/panel-metadata         : rCRS Control Region (HV1/HV2/HV3) and ISFG rules
+  GET  /forensic/lineage/mtdna/reference-metadata     : Alias for reference metadata
+  GET  /forensic/lineage/mtdna/control-region-domains : 7 D-Loop functional domains
+  GET  /forensic/lineage/mtdna/gold-standards         : Certified multi-omic reference standards
+  GET  /forensic/lineage/mtdna/casework-cohorts        : Certified casework benchmark cohorts
+  GET  /forensic/lineage/mtdna/reporting-disclaimer   : ISFG (2020) mtDNA evaluative reporting disclaimer
 """
 
 import math

@@ -539,7 +539,7 @@ export function PanelKinship() {
   );
 }
 
-// ─── Panel Router (all 35 modules wired to dedicated components) ───────────
+// ─── Panel Router (all 38 modules wired to dedicated components) ───────────
 
 export function renderPanel(tabId: string) {
   switch (tabId) {

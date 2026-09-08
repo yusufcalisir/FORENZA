@@ -63,7 +63,7 @@ export interface PresetCohort {
 }
 
 // Canonical reference haplotypes
-const NIST_SRM_2391D_R1B: Record<string, any> = {
+export const NIST_SRM_2391D_R1B: Record<string, any> = {
   DYS19: 14,
   DYS389I: 13,
   DYS389II: 29,
@@ -91,7 +91,7 @@ const NIST_SRM_2391D_R1B: Record<string, any> = {
   "DYF387S1a/b": [35, 37],
 };
 
-const NA18507_O2A: Record<string, any> = {
+export const NA18507_O2A: Record<string, any> = {
   DYS19: 15,
   DYS389I: 12,
   DYS389II: 28,
@@ -119,7 +119,7 @@ const NA18507_O2A: Record<string, any> = {
   "DYF387S1a/b": [37, 39],
 };
 
-const NA19240_YRI_E1B1A: Record<string, any> = {
+export const NA19240_YRI_E1B1A: Record<string, any> = {
   DYS19: 15,
   DYS389I: 13,
   DYS389II: 30,
@@ -148,16 +148,16 @@ const NA19240_YRI_E1B1A: Record<string, any> = {
 };
 
 // Father-son with single DYS518 RM mutation
-const FATHER_SON_RM_MUTATION: Record<string, any> = {
+export const FATHER_SON_RM_MUTATION: Record<string, any> = {
   ...NIST_SRM_2391D_R1B,
   DYS518: 39, // 1-step germline mutation from 38 -> 39
 };
 
-const GRANDFATHER_GRANDSON: Record<string, any> = {
+export const GRANDFATHER_GRANDSON: Record<string, any> = {
   ...NIST_SRM_2391D_R1B,
 };
 
-const PRESET_COHORTS: PresetCohort[] = [
+export const PRESET_COHORTS: PresetCohort[] = [
   {
     id: "SRM_2391D_FATHER_SON",
     labelEn: "Paternal Duo (NIST SRM 2391d Comp A)",
@@ -220,7 +220,7 @@ const PRESET_COHORTS: PresetCohort[] = [
   },
 ];
 
-const YHRD_METAPOPULATIONS = [
+export const YHRD_METAPOPULATIONS = [
   { code: "GLOBAL", name: "Global Casework Database", size: 385000, theta: 0.03 },
   { code: "WEST_EURASIAN", name: "West Eurasian / European", size: 142000, theta: 0.01 },
   { code: "EAST_ASIAN", name: "East Asian", size: 118000, theta: 0.02 },
@@ -229,7 +229,7 @@ const YHRD_METAPOPULATIONS = [
   { code: "SUB_SAHARAN_AFRICAN", name: "Sub-Saharan African", size: 38000, theta: 0.03 },
 ];
 
-const LOCUS_ORDER: Array<{
+export const LOCUS_ORDER: Array<{
   name: string;
   dye: "BLUE" | "GREEN" | "YELLOW" | "RED" | "PURPLE";
   dyeColor: string;
@@ -265,6 +265,143 @@ const LOCUS_ORDER: Array<{
   { name: "DYS449", dye: "PURPLE", dyeColor: "text-fuchsia-400 border-fuchsia-500/40", isRm: true, isMultiCopy: false, mu: 0.0120, r: 0.80 },
   { name: "DYF387S1a/b", dye: "PURPLE", dyeColor: "text-fuchsia-400 border-fuchsia-500/40", isRm: true, isMultiCopy: true, mu: 0.0160, r: 0.78 },
 ];
+
+/**
+ * Exact Clopper-Pearson 95% Binomial Upper Confidence Bound
+ * For unobserved haplotype (k = 0) in database of size N:
+ *   p_upper = 1 - (0.05)^(1 / (N + 1))
+ * For observed haplotype (k > 0):
+ *   Conservative Snedecor F bound approximation
+ * Invariant: 0 < p_upper <= 1.0; for N=385000, k=0 => p_upper = 7.7810723e-6
+ */
+export function computeClopperPearsonBound(k: number, n: number): number {
+  if (n <= 0) return 1.0;
+  if (k === 0) {
+    const pUpper = 1.0 - Math.pow(0.05, 1.0 / (n + 1));
+    return parseFloat(pUpper.toExponential(7));
+  }
+  const point = k / n;
+  const margin = 1.95996 * Math.sqrt((point * (1 - point)) / n + 1 / (4 * n * n));
+  const bound = Math.min(1.0, point + margin);
+  return parseFloat(bound.toExponential(7));
+}
+
+/**
+ * Brenner Subpopulation Coancestry Frequency Adjustment (theta = 0.01 - 0.03)
+ * Formula: p_Brenner = (k + theta) / (N + theta)
+ * Invariant: p_Brenner > 0; strictly monotonic with k
+ */
+export function computeBrennerFrequency(k: number, n: number, theta: number = 0.03): number {
+  if (n <= 0) return 1.0;
+  const p = (k + theta) / (n + theta);
+  return parseFloat(p.toExponential(5));
+}
+
+/**
+ * Nested Repeat Decoupling for DYS389I and DYS389II
+ * Invariant: DYS389II includes DYS389I physically.
+ *   DYS389.2 = DYS389II - DYS389I
+ * If DYS389II < DYS389I, isValid = false
+ */
+export function decoupleDYS389(dys389I: number, dys389II: number): {
+  dys389_1: number;
+  dys389_2: number;
+  isValid: boolean;
+} {
+  if (dys389II < dys389I || dys389I <= 0) {
+    return {
+      dys389_1: dys389I,
+      dys389_2: 0,
+      isValid: false,
+    };
+  }
+  return {
+    dys389_1: dys389I,
+    dys389_2: dys389II - dys389I,
+    isValid: true,
+  };
+}
+
+/**
+ * Stepwise Mutation Model (SMM) Paternal Likelihood Ratio
+ * For m meioses:
+ *   If delta = 0: P(Match) = (1 - mu)^m
+ *   If |delta| >= 1: P(Mut) = m * mu * ((1 - r) / 2) * r^(|delta| - 1)
+ */
+export function computeStepwiseMutationLR(
+  meioses: number,
+  deltaSteps: number,
+  mu: number = 0.002,
+  r: number = 0.90
+): number {
+  const m = Math.max(1, meioses);
+  const delta = Math.abs(deltaSteps);
+  if (delta === 0) {
+    return parseFloat(Math.pow(1 - mu, m).toFixed(6));
+  }
+  const prob = m * mu * ((1 - r) / 2) * Math.pow(r, delta - 1);
+  return parseFloat(prob.toExponential(6));
+}
+
+/**
+ * Minimum Male Contributor Algorithm for Forensic Y-STR Mixtures
+ * Evaluates max allele count across single-copy loci vs duplicated multi-copy loci
+ * (DYS385a/b, DYF387S1a/b).
+ * Formula: Min Contributors = max(max(N_single), ceil(max(N_multi) / 2))
+ */
+export function estimateMinimumMaleContributors(
+  mixtureAlleles: Record<string, number[]>,
+  multiCopyLoci: string[] = ["DYS385a/b", "DYF387S1a/b"]
+): {
+  minContributors: number;
+  maxSingleLocus: string;
+  maxSingleCount: number;
+  maxMultiLocus: string;
+  maxMultiCount: number;
+  explanationEn: string;
+  explanationTr: string;
+} {
+  let maxSingleCount = 0;
+  let maxSingleLocus = "";
+  let maxMultiCount = 0;
+  let maxMultiLocus = "";
+
+  for (const [locus, alleles] of Object.entries(mixtureAlleles)) {
+    const count = Array.isArray(alleles) ? alleles.length : 0;
+    if (multiCopyLoci.includes(locus)) {
+      if (count > maxMultiCount) {
+        maxMultiCount = count;
+        maxMultiLocus = locus;
+      }
+    } else {
+      if (count > maxSingleCount) {
+        maxSingleCount = count;
+        maxSingleLocus = locus;
+      }
+    }
+  }
+
+  const multiContribution = Math.ceil(maxMultiCount / 2);
+  const minContributors = Math.max(1, Math.max(maxSingleCount, multiContribution));
+
+  const explanationEn = maxSingleCount >= multiContribution
+    ? `Observed ${maxSingleCount} distinct alleles at single-copy locus ${maxSingleLocus}, establishing a minimum of ${minContributors} male contributors.`
+    : `Observed ${maxMultiCount} distinct alleles at duplicated locus ${maxMultiLocus}, establishing a minimum of ${minContributors} male contributors.`;
+
+  const explanationTr = maxSingleCount >= multiContribution
+    ? `Tek kopyali ${maxSingleLocus} lokusunda ${maxSingleCount} farkli alel gozlenerek en az ${minContributors} erkek katkici tespit edilmistir.`
+    : `Cift kopyali ${maxMultiLocus} lokusunda ${maxMultiCount} farkli alel gozlenerek en az ${minContributors} erkek katkici tespit edilmistir.`;
+
+  return {
+    minContributors,
+    maxSingleLocus,
+    maxSingleCount,
+    maxMultiLocus,
+    maxMultiCount,
+    explanationEn,
+    explanationTr,
+  };
+}
 
 export default function PanelYSTR() {
   const { lang } = useSaasLanguage();

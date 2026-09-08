@@ -11,9 +11,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # ── Job 1: Frontend Quality, Vitest (147 Tests), TypeScript & Next.js 16 Production Build ──
+  # ── Job 1: Frontend Quality, Vitest (162 Tests), TypeScript & Next.js 16 Production Build ──
   frontend-ci:
-    name: 1. Frontend Quality, Vitest (147 Tests), TypeScript & Next.js 16 Production Build
+    name: 1. Frontend Quality, Vitest (162 Tests), TypeScript & Next.js 16 Production Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -32,7 +32,7 @@ jobs:
       - name: Run ESLint Code Hygiene & Style Check
         run: npm --prefix frontend run lint || echo "ESLint Completed with report"
 
-      - name: Run Frontend Vitest Unit & Invariant Test Suite (147 Tests)
+      - name: Run Frontend Vitest Unit & Invariant Test Suite (162 Tests)
         run: npm --prefix frontend test -- --run
 
       - name: Verify Next.js Production Bundle & TypeScript Typecheck

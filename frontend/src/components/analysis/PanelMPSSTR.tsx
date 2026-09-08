@@ -29,7 +29,7 @@ import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 import { getApiBaseUrl } from "@/lib/api";
 
 // ─── Golden Benchmark Presets ──────────────────────────────────────────────────
-interface MpsPreset {
+export interface MpsPreset {
   id: string;
   name: string;
   nameTr: string;
@@ -45,7 +45,7 @@ interface MpsPreset {
   descTr: string;
 }
 
-const MPS_GOLDEN_PRESETS: MpsPreset[] = [
+export const MPS_GOLDEN_PRESETS: MpsPreset[] = [
   {
     id: "VECTOR_MPS_01",
     name: "VECTOR_MPS_01: SE33 Bimodal Isoallele Deconvolution",
@@ -123,13 +123,172 @@ const MPS_GOLDEN_PRESETS: MpsPreset[] = [
   },
 ];
 
-const PARSER_DEMO_SEQUENCES = [
+export const MPS_GOLDEN_VECTOR_01 = MPS_GOLDEN_PRESETS[0];
+export const MPS_GOLDEN_VECTOR_02 = MPS_GOLDEN_PRESETS[1];
+export const MPS_GOLDEN_VECTOR_03 = MPS_GOLDEN_PRESETS[2];
+export const MPS_GOLDEN_VECTOR_04 = MPS_GOLDEN_PRESETS[3];
+
+export const PARSER_DEMO_SEQUENCES = [
   { label: "SE33 Allele 27.2 (rs1277875566)", locus: "SE33", seq: "CTTC [CTTT]10 TT [CTTT]16_rs1277875566[T>C]" },
   { label: "SE33 Allele 18 (rs9362477)", locus: "SE33", seq: "CTTC [CTTT]17_rs9362477[C>T]" },
   { label: "D3S1358 Allele 15a", locus: "D3S1358", seq: "[TCTA]1 [TCTG]3 [TCTA]11" },
   { label: "vWA Allele 15 (rs771794429)", locus: "vWA", seq: "[TCTA]11 [TCTG]4 [TCTA]2_rs771794429[G>A]" },
   { label: "TH01 Microvariant 9.3", locus: "TH01", seq: "[AATG]6 ATG [AATG]3" },
 ];
+
+/**
+ * Computes Expected Heterozygosity: H_exp = 1 - sum(p_i^2)
+ * Invariant: 0 <= H_exp <= 1.0 (for SE33, H_exp = 0.973 in MPS)
+ */
+export function computeExpectedHeterozygosity(frequencies: number[]): number {
+  if (!frequencies || frequencies.length === 0) return 0;
+  const sumSq = frequencies.reduce((acc, p) => acc + p * p, 0);
+  return Math.max(0, Math.min(1, parseFloat((1 - sumSq).toFixed(6))));
+}
+
+/**
+ * Computes Match Probability (PM) and Power of Discrimination (PD = 1 - PM)
+ * Formula: PM = 2 * (sum p_i^2)^2 - sum(p_i^4)
+ * Invariant: PD + PM = 1.0
+ */
+export function computePowerOfDiscrimination(frequencies: number[]): {
+  matchProbability: number;
+  powerOfDiscrimination: number;
+} {
+  if (!frequencies || frequencies.length === 0) {
+    return { matchProbability: 1, powerOfDiscrimination: 0 };
+  }
+  const sumSq = frequencies.reduce((acc, p) => acc + p * p, 0);
+  const sumFourth = frequencies.reduce((acc, p) => acc + Math.pow(p, 4), 0);
+  const pm = Math.max(1e-15, Math.min(1, 2.0 * Math.pow(sumSq, 2) - sumFourth));
+  const pd = Math.max(0, Math.min(1, 1.0 - pm));
+  return {
+    matchProbability: parseFloat(pm.toFixed(6)),
+    powerOfDiscrimination: parseFloat(pd.toFixed(6)),
+  };
+}
+
+/**
+ * Computes Syntenic Linkage Recombination LR Guard (D6S1043 - SE33)
+ * On chromosome 6q, physical distance = 3.46 Mb, theta = 0.0440.
+ * In parentage/kinship, naive multiplication (d6Lr * se33Lr) overstates evidence.
+ * If singleLocusFallback is true: returns max(d6Lr, se33Lr).
+ * If false: applies Kosambi/Haldane recombination discount factor (1.0 - (0.5 - theta)).
+ */
+export function computeSyntenicRecombinationLR(
+  d6Lr: number,
+  se33Lr: number,
+  theta: number = 0.044,
+  singleLocusFallback: boolean = true
+): { adjustedLr: number; actionTaken: string; isLinkageRisk: boolean } {
+  const isLinkageRisk = true;
+  if (singleLocusFallback) {
+    const adjustedLr = Math.max(d6Lr, se33Lr);
+    return {
+      adjustedLr,
+      actionTaken: "FALLBACK_TO_MORE_INFORMATIVE_LOCUS (SE33)",
+      isLinkageRisk,
+    };
+  }
+  const discountFactor = 1.0 - (0.5 - theta);
+  const adjustedLr = parseFloat((d6Lr * se33Lr * discountFactor).toFixed(2));
+  return {
+    adjustedLr,
+    actionTaken: `RECOMBINATION_DISCOUNT_APPLIED (theta=${theta})`,
+    isLinkageRisk,
+  };
+}
+
+/**
+ * SE33 4-bp Flanking Deletion Resolver (rs369314007 [delTTTT], rs1371483225 [delTCTT])
+ * Short-amplicon MPS assays sequence into the 3' flanking region where 4-bp deletions
+ * cause apparent +1 repeat shifts compared to legacy CE assays.
+ * Automatically reconciles raw call by subtracting 1 repeat to match 100% biological CE standard.
+ */
+export function reconcileSE33FlankingDeletion(
+  sequenceString: string,
+  rawCall: number
+): {
+  reconciledCall: number;
+  has4bpDeletion: boolean;
+  deletionRsId: string | null;
+  concordanceStatus: string;
+} {
+  const isDelTTTT = sequenceString.includes("rs369314007") || sequenceString.includes("delTTTT");
+  const isDelTCTT = sequenceString.includes("rs1371483225") || sequenceString.includes("delTCTT");
+
+  if (isDelTTTT || isDelTCTT) {
+    const rsId = isDelTTTT ? "rs369314007" : "rs1371483225";
+    const reconciledCall = parseFloat((rawCall - 1.0).toFixed(1));
+    return {
+      reconciledCall,
+      has4bpDeletion: true,
+      deletionRsId: rsId,
+      concordanceStatus: "100% RECONCILED",
+    };
+  }
+
+  return {
+    reconciledCall: rawCall,
+    has4bpDeletion: false,
+    deletionRsId: null,
+    concordanceStatus: "CONCORDANT",
+  };
+}
+
+/**
+ * Parses ISFG STR sequence string into length call and motif structure
+ * Supports simple repeats [TCTA]n, compound motifs, and microvariant interruptions (e.g. TH01 9.3)
+ */
+export function parseSequenceToLengthCall(sequenceString: string): {
+  lengthCall: number;
+  totalBp: number;
+  motifBlocks: { motif: string; count: number }[];
+  isMicrovariant: boolean;
+} {
+  const mainRepeat = sequenceString.split("_")[0].trim();
+  const motifBlocks: { motif: string; count: number }[] = [];
+  let totalBp = 0;
+
+  const bracketRegex = /\[([A-Z]+)\](\d+(?:\.\d+)?)/g;
+  let match;
+
+  while ((match = bracketRegex.exec(mainRepeat)) !== null) {
+    const motif = match[1];
+    const count = parseFloat(match[2]);
+    motifBlocks.push({ motif, count });
+    totalBp += motif.length * count;
+  }
+
+  const remainingTokens = mainRepeat.replace(/\[[A-Z]+\]\d+(?:\.\d+)?/g, " ").trim().split(/\s+/).filter(Boolean);
+  for (const token of remainingTokens) {
+    if (/^[A-Z]+$/.test(token)) {
+      totalBp += token.length;
+    }
+  }
+
+  const repeatLength = totalBp / 4;
+  const integerPart = Math.floor(repeatLength);
+  const remainderBp = totalBp % 4;
+  const lengthCall = remainderBp === 0 ? integerPart : parseFloat(`${integerPart}.${remainderBp}`);
+  const isMicrovariant = remainderBp !== 0;
+
+  return {
+    lengthCall,
+    totalBp,
+    motifBlocks,
+    isMicrovariant,
+  };
+}
+
+/**
+ * Computes single-locus information gain boost from CE to MPS:
+ * Gain = LR_mps / LR_ce
+ */
+export function computeIsoalleleInformationGain(lrCe: number, lrMps: number): number {
+  if (lrCe <= 0) return 1.0;
+  return parseFloat((lrMps / lrCe).toFixed(1));
+}
 
 export const PanelMPSSTR: React.FC = () => {
   const { lang } = useSaasLanguage();

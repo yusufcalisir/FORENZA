@@ -50,83 +50,158 @@ interface GoldenPreset {
   sequenceString: string;
 }
 
+// ─── Named Exports for Vitest (Subsystem 22: ML STR Calling & Artifact Filtering) ────────────────
+// Following the same pattern as GeoForensicIntelligencePanel: exported golden vectors + pure math
+// functions enable the 5 mandatory EC-MLSTR ISO/IEC 17025 edge-case invariants to be unit-tested.
+
+/** VECTOR_MLSTR_01: Certified D21S11 severe back-stutter benchmark (SR = 18.5%) */
+export const MLSTR_GOLDEN_VECTOR_01: GoldenPreset = {
+  id: "VECTOR_MLSTR_01",
+  name: "VECTOR_MLSTR_01: Severe Back-Stutter Discrimination",
+  nameTr: "VECTOR_MLSTR_01: Siddetli Geri-Kekeleme Ayristirma",
+  locus: "D21S11",
+  challenge: "High-Ratio Reverse Stutter (SR = 18.5% at -4 bp position)",
+  challengeTr: "Yuksek Oranli Ters Kekeleme (-4 bp pozisyonunda SR = %18.5)",
+  rawPeaks: [
+    { id: "Peak_30", h: 2400, bp: 214.0, class: "CLASS_TRUE_ALLELE", conf: 0.98 },
+    { id: "Peak_29", h: 444, bp: 210.0, class: "CLASS_BACK_STUTTER", conf: 0.94 }
+  ],
+  action: "SUBTRACT_STUTTER_SIGNAL (444.0 RFU)",
+  actionTr: "KEKELEME SINYALINI CIKAR (444.0 RFU)",
+  mcmcSpeedup: "1.45x Faster (Burn-in -31%)",
+  desc: "Correctly discriminates severe back-stutter from genuine minor contributor peak in D21S11.",
+  descTr: "D21S11 lokusunda siddetli geri kekelemeyi gercek minor katkici pikinden dogru sekilde ayristirir.",
+  sequenceString: "[TCTA]29 [TCTG]1 [TCTA]1"
+};
+
+/** VECTOR_MLSTR_02: TH01 split +A / -A non-template adenylation recombination benchmark */
+export const MLSTR_GOLDEN_VECTOR_02: GoldenPreset = {
+  id: "VECTOR_MLSTR_02",
+  name: "VECTOR_MLSTR_02: Split -A / +A Non-Template Recombination",
+  nameTr: "VECTOR_MLSTR_02: Ayrik -A / +A Sablonsuz Adenilasyon Birlestirme",
+  locus: "TH01",
+  challenge: "Incomplete Polymerase Terminal Transferase (+1 bp split peak)",
+  challengeTr: "Eksik Polimeraz Terminal Transferaz (+1 bp ayrik pik)",
+  rawPeaks: [
+    { id: "Peak_9.3", h: 1800, bp: 180.0, class: "CLASS_TRUE_ALLELE", conf: 0.96 },
+    { id: "Peak_PlusA", h: 360, bp: 181.0, class: "CLASS_PLUS_A_ARTIFACT", conf: 0.88 }
+  ],
+  action: "RECOMBINE_PLUS_A_INTO_PARENT_PEAK (+360 RFU)",
+  actionTr: "+A PIKINI ANA PIKLE BIRLESTIR (+360 RFU)",
+  mcmcSpeedup: "1.30x Faster (Conserved Area)",
+  desc: "Recombines split +A peak into parent 9.3 allele, conserving total signal area.",
+  descTr: "Ayrik +A pikini ana 9.3 alleliyle birlestirerek toplam pik alanini korur.",
+  sequenceString: "[AATG]6 ATG [AATG]3"
+};
+
+/** VECTOR_MLSTR_03: vWA high-RFU (6200 RFU) spectral pull-up elimination benchmark */
+export const MLSTR_GOLDEN_VECTOR_03: GoldenPreset = {
+  id: "VECTOR_MLSTR_03",
+  name: "VECTOR_MLSTR_03: High-RFU Spectral Pull-Up Elimination",
+  nameTr: "VECTOR_MLSTR_03: Yuksek-RFU Spektral Pull-Up Eleme",
+  locus: "vWA",
+  challenge: "Secondary Dye Bleedthrough (h > 6000 RFU in 6-FAM dye)",
+  challengeTr: "Ikincil Boya Sizintisi (6-FAM kanalinda h > 6000 RFU)",
+  rawPeaks: [
+    { id: "Major_Blue", h: 6200, bp: 165.0, class: "CLASS_TRUE_ALLELE", conf: 0.99 },
+    { id: "PullUp_Yellow", h: 480, bp: 165.0, class: "CLASS_SPECTRAL_PULL_UP", conf: 0.95 }
+  ],
+  action: "CULL_SPECTRAL_PULL_UP_BLEEDTHROUGH",
+  actionTr: "SPEKTRAL PULL-UP SIZINTISINI ELE",
+  mcmcSpeedup: "1.60x Faster (Eliminated Artifact)",
+  desc: "Identifies and culls spectral pull-up bleedthrough caused by CCD sensor saturation.",
+  descTr: "CCD sensor doygunlugundan kaynaklanan spektral pull-up sizintisini tespit edip eler.",
+  sequenceString: "[TCTA]11 [TCTG]4"
+};
+
+/** VECTOR_MLSTR_04: PROVEDIt 3-person mixture MCMC pre-filtering benchmark */
+export const MLSTR_GOLDEN_VECTOR_04: GoldenPreset = {
+  id: "VECTOR_MLSTR_04",
+  name: "VECTOR_MLSTR_04: PROVEDIt 3-Person Mixture Pre-Filtering",
+  nameTr: "VECTOR_MLSTR_04: PROVEDIt 3 Kisilik Karisim On Filtreleme",
+  locus: "D3S1358",
+  challenge: "Complex 3-Person Mixture with 2 Stutters and 1 Noise Peak",
+  challengeTr: "2 Kekeleme ve 1 Gurultu Piki Iceren Karmasik 3 Kisilik Karisim",
+  rawPeaks: [
+    { id: "Allele_15", h: 1400, bp: 120.0, class: "CLASS_TRUE_ALLELE", conf: 0.98 },
+    { id: "Allele_16", h: 950, bp: 124.0, class: "CLASS_TRUE_ALLELE", conf: 0.96 },
+    { id: "Allele_17", h: 600, bp: 128.0, class: "CLASS_TRUE_ALLELE", conf: 0.92 },
+    { id: "Stutter_14", h: 120, bp: 116.0, class: "CLASS_BACK_STUTTER", conf: 0.94 },
+    { id: "Noise_SubAT", h: 32, bp: 110.0, class: "CLASS_BASE_NOISE_DROP_IN", conf: 0.97 }
+  ],
+  action: "OPTIMIZE_MCMC_SEARCH_SPACE (-75% Permutations)",
+  actionTr: "MCMC ARAMA UZAYINI OPTIMIZE ET (%-75 Permutasyon)",
+  mcmcSpeedup: "2.10x Faster (R^ = 1.012)",
+  desc: "Filters stutters and sub-AT noise, reducing MCMC permutation state space from 32 to 8 candidate genotypes.",
+  descTr: "Kekeleme ve esik alti gurultuleri eleyerek MCMC permutasyon uzayini 32'den 8 adaya indirir.",
+  sequenceString: "[TCTA]1 [TCTG]3 [TCTA]12"
+};
+
+// Internal component array (re-assembled from named exports)
 const MLSTR_GOLDEN_PRESETS: GoldenPreset[] = [
-  {
-    id: "VECTOR_MLSTR_01",
-    name: "VECTOR_MLSTR_01: Severe Back-Stutter Discrimination",
-    nameTr: "VECTOR_MLSTR_01: Siddetli Geri-Kekeleme Ayristirma",
-    locus: "D21S11",
-    challenge: "High-Ratio Reverse Stutter (SR = 18.5% at -4 bp position)",
-    challengeTr: "Yuksek Oranli Ters Kekeleme (-4 bp pozisyonunda SR = %18.5)",
-    rawPeaks: [
-      { id: "Peak_30", h: 2400, bp: 214.0, class: "CLASS_TRUE_ALLELE", conf: 0.98 },
-      { id: "Peak_29", h: 444, bp: 210.0, class: "CLASS_BACK_STUTTER", conf: 0.94 }
-    ],
-    action: "SUBTRACT_STUTTER_SIGNAL (444.0 RFU)",
-    actionTr: "KEKELEME SINYALINI CIKAR (444.0 RFU)",
-    mcmcSpeedup: "1.45x Faster (Burn-in -31%)",
-    desc: "Correctly discriminates severe back-stutter from genuine minor contributor peak in D21S11.",
-    descTr: "D21S11 lokusunda siddetli geri kekelemeyi gercek minor katkici pikinden dogru sekilde ayristirir.",
-    sequenceString: "[TCTA]29 [TCTG]1 [TCTA]1"
-  },
-  {
-    id: "VECTOR_MLSTR_02",
-    name: "VECTOR_MLSTR_02: Split -A / +A Non-Template Recombination",
-    nameTr: "VECTOR_MLSTR_02: Ayrik -A / +A Sablonsuz Adenilasyon Birlestirme",
-    locus: "TH01",
-    challenge: "Incomplete Polymerase Terminal Transferase (+1 bp split peak)",
-    challengeTr: "Eksik Polimeraz Terminal Transferaz (+1 bp ayrik pik)",
-    rawPeaks: [
-      { id: "Peak_9.3", h: 1800, bp: 180.0, class: "CLASS_TRUE_ALLELE", conf: 0.96 },
-      { id: "Peak_PlusA", h: 360, bp: 181.0, class: "CLASS_PLUS_A_ARTIFACT", conf: 0.88 }
-    ],
-    action: "RECOMBINE_PLUS_A_INTO_PARENT_PEAK (+360 RFU)",
-    actionTr: "+A PIKINI ANA PIKLE BIRLESTIR (+360 RFU)",
-    mcmcSpeedup: "1.30x Faster (Conserved Area)",
-    desc: "Recombines split +A peak into parent 9.3 allele, conserving total signal area.",
-    descTr: "Ayrik +A pikini ana 9.3 alleliyle birlestirerek toplam pik alanini korur.",
-    sequenceString: "[AATG]6 ATG [AATG]3"
-  },
-  {
-    id: "VECTOR_MLSTR_03",
-    name: "VECTOR_MLSTR_03: High-RFU Spectral Pull-Up Elimination",
-    nameTr: "VECTOR_MLSTR_03: Yuksek-RFU Spektral Pull-Up Eleme",
-    locus: "vWA",
-    challenge: "Secondary Dye Bleedthrough (h > 6000 RFU in 6-FAM dye)",
-    challengeTr: "Ikincil Boya Sizintisi (6-FAM kanalinda h > 6000 RFU)",
-    rawPeaks: [
-      { id: "Major_Blue", h: 6200, bp: 165.0, class: "CLASS_TRUE_ALLELE", conf: 0.99 },
-      { id: "PullUp_Yellow", h: 480, bp: 165.0, class: "CLASS_SPECTRAL_PULL_UP", conf: 0.95 }
-    ],
-    action: "CULL_SPECTRAL_PULL_UP_BLEEDTHROUGH",
-    actionTr: "SPEKTRAL PULL-UP SIZINTISINI ELE",
-    mcmcSpeedup: "1.60x Faster (Eliminated Artifact)",
-    desc: "Identifies and culls spectral pull-up bleedthrough caused by CCD sensor saturation.",
-    descTr: "CCD sensor doygunlugundan kaynaklanan spektral pull-up sizintisini tespit edip eler.",
-    sequenceString: "[TCTA]11 [TCTG]4"
-  },
-  {
-    id: "VECTOR_MLSTR_04",
-    name: "VECTOR_MLSTR_04: PROVEDIt 3-Person Mixture Pre-Filtering",
-    nameTr: "VECTOR_MLSTR_04: PROVEDIt 3 Kisilik Karisim On Filtreleme",
-    locus: "D3S1358",
-    challenge: "Complex 3-Person Mixture with 2 Stutters and 1 Noise Peak",
-    challengeTr: "2 Kekeleme ve 1 Gurultu Piki Iceren Karmasik 3 Kisilik Karisim",
-    rawPeaks: [
-      { id: "Allele_15", h: 1400, bp: 120.0, class: "CLASS_TRUE_ALLELE", conf: 0.98 },
-      { id: "Allele_16", h: 950, bp: 124.0, class: "CLASS_TRUE_ALLELE", conf: 0.96 },
-      { id: "Allele_17", h: 600, bp: 128.0, class: "CLASS_TRUE_ALLELE", conf: 0.92 },
-      { id: "Stutter_14", h: 120, bp: 116.0, class: "CLASS_BACK_STUTTER", conf: 0.94 },
-      { id: "Noise_SubAT", h: 32, bp: 110.0, class: "CLASS_BASE_NOISE_DROP_IN", conf: 0.97 }
-    ],
-    action: "OPTIMIZE_MCMC_SEARCH_SPACE (-75% Permutations)",
-    actionTr: "MCMC ARAMA UZAYINI OPTIMIZE ET (%-75 Permutasyon)",
-    mcmcSpeedup: "2.10x Faster (R^ = 1.012)",
-    desc: "Filters stutters and sub-AT noise, reducing MCMC permutation state space from 32 to 8 candidate genotypes.",
-    descTr: "Kekeleme ve esik alti gurultuleri eleyerek MCMC permutasyon uzayini 32'den 8 adaya indirir.",
-    sequenceString: "[TCTA]1 [TCTG]3 [TCTA]12"
-  }
+  MLSTR_GOLDEN_VECTOR_01,
+  MLSTR_GOLDEN_VECTOR_02,
+  MLSTR_GOLDEN_VECTOR_03,
+  MLSTR_GOLDEN_VECTOR_04,
 ];
+
+// ─── Exported Pure Math Functions (testable without DOM) ────────────────────────────────────────
+
+/**
+ * EC-MLSTR-02: Stutter Ratio observed.
+ * SR_obs = h_candidate / h_major_allele
+ * Research spec Section 3.2 x12.
+ */
+export function computeStutterRatio(h_candidate: number, h_major: number): number {
+  if (h_major <= 0) return 0;
+  return h_candidate / h_major;
+}
+
+/**
+ * EC-MLSTR: Random Forest split criterion - Gini Impurity over K classes.
+ * I_G(S) = 1 - sum_{k=1}^{K} p_k^2
+ * Research spec Section 4.1 (7 artifact classes).
+ */
+export function computeGiniImpurity(probs: number[]): number {
+  return 1 - probs.reduce((sum, p) => sum + p * p, 0);
+}
+
+/**
+ * EC-MLSTR: Shannon Sequence Entropy over nucleotide composition.
+ * H(S) = -sum_{i in {A,C,G,T}} p_i * log2(p_i)
+ * Research spec Section 3.3 x13.
+ */
+export function computeShannonEntropy(seq: string): number {
+  const N = seq.length;
+  if (N === 0) return 0;
+  const counts: Record<string, number> = { A: 0, C: 0, G: 0, T: 0 };
+  for (const ch of seq.toUpperCase()) {
+    if (ch in counts) counts[ch]++;
+  }
+  return -Object.values(counts).reduce((sum, n) => {
+    const p = n / N;
+    return sum + (p > 0 ? p * Math.log2(p) : 0);
+  }, 0);
+}
+
+/**
+ * EC-MLSTR-04 / EC-MLSTR-01: Analytical Threshold Margin.
+ * M_AT = (h - AT) / AT, AT = 50.0 RFU (research spec Master Rule 1 constant).
+ * M_AT >= 0 means peak is above analytical threshold (must not be dropped).
+ */
+export function computeATMargin(h: number, AT = 50.0): number {
+  return (h - AT) / AT;
+}
+
+/**
+ * EC-MLSTR-03: Heterozygote Balance Ratio (Hb).
+ * H_b = h_minor / h_major, clamped to [0, 1].
+ * Research spec Section 3.4 x19.
+ */
+export function computeHeterozygoteBalance(h_minor: number, h_major: number): number {
+  if (h_major <= 0) return 0;
+  return Math.min(h_minor / h_major, 1.0);
+}
 
 export const PanelMLSTR: React.FC = () => {
   const { lang } = useSaasLanguage();

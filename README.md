@@ -627,6 +627,10 @@ The FastAPI gateway exposes a clean `/api/v1` RESTful interface.
 | **MPS/NGS Mixture Deconvolution** | `/api/v1/forensic/mps-str/deconvolve-mixture` | `POST` | Resolves multi-contributor mixtures using base-level sequence isoallele expansion |
 | **ML STR Artifact Classifier** | `/api/v1/forensic/ml-str/classify-peak` | `POST` | Evaluates 24-D peak morphology and classifies true alleles vs CE/MPS artifacts |
 | **Phenotype** | `/api/v1/forensic/phenotype` | `POST` | Computes HIrisPlex-S eye, skin, and hair probabilities |
+| **HIrisPlex-S (Simultaneous 41-SNP)** | `/api/v1/forensic/phenotyping/hirisplex/predict-full` | `POST` | Simultaneously predicts IrisPlex eye, HIrisPlex hair color & shade, and Fitzpatrick skin phototypes |
+| **HIrisPlex-S (Certified Standards)** | `/api/v1/forensic/phenotyping/hirisplex/standards` | `GET` | Retrieves 5 certified multi-omic pigmentation reference standards (NA12878, NA19240, etc.) |
+| **HIrisPlex-S (Cross-Validation)** | `/api/v1/forensic/phenotyping/hirisplex/cross-validation` | `GET` | Evaluates concordance against Erasmus MC HIrisPlex webtool & VISAGE standards |
+| **HIrisPlex-S (Reporting Shield)** | `/api/v1/forensic/phenotyping/hirisplex/reporting-shield` | `GET` | Generates bilingual ISFG 2018 / VISAGE 2020 evaluative statement & Prosecutor's Fallacy Shield |
 | **Ancestry (55-AIM)** | `/api/v1/forensic/ancestry/55-aim/predict` | `POST` | Evaluates 55-SNP AIM biogeographic ancestry clusters and continental centroids |
 | **Ancestry (Expanded BGA & gnomAD)** | `/api/forensic/bga/analyze` | `POST` | Evaluates 165-SNP AIM / gnomAD continental centroid projections & Euclidean distances |
 | **Hair & Balding PRS** | `/api/v1/forensic/phenotyping/hair/morphology-and-balding` | `POST` | Evaluates fiber cross-sectional area, curl density index, and balding PRS |

@@ -81,7 +81,7 @@ const EvidenceManagementPanel = dynamic(() => import("@/components/analysis/Evid
 const PedigreeTree = dynamic(() => import("@/components/analysis/PedigreeTree"), {
   loading: () => <ModuleSkeletonLoader label="Loading Kinship Pedigree Tree..." />,
 });
-const HIrisPlexPanel = dynamic(() => import("@/components/analysis/HIrisPlexPanel"), {
+const PanelHIrisPlex = dynamic(() => import("@/components/analysis/PanelHIrisPlex"), {
   loading: () => <ModuleSkeletonLoader label="Loading HIrisPlex-S 41-SNP Phenotype Model..." />,
 });
 const SuspectVisualizer = dynamic(() => import("@/components/analysis/SuspectVisualizer"), {
@@ -596,7 +596,7 @@ export function renderPanel(tabId: string) {
     case "hirisplex_s":
     case "phenotyping":
     case "pigmentation":
-      return <HIrisPlexPanel />;
+      return <PanelHIrisPlex />;
     case "ancestry":
     case "bga":
     case "bga_55":

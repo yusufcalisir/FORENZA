@@ -546,6 +546,8 @@ export function renderPanel(tabId: string) {
     // Pillar 1: Genotyping & Population
     case "genotyping":
     case "str":
+    case "str_kinship":
+    case "kinship":
       return <PanelSTR />;
     case "mcmc":
       return <ProbabilisticGenotypingPanel />;

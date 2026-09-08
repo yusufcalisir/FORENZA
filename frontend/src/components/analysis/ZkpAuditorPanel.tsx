@@ -653,10 +653,15 @@ export default function ZkpAuditorPanel() {
                         : "bg-black/30 border-tactical-border/40 text-zinc-400 hover:text-zinc-200 hover:border-zinc-700"
                     }`}
                   >
-                    <div className="flex items-center justify-between text-xs font-bold">
-                      <span className="truncate">{isTr ? vec.nameTr : vec.name}</span>
+                    <div className="flex items-center justify-between text-xs font-bold gap-1.5">
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <span className="truncate">{isTr ? vec.nameTr : vec.name}</span>
+                        <span className="text-[8px] font-mono px-1 py-0.5 rounded bg-blue-500/10 border border-blue-500/20 text-blue-300 shrink-0">
+                          {vec.badge}
+                        </span>
+                      </div>
                       <span
-                        className={`text-[9px] px-1.5 py-0.5 rounded font-extrabold ${
+                        className={`text-[9px] px-1.5 py-0.5 rounded font-extrabold shrink-0 ${
                           vec.expectedVerdict === "INCLUSION"
                             ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
                             : "bg-rose-500/20 text-rose-400 border border-rose-500/30"
@@ -950,7 +955,17 @@ export default function ZkpAuditorPanel() {
                       {provingSystem === "GROTH16" ? "Point A in G1 (x, y):" : "Wire / Polynomial Commitments:"}
                     </div>
                     <div className="text-emerald-400 break-all">
-                      {JSON.stringify(proofResult.proofPayload?.pi_a || proofResult.proofPayload?.commitments || proofResult.proofPayload?.lookup_perm || proofResult.proofPayload?.vole_mac_root)}
+                      {JSON.stringify(
+                        proofResult.proofPayload?.a ||
+                        proofResult.proofPayload?.pi_a ||
+                        proofResult.proofPayload?.wire_commitments ||
+                        proofResult.proofPayload?.commitments ||
+                        proofResult.proofPayload?.grand_product_accumulator ||
+                        proofResult.proofPayload?.vector_a ||
+                        proofResult.proofPayload?.lookup_perm ||
+                        proofResult.proofPayload?.vole_mac_root ||
+                        "0x0000000000000000"
+                      )}
                     </div>
                   </div>
                   <div className="p-2.5 rounded-xl bg-black/60 border border-tactical-border/60">
@@ -958,7 +973,16 @@ export default function ZkpAuditorPanel() {
                       {provingSystem === "GROTH16" ? "Point B in G2 (Fq2 coordinates):" : "Opening / Quotient Evaluator:"}
                     </div>
                     <div className="text-blue-400 break-all">
-                      {JSON.stringify(proofResult.proofPayload?.pi_b || proofResult.proofPayload?.openings || proofResult.proofPayload?.quotient_h || proofResult.proofPayload?.delta_share)}
+                      {JSON.stringify(
+                        proofResult.proofPayload?.b ||
+                        proofResult.proofPayload?.pi_b ||
+                        proofResult.proofPayload?.grand_product_z ||
+                        proofResult.proofPayload?.openings ||
+                        proofResult.proofPayload?.vector_b ||
+                        proofResult.proofPayload?.quotient_h ||
+                        proofResult.proofPayload?.delta_share ||
+                        "0x0000000000000000"
+                      )}
                     </div>
                   </div>
                   <div className="p-2.5 rounded-xl bg-black/60 border border-tactical-border/60">
@@ -966,7 +990,16 @@ export default function ZkpAuditorPanel() {
                       {provingSystem === "GROTH16" ? "Point C in G1 (x, y):" : "Lookup Tables / Execution Pipeline:"}
                     </div>
                     <div className="text-purple-400 break-all">
-                      {JSON.stringify(proofResult.proofPayload?.pi_c || proofResult.proofPayload?.eval_at_xi || proofResult.proofPayload?.garbled_wire_stream || "0x0000000000000000")}
+                      {JSON.stringify(
+                        proofResult.proofPayload?.c ||
+                        proofResult.proofPayload?.pi_c ||
+                        proofResult.proofPayload?.kzg_opening_proof ||
+                        proofResult.proofPayload?.quotient_split_t ||
+                        proofResult.proofPayload?.vector_c ||
+                        proofResult.proofPayload?.eval_at_xi ||
+                        proofResult.proofPayload?.garbled_wire_stream ||
+                        "0x0000000000000000"
+                      )}
                     </div>
                   </div>
                 </div>

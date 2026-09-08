@@ -475,17 +475,6 @@ try:
 except Exception as _phys_import_err:
     logger.warning(f"[boot] Physical evidence router not loaded: {_phys_import_err}")
 
-# --- Forensic Zero-Knowledge Proofs & Verifiable Computation Router (Pillar 6.2) ---
-try:
-    try:
-        from app.api.forensic_zk_routes import router as forensic_zk_router
-    except ImportError:
-        from backend.app.api.forensic_zk_routes import router as forensic_zk_router
-    app.include_router(forensic_zk_router)
-    logger.info("[boot] Forensic ZK-SNARK & Verifiable Computation API router registered at /api/v1/forensic/zk")
-except Exception as _zk_import_err:
-    logger.warning(f"[boot] Forensic ZK router not loaded: {_zk_import_err}")
-
 # --- Empirical Validation Lab & Tippett ROC Calibration Router (Module 04 / Pillar 1 §5) ---
 try:
     try:

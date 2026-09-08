@@ -870,7 +870,7 @@ pytest backend/node/services/forensic/physical/ -v        # Pillar 5: Physical E
 pytest backend/node/services/forensic/security/ -v        # Pillar 6: LIMS & ZKP
 pytest backend/node/services/forensic/geoint/ -v          # Pillar 7: Geo-Forensics
 
-# Execute frontend tactical workstation test suite (81 tests across 14 test suites)
+# Execute frontend tactical workstation test suite (87 tests across 15 test suites)
 npm --prefix frontend test -- --run
 ```
 

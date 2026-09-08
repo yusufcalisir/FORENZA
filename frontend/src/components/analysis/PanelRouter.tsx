@@ -36,7 +36,7 @@ const PanelNRC = dynamic(() => import("@/components/analysis/PanelNRC"), {
 const ValidationLabPanel = dynamic(() => import("@/components/analysis/ValidationLabPanel"), {
   loading: () => <ModuleSkeletonLoader label="Loading Tippett ROC Calibration Engine..." />,
 });
-const AgeEstimationPanel = dynamic(() => import("@/components/analysis/AgeEstimationPanel"), {
+const PanelEpigeneticClocks = dynamic(() => import("@/components/analysis/PanelEpigeneticClocks"), {
   loading: () => <ModuleSkeletonLoader label="Loading Epigenetic Age Clock Engine..." />,
 });
 const EntomologyPmiPanel = dynamic(() => import("@/components/analysis/EntomologyPmiPanel"), {
@@ -628,13 +628,15 @@ export function renderPanel(tabId: string) {
     // Pillar 4: Epigenetics, Microbiomics & Aging
     case "epigenetics":
     case "age":
-      return <AgeEstimationPanel />;
+    case "epigenetic_clocks":
+    case "clocks":
+      return <PanelEpigeneticClocks />;
     case "bodyfluid":
       return <BodyFluidPanel />;
     case "lifestyle":
       return <ComprehensiveEpigenomicsPanel />;
     case "telomere":
-      return <AgeEstimationPanel />;
+      return <PanelEpigeneticClocks />;
     case "mirna":
       return <BodyFluidPanel />;
     case "microbiome":

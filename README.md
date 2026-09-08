@@ -328,6 +328,8 @@ str-analysis/
 │       │   │   ├── SuspectVisualizer.tsx  # Backward-Compatible Re-Export Bridge for PanelCraniofacial
 │       │   │   ├── PanelFreckling.tsx     # Ephelides, MC1R Epistasis & UV Sensitivity 5-Tab Forensic Studio
 │       │   │   ├── PanelHair.tsx          # Hair Texture & Balding PRS 5-Tab Forensic Studio
+│       │   │   ├── PanelEpigeneticClocks.tsx # Multi-Generation Epigenetic Clocks & PMI 5-Tab Forensic Studio
+│       │   │   ├── AgeEstimationPanel.tsx # Backward-Compatible Re-Export Bridge for PanelEpigeneticClocks
 │       │   │   └── GeoForensicIntelligencePanel.tsx # Multi-Modal Geo-Forensic Platform
 │       │   ├── common/                    # Shared Modals & Telemetry Banners
 │       │   │   ├── DnaProfileInspectorModal.tsx # DNA & SNP Terminal with Interactive CLI
@@ -656,7 +658,11 @@ The FastAPI gateway exposes a clean `/api/v1` RESTful interface.
 | **Freckling (Cross-Validation)** | `/api/v1/forensic/phenotyping/ephelides/cross-validation` | `GET` | Evaluates concordance against Sulem (2007/2008) and Valverde (1995) benchmarks |
 | **Freckling (Reporting Shield)** | `/api/v1/forensic/phenotyping/ephelides/reporting-shield` | `GET` | Generates ENFSI 2017 / §81e StPO evaluative statements and active Prosecutor's Fallacy Shield |
 | **Epigenetics (Age Clock)** | `/api/v1/forensic/epigenetics/predict-age` | `POST` | Estimates biological age from 5 CpG methylation sites |
-| **Epigenetic Clocks (Multi-Gen)** | `/api/v1/forensic/epigenetics/clocks/estimate-age` | `POST` | Multi-generation epigenetic age estimation (Horvath, PhenoAge, GrimAge, VISAGE) |
+| **Epigenetic Clocks (Catalog)** | `/api/v1/forensic/epigenetics/clocks/catalog` | `GET` | Retrieves catalog of 6 supported clocks (Horvath, VISAGE Basic/Enhanced, Hannum, Weidner, PedBE) |
+| **Epigenetic Clocks (Tissue Offsets)** | `/api/v1/forensic/epigenetics/clocks/tissue-offsets` | `GET` | Retrieves calibrated tissue offsets (Delta_tissue) across 7 forensic tissues |
+| **Epigenetic Clocks (Golden Vectors)** | `/api/v1/forensic/epigenetics/clocks/golden-vectors` | `GET` | Retrieves 5 certified multi-generation epigenetic reference standards |
+| **Epigenetic Clocks (Chronological Age)** | `/api/v1/forensic/epigenetics/clocks/estimate-age` | `POST` | Multi-generation epigenetic age estimation with GUM ISO 17025 expanded uncertainty |
+| **Epigenetic Clocks (Biological Aging)** | `/api/v1/forensic/epigenetics/clocks/biological-aging` | `POST` | Biological mortality clocks (PhenoAge, GrimAge) & DunedinPACE aging velocity with Anti-Averaging Shield |
 | **Epigenetic Multimodal PMI** | `/api/v1/forensic/epigenetics/clocks/multimodal-pmi` | `POST` | Multimodal Bayesian evidence fusion of Henssge, Vitreous K+, and Entomology for PMI |
 | **Anthropology** | `/api/v1/forensic/anthropology/biological-profile` | `POST` | Computes skeletal stature, biological profile, and sex estimation |
 | **Entomology** | `/api/v1/forensic/entomology/pmi` | `POST` | Calculates Accumulated Degree Hours (ADH) post-mortem interval |

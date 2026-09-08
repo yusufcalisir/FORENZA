@@ -199,7 +199,6 @@ async def estimate_chronological_age(req: ClockEstimationRequest) -> Dict[str, A
                     tissue_offset=tissue_offset,
                 )
                 results.append(r)
-                results.append(r)
 
         if not results:
             raise ValueError("No valid chronological clocks were evaluated.")

@@ -1,5 +1,5 @@
 """
-FORENZA Massively Parallel Sequencing (MPS/NGS) STR Analysis — Pydantic v2 Schemas.
+FORENZA Massively Parallel Sequencing (MPS/NGS) STR Analysis: Pydantic v2 Schemas.
 Standard Compliance: ISFG Recommendations on STR Sequence Nomenclature & ISO/IEC 17025:2017.
 """
 

@@ -1,5 +1,5 @@
 """
-FORENZA MPS STR REST API — Pydantic v2 Schemas.
+FORENZA MPS STR REST API: Pydantic v2 Schemas.
 """
 
 from typing import Dict, List, Optional

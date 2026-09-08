@@ -132,6 +132,12 @@ async def compute_biostatistics(body: BiostatisticsRequest) -> MultiLocusDiversi
     description="Audits syntenic linkage between D6S1043 and SE33 on chromosome 6q (theta=0.0440) for kinship evaluations.",
     status_code=status.HTTP_200_OK,
 )
+@router.post(
+    "/syntenic-linkage",
+    response_model=SyntenicPairKinshipAudit,
+    include_in_schema=False,
+    status_code=status.HTTP_200_OK,
+)
 async def audit_syntenic_linkage(body: SyntenicLinkageRequest) -> SyntenicPairKinshipAudit:
     try:
         return SyntenicLinkageGuard.audit_d6s1043_se33_kinship(

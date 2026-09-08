@@ -795,6 +795,8 @@ The FastAPI gateway exposes a clean `/api/v1` RESTful interface.
 | **LIMS Inclusion Proof (Audit Path)** | `/api/v1/forensic/lims/merkle/generate-proof` | `POST` | Generates minimal O(log2 N) sibling audit path for courtroom evidence inclusion |
 | **LIMS Proof Verification** | `/api/v1/forensic/lims/merkle/verify-proof` | `POST` | Reconstructs root from leaf hash and sibling path to evaluate authenticity |
 | **Court Testimony & ENFSI** | `/api/v1/forensic/court/evaluative-report` | `POST` | Generates ISO 17025 / ENFSI 2017 7-tier bilingual evaluative statements with Fallacy Shield |
+| **Court Daubert Compliance** | `/api/v1/forensic/court/daubert-compliance` | `POST` | Audits statutory admissibility under Daubert FRE 702 4-pillar and Frye general acceptance |
+| **Court Testimony Brief** | `/api/v1/forensic/court/generate-testimony-brief` | `POST` | Generates 7-point judicial testimony brief with HMAC-SHA256 signature under ISO 17025 |
 | **Evidence OS Architecture** | `/api/v1/forensic/os/system-architecture` | `GET` | Returns master catalog status across all 38 biocomputational subsystems |
 | **Evidence Management (Catalog)** | `/api/v1/forensic/evidence/items` | `GET` | Retrieves all registered biological and physical crime scene evidence items |
 | **Evidence Management (Register)** | `/api/v1/forensic/evidence/register` | `POST` | Registers biological/physical evidence, 3D spatial coordinates, container seal, and genesis hash |

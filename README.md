@@ -320,8 +320,16 @@ str-analysis/
 │       ├── components/                    # React UI Components
 │       │   ├── analysis/                  # 38 Tactical Forensic Viewport Panels & Router
 │       │   │   ├── PanelRouter.tsx        # Centralized Biocomputational Panel Router
+│       │   │   ├── PanelSTRKinship.tsx    # Complex Autosomal STR Kinship & Pedigrees 5-Tab Forensic Studio
+│       │   │   ├── PanelNRC.tsx           # NRC II Population Genetics & Dirichlet Fst 5-Tab Forensic Studio
+│       │   │   ├── PanelMPSSTR.tsx        # MPS / NGS STR Sequence Analysis & Isoalleles 5-Tab Forensic Studio
+│       │   │   ├── PanelMLSTR.tsx         # ML STR Calling, Stutter Taxonomy & Fragsifier 5-Tab Forensic Studio
 │       │   │   ├── PanelYSTR.tsx          # Y-STR 27-Locus Multi-Panel Tactical Visualizer
 │       │   │   ├── PanelXSTR.tsx          # X-STR 12-Locus Argus X-12 5-Tab Forensic Studio
+│       │   │   ├── PanelMTDNA.tsx         # mtDNA EMPOP Alignment & Phylogenetics 5-Tab Forensic Studio
+│       │   │   ├── PanelDVI.tsx           # Interpol DVI Disaster Victim Identification 5-Tab Forensic Studio
+│       │   │   ├── PanelADNA.tsx          # Ancient & Degraded Forensic DNA Damage Repair 5-Tab Forensic Studio
+│       │   │   ├── PanelFGG.tsx           # Forensic Genetic Genealogy (IGG/FGG) & Segment Analysis 5-Tab Forensic Studio
 │       │   │   ├── PanelHIrisPlex.tsx     # HIrisPlex-S 41-SNP Pigmentation 5-Tab Forensic Studio
 │       │   │   ├── PanelBGA.tsx           # 55-SNP AIM Biogeographic Ancestry & Live GIS Studio
 │       │   │   ├── PanelCraniofacial.tsx  # 3D Craniofacial Morphometry & Anthropological Studio
@@ -355,7 +363,7 @@ str-analysis/
 │       ├── context/                       # React Context Providers
 │       ├── dictionaries/                  # Bilingual Translations (TR / EN)
 │       ├── lib/                           # Utility Functions & API Clients
-│       ├── test/                          # Automated Vitest Suite (50/50 Tests Passing across 10 Specs)
+│       ├── test/                          # Automated Vitest Suite (69/69 Tests Passing across 12 Specs)
 │       └── utils/                         # Client-Side Biocomputational Simulation Engines
 │           ├── strLocusRegistryEngine.ts  # 24-STR Locus Registry & CE Sizing TS Engine
 │           ├── forensicCliBatchParser.ts  # Forensic CLI Batch Lexer & Ingestion TS Engine

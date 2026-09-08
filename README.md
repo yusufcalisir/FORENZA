@@ -681,6 +681,8 @@ The FastAPI gateway exposes a clean `/api/v1` RESTful interface.
 | **Ancient DNA (Contamination Subtraction)** | `/api/v1/forensic/adna/contamination-subtraction` | `POST` | Culls modern exogenous DNA contamination to rescue authentic ancient deamination |
 | **Forensic Genetic Genealogy (IBD)** | `/api/v1/forensic/fgg/ibd-pairwise` | `POST` | Executes phase-free windowed IBS0 IBD scanning & Shared cM degree classification |
 | **FGG Pedigree Solver (Bonsai)** | `/api/v1/forensic/fgg/reconstruct-pedigree` | `POST` | Solves composite likelihood pedigree DAG and generates MRCA triangulation |
+| **FGG Benchmark Evaluation** | `/api/v1/forensic/fgg/evaluate-benchmark` | `POST` | Evaluates full FGG pipeline across GIAB/GSK golden benchmark vectors |
+| **FGG Sample Destruction Order** | `/api/v1/forensic/fgg/sample-destruction-order` | `POST` | Generates SHA-256 sealed sample destruction certificate under MD Title 17 |
 | **Forensic Microbiome** | `/api/v1/forensic/microbiology/thanato-pmi` | `POST` | Evaluates 16S/ITS CoDa CLR transformation, ADD thermal clock & hidSkinPlex+ touch LR |
 | **LIMS Chain of Custody** | `/api/v1/forensic/lims/merkle/build-tree` | `POST` | Constructs binary Merkle tree and generates O(log2 N) inclusion proofs |
 | **Court Testimony & ENFSI** | `/api/v1/forensic/court/evaluative-report` | `POST` | Generates ISO 17025 / ENFSI 2017 7-tier bilingual evaluative statements with Fallacy Shield |

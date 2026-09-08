@@ -94,7 +94,30 @@ async def filter_locus_endpoint(req: FilterLocusPeaksRequest) -> LocusMLPreFilte
     Filters all peaks at a locus, generating a candidate cleaning and search space reduction report.
     """
     try:
-        return FragsifierRandomForestClassifier.filter_locus_peaks(req.locus_name, req.feature_vectors)
+        if req.feature_vectors is not None and len(req.feature_vectors) > 0:
+            fvs = req.feature_vectors
+        elif req.raw_peaks is not None and len(req.raw_peaks) > 0:
+            major_peak = max(req.raw_peaks, key=lambda p: p.height)
+            fvs = [
+                MLSTRFeatureExtractor.extract_features(
+                    locus_name=req.locus_name,
+                    peak_id=p.peak_id,
+                    peak_height=p.height,
+                    peak_area=p.peak_area if p.peak_area is not None else p.height * 8.5,
+                    fwhm=p.fwhm,
+                    bp_position=p.bp_position,
+                    major_allele_bp=major_peak.bp_position,
+                    major_allele_height=major_peak.height,
+                    repeat_unit_len=4,
+                    sequence_string=p.sequence_string,
+                    co_eluting_secondary_rfu=p.co_eluting_secondary_rfu,
+                )
+                for p in req.raw_peaks
+            ]
+        else:
+            raise ValueError("Either feature_vectors or raw_peaks must be provided.")
+
+        return FragsifierRandomForestClassifier.filter_locus_peaks(req.locus_name, fvs)
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -124,8 +147,35 @@ async def prefilter_mixture_endpoint(req: MultiLocusPreFilterRequest) -> MultiLo
     Optimizes multi-locus mixture profiles before MCMC Markov chain initialization.
     """
     try:
+        if req.locus_peaks_map is not None:
+            lmap = req.locus_peaks_map
+        elif req.raw_locus_peaks_map is not None:
+            lmap = {}
+            for loc, pks in req.raw_locus_peaks_map.items():
+                if not pks:
+                    continue
+                major_pk = max(pks, key=lambda p: p.height)
+                lmap[loc] = [
+                    MLSTRFeatureExtractor.extract_features(
+                        locus_name=loc,
+                        peak_id=p.peak_id,
+                        peak_height=p.height,
+                        peak_area=p.peak_area if p.peak_area is not None else p.height * 8.5,
+                        fwhm=p.fwhm,
+                        bp_position=p.bp_position,
+                        major_allele_bp=major_pk.bp_position,
+                        major_allele_height=major_pk.height,
+                        repeat_unit_len=4,
+                        sequence_string=p.sequence_string,
+                        co_eluting_secondary_rfu=p.co_eluting_secondary_rfu,
+                    )
+                    for p in pks
+                ]
+        else:
+            raise ValueError("Either locus_peaks_map or raw_locus_peaks_map must be provided.")
+
         return MLMCMCPreFilterOptimizer.optimize_mixture_profile(
-            req.case_id, req.locus_peaks_map
+            req.case_id, lmap
         )
     except Exception as e:
         raise HTTPException(

@@ -88,3 +88,42 @@ class TestMLSTRApiEndpoints:
         data = resp.json()
         assert len(data) == 4
         assert any(v["vector_id"] == "VECTOR_MLSTR_01" for v in data)
+
+    def test_filter_locus_endpoint_with_raw_peaks(self):
+        payload = {
+            "locus_name": "D21S11",
+            "raw_peaks": [
+                {"peak_id": "Peak_30", "height": 2400.0, "bp_position": 214.0},
+                {"peak_id": "Peak_29", "height": 444.0, "bp_position": 210.0}
+            ]
+        }
+        resp = client.post("/api/v1/forensic/ml-str/filter-locus", json=payload)
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["locus_name"] == "D21S11"
+        assert data["total_raw_peaks"] == 2
+        assert "Peak_30" in data["clean_candidate_alleles"]
+        assert "Peak_29" not in data["clean_candidate_alleles"]
+        assert data["artifacts_culled"] >= 1
+
+    def test_prefilter_mixture_endpoint_with_raw_peaks(self):
+        payload = {
+            "case_id": "CASE_PROVEDIt_03",
+            "raw_locus_peaks_map": {
+                "D21S11": [
+                    {"peak_id": "Peak_30", "height": 2400.0, "bp_position": 214.0},
+                    {"peak_id": "Peak_29", "height": 444.0, "bp_position": 210.0}
+                ],
+                "TH01": [
+                    {"peak_id": "Peak_9.3", "height": 1800.0, "bp_position": 180.0},
+                    {"peak_id": "Peak_PlusA", "height": 360.0, "bp_position": 181.0}
+                ]
+            }
+        }
+        resp = client.post("/api/v1/forensic/ml-str/prefilter-mixture", json=payload)
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["case_id"] == "CASE_PROVEDIt_03"
+        assert data["total_raw_peaks_profile"] == 4
+        assert data["overall_mcmc_burn_in_reduction_pct"] > 0.0
+        assert data["gelman_rubin_projected_rhat"] < 1.05

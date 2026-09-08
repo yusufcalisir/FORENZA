@@ -54,11 +54,24 @@ class ClassifyPeakRequest(BaseModel):
 
 
 
+class RawPeakItem(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
+    peak_id: str
+    height: float = Field(..., ge=0.0)
+    bp_position: float = Field(150.0)
+    fwhm: float = Field(1.0, ge=0.1)
+    peak_area: Optional[float] = None
+    sequence_string: str = ""
+    co_eluting_secondary_rfu: float = 0.0
+
+
 class FilterLocusPeaksRequest(BaseModel):
     model_config = ConfigDict(protected_namespaces=())
 
     locus_name: str
-    feature_vectors: List[FeatureVector24D]
+    feature_vectors: Optional[List[FeatureVector24D]] = None
+    raw_peaks: Optional[List[RawPeakItem]] = None
 
 
 class ISFGHierarchyRequest(BaseModel):
@@ -72,4 +85,5 @@ class MultiLocusPreFilterRequest(BaseModel):
     model_config = ConfigDict(protected_namespaces=())
 
     case_id: str
-    locus_peaks_map: Dict[str, List[FeatureVector24D]]
+    locus_peaks_map: Optional[Dict[str, List[FeatureVector24D]]] = None
+    raw_locus_peaks_map: Optional[Dict[str, List[RawPeakItem]]] = None

@@ -3454,3 +3454,81 @@ Under German criminal procedure law, biogeographical ancestry inferred from trac
 $$q_k^{(\text{redacted})} = \text{[REDACTED]}, \quad (\bar{\lambda}, \bar{\phi})^{(\text{redacted})} = \text{[COORDINATES MASKED]}$$
 Authorized phenotype characteristics (pigmentation phototype, iris color, hair morphology) and epigenetic biological age remain active and disclosable.
 
+## 94. Subsystem 16: 3D Craniofacial Morphology Studio & Generalized Orthogonal Procrustes Superposition (Kabsch SVD Algorithm)
+
+### 94.1 Canonical Cephalometric Landmark Vector Space
+3D cephalometric landmark configurations $\mathbf{L} \in \mathbb{R}^{11 \times 3}$ model soft-tissue facial morphology across 11 standard anthropological landmarks categorized into midline sagittal and bilateral transverse points:
+$$\mathbf{L} = \begin{pmatrix} \mathbf{p}_{\text{N}} \\ \mathbf{p}_{\text{Prn}} \\ \mathbf{p}_{\text{Sn}} \\ \mathbf{p}_{\text{Al\_L}} \\ \mathbf{p}_{\text{Al\_R}} \\ \mathbf{p}_{\text{Ls}} \\ \mathbf{p}_{\text{Me}} \\ \mathbf{p}_{\text{Zy\_L}} \\ \mathbf{p}_{\text{Zy\_R}} \\ \mathbf{p}_{\text{Ch\_L}} \\ \mathbf{p}_{\text{Ch\_R}} \end{pmatrix}$$
+Midline sagittal points satisfy the transverse symmetry invariant:
+$$x_{\text{N}} = x_{\text{Prn}} = x_{\text{Sn}} = x_{\text{Ls}} = x_{\text{Me}} = 0.0$$
+Bilateral pairs satisfy reflexive transverse symmetry:
+$$x_{\text{Al\_L}} = -x_{\text{Al\_R}}, \quad x_{\text{Zy\_L}} = -x_{\text{Zy\_R}}, \quad x_{\text{Ch\_L}} = -x_{\text{Ch\_R}}$$
+
+### 94.2 GWAS Additive Allelic Dosage & Craniometric Scaling
+Cephalometric coordinates are reconstructed via linear additive regression from morphometric SNP effect dosages $d_l \in \{0, 1, 2\}$ modulated by biological sex scaling $s_{\text{sex}}$ and mandibular sexual dimorphism $\delta_{\text{mandible}}$:
+$$s_{\text{sex}} = \begin{cases} 1.045 & \text{if male} \\ 1.000 & \text{if female} \end{cases}, \quad \delta_{\text{mandible}} = \begin{cases} 8.40\text{ mm} & \text{if male} \\ 0.00\text{ mm} & \text{if female} \end{cases}$$
+
+Key GWAS morphometric locus coefficients:
+1. **Nasion ($\text{N}$)** ($PAX3$ rs974448):
+   $$y_{\text{N}} = (12.40 + 1.25 \cdot d_{\text{PAX3}}) \cdot s_{\text{sex}}, \quad z_{\text{N}} = (45.20 + 0.85 \cdot d_{\text{PAX3}}) \cdot s_{\text{sex}}$$
+2. **Pronasale ($\text{Prn}$)** ($PRDM16$ rs11130635, $DCHS2$ rs13289):
+   $$y_{\text{Prn}} = (48.50 + 2.10 \cdot d_{\text{PRDM16}} - 1.45 \cdot d_{\text{DCHS2}}) \cdot s_{\text{sex}}, \quad z_{\text{Prn}} = (12.10 + 1.15 \cdot d_{\text{PRDM16}}) \cdot s_{\text{sex}}$$
+3. **Subnasale ($\text{Sn}$)** ($DCHS2$ rs13289):
+   $$y_{\text{Sn}} = (38.20 - 1.10 \cdot d_{\text{DCHS2}}) \cdot s_{\text{sex}}, \quad z_{\text{Sn}} = (-2.50 - 0.65 \cdot d_{\text{DCHS2}}) \cdot s_{\text{sex}}$$
+4. **Alare Left/Right ($\text{Al}_{\text{L/R}}$)** ($PAX9$ rs12882923):
+   $$x_{\text{Al}} = \pm (18.50 + 0.95 \cdot d_{\text{PAX9}}) \cdot s_{\text{sex}}, \quad y_{\text{Al}} = (36.10 + 0.45 \cdot d_{\text{PAX9}}) \cdot s_{\text{sex}}, \quad z_{\text{Al}} = (2.10 + 0.30 \cdot d_{\text{PAX9}}) \cdot s_{\text{sex}}$$
+5. **Labiale Superius ($\text{Ls}$)** ($PCDH15$ rs7559252):
+   $$y_{\text{Ls}} = (34.50 + 0.60 \cdot d_{\text{PCDH15}}) \cdot s_{\text{sex}}, \quad z_{\text{Ls}} = (-12.40 - 0.40 \cdot d_{\text{PCDH15}}) \cdot s_{\text{sex}}$$
+6. **Menton ($\text{Me}$)** ($PCDH15$ rs7559252):
+   $$y_{\text{Me}} = (18.20 + 1.85 \cdot d_{\text{PCDH15}}) \cdot s_{\text{sex}} + 0.25 \cdot \delta_{\text{mandible}}, \quad z_{\text{Me}} = (-68.50 - 1.20 \cdot d_{\text{PCDH15}}) \cdot s_{\text{sex}}$$
+7. **Zygion Left/Right ($\text{Zy}_{\text{L/R}}$)** ($PAX9$ rs12882923, $PAX3$ rs974448):
+   $$x_{\text{Zy}} = \pm (67.50 + 1.60 \cdot d_{\text{PAX9}}) \cdot s_{\text{sex}}, \quad y_{\text{Zy}} = (15.20 + 0.35 \cdot d_{\text{PAX9}}) \cdot s_{\text{sex}}, \quad z_{\text{Zy}} = (18.40 + 0.25 \cdot d_{\text{PAX3}}) \cdot s_{\text{sex}}$$
+8. **Cheilion Left/Right ($\text{Ch}_{\text{L/R}}$)** ($PCDH15$ rs7559252):
+   $$x_{\text{Ch}} = \pm (24.50 + 0.40 \cdot d_{\text{PCDH15}}) \cdot s_{\text{sex}}, \quad y_{\text{Ch}} = (31.00 + 0.50 \cdot d_{\text{PCDH15}}) \cdot s_{\text{sex}}, \quad z_{\text{Ch}} = (-18.20 - 0.30 \cdot d_{\text{PCDH15}}) \cdot s_{\text{sex}}$$
+
+### 94.3 Farkas & Martin Anthropological Facial Indices
+Anthropological indices characterize craniometric proportions and typological classifications:
+1. **Farkas Soft-Tissue Nasal Index ($NI$):**
+   $$W_{\text{alar}} = \|\mathbf{p}_{\text{Al\_L}} - \mathbf{p}_{\text{Al\_R}}\|, \quad H_{\text{nasal}} = \|\mathbf{p}_{\text{N}} - \mathbf{p}_{\text{Sn}}\|, \quad NI = \frac{W_{\text{alar}}}{H_{\text{nasal}}} \times 100$$
+   - Leptorrhine: $NI < 70.0$ (Narrow nasal aperture: European ancestral cline)
+   - Mesorrhine: $70.0 \le NI < 75.0$ (Medium aperture: Asian/Admixed cline)
+   - Platyrrhine: $NI \ge 75.0$ (Broad aperture: African/Australasian cline)
+2. **Martin & Saller Morphological Facial Index ($MFI$):**
+   $$H_{\text{facial}} = \|\mathbf{p}_{\text{N}} - \mathbf{p}_{\text{Me}}\|, \quad W_{\text{bizygomatic}} = \|\mathbf{p}_{\text{Zy\_L}} - \mathbf{p}_{\text{Zy\_R}}\|, \quad MFI = \frac{H_{\text{facial}}}{W_{\text{bizygomatic}}} \times 100$$
+   - Hypereuryprosopic: $MFI < 80.0$
+   - Euryprosopic: $80.0 \le MFI < 85.0$
+   - Mesoprosopic: $85.0 \le MFI < 90.0$
+   - Leptoprosopic: $90.0 \le MFI < 95.0$
+   - Hyperleptoprosopic: $MFI \ge 95.0$
+3. **Nasal Bridge Elevation Index ($NBEI$):**
+   $$NBEI = \frac{z_{\text{Prn}} - z_{\text{Sn}}}{\max(|y_{\text{Prn}} - y_{\text{Sn}}|, 10^{-6})}$$
+4. **Facial Convexity Angle ($\theta_{\text{conv}}$):**
+   $$\mathbf{u} = \mathbf{p}_{\text{N}} - \mathbf{p}_{\text{Sn}}, \quad \mathbf{v} = \mathbf{p}_{\text{Me}} - \mathbf{p}_{\text{Sn}}$$
+   $$\cos(\theta_{\text{conv}}) = \frac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{u}\| \|\mathbf{v}\|}, \quad \theta_{\text{conv}} = \arccos(\text{clamp}(\cos\theta_{\text{conv}}, -1, 1)) \cdot \frac{180^\circ}{\pi}$$
+5. **Mandibular Breadth with Sexual Dimorphism Offset:**
+   $$W_{\text{mandibular}} = 0.72 \cdot W_{\text{bizygomatic}} + \delta_{\text{mandible}}$$
+
+### 94.4 Generalized Orthogonal Procrustes Analysis (Kabsch SVD Algorithm)
+Superposition of source landmark matrix $\mathbf{X}_2 \in \mathbb{R}^{k \times 3}$ onto target configuration $\mathbf{X}_1 \in \mathbb{R}^{k \times 3}$ ($k=11$):
+1. **Centering and Centroid Size:**
+   $$\mathbf{c}_1 = \frac{1}{k} \sum_{i=1}^k \mathbf{X}_{1,i}, \quad \mathbf{c}_2 = \frac{1}{k} \sum_{i=1}^k \mathbf{X}_{2,i}$$
+   $$\tilde{\mathbf{X}}_{1c} = \mathbf{X}_1 - \mathbf{c}_1, \quad \tilde{\mathbf{X}}_{2c} = \mathbf{X}_2 - \mathbf{c}_2$$
+   $$CS_1 = \sqrt{\sum_{i=1}^k \|\tilde{\mathbf{X}}_{1c,i}\|^2}, \quad CS_2 = \sqrt{\sum_{i=1}^k \|\tilde{\mathbf{X}}_{2c,i}\|^2}$$
+2. **Normal Configuration:**
+   $$\mathbf{X}_{1,\text{norm}} = \frac{\tilde{\mathbf{X}}_{1c}}{CS_1}, \quad \mathbf{X}_{2,\text{norm}} = \frac{\tilde{\mathbf{X}}_{2c}}{CS_2}$$
+3. **Cross-Covariance Matrix & Singular Value Decomposition:**
+   $$\mathbf{H} = \mathbf{X}_{2,\text{norm}}^T \mathbf{X}_{1,\text{norm}} \in \mathbb{R}^{3 \times 3}$$
+   Via 30-iteration Jacobi cyclic diagonalization of $\mathbf{H}^T \mathbf{H}$:
+   $$\mathbf{H} = \mathbf{U} \mathbf{\Sigma} \mathbf{V}^T$$
+   The candidate orthogonal rotation is $\mathbf{R} = \mathbf{U} \mathbf{V}^T$. If $\det(\mathbf{R}) < 0$ (reflection), the column of $\mathbf{V}$ corresponding to the minimum singular value is inverted:
+   $$\mathbf{V}_{:,3} \leftarrow -\mathbf{V}_{:,3}, \quad \mathbf{R} = \mathbf{U} \mathbf{V}^T, \quad \det(\mathbf{R}) = +1.0 \quad (\mathbf{R} \in SO(3))$$
+4. **Aligned Source Configuration in Target Physical Space:**
+   $$\mathbf{X}_{2,\text{aligned}} = (\mathbf{X}_{2,\text{norm}} \mathbf{R}) \cdot CS_1 + \mathbf{c}_1$$
+5. **Procrustes Distance & RMSD Metrics:**
+   $$D_{\text{Proc}} = \sum_{i=1}^k \|\mathbf{X}_{1,i} - \mathbf{X}_{2,\text{aligned},i}\|^2, \quad \text{RMSD} = \sqrt{\frac{D_{\text{Proc}}}{k}}$$
+   Translation offset vector: $\mathbf{t} = \mathbf{c}_1 - \mathbf{c}_2$.
+
+### 94.5 Evaluative Reporting Shield & Prosecutor's Fallacy Invariant
+In compliance with ENFSI (2017) and ISFG guidelines, reconstructed 3D craniofacial coordinates serve solely as exploratory investigative leads. Individual photographic face-matching is explicitly prohibited under German § 81e (2) StPO and EU AI Act Annex III high-risk biometric restrictions.
+The forensic evaluative reporting shield enforces the Prosecutor's Fallacy mathematical safeguard:
+$$P(\text{DNA Profile} \mid \text{Craniofacial Morphology}) \ne P(\text{Craniofacial Morphology} \mid \text{DNA Profile})$$

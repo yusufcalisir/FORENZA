@@ -169,15 +169,22 @@ describe("Subsystem 28: Post-Mortem Toxicokinetics & PMR Panel Suite", () => {
 
   // 13. Case Store Audit Logging Dispatch
   it("dispatches audit event to forensicCaseStore upon evaluation", async () => {
+    // Mock fetch to reject immediately so client-side fallback triggers without 3s AbortSignal timeout
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("Network unavailable")));
     const addAuditLogSpy = vi.spyOn(useForensicCaseStore.getState(), "addAuditLog");
     render(<ToxicologyPmrPanel />);
 
     const evalBtn = screen.getByRole("button", { name: /Evaluate PMR/i });
     fireEvent.click(evalBtn);
 
-    await waitFor(() => {
-      expect(addAuditLogSpy).toHaveBeenCalled();
-    });
+    // setTimeout chain: 700ms + 200ms = 900ms total delay; use 2500ms waitFor timeout
+    await waitFor(
+      () => {
+        expect(addAuditLogSpy).toHaveBeenCalled();
+      },
+      { timeout: 2500 }
+    );
+    vi.unstubAllGlobals();
   });
 
   // 14. Deterministic ISO 17025 SHA-256 State Audit Digest

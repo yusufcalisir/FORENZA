@@ -722,7 +722,7 @@ export const SUBSYSTEM_CATEGORIES: SubsystemCategory[] = [
         standardTr: "Avrupa Adli Entomoloji Derneği (EAFE)",
       },
       {
-        id: "toxicology",
+        id: "trace_spectroscopy",
         label: "27. Trace Spectroscopy & MSI",
         labelTr: "27. İz Spektroskopisi & MSI",
         shortTitle: "MSI & ATR-FTIR",
@@ -739,7 +739,7 @@ export const SUBSYSTEM_CATEGORIES: SubsystemCategory[] = [
         standardTr: "ASTM E2224 / ASTM E2228 / SWGMAT Standartları",
       },
       {
-        id: "serology",
+        id: "pmr",
         label: "28. Post-Mortem Toxicokinetics",
         labelTr: "28. Ölüm Sonrası Toksikokinetik",
         shortTitle: "PMR Toxicokinetics",

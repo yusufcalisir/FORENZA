@@ -269,14 +269,13 @@ export function renderPanel(tabId: string) {
     case "ento":
     case "pmi_thermal":
       return <EntomologyPmiPanel />;
+    case "trace_spectroscopy":
     case "toxicology":
     case "spectroscopy":
     case "msi":
     case "ftir":
     case "atr_ftir":
-    case "trace_spectroscopy":
       return <TraceSpectroscopyPanel />;
-    case "serology":
     case "pmr":
     case "toxicokinetics":
     case "postmortem_tox":

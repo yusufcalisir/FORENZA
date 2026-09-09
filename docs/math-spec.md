@@ -4172,3 +4172,76 @@ $$H_{\text{spectro}} = \text{SHA256}\left( \text{caseId} \parallel \mathbf{S}_{\
 ### 103.7 SWGMAT & ASTM E2228 Courtroom Evaluative Reporting Shield
 In accordance with ENFSI (2017) and SWGMAT evaluative reporting guidelines:
 $$\text{Shield}_{\text{Spectroscopy}} = \text{"An HQI >= 90.0% provides definitive chemical polymer identification. However, synthetic fibers are mass-manufactured; spectral identity proves material class consistency but cannot uniquely identify a single garment without batch/dye context (ASTM E2228 / SWGMAT)."}$$
+
+---
+
+## 104. Forensic Toxicology, Pharmacokinetics & Post-Mortem Drug Redistribution (PMR) (Subsystem 28 / Module 25)
+
+Subsystem 28 implements the quantitative evaluation of post-mortem xenobiotic redistribution (PMR), central-to-peripheral ($C/P$) concentration ratios, toxicokinetic clearance modeling, and antemortem concentration back-extrapolation in strict concordance with SOFT (Society of Forensic Toxicologists) and TIAFT (The International Association of Forensic Toxicologists) consensus standards and Pillar 5 Research Section 5.
+
+### 104.1 Physicochemical Determinants of PMR and Central-to-Peripheral Ratios
+Post-mortem drug redistribution refers to the transmural, post-mortem movement of drugs along concentration gradients from high-concentration tissue reservoirs (such as lungs, liver, and myocardium) into central cardiac blood chambers after somatic circulatory arrest.
+
+The observed central-to-peripheral ratio $(C/P)$ is defined as:
+$$C/P = \frac{C_{\text{heart}}}{C_{\text{femoral}}}$$
+
+where $C_{\text{heart}}$ is the cardiac blood concentration ($\mu\text{g/L}$ or $\text{mg/L}$) and $C_{\text{femoral}}$ is the peripheral femoral venous blood concentration.
+
+**Physicochemical Predictors of PMR:**
+1. **Apparent Volume of Distribution ($V_d$):** Xenobiotics with $V_d > 3.0\text{ L/kg}$ (e.g., Amitriptyline $V_d = 20.0\text{ L/kg}$, Fentanyl $V_d = 5.0\text{ L/kg}$) exhibit high tissue sequestration and profound post-mortem diffusion into cardiac blood.
+2. **Lipophilicity ($\log P$):** Higher octanol-water partition coefficients ($\log P > 2.0$) correlate with lipid depot diffusion.
+3. **Basic Ionization ($\text{p}K_a$):** Basic lipophilic drugs ($\text{p}K_a > 8.0$) undergo lysosomal trapping in pulmonary and hepatic tissue during life, rapidly discharging into central blood pools post-mortem.
+
+| Xenobiotic Compound | $V_d$ (L/kg) | $\log P$ | $\text{p}K_a$ | Mean C/P Ratio ($C_{\text{heart}}/C_{\text{femoral}}$) | PMR Risk Tier |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Ethanol** | $0.6$ | $-0.31$ | N/A | $1.00 \pm 0.10$ | Low / Minimal |
+| **Acetaminophen** | $0.9$ | $0.46$ | $9.5$ | $1.05 \pm 0.12$ | Low |
+| **Morphine** | $3.5$ | $0.89$ | $8.0$ | $1.80 \pm 0.40$ | Moderate |
+| **Methamphetamine** | $4.0$ | $2.07$ | $9.9$ | $2.10 \pm 0.50$ | High |
+| **Fentanyl** | $5.0$ | $4.05$ | $8.4$ | $2.80 \pm 0.70$ | High / Severe |
+| **Amitriptyline** | $20.0$ | $4.92$ | $9.4$ | $4.50 \pm 1.20$ | Very High |
+
+---
+
+### 104.2 Dual-Criterion PMR Overestimation Risk Assessment
+To eliminate false positive cardiac intoxication claims, FORENZA applies a dual-criterion evaluation algorithm:
+$$\text{Overestimation Flag} = \begin{cases} \text{TRUE} & \text{if } \left( C/P > 2.0 \land V_d > 3.0\text{ L/kg} \right) \lor \left( C/P > 1.5 \cdot \mu_{\text{lit}} \right) \\ \text{FALSE} & \text{otherwise} \end{cases}$$
+
+where $\mu_{\text{lit}}$ is the empirical literature reference mean ratio for the target compound.
+
+**Percentage Overestimation Above Femoral Baseline:**
+$$\Delta_{\text{overestimation}}\% = \max\left(0.0, \; \frac{C_{\text{heart}} - C_{\text{femoral}}}{C_{\text{femoral}}} \times 100\%\right)$$
+
+---
+
+### 104.3 Zero-Order Widmark Antemortem Elimination Kinetics
+For zero-order clearance compounds (principally Ethanol under saturated alcohol dehydrogenase kinetics):
+$$C_{\text{antemortem}}(t - \Delta t) = C_{\text{femoral}} + \beta_{60} \cdot \Delta t$$
+
+where:
+- $\beta_{60} \approx 0.15\text{ g/L/h}$ (standard forensic Widmark elimination rate).
+- $\Delta t$ is the elapsed post-mortem or antemortem time interval in hours.
+
+---
+
+### 104.4 First-Order Half-Life Antemortem Elimination Kinetics
+For first-order exponential clearance compounds (e.g. Fentanyl, Morphine, Methamphetamine, Amitriptyline):
+$$k_e = \frac{\ln(2)}{t_{1/2}}$$
+$$C_{\text{antemortem}}(t - \Delta t) = C_{\text{femoral}} \cdot e^{k_e \cdot \Delta t}$$
+
+where:
+- $k_e$ is the elimination rate constant ($\text{h}^{-1}$).
+- $t_{1/2}$ is the terminal elimination half-life ($\text{h}$).
+
+---
+
+### 104.5 SOFT / TIAFT Post-Mortem Toxicology Evaluative Shield
+In accordance with SOFT and TIAFT consensus guidelines:
+$$\text{Shield}_{\text{Toxicology}} = \text{"Post-mortem cardiac blood concentrations cannot be directly translated to antemortem intoxication levels due to post-mortem drug redistribution (PMR). Peripheral femoral venous blood is the legal gold standard for quantitative forensic back-extrapolation."}$$
+
+---
+
+### 104.6 Deterministic Cryptographic State Audit Digest ($H_{\text{pmr}}$)
+Under ISO/IEC 17025:2017 Section 7.8, all concentration inputs, kinetic parameters, observed ratios, and extrapolation verdicts are bound into a 64-hex SHA-256 state audit digest:
+$$H_{\text{pmr}} = \text{SHA256}\left( \text{caseId} \parallel \text{compound} \parallel C_{\text{heart}} \parallel C_{\text{femoral}} \parallel C/P \parallel C_{\text{antemortem}} \right)$$
+

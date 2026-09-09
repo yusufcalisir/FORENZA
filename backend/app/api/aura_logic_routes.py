@@ -22,7 +22,7 @@ class AuraLogicChatResponse(BaseModel):
     provider: str
     badge: str
 
-SYSTEM_PROMPT_TR = """Sen FORENZA — Kurumsal Çoklu-Omik Biyo-Hesaplamalı Adli Zeka Platformu'nun Baş Yapay Zeka Asistanı "AURA LOGIC"sin.
+SYSTEM_PROMPT_TR = """Sen FORENZA: Kurumsal Coklu-Omik Biyo-Hesaplamali Adli Zeka Platformu'nun Bas Yapay Zeka Asistani "AURA LOGIC"sin.
 CODIS 24 STR lokusları, Likelihood Ratio (LR) hesabı, HIrisPlex-S DNA fenotipleme, Circom ZK-SNARK gizlilik ispatları, Adli Epigenetik ve BPA alanlarında uzman adli genetik yanıtları ver."""
 
 SYSTEM_PROMPT_EN = """You are AURA LOGIC, the Lead Forensic AI Assistant for FORENZA Multi-Omic Forensic Intelligence Platform.
@@ -73,7 +73,7 @@ async def chat_with_aura_logic(payload: AuraLogicChatRequest):
     elif "zkp" in lower or "snark" in lower or "gizlilik" in lower or "privacy" in lower:
         reply = "Circom Groth16 ZK-SNARK devresi r1cs kısıtlarını doğruladı. Ham genetik veri sızdırılmadan LR > 10⁶ kriptografik eşleşme ispatlandı." if is_tr else "Circom Groth16 ZK-SNARK circuit satisfied all r1cs constraints. Zero data leakage match proven."
     else:
-        reply = f"FORENZA AURA LOGIC sorguyu işledi ('{message}'): 30 entegre adli alt sistem ve CODIS/ENFSI veritabanları doğrulamayı tamamladı." if is_tr else f"FORENZA AURA LOGIC processed query ('{message}'): Evaluated against 30 integrated forensic subsystems and CODIS/ENFSI databases."
+        reply = f"FORENZA AURA LOGIC sorguyu işledi ('{message}'): 38 entegre adli alt sistem ve CODIS/ENFSI veritabanları doğrulamayı tamamladı." if is_tr else f"FORENZA AURA LOGIC processed query ('{message}'): Evaluated against 38 integrated forensic subsystems and CODIS/ENFSI databases."
 
     return AuraLogicChatResponse(
         reply=reply,

@@ -323,8 +323,8 @@ export async function POST(req: NextRequest) {
         : "ISO/IEC 17025:2017 compliant 8-section Court Certification Report generated:\n1. Chain of Custody & HMAC Ledger (100% Integrity)\n2. QA/QC Criteria: Heterozygote Balance (Hb = 0.88), Stutter Ratio < 8.5%, Negative Control Clear.\n3. Forensic Interpretation: SWGDAM / ENFSI standard wording.\n4. PDF Export Ready for Judicial Testimony.";
     } else {
       replyText = isTr
-        ? `Sorgunuz işlendi: "${message}"\n\nFORENZA AURA LOGIC motoru, 30 entegre adli alt sistem ve biyo-hesaplamalı veritabanları üzerinde analiz gerçekleştirdi. İncelenen parametreler CODIS 24, SWGDAM ve ISO/IEC 17025 kalite standartlarına tam uyumludur. Detaylı lokus veya metilasyon sorgusu yapmak için soru sorabilirsiniz.`
-        : `Query processed: "${message}"\n\nFORENZA AURA LOGIC engine evaluated query across 30 integrated forensic subsystems and biocomputational databases. Target parameters comply with CODIS 24, SWGDAM, and ISO/IEC 17025 standards. Ask any specific question regarding locus profiles or methylation markers.`;
+        ? `Sorgunuz işlendi: "${message}"\n\nFORENZA AURA LOGIC motoru, 38 entegre adli alt sistem ve biyo-hesaplamalı veritabanları üzerinde analiz gerçekleştirdi. İncelenen parametreler CODIS 24, SWGDAM ve ISO/IEC 17025 kalite standartlarına tam uyumludur. Detaylı lokus veya metilasyon sorgusu yapmak için soru sorabilirsiniz.`
+        : `Query processed: "${message}"\n\nFORENZA AURA LOGIC engine evaluated query across 38 integrated forensic subsystems and biocomputational databases. Target parameters comply with CODIS 24, SWGDAM, and ISO/IEC 17025 standards. Ask any specific question regarding locus profiles or methylation markers.`;
     }
 
     return NextResponse.json({

@@ -1,6 +1,6 @@
 # Contributing to FORENZA
 
-Welcome to the **FORENZA: Forensic Evidence Operating System** contributor community. FORENZA is an enterprise multi-omic biocomputational forensic intelligence platform engineered to ISO/IEC 17025:2017 standards across 35 specialized subsystems grouped into 7 analytical pillars.
+Welcome to the **FORENZA: Forensic Evidence Operating System** contributor community. FORENZA is an enterprise multi-omic biocomputational forensic intelligence platform engineered to ISO/IEC 17025:2017 standards across 38 specialized subsystems grouped into 7 analytical pillars.
 
 We welcome contributions from forensic geneticists, computational biologists, software engineers, biostatisticians, and security researchers.
 
@@ -48,7 +48,7 @@ Because FORENZA produces courtroom-admissible forensic evaluations and expert wi
 FORENZA/
 ├── backend/                  # Python 3.12+ FastAPI Biocomputational Microservices
 │   ├── app/                  # REST API routers, models, and lifespan supervisor
-│   │   ├── api/v1/           # Modular endpoints for 35 forensic subsystems
+│   │   ├── api/v1/           # Modular endpoints for 38 forensic subsystems
 │   │   └── core/             # Configuration, CORS, middleware, and security
 │   ├── node/services/        # Scientific implementations across all 7 Pillars
 │   │   └── forensic/         # Probabilistic genotyping, kinship, phenotyping, etc.
@@ -147,7 +147,7 @@ Workstation URL: `https://localhost:8443` (HTTP Gateway: `http://localhost:8080`
 
 ## 4. Empirical Validation & Module Grounding Directive
 
-When creating or modifying any of FORENZA's 35 biocomputational modules, you must satisfy the **3 Mandatory Verification Criteria** before the module status can be marked `VERIFIED` in `docs/VALIDATION_STATUS.md`:
+When creating or modifying any of FORENZA's 38 biocomputational modules, you must satisfy the **3 Mandatory Verification Criteria** before the module status can be marked `VERIFIED` in `docs/VALIDATION_STATUS.md`:
 
 ### The 3 Mandatory Verification Criteria
 1. **Criterion 1 (Standard Reference Ground Truth):** Verify analytical accuracy against authoritative reference datasets (e.g. NIST SRM 2391d, PROVEDIt, GIAB/1000 Genomes, EMPOP, EDNAP, or Zenodo FTIR libraries).
@@ -209,11 +209,11 @@ npx tsc --noEmit
 - **Error Handling:** Use structured HTTP exceptions with clear forensic diagnostic detail.
 
 ### TypeScript & Frontend Guidelines
-- **Responsive Parity:** All UI views must work across **Mobile (320px–640px)**, **Tablet (641px–1024px)**, and **Desktop/4K (1025px+)**.
+- **Responsive Parity:** All UI views must work across **Mobile (320px - 640px)**, **Tablet (641px - 1024px)**, and **Desktop/4K (1025px+)**.
 - **Tactical Dark Aesthetic:** Use FORENZA's high-contrast theme (`bg-tactical-surface`, `border-tactical-border/60`, emerald for inclusion/Hp, red/rose for exclusion/Hd, amber for warnings).
 - **Monospace Tabular Alignment:** Numbers, alleles, RFU values, and LRs must use `font-mono tabular-nums`.
 - **No Mock Action Buttons:** Buttons like *"Run MCMC Sampler"* or *"Synthesize Proof"* must trigger genuine biocomputational calls, not idle timers.
-- **Bilingual Support:** Add all new user-facing strings to `frontend/src/translations/saasTranslations.ts` in both English and Turkish.
+- **Bilingual Support:** Add all new user-facing strings to `frontend/src/dictionaries/saasTranslations.ts` in both English and Turkish.
 
 ### PowerShell & Automation Scripts
 - **Portability:** Never hardcode absolute file paths, usernames, or drive letters. Derive paths dynamically via `$MyInvocation.MyCommand.Path`.

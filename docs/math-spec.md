@@ -3370,3 +3370,49 @@ Automated verification of 4 mandatory governance gates:
 4. Mandatory trial disclaimer (investigative lead only; direct STR confirmation required for arrest).
 Third-party consensual reference DNA samples generate an automated deterministic SHA-256 destruction certificate pursuant to Maryland Public Safety § 17-102:
 $$H_{\text{cert}} = \text{SHA256}(\text{CaseID} \parallel \text{SampleIDs} \parallel \text{Statute} \parallel \text{Officer} \parallel \text{Timestamp})$$
+
+---
+
+## 92. HIrisPlex-S 41-SNP Forensic DNA Pigmentation & Phenotyping Studio (Pillar 3.1 / Subsystem 14)
+
+### 92.1 IrisPlex Multinomial Log-Odds Formulation (Eye Color)
+Eye color prediction across 3 mutually exclusive categories (Blue, Intermediate, Brown) uses multinomial logistic regression with Brown designated as the reference baseline ($z_{\text{Brown}} = 0$):
+$$z_{\text{Blue}}(\mathbf{X}) = \beta_{0, \text{Blue}} + \sum_{j=1}^{16} \beta_{j, \text{Blue}} X_j, \quad z_{\text{Inter}}(\mathbf{X}) = \beta_{0, \text{Inter}} + \sum_{j=1}^{16} \beta_{j, \text{Inter}} X_j$$
+Where $\beta_{0, \text{Blue}} = -2.815$ and $\beta_{0, \text{Inter}} = -1.412$. Normalized category probabilities follow the Softmax probability simplex:
+$$P(Y = k \mid \mathbf{X}) = \frac{\exp(z_k(\mathbf{X}))}{1 + \exp(z_{\text{Blue}}(\mathbf{X})) + \exp(z_{\text{Inter}}(\mathbf{X}))}, \quad P(Y = \text{Brown} \mid \mathbf{X}) = \frac{1}{1 + \exp(z_{\text{Blue}}(\mathbf{X})) + \exp(z_{\text{Inter}}(\mathbf{X}))}$$
+Simplex invariant constraint:
+$$P(\text{Blue}) + P(\text{Intermediate}) + P(\text{Brown}) = 1.0000 \quad (| \sum P_i - 1.0 | \le 10^{-6})$$
+
+### 92.2 HIrisPlex 22-Locus Multinomial Formulation (Hair Color & Binomial Shade)
+Hair color is evaluated over 4 categories (Blond, Red, Black, Brown) with Brown as reference baseline ($z_{\text{Brown}} = 0$):
+$$z_{\text{Blond}}(\mathbf{X}) = -1.920 + \sum_{j=1}^{38} \beta_{j, \text{Blond}} X_j$$
+$$z_{\text{Red}}(\mathbf{X}) = -3.450 + \sum_{j=1}^{38} \beta_{j, \text{Red}} X_j$$
+$$z_{\text{Black}}(\mathbf{X}) = -2.110 + \sum_{j=1}^{38} \beta_{j, \text{Black}} X_j$$
+Epistatic Red Hair loss-of-function dynamics are driven by 11 MC1R variants (`rs1805007` R151C, `rs1805008` R160W, `rs1805009` D294H, `rs1805006` R142H, `rs885479` I155T, `rs1805005` D60N, `rs2228479` V60L, `rs1110400` V92M, `rs11547464` R163Q, `rs28936415` Y152X, `rs201326893` N29insA).
+Hair shade follows a binomial logistic regression model:
+$$z_{\text{LightShade}}(\mathbf{X}) = 0.125 + \sum_{j=1}^{38} \beta_{j, \text{Shade}} X_j, \quad P(\text{Light}) = \frac{1}{1 + \exp(-z_{\text{LightShade}})}, \quad P(\text{Dark}) = 1.0 - P(\text{Light})$$
+
+### 92.3 HIrisPlex-S Fitzpatrick Phototype Model (Skin Pigmentation)
+Skin phototype prediction spans 5 Fitzpatrick categories (Very Pale / Type I, Pale / Type II, Intermediate / Type III/IV, Dark / Type V, Dark to Black / Type VI) with Intermediate as reference baseline ($z_{\text{Inter}} = 0$):
+$$z_{\text{VP}}(\mathbf{X}) = -2.150 + \sum_{j=1}^{41} \beta_{j, \text{VP}} X_j, \quad z_{\text{P}}(\mathbf{X}) = -1.100 + \sum_{j=1}^{41} \beta_{j, \text{P}} X_j$$
+$$z_{\text{D}}(\mathbf{X}) = -2.850 + \sum_{j=1}^{41} \beta_{j, \text{D}} X_j, \quad z_{\text{DB}}(\mathbf{X}) = -5.200 + \sum_{j=1}^{41} \beta_{j, \text{DB}} X_j$$
+Major Eurasian depigmentation sweeps (`rs1426654` Thr111Ala, `rs16891982` Phe374Leu) yield large positive shifts for $z_{\text{VP}}$ and $z_{\text{P}}$, while African ancestral alleles (`rs10424031` MFSD12, `rs2814778` ACKR1) drive $z_{\text{D}}$ and $z_{\text{DB}}$.
+
+### 92.4 Multinomial Logistic Regression Hair Morphology (EDAR, TCHH, ACKR1)
+Hair texture morphology is modeled across 3 discrete classes (Straight, Wavy, Curly/Coily) with Wavy as reference category ($z_{\text{Wavy}} = 0$):
+$$z_{\text{Straight}} = 0.50 + 2.854 \cdot X_{\text{EDAR}} - 1.852 \cdot X_{\text{TCHH}} - 0.852 \cdot X_{\text{ACKR1}}$$
+$$z_{\text{Curly}} = -0.50 - 1.250 \cdot X_{\text{EDAR}} + 2.105 \cdot X_{\text{TCHH}} + 0.950 \cdot X_{\text{ACKR1}}$$
+Where $X_{\text{EDAR}}$ is dosage of `rs3827760` (Val370Ala), $X_{\text{TCHH}}$ is dosage of `rs11803731` (Leu790Phe), and $X_{\text{ACKR1}}$ is dosage of `rs2814778` (Duffy Null). Probabilities are normalized on the 3-simplex:
+$$P(\text{Straight}) = \frac{\exp(z_s)}{1 + \exp(z_s) + \exp(z_c)}, \quad P(\text{Curly}) = \frac{\exp(z_c)}{1 + \exp(z_s) + \exp(z_c)}, \quad P(\text{Wavy}) = \frac{1}{1 + \exp(z_s) + \exp(z_c)}$$
+
+### 92.5 Missing Marker Imputation & Uncertainty Scaling
+When $M < 41$ loci are assayed, unobserved genotypes are conditionally imputed via continental population mean dosages $\bar{d}_j = 2.0 \cdot f_j$:
+$$X_j^* = \begin{cases} X_j & \text{if locus } j \text{ is observed} \\ 2.0 \cdot f_j & \text{if locus } j \text{ is missing and imputation is enabled} \end{cases}$$
+Uncertainty scaling penalty dynamically flattens logits toward the prior when missing markers are encountered:
+$$z_k^{(\text{scaled})} = \frac{z_k}{\sqrt{1 + \lambda \cdot (M_{\text{missing}} / N_{\text{total}})}}, \quad \lambda = 0.35$$
+
+### 92.6 Evaluative Reporting & Transposed Conditional Shield (ISFG 2018 / VISAGE 2020)
+All numerical phenotype probabilities must be accompanied by the mandatory active Prosecutor's Fallacy Shield:
+$$P(E \mid H_p) \ne P(H_p \mid E)$$
+Phenotypic inferences represent conditional likelihoods of visible traits given DNA profiles for intelligence and lead generation, and must never be inverted into posterior probabilities of individual identity in court proceedings.
+

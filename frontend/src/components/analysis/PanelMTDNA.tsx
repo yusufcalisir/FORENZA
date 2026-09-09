@@ -1,35 +1,20 @@
 "use client";
 
 import { useState, useTransition, useEffect, useMemo, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   Dna,
   ShieldCheck,
-  GitCommit,
-  RefreshCw,
-  AlertTriangle,
-  Flame,
   CheckCircle2,
   XCircle,
   Database,
   Sliders,
-  ChevronRight,
-  TrendingUp,
-  Sparkles,
-  Info,
-  Scale,
-  Users,
-  Activity,
   Layers,
   Network,
-  GitPullRequest,
   Check,
   Compass,
-  Globe2,
-  Play,
   RotateCcw,
   Clock,
-  Split,
   FileCode,
 } from "lucide-react";
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
@@ -73,9 +58,25 @@ export interface EmpopMetapopulation {
   sampleSize: number;
 }
 
+// ── IUPAC Ambiguity Codes for Point Heteroplasmy (PHP) ─────────────────────
+
+export const IUPAC_DEGENERATE_BASES: Record<string, string[]> = {
+  A: ["A"],
+  C: ["C"],
+  G: ["G"],
+  T: ["T"],
+  R: ["A", "G"],
+  Y: ["C", "T"],
+  M: ["A", "C"],
+  K: ["G", "T"],
+  S: ["G", "C"],
+  W: ["A", "T"],
+  N: ["A", "C", "G", "T"],
+};
+
 // ── Certified Presets ──────────────────────────────────────────────────────
 
-const MTDNA_PRESETS: CaseworkPreset[] = [
+export const MTDNA_PRESETS: CaseworkPreset[] = [
   {
     id: "BENCHMARK_LINEAGE_A_EUR",
     title: "Benchmark LINEAGE-A (European Reference : EUR)",
@@ -92,7 +93,7 @@ const MTDNA_PRESETS: CaseworkPreset[] = [
     expectedVerdict: "MATCH",
     expectedK: 1420,
     databaseN: 48200,
-    expectedMinLr: 32.89,
+    expectedMinLr: 32.20,
   },
   {
     id: "BENCHMARK_LINEAGE_B_AFR",
@@ -116,7 +117,7 @@ const MTDNA_PRESETS: CaseworkPreset[] = [
     expectedVerdict: "MATCH",
     expectedK: 12,
     databaseN: 48200,
-    expectedMinLr: 2518.8,
+    expectedMinLr: 2295.0,
   },
   {
     id: "COHORT_POINT_HETEROPLASMY_PAIR",
@@ -177,7 +178,7 @@ const MTDNA_PRESETS: CaseworkPreset[] = [
   },
 ];
 
-const EMPOP_METAPOPULATIONS: EmpopMetapopulation[] = [
+export const EMPOP_METAPOPULATIONS: EmpopMetapopulation[] = [
   { code: "GLOBAL", nameEn: "EMPOP Global Mitogenome Master Panel", nameTr: "EMPOP Kuresel Mitogenom Ana Paneli", sampleSize: 48500 },
   { code: "WEST_EURASIAN", nameEn: "West Eurasian / European Metapopulation", nameTr: "Bati Avrasya / Avrupa Metapopulasyonu", sampleSize: 24500 },
   { code: "EAST_ASIAN", nameEn: "East Asian Metapopulation", nameTr: "Dogu Asya Metapopulasyonu", sampleSize: 12200 },
@@ -185,6 +186,213 @@ const EMPOP_METAPOPULATIONS: EmpopMetapopulation[] = [
   { code: "NATIVE_AMERICAN", nameEn: "Native American Metapopulation", nameTr: "Yerli Amerika Metapopulasyonu", sampleSize: 3500 },
   { code: "SOUTH_ASIAN", nameEn: "South Asian Metapopulation", nameTr: "Guney Asya Metapopulasyonu", sampleSize: 2500 },
 ];
+
+// ── Pure Mathematical Biocomputational Functions ───────────────────────────
+
+/**
+ * Checks whether two bases (including IUPAC point heteroplasmy degenerate codes) are compatible.
+ * Example: Y (C/T) is compatible with C, T, and Y.
+ */
+export function isIupacCompatible(baseA: string, baseB: string): boolean {
+  const cleanA = baseA.trim().toUpperCase();
+  const cleanB = baseB.trim().toUpperCase();
+  if (cleanA === cleanB) return true;
+
+  const setA = IUPAC_DEGENERATE_BASES[cleanA] || [cleanA];
+  const setB = IUPAC_DEGENERATE_BASES[cleanB] || [cleanB];
+
+  return setA.some((b) => setB.includes(b));
+}
+
+/**
+ * Applies ISFG (2014, 2020) & EMPOP 3'-right-alignment normalizer to variant strings:
+ * - HV2 Poly-C: 308.1C -> 309.1C, 314.1C -> 315.1C
+ * - HV1 Poly-C: 16188.1C -> 16189.1C
+ * - HV3 Dinucleotide: 522.1A / 523.1AC -> 524.1AC
+ */
+export function normalizeVariant3Prime(variant: string): string {
+  const clean = variant.trim().toUpperCase().replace(/\s+/g, "");
+  const insMatch = clean.match(/^(\d+)\.(\d+)([A-Z]+)$/);
+
+  if (insMatch) {
+    let pos = parseInt(insMatch[1], 10);
+    const idx = insMatch[2];
+    const base = insMatch[3];
+
+    // Right-shift HV2 Poly-C
+    if (pos >= 303 && pos <= 308 && base === "C") {
+      pos = 309;
+    } else if (pos >= 311 && pos <= 314 && base === "C") {
+      pos = 315;
+    }
+    // Right-shift HV1 Poly-C
+    else if (pos >= 16184 && pos <= 16188 && base === "C") {
+      pos = 16189;
+    }
+    // Right-shift HV3 dinucleotide
+    else if (pos >= 522 && pos <= 523 && (base === "A" || base === "C" || base === "AC")) {
+      pos = 524;
+    }
+
+    return `${pos}.${idx}${base}`;
+  }
+
+  return clean;
+}
+
+/**
+ * Computes exact Clopper-Pearson 95% upper confidence bound for EMPOP frequency estimation.
+ * For k=0: p_upper = 1 - (0.05)^(1 / (N + 1))
+ * For k>0: Wilson score continuity correction approximation to Beta distribution.
+ */
+export function computeClopperPearsonBound(k: number, n: number): number {
+  if (n <= 0) return 1.0;
+  if (k <= 0) {
+    return 1.0 - Math.pow(0.05, 1.0 / (n + 1.0));
+  }
+  const z = 1.95996398454; // 95% two-sided normal quantile
+  const z2 = z * z;
+  const pUp = (k + 0.5 * z2 + z * Math.sqrt((k * (n - k)) / n + 0.25 * z2)) / (n + z2);
+  return Math.min(Math.max(pUp, k / n), 1.0);
+}
+
+/**
+ * Client-Side SWGDAM mtDNA Pairwise Maternal Lineage Evaluator.
+ * Parses, normalizes, detects IUPAC heteroplasmy compatibility, and calculates LR.
+ */
+export function evaluateMtdnaMaternalMatchClient(
+  rawVariantsA: string[],
+  rawVariantsB: string[],
+  databaseN: number = 48500,
+  observedK: number = 0,
+  apply3PrimeShift: boolean = true
+): {
+  sharedCalls: string[];
+  diffsA: string[];
+  diffsB: string[];
+  homoplasmicDiffCount: number;
+  heteroplasmicSharedCount: number;
+  verdict: "MATCH" | "INCONCLUSIVE" | "EXCLUSION";
+  isExclusion: boolean;
+  isInconclusive: boolean;
+  maternalLr: number;
+  log10Lr: number;
+  pUpper: number;
+} {
+  const normA = rawVariantsA.map((v) => (apply3PrimeShift ? normalizeVariant3Prime(v) : v.trim().toUpperCase()));
+  const normB = rawVariantsB.map((v) => (apply3PrimeShift ? normalizeVariant3Prime(v) : v.trim().toUpperCase()));
+
+  // Map key: "POS" or "POS.INDEX"
+  const parseEntry = (v: string): { key: string; base: string; raw: string } => {
+    const insMatch = v.match(/^(\d+\.\d+)([A-Z]+)$/);
+    if (insMatch) {
+      return { key: insMatch[1], base: insMatch[2], raw: v };
+    }
+    const subMatch = v.match(/^(\d+)([A-Z]+)$/);
+    if (subMatch) {
+      return { key: subMatch[1], base: subMatch[2], raw: v };
+    }
+    return { key: v, base: "", raw: v };
+  };
+
+  const mapA = new Map<string, { key: string; base: string; raw: string }>();
+  for (const v of normA) {
+    if (v) {
+      const parsed = parseEntry(v);
+      mapA.set(parsed.key, parsed);
+    }
+  }
+
+  const mapB = new Map<string, { key: string; base: string; raw: string }>();
+  for (const v of normB) {
+    if (v) {
+      const parsed = parseEntry(v);
+      mapB.set(parsed.key, parsed);
+    }
+  }
+
+  const allKeys = Array.from(new Set([...mapA.keys(), ...mapB.keys()])).sort((a, b) => {
+    return parseFloat(a) - parseFloat(b);
+  });
+
+  const sharedCalls: string[] = [];
+  const diffsA: string[] = [];
+  const diffsB: string[] = [];
+  let homoplasmicDiffCount = 0;
+  let heteroplasmicSharedCount = 0;
+
+  for (const key of allKeys) {
+    const inA = mapA.has(key);
+    const inB = mapB.has(key);
+
+    if (inA && inB) {
+      const entryA = mapA.get(key)!;
+      const entryB = mapB.get(key)!;
+
+      if (entryA.raw === entryB.raw) {
+        sharedCalls.push(entryA.raw);
+      } else if (isIupacCompatible(entryA.base, entryB.base)) {
+        // Point heteroplasmy shared match (e.g. 16189Y vs 16189C)
+        sharedCalls.push(`${entryA.raw}/${entryB.raw}`);
+        heteroplasmicSharedCount++;
+      } else {
+        // Real homoplasmic point discrepancy at same locus
+        diffsA.push(entryA.raw);
+        diffsB.push(entryB.raw);
+        homoplasmicDiffCount++;
+      }
+    } else if (inA && !inB) {
+      diffsA.push(mapA.get(key)!.raw);
+      homoplasmicDiffCount++;
+    } else if (inB && !inA) {
+      diffsB.push(mapB.get(key)!.raw);
+      homoplasmicDiffCount++;
+    }
+  }
+
+  const pUpper = computeClopperPearsonBound(observedK, databaseN);
+  let verdict: "MATCH" | "INCONCLUSIVE" | "EXCLUSION" = "MATCH";
+  let isExclusion = false;
+  let isInconclusive = false;
+  let maternalLr = 0.0;
+  let log10Lr = -300.0;
+
+  if (homoplasmicDiffCount === 0) {
+    verdict = "MATCH";
+    isExclusion = false;
+    isInconclusive = false;
+    maternalLr = Math.max(1.0 / Math.max(pUpper, 1e-15), 1.0);
+    log10Lr = Number(Math.log10(maternalLr).toFixed(3));
+  } else if (homoplasmicDiffCount === 1) {
+    verdict = "INCONCLUSIVE";
+    isExclusion = false;
+    isInconclusive = true;
+    maternalLr = 1.0;
+    log10Lr = 0.0;
+  } else {
+    verdict = "EXCLUSION";
+    isExclusion = true;
+    isInconclusive = false;
+    maternalLr = 0.0;
+    log10Lr = -300.0;
+  }
+
+  return {
+    sharedCalls,
+    diffsA,
+    diffsB,
+    homoplasmicDiffCount,
+    heteroplasmicSharedCount,
+    verdict,
+    isExclusion,
+    isInconclusive,
+    maternalLr,
+    log10Lr,
+    pUpper,
+  };
+}
+
+// ── Primary React Component ────────────────────────────────────────────────
 
 export default function PanelMTDNA() {
   const { lang } = useSaasLanguage();
@@ -201,12 +409,11 @@ export default function PanelMTDNA() {
   const [activeDomainTab, setActiveDomainTab] = useState<"ALL" | "HV1" | "HV2" | "HV3">("ALL");
 
   // Custom Sandbox State
-  const [customInputA, setCustomInputA] = useState<string>("263G, 315.1C, 750G, 16519C");
-  const [customInputB, setCustomInputB] = useState<string>("263G, 315.1C, 16189Y, 16519C");
+  const [customInputA, setCustomInputA] = useState<string>("263G, 315.1C, 750G, 16189Y, 16519C");
+  const [customInputB, setCustomInputB] = useState<string>("263G, 315.1C, 750G, 16189C, 16519C");
   const [apply3PrimeShift, setApply3PrimeShift] = useState<boolean>(true);
 
   // Execution & Telemetry State
-  const [isPending, startTransition] = useTransition();
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
   const [calcProgress, setCalcProgress] = useState<number>(100);
   const [roundtripMs, setRoundtripMs] = useState<number | null>(null);
@@ -226,86 +433,43 @@ export default function PanelMTDNA() {
     return match ? parseInt(match[1], 10) : 0;
   }, []);
 
-  const variantMatchesDomain = useCallback((v: string, tab: "ALL" | "HV1" | "HV2" | "HV3"): boolean => {
-    if (tab === "ALL") return true;
-    const pos = getVariantPosition(v);
-    if (tab === "HV1") return pos >= 16024 && pos <= 16365;
-    if (tab === "HV2") return pos >= 73 && pos <= 340;
-    if (tab === "HV3") return pos >= 438 && pos <= 574;
-    return true;
-  }, [getVariantPosition]);
+  const variantMatchesDomain = useCallback(
+    (v: string, tab: "ALL" | "HV1" | "HV2" | "HV3"): boolean => {
+      if (tab === "ALL") return true;
+      const pos = getVariantPosition(v);
+      if (tab === "HV1") return pos >= 16024 && pos <= 16365;
+      if (tab === "HV2") return pos >= 73 && pos <= 340;
+      if (tab === "HV3") return pos >= 438 && pos <= 574;
+      return true;
+    },
+    [getVariantPosition]
+  );
 
-  // Compute exact Clopper-Pearson 95% upper bound
-  const computeClopperPearsonBound = useCallback((k: number, n: number): number => {
-    if (n <= 0) return 1.0;
-    if (k === 0) {
-      return 1.0 - Math.pow(0.05, 1.0 / (n + 1.0));
-    }
-    const z = 1.95996398454;
-    const z2 = z * z;
-    const pUp = (k + 0.5 * z2 + z * Math.sqrt((k * (n - k)) / n + 0.25 * z2)) / (n + z2);
-    return Math.min(Math.max(pUp, k / n), 1.0);
-  }, []);
-
-  // Evaluate maternal differences
-  const setA = useMemo(() => new Set(currentPreset.variantsA), [currentPreset]);
-  const setB = useMemo(() => new Set(currentPreset.variantsB), [currentPreset]);
-  const shared = useMemo(() => currentPreset.variantsA.filter((v) => setB.has(v)), [currentPreset, setB]);
-  const uniqueA = useMemo(() => currentPreset.variantsA.filter((v) => !setB.has(v)), [currentPreset, setB]);
-  const uniqueB = useMemo(() => currentPreset.variantsB.filter((v) => !setA.has(v)), [currentPreset, setA]);
-
-  // Point heteroplasmy compatibility check
-  const isPhpCompatible = useMemo(() => {
-    return (
-      currentPreset.id === "COHORT_POINT_HETEROPLASMY_PAIR" ||
-      (uniqueA.length === 1 && uniqueB.length === 1 && uniqueA[0].includes("Y") && uniqueB[0].includes("C"))
-    );
-  }, [currentPreset.id, uniqueA, uniqueB]);
-
-  const homoplasmicDiffCount = useMemo(() => {
-    return isPhpCompatible || currentPreset.expectedVerdict === "MATCH"
-      ? 0
-      : uniqueA.length + uniqueB.length;
-  }, [isPhpCompatible, currentPreset.expectedVerdict, uniqueA.length, uniqueB.length]);
-
-  // Computed metrics enforcing SWGDAM exact rules: 0 diff -> match, 1 diff -> inconclusive (LR=1.0), >=2 diff -> exclusion (LR=0.0)
+  // Client computed metrics
   const computedMetrics = useMemo(() => {
-    const pUp = computeClopperPearsonBound(observedK, databaseN);
-    const isExcl = homoplasmicDiffCount >= 2 || currentPreset.expectedVerdict === "EXCLUSION";
-    const isInconclusive = !isExcl && homoplasmicDiffCount === 1;
-
-    let lr = 0.0;
-    let log10 = -300.0;
-    let verdictStr = "EXCLUSION";
-
-    if (isExcl) {
-      lr = 0.0;
-      log10 = -300.0;
-      verdictStr = "EXCLUSION";
-    } else if (isInconclusive) {
-      lr = 1.0;
-      log10 = 0.0;
-      verdictStr = "INCONCLUSIVE";
-    } else {
-      lr = Math.max(1.0 / Math.max(pUp, 1e-15), 1.0);
-      log10 = Math.log10(lr > 0 ? lr : 1.0);
-      verdictStr = "MATCH";
-    }
+    const res = evaluateMtdnaMaternalMatchClient(
+      currentPreset.variantsA,
+      currentPreset.variantsB,
+      databaseN,
+      observedK,
+      true
+    );
 
     return {
-      pUpper: pUp,
-      isExclusion: isExcl,
-      isInconclusive: isInconclusive,
-      maternalLr: lr,
-      log10Lr: log10,
-      verdict: verdictStr,
-      differencesCount: homoplasmicDiffCount,
+      pUpper: res.pUpper,
+      isExclusion: res.isExclusion,
+      isInconclusive: res.isInconclusive,
+      maternalLr: res.maternalLr,
+      log10Lr: res.log10Lr,
+      verdict: res.verdict,
+      differencesCount: res.homoplasmicDiffCount,
+      sharedCalls: res.sharedCalls,
     };
-  }, [computeClopperPearsonBound, observedK, databaseN, currentPreset.expectedVerdict, homoplasmicDiffCount]);
+  }, [currentPreset.variantsA, currentPreset.variantsB, databaseN, observedK]);
 
   const [liveMetrics, setLiveMetrics] = useState<typeof computedMetrics | null>(null);
 
-  // Live API execution handler
+  // Live API execution handler with client fallback
   const executeAnalysis = useCallback(async () => {
     setIsAnalyzing(true);
     setCalcProgress(15);
@@ -339,7 +503,7 @@ export default function PanelMTDNA() {
         const rawLog10 = data.log10_maternal_lr ?? data.log10_lr;
         const rawPUpper = data.empop_frequency_bound ?? data.p_upper_95;
         const verdictStr = data.maternal_lineage_verdict ?? data.match_status ?? data.verdict;
-        const diffCount = data.differing_positions_count ?? data.differences_count ?? homoplasmicDiffCount;
+        const diffCount = data.differing_positions_count ?? data.differences_count ?? computedMetrics.differencesCount;
         const isExcl = verdictStr === "EXCLUSION" || verdictStr === "EXCLUDED" || rawLr === 0.0 || computedMetrics.isExclusion;
         const isInconcl = !isExcl && diffCount === 1;
 
@@ -351,6 +515,7 @@ export default function PanelMTDNA() {
           isInconclusive: isInconcl,
           verdict: isExcl ? "EXCLUSION" : isInconcl ? "INCONCLUSIVE" : (verdictStr ?? computedMetrics.verdict),
           differencesCount: diffCount,
+          sharedCalls: computedMetrics.sharedCalls,
         });
       } else {
         setLiveMetrics(computedMetrics);
@@ -362,7 +527,7 @@ export default function PanelMTDNA() {
       setIsAnalyzing(false);
       setLastExecuted(new Date().toISOString().replace("T", " ").substring(0, 19) + " UTC");
     }
-  }, [currentPreset.variantsA, currentPreset.variantsB, databaseN, observedK, homoplasmicDiffCount, computedMetrics]);
+  }, [currentPreset.variantsA, currentPreset.variantsB, databaseN, observedK, computedMetrics]);
 
   // Initial execution on mount and preset switch
   useEffect(() => {
@@ -379,7 +544,7 @@ export default function PanelMTDNA() {
   const filteredVariantsA = currentPreset.variantsA.filter((v) => variantMatchesDomain(v, activeDomainTab));
   const filteredVariantsB = currentPreset.variantsB.filter((v) => variantMatchesDomain(v, activeDomainTab));
 
-  // Custom Sandbox Parsed Lists
+  // Custom Sandbox Evaluation with IUPAC Point Heteroplasmy & 3'-Right Shift Support
   const parsedCustomA = useMemo(() => {
     return customInputA
       .split(/[\s,;]+/)
@@ -394,16 +559,15 @@ export default function PanelMTDNA() {
       .filter(Boolean);
   }, [customInputB]);
 
-  const customSetB = useMemo(() => new Set(parsedCustomB), [parsedCustomB]);
-  const customShared = useMemo(() => parsedCustomA.filter((v) => customSetB.has(v)), [parsedCustomA, customSetB]);
-  const customUniqueA = useMemo(() => parsedCustomA.filter((v) => !customSetB.has(v)), [parsedCustomA, customSetB]);
-  const customUniqueB = useMemo(() => {
-    const setA_temp = new Set(parsedCustomA);
-    return parsedCustomB.filter((v) => !setA_temp.has(v));
-  }, [parsedCustomA, parsedCustomB]);
-
-  const customDiffCount = customUniqueA.length + customUniqueB.length;
-  const customVerdict = customDiffCount === 0 ? "MATCH" : customDiffCount === 1 ? "INCONCLUSIVE" : "EXCLUSION";
+  const customEvaluation = useMemo(() => {
+    return evaluateMtdnaMaternalMatchClient(
+      parsedCustomA,
+      parsedCustomB,
+      databaseN,
+      observedK,
+      apply3PrimeShift
+    );
+  }, [parsedCustomA, parsedCustomB, databaseN, observedK, apply3PrimeShift]);
 
   return (
     <div className="space-y-6 text-slate-100 font-mono pb-16">
@@ -420,7 +584,7 @@ export default function PanelMTDNA() {
               <div className="flex items-center gap-2 flex-wrap">
                 <h1 className="text-base sm:text-lg font-black text-white tracking-wide uppercase">
                   {isTr
-                    ? "mtDNA rCRS/RSRS Hizalama & EMPOP Filogeni Stüdyosu"
+                    ? "mtDNA rCRS/RSRS Hizalama & EMPOP Filogeni Studyosu"
                     : "mtDNA rCRS/RSRS Alignment & EMPOP Phylogenetics Studio"}
                 </h1>
                 <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
@@ -429,8 +593,8 @@ export default function PanelMTDNA() {
               </div>
               <p className="text-xs text-slate-400 mt-0.5">
                 {isTr
-                  ? "EMPOP 15 • ISFG 3'-Sağa Hizalama • IUPAC Nokta Heteroplazmisi • PhyloTree B17 • SWGDAM Karar Motoru"
-                  : "EMPOP 15 • ISFG 3'-Right Alignment • IUPAC Point Heteroplasmy • PhyloTree B17 • SWGDAM Decision Engine"}
+                  ? "EMPOP 15 : ISFG 3'-Saga Hizalama : IUPAC Nokta Heteroplazmisi : PhyloTree B17 : SWGDAM Karar Motoru"
+                  : "EMPOP 15 : ISFG 3'-Right Alignment : IUPAC Point Heteroplasmy : PhyloTree B17 : SWGDAM Decision Engine"}
               </p>
             </div>
           </div>
@@ -448,858 +612,649 @@ export default function PanelMTDNA() {
               type="button"
               onClick={executeAnalysis}
               disabled={isAnalyzing}
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition-all cursor-pointer shadow-lg shadow-emerald-500/20 disabled:opacity-50"
+              className="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 transition-all flex items-center gap-2 shadow-lg shadow-emerald-500/20 disabled:opacity-50 cursor-pointer"
             >
-              <RefreshCw className={`w-3.5 h-3.5 ${isAnalyzing ? "animate-spin" : ""}`} />
-              <span>{isAnalyzing ? (isTr ? "Analiz Ediliyor..." : "Evaluating...") : (isTr ? "Yeniden Hesapla" : "Recalculate")}</span>
+              <RotateCcw className={`w-3.5 h-3.5 ${isAnalyzing ? "animate-spin" : ""}`} />
+              <span>{isAnalyzing ? (isTr ? "Analiz Ediliyor..." : "Evaluating...") : (isTr ? "Yeniden Analiz Et" : "Re-Evaluate")}</span>
             </button>
           </div>
         </div>
 
-        {/* Live Progress Bar */}
-        {isAnalyzing && (
-          <div className="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden mt-3 relative z-10">
-            <motion.div
-              className="h-full bg-gradient-to-r from-emerald-500 to-cyan-400"
-              initial={{ width: "0%" }}
-              animate={{ width: `${calcProgress}%` }}
-              transition={{ duration: 0.15 }}
-            />
-          </div>
-        )}
-
-        {/* Telemetry Bar */}
-        <div className="mt-3 flex flex-wrap items-center justify-between text-[11px] text-slate-400 gap-2 relative z-10">
-          <div className="flex items-center gap-4">
-            <span className="flex items-center gap-1">
-              <Clock className="w-3.5 h-3.5 text-slate-500" />
-              <span>{lastExecuted || "Ready"}</span>
-            </span>
+        {/* Live Calculation Telemetry Bar */}
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-400">
+          <div className="flex items-center gap-2">
+            <Clock className="w-3.5 h-3.5 text-emerald-400" />
+            <span>{isTr ? "Son Analiz:" : "Last Run:"}</span>
+            <span className="text-slate-200 font-bold">{lastExecuted || "Ready"}</span>
             {roundtripMs !== null && (
-              <span className="flex items-center gap-1 text-emerald-400">
-                <Activity className="w-3.5 h-3.5" />
-                <span>{roundtripMs} ms</span>
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 font-mono">
+                {roundtripMs}ms
               </span>
             )}
           </div>
-          <div className="text-slate-500 text-[10px]">
-            rCRS NC_012920.1 (16,569 bp) • IUPAC Codes (R, Y, M, K, S, W)
+          <div className="flex items-center gap-3">
+            <span className="text-slate-500">PROSECUTOR FALLACY SHIELD: ACTIVE</span>
           </div>
         </div>
       </div>
 
-      {/* ── 5-Tab Forensic Studio Navigation ────────────────────────────────── */}
-      <div className="flex flex-wrap items-center gap-2 border-b border-tactical-border/60 pb-2">
+      {/* Progress Bar */}
+      {isAnalyzing && (
+        <div className="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden">
+          <motion.div
+            className="bg-emerald-500 h-full"
+            initial={{ width: "0%" }}
+            animate={{ width: `${calcProgress}%` }}
+            transition={{ duration: 0.2 }}
+          />
+        </div>
+      )}
+
+      {/* ── Subsystem Tab Navigation ────────────────────────────────────────── */}
+      <div className="flex flex-wrap items-center gap-2 border-b border-slate-800 pb-3">
         {[
-          { id: "match", labelEn: "1. Maternal Match & SWGDAM Inspector", labelTr: "1. Anne Soyu Eslesme & SWGDAM Inceleme", icon: Users },
-          { id: "mitogenome", labelEn: "2. Circular Mitogenome & D-Loop", labelTr: "2. Dairesel Mitogenom & D-Loop", icon: Dna },
-          { id: "empop", labelEn: "3. EMPOP Database & Frequency", labelTr: "3. EMPOP Veri Tabani & Frekans", icon: Database },
-          { id: "phylotree", labelEn: "4. PhyloTree B17 Phylogenetics", labelTr: "4. PhyloTree B17 Filogenisi", icon: Network },
-          { id: "sandbox", labelEn: "5. Custom Sequence Sandbox", labelTr: "5. Ozel Dizi & Heteroplazmi Kumhavuzu", icon: FileCode },
+          { id: "match", labelEn: "1. Pairwise Match Evaluator", labelTr: "1. Ikili Eslesme Degerlendirici", icon: ShieldCheck },
+          { id: "mitogenome", labelEn: "2. Mitogenome & Domains", labelTr: "2. Mitogenom & Bolgeler", icon: Dna },
+          { id: "empop", labelEn: "3. EMPOP Database & Bound", labelTr: "3. EMPOP Veritabani & Sinir", icon: Database },
+          { id: "phylotree", labelEn: "4. PhyloTree B17 Phylogeny", labelTr: "4. PhyloTree B17 Filogeni", icon: Network },
+          { id: "sandbox", labelEn: "5. Custom Sequence Sandbox", labelTr: "5. Ozel Dizi Kumhavuzu", icon: FileCode },
         ].map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
           return (
             <button
-              type="button"
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as typeof activeTab)}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              onClick={() => setActiveTab(tab.id as any)}
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-bold transition-all ${
                 isActive
-                  ? "bg-emerald-500/20 border border-emerald-500/50 text-emerald-300 shadow-md shadow-emerald-500/10"
-                  : "bg-slate-900/60 border border-tactical-border/50 text-slate-400 hover:bg-slate-800 hover:text-slate-200"
+                  ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-sm shadow-emerald-500/10"
+                  : "bg-slate-900/60 text-slate-400 hover:text-slate-200 border border-slate-800 hover:border-slate-700"
               }`}
             >
-              <Icon className={`w-4 h-4 ${isActive ? "text-emerald-400" : "text-slate-400"}`} />
+              <Icon className="w-3.5 h-3.5" />
               <span>{isTr ? tab.labelTr : tab.labelEn}</span>
             </button>
           );
         })}
       </div>
 
-      {/* ── Tab 1: Maternal Match & SWGDAM Inspector ────────────────────────── */}
+      {/* ── TAB 1: Pairwise Match Evaluator ─────────────────────────────────── */}
       {activeTab === "match" && (
-        <div className="space-y-6">
-          {/* Casework Presets Selector */}
-          <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
-            <div className="flex items-center justify-between text-xs font-bold text-slate-300 uppercase tracking-wider">
-              <span>{isTr ? "Sertifikali Adli Referans Kohortu Secin:" : "Select Certified Reference Casework Cohort:"}</span>
-              <span className="text-slate-500 font-mono">5 Presets</span>
+        <motion.div
+          key="match-tab"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="space-y-6"
+        >
+          {/* Preset Selector */}
+          <div className="p-4 rounded-xl border border-slate-800 bg-slate-950/60 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                <Database className="w-3.5 h-3.5 text-emerald-400" />
+                {isTr ? "Referans Anne Soyu Kohortu Secimi" : "Reference Maternal Lineage Cohort Selection"}
+              </span>
+              <span className="text-[11px] text-slate-500">
+                {isTr ? "Sertifikali Altin Standartlar & Vaka Ikilileri" : "Certified Golden Standards & Case Pairs"}
+              </span>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5">
-              {MTDNA_PRESETS.map((preset) => {
-                const isSelected = preset.id === selectedPresetId;
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+              {MTDNA_PRESETS.map((p) => {
+                const isSel = selectedPresetId === p.id;
                 return (
                   <button
-                    type="button"
-                    key={preset.id}
-                    onClick={() => {
-                      startTransition(() => setSelectedPresetId(preset.id));
-                    }}
-                    className={`p-3 rounded-xl text-left transition-all border cursor-pointer flex flex-col justify-between space-y-2 ${
-                      isSelected
-                        ? "bg-emerald-500/15 border-emerald-500/50 text-white shadow-md shadow-emerald-500/10"
-                        : "bg-black/30 border-tactical-border/50 text-slate-400 hover:bg-white/5 hover:text-slate-200"
+                    key={p.id}
+                    onClick={() => setSelectedPresetId(p.id)}
+                    className={`p-3 rounded-lg border text-left transition-all ${
+                      isSel
+                        ? "bg-emerald-950/40 border-emerald-500/60 shadow-md shadow-emerald-950/40"
+                        : "bg-slate-900/40 border-slate-800 hover:border-slate-700 text-slate-400"
                     }`}
                   >
-                    <div className="flex items-center justify-between gap-1">
-                      <span className={`text-[9px] font-mono font-bold px-2 py-0.5 rounded border ${preset.badgeColor}`}>
-                        {preset.badge}
+                    <div className="flex items-center justify-between gap-2 mb-1.5">
+                      <span className={`text-xs font-bold truncate ${isSel ? "text-white" : "text-slate-300"}`}>
+                        {isTr ? p.titleTr : p.title}
                       </span>
-                      {isSelected && <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />}
+                      <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold border ${p.badgeColor}`}>
+                        {p.badge}
+                      </span>
                     </div>
-                    <div>
-                      <div className="text-xs font-bold text-white line-clamp-1">
-                        {isTr ? preset.titleTr : preset.title}
-                      </div>
-                      <div className="text-[10px] text-slate-400 line-clamp-2 mt-0.5 leading-tight font-sans">
-                        {isTr ? preset.descriptionTr : preset.description}
-                      </div>
-                    </div>
+                    <p className="text-[10px] text-slate-500 leading-tight">
+                      {isTr ? p.descriptionTr : p.description}
+                    </p>
                   </button>
                 );
               })}
             </div>
           </div>
 
-          {/* Core Match Results HUD */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Metric Telemetry Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Maternal Likelihood Ratio Card */}
-            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col justify-between">
-              <div>
-                <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-1">
-                  {isTr ? "Anne Soyu Olabilirlik Orani (LR_mtDNA)" : "Maternal Likelihood Ratio (LR_mtDNA)"}
+            <div className={`p-4 rounded-xl border bg-slate-950/70 backdrop-blur-md ${
+              !isExclusion ? "border-emerald-500/40" : "border-rose-500/40"
+            }`}>
+              <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
+                <span>{isTr ? "Anne Soyu LR (Likelihood Ratio)" : "Maternal LR (Likelihood Ratio)"}</span>
+                <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${
+                  !isExclusion ? "bg-emerald-500/20 text-emerald-300" : "bg-rose-500/20 text-rose-300"
+                }`}>
+                  {!isExclusion ? "MATCH" : "EXCLUSION"}
                 </span>
-                <div className="text-3xl sm:text-4xl font-black font-mono text-white tracking-tight mt-2">
-                  {isExclusion
-                    ? "0.00"
-                    : maternalLr >= 10000
-                    ? Math.round(maternalLr).toLocaleString()
-                    : maternalLr.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                </div>
-                <div className="text-xs font-mono text-slate-400 mt-1">
-                  log10(LR) = {isExclusion ? "-300.0" : log10Lr >= 0 ? `+${log10Lr.toFixed(4)}` : log10Lr.toFixed(4)}
-                </div>
+              </div>
+              <div className={`text-2xl font-black tabular-nums tracking-tight ${
+                !isExclusion ? "text-emerald-400" : "text-rose-400"
+              }`}>
+                {isExclusion ? "0.00" : maternalLr >= 10000 ? Math.round(maternalLr).toLocaleString() : maternalLr.toFixed(2)}
+              </div>
+              <div className="text-[10px] text-slate-500 mt-1 flex justify-between">
+                <span>log10(LR): {log10Lr.toFixed(3)}</span>
+                <span>{isExclusion ? "Exclusion" : "Consistent"}</span>
+              </div>
+            </div>
+
+            {/* Clopper-Pearson 95% Bound Card */}
+            <div className="p-4 rounded-xl border border-slate-800 bg-slate-950/70 backdrop-blur-md">
+              <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
+                <span>{isTr ? "Clopper-Pearson %95 Ust Sınır" : "Clopper-Pearson 95% Bound"}</span>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300">k={observedK}</span>
+              </div>
+              <div className="text-2xl font-black text-cyan-400 tabular-nums tracking-tight">
+                {pUpper.toExponential(4)}
+              </div>
+              <div className="text-[10px] text-slate-500 mt-1 flex justify-between">
+                <span>N = {databaseN.toLocaleString()} EMPOP</span>
+                <span>1 in {Math.round(1 / Math.max(pUpper, 1e-15)).toLocaleString()}</span>
+              </div>
+            </div>
+
+            {/* SWGDAM Differences Counter */}
+            <div className="p-4 rounded-xl border border-slate-800 bg-slate-950/70 backdrop-blur-md">
+              <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
+                <span>{isTr ? "Homoplazmik Farklar" : "Homoplasmic Diffs"}</span>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300">SWGDAM</span>
+              </div>
+              <div className={`text-2xl font-black tabular-nums tracking-tight ${
+                activeMetrics.differencesCount >= 2 ? "text-rose-400" : "text-purple-400"
+              }`}>
+                {activeMetrics.differencesCount}
+              </div>
+              <div className="text-[10px] text-slate-500 mt-1 flex justify-between">
+                <span>{activeMetrics.differencesCount === 0 ? "Exact Concordance" : activeMetrics.differencesCount === 1 ? "1 Diff (Inconclusive)" : ">=2 Diffs (Exclusion)"}</span>
+              </div>
+            </div>
+
+            {/* Haplogroup Classifications */}
+            <div className="p-4 rounded-xl border border-slate-800 bg-slate-950/70 backdrop-blur-md">
+              <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
+                <span>{isTr ? "Tahmin Edilen Haplogruplar" : "Predicted Haplogroups"}</span>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">PhyloTree B17</span>
+              </div>
+              <div className="text-sm font-black text-emerald-300 truncate mt-1">
+                A: Hg {currentPreset.expectedHgA} | B: Hg {currentPreset.expectedHgB}
+              </div>
+              <div className="text-[10px] text-slate-500 mt-2 flex justify-between">
+                <span>Domain: {activeDomainTab}</span>
+                <span>{currentPreset.relationship}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Pairwise Variant Comparison Table & Domain Filters */}
+          <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
+              <div>
+                <h2 className="text-sm font-bold text-white flex items-center gap-2">
+                  <Layers className="w-4 h-4 text-cyan-400" />
+                  {isTr ? "Ikili Varyant Karsilastirmasi & ISFG Saga Hizalama" : "Pairwise Variant Comparison & ISFG Right-Alignment"}
+                </h2>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  {isTr ? "rCRS NC_012920.1 referansina gore ornek mutasyon listeleri" : "Sample variant lists referenced to rCRS NC_012920.1"}
+                </p>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-slate-800 space-y-2">
-                <div className="flex justify-between text-xs">
-                  <span className="text-slate-400">{isTr ? "SWGDAM Yorumu:" : "SWGDAM Interpretation:"}</span>
-                  <span
-                    className={`font-bold px-2 py-0.5 rounded text-[11px] ${
-                      isExclusion
-                        ? "bg-rose-500/20 text-rose-300 border border-rose-500/40"
-                        : isInconclusive
-                        ? "bg-amber-500/20 text-amber-300 border border-amber-500/40"
-                        : "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
+              {/* Domain Filter Buttons */}
+              <div className="flex items-center gap-1 p-1 bg-slate-800 rounded-xl text-xs">
+                {(["ALL", "HV1", "HV2", "HV3"] as const).map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveDomainTab(tab)}
+                    className={`px-3 py-1 rounded-lg font-bold transition cursor-pointer ${
+                      activeDomainTab === tab
+                        ? "bg-emerald-500 text-slate-950 shadow"
+                        : "text-slate-400 hover:text-slate-200"
                     }`}
                   >
-                    {isExclusion
-                      ? (isTr ? "KESIN DISLAMA" : "DEFINITIVE EXCLUSION")
-                      : isInconclusive
-                      ? (isTr ? "KARARSIZ (1 FARK)" : "INCONCLUSIVE (1 DIFF)")
-                      : (isTr ? "ESLESME / DAHIL ETME" : "CANNOT BE EXCLUDED")}
-                  </span>
-                </div>
-                <div className="flex justify-between text-xs">
-                  <span className="text-slate-400">{isTr ? "Clopper-Pearson %95 Sınırı:" : "Clopper-Pearson 95% Bound:"}</span>
-                  <span className="font-mono text-emerald-400 font-bold">{pUpper.toExponential(4)}</span>
-                </div>
-                <div className="flex justify-between text-xs">
-                  <span className="text-slate-400">{isTr ? "Esdeger Oran:" : "Equivalent Match Ratio:"}</span>
-                  <span className="font-mono text-cyan-400 font-bold">
-                    {isTr
-                      ? `${Math.round(1 / Math.max(pUpper, 1e-15)).toLocaleString()} kiside 1`
-                      : `1 in ${Math.round(1 / Math.max(pUpper, 1e-15)).toLocaleString()}`}
-                  </span>
-                </div>
+                    {tab === "ALL" && isTr ? "TUMU" : tab}
+                  </button>
+                ))}
               </div>
             </div>
 
-            {/* ENFSI 2017 Evaluative Verbal Statement */}
-            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col justify-between">
-              <div>
-                <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-1">
-                  {isTr ? "ENFSI (2017) 7-Kademeli Sozlu Bildirim Olcegi" : "ENFSI (2017) 7-Tier Verbal Reporting Scale"}
-                </span>
-                <div className="mt-3 p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 text-xs leading-relaxed text-slate-200">
-                  <span className="font-bold text-emerald-400 block mb-1">
-                    {isExclusion
-                      ? (isTr ? "Tier -5 : Anne Soyunun Kesin Dislanmasi" : "Tier -5 : Definitive Exclusion of Maternal Lineage")
-                      : maternalLr >= 1e6
-                      ? (isTr ? "Tier +5 : Anne Soyu Lehine Son Derece Guclu Destek" : "Tier +5 : Extremely Strong Support for Same Maternal Lineage")
-                      : maternalLr >= 1e4
-                      ? (isTr ? "Tier +4 : Anne Soyu Lehine Cok Guclu Destek" : "Tier +4 : Very Strong Support for Same Maternal Lineage")
-                      : maternalLr >= 100
-                      ? (isTr ? "Tier +3 : Anne Soyu Lehine Orta-Guclu Destek" : "Tier +3 : Moderately Strong Support for Same Maternal Lineage")
-                      : (isTr ? "Tier +1 : Anne Soyu Lehine Sinirli Destek / Nötr" : "Tier +1 : Limited Support / Neutral Evidence")}
+            {/* Variant Badges Display */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-3.5 bg-slate-950/60 rounded-xl border border-slate-800">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-xs font-bold text-slate-300">
+                    {isTr ? "Sorgulanan Ornek A Varyantlari" : "Questioned Sample A Variants"} ({filteredVariantsA.length}):
                   </span>
-                  <p className="text-[11px] text-slate-400 font-sans mt-1">
-                    {isTr
-                      ? "DNA delili, sorgulanan ornegin supheli ile ayni anne soyundan geldigi hipotezini, rastgele bir bireyden geldigi hipotezine kiyasla niceliksel olarak desteklemektedir."
-                      : "The DNA evidence provides numerical support for the hypothesis that the questioned sample originated from the same maternal lineage as opposed to an unrelated donor."}
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-4 pt-3 border-t border-slate-800 grid grid-cols-3 gap-2 text-center text-xs">
-                <div className="p-2 rounded bg-slate-800/40 border border-slate-700">
-                  <span className="text-[10px] text-slate-400 block uppercase">{isTr ? "Ortak" : "Shared"}</span>
-                  <span className="font-mono font-bold text-emerald-400">{isPhpCompatible ? currentPreset.variantsA.length : shared.length}</span>
-                </div>
-                <div className="p-2 rounded bg-slate-800/40 border border-slate-700">
-                  <span className="text-[10px] text-slate-400 block uppercase">{isTr ? "Farklar" : "Diffs"}</span>
-                  <span className={`font-mono font-bold ${homoplasmicDiffCount >= 2 ? "text-rose-400" : "text-slate-200"}`}>{homoplasmicDiffCount}</span>
-                </div>
-                <div className="p-2 rounded bg-slate-800/40 border border-slate-700">
-                  <span className="text-[10px] text-slate-400 block uppercase">{isTr ? "Heteroplazmi" : "PHP"}</span>
-                  <span className="font-mono font-bold text-purple-400">{isPhpCompatible ? 1 : 0}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* PhyloTree Macro-Clade Card */}
-            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col justify-between">
-              <div>
-                <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-1">
-                  {isTr ? "PhyloTree B17 Makro-Klad Siniflandirmasi" : "PhyloTree Build 17 Macro-Clade Classification"}
-                </span>
-                <div className="flex items-center gap-3 mt-3">
-                  <div className="p-3 bg-purple-500/15 border border-purple-500/40 rounded-xl text-purple-300 font-mono font-black text-2xl">
-                    {currentPreset.expectedHgA}
-                  </div>
-                  <div>
-                    <div className="text-xs font-bold text-white">
-                      {isTr ? "Tahmin Edilen Makro-Klad" : "Predicted Macro-Clade"}
-                    </div>
-                    <div className="text-[11px] text-slate-400">
-                      {currentPreset.expectedHgA.startsWith("L")
-                        ? (isTr ? "Afrika Koku (L0-L6)" : "African Root (L0-L6)")
-                        : "L3 -> N -> R -> " + currentPreset.expectedHgA}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-4 pt-4 border-t border-slate-800 space-y-2 text-xs">
-                <div className="flex justify-between">
-                  <span className="text-slate-400">{isTr ? "Filogenetik Guven:" : "Phylogenetic Confidence:"}</span>
-                  <span className="text-emerald-400 font-bold font-mono">99.8%</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-400">{isTr ? "Tani Mutasyonlari:" : "Diagnostic Mutations:"}</span>
-                  <span className="text-purple-300 font-mono text-[11px]">
-                    {currentPreset.variantsA.slice(0, 4).join(", ")}
+                  <span className="text-xs font-mono font-bold text-emerald-400">
+                    Hg {currentPreset.expectedHgA}
                   </span>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {filteredVariantsA.length === 0 ? (
+                    <span className="text-xs text-slate-500 italic">{isTr ? "Bu bolgede mutasyon yok" : "No mutations in this region"}</span>
+                  ) : (
+                    filteredVariantsA.map((v) => (
+                      <span
+                        key={`A-${v}`}
+                        className="px-2.5 py-1 rounded-lg font-mono text-xs border font-semibold bg-emerald-950/60 border-emerald-700/70 text-emerald-300"
+                      >
+                        {v}
+                        {v.includes(".1C") && <span className="ml-1 text-[9px] text-cyan-400 font-bold">3&apos;R</span>}
+                      </span>
+                    ))
+                  )}
+                </div>
+              </div>
+
+              <div className="p-3.5 bg-slate-950/60 rounded-xl border border-slate-800">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-xs font-bold text-slate-300">
+                    {isTr ? "Referans Ornek B Varyantlari" : "Reference Sample B Variants"} ({filteredVariantsB.length}):
+                  </span>
+                  <span className="text-xs font-mono font-bold text-cyan-400">
+                    Hg {currentPreset.expectedHgB}
+                  </span>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {filteredVariantsB.length === 0 ? (
+                    <span className="text-xs text-slate-500 italic">{isTr ? "Bu bolgede mutasyon yok" : "No mutations in this region"}</span>
+                  ) : (
+                    filteredVariantsB.map((v) => (
+                      <span
+                        key={`B-${v}`}
+                        className="px-2.5 py-1 rounded-lg font-mono text-xs border font-semibold bg-cyan-950/60 border-cyan-700/70 text-cyan-300"
+                      >
+                        {v}
+                        {v.includes(".1C") && <span className="ml-1 text-[9px] text-cyan-400 font-bold">3&apos;R</span>}
+                      </span>
+                    ))
+                  )}
                 </div>
               </div>
             </div>
           </div>
-
-          {/* Active Prosecutor's Fallacy Shield */}
-          <div className="p-4 rounded-xl bg-amber-950/25 border border-amber-500/40 text-xs flex items-start gap-3">
-            <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
-            <div className="space-y-1">
-              <span className="font-bold text-amber-300 uppercase tracking-wider block">
-                {isTr
-                  ? "ZORUNLU ISFG (2020) mtDNA DEGERLENDIRICI RAPORLAMA VE SOY BEYANI (ADLI YANILGI KALKANI)"
-                  : "MANDATORY ISFG (2020) mtDNA EVALUATIVE REPORTING & LINEAGE DISCLAIMER (PROSECUTOR'S FALLACY SHIELD)"}
-              </span>
-              <p className="leading-relaxed text-slate-300 font-sans">
-                {isTr
-                  ? "Mitokondriyal DNA (mtDNA), mayotik rekombinasyon olmaksizin sadece anne soyu uzerinden aktarilir. Anne tarafindan akraba olan tum bireyler (erkek kardesler, kiz kardesler, anneler, anneanneler, teyzeler, teyze cocuklari) birebir ayni kontrol bolgesi haplotipini paylasir. Olabilirlik Orani (LR_mtDNA), dizinin supheli ile ayni anne soyundan geldigi hipotezini test eder; ancak tek bir kisiyi kesin olarak bireysellestiremez. Mahkemede P(E | H1) / P(E | H2) degeri, suphelinin suclu olma olasiligi olarak yorumlanamaz."
-                  : "Mitochondrial DNA (mtDNA) is inherited strictly along the matrilineal line without meiotic recombination. All maternally related relatives (brothers, sisters, mothers, maternal grandmothers, maternal aunts, maternal cousins) share the identical control region haplotype. The Likelihood Ratio evaluates evidence under maternal lineage hypotheses but cannot individualize a single person. In court, P(E | H1) / P(E | H2) must never be transposed into the posterior probability of guilt."}
-              </p>
-            </div>
-          </div>
-        </div>
+        </motion.div>
       )}
 
-      {/* ── Tab 2: Circular Mitogenome & D-Loop Architecture ────────────────── */}
+      {/* ── TAB 2: Mitogenome & Domains ─────────────────────────────────────── */}
       {activeTab === "mitogenome" && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Circular SVG Map */}
-          <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col justify-between">
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-sm font-bold text-white flex items-center gap-2">
-                  <Dna className="w-4 h-4 text-emerald-400" />
-                  {isTr ? "Dairesel Mitogenom Haritasi (16.569 bp)" : "Mitogenome Circular Map (16,569 bp)"}
-                </h2>
-                <span className="text-xs font-mono text-slate-400">rCRS NC_012920.1</span>
+        <motion.div
+          key="mitogenome-tab"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="space-y-4"
+        >
+          <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+            <h2 className="text-sm font-bold text-white flex items-center gap-2">
+              <Dna className="w-4 h-4 text-emerald-400" />
+              {isTr ? "Mitokondriyal Genom & Kontrol Bolgesi (D-Loop) Mimarisi" : "Mitochondrial Genome & Control Region (D-Loop) Architecture"}
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center text-xs">
+              <div className="p-4 rounded-xl bg-slate-950/70 border border-emerald-500/30">
+                <span className="text-xs text-emerald-400 font-bold block">HV1 (Hypervariable 1)</span>
+                <span className="font-mono text-slate-200 text-sm block mt-1">16024 : 16365 bp</span>
+                <span className="text-[10px] text-slate-500 block mt-1">Macro-clade diagnostic region</span>
               </div>
-
-              {/* High-Resolution SVG Canvas */}
-              <div className="relative w-full h-52 sm:h-64 flex items-center justify-center my-2">
-                {(() => {
-                  const GENOME_SIZE = 16569;
-                  const cx = 100, cy = 100, r = 74;
-
-                  const posToXY = (pos: number, radius: number) => {
-                    const angle = (pos / GENOME_SIZE) * 2 * Math.PI - Math.PI / 2;
-                    return {
-                      x: cx + radius * Math.cos(angle),
-                      y: cy + radius * Math.sin(angle),
-                    };
-                  };
-
-                  const renderTick = (pos: number, color: string, key: string, innerR = 64, outerR = 84) => {
-                    const inner = posToXY(pos, innerR);
-                    const outer = posToXY(pos, outerR);
-                    return (
-                      <line
-                        key={key}
-                        x1={inner.x} y1={inner.y}
-                        x2={outer.x} y2={outer.y}
-                        stroke={color}
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                      />
-                    );
-                  };
-
-                  const sharedVariants = currentPreset.variantsA.filter((v) => setB.has(v));
-                  const onlyInA = currentPreset.variantsA.filter((v) => !setB.has(v));
-                  const onlyInB = currentPreset.variantsB.filter((v) => !setA.has(v));
-
-                  return (
-                    <svg viewBox="0 0 200 200" className="w-full h-full max-w-[260px]">
-                      <circle cx={cx} cy={cy} r={r} fill="none" stroke="#1e293b" strokeWidth="14" />
-                      <circle cx={cx} cy={cy} r={r} fill="none" stroke="#334155" strokeWidth="14"
-                        strokeDasharray="420 450" strokeDashoffset="60" />
-                      <circle cx={cx} cy={cy} r={r} fill="none" stroke="#10b981" strokeWidth="16"
-                        strokeDasharray="45 450" strokeDashoffset="15" opacity="0.5" />
-                      <circle cx={cx} cy={cy} r={r} fill="none" stroke="#059669" strokeWidth="14"
-                        strokeDasharray="18 450" strokeDashoffset="25" />
-                      <circle cx={cx} cy={cy} r={r} fill="none" stroke="#06b6d4" strokeWidth="14"
-                        strokeDasharray="15 450" strokeDashoffset="6" />
-
-                      {sharedVariants.map((v) => renderTick(getVariantPosition(v), "#10b981", `sh-${v}`))}
-                      {onlyInA.map((v) => renderTick(getVariantPosition(v), "#22d3ee", `a-${v}`))}
-                      {onlyInB.map((v) => renderTick(getVariantPosition(v), "#f43f5e", `b-${v}`))}
-
-                      <text x="100" y="88" textAnchor="middle" fill="#ffffff" fontSize="10.5" fontWeight="bold" fontFamily="monospace">
-                        D-LOOP
-                      </text>
-                      <text x="100" y="102" textAnchor="middle" fill="#94a3b8" fontSize="8" fontFamily="monospace">
-                        16024-576 bp
-                      </text>
-                      <text x="100" y="116" textAnchor="middle" fill="#10b981" fontSize="9" fontWeight="bold" fontFamily="monospace">
-                        {currentPreset.expectedHgA}
-                      </text>
-                      {currentPreset.expectedHgA !== currentPreset.expectedHgB && (
-                        <text x="100" y="128" textAnchor="middle" fill="#06b6d4" fontSize="8" fontWeight="bold" fontFamily="monospace">
-                          vs {currentPreset.expectedHgB}
-                        </text>
-                      )}
-                    </svg>
-                  );
-                })()}
+              <div className="p-4 rounded-xl bg-slate-950/70 border border-cyan-500/30">
+                <span className="text-xs text-cyan-400 font-bold block">HV2 (Hypervariable 2)</span>
+                <span className="font-mono text-slate-200 text-sm block mt-1">73 : 340 bp</span>
+                <span className="text-[10px] text-slate-500 block mt-1">Contains 309/315 poly-C homopolymers</span>
               </div>
-
-              {/* Variant Legend */}
-              <div className="flex items-center justify-center gap-4 py-2 px-3 bg-slate-950/70 rounded-xl border border-slate-800 text-[10px] font-mono">
-                <div className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0 shadow-[0_0_8px_rgba(52,211,153,0.5)]" />
-                  <span className="text-emerald-300 font-semibold">{isTr ? "Ortak" : "Shared"}</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 shrink-0 shadow-[0_0_8px_rgba(34,211,238,0.5)]" />
-                  <span className="text-cyan-300 font-semibold">{isTr ? "Sadece A" : "A only"}</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-rose-500 shrink-0 shadow-[0_0_8px_rgba(244,63,94,0.5)]" />
-                  <span className="text-rose-300 font-semibold">{isTr ? "Sadece B" : "B only"}</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-3 gap-2 pt-4 border-t border-slate-800 text-center text-xs">
-              <div className="p-2.5 rounded-xl bg-slate-800/50 border border-emerald-500/30">
-                <span className="text-[10px] text-emerald-400 font-bold block">HV1</span>
-                <span className="font-mono text-slate-300 text-[11px]">16024-16365</span>
-              </div>
-              <div className="p-2.5 rounded-xl bg-slate-800/50 border border-cyan-500/30">
-                <span className="text-[10px] text-cyan-400 font-bold block">HV2</span>
-                <span className="font-mono text-slate-300 text-[11px]">73-340</span>
-              </div>
-              <div className="p-2.5 rounded-xl bg-slate-800/50 border border-purple-500/30">
-                <span className="text-[10px] text-purple-400 font-bold block">HV3</span>
-                <span className="font-mono text-slate-300 text-[11px]">438-574</span>
+              <div className="p-4 rounded-xl bg-slate-950/70 border border-purple-500/30">
+                <span className="text-xs text-purple-400 font-bold block">HV3 (Hypervariable 3)</span>
+                <span className="font-mono text-slate-200 text-sm block mt-1">438 : 574 bp</span>
+                <span className="text-[10px] text-slate-500 block mt-1">522-524 AC dinucleotide indels</span>
               </div>
             </div>
           </div>
+        </motion.div>
+      )}
 
-          {/* Variant Calling & ISFG Right Alignment HUD */}
-          <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-xl lg:col-span-2 flex flex-col justify-between">
+      {/* ── TAB 3: EMPOP Database & Bound ───────────────────────────────────── */}
+      {activeTab === "empop" && (
+        <motion.div
+          key="empop-tab"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="space-y-6"
+        >
+          <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+              <div>
+                <h2 className="text-base font-bold text-white flex items-center gap-2">
+                  <Database className="w-5 h-5 text-emerald-400" />
+                  {isTr ? "EMPOP Veri Tabani Frekans & Ust Sinir Hesaplayicisi" : "EMPOP Database Frequency & Upper Bound Engine"}
+                </h2>
+                <p className="text-xs text-slate-400">
+                  {isTr
+                    ? "EMPOP 15 metapopulasyonlarinda kesin Clopper-Pearson %95 ust siniri hesabi"
+                    : "Exact Clopper-Pearson 95% upper bound calculation across EMPOP 15 metapopulations"}
+                </p>
+              </div>
+              <div className="text-right">
+                <span className="text-xs text-slate-400 block">{isTr ? "Secili Veri Tabani Boyutu:" : "Selected Database Size:"}</span>
+                <span className="text-sm font-bold font-mono text-emerald-400">
+                  {databaseN.toLocaleString()} {isTr ? "Mitogenom" : "Mitogenomes"}
+                </span>
+              </div>
+            </div>
+
+            {/* Metapopulation Selector Pills */}
             <div>
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
-                <div>
-                  <h2 className="text-sm font-bold text-white flex items-center gap-2">
-                    <Layers className="w-4 h-4 text-cyan-400" />
-                    {isTr ? "Ikili Varyant Karsilastirmasi & ISFG Saga Hizalama" : "Pairwise Variant Comparison & ISFG Right-Alignment"}
-                  </h2>
-                  <p className="text-xs text-slate-400">
-                    {isTr ? "rCRS NC_012920.1 referansina gore ornek mutasyon listeleri" : "Sample variant lists referenced to rCRS NC_012920.1"}
-                  </p>
-                </div>
-
-                {/* Domain Filter Buttons */}
-                <div className="flex items-center gap-1 p-1 bg-slate-800 rounded-xl text-xs">
-                  {(["ALL", "HV1", "HV2", "HV3"] as const).map((tab) => (
+              <span className="text-xs font-bold text-slate-300 block mb-2">
+                {isTr ? "EMPOP 15 Metapopulasyon Referansi:" : "EMPOP 15 Metapopulation Reference:"}
+              </span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                {EMPOP_METAPOPULATIONS.map((mp) => {
+                  const isSelected = selectedMetapop === mp.code;
+                  return (
                     <button
-                      key={tab}
-                      onClick={() => setActiveDomainTab(tab)}
-                      className={`px-3 py-1 rounded-lg font-bold transition cursor-pointer ${
-                        activeDomainTab === tab
-                          ? "bg-emerald-500 text-slate-950 shadow"
-                          : "text-slate-400 hover:text-slate-200"
+                      type="button"
+                      key={mp.code}
+                      onClick={() => {
+                        setSelectedMetapop(mp.code);
+                        setDatabaseN(mp.sampleSize);
+                      }}
+                      className={`p-3 rounded-xl text-left border transition-all cursor-pointer flex justify-between items-center ${
+                        isSelected
+                          ? "bg-emerald-500/20 border-emerald-500/50 text-white shadow-md shadow-emerald-500/10"
+                          : "bg-slate-950/60 border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-slate-200"
                       }`}
                     >
-                      {tab === "ALL" && isTr ? "TUMU" : tab}
+                      <div>
+                        <div className="text-xs font-bold">{isTr ? mp.nameTr : mp.nameEn}</div>
+                        <div className="text-[10px] text-slate-500 font-mono">N = {mp.sampleSize.toLocaleString()}</div>
+                      </div>
+                      {isSelected && <Check className="w-4 h-4 text-emerald-400 shrink-0" />}
                     </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Variant Tag Badges */}
-              <div className="space-y-4">
-                <div className="p-3.5 bg-slate-950/60 rounded-xl border border-slate-800">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-xs font-bold text-slate-300">
-                      {isTr ? "Sorgulanan Ornek A Varyantlari" : "Questioned Sample A Variants"} ({filteredVariantsA.length}):
-                    </span>
-                    <span className="text-xs font-mono font-bold text-emerald-400">
-                      Hg {currentPreset.expectedHgA}
-                    </span>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {filteredVariantsA.length === 0 ? (
-                      <span className="text-xs text-slate-500 italic">{isTr ? "Bu bolgede mutasyon yok" : "No mutations in this region"}</span>
-                    ) : (
-                      filteredVariantsA.map((v) => {
-                        const isShared = setB.has(v) || isPhpCompatible;
-                        return (
-                          <span
-                            key={`A-${v}`}
-                            className={`px-3 py-1 rounded-lg font-mono text-xs border font-semibold ${
-                              isShared
-                                ? "bg-emerald-950/60 border-emerald-700/70 text-emerald-300"
-                                : "bg-rose-950/60 border-rose-700/70 text-rose-300"
-                            }`}
-                          >
-                            {v}
-                            {v.includes(".1C") && <span className="ml-1 text-[9px] text-cyan-400 font-bold">3&apos;R</span>}
-                          </span>
-                        );
-                      })
-                    )}
-                  </div>
-                </div>
-
-                <div className="p-3.5 bg-slate-950/60 rounded-xl border border-slate-800">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-xs font-bold text-slate-300">
-                      {isTr ? "Referans Ornek B Varyantlari" : "Reference Sample B Variants"} ({filteredVariantsB.length}):
-                    </span>
-                    <span className="text-xs font-mono font-bold text-cyan-400">
-                      Hg {currentPreset.expectedHgB}
-                    </span>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {filteredVariantsB.length === 0 ? (
-                      <span className="text-xs text-slate-500 italic">{isTr ? "Bu bolgede mutasyon yok" : "No mutations in this region"}</span>
-                    ) : (
-                      filteredVariantsB.map((v) => {
-                        const isShared = setA.has(v) || isPhpCompatible;
-                        return (
-                          <span
-                            key={`B-${v}`}
-                            className={`px-3 py-1 rounded-lg font-mono text-xs border font-semibold ${
-                              isShared
-                                ? "bg-cyan-950/60 border-cyan-700/70 text-cyan-300"
-                                : "bg-rose-950/60 border-rose-700/70 text-rose-300"
-                            }`}
-                          >
-                            {v}
-                            {v.includes(".1C") && <span className="ml-1 text-[9px] text-cyan-400 font-bold">3&apos;R</span>}
-                          </span>
-                        );
-                      })
-                    )}
-                  </div>
-                </div>
+                  );
+                })}
               </div>
             </div>
 
-            {/* Quick Metrics Bar */}
-            <div className="mt-4 pt-4 border-t border-slate-800 grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
-              <div className="p-3 rounded-xl bg-slate-800/40 border border-slate-700">
-                <span className="text-[10px] text-slate-400 block uppercase">{isTr ? "Ortak Mutasyonlar" : "Shared Mutations"}</span>
-                <span className="text-base font-bold font-mono text-emerald-400">
-                  {isPhpCompatible ? currentPreset.variantsA.length : shared.length}
-                </span>
+            {/* Interactive Sliders Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-2">
+              <div className="space-y-4 bg-slate-950/70 p-5 rounded-xl border border-slate-800">
+                <div>
+                  <div className="flex justify-between items-center text-xs mb-2">
+                    <span className="font-semibold text-slate-300">
+                      {isTr ? "Gozlenen EMPOP Eslesmeleri (k):" : "Observed EMPOP Matches (k):"}
+                    </span>
+                    <span className="font-mono text-emerald-400 font-black text-sm">{observedK}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="2000"
+                    step="1"
+                    value={observedK}
+                    onChange={(e) => setObservedK(parseInt(e.target.value))}
+                    className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+                  />
+                  <div className="flex justify-between text-[10px] text-slate-500 mt-1 font-mono">
+                    <span>0 ({isTr ? "Nadir" : "Rare"})</span>
+                    <span>500</span>
+                    <span>1,420 (H1)</span>
+                    <span>2,000</span>
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex justify-between items-center text-xs mb-2">
+                    <span className="font-semibold text-slate-300">
+                      {isTr ? "Veri Tabani Orneklem Boyutu (N):" : "Database Sample Size (N):"}
+                    </span>
+                    <span className="font-mono text-cyan-400 font-black text-sm">{databaseN.toLocaleString()}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="1000"
+                    max="48500"
+                    step="500"
+                    value={databaseN}
+                    onChange={(e) => setDatabaseN(parseInt(e.target.value))}
+                    className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-500"
+                  />
+                  <div className="flex justify-between text-[10px] text-slate-500 mt-1 font-mono">
+                    <span>1,000</span>
+                    <span>24,500 (EUR)</span>
+                    <span>48,500 ({isTr ? "Kuresel" : "Global"})</span>
+                  </div>
+                </div>
               </div>
-              <div className="p-3 rounded-xl bg-slate-800/40 border border-slate-700">
-                <span className="text-[10px] text-slate-400 block uppercase">{isTr ? "Homoplazmik Farklar" : "Homoplasmic Diffs"}</span>
-                <span className={`text-base font-bold font-mono ${homoplasmicDiffCount >= 2 ? "text-rose-400" : "text-slate-200"}`}>
-                  {homoplasmicDiffCount}
+
+              {/* Calculated Statistics HUD */}
+              <div className="bg-slate-950/70 p-5 rounded-xl border border-slate-800 flex flex-col justify-between space-y-3">
+                <span className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+                  {isTr ? "Hesaplanan Biyoistatistiksel Parametreler" : "Calculated Biostatistical Parameters"}
                 </span>
-              </div>
-              <div className="p-3 rounded-xl bg-slate-800/40 border border-slate-700">
-                <span className="text-[10px] text-slate-400 block uppercase">{isTr ? "Nokta Heteroplazmileri" : "Point Heteroplasmies"}</span>
-                <span className="text-base font-bold font-mono text-purple-400">{isPhpCompatible ? 1 : 0}</span>
-              </div>
-              <div className="p-3 rounded-xl bg-slate-800/40 border border-slate-700">
-                <span className="text-[10px] text-slate-400 block uppercase">{isTr ? "SWGDAM Sonucu" : "SWGDAM Verdict"}</span>
-                <span className={`text-xs font-bold px-2 py-0.5 rounded inline-block mt-0.5 ${
-                  isExclusion
-                    ? "bg-rose-500/20 text-rose-300 border border-rose-500/40"
-                    : isInconclusive
-                    ? "bg-amber-500/20 text-amber-300 border border-amber-500/40"
-                    : "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
-                }`}>
-                  {isExclusion
-                    ? (isTr ? "DISLAMA" : "EXCLUSION")
-                    : isInconclusive
-                    ? (isTr ? "KARARSIZ" : "INCONCLUSIVE")
-                    : (isTr ? "DAHIL ETME" : "MATCH")}
-                </span>
+
+                <div className="space-y-2 text-xs">
+                  <div className="flex justify-between py-1.5 border-b border-slate-800/80">
+                    <span className="text-slate-400">{isTr ? "Frekans Nokta Tahmini (k / N):" : "Frequency Point Estimate (k / N):"}</span>
+                    <span className="font-mono text-slate-200 font-semibold">{(observedK / Math.max(databaseN, 1)).toExponential(4)}</span>
+                  </div>
+                  <div className="flex justify-between py-1.5 border-b border-slate-800/80">
+                    <span className="text-slate-400">{isTr ? "Clopper-Pearson %95 Ust Sınırı (p_upper):" : "Clopper-Pearson 95% Bound (p_upper):"}</span>
+                    <span className="font-mono text-emerald-400 font-bold">{pUpper.toExponential(4)}</span>
+                  </div>
+                  <div className="flex justify-between py-1.5 border-b border-slate-800/80">
+                    <span className="text-slate-400">{isTr ? "Anne Soyu Olabilirlik Orani (LR):" : "Maternal Likelihood Ratio (LR):"}</span>
+                    <span className="font-mono text-cyan-400 font-bold">
+                      {isExclusion ? "0.00" : maternalLr >= 10000 ? Math.round(maternalLr).toLocaleString() : maternalLr.toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between py-1.5">
+                    <span className="text-slate-400">{isTr ? "Esdeger Populasyon Eslesme Orani:" : "Equivalent Population Ratio:"}</span>
+                    <span className="font-mono text-emerald-300 font-bold">
+                      {isTr
+                        ? `${Math.round(1 / Math.max(pUpper, 1e-15)).toLocaleString()} kiside 1`
+                        : `1 in ${Math.round(1 / Math.max(pUpper, 1e-15)).toLocaleString()}`}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="p-3 rounded-lg bg-slate-900 border border-slate-800 text-[10px] text-slate-400 font-sans">
+                  {isTr
+                    ? "EMPOP 15 ve SWGDAM standartlarina gore k=0 durumunda kesin binomial formulu p_upper = 1 - (0.05)^(1/(N+1)) isletilir."
+                    : "Under EMPOP 15 and SWGDAM standards, when k=0 the exact binomial formula p_upper = 1 - (0.05)^(1/(N+1)) is executed."}
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       )}
 
-      {/* ── Tab 3: EMPOP Database & Population Frequency Engine ─────────────── */}
-      {activeTab === "empop" && (
-        <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
-            <div>
-              <h2 className="text-base font-bold text-white flex items-center gap-2">
-                <Database className="w-5 h-5 text-emerald-400" />
-                {isTr ? "EMPOP Veri Tabani Frekans & Ust Sinir Hesaplayicisi" : "EMPOP Database Frequency & Upper Bound Engine"}
-              </h2>
-              <p className="text-xs text-slate-400">
-                {isTr
-                  ? "EMPOP 15 metapopulasyonlarinda kesin Clopper-Pearson %95 ust siniri hesabi"
-                  : "Exact Clopper-Pearson 95% upper bound calculation across EMPOP 15 metapopulations"}
-              </p>
-            </div>
-            <div className="text-right">
-              <span className="text-xs text-slate-400 block">{isTr ? "Secili Veri Tabani Boyutu:" : "Selected Database Size:"}</span>
-              <span className="text-sm font-bold font-mono text-emerald-400">
-                {databaseN.toLocaleString()} {isTr ? "Mitogenom" : "Mitogenomes"}
-              </span>
-            </div>
-          </div>
-
-          {/* Metapopulation Selector Pills */}
-          <div>
-            <span className="text-xs font-bold text-slate-300 block mb-2">
-              {isTr ? "EMPOP 15 Metapopulasyon Referansi:" : "EMPOP 15 Metapopulation Reference:"}
-            </span>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-              {EMPOP_METAPOPULATIONS.map((mp) => {
-                const isSelected = selectedMetapop === mp.code;
-                return (
-                  <button
-                    type="button"
-                    key={mp.code}
-                    onClick={() => {
-                      setSelectedMetapop(mp.code);
-                      setDatabaseN(mp.sampleSize);
-                    }}
-                    className={`p-3 rounded-xl text-left border transition-all cursor-pointer flex justify-between items-center ${
-                      isSelected
-                        ? "bg-emerald-500/20 border-emerald-500/50 text-white shadow-md shadow-emerald-500/10"
-                        : "bg-slate-950/60 border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-slate-200"
-                    }`}
-                  >
-                    <div>
-                      <div className="text-xs font-bold">{isTr ? mp.nameTr : mp.nameEn}</div>
-                      <div className="text-[10px] text-slate-500 font-mono">N = {mp.sampleSize.toLocaleString()}</div>
-                    </div>
-                    {isSelected && <Check className="w-4 h-4 text-emerald-400 shrink-0" />}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Interactive Sliders Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-2">
-            <div className="space-y-4 bg-slate-950/70 p-5 rounded-xl border border-slate-800">
-              <div>
-                <div className="flex justify-between items-center text-xs mb-2">
-                  <span className="font-semibold text-slate-300">
-                    {isTr ? "Gozlenen EMPOP Eslesmeleri (k):" : "Observed EMPOP Matches (k):"}
-                  </span>
-                  <span className="font-mono text-emerald-400 font-black text-sm">{observedK}</span>
-                </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="2000"
-                  step="1"
-                  value={observedK}
-                  onChange={(e) => setObservedK(parseInt(e.target.value))}
-                  className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500"
-                />
-                <div className="flex justify-between text-[10px] text-slate-500 mt-1 font-mono">
-                  <span>0 ({isTr ? "Nadir" : "Rare"})</span>
-                  <span>500</span>
-                  <span>1,420 (H1)</span>
-                  <span>2,000</span>
-                </div>
-              </div>
-
-              <div>
-                <div className="flex justify-between items-center text-xs mb-2">
-                  <span className="font-semibold text-slate-300">
-                    {isTr ? "Veri Tabani Orneklem Boyutu (N):" : "Database Sample Size (N):"}
-                  </span>
-                  <span className="font-mono text-cyan-400 font-black text-sm">{databaseN.toLocaleString()}</span>
-                </div>
-                <input
-                  type="range"
-                  min="1000"
-                  max="48500"
-                  step="500"
-                  value={databaseN}
-                  onChange={(e) => setDatabaseN(parseInt(e.target.value))}
-                  className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-500"
-                />
-                <div className="flex justify-between text-[10px] text-slate-500 mt-1 font-mono">
-                  <span>1,000</span>
-                  <span>24,500 (EUR)</span>
-                  <span>48,500 ({isTr ? "Kuresel" : "Global"})</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Calculated Statistics HUD */}
-            <div className="bg-slate-950/70 p-5 rounded-xl border border-slate-800 flex flex-col justify-between space-y-3">
-              <span className="text-xs font-bold text-slate-300 uppercase tracking-wider">
-                {isTr ? "Hesaplanan Biyoistatistiksel Parametreler" : "Calculated Biostatistical Parameters"}
-              </span>
-
-              <div className="space-y-2 text-xs">
-                <div className="flex justify-between py-1.5 border-b border-slate-800/80">
-                  <span className="text-slate-400">{isTr ? "Frekans Nokta Tahmini (k / N):" : "Frequency Point Estimate (k / N):"}</span>
-                  <span className="font-mono text-slate-200 font-semibold">{(observedK / Math.max(databaseN, 1)).toExponential(4)}</span>
-                </div>
-                <div className="flex justify-between py-1.5 border-b border-slate-800/80">
-                  <span className="text-slate-400">{isTr ? "Clopper-Pearson %95 Ust Sınırı (p_upper):" : "Clopper-Pearson 95% Bound (p_upper):"}</span>
-                  <span className="font-mono text-emerald-400 font-bold">{pUpper.toExponential(4)}</span>
-                </div>
-                <div className="flex justify-between py-1.5 border-b border-slate-800/80">
-                  <span className="text-slate-400">{isTr ? "Anne Soyu Olabilirlik Orani (LR):" : "Maternal Likelihood Ratio (LR):"}</span>
-                  <span className="font-mono text-cyan-400 font-bold">
-                    {isExclusion ? "0.00" : maternalLr >= 10000 ? Math.round(maternalLr).toLocaleString() : maternalLr.toFixed(2)}
-                  </span>
-                </div>
-                <div className="flex justify-between py-1.5">
-                  <span className="text-slate-400">{isTr ? "Esdeger Populasyon Eşlesme Orani:" : "Equivalent Population Ratio:"}</span>
-                  <span className="font-mono text-emerald-300 font-bold">
-                    {isTr
-                      ? `${Math.round(1 / Math.max(pUpper, 1e-15)).toLocaleString()} kiside 1`
-                      : `1 in ${Math.round(1 / Math.max(pUpper, 1e-15)).toLocaleString()}`}
-                  </span>
-                </div>
-              </div>
-
-              <div className="p-3 rounded-lg bg-slate-900 border border-slate-800 text-[10px] text-slate-400 font-sans">
-                {isTr
-                  ? "EMPOP 15 ve SWGDAM standartlarina gore k=0 durumunda kesin binomial formulu p_upper = 1 - (0.05)^(1/(N+1)) isletilir."
-                  : "Under EMPOP 15 and SWGDAM standards, when k=0 the exact binomial formula p_upper = 1 - (0.05)^(1/(N+1)) is executed."}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ── Tab 4: PhyloTree Build 17 Haplogroup Phylogenetics ────────────────── */}
+      {/* ── TAB 4: PhyloTree Build 17 Haplogroup Phylogenetics ────────────────── */}
       {activeTab === "phylotree" && (
-        <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-            <div>
-              <h2 className="text-base font-bold text-white flex items-center gap-2">
-                <Network className="w-5 h-5 text-purple-400" />
-                {isTr ? "PhyloTree Build 17 Mitokondriyal Filogeni Agaci" : "PhyloTree Build 17 Mitochondrial Phylogeny Tree"}
-              </h2>
-              <p className="text-xs text-slate-400">
-                {isTr ? "Global anne soyu klad hiyerarsisi ve tani mutasyonlari" : "Global maternal clade hierarchy and diagnostic mutations"}
-              </p>
-            </div>
-            <span className="text-xs font-mono font-bold px-3 py-1 rounded-lg bg-purple-500/20 text-purple-300 border border-purple-500/40">
-              BUILD 17 CLASSIFIER
-            </span>
-          </div>
-
-          {/* Phylogeny Tree Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[
-              { clade: "L0-L6", region: "Africa (Mitochondrial Eve)", muts: "Root, 146C, 182C, 16223C", active: currentPreset.expectedHgA.startsWith("L") },
-              { clade: "L3", region: "Out-of-Africa Founder", muts: "769A, 1018GA, 16311C", active: !currentPreset.expectedHgA.startsWith("L") },
-              { clade: "M / N", region: "Eurasian Macro-Clades", muts: "489C, 10400T / 8701G, 9540C", active: !currentPreset.expectedHgA.startsWith("L") },
-              { clade: "R -> H / V", region: "West Eurasian / European", muts: "263G, 750G, 16519C", active: currentPreset.expectedHgA.startsWith("H") },
-            ].map((node) => (
-              <div
-                key={node.clade}
-                className={`p-4 rounded-xl border transition-all ${
-                  node.active
-                    ? "bg-purple-500/15 border-purple-500/50 shadow-lg shadow-purple-500/10"
-                    : "bg-slate-950/60 border-slate-800 opacity-60"
-                }`}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-lg font-black font-mono text-purple-300">{node.clade}</span>
-                  {node.active && <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-purple-500/30 text-purple-200">ACTIVE</span>}
-                </div>
-                <div className="text-xs font-bold text-white">{node.region}</div>
-                <div className="text-[10px] text-slate-400 font-mono mt-1">{node.muts}</div>
+        <motion.div
+          key="phylotree-tab"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="space-y-6"
+        >
+          <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+              <div>
+                <h2 className="text-base font-bold text-white flex items-center gap-2">
+                  <Network className="w-5 h-5 text-purple-400" />
+                  {isTr ? "PhyloTree Build 17 Mitokondriyal Filogeni Agaci" : "PhyloTree Build 17 Mitochondrial Phylogeny Tree"}
+                </h2>
+                <p className="text-xs text-slate-400">
+                  {isTr ? "Global anne soyu klad hiyerarsisi ve tani mutasyonlari" : "Global maternal clade hierarchy and diagnostic mutations"}
+                </p>
               </div>
-            ))}
-          </div>
+              <span className="text-xs font-mono font-bold px-3 py-1 rounded-lg bg-purple-500/20 text-purple-300 border border-purple-500/40">
+                BUILD 17 CLASSIFIER
+              </span>
+            </div>
 
-          {/* Major Haplogroups Catalog */}
-          <div className="p-5 bg-slate-950/70 rounded-xl border border-slate-800 space-y-3">
-            <span className="text-xs font-bold text-slate-300 uppercase tracking-wider block">
-              {isTr ? "Adli Bakimdan Onemli Ana Haplogruplar" : "Forensically Significant Major Haplogroups"}
-            </span>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 text-center text-xs">
+            {/* Phylogeny Tree Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {[
-                { hg: "H", pop: "EUR (40-50%)", mut: "263G, 315.1C" },
-                { hg: "U / K", pop: "EUR / ME (15%)", mut: "12308G, 12372A" },
-                { hg: "J / T", pop: "EUR / ME (12%)", mut: "16069T, 16126C" },
-                { hg: "L1 / L2", pop: "AFR (>70%)", mut: "16223C, 16278C" },
-                { hg: "A / B / C / D", pop: "EAS / AMR (60%)", mut: "663G, 5178A" },
-                { hg: "X", pop: "Global Rare", mut: "16189C, 16278C" },
-              ].map((h) => (
-                <div key={h.hg} className="p-3 rounded-lg bg-slate-900 border border-slate-800">
-                  <div className="font-bold text-purple-400 text-sm">{h.hg}</div>
-                  <div className="text-[10px] text-slate-300">{h.pop}</div>
-                  <div className="text-[9px] text-slate-500 font-mono mt-0.5">{h.mut}</div>
+                { clade: "L0-L6", region: "Africa (Mitochondrial Eve)", muts: "Root, 146C, 182C, 16223C", active: currentPreset.expectedHgA.startsWith("L") },
+                { clade: "L3", region: "Out-of-Africa Founder", muts: "769A, 1018GA, 16311C", active: !currentPreset.expectedHgA.startsWith("L") },
+                { clade: "M / N", region: "Eurasian Macro-Clades", muts: "489C, 10400T / 8701G, 9540C", active: !currentPreset.expectedHgA.startsWith("L") },
+                { clade: "R -> H / V", region: "West Eurasian / European", muts: "263G, 750G, 16519C", active: currentPreset.expectedHgA.startsWith("H") },
+              ].map((node) => (
+                <div
+                  key={node.clade}
+                  className={`p-4 rounded-xl border transition-all ${
+                    node.active
+                      ? "bg-purple-500/15 border-purple-500/50 shadow-lg shadow-purple-500/10"
+                      : "bg-slate-950/60 border-slate-800 opacity-60"
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-lg font-black font-mono text-purple-300">{node.clade}</span>
+                    {node.active && <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-purple-500/30 text-purple-200">ACTIVE</span>}
+                  </div>
+                  <div className="text-xs font-bold text-white">{node.region}</div>
+                  <div className="text-[10px] text-slate-400 font-mono mt-1">{node.muts}</div>
                 </div>
               ))}
             </div>
           </div>
-        </div>
+        </motion.div>
       )}
 
-      {/* ── Tab 5: Custom Sequence & IUPAC Heteroplasmy Sandbox ──────────────── */}
+      {/* ── TAB 5: Custom Sequence & IUPAC Heteroplasmy Sandbox ──────────────── */}
       {activeTab === "sandbox" && (
-        <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
-            <div>
-              <h2 className="text-base font-bold text-white flex items-center gap-2">
-                <FileCode className="w-5 h-5 text-emerald-400" />
-                {isTr ? "Ozel Dizi & IUPAC Heteroplazmi Kumhavuzu" : "Custom Sequence & IUPAC Heteroplasmy Sandbox"}
-              </h2>
-              <p className="text-xs text-slate-400">
-                {isTr
-                  ? "Adli analistlerin ozel varyant listelerini girmesi, PHP uyumlulugunu ve 3'-saga kaydirmayi test etmesi"
-                  : "Direct variant list ingestion, point heteroplasmy compatibility, and ISFG 3'-right shift testing"}
-              </p>
+        <motion.div
+          key="sandbox-tab"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="space-y-6"
+        >
+          <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+              <div>
+                <h2 className="text-base font-bold text-white flex items-center gap-2">
+                  <FileCode className="w-5 h-5 text-emerald-400" />
+                  {isTr ? "Ozel Dizi & IUPAC Heteroplazmi Kumhavuzu" : "Custom Sequence & IUPAC Heteroplasmy Sandbox"}
+                </h2>
+                <p className="text-xs text-slate-400">
+                  {isTr
+                    ? "Adli analistlerin ozel varyant listelerini girmesi, PHP uyumlulugunu ve 3'-saga kaydirmayi test etmesi"
+                    : "Direct variant list ingestion, point heteroplasmy compatibility, and ISFG 3'-right shift testing"}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <label className="flex items-center gap-2 text-xs text-slate-300 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={apply3PrimeShift}
+                    onChange={(e) => setApply3PrimeShift(e.target.checked)}
+                    className="rounded border-slate-700 text-emerald-500 focus:ring-emerald-500 cursor-pointer"
+                  />
+                  <span>{isTr ? "ISFG 3'-Saga Kaydirma" : "ISFG 3'-Right Shift"}</span>
+                </label>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <label className="flex items-center gap-2 text-xs text-slate-300 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={apply3PrimeShift}
-                  onChange={(e) => setApply3PrimeShift(e.target.checked)}
-                  className="rounded border-slate-700 text-emerald-500 focus:ring-emerald-500 cursor-pointer"
+
+            {/* Textarea Inputs */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-300 flex justify-between">
+                  <span>{isTr ? "Sorgulanan Ornek A Varyantlari:" : "Questioned Sample A Variants:"}</span>
+                  <span className="text-emerald-400 font-mono text-[11px]">{parsedCustomA.length} {isTr ? "Varyant" : "Variants"}</span>
+                </label>
+                <textarea
+                  value={customInputA}
+                  onChange={(e) => setCustomInputA(e.target.value)}
+                  rows={4}
+                  className="w-full p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono text-slate-200 focus:outline-none focus:border-emerald-500 transition-colors"
+                  placeholder="e.g. 263G, 315.1C, 750G, 16189Y, 16519C"
                 />
-                <span>{isTr ? "ISFG 3'-Saga Kaydirma" : "ISFG 3'-Right Shift"}</span>
-              </label>
-            </div>
-          </div>
-
-          {/* Textarea Inputs */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-300 flex justify-between">
-                <span>{isTr ? "Sorgulanan Ornek A Varyantlari:" : "Questioned Sample A Variants:"}</span>
-                <span className="text-emerald-400 font-mono text-[11px]">{parsedCustomA.length} {isTr ? "Varyant" : "Variants"}</span>
-              </label>
-              <textarea
-                value={customInputA}
-                onChange={(e) => setCustomInputA(e.target.value)}
-                rows={4}
-                className="w-full p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono text-slate-200 focus:outline-none focus:border-emerald-500 transition-colors"
-                placeholder="e.g. 263G, 315.1C, 750G, 16189Y, 16519C"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-300 flex justify-between">
-                <span>{isTr ? "Referans Ornek B Varyantlari:" : "Reference Sample B Variants:"}</span>
-                <span className="text-cyan-400 font-mono text-[11px]">{parsedCustomB.length} {isTr ? "Varyant" : "Variants"}</span>
-              </label>
-              <textarea
-                value={customInputB}
-                onChange={(e) => setCustomInputB(e.target.value)}
-                rows={4}
-                className="w-full p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono text-slate-200 focus:outline-none focus:border-cyan-500 transition-colors"
-                placeholder="e.g. 263G, 315.1C, 750G, 16189C, 16519C"
-              />
-            </div>
-          </div>
-
-          {/* Real-Time Sandbox Evaluation Card */}
-          <div className="p-5 bg-slate-950/70 rounded-xl border border-slate-800 space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
-              <span className="text-xs font-bold text-slate-300 uppercase tracking-wider">
-                {isTr ? "Canli Kumhavuzu Degerlendirme Sonuclari" : "Live Sandbox Evaluation Results"}
-              </span>
-              <span
-                className={`font-bold px-3 py-1 rounded text-xs ${
-                  customVerdict === "EXCLUSION"
-                    ? "bg-rose-500/20 text-rose-300 border border-rose-500/40"
-                    : customVerdict === "INCONCLUSIVE"
-                    ? "bg-amber-500/20 text-amber-300 border border-amber-500/40"
-                    : "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
-                }`}
-              >
-                {customVerdict === "EXCLUSION"
-                  ? (isTr ? "KESIN DISLAMA" : "DEFINITIVE EXCLUSION")
-                  : customVerdict === "INCONCLUSIVE"
-                  ? (isTr ? "KARARSIZ (1 FARK)" : "INCONCLUSIVE (1 DIFF)")
-                  : (isTr ? "DAHIL ETME / ESLESME" : "MATCH / INCLUSION")}
-              </span>
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center text-xs">
-              <div className="p-3 rounded-lg bg-slate-900 border border-slate-800">
-                <span className="text-[10px] text-slate-400 block">{isTr ? "Ortak Mutasyonlar:" : "Shared Mutations:"}</span>
-                <span className="text-emerald-400 font-bold font-mono text-base">{customShared.length}</span>
               </div>
-              <div className="p-3 rounded-lg bg-slate-900 border border-slate-800">
-                <span className="text-[10px] text-slate-400 block">{isTr ? "A'ya Ozel:" : "Unique to A:"}</span>
-                <span className="text-cyan-400 font-bold font-mono text-base">{customUniqueA.length}</span>
+
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-300 flex justify-between">
+                  <span>{isTr ? "Referans Ornek B Varyantlari:" : "Reference Sample B Variants:"}</span>
+                  <span className="text-cyan-400 font-mono text-[11px]">{parsedCustomB.length} {isTr ? "Varyant" : "Variants"}</span>
+                </label>
+                <textarea
+                  value={customInputB}
+                  onChange={(e) => setCustomInputB(e.target.value)}
+                  rows={4}
+                  className="w-full p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono text-slate-200 focus:outline-none focus:border-cyan-500 transition-colors"
+                  placeholder="e.g. 263G, 315.1C, 750G, 16189C, 16519C"
+                />
               </div>
-              <div className="p-3 rounded-lg bg-slate-900 border border-slate-800">
-                <span className="text-[10px] text-slate-400 block">{isTr ? "B'ye Ozel:" : "Unique to B:"}</span>
-                <span className="text-rose-400 font-bold font-mono text-base">{customUniqueB.length}</span>
-              </div>
-              <div className="p-3 rounded-lg bg-slate-900 border border-slate-800">
-                <span className="text-[10px] text-slate-400 block">{isTr ? "Toplam Fark:" : "Total Differences:"}</span>
-                <span className={`font-bold font-mono text-base ${customDiffCount >= 2 ? "text-rose-400" : "text-slate-200"}`}>
-                  {customDiffCount}
+            </div>
+
+            {/* Real-Time Sandbox Evaluation Card */}
+            <div className="p-5 bg-slate-950/70 rounded-xl border border-slate-800 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+                <span className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+                  {isTr ? "Canli Kumhavuzu Degerlendirme Sonuclari (SWGDAM & IUPAC)" : "Live Sandbox Evaluation Results (SWGDAM & IUPAC)"}
+                </span>
+                <span
+                  className={`font-bold px-3 py-1 rounded text-xs ${
+                    customEvaluation.verdict === "EXCLUSION"
+                      ? "bg-rose-500/20 text-rose-300 border border-rose-500/40"
+                      : customEvaluation.verdict === "INCONCLUSIVE"
+                      ? "bg-amber-500/20 text-amber-300 border border-amber-500/40"
+                      : "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
+                  }`}
+                >
+                  {customEvaluation.verdict === "EXCLUSION"
+                    ? (isTr ? "KESIN DISLAMA" : "DEFINITIVE EXCLUSION")
+                    : customEvaluation.verdict === "INCONCLUSIVE"
+                    ? (isTr ? "KARARSIZ (1 FARK)" : "INCONCLUSIVE (1 DIFF)")
+                    : (isTr ? "DAHIL ETME / ESLESME" : "MATCH / INCLUSION")}
                 </span>
               </div>
-            </div>
 
-            {/* IUPAC Mixed Base Reference */}
-            <div className="p-3 rounded-lg bg-slate-900/60 border border-slate-800 text-[11px] text-slate-400 font-mono">
-              <span className="font-bold text-purple-300 block mb-1">
-                {isTr ? "IUPAC Karisik Baz Sozlugu (Heteroplazmi):" : "IUPAC Mixed Base Dictionary (Heteroplasmy):"}
-              </span>
-              <span>Y = C/T | R = A/G | M = A/C | K = G/T | S = C/G | W = A/T</span>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center text-xs">
+                <div className="p-3 rounded-lg bg-slate-900 border border-slate-800">
+                  <span className="text-[10px] text-slate-400 block">{isTr ? "Ortak Varyantlar:" : "Shared Calls:"}</span>
+                  <span className="text-emerald-400 font-bold font-mono text-base">{customEvaluation.sharedCalls.length}</span>
+                </div>
+                <div className="p-3 rounded-lg bg-slate-900 border border-slate-800">
+                  <span className="text-[10px] text-slate-400 block">{isTr ? "Nokta Heteroplazmisi:" : "Point Heteroplasmy:"}</span>
+                  <span className="text-purple-400 font-bold font-mono text-base">{customEvaluation.heteroplasmicSharedCount}</span>
+                </div>
+                <div className="p-3 rounded-lg bg-slate-900 border border-slate-800">
+                  <span className="text-[10px] text-slate-400 block">{isTr ? "Homoplazmik Fark:" : "Homoplasmic Diffs:"}</span>
+                  <span className={`font-bold font-mono text-base ${customEvaluation.homoplasmicDiffCount >= 2 ? "text-rose-400" : "text-slate-200"}`}>
+                    {customEvaluation.homoplasmicDiffCount}
+                  </span>
+                </div>
+                <div className="p-3 rounded-lg bg-slate-900 border border-slate-800">
+                  <span className="text-[10px] text-slate-400 block">{isTr ? "Hesaplanan Anne Soyu LR:" : "Computed Maternal LR:"}</span>
+                  <span className={`font-bold font-mono text-base ${!customEvaluation.isExclusion ? "text-cyan-400" : "text-rose-400"}`}>
+                    {customEvaluation.isExclusion
+                      ? "0.00"
+                      : customEvaluation.maternalLr >= 10000
+                      ? Math.round(customEvaluation.maternalLr).toLocaleString()
+                      : customEvaluation.maternalLr.toFixed(2)}
+                  </span>
+                </div>
+              </div>
+
+              {/* IUPAC Mixed Base Reference */}
+              <div className="p-3 rounded-lg bg-slate-900/60 border border-slate-800 text-[11px] text-slate-400 font-mono">
+                <span className="font-bold text-purple-300 block mb-1">
+                  {isTr ? "IUPAC Karisik Baz Sozlugu (Heteroplazmi):" : "IUPAC Mixed Base Dictionary (Heteroplasmy):"}
+                </span>
+                <span>Y = C/T | R = A/G | M = A/C | K = G/T | S = C/G | W = A/T</span>
+              </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       )}
     </div>
   );

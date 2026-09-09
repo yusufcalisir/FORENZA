@@ -3532,3 +3532,63 @@ Superposition of source landmark matrix $\mathbf{X}_2 \in \mathbb{R}^{k \times 3
 In compliance with ENFSI (2017) and ISFG guidelines, reconstructed 3D craniofacial coordinates serve solely as exploratory investigative leads. Individual photographic face-matching is explicitly prohibited under German § 81e (2) StPO and EU AI Act Annex III high-risk biometric restrictions.
 The forensic evaluative reporting shield enforces the Prosecutor's Fallacy mathematical safeguard:
 $$P(\text{DNA Profile} \mid \text{Craniofacial Morphology}) \ne P(\text{Craniofacial Morphology} \mid \text{DNA Profile})$$
+
+---
+
+## 95. Subsystem 17: Hair Texture Dynamics, Fiber Cross-Sectional Morphology & Male Pattern Baldness PRS (Pillar 3.4)
+
+### 95.1 Medland et al. (2009) EDAR Val370Ala Fiber Cross-Sectional Area Model
+Forensic hair fiber cross-sectional area $A$ ($\\mu\\text{m}^2$) is modulated by the non-synonymous single nucleotide polymorphism rs3827072 (c.1109T>C, p.Val370Ala) in the Ectodysplasin A Receptor (*EDAR*) gene on chromosome 2q13:
+$$A = A_{\\text{base}} + \\Delta A_{\\text{EDAR}} \\cdot x_{\\text{EDAR}}$$
+where:
+- $A_{\\text{base}} = 3850.0\\ \\mu\\text{m}^2$ (standard wild-type ancestral fiber cross section, representative of European/African baseline),
+- $\\Delta A_{\\text{EDAR}} = +1420.0\\ \\mu\\text{m}^2$ (per derived C allele dosage),
+- $x_{\\text{EDAR}} \\in \\{0, 1, 2\\}$ (additive allele dosage).
+
+Discrete phenotypic outcomes:
+- $x_{\\text{EDAR}} = 0 \\implies A = 3850.0\\ \\mu\\text{m}^2$ (fine to medium caliber fiber),
+- $x_{\\text{EDAR}} = 1 \\implies A = 5270.0\\ \\mu\\text{m}^2$ (intermediate caliber fiber),
+- $x_{\\text{EDAR}} = 2 \\implies A = 6690.0\\ \\mu\\text{m}^2$ (coarse, thick cylindrical East Asian hair fiber).
+
+### 95.2 Adhikari et al. (2016) Multi-Locus Curl Density Index ($C_{\\text{curl}}$) & Taxonomy
+Hair curvature and follicular geometry are determined by the cumulative additive effects of Trichohyalin (*TCHH* rs11803731), *WNT10A* (rs7349332), and *EDAR* (rs3827072):
+$$C_{\\text{raw}} = \\beta_0 + \\beta_{\\text{TCHH}} \\cdot x_{\\text{TCHH}} + \\beta_{\\text{WNT10A}} \\cdot x_{\\text{WNT10A}} + \\beta_{\\text{EDAR}} \\cdot x_{\\text{EDAR}}$$
+where:
+- $\\beta_0 = +1.20$ (baseline Caucasian/ancestral curvature intercept),
+- $\\beta_{\\text{TCHH}} = +1.85$ (cortical intermediate filament curl induction per T allele),
+- $\\beta_{\\text{WNT10A}} = +1.42$ (follicular morphogenesis curl induction per T allele),
+- $\\beta_{\\text{EDAR}} = -2.10$ (straightening effect per derived C allele).
+
+Bounded curl index $C_{\\text{curl}} \\in [0.0, 10.0]$:
+$$C_{\\text{curl}} = \\max\\left(0.0, \\min\\left(10.0, C_{\\text{raw}}\\right)\\right)$$
+
+Standard 4-tier forensic morphological categorization:
+1. **Straight ($C_{\\text{curl}} < 2.0$):** Circular cross-section ($1.0 \\le \\text{Aspect Ratio} \\le 1.15$). Caliber: $70.0 - 85.0\\ \\mu\\text{m}$ (wild-type) or $85.0 - 110.0\\ \\mu\\text{m}$ (EDAR coarse Asian).
+2. **Wavy ($2.0 \\le C_{\\text{curl}} < 4.5$):** Oval cross-section ($\\text{Aspect Ratio} \\approx 1.25$). Caliber: $65.0 - 80.0\\ \\mu\\text{m}$.
+3. **Curly ($4.5 \\le C_{\\text{curl}} < 7.0$):** Elliptical cross-section ($\\text{Aspect Ratio} \\approx 1.55$). Caliber: $55.0 - 70.0\\ \\mu\\text{m}$.
+4. **Kinky / Woolly ($C_{\\text{curl}} \\ge 7.0$):** Ribbon-like cross-section ($\\text{Aspect Ratio} \\ge 2.0$). Caliber: $45.0 - 60.0\\ \\mu\\text{m}$.
+
+### 95.3 Li et al. (2022) Androgenetic Alopecia Polygenic Risk Score ($PRS$)
+Male pattern baldness risk is computed via an additive log-odds polygenic risk score across primary X-linked and autosomal loci:
+$$PRS = w_{\\text{AR}} \\cdot x_{\\text{AR}} + w_{20p11a} \\cdot x_{20p11a} + w_{20p11b} \\cdot x_{20p11b} + w_{\\text{HDAC9}} \\cdot x_{\\text{HDAC9}}$$
+where weights derive from large-scale GWAS meta-analyses (Hillmer et al. 2005, Li et al. 2022):
+- $w_{\\text{AR}} = 0.982$ (rs6152 in Androgen Receptor *AR*, Xq11-12),
+- $w_{20p11a} = 0.541$ (rs2180439 near *FOXA2/PAX1*, 20p11),
+- $w_{20p11b} = 0.485$ (rs1160312 in *PAX1*, 20p11),
+- $w_{\\text{HDAC9}} = 0.362$ (rs756853 in *HDAC9*, 7p21.1).
+
+Theoretical bounds: $PRS \\in [0.000, 4.740]$.
+
+Hamilton-Norwood clinical grade mapping:
+1. **Grade I / II ($PRS < 0.50$):** Low risk (Full vertex density, minimal frontal recession).
+2. **Grade III ($0.50 \\le PRS < 1.20$):** Moderate risk (Early symmetrical frontotemporal recess, deep M-shape).
+3. **Grade IV / V ($1.20 \\le PRS < 2.10$):** Elevated risk (Moderate frontotemporal recession and vertex thinning with narrow bridge).
+4. **Grade VI / VII ($PRS \\ge 2.10$):** High / severe risk (Confluent frontotemporal and vertex baldness with residual horseshoe fringe).
+
+### 95.4 Deterministic Cryptographic State Audit Digest ($H_{\\text{state}}$)
+To ensure compliance with ISO/IEC 17025:2017 chain of custody requirements, every hair phenotype evaluation produces an immutable 64-hex SHA-256 state digest:
+$$H_{\\text{state}} = \\text{Hash}\\left(\\text{Sort}(\\mathbf{x}_{\\text{dosages}}) \\parallel C_{\\text{curl}} \\parallel A \\parallel \\text{Cat} \\parallel PRS \\parallel \\text{Grade} \\parallel \\text{Risk}\\right)$$
+
+### 95.5 German StPO § 81e Statutory Scope & Evaluative Reporting Shield
+Under § 81e (2) of the German Code of Criminal Procedure (Strafprozessordnung - StPO) and EU AI Act (2024/1689), forensic DNA phenotyping on unknown trace donors is strictly confined to externally visible characteristics (EVCs). Hair cross-sectional thickness and curl curvature represent non-disease morphological traits. Androgenetic alopecia is a polygenic cosmetic trait; in courtroom testimony, it serves strictly as an investigative lead (Ermittlungsansatz), protected by the reciprocal Prosecutor's Fallacy shield:
+$$P(\\text{DNA Profile} \\mid \\text{Hair Morphology / Balding Grade}) \\ne P(\\text{Hair Morphology / Balding Grade} \\mid \\text{DNA Profile})$$

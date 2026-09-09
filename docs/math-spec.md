@@ -3650,3 +3650,66 @@ $$H_{\text{state}} = \text{SHA256}\left(\text{Sort}(\mathbf{x}_{\text{dosages}})
 ### 96.5 German StPO § 81e Statutory Scope & Evaluative Reporting Shield
 Under Section 81e (2) of the German Code of Criminal Procedure (StPO) and EU AI Act (2024/1689), forensic DNA phenotyping on unknown biological crime-stains is strictly confined to externally visible characteristics (EVCs). Quantitative ephelides and UV erythema susceptibility represent non-disease superficial dermatological phenotypes. Courtroom presentation enforces the reciprocal Prosecutor's Fallacy defense shield:
 $$P(\text{DNA Profile} \mid \text{Predicted Ephelides / MED Tier}) \ne P(\text{Predicted Ephelides / MED Tier} \mid \text{DNA Profile})$$
+
+---
+
+## 97. Multi-Generation Epigenetic Clocks, Multi-Tissue Calibration & Multimodal PMI Estimation (`visageAgeEngine.ts`, `PanelEpigeneticClocks.tsx` & `epigenetic_clocks_horvath_phenoage_grimage_pmi_research.md`)
+
+### 97.1 Horvath Piecewise Log-Linear Elastic Net Model ($y_0 = 20.0$)
+The Horvath pan-tissue epigenetic clock model evaluates DNA methylation data across multiple CpG sites through a piecewise log-linear transformation. The forward transformation $F(y)$ maps chronological age $y$ (years) into continuous biological age space $x$:
+$$F(y) = \begin{cases} \ln(y + 1) - \ln(y_0 + 1) & \text{if } y \le y_0 \\ \frac{y - y_0}{y_0 + 1} & \text{if } y > y_0 \end{cases}$$
+where $y_0 = 20.0$ years represents the universal adult human developmental transition threshold.
+
+The inverse transformation $F^{-1}(x)$ converts the linear predictor $x = \beta_0 + \sum_{i=1}^M \beta_i \cdot \beta_{\text{CpG}, i}$ back into calibrated chronological years:
+$$y_{\text{chronological}} = F^{-1}(x) = \begin{cases} (y_0 + 1) \cdot \exp(x) - 1 & \text{if } x < 0 \\ (y_0 + 1) \cdot x + y_0 & \text{if } x \ge 0 \end{cases}$$
+This piecewise architecture prevents age compression in pediatric and juvenile samples ($y < 20.0$) while maintaining strict linear fidelity throughout adult senescence.
+
+### 97.2 VISAGE 5-Locus & 8-Locus MLR Forensic Multiplexes
+Forensic casework utilizes targeted multiplexes optimized for degraded or low-template DNA. The VISAGE (Visualise Consortium) framework evaluates age via multivariable linear regression (MLR) models:
+1. **VISAGE Basic 5-CpG Model:**
+   Targeting five hypermethylated and hypomethylated age-correlated loci:
+   $$\hat{y}_{\text{basic}} = \beta_0 + \beta_{\text{ELOVL2}} \cdot \text{ELOVL2}^{0.5} + \beta_{\text{FHL2}} \cdot \text{FHL2} + \beta_{\text{PENK}} \cdot \text{PENK} + \beta_{\text{TRIM59}} \cdot \text{TRIM59} + \beta_{\text{KLF14}} \cdot \text{KLF14}$$
+   with non-linear square-root transformation on *ELOVL2* ($\beta_{\text{ELOVL2}} = 39.5$) capturing accelerated methylation dynamics during early adulthood.
+2. **VISAGE Enhanced 8-CpG Model:**
+   Incorporating *ASPA* hypomethylation correction ($\beta_{\text{ASPA}} = -31.0$), *PDE4C* ($\beta_{\text{PDE4C}} = 22.0$), and *MIR29B2CHG* ($\beta_{\text{MIR29B2CHG}} = 14.5$):
+   $$\hat{y}_{\text{enhanced}} = \hat{y}_{\text{basic}} + \beta_{\text{ASPA}} \cdot \text{ASPA} + \beta_{\text{PDE4C}} \cdot \text{PDE4C} + \beta_{\text{MIR29B2CHG}} \cdot \text{MIR29B2CHG}$$
+   yielding calibrated Mean Absolute Deviation (MAD) of $\pm 3.10$ to $\pm 3.75$ years in whole blood.
+
+### 97.3 Multi-Tissue Biological Calibration Offsets ($\Delta_{\text{tissue}}$)
+DNA methylation kinetics vary systematically across cell lineages due to distinct tissue turnover rates and chromatin structures. Forensic evaluations apply additive empirical calibration offsets $\Delta_{\text{tissue}}$ relative to the whole blood reference baseline:
+$$\hat{y}_{\text{tissue}} = \hat{y}_{\text{blood}} + \Delta_{\text{tissue}}$$
+Calibrated multi-tissue offsets:
+- **Whole Blood:** $\Delta_{\text{blood}} = 0.00\text{ years}$
+- **Saliva / Buccal Epithelium:** $\Delta_{\text{saliva}} = +2.45\text{ years}$
+- **Semen / Spermatozoa:** $\Delta_{\text{semen}} = +18.60\text{ years}$ (reflecting protamine compaction and germline hypermethylation)
+- **Skeletal Bone / Dental Pulp:** $\Delta_{\text{bone}} = +1.15\text{ years}$
+- **Hair Follicles:** $\Delta_{\text{hair}} = -1.20\text{ years}$
+
+### 97.4 Mahalanobis $(X^T X)^{-1}$ Covariance Dispersion & ISO/IEC 17025 Uncertainty ($U_{95\%}$)
+Under ISO/IEC 17025:2017 Section 7.6 and GUM (JCGM 100:2008), the total combined uncertainty $u_c$ incorporates baseline model residual variance ($u_0 = 3.50\text{ years}$), tissue-specific heteroscedasticity ($u_{\text{tissue}}$), and multivariate sample leverage. Leverage is measured by the squared Mahalanobis distance $d_M^2$ against the training centroid covariance matrix $(X^T X)^{-1}$:
+$$d_M^2 = (\mathbf{x} - \boldsymbol{\mu})^T (X^T X)^{-1} (\mathbf{x} - \boldsymbol{\mu})$$
+$$u_c = \sqrt{u_0^2 + u_{\text{tissue}}^2 + (1.2 \cdot d_M^2)}$$
+The expanded uncertainty at $95\%$ coverage probability ($k = 2.00$) is:
+$$U_{95\%} = k \cdot u_c = 2.00 \cdot u_c$$
+defining the formal forensic evaluative confidence interval:
+$$\text{CI}_{95\%} = \left[ \max(0.0, \hat{y} - U_{95\%}),\; \hat{y} + U_{95\%} \right]$$
+
+### 97.5 Multimodal Post-Mortem Interval (PMI) Bayesian Fusion
+Post-mortem interval estimation couples DNA methylation degradation rates with independent physical and taphonomic sensors using inverse-variance Bayesian fusion:
+$$w_i = \frac{1}{\sigma_i^2}, \quad \mu_{\text{fused}} = \frac{\sum_{i} w_i \cdot \text{PMI}_i}{\sum_{i} w_i}, \quad \sigma_{\text{fused}} = \frac{1}{\sqrt{\sum_{i} w_i}}$$
+where sensor modalities include:
+1. Epigenetic DNAm degradation decay ($u_{\text{DNAm}}$),
+2. Entomological thermal energy accumulation (ADD/ADH, $u_{\text{ento}}$),
+3. Thanatometagenomic microbial succession index ($u_{\text{microbiome}}$).
+
+Expanded interval bounds at $95\%$ confidence ($Z = 1.96$):
+$$\text{PMI}_{95\%} = \left[ \max(0.0, \mu_{\text{fused}} - 1.96 \cdot \sigma_{\text{fused}}),\; \mu_{\text{fused}} + 1.96 \cdot \sigma_{\text{fused}} \right]$$
+
+### 97.6 Deterministic Cryptographic State Audit Digest ($H_{\text{state}}$)
+Under ISO/IEC 17025:2017 Sections 7.5 and 7.8, each epigenetic estimation generates an immutable 64-hex SHA-256 state audit digest:
+$$H_{\text{state}} = \text{SHA256}\left(\text{Sort}(\mathbf{x}_{\text{cpg}}) \parallel \text{Tissue} \parallel \text{ClockModel} \parallel \hat{y} \parallel U_{95\%} \parallel d_M^2\right)$$
+
+### 97.7 German StPO § 81e Statutory Scope & Reciprocal Fallacy Protection
+Under Section 81e (2) of the German Code of Criminal Procedure (StPO) and EU AI Act (2024/1689), forensic DNA phenotyping and epigenetic aging on unknown biological traces are strictly restricted to determining externally visible characteristics and age brackets. Evaluative reporting enforces the reciprocal Prosecutor's Fallacy defense shield:
+$$P(\text{DNA Profile} \mid \text{Predicted Epigenetic Age Bracket}) \ne P(\text{Predicted Epigenetic Age Bracket} \mid \text{DNA Profile})$$
+

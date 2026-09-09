@@ -299,7 +299,7 @@ describe("PanelADNA - Subsystem 12 Biocomputational Engine & UI Suite", () => {
     const callArgs = addAuditLogSpy.mock.calls[0][0];
     expect(callArgs.module).toBe("Ancient & Degraded DNA Damage Kinetics");
     expect(callArgs.status).toBe("PASS");
-    expect(callArgs.polygonTx.startsWith("0x")).toBe(true);
+    expect(callArgs.polygonTx?.startsWith("0x")).toBe(true);
   });
 
   it("renders dynamic SNP Table in Tab 3 reacting to active damage parameters", () => {

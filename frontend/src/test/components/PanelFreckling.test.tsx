@@ -177,7 +177,7 @@ describe("Subsystem 18 (Pillar 3.5) PanelFreckling Component & Case Store Integr
     beforeEach(() => {
         vi.clearAllMocks();
         useForensicCaseStore.setState({
-            activeCase: null,
+            activeCase: undefined as any,
             auditTrail: [],
         });
     });

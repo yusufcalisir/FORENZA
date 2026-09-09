@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # ── Job 1: Frontend Quality, Vitest (278 Tests), TypeScript & Next.js 16 Production Build ──
+  # ── Job 1: Frontend Quality, Vitest (314 Tests), TypeScript & Next.js 16 Production Build ──
   frontend-ci:
     name: 1. Frontend Quality, Vitest (314 Tests), TypeScript & Next.js 16 Production Build
     runs-on: ubuntu-latest

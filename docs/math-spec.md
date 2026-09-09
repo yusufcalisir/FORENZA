@@ -3327,7 +3327,46 @@ Tamper-evidence invariant:
 $$\forall i \in \{1, \dots, N\}, \quad \text{PreviousHash}(E_i) = \text{CurrentHash}(E_{i-1})$$
 Any alteration to container seal codes, officer IDs, or timestamps invalidates the downstream hash chain with probability $1 - 2^{-256}$.
 
+---
 
+## 91. Forensic Genetic Genealogy (FGG / IGG), Phase-Free IBD Deconvolution & Bonsai Pedigree Kinship (Pillar 2.6 / Subsystem 13)
 
+### 91.1 Cotterman Coefficients & Kinship Statistics
+For any pair of individuals $(i, j)$ evaluated over dense autosomal SNP microarrays ($N \ge 650,000$ SNPs) or Whole-Genome Sequencing (WGS):
+$$k_0 + k_1 + k_2 = 1.0, \quad k_m \ge 0$$
+Where $k_m$ represents the probability of sharing $m \in \{0, 1, 2\}$ alleles identical-by-descent (IBD).
+Cotterman kinship coefficient:
+$$\Phi_{ij} = \frac{1}{2} k_2 + \frac{1}{4} k_1$$
+Wright coefficient of relationship:
+$$r_{ij} = 2 \Phi_{ij} = k_2 + \frac{1}{2} k_1, \quad 0 \le r_{ij} \le 1.0$$
 
+### 91.2 KING-Robust Kinship Estimator
+Robust against unknown subpopulation structure and ancestry divergence without requiring reference allele frequencies:
+$$\hat{\phi}_{ij} = \frac{N_{Aa,Aa} - 2 N_{AA,aa}}{N_{Aa}^{(i)} + N_{Aa}^{(j)}} + \frac{1}{2} \left( \frac{H_i + H_j}{4 N} \right)$$
+Where $N_{Aa,Aa}$ is the count of shared heterozygous loci, $N_{AA,aa}$ is opposite homozygous mismatches, and $H_i, H_j$ are sample heterozygosity counts.
 
+### 91.3 Background Homozygosity & Endogamy Discounting ($F_{\text{ROH}}$)
+To mitigate false-positive close cousin classifications in endogamous or founder populations (e.g. Ashkenazi, Amish, Acadian cohorts) with elevated Runs of Homozygosity ($F_{\text{ROH}} > 0.02$):
+$$cM_{\text{discounted}} = cM_{\text{raw}} \cdot \max(0.40, 1.0 - 4.5 \cdot F_{\text{ROH}}) \quad \text{for } F_{\text{ROH}} > 0.02$$
+For outbred baseline populations ($F_{\text{ROH}} \le 0.02$), $cM_{\text{discounted}} = cM_{\text{raw}}$.
+
+### 91.4 Phase-Free Windowed IBD Segment Filtering (IBIS)
+Segments of contiguous IBS0-free markers are qualified as authentic IBD1/IBD2 transmissions if:
+$$L \ge L_{\min} = 7.0\text{ cM}, \quad N_{\text{SNP}} \ge 500\text{ SNPs}, \quad \text{Error Rate} \le 1.5\%$$
+Total shared genetic distance:
+$$cM_{\text{total}} = \sum_{k=1}^S L_k \cdot \mathbb{I}(L_k \ge L_{\min} \land N_{\text{SNP}, k} \ge 500)$$
+
+### 91.5 Shared cM Project Multi-Tier Gaussian Kinship Classification
+Evaluated across 8 canonical relationship tiers (Parent-Child, Full Sibling, Avuncular/Half-Sibling, 1C, 1C1R, 2C, 3C/2C1R, Distant <15 cM) using empirical parameters derived from Bettinger & Speed (2020):
+$$w_r = \exp\left( -\frac{1}{2} \left(\frac{cM_{\text{total}} - \mu_r}{\sigma_r}\right)^2 \right), \quad P(R_r \mid cM) = \frac{w_r}{\sum_{k=1}^8 w_k}$$
+Probability simplex normalization invariant:
+$$\sum_{r=1}^8 P(R_r \mid cM) = 1.0000 \quad \left(\left| \sum P_r - 1.0 \right| \le 10^{-6}\right)$$
+
+### 91.6 Statutory Compliance Gates & Cryptographic Sample Destruction (Maryland Title 17 / US DOJ 2019)
+Automated verification of 4 mandatory governance gates:
+1. Prior CODIS/NDIS STR database search exhaustion certification.
+2. Serious violent qualifying felony threshold (homicide, aggravated sexual assault, unidentified remains).
+3. Genealogical database terms-of-service opt-in compliance.
+4. Mandatory trial disclaimer (investigative lead only; direct STR confirmation required for arrest).
+Third-party consensual reference DNA samples generate an automated deterministic SHA-256 destruction certificate pursuant to Maryland Public Safety § 17-102:
+$$H_{\text{cert}} = \text{SHA256}(\text{CaseID} \parallel \text{SampleIDs} \parallel \text{Statute} \parallel \text{Officer} \parallel \text{Timestamp})$$

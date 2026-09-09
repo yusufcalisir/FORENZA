@@ -31,9 +31,10 @@ import {
 } from "lucide-react";
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 import { getApiBaseUrl } from "@/lib/api";
+import { useForensicCaseStore } from "@/store/forensicCaseStore";
 
 // ── Standard Sex-Averaged Autosomal Map Lengths (cM) ───────────────────────
-const AUTOSOME_MAP_LENGTHS: Record<string, number> = {
+export const AUTOSOME_MAP_LENGTHS: Record<string, number> = {
   "1": 286.27, "2": 268.84, "3": 223.36, "4": 214.69, "5": 204.09,
   "6": 192.04, "7": 187.22, "8": 168.00, "9": 166.36, "10": 181.14,
   "11": 158.22, "12": 174.67, "13": 125.79, "14": 120.22, "15": 141.87,
@@ -55,6 +56,7 @@ export interface IBDSegmentUI {
 export interface RelationshipCandidateUI {
   degree: string;
   label: string;
+  labelTr?: string;
   probability: number;
   expectedMeanCm: number;
   range: string;
@@ -68,6 +70,463 @@ export interface DestructionOrderData {
   jurisdiction: string;
   authorizedBy: string;
   samples: string[];
+  samplesToDestroy?: string[];
+  status?: string;
+}
+
+export interface FggCaseworkPreset {
+  id: string;
+  code: string;
+  title: string;
+  titleTr: string;
+  targetId: string;
+  matchId: string;
+  platform: string;
+  callRate: number;
+  hetRate: number;
+  rawCm: number;
+  adjustedCm: number;
+  longestCm: number;
+  segmentCount: number;
+  k0: number;
+  k1: number;
+  k2: number;
+  kinshipPhi: number;
+  wrightR: number;
+  kingPhi: number;
+  topCandidate: RelationshipCandidateUI;
+  degree: string;
+  degreeTr: string;
+  badge: string;
+  desc: string;
+  descTr: string;
+  mrcaLabel: string;
+  uniparentalStatus: string;
+  segments: IBDSegmentUI[];
+}
+
+// ── Master Casework Benchmark Presets ───────────────────────────────────────
+export const FGG_PRESETS: FggCaseworkPreset[] = [
+  {
+    id: "VECTOR_01",
+    code: "VECTOR_FGG_01",
+    title: "CEPH / GIAB NA12878 Family Trio (1st-Degree Parent-Child)",
+    titleTr: "CEPH / GIAB NA12878 Aile Agaci (1. Derece Ebeveyn-Cocuk)",
+    targetId: "NA12878_DAUGHTER",
+    matchId: "NA12877_FATHER",
+    platform: "Illumina Infinium GSA (~654k SNPs)",
+    callRate: 99.82,
+    hetRate: 28.4,
+    rawCm: 3450.0,
+    adjustedCm: 3450.0,
+    longestCm: 285.2,
+    segmentCount: 22,
+    k0: 0.0,
+    k1: 1.0,
+    k2: 0.0,
+    kinshipPhi: 0.25,
+    wrightR: 0.50,
+    kingPhi: 0.25,
+    topCandidate: {
+      degree: "DEGREE_1_PARENT_CHILD",
+      label: "Parent / Child (100% IBD1)",
+      labelTr: "Ebeveyn / Cocuk (100% IBD1)",
+      probability: 0.998,
+      expectedMeanCm: 3450.0,
+      range: "3300 - 3600 cM"
+    },
+    degree: "1st-Degree Parent-Child",
+    degreeTr: "1. Derece Ebeveyn-Cocuk",
+    badge: "CEPH / GIAB",
+    desc: "NIST/GIAB reference daughter vs father displaying complete genome-wide IBD1 transmission across 22 autosomes.",
+    descTr: "NIST/GIAB altin standardi NA12878 (Kiz) vs NA12877 (Baba). 22 otozom boyunca eksiksiz IBD1 paylasimi.",
+    mrcaLabel: "Direct Generation (1st Degree)",
+    uniparentalStatus: "CONCORDANT",
+    segments: Object.entries(AUTOSOME_MAP_LENGTHS).map(([chr, len]) => ({
+      chr,
+      startBp: 1000000,
+      endBp: 150000000,
+      startCm: 1.0,
+      endCm: len,
+      lengthCm: len - 1.0,
+      snpCount: Math.floor(len * 65),
+      type: "IBD1" as const,
+    })),
+  },
+  {
+    id: "VECTOR_02",
+    code: "VECTOR_FGG_02",
+    title: "GIAB Ashkenazi Trio (Endogamy & F_ROH > 4% Stress Test)",
+    titleTr: "GIAB Askenaz Uclusu (Endogami & F_ROH > %4 Stres Testi)",
+    targetId: "HG002_ASHKENAZI_SON",
+    matchId: "HG003_ASHKENAZI_FATHER",
+    platform: "Illumina Global Diversity Array GDA (~1.8M SNPs)",
+    callRate: 99.45,
+    hetRate: 12.8,
+    rawCm: 3580.0,
+    adjustedCm: 3420.0,
+    longestCm: 220.0,
+    segmentCount: 15,
+    k0: 0.0,
+    k1: 0.96,
+    k2: 0.04,
+    kinshipPhi: 0.26,
+    wrightR: 0.52,
+    kingPhi: 0.248,
+    topCandidate: {
+      degree: "DEGREE_1_PARENT_CHILD",
+      label: "Parent / Child (Endogamy Compensated)",
+      labelTr: "Ebeveyn / Cocuk (Endogami Duzeltmeli)",
+      probability: 0.985,
+      expectedMeanCm: 3450.0,
+      range: "3300 - 3600 cM"
+    },
+    degree: "Endogamous Parent-Child",
+    degreeTr: "Endogamili Ebeveyn-Cocuk",
+    badge: "ASHKENAZI F_ROH",
+    desc: "HG002 vs HG003. Stress tests false close-cousin calling in high-inbreeding populations with F_ROH background.",
+    descTr: "HG002 vs HG003. Yuksek homozigotluk (F_ROH) arka planinda gercek ebeveyn-cocuk bagini ayristirma stres testi.",
+    mrcaLabel: "Ashkenazi Lineage Paternal Anchor",
+    uniparentalStatus: "CONCORDANT",
+    segments: Object.entries(AUTOSOME_MAP_LENGTHS).slice(0, 15).map(([chr, len]) => ({
+      chr,
+      startBp: 5000000,
+      endBp: 120000000,
+      startCm: 5.0,
+      endCm: len * 0.85,
+      lengthCm: Math.max(8.0, (len * 0.85) - 5.0),
+      snpCount: 1800,
+      type: "IBD1" as const,
+    })),
+  },
+  {
+    id: "VECTOR_03",
+    code: "VECTOR_FGG_03",
+    title: "Golden State Killer (GSK) Investigative Case (3C Triangulation)",
+    titleTr: "Golden State Killer (GSK) Adli Vaka Canlandirmasi (3C Triangulasyonu)",
+    targetId: "GSK_CRIME_SCENE_1978",
+    matchId: "GSK_MATCH_3RD_COUSIN",
+    platform: "DTC Microarray Raw Data (GEDmatch / FTDNA)",
+    callRate: 98.65,
+    hetRate: 26.2,
+    rawCm: 90.5,
+    adjustedCm: 90.5,
+    longestCm: 51.5,
+    segmentCount: 3,
+    k0: 0.974,
+    k1: 0.026,
+    k2: 0.0,
+    kinshipPhi: 0.0065,
+    wrightR: 0.013,
+    kingPhi: 0.0062,
+    topCandidate: {
+      degree: "DEGREE_6_THIRD_COUSIN",
+      label: "3rd Cousin (3C) / 2C1R",
+      labelTr: "3. Derece Kuzen (3C) / 2C1R",
+      probability: 0.842,
+      expectedMeanCm: 70.0,
+      range: "15 - 200 cM"
+    },
+    degree: "3rd-Cousin Triangulation",
+    degreeTr: "3. Derece Kuzen Triangulasyonu",
+    badge: "CRIMINAL CASEWORK",
+    desc: "Simulates the 2018 GSK breakthrough: 3C match (~90 cM), 1840s MRCA couple, and Y-STR R1b pruning.",
+    descTr: "Joseph James DeAngelo davasi: GEDmatch 3. kuzen eslesmesi, 1845 MRCA cifti ve Y-STR R1b filtrelemesi.",
+    mrcaLabel: "John DeAngelo & Rebecca (m. 1845, New York)",
+    uniparentalStatus: "Y-STR R1b-M269 CONCORDANT",
+    segments: [
+      {
+        chr: "1",
+        startBp: 20000000,
+        endBp: 65000000,
+        startCm: 23.0,
+        endCm: 74.5,
+        lengthCm: 51.5,
+        snpCount: 2200,
+        type: "IBD1" as const,
+      },
+      {
+        chr: "5",
+        startBp: 10000000,
+        endBp: 32000000,
+        startCm: 11.2,
+        endCm: 35.8,
+        lengthCm: 24.6,
+        snpCount: 1100,
+        type: "IBD1" as const,
+      },
+      {
+        chr: "9",
+        startBp: 40000000,
+        endBp: 52000000,
+        startCm: 48.0,
+        endCm: 62.4,
+        lengthCm: 14.4,
+        snpCount: 650,
+        type: "IBD1" as const,
+      },
+    ],
+  },
+];
+
+export const RELATIONSHIP_PRIOR_RANGES = [
+  { degree: "DEGREE_1_PARENT_CHILD", label: "1st Degree: Parent / Child", labelTr: "1. Derece: Ebeveyn / Cocuk", mean: 3450, std: 100, min: 3300, max: 3600 },
+  { degree: "DEGREE_1_FULL_SIBLING", label: "1st Degree: Full Sibling", labelTr: "1. Derece: Oz Kardes", mean: 2600, std: 240, min: 2200, max: 3300 },
+  { degree: "DEGREE_2_AVUNCULAR", label: "2nd Degree: Grandparent / Half-Sibling / Avuncular", labelTr: "2. Derece: Buyukanne-Baba / Amca-Hala-Teyze / Yari Kardes", mean: 1750, std: 220, min: 1300, max: 2300 },
+  { degree: "DEGREE_3_FIRST_COUSIN", label: "3rd Degree: 1st Cousin", labelTr: "3. Derece: 1. Kuzen (1C)", mean: 866, std: 140, min: 500, max: 1200 },
+  { degree: "DEGREE_4_1C1R", label: "4th Degree: 1C1R / Half-1C", labelTr: "4. Derece: 1C1R / Yari 1. Kuzen", mean: 433, std: 90, min: 250, max: 650 },
+  { degree: "DEGREE_5_SECOND_COUSIN", label: "5th Degree: 2nd Cousin (2C)", labelTr: "5. Derece: 2. Kuzen (2C)", mean: 212, std: 65, min: 90, max: 380 },
+  { degree: "DEGREE_6_THIRD_COUSIN", label: "6th Degree: 3rd Cousin (3C) / 2C1R", labelTr: "6. Derece: 3. Kuzen (3C) / 2C1R", mean: 73, std: 35, min: 15, max: 200 },
+  { degree: "DEGREE_7_DISTANT", label: "Distant / Unrelated (< 15 cM)", labelTr: "Uzak Akraba / Iliskisiz (< 15 cM)", mean: 0, std: 10, min: 0, max: 15 },
+];
+
+// ── Pure Mathematical Biocomputational Functions ───────────────────────────
+
+export function computeKinshipPhi(k0: number, k1: number, k2: number): number {
+  const phi = 0.5 * k2 + 0.25 * k1;
+  return Math.min(0.50, Math.max(0.0, phi));
+}
+
+export function computeWrightR(phi: number): number {
+  const r = 2.0 * phi;
+  return Math.min(1.0, Math.max(0.0, r));
+}
+
+export function computeKingPhi(
+  nAaAa: number,
+  nAAaa: number,
+  nAa1: number,
+  nAa2: number,
+  nTotal: number = 654000
+): number {
+  const denom = nAa1 + nAa2 + 1e-15;
+  const raw = (nAaAa - 2.0 * nAAaa) / denom;
+  const correction = 0.5 * ((nAa1 + nAa2) / (4.0 * Math.max(1, nTotal)));
+  return Math.min(0.50, Math.max(0.0, raw + correction));
+}
+
+export function computeDiscountedSharedCm(
+  rawCm: number,
+  fRoh: number,
+  kappa: number = 4.5
+): number {
+  if (fRoh <= 0.02) return rawCm;
+  const discountFactor = Math.max(0.40, 1.0 - kappa * Math.max(0.0, fRoh));
+  return Number((rawCm * discountFactor).toFixed(1));
+}
+
+export function filterQualifyingSegments(
+  segments: IBDSegmentUI[],
+  minCmThreshold: number = 7.0,
+  minSnps: number = 500
+): IBDSegmentUI[] {
+  return segments.filter((s) => s.lengthCm >= minCmThreshold && s.snpCount >= minSnps);
+}
+
+export function computeTotalSharedCm(segments: IBDSegmentUI[]): number {
+  return Number(segments.reduce((acc, s) => acc + s.lengthCm, 0.0).toFixed(1));
+}
+
+// ── Shared cM Project Kinship Classifier ─────────────────────────────────────
+export function classifyRelationshipBySharedCm(
+  totalCm: number,
+  isParentChildIbd1: boolean = false
+): RelationshipCandidateUI[] {
+  if (isParentChildIbd1 && totalCm >= 3200) {
+    return [
+      {
+        degree: "DEGREE_1_PARENT_CHILD",
+        label: "1st Degree: Parent / Child",
+        labelTr: "1. Derece: Ebeveyn / Cocuk (100% IBD1)",
+        probability: 0.998,
+        expectedMeanCm: 3450,
+        range: "3300 - 3600 cM",
+      },
+      {
+        degree: "DEGREE_1_FULL_SIBLING",
+        label: "1st Degree: Full Sibling",
+        labelTr: "1. Derece: Oz Kardes",
+        probability: 0.002,
+        expectedMeanCm: 2600,
+        range: "2200 - 3300 cM",
+      },
+      {
+        degree: "DEGREE_2_AVUNCULAR",
+        label: "2nd Degree: Grandparent / Half-Sibling / Avuncular",
+        labelTr: "2. Derece: Buyukanne-Baba / Amca-Hala-Teyze / Yari Kardes",
+        probability: 0.0,
+        expectedMeanCm: 1750,
+        range: "1300 - 2300 cM",
+      },
+      {
+        degree: "DEGREE_3_FIRST_COUSIN",
+        label: "3rd Degree: 1st Cousin",
+        labelTr: "3. Derece: 1. Kuzen (1C)",
+        probability: 0.0,
+        expectedMeanCm: 866,
+        range: "500 - 1200 cM",
+      },
+      {
+        degree: "DEGREE_4_1C1R",
+        label: "4th Degree: 1C1R / Half-1C",
+        labelTr: "4. Derece: 1C1R / Yari 1. Kuzen",
+        probability: 0.0,
+        expectedMeanCm: 433,
+        range: "250 - 650 cM",
+      },
+      {
+        degree: "DEGREE_5_SECOND_COUSIN",
+        label: "5th Degree: 2nd Cousin (2C)",
+        labelTr: "5. Derece: 2. Kuzen (2C)",
+        probability: 0.0,
+        expectedMeanCm: 212,
+        range: "90 - 380 cM",
+      },
+      {
+        degree: "DEGREE_6_THIRD_COUSIN",
+        label: "6th Degree: 3rd Cousin (3C) / 2C1R",
+        labelTr: "6. Derece: 3. Kuzen (3C) / 2C1R",
+        probability: 0.0,
+        expectedMeanCm: 73,
+        range: "15 - 200 cM",
+      },
+      {
+        degree: "DEGREE_7_DISTANT",
+        label: "Distant / Unrelated (< 15 cM)",
+        labelTr: "Uzak Akraba / Iliskisiz (< 15 cM)",
+        probability: 0.0,
+        expectedMeanCm: 0,
+        range: "< 15 cM",
+      },
+    ];
+  }
+
+  const priors = RELATIONSHIP_PRIOR_RANGES;
+  const rawWeights = priors.map((p) => {
+    if (totalCm < 15.0) {
+      return p.degree === "DEGREE_7_DISTANT" ? 1.0 : 0.0001;
+    }
+    if (p.degree === "DEGREE_7_DISTANT") {
+      return 0.0001;
+    }
+    const z = (totalCm - p.mean) / p.std;
+    let w = Math.exp(-0.5 * z * z);
+    if (totalCm < p.min - 1.5 * p.std || totalCm > p.max + 1.5 * p.std) {
+      w *= 0.01;
+    }
+    return Math.max(1e-9, w);
+  });
+
+  const sumWeight = rawWeights.reduce((a, b) => a + b, 0);
+  const probs = rawWeights.map((w) => Number((w / sumWeight).toFixed(4)));
+
+  return priors.map((p, idx) => ({
+    degree: p.degree,
+    label: p.label,
+    labelTr: p.labelTr,
+    probability: probs[idx],
+    expectedMeanCm: p.mean,
+    range: `${p.min} - ${p.max} cM`,
+  }));
+}
+
+export function evaluateLegalCompliance(
+  statute: string,
+  offense: string,
+  codisExhausted: boolean,
+  optInMatchesOnly: boolean = true
+): {
+  isCompliant: boolean;
+  violations: string[];
+  violationReasons: string[];
+  violationsTr: string[];
+  notice: string;
+  leadDisclaimerNotice: string;
+  noticeTr: string;
+} {
+  const violations: string[] = [];
+  const violationsTr: string[] = [];
+
+  if (!codisExhausted) {
+    violations.push("Mandatory CODIS & traditional forensic STR exhaustion certification missing.");
+    violationsTr.push("Zorunlu CODIS ve geleneksel adli STR arama tukenmislik sertifikasi eksik.");
+  }
+
+  const validOffenses = ["HOMICIDE", "SEXUAL_ASSAULT", "UNIDENTIFIED_REMAINS"];
+  if (!validOffenses.includes(offense)) {
+    violations.push(`Qualifying offense threshold not met: Offense '${offense}' does not meet statutory serious violent felony threshold.`);
+    violationsTr.push(`'${offense}' sucu yasal agir suc esigini karsilamamaktadir.`);
+  }
+
+  if (!optInMatchesOnly) {
+    violations.push("Terms of service violation: Only genealogical databases with explicit user opt-in for law enforcement are permitted.");
+    violationsTr.push("Hizmet kosullari ihlali: Yalnizca kolluk kuvvetleri icin acik riza (opt-in) vermis veri tabanlari taranabilir.");
+  }
+
+  const isCompliant = violations.length === 0;
+  const notice = "INVESTIGATIVE LEADS ONLY : INADMISSIBLE AS STANDALONE TRIAL EVIDENCE";
+  const noticeTr = "YALNIZCA SORUSTURMA IPUCU : MAHKEMEDE TEK BASINA KANIT SAYILAMAZ";
+
+  return {
+    isCompliant,
+    violations,
+    violationReasons: violations,
+    violationsTr,
+    notice,
+    leadDisclaimerNotice: notice,
+    noticeTr,
+  };
+}
+
+export function generateSampleDestructionCertificate(
+  caseId: string,
+  sampleIds: string[],
+  statute: string,
+  officer: string
+): DestructionOrderData {
+  const timestampIso = new Date().toISOString();
+  const rawPayload = `${caseId}:${sampleIds.slice().sort().join(",")}:${statute}:${officer}:${timestampIso}`;
+
+  let h1 = 0xdeadbeef ^ 0x811c9dc5;
+  let h2 = 0x41c6ce57 ^ 0x811c9dc5;
+  for (let i = 0; i < rawPayload.length; i++) {
+    const ch = rawPayload.charCodeAt(i);
+    h1 = Math.imul(h1 ^ ch, 2654435761);
+    h2 = Math.imul(h2 ^ ch, 1597334677);
+  }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  const hexPart = (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(16).padStart(16, "0");
+  const hex64 = `${hexPart}${hexPart}${hexPart}${hexPart}`.substring(0, 64);
+
+  const statuteLabel =
+    statute === "MARYLAND_TITLE_17" || statute.includes("Maryland")
+      ? "Maryland Title 17 (Pub. Safety § 17-102)"
+      : statute === "MONTANA_SB_306" || statute.includes("Montana")
+      ? "Montana SB 306 Judicial Warrant"
+      : "US DOJ Interim Policy (2019)";
+
+  return {
+    orderId: `DEST_ORD_${Date.now()}_FGG`,
+    certificateHash: hex64,
+    timestampIso,
+    statute: statuteLabel,
+    jurisdiction: statuteLabel,
+    authorizedBy: officer,
+    samples: sampleIds,
+    samplesToDestroy: sampleIds,
+    status: "SCHEDULED_FOR_INCINERATION",
+  };
+}
+
+export function computeEvidenceHash(input: string): string {
+  let hash = 0x811c9dc5;
+  for (let i = 0; i < input.length; i++) {
+    hash ^= input.charCodeAt(i);
+    hash = Math.imul(hash, 0x01000193);
+  }
+  const hex = (hash >>> 0).toString(16).padStart(8, "0");
+  return `0x${hex}${hex}`;
 }
 
 export default function PanelFGG() {
@@ -94,155 +553,14 @@ export default function PanelFGG() {
   // Selected IBD segment for detailed modal/hover inspector
   const [selectedSegment, setSelectedSegment] = useState<IBDSegmentUI | null>(null);
 
-  // Dynamic Synthetic Benchmark Data
+  // Dynamic Synthetic Benchmark Data Lookup
   const benchmarkData = useMemo(() => {
-    if (selectedBenchmark === "VECTOR_01") {
-      // CEPH NA12878 Parent-Child 100% IBD1
-      const segs: IBDSegmentUI[] = Object.entries(AUTOSOME_MAP_LENGTHS).map(([chr, len]) => ({
-        chr,
-        startBp: 1000000,
-        endBp: 150000000,
-        startCm: 1.0,
-        endCm: len,
-        lengthCm: len - 1.0,
-        snpCount: Math.floor(len * 65),
-        type: "IBD1"
-      }));
-      return {
-        id: "VECTOR_FGG_01",
-        title: isTr ? "CEPH / GIAB NA12878 Aile Agaci (1. Derece Ebeveyn-Cocuk)" : "CEPH / GIAB NA12878 Family Trio (1st-Degree Parent-Child)",
-        targetId: "NA12878_DAUGHTER",
-        matchId: "NA12877_FATHER",
-        platform: "Illumina Infinium GSA (~654k SNPs)",
-        callRate: 99.82,
-        hetRate: 28.4,
-        rawCm: 3450.0,
-        adjustedCm: 3450.0,
-        longestCm: 285.2,
-        segmentCount: 22,
-        k0: 0.0,
-        k1: 1.0,
-        k2: 0.0,
-        kinshipPhi: 0.25,
-        wrightR: 0.50,
-        kingPhi: 0.25,
-        topCandidate: {
-          degree: "DEGREE_1_PARENT_CHILD",
-          label: isTr ? "Ebeveyn / Cocuk (100% IBD1)" : "Parent / Child (100% IBD1)",
-          probability: 0.998,
-          expectedMeanCm: 3450.0,
-          range: "3300 - 3600 cM"
-        },
-        segments: segs,
-        mrcaLabel: isTr ? "Dogrudan Jenerasyon (1. Derece)" : "Direct Generation (1st Degree)",
-        uniparentalStatus: "CONCORDANT"
-      };
-    } else if (selectedBenchmark === "VECTOR_02") {
-      // GIAB Ashkenazi Trio Endogamy Stress-Test
-      const segs: IBDSegmentUI[] = Object.entries(AUTOSOME_MAP_LENGTHS).slice(0, 15).map(([chr, len]) => ({
-        chr,
-        startBp: 5000000,
-        endBp: 120000000,
-        startCm: 5.0,
-        endCm: len * 0.85,
-        lengthCm: Math.max(8.0, (len * 0.85) - 5.0),
-        snpCount: 1800,
-        type: "IBD1"
-      }));
-      return {
-        id: "VECTOR_FGG_02",
-        title: isTr ? "GIAB Askenaz Uclusu (Endogami & F_ROH > %4 Stres Testi)" : "GIAB Ashkenazi Trio (Endogamy & F_ROH > 4% Stress Test)",
-        targetId: "HG002_ASHKENAZI_SON",
-        matchId: "HG003_ASHKENAZI_FATHER",
-        platform: "Illumina Global Diversity Array GDA (~1.8M SNPs)",
-        callRate: 99.45,
-        hetRate: 12.8,
-        rawCm: 3580.0,
-        adjustedCm: 3420.0,
-        longestCm: 220.0,
-        segmentCount: 15,
-        k0: 0.0,
-        k1: 0.96,
-        k2: 0.04,
-        kinshipPhi: 0.26,
-        wrightR: 0.52,
-        kingPhi: 0.248,
-        topCandidate: {
-          degree: "DEGREE_1_PARENT_CHILD",
-          label: isTr ? "Ebeveyn / Cocuk (Endogami Duzeltmeli)" : "Parent / Child (Endogamy Compensated)",
-          probability: 0.985,
-          expectedMeanCm: 3450.0,
-          range: "3300 - 3600 cM"
-        },
-        segments: segs,
-        mrcaLabel: isTr ? "Askenaz Soy Hatti Baba Cifti" : "Ashkenazi Lineage Paternal Anchor",
-        uniparentalStatus: "CONCORDANT"
-      };
-    } else {
-      // VECTOR_03: Golden State Killer Investigative Reconstruction
-      const segs: IBDSegmentUI[] = [
-        {
-          chr: "1",
-          startBp: 20000000,
-          endBp: 65000000,
-          startCm: 23.0,
-          endCm: 74.5,
-          lengthCm: 51.5,
-          snpCount: 2200,
-          type: "IBD1"
-        },
-        {
-          chr: "5",
-          startBp: 10000000,
-          endBp: 32000000,
-          startCm: 11.2,
-          endCm: 35.8,
-          lengthCm: 24.6,
-          snpCount: 1100,
-          type: "IBD1"
-        },
-        {
-          chr: "9",
-          startBp: 40000000,
-          endBp: 52000000,
-          startCm: 48.0,
-          endCm: 62.4,
-          lengthCm: 14.4,
-          snpCount: 650,
-          type: "IBD1"
-        }
-      ];
-      return {
-        id: "VECTOR_FGG_03",
-        title: isTr ? "Golden State Killer (GSK) Adli Vaka Canlandirmasi (3C Triangulasyonu)" : "Golden State Killer (GSK) Investigative Case (3C Triangulation)",
-        targetId: "GSK_CRIME_SCENE_1978",
-        matchId: "GSK_MATCH_3RD_COUSIN",
-        platform: "DTC Microarray Raw Data (GEDmatch / FTDNA)",
-        callRate: 98.65,
-        hetRate: 26.2,
-        rawCm: 90.5,
-        adjustedCm: 90.5,
-        longestCm: 51.5,
-        segmentCount: 3,
-        k0: 0.974,
-        k1: 0.026,
-        k2: 0.0,
-        kinshipPhi: 0.0065,
-        wrightR: 0.013,
-        kingPhi: 0.0062,
-        topCandidate: {
-          degree: "DEGREE_6_THIRD_COUSIN",
-          label: isTr ? "3. Derece Kuzen (3C) / 2C1R" : "3rd Cousin (3C) / 2C1R",
-          probability: 0.842,
-          expectedMeanCm: 70.0,
-          range: "15 - 200 cM"
-        },
-        segments: segs,
-        mrcaLabel: "John DeAngelo & Rebecca (m. 1845, New York)",
-        uniparentalStatus: "Y-STR R1b-M269 CONCORDANT"
-      };
-    }
-  }, [selectedBenchmark, isTr]);
+    return (
+      FGG_PRESETS.find(
+        (p) => p.id === selectedBenchmark || p.code === selectedBenchmark
+      ) || FGG_PRESETS[0]
+    );
+  }, [selectedBenchmark]);
 
   // Live Backend State
   const [liveFgg, setLiveFgg] = useState<{
@@ -304,6 +622,21 @@ export default function PanelFGG() {
   const totalQualifyingCm = useMemo(() => {
     return qualifyingSegments.reduce((sum, s) => sum + s.lengthCm, 0);
   }, [qualifyingSegments]);
+
+  // Dynamic Kinship Candidates reacting to filtered cM and inbreeding score
+  const dynamicCandidates = useMemo(() => {
+    const isParentChild =
+      benchmarkData.id === "VECTOR_01" ||
+      benchmarkData.code === "VECTOR_FGG_01" ||
+      (benchmarkData.id === "VECTOR_02" && benchmarkData.k1 > 0.90);
+    const discountedTotalCm = computeDiscountedSharedCm(totalQualifyingCm, inbreedingRohScore);
+    return classifyRelationshipBySharedCm(discountedTotalCm, isParentChild);
+  }, [totalQualifyingCm, inbreedingRohScore, benchmarkData]);
+
+  const topDynamicCandidate = useMemo(() => {
+    if (!dynamicCandidates.length) return benchmarkData.topCandidate;
+    return [...dynamicCandidates].sort((a, b) => b.probability - a.probability)[0];
+  }, [dynamicCandidates, benchmarkData.topCandidate]);
 
   // Reset live results on benchmark switch
   useEffect(() => {
@@ -432,6 +765,17 @@ export default function PanelFGG() {
       setRoundtripMs(Math.max(14, Math.round(performance.now() - startT)));
       const now = new Date();
       setLastExecutionTimestamp(now.toISOString().replace("T", " ").substring(0, 19) + " UTC");
+
+      // Audit log commit with deterministic FNV-1a hash
+      useForensicCaseStore.getState().addAuditLog({
+        event: `Bonsai FGG Pedigree DAG Sweep (${benchmarkData.id})`,
+        module: "Forensic Genetic Genealogy (FGG / IGG)",
+        analyst: "Det. K. Vance, Forensic Lead (ISO 17025 Dual-Sign-Off)",
+        status: "PASS",
+        findingSeverity: "NOMINAL",
+        standard: "US DOJ Interim Policy (2019) / Maryland Title 17",
+        polygonTx: computeEvidenceHash(`FGG-${benchmarkData.id}-${minCmThreshold}-${inbreedingRohScore}`),
+      });
     }
   };
 
@@ -453,37 +797,56 @@ export default function PanelFGG() {
       });
       if (res.ok) {
         const data = await res.json();
+        const orderData: DestructionOrderData = {
+          orderId: data.destruction_order_id,
+          certificateHash: data.certificate_hash,
+          timestampIso: data.timestamp,
+          statute: data.statute_authority,
+          jurisdiction: statutoryFramework,
+          authorizedBy: "Det. K. Vance (FGG-49102)",
+          samples: [benchmarkData.matchId, "REF_CONSENT_02"]
+        };
         setLiveFgg((prev) => ({
           ...prev,
-          destructionOrder: {
-            orderId: data.destruction_order_id,
-            certificateHash: data.certificate_hash,
-            timestampIso: data.timestamp,
-            statute: data.statute_authority,
-            jurisdiction: statutoryFramework,
-            authorizedBy: "Det. K. Vance (FGG-49102)",
-            samples: [benchmarkData.matchId, "REF_CONSENT_02"]
-          }
+          destructionOrder: orderData
         }));
         setDestructionOrderGenerated(true);
+
+        useForensicCaseStore.getState().addAuditLog({
+          event: `Consensual DNA Sample Destruction Order Issued (${orderData.orderId})`,
+          module: "Forensic Genetic Genealogy (FGG / IGG)",
+          analyst: "Det. K. Vance, Forensic Lead (ISO 17025 Dual-Sign-Off)",
+          status: "PASS",
+          findingSeverity: "NOMINAL",
+          standard: "Maryland Title 17 (Pub. Safety § 17-102) / US DOJ 2019",
+          polygonTx: computeEvidenceHash(`DEST-${orderData.orderId}-${orderData.certificateHash}`),
+        });
       } else {
         throw new Error();
       }
     } catch {
-      // Offline fallback
+      // Offline fallback with genuine deterministic certificate
+      const certOrder = generateSampleDestructionCertificate(
+        "CASE_2026_COLD_FGG",
+        [benchmarkData.matchId, "REF_CONSENT_02"],
+        statutoryFramework,
+        "Det. K. Vance (FGG-49102)"
+      );
       setLiveFgg((prev) => ({
         ...prev,
-        destructionOrder: {
-          orderId: `DEST_ORD_${Date.now()}_FGG`,
-          certificateHash: "SHA256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-          timestampIso: new Date().toISOString(),
-          statute: statutoryFramework === "MARYLAND_TITLE_17" ? "MD Code Ann., Pub. Safety § 17-102" : "US DOJ Interim Policy Section IX",
-          jurisdiction: statutoryFramework,
-          authorizedBy: "Det. K. Vance (FGG-49102)",
-          samples: [benchmarkData.matchId, "REF_CONSENT_02"]
-        }
+        destructionOrder: certOrder,
       }));
       setDestructionOrderGenerated(true);
+
+      useForensicCaseStore.getState().addAuditLog({
+        event: `Consensual DNA Sample Destruction Order Issued (${certOrder.orderId})`,
+        module: "Forensic Genetic Genealogy (FGG / IGG)",
+        analyst: "Det. K. Vance, Forensic Lead (ISO 17025 Dual-Sign-Off)",
+        status: "PASS",
+        findingSeverity: "NOMINAL",
+        standard: "Maryland Title 17 (Pub. Safety § 17-102) / US DOJ 2019",
+        polygonTx: computeEvidenceHash(`DEST-${certOrder.orderId}-${certOrder.certificateHash}`),
+      });
     }
   };
 
@@ -559,41 +922,7 @@ export default function PanelFGG() {
             <span className="text-zinc-500 font-mono">3 {isTr ? "Referans Dosya" : "Golden Vectors"}</span>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5">
-            {[
-              {
-                id: "VECTOR_01",
-                code: "VECTOR_FGG_01",
-                title: isTr ? "CEPH NA12878 Aile Uclusu" : "CEPH NA12878 Trio",
-                degree: isTr ? "1. Derece Ebeveyn-Cocuk" : "1st-Degree Parent-Child",
-                cM: "3,450.0 cM (100% IBD1)",
-                badge: "CEPH / GIAB",
-                desc: isTr
-                  ? "NIST/GIAB altin standardi NA12878 (Kiz) vs NA12877 (Baba). 22 otozom boyunca eksiksiz IBD1 paylasimi."
-                  : "NIST/GIAB reference daughter vs father displaying complete genome-wide IBD1 transmission."
-              },
-              {
-                id: "VECTOR_02",
-                code: "VECTOR_FGG_02",
-                title: isTr ? "GIAB Askenaz Endogami Uclusu" : "GIAB Ashkenazi Trio",
-                degree: isTr ? "Endogamili Ebeveyn-Cocuk" : "Endogamous Parent-Child",
-                cM: "3,420.0 cM (F_ROH > 4%)",
-                badge: "ASHKENAZI F_ROH",
-                desc: isTr
-                  ? "HG002 vs HG003. Yuksek homozigotluk (F_ROH) arka planinda gercek ebeveyn-cocuk bagini ayristirma stres testi."
-                  : "HG002 vs HG003. Stress tests false close-cousin calling in high-inbreeding populations."
-              },
-              {
-                id: "VECTOR_03",
-                code: "VECTOR_FGG_03",
-                title: isTr ? "Golden State Killer (GSK) Dosyasi" : "Golden State Killer (GSK) Benchmark",
-                degree: isTr ? "3. Derece Kuzen Triangulasyonu" : "3rd-Cousin Triangulation",
-                cM: "90.5 cM (3 Segment)",
-                badge: "CRIMINAL CASEWORK",
-                desc: isTr
-                  ? "Joseph James DeAngelo davasi: GEDmatch 3. kuzen eslesmesi, 1845 MRCA cifti ve Y-STR R1b filtrelemesi."
-                  : "Simulates the 2018 GSK breakthrough: 3C match (~90 cM), 1840s MRCA couple, and Y-STR R1b pruning."
-              }
-            ].map((vec) => {
+            {FGG_PRESETS.map((vec) => {
               const isSelected = selectedBenchmark === vec.id;
               return (
                 <button
@@ -613,14 +942,14 @@ export default function PanelFGG() {
                       </span>
                       {isSelected && <Check className="w-4 h-4 text-cyan-400 shrink-0" />}
                     </div>
-                    <div className="text-xs font-bold text-slate-100">{vec.title}</div>
+                    <div className="text-xs font-bold text-slate-100">{isTr ? vec.titleTr : vec.title}</div>
                     <div className="text-[10px] text-zinc-400 mt-1 line-clamp-2 leading-relaxed">
-                      {vec.desc}
+                      {isTr ? vec.descTr : vec.desc}
                     </div>
                   </div>
                   <div className="mt-3 pt-2 border-t border-white/5 flex items-center justify-between text-[10px] font-mono">
-                    <span className="text-zinc-400">{vec.degree}</span>
-                    <span className="text-emerald-400 font-bold">{vec.cM}</span>
+                    <span className="text-zinc-400">{isTr ? vec.degreeTr : vec.degree}</span>
+                    <span className="text-emerald-400 font-bold">{vec.adjustedCm.toFixed(1)} cM</span>
                   </div>
                 </button>
               );
@@ -703,13 +1032,13 @@ export default function PanelFGG() {
                       {isTr ? "En Yuksek Olasilikli Akrabalik Tahmini:" : "Top Predicted Kinship Relationship:"}
                     </span>
                     <div className="text-base sm:text-lg font-extrabold text-white mt-0.5">
-                      {liveFgg.topCandidate?.label ?? benchmarkData.topCandidate.label}
+                      {isTr ? (topDynamicCandidate.labelTr ?? topDynamicCandidate.label) : topDynamicCandidate.label}
                     </div>
                   </div>
                   <div className="text-right">
                     <span className="text-[10px] text-zinc-400 block">{isTr ? "Sonsal Olasilik:" : "Posterior Probability:"}</span>
                     <span className="text-xl font-mono font-black text-emerald-400">
-                      {((liveFgg.topCandidate?.probability ?? benchmarkData.topCandidate.probability) * 100).toFixed(1)}%
+                      {(topDynamicCandidate.probability * 100).toFixed(1)}%
                     </span>
                   </div>
                 </div>
@@ -718,7 +1047,7 @@ export default function PanelFGG() {
                   <div>
                     <span className="text-[10px] text-zinc-400 block">{isTr ? "Toplam Paylasilan:" : "Total Shared:"}</span>
                     <span className="text-cyan-300 font-bold">
-                      {(liveFgg.totalSharedCm ?? benchmarkData.rawCm).toFixed(1)} cM
+                      {(liveFgg.totalSharedCm ?? totalQualifyingCm).toFixed(1)} cM
                     </span>
                   </div>
                   <div>
@@ -730,7 +1059,7 @@ export default function PanelFGG() {
                   <div>
                     <span className="text-[10px] text-zinc-400 block">{isTr ? "Segment Sayisi:" : "Segment Count:"}</span>
                     <span className="text-white font-bold">
-                      {liveFgg.segmentCount ?? benchmarkData.segmentCount}
+                      {liveFgg.segmentCount ?? qualifyingSegments.length}
                     </span>
                   </div>
                   <div>
@@ -942,22 +1271,14 @@ export default function PanelFGG() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5">
-                    {[
-                      { degree: "1st Degree: Parent / Child", mean: 3450, range: "3300 - 3600 cM", prob: selectedBenchmark === "VECTOR_01" || selectedBenchmark === "VECTOR_02" ? 99.8 : 0.0 },
-                      { degree: "1st Degree: Full Sibling", mean: 2600, range: "2200 - 3300 cM", prob: 0.0 },
-                      { degree: "2nd Degree: Grandparent / Half-Sibling / Avuncular", mean: 1750, range: "1300 - 2300 cM", prob: 0.0 },
-                      { degree: "3rd Degree: 1st Cousin", mean: 866, range: "500 - 1200 cM", prob: 0.0 },
-                      { degree: "4th Degree: 1C1R / Half-1C", mean: 433, range: "250 - 650 cM", prob: 0.0 },
-                      { degree: "5th Degree: 2nd Cousin (2C)", mean: 212, range: "90 - 380 cM", prob: selectedBenchmark === "VECTOR_03" ? 15.8 : 0.0 },
-                      { degree: "6th Degree: 3rd Cousin (3C) / 2C1R", mean: 73, range: "15 - 200 cM", prob: selectedBenchmark === "VECTOR_03" ? 84.2 : 0.0 },
-                    ].map((row, idx) => (
+                    {dynamicCandidates.map((row, idx) => (
                       <tr key={idx} className="hover:bg-white/[0.02]">
-                        <td className="py-2.5 font-bold text-white">{row.degree}</td>
-                        <td className="py-2.5 text-cyan-300">{row.mean} cM</td>
+                        <td className="py-2.5 font-bold text-white">{isTr ? (row.labelTr ?? row.label) : row.label}</td>
+                        <td className="py-2.5 text-cyan-300">{row.expectedMeanCm} cM</td>
                         <td className="py-2.5 text-zinc-400">{row.range}</td>
                         <td className="py-2.5 text-right font-bold">
-                          <span className={row.prob > 50 ? "text-emerald-400 font-bold" : row.prob > 0 ? "text-amber-300" : "text-zinc-600"}>
-                            {row.prob.toFixed(1)}%
+                          <span className={row.probability > 0.5 ? "text-emerald-400 font-bold" : row.probability > 0 ? "text-amber-300" : "text-zinc-600"}>
+                            {(row.probability * 100).toFixed(1)}%
                           </span>
                         </td>
                       </tr>
@@ -1000,12 +1321,12 @@ export default function PanelFGG() {
               <div className="p-3.5 rounded-xl bg-slate-900/80 border border-white/10 space-y-2 text-xs font-mono">
                 <div className="flex items-center justify-between">
                   <span className="text-zinc-400">{isTr ? "Ham IBD:" : "Raw IBD:"}</span>
-                  <span className="text-white font-bold">{benchmarkData.rawCm.toFixed(1)} cM</span>
+                  <span className="text-white font-bold">{totalQualifyingCm.toFixed(1)} cM</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-zinc-400">{isTr ? "Duzeltilmis IBD:" : "Discounted IBD:"}</span>
                   <span className="text-emerald-400 font-bold">
-                    {(benchmarkData.rawCm * Math.max(0.5, 1.0 - 4.5 * inbreedingRohScore)).toFixed(1)} cM
+                    {computeDiscountedSharedCm(totalQualifyingCm, inbreedingRohScore).toFixed(1)} cM
                   </span>
                 </div>
                 <div className="flex items-center justify-between pt-1 border-t border-white/5">

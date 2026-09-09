@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useIngestStore } from "@/store/ingestStore";
+import { useForensicCaseStore } from "@/store/forensicCaseStore";
 import {
     Globe,
     ShieldCheck,
@@ -54,11 +55,11 @@ export interface PanelBGAProps {
     selectedRegion?: string | null;
 }
 
-type TabType = "benchmarks" | "admixture" | "gis_map" | "snps_55" | "governance";
-type RefPanel = "gnomAD_v4" | "1000G" | "HGDP";
-type Jurisdiction = "ISFG" | "GERMANY_STPO" | "NETHERLANDS_SV";
+export type TabType = "benchmarks" | "admixture" | "gis_map" | "snps_55" | "governance";
+export type RefPanel = "gnomAD_v4" | "1000G" | "HGDP";
+export type Jurisdiction = "ISFG" | "GERMANY_STPO" | "NETHERLANDS_SV";
 
-interface ContinentalCentroid {
+export interface ContinentalCentroid {
     name: string;
     nameTr: string;
     lat: number;
@@ -66,7 +67,7 @@ interface ContinentalCentroid {
     color: string;
 }
 
-const CONTINENTAL_CENTROIDS: Record<string, ContinentalCentroid> = {
+export const CONTINENTAL_CENTROIDS: Record<string, ContinentalCentroid> = {
     EUR: { name: "European / West Eurasian", nameTr: "Avrupa / Bati Avrasya", lat: 48.50, lng: 15.20, color: "#3B82F6" },
     AFR: { name: "Sub-Saharan African", nameTr: "Sahra Alti Afrika", lat: 2.50, lng: 22.80, color: "#F59E0B" },
     EAS: { name: "East Asian", nameTr: "Dogu Asya", lat: 35.00, lng: 105.00, color: "#EC4899" },
@@ -75,9 +76,9 @@ const CONTINENTAL_CENTROIDS: Record<string, ContinentalCentroid> = {
     MID: { name: "Middle Eastern / West Asian", nameTr: "Orta Dogu / Bati Asya", lat: 29.50, lng: 45.00, color: "#06B6D4" },
 };
 
-const POPULATIONS = ["EUR", "AFR", "EAS", "SAS", "AMR", "MID"] as const;
+export const POPULATIONS = ["EUR", "AFR", "EAS", "SAS", "AMR", "MID"] as const;
 
-interface SnpAIMInfo {
+export interface SnpAIMInfo {
     gene: string;
     chr: string;
     ref: string;
@@ -86,7 +87,7 @@ interface SnpAIMInfo {
     freqs: Record<string, number>;
 }
 
-const AIM_55_MATRIX: Record<string, SnpAIMInfo> = {
+export const AIM_55_MATRIX: Record<string, SnpAIMInfo> = {
     rs3737576:  { gene: "CPM",        chr: "1q32.1", ref: "T", alt: "C", allele: "C", freqs: { AFR: 0.812, EUR: 0.221, EAS: 0.114, SAS: 0.325, AMR: 0.083, MID: 0.248 } },
     rs7554936:  { gene: "Intergenic", chr: "1q21.3", ref: "C", alt: "T", allele: "T", freqs: { AFR: 0.941, EUR: 0.385, EAS: 0.021, SAS: 0.412, AMR: 0.052, MID: 0.391 } },
     rs2814778:  { gene: "ACKR1",      chr: "1q23.2", ref: "T", alt: "C", allele: "C", freqs: { AFR: 0.992, EUR: 0.001, EAS: 0.000, SAS: 0.003, AMR: 0.021, MID: 0.085 } },
@@ -145,7 +146,7 @@ const AIM_55_MATRIX: Record<string, SnpAIMInfo> = {
 };
 
 // 5 Certified Reference Standards verbatim from bga_reference_datasets.py
-interface StandardPreset {
+export interface StandardPreset {
     id: string;
     name: string;
     pop: string;
@@ -154,7 +155,7 @@ interface StandardPreset {
     dosages: Record<string, number>;
 }
 
-const GOLDEN_STANDARDS: StandardPreset[] = [
+export const GOLDEN_STANDARDS: StandardPreset[] = [
     {
         id: "NA12878_CEU_EUROPEAN",
         name: "NIST RM 8398 / NA12878",
@@ -221,10 +222,14 @@ const GOLDEN_STANDARDS: StandardPreset[] = [
     }
 ];
 
-// Client-side mathematical formulation engine fallback
-function computeLocalBGA(snps: Record<string, number>, refPanel: RefPanel) {
+// ===============================================================================
+// PURE BIOCOMPUTATIONAL FORMULATION KERNEL (Pillar 3.2: 55-SNP AIM Engine)
+// ===============================================================================
+
+export function computeBGAPosteriors(snps: Record<string, number>, refPanel: RefPanel = "gnomAD_v4") {
     const pops = ["EUR", "AFR", "EAS", "SAS", "AMR", "MID"] as const;
     const logL: Record<string, number> = { EUR: 0, AFR: 0, EAS: 0, SAS: 0, AMR: 0, MID: 0 };
+    const alpha = 0.001; // Laplace smoothing parameter from research spec Section 3.1
 
     Object.entries(snps).forEach(([rsid, dosage]) => {
         const item = AIM_55_MATRIX[rsid];
@@ -232,14 +237,20 @@ function computeLocalBGA(snps: Record<string, number>, refPanel: RefPanel) {
         const freqs = item.freqs;
 
         pops.forEach((p) => {
-            let f = Math.max(0.001, Math.min(0.999, freqs[p] ?? 0.05));
-            if (refPanel === "gnomAD_v4") {
-                f = (f * 807162 + 0.5) / (807162 + 1.0);
-            }
+            const rawF = freqs[p] ?? 0.05;
+            let effN = 2000;
+            if (refPanel === "gnomAD_v4") effN = 807162;
+            else if (refPanel === "1000G") effN = 2504;
+            else if (refPanel === "HGDP") effN = 1043;
+
+            let f = (rawF * effN + alpha) / (effN + 2.0 * alpha);
+            f = Math.max(0.0001, Math.min(0.9999, f));
+
             let prob = 1.0;
             if (dosage === 2) prob = f * f;
-            else if (dosage === 1) prob = 2 * f * (1 - f);
-            else prob = (1 - f) * (1 - f);
+            else if (dosage === 1) prob = 2.0 * f * (1.0 - f);
+            else prob = (1.0 - f) * (1.0 - f);
+
             logL[p] += Math.log(Math.max(prob, 1e-12));
         });
     });
@@ -252,20 +263,11 @@ function computeLocalBGA(snps: Record<string, number>, refPanel: RefPanel) {
     const props: Record<string, number> = {};
     pops.forEach((p) => { props[p] = sumExp > 0 ? expL[p] / sumExp : 1.0 / pops.length; });
 
-    // 3D Spherical Direction Cosines WGS84
-    let vx = 0, vy = 0, vz = 0;
-    pops.forEach((p) => {
-        const q = props[p];
-        const latRad = (CONTINENTAL_CENTROIDS[p].lat * Math.PI) / 180;
-        const lngRad = (CONTINENTAL_CENTROIDS[p].lng * Math.PI) / 180;
-        vx += q * Math.cos(latRad) * Math.cos(lngRad);
-        vy += q * Math.cos(latRad) * Math.sin(lngRad);
-        vz += q * Math.sin(latRad);
-    });
-
-    const vNorm = Math.sqrt(vx * vx + vy * vy + vz * vz);
-    const latDeg = vNorm > 0 ? (Math.asin(vz / vNorm) * 180) / Math.PI : 0;
-    const lngDeg = vNorm > 0 ? (Math.atan2(vy, vx) * 180) / Math.PI : 0;
+    // Enforce sum-to-one simplex normalization
+    const rawSum = Object.values(props).reduce((a, b) => a + b, 0);
+    pops.forEach((p) => { props[p] = Math.round((props[p] / (rawSum || 1.0)) * 10000) / 10000; });
+    const finalSum = Object.values(props).reduce((a, b) => a + b, 0);
+    props[pops[0]] = Math.round((props[pops[0]] + (1.0 - finalSum)) * 10000) / 10000;
 
     let domPop = "EUR";
     let maxProp = -1;
@@ -276,33 +278,88 @@ function computeLocalBGA(snps: Record<string, number>, refPanel: RefPanel) {
         }
     });
 
+    return { props, logLikelihoods: logL, domPop, domProp: maxProp };
+}
+
+export function projectWGS84Centroid(props: Record<string, number>) {
+    const pops = ["EUR", "AFR", "EAS", "SAS", "AMR", "MID"] as const;
+    let vx = 0, vy = 0, vz = 0;
+    pops.forEach((p) => {
+        const q = props[p] ?? 0;
+        const centroid = CONTINENTAL_CENTROIDS[p];
+        if (!centroid) return;
+        const latRad = (centroid.lat * Math.PI) / 180;
+        const lngRad = (centroid.lng * Math.PI) / 180;
+        vx += q * Math.cos(latRad) * Math.cos(lngRad);
+        vy += q * Math.cos(latRad) * Math.sin(lngRad);
+        vz += q * Math.sin(latRad);
+    });
+
+    const vNorm = Math.sqrt(vx * vx + vy * vy + vz * vz);
+    if (vNorm < 1e-9) {
+        return {
+            lat: 0.0,
+            lng: 0.0,
+            vectorNorm: 0.0,
+        };
+    }
+    const latDeg = (Math.asin(Math.max(-1.0, Math.min(1.0, vz / vNorm))) * 180) / Math.PI;
+    const lngDeg = (Math.atan2(vy, vx) * 180) / Math.PI;
+
+    return {
+        lat: Math.round(latDeg * 10000) / 10000,
+        lng: Math.round(lngDeg * 10000) / 10000,
+        vectorNorm: Math.round(vNorm * 1000) / 1000,
+    };
+}
+
+export function evaluateFullBGA(snps: Record<string, number>, refPanel: RefPanel = "gnomAD_v4") {
+    const post = computeBGAPosteriors(snps, refPanel);
+    const gis = projectWGS84Centroid(post.props);
+
     // Shannon Entropy and Simpson Diversity
     let entropy = 0;
     let sumSq = 0;
+    const pops = ["EUR", "AFR", "EAS", "SAS", "AMR", "MID"] as const;
     pops.forEach((p) => {
-        if (props[p] > 1e-6) entropy -= props[p] * Math.log(props[p]);
-        sumSq += props[p] * props[p];
+        const q = post.props[p] ?? 0;
+        if (q > 1e-6) entropy -= q * Math.log(q);
+        sumSq += q * q;
     });
 
     const semiMajorKm = Math.round((220 + (entropy * 340)) * 10) / 10;
     const semiMinorKm = Math.round((160 + (entropy * 210)) * 10) / 10;
 
+    let admixtureClass: "HOMOGENEOUS" | "BI_ADMIXED" | "MULTI_ADMIXED" = "MULTI_ADMIXED";
+    if (post.domProp >= 0.80) {
+        admixtureClass = "HOMOGENEOUS";
+    } else {
+        const sortedProps = Object.values(post.props).sort((a, b) => b - a);
+        if ((sortedProps[0] + sortedProps[1]) >= 0.80) {
+            admixtureClass = "BI_ADMIXED";
+        }
+    }
+
     return {
-        props,
-        logLikelihoods: logL,
-        domPop,
-        domProp: maxProp,
-        lat: latDeg,
-        lng: lngDeg,
+        props: post.props,
+        logLikelihoods: post.logLikelihoods,
+        domPop: post.domPop,
+        domProp: post.domProp,
+        lat: gis.lat,
+        lng: gis.lng,
         entropy: Math.round(entropy * 1000) / 1000,
         simpsonDiversity: Math.round((1.0 - sumSq) * 1000) / 1000,
         semiMajorKm,
         semiMinorKm,
         tiltAngleDeg: 14.5,
-        vectorNorm: Math.round(vNorm * 1000) / 1000,
-        assayedCount: Object.keys(snps).length
+        vectorNorm: gis.vectorNorm,
+        assayedCount: Object.keys(snps).length,
+        admixtureClass,
+        isSimplexValid: Math.abs(Object.values(post.props).reduce((a, b) => a + b, 0) - 1.0) <= 1e-4,
     };
 }
+
+export const computeLocalBGA = evaluateFullBGA;
 
 export default function PanelBGA({
     data,
@@ -313,6 +370,7 @@ export default function PanelBGA({
     const { lang } = useSaasLanguage();
     const isTr = lang === "tr";
     const activeProfile = useIngestStore((s) => s.activeProfile);
+    const { activeCase, addAuditLog } = useForensicCaseStore();
 
     const [activeTab, setActiveTab] = useState<TabType>("benchmarks");
     const [selectedRefPanel, setSelectedRefPanel] = useState<RefPanel>("gnomAD_v4");
@@ -334,54 +392,65 @@ export default function PanelBGA({
     const [executionLatencyMs, setExecutionLatencyMs] = useState(48);
     const [copiedShield, setCopiedShield] = useState(false);
 
-    // Sync from activeProfile if present
+    // Sync from activeCase or activeProfile if present
     useEffect(() => {
-        if (activeProfile?.snpMarkers && Object.keys(activeProfile.snpMarkers).length > 0) {
+        const caseMarkers = activeCase?.profile?.snpMarkers;
+        const markers = caseMarkers || activeProfile?.snpMarkers;
+        if (markers && Object.keys(markers).length > 0) {
             const next: Record<string, number> = { ...snpDosages };
-            Object.entries(activeProfile.snpMarkers).forEach(([rsid, val]) => {
-                if (val.dosage !== undefined) {
-                    next[rsid] = val.dosage;
-                } else if (val.genotype === "A/A" || val.genotype === "1/1" || val.genotype === "G/G" || val.genotype === "C/C") {
-                    next[rsid] = 2;
-                } else if (val.genotype === "A/G" || val.genotype === "0/1" || val.genotype === "T/C") {
-                    next[rsid] = 1;
-                } else {
-                    next[rsid] = 0;
+            let hasUpdate = false;
+            Object.entries(markers).forEach(([rsid, val]: [string, any]) => {
+                if (AIM_55_MATRIX[rsid]) {
+                    hasUpdate = true;
+                    if (val.dosage !== undefined) {
+                        next[rsid] = val.dosage;
+                    } else if (val.genotype === "A/A" || val.genotype === "1/1" || val.genotype === "G/G" || val.genotype === "C/C") {
+                        next[rsid] = 2;
+                    } else if (val.genotype === "A/G" || val.genotype === "0/1" || val.genotype === "T/C") {
+                        next[rsid] = 1;
+                    } else {
+                        next[rsid] = 0;
+                    }
                 }
             });
-            setSnpDosages(next);
+            if (hasUpdate) {
+                setSnpDosages(next);
+            }
         }
-    }, [activeProfile?.profileId, activeProfile?.sampleType]);
+    }, [activeCase?.metadata?.caseId, activeProfile?.profileId]);
 
-    // Fast local baseline computation
-    const localResult = useMemo(() => computeLocalBGA(snpDosages, selectedRefPanel), [snpDosages, selectedRefPanel]);
+    // Initial baseline computation
+    const initialLocal = useMemo(() => evaluateFullBGA(snpDosages, selectedRefPanel), []);
 
     // Live API state
     const [bgaResult, setBgaResult] = useState({
-        props: localResult.props,
-        logLikelihoods: localResult.logLikelihoods,
-        domPop: localResult.domPop,
-        domProp: localResult.domProp,
-        lat: localResult.lat,
-        lng: localResult.lng,
-        entropy: localResult.entropy,
-        simpsonDiversity: localResult.simpsonDiversity,
-        semiMajorKm: localResult.semiMajorKm,
-        semiMinorKm: localResult.semiMinorKm,
-        tiltAngleDeg: localResult.tiltAngleDeg,
-        vectorNorm: localResult.vectorNorm,
-        assayedCount: localResult.assayedCount,
-        isSimplexValid: true,
-        admixtureClass: "HOMOGENEOUS",
+        props: initialLocal.props,
+        logLikelihoods: initialLocal.logLikelihoods,
+        domPop: initialLocal.domPop,
+        domProp: initialLocal.domProp,
+        lat: initialLocal.lat,
+        lng: initialLocal.lng,
+        entropy: initialLocal.entropy,
+        simpsonDiversity: initialLocal.simpsonDiversity,
+        semiMajorKm: initialLocal.semiMajorKm,
+        semiMinorKm: initialLocal.semiMinorKm,
+        tiltAngleDeg: initialLocal.tiltAngleDeg,
+        vectorNorm: initialLocal.vectorNorm,
+        assayedCount: initialLocal.assayedCount,
+        isSimplexValid: initialLocal.isSimplexValid,
+        admixtureClass: initialLocal.admixtureClass,
         isBackendConnected: false
     });
 
-    // Real API fetch execution
-    const runAnalysis = useCallback(async (dosagesToRun = snpDosages) => {
+    // Real API fetch execution with zero-stale direct computation
+    const runAnalysis = useCallback(async (dosagesToRun: Record<string, number> = snpDosages) => {
         setIsExecuting(true);
         setProgressPct(15);
         const tStart = performance.now();
         const API_BASE = getApiBaseUrl();
+
+        // Fresh direct calculation guaranteed to reflect dosagesToRun
+        const directLocal = evaluateFullBGA(dosagesToRun, selectedRefPanel);
 
         try {
             setProgressPct(45);
@@ -403,41 +472,41 @@ export default function PanelBGA({
             const ell = gis.confidence_ellipse || {};
 
             setBgaResult({
-                props: adm.proportions || localResult.props,
-                logLikelihoods: adm.log_likelihoods || localResult.logLikelihoods,
-                domPop: adm.dominant_population || localResult.domPop,
-                domProp: adm.dominant_proportion ?? localResult.domProp,
-                lat: gis.latitude ?? localResult.lat,
-                lng: gis.longitude ?? localResult.lng,
-                entropy: Math.round((adm.shannon_entropy ?? localResult.entropy) * 1000) / 1000,
-                simpsonDiversity: Math.round((adm.simpson_diversity ?? localResult.simpsonDiversity) * 1000) / 1000,
-                semiMajorKm: ell.semi_major_km ?? localResult.semiMajorKm,
-                semiMinorKm: ell.semi_minor_km ?? localResult.semiMinorKm,
+                props: adm.proportions || directLocal.props,
+                logLikelihoods: adm.log_likelihoods || directLocal.logLikelihoods,
+                domPop: adm.dominant_population || directLocal.domPop,
+                domProp: adm.dominant_proportion ?? directLocal.domProp,
+                lat: gis.latitude ?? directLocal.lat,
+                lng: gis.longitude ?? directLocal.lng,
+                entropy: Math.round((adm.shannon_entropy ?? directLocal.entropy) * 1000) / 1000,
+                simpsonDiversity: Math.round((adm.simpson_diversity ?? directLocal.simpsonDiversity) * 1000) / 1000,
+                semiMajorKm: ell.semi_major_km ?? directLocal.semiMajorKm,
+                semiMinorKm: ell.semi_minor_km ?? directLocal.semiMinorKm,
                 tiltAngleDeg: ell.tilt_angle_deg ?? 14.5,
-                vectorNorm: localResult.vectorNorm,
+                vectorNorm: directLocal.vectorNorm,
                 assayedCount: adm.assayed_snps_count ?? Object.keys(dosagesToRun).length,
                 isSimplexValid: adm.is_simplex_valid ?? true,
-                admixtureClass: adm.admixture_classification || (localResult.domProp >= 0.85 ? "HOMOGENEOUS" : "BI_ADMIXED"),
+                admixtureClass: adm.admixture_classification || directLocal.admixtureClass,
                 isBackendConnected: true
             });
         } catch {
-            // Smooth client-side fallback
+            // Deterministic mathematical client-side fallback using direct calculation
             setBgaResult({
-                props: localResult.props,
-                logLikelihoods: localResult.logLikelihoods,
-                domPop: localResult.domPop,
-                domProp: localResult.domProp,
-                lat: localResult.lat,
-                lng: localResult.lng,
-                entropy: localResult.entropy,
-                simpsonDiversity: localResult.simpsonDiversity,
-                semiMajorKm: localResult.semiMajorKm,
-                semiMinorKm: localResult.semiMinorKm,
-                tiltAngleDeg: localResult.tiltAngleDeg,
-                vectorNorm: localResult.vectorNorm,
+                props: directLocal.props,
+                logLikelihoods: directLocal.logLikelihoods,
+                domPop: directLocal.domPop,
+                domProp: directLocal.domProp,
+                lat: directLocal.lat,
+                lng: directLocal.lng,
+                entropy: directLocal.entropy,
+                simpsonDiversity: directLocal.simpsonDiversity,
+                semiMajorKm: directLocal.semiMajorKm,
+                semiMinorKm: directLocal.semiMinorKm,
+                tiltAngleDeg: directLocal.tiltAngleDeg,
+                vectorNorm: directLocal.vectorNorm,
                 assayedCount: Object.keys(dosagesToRun).length,
-                isSimplexValid: true,
-                admixtureClass: localResult.domProp >= 0.85 ? "HOMOGENEOUS" : "BI_ADMIXED",
+                isSimplexValid: directLocal.isSimplexValid,
+                admixtureClass: directLocal.admixtureClass,
                 isBackendConnected: false
             });
         } finally {
@@ -446,28 +515,83 @@ export default function PanelBGA({
             setProgressPct(100);
             setTimeout(() => setIsExecuting(false), 200);
         }
-    }, [snpDosages, localResult]);
+    }, [snpDosages, selectedRefPanel]);
 
     // Initial load and whenever ref panel changes
     useEffect(() => {
         runAnalysis();
     }, [selectedRefPanel]);
 
-    // Standard preset loader
+    // Standard preset loader with ISO/IEC 17025 audit trail
     const loadStandard = (std: StandardPreset) => {
         setSelectedStandardId(std.id);
         setSnpDosages({ ...std.dosages });
+        addAuditLog?.({
+            event: `Loaded BGA certified golden standard ${std.id} (${std.pop}) with ${Object.keys(std.dosages).length} AIM markers`,
+            module: "15. 55-SNP AIM Biogeographic Ancestry",
+            analyst: activeCase?.metadata?.leadAnalyst || "Forensic Ancestry Specialist",
+            status: "PASS",
+            standard: "Kidd et al. (2014) / ISFG 2020",
+            findingSeverity: "NOMINAL"
+        });
         runAnalysis({ ...std.dosages });
     };
 
-    // Cycle dosage 0 -> 1 -> 2 -> 0
+    // Cycle dosage 0 -> 1 -> 2 -> 0 with ISO/IEC 17025 audit trail
     const toggleDosage = (rsid: string) => {
         const next = {
             ...snpDosages,
             [rsid]: ((snpDosages[rsid] ?? 0) + 1) % 3
         };
         setSnpDosages(next);
+        addAuditLog?.({
+            event: `Toggled dosage for 55-SNP AIM marker ${rsid} to d=${next[rsid]}`,
+            module: "15. 55-SNP AIM Biogeographic Ancestry",
+            analyst: activeCase?.metadata?.leadAnalyst || "Forensic Ancestry Specialist",
+            status: "PASS",
+            standard: "Kidd et al. (2014) / ISFG 2020",
+            findingSeverity: "INFORMATIONAL"
+        });
         runAnalysis(next);
+    };
+
+    // Reference Panel Switcher with ISO/IEC 17025 audit trail
+    const handleSetRefPanel = (panel: RefPanel) => {
+        setSelectedRefPanel(panel);
+        addAuditLog?.({
+            event: `Switched BGA reference population matrix to ${panel}`,
+            module: "15. 55-SNP AIM Biogeographic Ancestry",
+            analyst: activeCase?.metadata?.leadAnalyst || "Forensic Ancestry Specialist",
+            status: "PASS",
+            standard: "Kidd et al. (2014) / ISFG 2020",
+            findingSeverity: "NOMINAL"
+        });
+    };
+
+    // Statutory Jurisdiction Toggle with ISO/IEC 17025 audit trail
+    const handleSetJurisdiction = (jur: Jurisdiction) => {
+        setActiveJurisdiction(jur);
+        addAuditLog?.({
+            event: `Set BGA statutory compliance mode to ${jur}`,
+            module: "15. 55-SNP AIM Biogeographic Ancestry",
+            analyst: activeCase?.metadata?.leadAnalyst || "Forensic Ancestry Specialist",
+            status: "PASS",
+            standard: "German § 81e (2) StPO / ISFG 2020",
+            findingSeverity: jur === "GERMANY_STPO" ? "ELEVATED" : "NOMINAL"
+        });
+    };
+
+    // Pipeline Execution Handler with ISO/IEC 17025 audit trail
+    const handleExecutePipeline = () => {
+        addAuditLog?.({
+            event: `Executed 55-SNP AIM Dirichlet deconvolution pipeline under ${selectedRefPanel} (${Object.keys(snpDosages).length} markers)`,
+            module: "15. 55-SNP AIM Biogeographic Ancestry",
+            analyst: activeCase?.metadata?.leadAnalyst || "Forensic Ancestry Specialist",
+            status: "PASS",
+            standard: "Kidd et al. (2014) / ISFG 2020",
+            findingSeverity: "NOMINAL"
+        });
+        runAnalysis();
     };
 
     // Filtered SNPs for catalog
@@ -562,7 +686,7 @@ export default function PanelBGA({
                                 <button
                                     key={panel}
                                     type="button"
-                                    onClick={() => setSelectedRefPanel(panel)}
+                                    onClick={() => handleSetRefPanel(panel)}
                                     className={`min-h-[44px] px-3 py-1.5 rounded-lg transition-all flex items-center gap-1 cursor-pointer ${
                                         selectedRefPanel === panel
                                             ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow"
@@ -579,7 +703,7 @@ export default function PanelBGA({
                         <div className="flex items-center bg-black/40 border border-tactical-border/60 rounded-xl p-1 text-[10px] font-bold">
                             <button
                                 type="button"
-                                onClick={() => setActiveJurisdiction("ISFG")}
+                                onClick={() => handleSetJurisdiction("ISFG")}
                                 className={`min-h-[44px] px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
                                     activeJurisdiction === "ISFG"
                                         ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow"
@@ -591,7 +715,7 @@ export default function PanelBGA({
                             </button>
                             <button
                                 type="button"
-                                onClick={() => setActiveJurisdiction("GERMANY_STPO")}
+                                onClick={() => handleSetJurisdiction("GERMANY_STPO")}
                                 className={`min-h-[44px] px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
                                     activeJurisdiction === "GERMANY_STPO"
                                         ? "bg-rose-500/20 text-rose-300 border border-rose-500/40 shadow"
@@ -606,7 +730,7 @@ export default function PanelBGA({
                         {/* Execute Trigger */}
                         <button
                             type="button"
-                            onClick={() => runAnalysis()}
+                            onClick={handleExecutePipeline}
                             disabled={isExecuting}
                             className="min-h-[44px] px-4 py-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white rounded-xl font-extrabold text-xs flex items-center gap-2 shadow-lg shadow-cyan-900/30 transition-all cursor-pointer disabled:opacity-50"
                         >
@@ -1331,7 +1455,7 @@ export default function PanelBGA({
                                     </div>
                                     <button
                                         type="button"
-                                        onClick={() => setActiveJurisdiction(isGermanRedacted ? "ISFG" : "GERMANY_STPO")}
+                                        onClick={() => handleSetJurisdiction(isGermanRedacted ? "ISFG" : "GERMANY_STPO")}
                                         className={`min-h-[44px] px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                                             isGermanRedacted
                                                 ? "bg-rose-500/20 text-rose-300 border border-rose-500/40"

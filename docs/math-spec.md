@@ -3416,3 +3416,41 @@ All numerical phenotype probabilities must be accompanied by the mandatory activ
 $$P(E \mid H_p) \ne P(H_p \mid E)$$
 Phenotypic inferences represent conditional likelihoods of visible traits given DNA profiles for intelligence and lead generation, and must never be inverted into posterior probabilities of individual identity in court proceedings.
 
+---
+
+## 93. 55-SNP AIM Dirichlet-Multinomial Biogeographical Ancestry Deconvolution & 3D WGS84 Geodesic Projection (Kidd et al. 2014)
+
+### 93.1 Multi-Locus Genotype Likelihood & Dirichlet-Multinomial Smoothing
+Biogeographical ancestry deconvolution across 6 continental reference populations ($K=6$: EUR, AFR, EAS, SAS, AMR, MID) models the likelihood of individual 55-SNP AIM genotype vectors $\mathbf{G} = (g_1, g_2, \dots, g_{55})$.
+For each locus $j$ with sample effect allele dosage $g_j \in \{0, 1, 2\}$ and reference population allele frequency $f_{j, k}$, Hardy-Weinberg genotype likelihoods are:
+$$P(g_j = 2 \mid f_{j, k}) = f_{j, k}^2$$
+$$P(g_j = 1 \mid f_{j, k}) = 2 f_{j, k} (1 - f_{j, k})$$
+$$P(g_j = 0 \mid f_{j, k}) = (1 - f_{j, k})^2$$
+To mitigate zero-probability anomalies caused by finite reference cohorts, Laplace Dirichlet-Multinomial smoothing ($\alpha = 0.001$) is applied with cohort effective size $N_{\text{eff}}$:
+$$f_{j, k}^* = \frac{f_{j, k} \cdot N_{\text{eff}} + \alpha}{N_{\text{eff}} + 2 \alpha}$$
+Where $N_{\text{eff}} = 807,162$ for gnomAD v4, $N_{\text{eff}} = 2,504$ for 1000 Genomes NYGC, and $N_{\text{eff}} = 1,043$ for HGDP.
+Assuming linkage equilibrium across all autosomal AISNP markers, multilocus log-likelihoods are:
+$$\ln L(C_k \mid \mathbf{G}) = \sum_{j=1}^{55} \ln P(g_j \mid f_{j, k}^*)$$
+
+### 93.2 Continental Admixture Proportions & Simplex Invariant
+Posterior continental ancestry proportions $q_k = P(C_k \mid \mathbf{G})$ under an uninformative prior ($P(C_k) = 1/6$) are normalized via Softmax on log-likelihoods:
+$$q_k = \frac{\exp(\ln L(C_k \mid \mathbf{G}) - \max_l \ln L(C_l \mid \mathbf{G}))}{\sum_{m=1}^6 \exp(\ln L(C_m \mid \mathbf{G}) - \max_l \ln L(C_l \mid \mathbf{G}))}$$
+Probability simplex sum-to-one invariant constraint:
+$$\sum_{k=1}^6 q_k = 1.0000 \quad (| \sum q_k - 1.0 | \le 10^{-6}, \quad q_k \ge 0)$$
+Admixture classification decision rule:
+$$\text{Class} = \begin{cases} \text{HOMOGENEOUS} & \text{if } \max_k q_k \ge 0.80 \\ \text{BI\_ADMIXED} & \text{if } q_{(1)} + q_{(2)} \ge 0.80 \\ \text{MULTI\_ADMIXED} & \text{otherwise} \end{cases}$$
+
+### 93.3 3D Direction Cosines WGS84 Geodesic Projection
+Weighted geographic location coordinates $(\bar{\lambda}, \bar{\phi})$ - latitude and longitude on the WGS84 ellipsoidal surface - are derived by projecting continental centroid anchors $(\lambda_k, \phi_k)$ into 3D Cartesian coordinates via spherical direction cosines:
+$$V_x = \sum_{k=1}^6 q_k \cos(\lambda_k) \cos(\phi_k), \quad V_y = \sum_{k=1}^6 q_k \cos(\lambda_k) \sin(\phi_k), \quad V_z = \sum_{k=1}^6 q_k \sin(\lambda_k)$$
+$$\|V\| = \sqrt{V_x^2 + V_y^2 + V_z^2}$$
+For non-degenerate vectors ($\|V\| \ge 10^{-9}$):
+$$\bar{\lambda} = \arcsin\left(\frac{V_z}{\|V\|}\right) \cdot \frac{180^\circ}{\pi}, \quad \bar{\phi} = \text{atan2}(V_y, V_x) \cdot \frac{180^\circ}{\pi}$$
+Bivariate spatial dispersion and 95% confidence ellipse dimensions derive from multilocus Shannon entropy $H = -\sum q_k \ln q_k$:
+$$a_{\text{semi-major}} = 220.0 + 340.0 \cdot H \text{ km}, \quad b_{\text{semi-minor}} = 160.0 + 210.0 \cdot H \text{ km}$$
+
+### 93.4 Statutory Compliance Gating (German Code of Criminal Procedure § 81e (2) StPO)
+Under German criminal procedure law, biogeographical ancestry inferred from trace DNA is legally restricted from courtroom submission. When § 81e StPO compliance mode is active:
+$$q_k^{(\text{redacted})} = \text{[REDACTED]}, \quad (\bar{\lambda}, \bar{\phi})^{(\text{redacted})} = \text{[COORDINATES MASKED]}$$
+Authorized phenotype characteristics (pigmentation phototype, iris color, hair morphology) and epigenetic biological age remain active and disclosable.
+

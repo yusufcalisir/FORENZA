@@ -198,7 +198,7 @@ async def analyze_msi_optical(req: MsiAnalysisRequest) -> MsiAnalysisResponse:
     "/ftir-raman-hqi-match",
     response_model=TraceSpectroscopyResponse,
     status_code=status.HTTP_200_OK,
-    summary="ATR-FTIR & Raman Trace Spectral Matching (Hit Quality Index — HQI)",
+    summary="ATR-FTIR & Raman Trace Spectral Matching (Hit Quality Index - HQI)",
     description="Compares unknown sample intensity spectrum against the forensic fiber & polymer library using normalized squared dot product (HQI >= 90.0% match)."
 )
 async def match_trace_spectroscopy(req: TraceSpectroscopyRequest) -> TraceSpectroscopyResponse:

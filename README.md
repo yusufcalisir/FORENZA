@@ -347,13 +347,22 @@ str-analysis/
 │       │   │   ├── PanelTelomere.tsx      # Telomere Biological Chronometer & Somatic Mosaicism 5-Tab Forensic Studio
 │       │   │   ├── PanelMicrobiome.tsx    # Forensic Microbiome & Thanatometagenomics 5-Tab Forensic Studio
 │       │   │   ├── MicrobiomeAnalysisPanel.tsx # Backward-Compatible Re-Export Bridge for PanelMicrobiome
-│       │   │   ├── GeoForensicIntelligencePanel.tsx # Multi-Modal Geo-Forensic Platform (Subsystems 34-38)
-│       │   │   ├── PanelIsoscape.tsx      # Multi-Isotope Isoscape Spatial Provenance Panel
-│       │   │   ├── PanelSoil.tsx          # Forensic Soil Pedology & Geochemical CoDa Panel
-│       │   │   ├── PanelPalynology.tsx    # Forensic Palynology & Environmental eDNA Panel
-│       │   │   ├── PanelRossmo.tsx        # Rossmo Bayesian Geographic Profiling Panel
+│       │   │   ├── BpaAreaOfOriginPanel.tsx # 3D Bloodstain Pattern Area of Origin Studio (Subsystem 24)
+│       │   │   ├── BallisticsGsrPanel.tsx # Ballistics & SEM-EDX GSR Studio (Subsystem 25)
+│       │   │   ├── EntomologyPmiPanel.tsx # Forensic Entomology & Minimum PMI Studio (Subsystem 26)
+│       │   │   ├── TraceSpectroscopyPanel.tsx # Trace Micro-Spectroscopy & MSI Studio (Subsystem 27)
+│       │   │   ├── ToxicologyPmrPanel.tsx # Post-Mortem Toxicokinetics & PMR Studio (Subsystem 28)
+│       │   │   ├── MerkleLedgerPanel.tsx  # Binary Merkle Tree Custody Ledger (Subsystem 29)
+│       │   │   ├── ZkpAuditorPanel.tsx    # ZK-SNARK Proving Systems & Verifiable Computation (Subsystem 30)
+│       │   │   ├── MeasurementUncertaintyPanel.tsx # ISO 17025 QA/QC Measurement Uncertainty (Subsystem 31)
+│       │   │   ├── ExpertWitnessPanel.tsx # Expert Witness Court Mode & Evaluative Reporting (Subsystem 32)
 │       │   │   ├── EvidenceManagementPanel.tsx # 3D Spatial Evidence Presenter & Juror Visualizer (Subsystem 33)
-│       │   │   └── PanelGeoFusion.tsx     # Multi-Criteria Bayesian GIS Evidence Fusion Panel
+│       │   │   ├── GeoForensicIntelligencePanel.tsx # Multi-Modal Geo-Forensic Platform (Subsystems 34-38)
+│       │   │   ├── PanelIsoscape.tsx      # Multi-Isotope Isoscape Spatial Provenance Panel (Subsystem 34)
+│       │   │   ├── PanelSoil.tsx          # Forensic Soil Pedology & Geochemical CoDa Panel (Subsystem 35)
+│       │   │   ├── PanelPalynology.tsx    # Forensic Palynology & Environmental eDNA Panel (Subsystem 36)
+│       │   │   ├── PanelRossmo.tsx        # Rossmo Bayesian Geographic Profiling Panel (Subsystem 37)
+│       │   │   └── PanelGeoFusion.tsx     # Multi-Criteria Bayesian GIS Evidence Fusion Panel (Subsystem 38)
 │       │   ├── common/                    # Shared Modals & Telemetry Banners
 │       │   │   ├── DnaProfileInspectorModal.tsx # DNA & SNP Terminal with Interactive CLI
 │       │   │   └── ActiveProfileBanner.tsx # Active Profile HUD & Live Leaflet GIS Map
@@ -367,7 +376,7 @@ str-analysis/
 │       ├── context/                       # React Context Providers
 │       ├── dictionaries/                  # Bilingual Translations (TR / EN)
 │       ├── lib/                           # Utility Functions & API Clients
-│       ├── test/                          # Automated Vitest Suite (350/350 Tests Passing across 33 Specs)
+│       ├── test/                          # Automated Vitest Suite (421/421 Tests Passing across 37 Specs)
 │       └── utils/                         # Client-Side Biocomputational Simulation Engines
 │           ├── strLocusRegistryEngine.ts  # 24-STR Locus Registry & CE Sizing TS Engine
 │           ├── forensicCliBatchParser.ts  # Forensic CLI Batch Lexer & Ingestion TS Engine
@@ -485,7 +494,7 @@ FORENZA structures its 38 biocomputational subsystems into 7 canonical operation
 19. **Multi-Generation Epigenetic Clocks & Multimodal PMI (`19`):** Computes chronological and biological age across 1st, 2nd, and 3rd generation clocks (Horvath 353-CpG, Hannum 71-CpG, Levine PhenoAge 513-CpG, Lu GrimAge 1,030-CpG, Belsky DunedinPACE pace-of-aging velocity, and VISAGE Enhanced) with GUM ISO 17025 expanded uncertainty and joint Bayesian multimodal PMI evidence fusion (Henssge, Vitreous K+, Entomology ADD).
 20. **tDMR Body Fluid & Tissue Provenance (`20`):** Classifies biological trace cellular origins (Venous Blood, Seminal Fluid, Oral Saliva, Vaginal Secretions, Menstrual Blood, Epidermal Skin) using 12 diagnostic tissue-specific differentially methylated regions (tDMRs), Bayesian Quadratic Discriminant Analysis (QDA), and Non-Negative Least Squares (NNLS) mixture deconvolution with exact simplex sum-to-one invariant ($\sum \theta_k = 1.0$).
 21. **Lifestyle Epigenomics & AHRR Biomarkers (`21`):** Predicts cigarette smoking history (pack-years) via *AHRR* `cg05575921` hypomethylation, heavy alcohol consumption, and BMI from blood methylation.
-22. **Telomere Length Chronometer & Decay (`22`):** Estimates biological senescence via quantitative $T/S$ ratio decay and post-mortem interval (PMI) via Accumulated Degree Hours (ADH) thermal decay kinetics.
+22. **Telomere Length Chronometer & Somatic Mosaicism (`22`):** Estimates biological senescence via Cawthon qPCR $T/S$ ratio decay ($\hat{y} = \max(0.0, (1.420 - T/S) / 0.0085)$, $U_{95\%} = \pm 4.24\text{ yrs}$), post-mortem interval (PMI) via Accumulated Degree-Hours (ADH) exponential thermal decay kinetics ($\lambda_{\text{pmi}} = 0.00045\text{ ADH}^{-1}$, $T_{\text{ambient}}$ compensation), and somatic mosaicism / clonal divergence across 8 diagnostic CpG loci via the Root-Mean-Square (RMS) Mosaicism Index $M$.
 23. **Forensic Microbiomics, Thanatometagenomics & Touch Microbial Intelligence (`23`):** Integrates 16S rRNA / ITS amplicon and shotgun metagenomic sequencing for quantitative Post-Mortem Interval (PMI) thermal summation ($\text{ADD} = \sum \max(0, T_d - T_{\text{base}}), \; T_{\text{base}}=0.0^\circ\text{C}$), Inductive Conformal Prediction intervals (95% coverage), hidSkinPlex+ touch trace individualization with Score-Based Likelihood Ratios ($\text{SLR}$, $C_{\text{llr}} = 0.0842$), 6-class body fluid niche deconvolution, and Cadaver Decomposition Island (CDI) 5-stage taphonomy.
 
 ### Pillar 5: Physical Evidence, Pathology & Trace Forensics
@@ -738,7 +747,15 @@ The FastAPI gateway exposes a clean `/api/v1` RESTful interface.
 | **Epigenetic Clocks (Biological Aging)** | `/api/v1/forensic/epigenetics/clocks/biological-aging` | `POST` | Biological mortality clocks (PhenoAge, GrimAge) & DunedinPACE aging velocity with Anti-Averaging Shield |
 | **Epigenetic Multimodal PMI** | `/api/v1/forensic/epigenetics/clocks/multimodal-pmi` | `POST` | Multimodal Bayesian evidence fusion of Henssge, Vitreous K+, and Entomology for PMI |
 | **Anthropology** | `/api/v1/forensic/anthropology/biological-profile` | `POST` | Computes skeletal stature, biological profile, and sex estimation |
-| **Entomology** | `/api/v1/forensic/entomology/pmi` | `POST` | Calculates Accumulated Degree Hours (ADH) post-mortem interval |
+| **Entomology (ADH Model)** | `/api/v1/forensic/entomology/pmi` | `POST` | Calculates Accumulated Degree Hours (ADH) post-mortem interval |
+| **Physical (3D BPA Area of Origin)** | `/api/v1/forensic/physical/bpa-area-of-origin` | `POST` | Computes 3D spatial convergence and flight path origin via least-squares trajectory intersection with 95% confidence ellipsoids |
+| **Physical (SEM-EDX GSR)** | `/api/v1/forensic/physical/gsr-sem-edx-analysis` | `POST` | Evaluates ASTM E1588-20 SEM-EDX characteristic Pb-Ba-Sb gunshot residue particles and evidentiary LR |
+| **Physical (3D CMC Striations)** | `/api/v1/forensic/physical/cmc-striation-matching` | `POST` | 3D Congruent Matching Cells firearm striation toolmark comparison with convergence verification |
+| **Physical (Entomology PMI Estimation)** | `/api/v1/forensic/physical/entomology-pmi-estimation` | `POST` | Minimum insect colonisation interval (MICI) backward hourly temperature integration and colonisation timestamp |
+| **Physical (MSI Optical Analysis)** | `/api/v1/forensic/physical/msi-optical-analysis` | `POST` | Multispectral optical wavelength response (365nm UV, 415nm Soret, 450nm, 850nm NIR) contrast simulation |
+| **Physical (Trace Spectroscopy HQI)** | `/api/v1/forensic/physical/ftir-raman-hqi-match` | `POST` | ATR-FTIR and Raman trace spectral matching against forensic polymer library using Hit Quality Index (HQI) |
+| **Physical (Toxicology PMR Evaluation)** | `/api/v1/forensic/physical/toxicology-pmr-evaluation` | `POST` | Evaluates central-to-peripheral (C/P) drug redistribution ratio to detect systemic toxicity overestimation |
+| **Physical (Antemortem Extrapolation)** | `/api/v1/forensic/physical/toxicology-antemortem-extrapolation` | `POST` | Back-extrapolates antemortem drug concentration using zero-order Widmark or first-order elimination kinetics |
 | **Serology & Body Fluid (mRNA)** | `/api/v1/forensic/fluid/identify` | `POST` | Predicts body fluid tissue origin from mRNA expression profiles |
 | **Body Fluid (Co-Extraction)** | `/api/v1/forensic/fluid/co-extraction-audit` | `POST` | Audits RNA yield and RIN integrity score for STR co-extraction compatibility |
 | **Body Fluid (tDMR QDA)** | `/api/v1/forensic/epigenetics/deconvolve-tissue` | `POST` | Bayesian QDA Gaussian mixture deconvolution for 6 body fluids across 12 tDMR loci |
@@ -872,7 +889,7 @@ pytest backend/node/services/forensic/physical/ -v        # Pillar 5: Physical E
 pytest backend/node/services/forensic/security/ -v        # Pillar 6: LIMS & ZKP
 pytest backend/node/services/forensic/geoint/ -v          # Pillar 7: Geo-Forensics
 
-# Execute frontend tactical workstation test suite (350 tests across 33 test suites)
+# Execute frontend tactical workstation test suite (421 tests across 37 test suites)
 npm --prefix frontend test -- --run
 ```
 

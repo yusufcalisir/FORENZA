@@ -3713,3 +3713,381 @@ $$H_{\text{state}} = \text{SHA256}\left(\text{Sort}(\mathbf{x}_{\text{cpg}}) \pa
 Under Section 81e (2) of the German Code of Criminal Procedure (StPO) and EU AI Act (2024/1689), forensic DNA phenotyping and epigenetic aging on unknown biological traces are strictly restricted to determining externally visible characteristics and age brackets. Evaluative reporting enforces the reciprocal Prosecutor's Fallacy defense shield:
 $$P(\text{DNA Profile} \mid \text{Predicted Epigenetic Age Bracket}) \ne P(\text{Predicted Epigenetic Age Bracket} \mid \text{DNA Profile})$$
 
+---
+
+## 98. Forensic Telomere Chronometer, Post-Mortem Epigenetic PMI Kinetics & Somatic Mosaicism (`telomere_pmi_engine.py`, `PanelTelomere.tsx` & `pillar_4_epigenetics_aging_research.md`)
+
+### 98.1 Cawthon Quantitative PCR (qPCR) Relative T/S Ratio Decay Model
+Relative telomere length is quantified via Cawthon quantitative polymerase chain reaction (qPCR) measuring the ratio of the telomere repeat copy number ($T$) to a single-copy nuclear reference gene ($S$, e.g., 36B4 or $\beta$-globin):
+$$T/S = 2^{-\Delta\Delta C_t} = 2^{-( \Delta C_{t, \text{sample}} - \Delta C_{t, \text{reference}} )}$$
+where $\Delta C_t = C_{t, \text{telomere}} - C_{t, \text{single-copy}}$.
+
+Under steady-state human cellular senescence, telomeric hexameric $(TTAGGG)_n$ repeat attrition follows a linear velocity model calibrated across global populations:
+$$T/S(\text{Age}) = \alpha_0 - \kappa_{\text{telo}} \cdot \text{Age}$$
+where:
+- $\alpha_0 = 1.420$ represents the pristine neonate baseline at gestational birth ($\text{Age} = 0.0$ years, $\sim 11.0\text{ kb}$),
+- $\kappa_{\text{telo}} = 0.0085\text{ T/S units/year}$ represents the annual shortening velocity (equivalent to $\sim 45 - 60\text{ bp/year}$ loss in peripheral blood leukocytes).
+
+Inverting the biophysical trajectory yields the estimated biological telomere age:
+$$\hat{y}_{\text{telomere}} = \max\left(0.0, \frac{\alpha_0 - T/S}{\kappa_{\text{telo}}}\right) = \max\left(0.0, \frac{1.420 - T/S}{0.0085}\right)$$
+
+#### Diagnostic Age Bracket Boundaries:
+$$\text{Bracket}(T/S) = \begin{cases} 
+\text{NEWBORN\_INFANT} & \text{if } T/S \ge 1.350 \\
+\text{YOUNG\_ADULT} & \text{if } 1.150 \le T/S < 1.350 \\
+\text{MIDDLE\_AGED} & \text{if } 0.900 \le T/S < 1.150 \\
+\text{ELDERLY} & \text{if } T/S < 0.900 
+\end{cases}$$
+
+---
+
+### 98.2 Accumulated Degree-Hours (ADH) Post-Mortem De-Methylation Kinetics
+Post-mortem epigenetic de-methylation of target CpG dinucleotides (e.g., *ELOVL2*, *FHL2*, *PENK*) follows thermal energy-driven exponential decay kinetics governed by Accumulated Degree-Hours ($ADH$):
+$$\beta_{\text{residual}}(ADH) = (\beta_0 - \beta_{\text{floor}}) \cdot \exp(-\lambda_{\text{pmi}} \cdot ADH) + \beta_{\text{floor}}$$
+where:
+- $\beta_0 = 0.850$ is the pristine ante-mortem methylation baseline,
+- $\beta_{\text{floor}} = 0.050$ is the biochemical degradation asymptote,
+- $\lambda_{\text{pmi}} = 0.00045\text{ ADH}^{-1}$ is the empirical post-mortem decay constant.
+
+Inverting the exponential kinetic relationship yields the Accumulated Degree-Hours absorbed by the biological trace:
+$$ADH = \frac{1}{\lambda_{\text{pmi}}} \cdot \ln\left( \frac{\beta_0 - \beta_{\text{floor}}}{\max(10^{-4}, \beta_{\text{observed}} - \beta_{\text{floor}})} \right)$$
+
+Given the ambient environmental crime-scene temperature $T_{\text{ambient}}$ ($^\circ\text{C}$) above the base metabolic threshold $T_{\text{base}} = 0.0^\circ\text{C}$:
+$$T_{\text{effective}} = \max(0.1, T_{\text{ambient}} - T_{\text{base}})$$
+$$\text{PMI}_{\text{hours}} = \frac{ADH}{T_{\text{effective}}}, \quad \text{PMI}_{\text{days}} = \frac{\text{PMI}_{\text{hours}}}{24.0}$$
+
+#### Temperature Retardation Benchmark:
+Thermal dissipation sensitivity ensures strict physical reciprocity: a cold storage environment ($10.0^\circ\text{C}$) halves the hourly reaction velocity compared to standard room temperature ($20.0^\circ\text{C}$), requiring exactly double elapsed chronometric hours to reach identical de-methylation levels:
+$$\text{PMI}_{\text{hours}}(10^\circ\text{C}) = 2.0 \cdot \text{PMI}_{\text{hours}}(20^\circ\text{C})$$
+
+---
+
+### 98.3 Somatic Epigenetic Mosaicism & Clonal Divergence Index ($M$)
+Intra-individual epigenetic heterogeneity across biological traces (e.g., blood vs. buccal epithelium, or neoplastic clonal expansions) is quantified across $K = 8$ diagnostic CpG loci via the Root-Mean-Square (RMS) Mosaicism Index $M$:
+$$M = \sqrt{\frac{1}{K} \sum_{k=1}^K (\beta_{1, k} - \beta_{2, k})^2}$$
+$$\Delta_{\max} = \max_{k \in \{1, \dots, K\}} |\beta_{1, k} - \beta_{2, k}|$$
+
+#### Clonal Homogeneity & Chimerism Tiers:
+$$\text{Classification}(M) = \begin{cases} 
+\text{CLONAL\_HOMOGENEITY} & \text{if } M < 0.050 \\
+\text{LOW\_SOMATIC\_DRIFT} & \text{if } 0.050 \le M \le 0.150 \\
+\text{HIGH\_SOMATIC\_MOSAICISM} & \text{if } M > 0.150 
+\end{cases}$$
+where $M < 0.050$ confirms identical cell lineage origin (replicate fidelity), whereas $M > 0.150$ alerts forensic examiners to somatic chimerism, localized organ-specific epigenetic reprogramming, or mixed source deposits.
+
+---
+
+### 98.4 ISO/IEC 17025 Uncertainty Budget & Golden Standard Vectors
+Under ISO/IEC 17025:2017 Section 7.6, expanded uncertainty for telomeric age estimation employs coverage factor $k = 2.00$ ($95\%$ coverage probability):
+$$U_{95\%} = \pm 4.24\text{ years}$$
+$$\text{CI}_{95\%}(\hat{y}) = \left[ \max(0.0, \hat{y} - 4.24), \; \hat{y} + 4.24 \right]$$
+
+For post-mortem interval estimation, thermal fluctuation and microclimatic uncertainty impart a calibrated $\pm 15\%$ dispersion window:
+$$\text{CI}_{95\%}(\text{PMI}) = [0.85 \cdot \text{PMI}_{\text{hours}}, \; 1.15 \cdot \text{PMI}_{\text{hours}}]$$
+
+#### Certified Reference Vectors:
+- **`VECTOR_19_PMI_A` (Newborn Infant):** $T/S = 1.420, \text{Age} = 0.0\text{ y}, \text{Group} = \text{NEWBORN\_INFANT}, \beta = 0.850, ADH = 0.0$.
+- **`VECTOR_19_PMI_B` (Young Adult):** $T/S = 1.2075, \text{Age} = 25.0\text{ y}, \text{Group} = \text{YOUNG\_ADULT}, \beta = 0.820, ADH = 220.5$.
+- **`VECTOR_19_PMI_C` (Elderly Attrition):** $T/S = 0.7825, \text{Age} = 75.0\text{ y}, \text{Group} = \text{ELDERLY}, \beta = 0.700, M = 0.065$.
+- **`VECTOR_19_PMI_D` (72h Decomposition):** $T/S = 1.050, \text{Age} = 43.5\text{ y}, \beta = 0.500, T = 20.0^\circ\text{C}, ADH = 1413.3, \text{PMI} = 70.7\text{ h}$.
+- **`VECTOR_19_PMI_E` (Hypothermic Retardation):** $\beta = 0.450, T = 10.0^\circ\text{C}, ADH = 1675.9, \text{PMI} = 167.6\text{ h}$.
+- **`VECTOR_19_PMI_F` (Clonal Homogeneity):** $M = 0.010 < 0.050 \implies \text{CLONAL\_HOMOGENEITY}$.
+- **`VECTOR_19_PMI_G` (Somatic Chimerism Anomaly):** $M = 0.482 > 0.150 \implies \text{HIGH\_SOMATIC\_MOSAICISM}$.
+
+---
+
+### 98.5 Deterministic Cryptographic State Audit Digest ($H_{\text{telo}}$)
+In compliance with ISO/IEC 17025:2017 Sections 7.5 and 7.8, all input biophysical variables and resulting calculations are cryptographically hashed into an immutable 64-hex SHA-256 state audit digest for chain of custody and ZK-SNARK verification:
+$$H_{\text{telo}} = \text{SHA256}\left( T/S \parallel \Delta\Delta C_t \parallel \beta_{\text{obs}} \parallel T_{\text{ambient}} \parallel \text{Sort}(\mathbf{t}_1) \parallel \text{Sort}(\mathbf{t}_2) \parallel \hat{y} \parallel \text{CI}_{95\%} \parallel \text{PMI}_{\text{hours}} \parallel ADH \parallel M \right)$$
+
+---
+
+### 98.6 Reciprocal Prosecutor's Fallacy Shield & Admissibility Scope
+Telomere length ($T/S$) and post-mortem CpG de-methylation quantify biological senescence wear and thermal energy dissipation. Forensic evaluative reporting enforces the mandatory courtroom Prosecutor's Fallacy defense shield:
+$$P(\text{DNA Evidence} \mid \text{Predicted Age Bracket / Elapsed PMI}) \ne P(\text{Predicted Age Bracket / Elapsed PMI} \mid \text{DNA Evidence})$$
+PMI calculations must be cross-validated against forensic entomology (blowfly colonization intervals), taphonomy, and scene environmental records.
+
+---
+
+## 99. Forensic Thanatometagenomics, Thanato-PMI Conformal Bounds & hidSkinPlex+ Touch Likelihood Ratio Architecture (Subsystem 38 / Module 23 / Pillar 4)
+
+### 99.1 CoDa Centered Log-Ratio (CLR) Transformation & Simplex Invariance
+Forensic metagenomic taxonomic abundances represent compositional data constrained to the simplex $\mathbb{S}^D = \{ \mathbf{x} \in \mathbb{R}^D : x_i > 0, \sum_{i=1}^D x_i = 1.0 \}$.
+
+To eliminate spurious negative correlation biases, compositional profiles undergo centered log-ratio (CLR) transformation. Zero relative abundances are replaced using Bayesian multiplicative zero-replacement with floor $\delta = 10^{-4}$.
+
+The geometric mean $g(\mathbf{x})$ of the normalized composition is evaluated as:
+$$g(\mathbf{x}) = \left( \prod_{i=1}^D x_i \right)^{1/D} = \exp\left( \frac{1}{D} \sum_{i=1}^D \ln x_i \right)$$
+
+The CLR coordinate vector $\text{clr}(\mathbf{x}) \in \mathbb{R}^D$ is defined by:
+$$\text{clr}(x_i) = \ln\left( \frac{x_i}{g(\mathbf{x})} \right)$$
+
+#### Simplex Zero-Sum Invariant:
+$$\sum_{i=1}^D \text{clr}(x_i) = \sum_{i=1}^D \left( \ln x_i - \frac{1}{D} \sum_{j=1}^D \ln x_j \right) = \sum_{i=1}^D \ln x_i - D \cdot \frac{1}{D} \sum_{j=1}^D \ln x_j = 0.0000$$
+
+---
+
+### 99.2 Aitchison Distance & hidSkinPlex+ Score-Based Likelihood Ratio (SLR)
+For evidentiary touch trace $\mathbf{u}$ and reference palm swab $\mathbf{v}$, individualization is evaluated via the scale-invariant Aitchison distance $d_A(\mathbf{u}, \mathbf{v})$:
+$$d_A(\mathbf{u}, \mathbf{v}) = \|\text{clr}(\mathbf{u}) - \text{clr}(\mathbf{v})\|_2 = \sqrt{\sum_{i=1}^D (\text{clr}(u_i) - \text{clr}(v_i))^2}$$
+
+Under identical microbial source profiles ($u_i = v_i$), $d_A = 0.0$.
+
+#### Score-Based Likelihood Ratio (SLR):
+Calibration models define univariate Gaussian probability density functions under the prosecution proposition $H_p$ (same source) and defense proposition $H_d$ (different source):
+$$f(d_A \mid \mu, \sigma) = \frac{1}{\sigma \sqrt{2\pi}} \exp\left( -\frac{(d_A - \mu)^2}{2\sigma^2} \right)$$
+where the empirical hidSkinPlex+ calibration parameters are:
+$$\begin{aligned}
+H_p \text{ (within-source):} &\quad \mu_{Hp} = 1.842, \quad \sigma_{Hp} = 0.355 \\
+H_d \text{ (between-source):} &\quad \mu_{Hd} = 3.650, \quad \sigma_{Hd} = 0.420
+\end{aligned}$$
+
+The raw score-based likelihood ratio evaluates to:
+$$LR_{\text{raw}} = \frac{f(d_A \mid \mu_{Hp}, \sigma_{Hp})}{\max(10^{-15}, f(d_A \mid \mu_{Hd}, \sigma_{Hd}))}$$
+
+Isotonic calibration accounts for high-dimensional shrinkage with empirical slope $\alpha = 0.8858$:
+$$\log_{10} LR_{\text{cal}} = 0.8858 \cdot \log_{10} LR_{\text{raw}}$$
+$$LR_{\text{cal}} = 10^{\log_{10} LR_{\text{cal}}}$$
+
+The numerical $LR_{\text{cal}}$ is mapped into standardized 7-tier ENFSI (2017) verbal evaluative statements.
+
+---
+
+### 99.3 Thanatomicrobiome PMI Thermal Kinetic Integration & 95% Conformal Prediction
+During post-mortem decomposition, oral and epinecrotic bacterial communities exhibit predictable successional turnover. Elastic Net / Random Forest models predict Accumulated Degree Days ($ADD$):
+$$ADD = \text{Base}_{ADD} + \sum_{i=1}^K w_i \cdot \text{clr}_i$$
+where key biomarker coefficients satisfy:
+$$w_{\text{Clostridium\_perfringens}} = +28.5, \quad w_{\text{Enterobacteriaceae}} = +15.2, \quad w_{\text{Streptococcus\_salivarius}} = -32.4$$
+
+Given ambient temperature $T_{\text{ambient}}$ ($^\circ\text{C}$) and base threshold $T_{\text{base}} = 0.0^\circ\text{C}$:
+$$T_{\text{effective}} = \max(0.1, T_{\text{ambient}} - T_{\text{base}})$$
+$$\text{PMI}_{\text{hours}} = \frac{ADD \cdot 24.0}{T_{\text{effective}}}, \quad \text{PMI}_{\text{days}} = \frac{\text{PMI}_{\text{hours}}}{24.0}$$
+
+#### Inductive Conformal Prediction Window:
+Under finite-sample non-parametric conformal inference with significance level $\alpha = 0.05$:
+$$\text{CI}_{95\%}(ADD) = [\max(0.0, ADD - 14.5), \; ADD + 14.5]$$
+$$\text{CI}_{95\%}(\text{PMI}_{\text{hours}}) = \left[ \frac{\max(0.0, ADD - 14.5) \cdot 24.0}{T_{\text{effective}}}, \; \frac{(ADD + 14.5) \cdot 24.0}{T_{\text{effective}}} \right]$$
+
+---
+
+### 99.4 Cadaver Decomposition Island (CDI) Soil Perturbation & 6-Class Body Fluid Niche
+Metagenomic soil core profiling beneath decomposing remains evaluates the CDI Perturbation Index $\phi_{\text{CDI}}$:
+$$\phi_{\text{CDI}} = \frac{B_{\text{dipteran}} + B_{\text{fungal}}}{B_{\text{dipteran}} + B_{\text{fungal}} + B_{\text{native}}}$$
+where $B_{\text{dipteran}}$ represents fly-associated taxa (*Ignatzschineria*, *Wohlfahrtiimonas*), $B_{\text{fungal}}$ represents post-mortem fungal blooms (*Yarrowia*, *Candida*), and $B_{\text{native}}$ represents unperturbed soil bacteria (*Acidobacteriota*). When $\phi_{\text{CDI}} > 0.80$, soil taphonomy is classified as `ADVANCED_DECAY`.
+
+Biological stain deconvolution evaluates diagnostic commensal signatures across 6 core fluids (Vaginal, Hand Skin, Saliva, Urine, Penile, Semen) subject to the probability simplex constraint:
+$$\sum_{k=1}^6 P(\text{Fluid}_k) = 1.0000$$
+
+---
+
+### 99.5 Deterministic Cryptographic State Audit Digest ($H_{\text{microbiome}}$)
+Under ISO/IEC 17025:2017 Sections 7.5 and 7.8, all experimental metagenomic inputs, thermal parameters, and posterior outputs are cryptographically hashed:
+$$H_{\text{microbiome}} = \text{SHA256}\left( \text{preset} \parallel \text{sampleId} \parallel T_{\text{ambient}} \parallel T_{\text{base}} \parallel \mathbf{p}_{\text{PMI}} \parallel \mathbf{u}_{\text{touch}} \parallel \mathbf{v}_{\text{ref}} \parallel \mathbf{f}_{\text{fluid}} \parallel \mathbf{s}_{\text{soil}} \parallel ADD \parallel d_A \parallel LR_{\text{cal}} \right)$$
+
+---
+
+### 99.6 Reciprocal Prosecutor's Fallacy Shield & Legal Admissibility Scope
+Forensic microbiology quantifies conditional evidentiary likelihoods:
+$$P(\text{Metagenomic Profile} \mid H_p) \text{ vs. } P(\text{Metagenomic Profile} \mid H_d)$$
+The evaluative statement strictly refrains from transposing the conditional to assert suspect guilt or direct time-of-death certainty ($P(H_p \mid \text{Metagenomic Profile})$). Taphonomic and metagenomic PMI calculations must be contextualized alongside forensic pathology, entomology, and climatological scene data.
+
+---
+
+## 100. Subsystem 26: Forensic Entomology, Thermal Energy Summation (ADH/ADD), Ikemoto-Takai Model & MICI Optimization
+
+### 100.1 Accumulated Degree Hours (ADH) & Backward Hourly Numerical Integration
+Under European Association for Forensic Entomology (EAFE) and North American Forensic Entomology Association (NAFEA) consensus guidelines, dipteran larval development proceeds as a cumulative function of thermal energy above a lower developmental threshold temperature ($T_0$ or $T_{\text{base}}$):
+$$K = \sum_{i=1}^H \max(0.0, \; T_{\text{eff}}(i) - T_0)$$
+where:
+- $K$: Cumulative thermal constant for the observed developmental stage (Degree-Hours / ADH or Degree-Days / ADD).
+- $T_0$: Species-specific lower developmental threshold below which physiological growth ceases ($T_0 = 9.0^\circ\text{C}$ for *Lucilia sericata*, $T_0 = 3.0^\circ\text{C}$ for *Calliphora vicina*, $T_0 = 10.2^\circ\text{C}$ for *Chrysomya albiceps*, $T_0 = 10.0^\circ\text{C}$ for *Phormia regina*, $T_0 = 8.5^\circ\text{C}$ for *Sarcophaga argyrostoma*, $T_0 = 15.0^\circ\text{C}$ for *Dermestes maculatus*).
+- $T_{\text{eff}}(i)$: Effective ambient temperature at hour $i$ before specimen collection, adjusted for environmental lapse rate and larval mass metabolic self-heating:
+$$T_{\text{eff}}(i) = T_{\text{ambient}}(i) + \Delta T_{\text{lapse}} + \Delta T_{\text{mass}}$$
+
+The backward hourly summation integrates chronologically in reverse from specimen collection timestamp $t_{\text{sample}}$:
+$$\text{Accumulated ADH}(h) = \sum_{j=0}^{h-1} \max(0.0, \; T_{\text{eff}}(t_{\text{sample}} - j) - T_0)$$
+Until $\text{Accumulated ADH}(h) \ge K_{\text{target}}$. The exact fractional hour interpolation is given by:
+$$\text{PMI}_{\min} = (h - 1) + \left( 1.0 - \frac{\text{Accumulated ADH}(h) - K_{\text{target}}}{\text{ADH}_{\text{increment}}(h)} \right)$$
+
+---
+
+### 100.2 Ikemoto-Takai Linearized Parameter Formulation
+Classical thermal summation assumes a strictly linear relation between developmental velocity ($1/D$) and ambient temperature ($T$). Under extreme temperature gradients near physiological limits ($T \to T_0$ or $T \to T_{\text{max}}$), the Ikemoto and Takai (2000) linear formulation eliminates mutual parameter dependencies:
+$$D \cdot T = K + T_0 \cdot D$$
+where:
+- $D$: Duration of development in days or hours.
+- $T$: Mean ambient temperature ($^\circ\text{C}$).
+- $T_0$: Slope coefficient representing true physiological base threshold ($^\circ\text{C}$).
+- $K$: Y-intercept representing cumulative thermal constant (ADH/ADD).
+
+---
+
+### 100.3 Environmental Lapse Rate & Weather Station Microclimatic Calibration
+When crime scene coordinates differ in elevation from the reporting meteorological station, ambient temperatures must be calibrated via the standard tropospheric environmental lapse rate:
+$$\Delta T_{\text{lapse}} = -0.0065^\circ\text{C}/\text{m} \cdot (h_{\text{scene}} - h_{\text{station}})$$
+where $h_{\text{scene}}$ and $h_{\text{station}}$ represent elevation above sea level in meters.
+
+---
+
+### 100.4 Larval Mass Metabolic Self-Heating (+ΔT_mass)
+Aggregations of feeding third instars (*Calliphoridae* and *Sarcophagidae*) generate localized metabolic heat:
+$$\Delta T_{\text{mass}} \in [0.0^\circ\text{C}, \; 5.0^\circ\text{C}]$$
+Applying $+\Delta T_{\text{mass}}$ increases $T_{\text{eff}}$, accelerating the rate of degree-hour accumulation and yielding a shorter, more conservative minimum PMI.
+
+---
+
+### 100.5 Nocturnal Oviposition Scotophase Gate
+Under natural field conditions, adult blowflies exhibit strong scotophase suppression and cease oviposition during hours of darkness ($21:00 \le t_{\text{local}} < 06:00$). If backward integration resolves an initial colonization event within this scotophase window, the effective minimum insect colonization interval ($\text{MICI}$) is adjusted backward to the preceding daylight photoperiod ($20:30$ dusk), preventing premature attribution to night hours.
+
+---
+
+### 100.6 Deterministic Cryptographic State Audit Digest ($H_{\text{entomology}}$)
+Under ISO/IEC 17025:2017 Section 7.8, all entomological identification inputs, thermal integration steps, and calculated colonization intervals are hashed:
+$$H_{\text{entomology}} = \text{SHA256}\left( \text{species} \parallel \text{stage} \parallel K_{\text{target}} \parallel T_{\text{ambient}} \parallel \Delta T_{\text{mass}} \parallel \text{PMI}_{\text{hours}} \parallel t_{\text{colon}} \parallel \text{caseId} \right)$$
+
+---
+
+### 100.7 Evidentiary Reporting & Prosecutor's Fallacy Legal Shield
+The minimum post-mortem interval ($\text{PMI}_{\min}$) calculated via thermal summation represents the Minimum Insect Colonisation Interval ($\text{MICI}$). It defines the earliest physical window during which necrophagous flies could have gained access to and oviposited on the remains under documented ambient temperatures. $\text{MICI}$ does not equate directly to post-mortem interval ($\text{PMI}$); delays due to physical barriers, wrapping, indoor enclosure, seasonal dormancy, or nocturnal scotophase must be explicitly evaluated.
+
+---
+
+## 101. 3D Bloodstain Pattern Analysis (BPA) & Flight Origin Optimization (Module 21 / Subsystem 24)
+
+### 101.1 Fluid Kinematics and Elliptical Projection Dynamics
+In forensic bloodstain pattern analysis (BPA), when a spherical droplet of blood strikes a non-porous target surface obliquely at an angle $\alpha$, the resulting stain forms an ellipse. By fluid impact kinematics:
+$$\sin\alpha = \frac{W}{L}$$
+where $W$ is the stain width (minor axis) and $L$ is the stain length (major axis excluding the directional tail/spine). The impact angle $\alpha$ is bounded on $\alpha \in [0^\circ, 90^\circ]$:
+$$\alpha = \arcsin\left(\min\left(1.0, \; \max\left(0.01, \; \frac{W}{L}\right)\right)\right)$$
+
+The directional angle of incidence on the planar target surface is defined by $\gamma \in [0^\circ, 360^\circ)$, measured relative to the reference horizontal coordinate axis. The three-dimensional unit trajectory flight vector $\vec{v}_i = (v_{ix}, v_{iy}, v_{iz})^T$ pointing from the point of origin toward stain $i$ is formulated via spherical directional cosines:
+$$\vec{v}_i = \begin{pmatrix} \cos\gamma_i \cdot \cos\alpha_i \\ \sin\gamma_i \cdot \cos\alpha_i \\ \sin\alpha_i \end{pmatrix}$$
+satisfying the unit norm invariant:
+$$\|\vec{v}_i\| = \sqrt{v_{ix}^2 + v_{iy}^2 + v_{iz}^2} = 1.0$$
+
+---
+
+### 101.2 Closed-Form Least-Squares Orthogonal Distance Minimization
+Given $N \ge 2$ bloodstains with target positions $\mathbf{P}_i = (x_i, y_i, z_i)^T$ and unit flight vectors $\vec{v}_i$, the 3D Point of Origin $\mathbf{P}_{\text{AO}} = (x_0, y_0, z_0)^T$ minimizes the sum of squared orthogonal Euclidean distances from $\mathbf{P}_{\text{AO}}$ to each trajectory line:
+$$\mathbf{P}_{\text{AO}} = \arg\min_{\mathbf{P}} \sum_{i=1}^N \|\mathbf{d}_i\|^2$$
+where $\mathbf{d}_i$ is the perpendicular residual vector:
+$$\mathbf{d}_i = (\mathbf{P} - \mathbf{P}_i) - [(\mathbf{P} - \mathbf{P}_i) \cdot \vec{v}_i] \vec{v}_i = (\mathbf{I} - \vec{v}_i \vec{v}_i^T)(\mathbf{P} - \mathbf{P}_i)$$
+
+Defining the orthogonal projection matrix for trajectory $i$:
+$$\mathbf{M}_i = \mathbf{I} - \vec{v}_i \vec{v}_i^T = \begin{pmatrix} 1 - v_{ix}^2 & -v_{ix} v_{iy} & -v_{ix} v_{iz} \\ -v_{iy} v_{ix} & 1 - v_{iy}^2 & -v_{iy} v_{iz} \\ -v_{iz} v_{ix} & -v_{iz} v_{iy} & 1 - v_{iz}^2 \end{pmatrix}$$
+
+The closed-form least-squares normal equations yield:
+$$\mathbf{A} \mathbf{P}_{\text{AO}} = \mathbf{b}$$
+where:
+$$\mathbf{A} = \sum_{i=1}^N \mathbf{M}_i \in \mathbb{R}^{3 \times 3}, \quad \mathbf{b} = \sum_{i=1}^N \mathbf{M}_i \mathbf{P}_i \in \mathbb{R}^3$$
+Inverting the $3 \times 3$ symmetric positive-semidefinite matrix $\mathbf{A}$:
+$$\mathbf{P}_{\text{AO}} = \mathbf{A}^{-1} \mathbf{b}$$
+Singular matrix configurations ($\det(\mathbf{A}) < 10^{-7}$) occur if trajectory vectors are collinear or parallel, triggering an admissibility error rejecting under-constrained physical geometries.
+
+---
+
+### 101.3 Aerodynamic Drag & Gravitational Trajectory Curvature Correction
+Straight-line geometric projection systematically underestimates the vertical height ($z_0$) of the point of origin because gravitational acceleration curves droplet paths downward during free flight.
+
+The equation of motion for a spherical blood droplet of diameter $d$, mass $m = \frac{\pi}{6} \rho_{\text{blood}} d^3$, and velocity $\vec{v}$ through ambient air of density $\rho_{\text{air}} = 1.225\text{ kg/m}^3$ is governed by Newton's second law:
+$$m \frac{d\vec{v}}{dt} = m \vec{g} - \frac{1}{2} C_d \rho_{\text{air}} A_{\text{cross}} \|\vec{v}\| \vec{v}$$
+where $A_{\text{cross}} = \frac{\pi}{4} d^2$, and $C_d$ is the empirical drag coefficient defined by the Schiller-Naumann correlation for droplet Reynolds numbers $\text{Re} \le 1000$:
+$$\text{Re} = \frac{\rho_{\text{air}} \|\vec{v}\| d}{\mu_{\text{air}}}$$
+$$C_d = \frac{24}{\text{Re}} \left(1.0 + 0.15 \cdot \text{Re}^{0.687}\right)$$
+
+In the 4th-order Runge-Kutta (RK4) integration or analytical approximation for moderate distances, the upward vertical origin correction is:
+$$\Delta z_{\text{gravity}} = \frac{1}{2} g \cdot t_{\text{flight}}^2 \cdot k_{\text{drag}}$$
+where $g = 981.0\text{ cm/s}^2$, $t_{\text{flight}} \approx \frac{\bar{d}_{\text{flight}}}{v_{\text{initial}}}$, and $k_{\text{drag}} \approx 0.15$ reflects the upward flight trajectory apex correction:
+$$z_0^{\text{corrected}} = z_0^{\text{linear}} + \Delta z_{\text{gravity}}$$
+
+---
+
+### 101.4 Spatial Confidence Ellipsoids and Residual Distance Formulation
+For each evaluated bloodstain $i$, the orthogonal spatial residual distance $d_i$ between the reconstructed origin $\mathbf{P}_{\text{AO}}$ and trajectory $i$ is:
+$$\mathbf{r}_i = \mathbf{P}_{\text{AO}} - \mathbf{P}_i$$
+$$d_i = \sqrt{\|\mathbf{r}_i\|^2 - (\mathbf{r}_i \cdot \vec{v}_i)^2}$$
+
+The spatial error radius representing the 95% confidence bounds of the origin convergence ellipsoid is:
+$$r_{\text{err}} = \sqrt{\frac{\sum_{i=1}^N d_i^2}{\max(1, N - 3)}}$$
+where $N - 3$ denotes the residual degrees of freedom for 3D coordinate estimation.
+
+---
+
+### 101.5 Deterministic Cryptographic State Audit Digest ($H_{\text{bpa}}$)
+Under ISO/IEC 17025:2017 Section 7.8 and SWGSTAIN Recommended Guidelines, the complete input geometry, solving parameters, convergence coordinates, and case metadata are hashed into a deterministic 64-hex SHA-256 digest:
+$$H_{\text{bpa}} = \text{SHA256}\left( \text{caseId} \parallel N \parallel \{(x_i, y_i, z_i, W_i, L_i, \gamma_i)\}_{i=1}^N \parallel \mathbf{P}_{\text{AO}} \parallel r_{\text{err}} \parallel \text{flag}_{\text{gravity}} \right)$$
+
+---
+
+### 101.6 SWGSTAIN / IABPA Standards & Courtroom Evaluative Reporting Shield
+In compliance with ENFSI 2017 and SWGSTAIN guidelines, numerical reconstructions must be accompanied by an explicit evaluative disclaimer:
+$$\text{Shield}_{\text{BPA}} = \text{"3D Area of Origin calculations provide probabilistic spatial convergence ellipsoids under straight-line and gravity-corrected projection (SWGSTAIN / IABPA Standards). Trajectory curvature due to gravity and air drag may elevate the biological origin above the linear apex."}$$
+This statement shields against the Prosecutor's Fallacy by precluding misrepresentation of an approximate physical convergence zone as a pinpoint mathematical certainty.
+
+---
+
+## 102. Forensic Ballistics, SEM-EDX GSR, 3D CMC Striations & Microscopy (Module 22 / Subsystem 25)
+
+### 102.1 ASTM E1588-20 SEM-EDX Gunshot Residue (GSR) Quantitative Criteria
+Scanning Electron Microscopy coupled with Energy-Dispersive X-ray Spectroscopy (SEM-EDX) provides automated elemental classification of primer discharge particles based on weight percentages ($w_{\text{element}} \in [0.0\%, 100.0\%]$):
+- **Characteristic GSR (Pb-Ba-Sb Triad):** Particle contains Lead ($\text{Pb} \ge 10.0\%$), Barium ($\text{Ba} \ge 10.0\%$), and Antimony ($\text{Sb} \ge 5.0\%$) with spherical condensed-vapor morphology ($AR \le 1.30$).
+- **Consistent with GSR (Bi-Element Pairs):** Particle contains any 2-element combination ($\text{Pb}\text{-}\text{Ba}$, $\text{Pb}\text{-}\text{Sb}$, or $\text{Ba}\text{-}\text{Sb}$) with $w \ge 10.0\%$ and condensed morphology ($AR \le 1.50$).
+- **Commonly Associated:** Single elements ($\text{Pb} \ge 10.0\%$ or $\text{Ba} \ge 10.0\%$), $\text{Ba}\text{-}\text{Al}$ pyrotechnic residues, or triad particles whose non-spherical aspect ratio ($AR > 1.30$) requires classification downgrade.
+- **Environmental Background:** Particles lacking significant heavy metal concentrations ($w < 10.0\%$) or originating from brake linings and industrial sources.
+
+---
+
+### 102.2 Morphological Aspect Ratio Constraint & Tier Downgrading
+True primer vapor condensation produces spherical or spheroidal micro-droplets ($0.5\,\mu\text{m} \le d \le 5.0\,\mu\text{m}$) formed via high-temperature adiabatic cooling. Irregular mechanical spallation yields non-spherical particles. The morphological aspect ratio ($AR$) is defined:
+$$AR = \frac{d_{\max}}{d_{\min}} \ge 1.0$$
+- If $AR \le 1.30$ and elemental triad conditions are satisfied: $\text{Tier} = \text{CHARACTERISTIC\_GSR}$.
+- If $1.30 < AR \le 1.50$: downgraded to $\text{CONSISTENT\_WITH\_GSR}$.
+- If $AR > 1.50$: non-spherical morphology disqualifies characteristic/consistent status; downgraded to $\text{COMMONLY\_ASSOCIATED}$.
+
+---
+
+### 102.3 GSR Likelihood Ratio Evaluation & Evidentiary Support Scale
+The forensic weight of evidence for primer residue presence is evaluated under competing propositions:
+- $H_p$: The suspect fired or was in immediate proximity to a firearm discharge event.
+- $H_d$: The suspect did not fire, was not proximate, and detected particles derive from background/secondary transfer.
+
+Following ASTM E1588-20 and ENFSI 2017 verbal calibration:
+$$LR_{\text{GSR}} = \begin{cases} 10,000.0 & \text{if } N_{\text{char}} \ge 3 \quad \text{(Extremely Strong Support)} \\ 500.0 & \text{if } N_{\text{char}} \ge 1 \lor N_{\text{cons}} \ge 5 \quad \text{(Strong Support)} \\ 25.0 & \text{if } N_{\text{cons}} \ge 1 \quad \text{(Moderate Support)} \\ 1.0 & \text{otherwise} \quad \text{(Inconclusive / Neutral)} \end{cases}$$
+
+---
+
+### 102.4 NIST Song et al. Congruent Matching Cells (CMC) 3D Firearm Striations
+Automated 3D topographic surface comparison of fired cartridge cases and bullet land engraved areas (LEA) evaluates correlation across a discrete grid of comparison cells ($C_i$). A cell qualifies as a Congruent Matching Cell ($\text{CMC}$) if and only if all three validation criteria are simultaneously satisfied:
+1. **Cross-Correlation Peak Factor:** $\text{CCF}_{\max}(C_i) \ge 0.55$.
+2. **Spatial Translation Tolerance:** $|\Delta x_i - \bar{\Delta x}| \le 15.0\,\mu\text{m}$ and $|\Delta y_i - \bar{\Delta y}| \le 15.0\,\mu\text{m}$.
+3. **Angular Rotation Tolerance:** $|\Delta\theta_i - \bar{\Delta\theta}| \le 1.0^\circ$.
+
+The total number of congruent cells $K = \sum_{i=1}^M \mathbf{1}_{\text{CMC}}(C_i)$ dictates the identification verdict:
+- $K \ge 6$: $\text{POSITIVE\_IDENTIFICATION}$ ($P_{\text{false}} < 10^{-6}$).
+- $3 \le K \le 5$: $\text{INCONCLUSIVE\_BORDERLINE}$ ($P_{\text{false}} \in [0.01, 0.05]$).
+- $K < 3$: $\text{ELIMINATION\_NO\_MATCH}$ ($P_{\text{false}} > 0.50$).
+
+---
+
+### 102.5 SWGMAT Forensic Hair Microscopy & Medullary Index
+Microscopic examination of trace hair specimens discriminates human from non-human animal origin via the Medullary Index ($I_{\text{medulla}}$):
+$$I_{\text{medulla}} = \frac{d_{\text{medulla}}}{d_{\text{shaft}}}$$
+where $d_{\text{medulla}}$ is the internal medullary canal width and $d_{\text{shaft}}$ is the total hair shaft diameter in micrometers:
+- **Human Hair:** $I_{\text{medulla}} < 0.33$ (narrow, amorphous, discontinuous, or absent medulla).
+- **Animal Hair:** $I_{\text{medulla}} > 0.50$ (wide, continuous, geometric/uniserial or multiserial ladder structure).
+
+**Follicular Root Sheath DNA Routing:**
+- *Anagen / Catagen Root with Tissue Sheath:* Sufficient nuclear genomic DNA ($\ge 1.0\text{ ng}$) for 24-locus CODIS autosomal STR profiling.
+- *Telogen / Shaft without Root Sheath:* Shed naturally; lacking nucleated root sheath cells. Routed exclusively to mitochondrial DNA (mtDNA HV1/HV2/HV3) hypervariable sequencing.
+
+---
+
+### 102.6 Deterministic Cryptographic State Audit Digest ($H_{\text{ballistics}}$)
+Under ISO/IEC 17025:2017 Section 7.8, all particle coordinates, elemental weight percentages, CMC cell matrices, microscopy parameters, and categorical verdicts are hashed into a deterministic 64-hex SHA-256 state digest:
+$$H_{\text{ballistics}} = \text{SHA256}\left( \text{caseId} \parallel \{p_i\}_{i=1}^N \parallel \{c_j\}_{j=1}^M \parallel \{s_k\}_{k=1}^L \parallel LR_{\text{GSR}} \parallel K_{\text{CMC}} \right)$$
+
+---
+
+### 102.7 ASTM E1588 / AFTE Courtroom Evaluative Reporting Shield
+In accordance with ENFSI (2017) and AFTE criteria:
+$$\text{Shield}_{\text{Ballistics}} = \text{"Finding characteristic Pb-Ba-Sb particles indicates proximity to a firearm discharge event, but cannot identify the specific shooter or exclude secondary transfer from contaminated law enforcement environments. Identification of fired toolmarks requires K >= 6 congruent matching cells under documented cross-correlation, translation, and rotation thresholds (P_false < 10^-6)."}$$

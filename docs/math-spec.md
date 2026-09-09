@@ -3582,13 +3582,71 @@ Theoretical bounds: $PRS \\in [0.000, 4.740]$.
 Hamilton-Norwood clinical grade mapping:
 1. **Grade I / II ($PRS < 0.50$):** Low risk (Full vertex density, minimal frontal recession).
 2. **Grade III ($0.50 \\le PRS < 1.20$):** Moderate risk (Early symmetrical frontotemporal recess, deep M-shape).
-3. **Grade IV / V ($1.20 \\le PRS < 2.10$):** Elevated risk (Moderate frontotemporal recession and vertex thinning with narrow bridge).
-4. **Grade VI / VII ($PRS \\ge 2.10$):** High / severe risk (Confluent frontotemporal and vertex baldness with residual horseshoe fringe).
+3. **Grade IV / V ($1.20 \le PRS < 2.10$):** Elevated risk (Moderate frontotemporal recession and vertex thinning with narrow bridge).
+4. **Grade VI / VII ($PRS \ge 2.10$):** High / severe risk (Confluent frontotemporal and vertex baldness with residual horseshoe fringe).
 
-### 95.4 Deterministic Cryptographic State Audit Digest ($H_{\\text{state}}$)
+### 95.4 Deterministic Cryptographic State Audit Digest ($H_{\text{state}}$)
 To ensure compliance with ISO/IEC 17025:2017 chain of custody requirements, every hair phenotype evaluation produces an immutable 64-hex SHA-256 state digest:
-$$H_{\\text{state}} = \\text{Hash}\\left(\\text{Sort}(\\mathbf{x}_{\\text{dosages}}) \\parallel C_{\\text{curl}} \\parallel A \\parallel \\text{Cat} \\parallel PRS \\parallel \\text{Grade} \\parallel \\text{Risk}\\right)$$
+$$H_{\text{state}} = \text{Hash}(\text{Sort}(\mathbf{x}_{\text{dosages}}) \parallel C_{\text{curl}} \parallel A \parallel \text{Cat} \parallel PRS \parallel \text{Grade} \parallel \text{Risk})$$
 
 ### 95.5 German StPO § 81e Statutory Scope & Evaluative Reporting Shield
 Under § 81e (2) of the German Code of Criminal Procedure (Strafprozessordnung - StPO) and EU AI Act (2024/1689), forensic DNA phenotyping on unknown trace donors is strictly confined to externally visible characteristics (EVCs). Hair cross-sectional thickness and curl curvature represent non-disease morphological traits. Androgenetic alopecia is a polygenic cosmetic trait; in courtroom testimony, it serves strictly as an investigative lead (Ermittlungsansatz), protected by the reciprocal Prosecutor's Fallacy shield:
-$$P(\\text{DNA Profile} \\mid \\text{Hair Morphology / Balding Grade}) \\ne P(\\text{Hair Morphology / Balding Grade} \\mid \\text{DNA Profile})$$
+$$P(\text{DNA Profile} \mid \text{Hair Morphology / Balding Grade}) \ne P(\text{Hair Morphology / Balding Grade} \mid \text{DNA Profile})$$
+
+---
+
+## 96. Ephelides (Freckling), MC1R Loss-of-Function Epistasis & Minimal Erythema Dose (`ephelides_freckling_engine.py` & `PanelFreckling.tsx`)
+
+### 96.1 8-Locus MC1R Allelic Architecture & Loss Weight Metric ($W_{\text{MC1R}}$)
+MC1R (Melanocortin 1 Receptor, 16q24.3) mediates the biochemical switch between eumelanin (photoprotective black/brown pigment) and pheomelanin (pro-oxidant red/yellow pigment) in epidermal melanocytes. Loss-of-function variants severely impair receptor-ligand coupling with alpha-MSH, leading to eumelanin synthesis failure, hyper-pigmented ephelides clusters, and solar radiation sensitivity (Valverde et al. 1995, Sulem et al. 2007).
+
+Variants are partitioned into two penetrance classes based on biochemical cAMP activation assay metrics:
+1. **High-Risk Loss-of-Function Alleles ('R'):**
+   - rs1805006 (`D84E`), $w = 2.50$
+   - rs75570604 (`R142H`), $w = 2.40$
+   - rs1805007 (`R151C`), $w = 2.85$
+   - rs1805008 (`R160W`), $w = 2.75$
+   - rs1805009 (`D294H`), $w = 2.60$
+2. **Low-Risk / Partial Loss Alleles ('r'):**
+   - rs1805005 (`V60L`), $w = 1.10$
+   - rs2228479 (`V92M`), $w = 0.85$
+   - rs885479 (`R163Q`), $w = 0.75$
+
+For allele dosages $d_k \in \{0, 1, 2\}$, the total cumulative MC1R functional loss burden is:
+$$W_{\text{MC1R}} = \sum_{k \in \mathcal{R}} w_k \cdot d_k + \sum_{j \in r} w_j \cdot d_j$$
+
+Deterministic diplotype categorization follows strict combinatorial allele counts $N_R = \sum_{k \in \mathcal{R}} d_k$ and $N_r = \sum_{j \in r} d_j$:
+$$\text{Diplotype} = \begin{cases} \text{R/R} & \text{if } N_R \ge 2 \implies \text{SEVERE\_LOSS} \\ \text{R/r} & \text{if } N_R \ge 1 \land N_r \ge 1 \implies \text{MODERATE\_LOSS} \\ \text{R/wt} & \text{if } N_R = 1 \land N_r = 0 \implies \text{MODERATE\_LOSS} \\ \text{r/r} & \text{if } N_R = 0 \land N_r \ge 2 \implies \text{MILD\_LOSS} \\ \text{r/wt} & \text{if } N_R = 0 \land N_r = 1 \implies \text{MILD\_LOSS} \\ \text{wt/wt} & \text{if } N_R = 0 \land N_r = 0 \implies \text{WILD\_TYPE} \end{cases}$$
+
+### 96.2 Sulem et al. (2008) Epistatic Freckling Score Model ($F_{\text{score}}$)
+Freckling propensity is calculated via a multi-locus epistatic logistic regression model incorporating MC1R total loss weight and independent modifiers *ASIP* (Agouti Signaling Protein, 20q11.2, rs1015362) and *BNC2* (Basonuclin 2, 9p22.2, rs10756819):
+$$\text{logit}(P_{\text{freckle}}) = \beta_0 + \beta_{\text{MC1R}} \cdot W_{\text{MC1R}} + \beta_{\text{ASIP}} \cdot x_{\text{ASIP}} + \beta_{\text{BNC2}} \cdot x_{\text{BNC2}}$$
+where calibrated GWAS meta-analysis coefficients satisfy:
+- $\beta_0 = -2.50$ (baseline Caucasian intercept),
+- $\beta_{\text{MC1R}} = +1.35$ (primary driver of cutaneous pheomelanin freckling),
+- $\beta_{\text{ASIP}} = +0.85$ (antagonistic melanocortin pathway modifier),
+- $\beta_{\text{BNC2}} = +0.65$ (skin saturation and pigment patterning regulator).
+
+The continuous quantitative freckling score $F_{\text{score}} \in [0.0, 100.0]$ is evaluated by the logistic sigmoid:
+$$F_{\text{score}} = \frac{100.0}{1.0 + \exp\left(-\text{logit}(P_{\text{freckle}})\right)}$$
+
+4-tier forensic density classification:
+1. **MINIMAL ($F_{\text{score}} < 20.0\%$):** Rare or absent ephelides under standard sun exposure ($F_{\text{score}}^{\text{WT}} = 7.59\%$).
+2. **MILD ($20.0\% \le F_{\text{score}} < 45.0\%$):** Sparse ephelides on bridge of nose and malar prominence upon seasonal UV exposure.
+3. **MODERATE ($45.0\% \le F_{\text{score}} < 75.0\%$):** Distinct, multi-focal freckle clusters across nose, cheeks, and forehead.
+4. **DENSE ($F_{\text{score}} \ge 75.0\%$):** Extensive confluent facial and dorsal shoulder ephelides ($F_{\text{score}}^{\text{R151C/R151C}} = 99.45\%$).
+
+### 96.3 Minimal Erythema Dose (MED) & Solar Phototype Mapping
+Minimal Erythema Dose (MED) defines the threshold radiant exposure ($mJ / cm^2$) required to produce uniform, clearly demarcated cutaneous erythema (sunburn) at 24 hours post-exposure. Diplotype-based phototype categorization maps to clinical tanning response:
+1. **R/R ($< 20\text{ mJ/cm}^2$):** Extremely high photosensitivity. Tanning response: NEVER_TANS_ALWAYS_BURNS (Fitzpatrick Phototype I). Extreme relative risk for melanoma and basal cell carcinoma.
+2. **R/r or R/wt ($20 - 35\text{ mJ/cm}^2$):** Elevated photosensitivity. Tanning response: RARE_TAN_FREQUENT_BURN (Fitzpatrick Phototype I/II). Prompt sunburn upon UV index $\ge 4$.
+3. **r/r or r/wt ($35 - 50\text{ mJ/cm}^2$):** Moderate photosensitivity. Tanning response: MILD_TAN_OCCASIONAL_BURN (Fitzpatrick Phototype II/III). Gradual melanin darkening with moderate erythema tolerance.
+4. **wt/wt ($> 50\text{ mJ/cm}^2$):** Normal erythema tolerance. Tanning response: NORMAL_TAN_RARE_BURN (Fitzpatrick Phototype III/IV). High photoprotective capacity with baseline eumelanogenesis.
+
+### 96.4 Deterministic Cryptographic State Audit Digest ($H_{\text{state}}$)
+To ensure full chain-of-custody compliance under ISO/IEC 17025:2017 Sections 7.5 and 7.8, each freckling and UV phototype evaluation produces an immutable 64-hex SHA-256 state audit digest:
+$$H_{\text{state}} = \text{SHA256}\left(\text{Sort}(\mathbf{x}_{\text{dosages}}) \parallel \text{Diplotype} \parallel W_{\text{MC1R}} \parallel F_{\text{score}} \parallel \text{MED\_Category}\right)$$
+
+### 96.5 German StPO § 81e Statutory Scope & Evaluative Reporting Shield
+Under Section 81e (2) of the German Code of Criminal Procedure (StPO) and EU AI Act (2024/1689), forensic DNA phenotyping on unknown biological crime-stains is strictly confined to externally visible characteristics (EVCs). Quantitative ephelides and UV erythema susceptibility represent non-disease superficial dermatological phenotypes. Courtroom presentation enforces the reciprocal Prosecutor's Fallacy defense shield:
+$$P(\text{DNA Profile} \mid \text{Predicted Ephelides / MED Tier}) \ne P(\text{Predicted Ephelides / MED Tier} \mid \text{DNA Profile})$$

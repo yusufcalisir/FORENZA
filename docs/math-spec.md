@@ -4091,3 +4091,84 @@ $$H_{\text{ballistics}} = \text{SHA256}\left( \text{caseId} \parallel \{p_i\}_{i
 ### 102.7 ASTM E1588 / AFTE Courtroom Evaluative Reporting Shield
 In accordance with ENFSI (2017) and AFTE criteria:
 $$\text{Shield}_{\text{Ballistics}} = \text{"Finding characteristic Pb-Ba-Sb particles indicates proximity to a firearm discharge event, but cannot identify the specific shooter or exclude secondary transfer from contaminated law enforcement environments. Identification of fired toolmarks requires K >= 6 congruent matching cells under documented cross-correlation, translation, and rotation thresholds (P_false < 10^-6)."}$$
+
+---
+
+## Section 103: Subsystem 27: Trace Micro-Spectroscopy (ATR-FTIR & Raman HQI) & Multispectral Imaging (MSI Studio)
+
+Subsystem 27 provides physical trace chemical intelligence via Attenuated Total Reflectance Fourier-Transform Infrared (ATR-FTIR) and confocal micro-Raman spectroscopy, multispectral optical imaging (MSI), and 2D focal plane array (FPA) spatial chemical mapping.
+
+### 103.1 Normalized Squared Dot Product Hit Quality Index (HQI)
+Spectral comparison between an unknown trace sample vector $\mathbf{S}_{\text{sample}} = [s_1, s_2, \dots, s_N]^T$ and a certified reference library vector $\mathbf{S}_{\text{ref}} = [r_1, r_2, \dots, r_N]^T$ across the mid-infrared region ($400\text{ cm}^{-1} \le \tilde{\nu} \le 4000\text{ cm}^{-1}$, $N=100$) utilizes the normalized squared dot product Hit Quality Index (HQI) in accordance with ASTM E2224-19:
+$$\text{HQI} = \frac{\left( \mathbf{S}_{\text{sample}} \cdot \mathbf{S}_{\text{ref}} \right)^2}{\left( \mathbf{S}_{\text{sample}} \cdot \mathbf{S}_{\text{sample}} \right) \left( \mathbf{S}_{\text{ref}} \cdot \mathbf{S}_{\text{ref}} \right)} \times 100\% = \frac{\left( \sum_{i=1}^N s_i r_i \right)^2}{\left( \sum_{i=1}^N s_i^2 \right) \left( \sum_{i=1}^N r_i^2 \right)} \times 100\%$$
+
+**Boundary & Quality Invariants:**
+- Normalization Invariant: $\text{HQI} \in [0.0\%, 100.0\%]$.
+- Scale Invariance: $\text{HQI}(\alpha \mathbf{S}_{\text{sample}}, \mathbf{S}_{\text{ref}}) = \text{HQI}(\mathbf{S}_{\text{sample}}, \mathbf{S}_{\text{ref}})$ for any scalar intensity multiplier $\alpha > 0$.
+- Energy Constraint: $\sum_{i=1}^N s_i^2 > 10^{-12}$ and $\sum_{i=1}^N r_i^2 > 10^{-12}$ (rejects zero-energy or detector blackout spectra).
+- Dimensionality Constraint: $\dim(\mathbf{S}_{\text{sample}}) = \dim(\mathbf{S}_{\text{ref}}) = N$.
+
+---
+
+### 103.2 ASTM E2224 / SWGMAT 3-Tier Evaluative Classification Calibration
+In accordance with SWGMAT forensic fiber examination criteria and ASTM E2224-19 guidelines, HQI scores map to three distinct categorical evidence tiers:
+$$\text{Classification}(\text{HQI}) = \begin{cases} \text{POSITIVE\_SPECTRAL\_MATCH} & \text{if } \text{HQI} \ge 90.0\% \quad (P_{\text{false}} < 10^{-4}) \\ \text{PROBABLE\_MATCH\_DEGRADED} & \text{if } 75.0\% \le \text{HQI} < 90.0\% \quad (\text{Weathered / Contaminated}) \\ \text{NON\_MATCH\_EXCLUSION} & \text{if } \text{HQI} < 75.0\% \quad (\text{Dissimilar Polymer Exclusion}) \end{cases}$$
+
+---
+
+### 103.3 Reference Forensic Fiber & Polymer Spectral Library
+The primary library registers diagnostic vibrational band absorption peaks ($\tilde{\nu}$ in $\text{cm}^{-1}$) for natural and synthetic fibers:
+1. **Polyester (Polyethylene Terephthalate - PET):**
+   - Ester carbonyl stretch: $\text{C=O}$ at $1715.0\text{ cm}^{-1}$
+   - Ester oxygen stretch: $\text{C-O-C}$ at $1240.0\text{ cm}^{-1}$
+   - Aromatic ester ring: $1100.0\text{ cm}^{-1}$ and $725.0\text{ cm}^{-1}$
+2. **Nylon-6,6 (Polyamide 6,6):**
+   - Amide I band ($\text{C=O}$ stretch): $1635.0\text{ cm}^{-1}$
+   - Amide II band ($\text{N-H}$ bend / $\text{C-N}$ stretch): $1538.0\text{ cm}^{-1}$
+   - Amide $\text{N-H}$ stretch: $3300.0\text{ cm}^{-1}$
+   - Aliphatic $\text{C-H}$ coupling: $1275.0\text{ cm}^{-1}$
+3. **Acrylic (Polyacrylonitrile - PAN):**
+   - Sharp nitrile stretch: $\text{C}\equiv\text{N}$ at $2240.0\text{ cm}^{-1}$
+   - Methylene bend: $\text{CH}_2$ at $1450.0\text{ cm}^{-1}$
+   - Aliphatic skeletal: $1070.0\text{ cm}^{-1}$
+4. **Cotton (Cellulose):**
+   - Hydrogen-bonded hydroxyl stretch: $\text{O-H}$ at $3330.0\text{ cm}^{-1}$
+   - Alkane stretch: $\text{C-H}$ at $2900.0\text{ cm}^{-1}$
+   - Pyranose ring ether: $\text{C-O}$ at $1030.0\text{ cm}^{-1}$ and $1160.0\text{ cm}^{-1}$
+5. **Wool (Keratin Protein):**
+   - Amide I alpha-helix: $1650.0\text{ cm}^{-1}$
+   - Amide II band: $1520.0\text{ cm}^{-1}$
+   - Keratin $\text{N-H}$ stretch: $3280.0\text{ cm}^{-1}$
+   - Disulfide / cystine-linked matrix: $1235.0\text{ cm}^{-1}$
+
+---
+
+### 103.4 Targeted Multispectral Imaging (MSI) Optical Contrast Mechanics
+Multispectral optical excitation exploits wavelength-dependent absorption, fluorescence, and substrate transmission:
+$$C_{\text{optical}}(\lambda) = \frac{|I_{\text{target}}(\lambda) - I_{\text{substrate}}(\lambda)|}{I_{\text{target}}(\lambda) + I_{\text{substrate}}(\lambda)}$$
+
+| Band Range | Primary Optical Phenomenon | Target Forensic Evidence | Physical Contrast Mechanism | Barrier Filter Recommendation |
+| :--- | :--- | :--- | :--- | :--- |
+| **365 nm (UV-A)** | Fluorescence Excitation | Semen, Saliva, Vaginal Fluids | Excitation of endogenous flavins and lipid fluorophores | 420 nm Long-Pass |
+| **415 nm (Soret)** | Peak Optical Absorption | Latent / Dilute Bloodstains | Strong porphyrin ring absorption in hemoglobin ($C_{\text{optical}} \ge 0.95$) | Monochromatic Neutral Density |
+| **450 nm (Blue Light)** | Secondary Fluorescence | Latent Fingerprints, Trace Serology | 530 nm long-pass filtered dye excitation ($C_{\text{optical}} \ge 0.90$) | 530 nm Yellow/Orange Long-Pass |
+| **850 nm (Near-IR)** | Substrate Transmission | Blood & GSR on Dark Fabrics | Fabric dyes become transparent; carbon/blood visible ($C_{\text{optical}} \ge 0.90$) | 830 nm Infrared Band-Pass |
+
+---
+
+### 103.5 2D Focal Plane Array (FPA) Spatial Chemical Mapping
+Spatial chemical mapping discretizes a $200\,\mu\text{m} \times 200\,\mu\text{m}$ specimen area into an $8 \times 8$ grid of $M=64$ micro-spectroscopy pixels. For each pixel coordinate $(x, y)$, the local spectrum $\mathbf{S}_{x, y}$ is matched against the reference library:
+$$\text{Class}(x, y) = \arg\max_{k} \left\{ \text{HQI}(\mathbf{S}_{x, y}, \mathbf{S}_{\text{ref}, k}) \right\}$$
+Peak absorbance at characteristic wavenumber $\tilde{\nu}_{\text{diagnostic}}$ maps the spatial concentration distribution of transferred fibers versus substrate matrix.
+
+---
+
+### 103.6 Deterministic Cryptographic State Audit Digest ($H_{\text{spectro}}$)
+Under ISO/IEC 17025:2017 Section 7.8, all spectral vectors, HQI match results, optical band parameters, and classification verdicts are hashed into a deterministic 64-hex SHA-256 state digest:
+$$H_{\text{spectro}} = \text{SHA256}\left( \text{caseId} \parallel \mathbf{S}_{\text{sample}} \parallel \text{topMatch} \parallel \text{HQI} \parallel \lambda_{\text{MSI}} \right)$$
+
+---
+
+### 103.7 SWGMAT & ASTM E2228 Courtroom Evaluative Reporting Shield
+In accordance with ENFSI (2017) and SWGMAT evaluative reporting guidelines:
+$$\text{Shield}_{\text{Spectroscopy}} = \text{"An HQI >= 90.0% provides definitive chemical polymer identification. However, synthetic fibers are mass-manufactured; spectral identity proves material class consistency but cannot uniquely identify a single garment without batch/dye context (ASTM E2228 / SWGMAT)."}$$

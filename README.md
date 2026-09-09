@@ -376,7 +376,7 @@ str-analysis/
 │       ├── context/                       # React Context Providers
 │       ├── dictionaries/                  # Bilingual Translations (TR / EN)
 │       ├── lib/                           # Utility Functions & API Clients
-│       ├── test/                          # Automated Vitest Suite (421/421 Tests Passing across 37 Specs)
+│       ├── test/                          # Automated Vitest Suite (436/436 Tests Passing across 38 Specs)
 │       └── utils/                         # Client-Side Biocomputational Simulation Engines
 │           ├── strLocusRegistryEngine.ts  # 24-STR Locus Registry & CE Sizing TS Engine
 │           ├── forensicCliBatchParser.ts  # Forensic CLI Batch Lexer & Ingestion TS Engine
@@ -502,7 +502,7 @@ FORENZA structures its 38 biocomputational subsystems into 7 canonical operation
 24. **Bloodstain Pattern Analysis 3D Area of Origin (`24`):** Computes 3D spatial convergence and flight path origin $(\mathbf{P}_0 = \mathbf{A}^{-1}\mathbf{b})$ via least-squares trajectory intersection with 95% confidence ellipsoids.
 25. **SEM-EDX GSR & CMC 3D Ballistics Striation (`25`):** Automated ASTM E1588 Pb-Ba-Sb characteristic gunshot residue scoring and 3D Congruent Matching Cells (CMC) striation topography.
 26. **Forensic Entomology Thermal Summation (`26`):** Calculates minimum PMI based on Accumulated Degree Days (ADD) thermal constants $(K)$ and lower developmental thresholds $(T_0)$ for *Lucilia sericata*, *Calliphora vicina*, and *Chrysomya albiceps*.
-27. **Multispectral Imaging & ATR-FTIR HQI (`27`):** Chemical trace and synthetic fiber identification using multispectral reflectance (365 nm, 415 nm Soret, 450 nm, 850 nm NIR) and Hit Quality Index $(\text{HQI} \ge 85.0\%)$.
+27. **Trace Micro-Spectroscopy & Multispectral Imaging (MSI Studio) (`27`):** Chemical trace and synthetic polymer identification using mid-IR ATR-FTIR / confocal Raman Hit Quality Index $(\text{HQI} \ge 90.0\%)$, multispectral optical bands (365 nm UV-A, 415 nm Soret, 450 nm, 850 nm NIR), and 2D focal plane array (FPA) spatial chemical mapping.
 28. **Post-Mortem Toxicology PMR & ADME Kinetics (`28`):** Quantifies Central-to-Peripheral $(C/P)$ post-mortem drug redistribution ratios and zero/first-order clearance models for ethanol and synthetic opioids.
 
 ### Pillar 6: LIMS, ISO 17025 QA/QC & Cryptographic Governance
@@ -889,7 +889,7 @@ pytest backend/node/services/forensic/physical/ -v        # Pillar 5: Physical E
 pytest backend/node/services/forensic/security/ -v        # Pillar 6: LIMS & ZKP
 pytest backend/node/services/forensic/geoint/ -v          # Pillar 7: Geo-Forensics
 
-# Execute frontend tactical workstation test suite (421 tests across 37 test suites)
+# Execute frontend tactical workstation test suite (436 tests across 38 test suites)
 npm --prefix frontend test -- --run
 ```
 

@@ -1,9 +1,9 @@
 """
 FORENZA Forensic API Router.
 Exposes three production endpoints under the /forensic prefix:
-  POST /forensic/lr       — Single-source Likelihood Ratio evaluation
-  POST /forensic/kinship  — Kinship Index calculation
-  POST /forensic/validate — Internal validation simulation run
+  POST /forensic/lr       : Single-source Likelihood Ratio evaluation
+  POST /forensic/kinship  : Kinship Index calculation
+  POST /forensic/validate : Internal validation simulation run
 """
 
 import math

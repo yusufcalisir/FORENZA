@@ -1,5 +1,5 @@
 """
-FORENZA Module 01 — Kinship Index (KI), Pedigree Matching
+FORENZA Module 01: Kinship Index (KI), Pedigree Matching
 & Stepwise Mutation Model (SMM) Engine.
 
 Calculates Kinship/Paternity Indices (KI) using IBD (k0, k1, k2) coefficients
@@ -8,9 +8,9 @@ with Balding-Nichols theta correction for the following pedigree relationships:
   - Full Siblings (Ito-Donnelly k-coefficients: k0=0.25, k1=0.50, k2=0.25)
   - Half Siblings / Avuncular / Grandparent-Grandchild (k0=0.50, k1=0.50, k2=0)
   - First Cousins (k0=0.75, k1=0.25, k2=0)
-  - Unrelated (k0=1.0, k1=0, k2=0) — LR baseline
+  - Unrelated (k0=1.0, k1=0, k2=0) : LR baseline
 
-Stepwise Mutation Model (SMM) — Pillar 1 §1.3:
+Stepwise Mutation Model (SMM) : Pillar 1 §1.3:
   P(m→n) = (1-μ)          if m=n
   P(m→n) = (μ/2)(1-r)r^|m-n|-1  if m≠n    (μ=10^-3, r=0.10)
 
@@ -29,7 +29,7 @@ from .models import AnalysisResult, KinshipRelationship, STRGenotype, STRProfile
 
 
 # ---------------------------------------------------------------------------
-# IBD Coefficient Table (k0, k1, k2) — Pillar 1 §1.3
+# IBD Coefficient Table (k0, k1, k2) : Pillar 1 §1.3
 # ---------------------------------------------------------------------------
 
 IBD_COEFFICIENTS: Dict[KinshipRelationship, Tuple[float, float, float]] = {
@@ -154,7 +154,7 @@ class KinshipEngine:
 
         cpi = 10.0 ** total_log_ki
 
-        # Posterior Probability of Relationship (W%) — equal prior odds 0.50
+        # Posterior Probability of Relationship (W%) : equal prior odds 0.50
         w_percent = (cpi * 0.50) / (cpi * 0.50 + 0.50) * 100.0 if cpi > 0 else 0.0
 
         # 95% CI in log-space (propagated from locus-level uncertainty)
@@ -221,7 +221,7 @@ class KinshipEngine:
         """
         mutated = False
 
-        # Parent-Child fast-path (k0=0, k1=1, k2=0) — obligate allele formula
+        # Parent-Child fast-path (k0=0, k1=1, k2=0) : obligate allele formula
         # KI_l = 1 / [2(θ + (1-θ)·p_i)]  where p_i is the shared allele frequency
         if k0 == 0.0 and k1 == 1.0 and k2 == 0.0:
             shared = set(g1.alleles) & set(g2.alleles)

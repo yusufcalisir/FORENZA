@@ -1,5 +1,5 @@
 """
-FORENZA Forensic API — Pydantic v2 Request / Response Schemas.
+FORENZA Forensic API : Pydantic v2 Request / Response Schemas.
 Strict input validation for LR, kinship, and validation endpoints.
 """
 
@@ -65,13 +65,16 @@ class KinshipRequest(BaseModel):
     profile1: ProfileInput
     profile2: ProfileInput
     relationship: str = Field("parent_child",
-        description="parent_child | full_sibling | half_sibling | unrelated")
+        description="parent_child | full_sibling | half_sibling | avuncular | grandparent | first_cousin | unrelated")
     theta: float = Field(0.01, ge=0.0, le=0.10)
     population: Optional[str] = None
 
     @model_validator(mode="after")
     def validate_relationship(self) -> "KinshipRequest":
-        valid = {"parent_child", "full_sibling", "half_sibling", "unrelated"}
+        valid = {
+            "parent_child", "full_sibling", "half_sibling",
+            "avuncular", "grandparent", "first_cousin", "unrelated"
+        }
         if self.relationship not in valid:
             raise ValueError(f"relationship must be one of {valid}")
         return self
@@ -97,7 +100,7 @@ class KinshipResponse(BaseModel):
 class ValidationRequest(BaseModel):
     """Request body for POST /forensic/validate (runs internal validation simulation)."""
     n_per_type: int = Field(100, ge=10, le=2000,
-        description="Number of profile pairs per relationship type (10–2000)")
+        description="Number of profile pairs per relationship type (10-2000)")
     population: str = Field("Caucasian")
     theta: float = Field(0.01, ge=0.0, le=0.10)
     seed: int = Field(42)

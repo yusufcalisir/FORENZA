@@ -475,7 +475,7 @@ try:
 except Exception as _phys_import_err:
     logger.warning(f"[boot] Physical evidence router not loaded: {_phys_import_err}")
 
-# --- Empirical Validation Lab & Tippett ROC Calibration Router (Module 04 / Pillar 1 §5) ---
+# --- Empirical Validation Lab & Tippett ROC Calibration Router (Module 05 / Pillar 1 §5) ---
 try:
     try:
         from app.api.tippett_routes import router as tippett_router

@@ -1160,13 +1160,14 @@ The true $\log_{10}(\text{LR})$ exceeds $\text{LR}_{\text{court}}$ with **95% po
 
 | Tier | $\log_{10}(\text{LR})$ Range | English Verbal Predicate | Turkish Verbal Predicate |
 | :--- | :--- | :--- | :--- |
-| **Tier 5** | $> 6$ | Extremely strong support for prosecution | Son derece güçlü destek (iddianame) |
-| **Tier 4** | $4 < x \le 6$ | Very strong support for prosecution | Çok güçlü destek (iddianame) |
-| **Tier 3** | $2 < x \le 4$ | Strong support for prosecution | Güçlü destek (iddianame) |
-| **Tier 2** | $1 < x \le 2$ | Moderate support for prosecution | Orta düzeyde destek (iddianame) |
-| **Tier 1** | $0 < x \le 1$ | Limited support for prosecution | Sınırlı destek (iddianame) |
-| **Tier 0** | $x = 0$ | Neutral - no support for either | Tarafsız |
-| **Tier −1..−5** | $x < 0$ | Symmetric defence tiers | Savunma katmanları (simetrik) |
+| **Tier 6** | $> 9.0$ | Extremely strong support for prosecution proposition | İddianame önermesini destekler son derece güçlü destek |
+| **Tier 5** | $6.0 < x \le 9.0$ | Very strong support for prosecution proposition | İddianame önermesini destekler çok güçlü destek |
+| **Tier 4** | $4.0 < x \le 6.0$ | Strong support for prosecution proposition | İddianame önermesini destekler güçlü destek |
+| **Tier 3** | $2.0 < x \le 4.0$ | Moderately strong support for prosecution proposition | İddianame önermesini destekler orta-güçlü destek |
+| **Tier 2** | $1.0 < x \le 2.0$ | Moderate support for prosecution proposition | İddianame önermesini destekler orta düzeyde destek |
+| **Tier 1** | $0.0 < x \le 1.0$ | Weak / limited support for prosecution proposition | İddianame önermesini destekler zayıf destek |
+| **Tier 0** | $x = 0.0$ | Inconclusive / Neutral - no support for either hypothesis | Sonuçsuz / Nötr - delil her iki hipotezi de desteklememektedir |
+| **Tier -1..-6** | $x < 0.0$ | Symmetric defence propositions ($H_d$) | Savunma önermesini destekler simetrik kademeler ($H_d$) |
 
 **Prosecutor's Fallacy Shield (mandatory in all reports):**
 $$P(E \mid H_p) \neq P(H_p \mid E) \quad \text{(Transposed Conditional - inadmissible)}$$

@@ -1,34 +1,34 @@
 """
 FORENZA Tippett Calibration, ROC Analysis, Cllr Cost, 95% HPD Lower Bound &
-ENFSI 2017 Evaluative Reporting Engine — Module 05.
+ENFSI 2017 Evaluative Reporting Engine -  Module 05.
 
 Implements verbatim from Pillar 1 Research §5 (Tippett Calibration & Evaluative Reporting):
-  - §5.1 Tippett Calibration Curves (Empirical Complementary CDF):
+ - §5.1 Tippett Calibration Curves (Empirical Complementary CDF):
            Hp curve: P(log10(LR) >= x | Hp)
            Hd curve: P(log10(LR) >= x | Hd)
-  - §5.2 Empirical ROC Analysis:
+ - §5.2 Empirical ROC Analysis:
            FPR = P(log10(LR) > 0 | Hd)
            FNR = P(log10(LR) < 0 | Hp)
            ROC-AUC via trapezoidal integration
            Misleading Evidence Rate (MER) upper bound
-  - §5.3 Log-Likelihood-Ratio Cost (Cllr) Calibration Score:
+ - §5.3 Log-Likelihood-Ratio Cost (Cllr) Calibration Score:
            Cllr = (1/(2*N_Hp)) * SUM log2(1 + 1/LR_i) + (1/(2*N_Hd)) * SUM log2(1 + LR_j)
            Minimum Cllr (ideal PAV-calibrated system)
            Entropy Loss = Cllr - Cllr_min
-  - §5.4 Conservative 95% HPD Lower Bound (LR_court):
+ - §5.4 Conservative 95% HPD Lower Bound (LR_court):
            LR_court = Percentile_5% ({LR^(m)}_{m=1}^M)
-  - §5.5 ENFSI 2017 Dynamic 7-Tier Verbal Reporting Scale:
+ - §5.5 ENFSI 2017 Dynamic 7-Tier Verbal Reporting Scale:
            Tiers 0-6 (EN & TR) + Prosecutor's Fallacy Shield (Transposed Conditional)
 
 Golden Benchmark Vectors:
-  VECTOR_05_TIPPETT_A — Tippett curve ECCDF bounds and monotonicity
-  VECTOR_05_TIPPETT_B — FPR / FNR with synthetic datasets
-  VECTOR_05_TIPPETT_C — ROC-AUC >= 0.999 on pristine benchmark
-  VECTOR_05_TIPPETT_D — Cllr cost against canonical numerical benchmarks
-  VECTOR_05_TIPPETT_E — 95% HPD Lower Bound (Percentile_5%)
-  VECTOR_05_TIPPETT_F — ENFSI 7-tier scale boundary conditions
-  VECTOR_05_TIPPETT_G — Prosecutor's Fallacy Shield
-  VECTOR_05_TIPPETT_H — API integration tests
+  VECTOR_05_TIPPETT_A -  Tippett curve ECCDF bounds and monotonicity
+  VECTOR_05_TIPPETT_B -  FPR / FNR with synthetic datasets
+  VECTOR_05_TIPPETT_C -  ROC-AUC >= 0.999 on pristine benchmark
+  VECTOR_05_TIPPETT_D -  Cllr cost against canonical numerical benchmarks
+  VECTOR_05_TIPPETT_E -  95% HPD Lower Bound (Percentile_5%)
+  VECTOR_05_TIPPETT_F -  ENFSI 7-tier scale boundary conditions
+  VECTOR_05_TIPPETT_G -  Prosecutor's Fallacy Shield
+  VECTOR_05_TIPPETT_H -  API integration tests
 
 References:
   ENFSI (2017) Guiding Principles for Evaluative Reporting in Forensic Science.
@@ -49,14 +49,14 @@ LOG10_LR_MIN: float = -300.0
 LOG10_LR_MAX: float = 300.0
 
 # Target calibration quality thresholds
-CLLR_TARGET_EXCELLENT: float = 0.05   # < 5% — excellent calibration
-CLLR_TARGET_ACCEPTABLE: float = 0.20  # < 20% — acceptable calibration
+CLLR_TARGET_EXCELLENT: float = 0.05   # < 5% -  excellent calibration
+CLLR_TARGET_ACCEPTABLE: float = 0.20  # < 20% -  acceptable calibration
 
 # Minimum Effective Sample Size for Tippett curves
 MIN_ECCDF_SAMPLES: int = 10
 
 # ENFSI 2017 7-Tier Verbal Scale boundaries (log10 LR thresholds)
-ENFSI_THRESHOLDS: List[float] = [0.0, 1.0, 2.0, 4.0, 6.0]  # 5 boundaries → 6 positive tiers
+ENFSI_THRESHOLDS: List[float] = [0.0, 1.0, 2.0, 4.0, 6.0, 9.0]  # 6 boundaries -> 7 tiers
 
 
 # ── Data Classes ───────────────────────────────────────────────────────────────
@@ -65,8 +65,8 @@ ENFSI_THRESHOLDS: List[float] = [0.0, 1.0, 2.0, 4.0, 6.0]  # 5 boundaries → 6 
 class TippettPoint:
     """Single point on a Tippett calibration curve (ECCDF)."""
     threshold: float        # log10(LR) threshold x
-    hp_exceedance: float    # P(log10(LR) >= x | Hp)  — prosecution curve
-    hd_exceedance: float    # P(log10(LR) >= x | Hd)  — defense curve
+    hp_exceedance: float    # P(log10(LR) >= x | Hp) -  prosecution curve
+    hd_exceedance: float    # P(log10(LR) >= x | Hd) -  defense curve
 
 
 @dataclass
@@ -128,7 +128,7 @@ class HPDLowerBoundResult:
 class ENFSIVerbalResult:
     """ENFSI 2017 7-Tier Verbal Scale evaluative reporting result."""
     log10_lr: float
-    tier: int                   # -1=support Hd tiers, 0–6=support Hp tiers
+    tier: int                   # -1=support Hd tiers, 0-6=support Hp tiers
     tier_name_en: str           # English verbal predicate
     tier_name_tr: str           # Turkish verbal predicate
     lr_range_description: str   # Numeric LR range for this tier
@@ -150,23 +150,23 @@ class TippettEngine:
     All formulas verbatim from Pillar 1 Research §5.
     """
 
-    # ENFSI 2017 7-Tier Verbal Scale — EN/TR pairs
+    # ENFSI 2017 7-Tier Verbal Scale - EN/TR pairs
     _ENFSI_TIERS: List[Dict] = [
-        # Tier 0: LR = 1 (neutral — no support)
+        # Tier 0: LR = 1 (neutral - no support)
         {
             "tier": 0,
             "log10_lr_range": (0.0, 0.0),
-            "en": "Neutral — the evidence does not favour either hypothesis.",
-            "tr": "Tarafsız — delil her iki hipotezi de desteklememektedir.",
+            "en": "Inconclusive / Neutral - the evidence does not favour either hypothesis.",
+            "tr": "Sonuçsuz / Nötr - delil her iki hipotezi de desteklememektedir.",
             "range_desc": "LR = 1 (log10 LR = 0)",
         },
-        # Tier 1: 1 < LR <= 10 (limited support for Hp)
+        # Tier 1: 1 < LR <= 10 (weak support for Hp)
         {
             "tier": 1,
             "log10_lr_range": (0.0, 1.0),
-            "en": "Limited support for the prosecution proposition.",
-            "tr": "İddianame önermesini destekler sınırlı destek.",
-            "range_desc": "1 < LR ≤ 10 (0 < log10 LR ≤ 1)",
+            "en": "Weak support for the prosecution proposition.",
+            "tr": "İddianame önermesini destekler zayıf destek.",
+            "range_desc": "1 < LR <= 10 (0 < log10 LR <= 1)",
         },
         # Tier 2: 10 < LR <= 100 (moderate support for Hp)
         {
@@ -174,31 +174,39 @@ class TippettEngine:
             "log10_lr_range": (1.0, 2.0),
             "en": "Moderate support for the prosecution proposition.",
             "tr": "İddianame önermesini destekler orta düzeyde destek.",
-            "range_desc": "10 < LR ≤ 100 (1 < log10 LR ≤ 2)",
+            "range_desc": "10 < LR <= 100 (1 < log10 LR <= 2)",
         },
-        # Tier 3: 100 < LR <= 10000 (strong support for Hp)
+        # Tier 3: 100 < LR <= 10000 (moderately strong support for Hp)
         {
             "tier": 3,
             "log10_lr_range": (2.0, 4.0),
-            "en": "Strong support for the prosecution proposition.",
-            "tr": "İddianame önermesini destekler güçlü destek.",
-            "range_desc": "100 < LR ≤ 10,000 (2 < log10 LR ≤ 4)",
+            "en": "Moderately strong support for the prosecution proposition.",
+            "tr": "İddianame önermesini destekler orta-güçlü destek.",
+            "range_desc": "100 < LR <= 10,000 (2 < log10 LR <= 4)",
         },
-        # Tier 4: 10000 < LR <= 1000000 (very strong support for Hp)
+        # Tier 4: 10000 < LR <= 1000000 (strong support for Hp)
         {
             "tier": 4,
             "log10_lr_range": (4.0, 6.0),
-            "en": "Very strong support for the prosecution proposition.",
-            "tr": "İddianame önermesini destekler çok güçlü destek.",
-            "range_desc": "10,000 < LR ≤ 1,000,000 (4 < log10 LR ≤ 6)",
+            "en": "Strong support for the prosecution proposition.",
+            "tr": "İddianame önermesini destekler güçlü destek.",
+            "range_desc": "10,000 < LR <= 1,000,000 (4 < log10 LR <= 6)",
         },
-        # Tier 5: LR > 1000000 (extremely strong support for Hp)
+        # Tier 5: 1000000 < LR <= 10^9 (very strong support for Hp)
         {
             "tier": 5,
-            "log10_lr_range": (6.0, 300.0),
+            "log10_lr_range": (6.0, 9.0),
+            "en": "Very strong support for the prosecution proposition.",
+            "tr": "İddianame önermesini destekler çok güçlü destek.",
+            "range_desc": "1,000,000 < LR <= 10^9 (6 < log10 LR <= 9)",
+        },
+        # Tier 6: LR > 10^9 (extremely strong support for Hp)
+        {
+            "tier": 6,
+            "log10_lr_range": (9.0, 300.0),
             "en": "Extremely strong support for the prosecution proposition.",
             "tr": "İddianame önermesini destekler son derece güçlü destek.",
-            "range_desc": "LR > 1,000,000 (log10 LR > 6)",
+            "range_desc": "LR > 10^9 (log10 LR > 9)",
         },
     ]
 
@@ -206,37 +214,44 @@ class TippettEngine:
         {
             "tier": -1,
             "log10_lr_range": (-1.0, 0.0),
-            "en": "Limited support for the defence proposition.",
-            "tr": "Savunma önermesini destekler sınırlı destek.",
-            "range_desc": "0.1 < LR(defence) ≤ 1 (-1 < log10 LR ≤ 0)",
+            "en": "Weak support for the defence proposition.",
+            "tr": "Savunma önermesini destekler zayıf destek.",
+            "range_desc": "0.1 <= LR < 1 (-1 <= log10 LR < 0)",
         },
         {
             "tier": -2,
             "log10_lr_range": (-2.0, -1.0),
             "en": "Moderate support for the defence proposition.",
             "tr": "Savunma önermesini destekler orta düzeyde destek.",
-            "range_desc": "0.01 < LR(defence) ≤ 0.1 (-2 < log10 LR ≤ -1)",
+            "range_desc": "0.01 <= LR < 0.1 (-2 <= log10 LR < -1)",
         },
         {
             "tier": -3,
             "log10_lr_range": (-4.0, -2.0),
-            "en": "Strong support for the defence proposition.",
-            "tr": "Savunma önermesini destekler güçlü destek.",
-            "range_desc": "LR(defence) ≤ 0.01 (log10 LR ≤ -2)",
+            "en": "Moderately strong support for the defence proposition.",
+            "tr": "Savunma önermesini destekler orta-güçlü destek.",
+            "range_desc": "10^-4 <= LR < 0.01 (-4 <= log10 LR < -2)",
         },
         {
             "tier": -4,
             "log10_lr_range": (-6.0, -4.0),
-            "en": "Very strong support for the defence proposition.",
-            "tr": "Savunma önermesini destekler çok güçlü destek.",
-            "range_desc": "LR(defence) ≤ 0.0001 (log10 LR ≤ -4)",
+            "en": "Strong support for the defence proposition.",
+            "tr": "Savunma önermesini destekler güçlü destek.",
+            "range_desc": "10^-6 <= LR < 10^-4 (-6 <= log10 LR < -4)",
         },
         {
             "tier": -5,
-            "log10_lr_range": (-300.0, -6.0),
+            "log10_lr_range": (-9.0, -6.0),
+            "en": "Very strong support for the defence proposition.",
+            "tr": "Savunma önermesini destekler çok güçlü destek.",
+            "range_desc": "10^-9 <= LR < 10^-6 (-9 <= log10 LR < -6)",
+        },
+        {
+            "tier": -6,
+            "log10_lr_range": (-300.0, -9.0),
             "en": "Extremely strong support for the defence proposition.",
             "tr": "Savunma önermesini destekler son derece güçlü destek.",
-            "range_desc": "LR(defence) ≤ 10⁻⁶ (log10 LR ≤ -6)",
+            "range_desc": "LR < 10^-9 (log10 LR < -9)",
         },
     ]
 
@@ -271,8 +286,8 @@ class TippettEngine:
         """
         Compute Tippett calibration curves (Empirical Complementary CDFs).
 
-        Hp curve: P(log10(LR) >= x | Hp)  — prosecution hypothesis true
-        Hd curve: P(log10(LR) >= x | Hd)  — defence hypothesis true
+        Hp curve: P(log10(LR) >= x | Hp) -  prosecution hypothesis true
+        Hd curve: P(log10(LR) >= x | Hd) -  defence hypothesis true
 
         Grid spans from min to max of all observed log10(LR) values.
         """
@@ -369,13 +384,13 @@ class TippettEngine:
         mer = max(fpr_at_lr1, fnr_at_lr1)
 
         if auc >= 0.999:
-            interp = "EXCELLENT: AUC >= 0.999 — Near-perfect discrimination (SWGDAM 2020)."
+            interp = "EXCELLENT: AUC >= 0.999 -  Near-perfect discrimination (SWGDAM 2020)."
         elif auc >= 0.995:
-            interp = "VERY GOOD: AUC >= 0.995 — High discrimination power."
+            interp = "VERY GOOD: AUC >= 0.995 -  High discrimination power."
         elif auc >= 0.99:
-            interp = "GOOD: AUC >= 0.990 — Acceptable discrimination."
+            interp = "GOOD: AUC >= 0.990 -  Acceptable discrimination."
         else:
-            interp = f"MARGINAL: AUC = {auc:.4f} — Review calibration and panel design."
+            interp = f"MARGINAL: AUC = {auc:.4f} -  Review calibration and panel design."
 
         return ROCAnalysisResult(
             n_hp=n_hp,
@@ -469,13 +484,13 @@ class TippettEngine:
 
         if cllr <= CLLR_TARGET_EXCELLENT:
             quality = "EXCELLENT"
-            interp = f"Cllr={cllr:.4f} — Extremely well-calibrated system (Cllr < {CLLR_TARGET_EXCELLENT})."
+            interp = f"Cllr={cllr:.4f} -  Extremely well-calibrated system (Cllr < {CLLR_TARGET_EXCELLENT})."
         elif cllr <= CLLR_TARGET_ACCEPTABLE:
             quality = "ACCEPTABLE"
-            interp = f"Cllr={cllr:.4f} — Acceptably calibrated system (Cllr < {CLLR_TARGET_ACCEPTABLE})."
+            interp = f"Cllr={cllr:.4f} -  Acceptably calibrated system (Cllr < {CLLR_TARGET_ACCEPTABLE})."
         else:
             quality = "POOR"
-            interp = f"Cllr={cllr:.4f} — Poorly calibrated system. Post-calibration recommended."
+            interp = f"Cllr={cllr:.4f} -  Poorly calibrated system. Post-calibration recommended."
 
         return CllrResult(
             n_hp=n_hp,
@@ -567,18 +582,18 @@ class TippettEngine:
             if selected is None:
                 selected = self._ENFSI_TIERS[-1]
         elif log10_lr < 0.0:
-            for tier_def in self._ENFSI_TIERS_NEG:
+            for tier_def in reversed(self._ENFSI_TIERS_NEG):
                 lo, hi = tier_def["log10_lr_range"]
-                if lo < log10_lr <= hi:
+                if log10_lr < hi:
                     selected = tier_def
                     break
             if selected is None:
-                selected = self._ENFSI_TIERS_NEG[-1]
+                selected = self._ENFSI_TIERS_NEG[0]
         else:
             selected = {
                 "tier": 0,
-                "en": "Neutral — the evidence does not favour either hypothesis.",
-                "tr": "Tarafsız — delil her iki hipotezi de desteklememektedir.",
+                "en": "Inconclusive / Neutral - the evidence does not favour either hypothesis.",
+                "tr": "Sonuçsuz / Nötr - delil her iki hipotezi de desteklememektedir.",
                 "range_desc": "LR = 1 (log10 LR = 0)",
             }
 

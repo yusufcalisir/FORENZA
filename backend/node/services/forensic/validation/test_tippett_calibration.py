@@ -1,23 +1,23 @@
 """
 Unit & Integration Tests for FORENZA Tippett Calibration, ROC, Cllr, HPD &
-ENFSI Evaluative Reporting Engine — Module 05.
+ENFSI Evaluative Reporting Engine -  Module 05.
 
 Tests verbatim from Pillar 1 Research §5:
   §5.1 Tippett Calibration Curves (Empirical Complementary CDFs)
-  §5.2 Empirical ROC Analysis — FPR, FNR, AUC trapezoidal
+  §5.2 Empirical ROC Analysis -  FPR, FNR, AUC trapezoidal
   §5.3 Log-Likelihood-Ratio Cost Cllr (Brümmer & du Preez 2006)
   §5.4 Conservative 95% HPD Lower Bound LR_court
   §5.5 ENFSI 2017 Dynamic 7-Tier Verbal Reporting Scale (EN/TR)
 
 Golden Benchmark Vectors:
-  VECTOR_05_TIPPETT_A — Tippett ECCDF monotonicity and bounds
-  VECTOR_05_TIPPETT_B — FPR / FNR with non-overlapping and overlapping datasets
-  VECTOR_05_TIPPETT_C — ROC-AUC >= 0.999 on pristine benchmark
-  VECTOR_05_TIPPETT_D — Cllr cost against canonical numerical benchmarks
-  VECTOR_05_TIPPETT_E — 95% HPD Lower Bound (Percentile_5%)
-  VECTOR_05_TIPPETT_F — ENFSI 2017 7-tier scale all tier boundaries
-  VECTOR_05_TIPPETT_G — Prosecutor's Fallacy Shield text invariants
-  VECTOR_05_TIPPETT_H — API integration tests across all 5 endpoints
+  VECTOR_05_TIPPETT_A -  Tippett ECCDF monotonicity and bounds
+  VECTOR_05_TIPPETT_B -  FPR / FNR with non-overlapping and overlapping datasets
+  VECTOR_05_TIPPETT_C -  ROC-AUC >= 0.999 on pristine benchmark
+  VECTOR_05_TIPPETT_D -  Cllr cost against canonical numerical benchmarks
+  VECTOR_05_TIPPETT_E -  95% HPD Lower Bound (Percentile_5%)
+  VECTOR_05_TIPPETT_F -  ENFSI 2017 7-tier scale all tier boundaries
+  VECTOR_05_TIPPETT_G -  Prosecutor's Fallacy Shield text invariants
+  VECTOR_05_TIPPETT_H -  API integration tests across all 5 endpoints
 """
 
 import math
@@ -44,13 +44,13 @@ engine = TippettEngine()
 HP_PRISTINE = [5.0, 6.2, 4.8, 7.1, 5.5, 6.8, 5.3, 6.0, 4.9, 7.2]
 HD_PRISTINE = [-2.1, -0.5, -1.8, -3.0, -1.2, -2.5, -0.8, -1.5, -2.0, -1.0]
 
-# Overlapping benchmark (less ideal system) — includes negative Hp LRs so FNR > 0
+# Overlapping benchmark (less ideal system) -  includes negative Hp LRs so FNR > 0
 HP_OVERLAP = [1.5, 2.0, -0.3, 3.0, 1.2, 2.5, -0.8, 1.8]
 HD_OVERLAP = [-0.5, 0.3, -1.0, 0.8, -0.2, 0.5, -0.8, 0.2]
 
 
 
-# ── VECTOR_05_TIPPETT_A — Tippett ECCDF Bounds & Monotonicity ─────────────────
+# ── VECTOR_05_TIPPETT_A -  Tippett ECCDF Bounds & Monotonicity ─────────────────
 
 class TestVector05TippettA:
     """Tippett curve ECCDF bounds and monotonicity invariants."""
@@ -101,7 +101,7 @@ class TestVector05TippettA:
             assert len(res.grid_points) == n
 
 
-# ── VECTOR_05_TIPPETT_B — FPR / FNR Calculation ───────────────────────────────
+# ── VECTOR_05_TIPPETT_B -  FPR / FNR Calculation ───────────────────────────────
 
 class TestVector05TippettB:
     """FPR and FNR with perfectly separated and overlapping datasets."""
@@ -148,7 +148,7 @@ class TestVector05TippettB:
         assert res.fnr_at_zero == pytest.approx(expected_fnr, abs=1e-8)
 
 
-# ── VECTOR_05_TIPPETT_C — ROC-AUC >= 0.999 on Pristine Benchmark ──────────────
+# ── VECTOR_05_TIPPETT_C -  ROC-AUC >= 0.999 on Pristine Benchmark ──────────────
 
 class TestVector05TippettC:
     """ROC-AUC trapezoidal integration with pristine and overlapping data."""
@@ -192,7 +192,7 @@ class TestVector05TippettC:
         assert res.n_hd == len(HD_PRISTINE)
 
 
-# ── VECTOR_05_TIPPETT_D — Cllr Cost Numerical Benchmarks ──────────────────────
+# ── VECTOR_05_TIPPETT_D -  Cllr Cost Numerical Benchmarks ──────────────────────
 
 class TestVector05TippettD:
     """Log-Likelihood-Ratio Cost Cllr against canonical numerical benchmarks."""
@@ -243,7 +243,7 @@ class TestVector05TippettD:
         assert abs(res.cllr - expected_cllr) < 1e-5, f"Cllr={res.cllr}, expected≈{expected_cllr}"
 
 
-# ── VECTOR_05_TIPPETT_E — 95% HPD Lower Bound ─────────────────────────────────
+# ── VECTOR_05_TIPPETT_E -  95% HPD Lower Bound ─────────────────────────────────
 
 class TestVector05TippettE:
     """Conservative 95% HPD Lower Bound (Percentile_5%) from MCMC samples."""
@@ -290,58 +290,72 @@ class TestVector05TippettE:
         assert "5" in res.interpretation
 
 
-# ── VECTOR_05_TIPPETT_F — ENFSI 2017 7-Tier Scale Boundaries ──────────────────
+# ── VECTOR_05_TIPPETT_F -  ENFSI 2017 7-Tier Scale Boundaries ──────────────────
 
 class TestVector05TippettF:
     """ENFSI 2017 7-tier scale all tier boundary conditions."""
 
-    def test_enfsi_tier_5_extremely_strong(self):
-        """log10(LR) = 26 → Tier 5 (Extremely strong support for prosecution)."""
+    def test_enfsi_tier_6_extremely_strong(self):
+        """log10(LR) = 26 -> Tier 6 (Extremely strong support for prosecution, log10 LR > 9)."""
         res = engine.map_enfsi_verbal_scale(26.0)
-        assert res.tier == 5
+        assert res.tier == 6
         assert "extremely strong" in res.tier_name_en.lower()
         assert res.is_positive_support is True
 
-    def test_enfsi_tier_4_very_strong(self):
-        """log10(LR) = 5.0 → Tier 4 (Very strong support, 4 < log10 LR ≤ 6)."""
+    def test_enfsi_tier_5_very_strong(self):
+        """log10(LR) = 7.5 -> Tier 5 (Very strong support, 6 < log10 LR <= 9)."""
+        res = engine.map_enfsi_verbal_scale(7.5)
+        assert res.tier == 5
+        assert "very strong" in res.tier_name_en.lower()
+        assert res.is_positive_support is True
+
+    def test_enfsi_tier_4_strong(self):
+        """log10(LR) = 5.0 -> Tier 4 (Strong support, 4 < log10 LR <= 6)."""
         res = engine.map_enfsi_verbal_scale(5.0)
         assert res.tier == 4
-        assert "very strong" in res.tier_name_en.lower()
-
-    def test_enfsi_tier_3_strong(self):
-        """log10(LR) = 3.0 → Tier 3 (Strong support, 2 < log10 LR ≤ 4)."""
-        res = engine.map_enfsi_verbal_scale(3.0)
-        assert res.tier == 3
         assert "strong" in res.tier_name_en.lower()
 
+    def test_enfsi_tier_3_moderately_strong(self):
+        """log10(LR) = 3.0 -> Tier 3 (Moderately strong support, 2 < log10 LR <= 4)."""
+        res = engine.map_enfsi_verbal_scale(3.0)
+        assert res.tier == 3
+        assert "moderately strong" in res.tier_name_en.lower()
+
     def test_enfsi_tier_2_moderate(self):
-        """log10(LR) = 1.5 → Tier 2 (Moderate support, 1 < log10 LR ≤ 2)."""
+        """log10(LR) = 1.5 -> Tier 2 (Moderate support, 1 < log10 LR <= 2)."""
         res = engine.map_enfsi_verbal_scale(1.5)
         assert res.tier == 2
         assert "moderate" in res.tier_name_en.lower()
 
-    def test_enfsi_tier_1_limited(self):
-        """log10(LR) = 0.5 → Tier 1 (Limited support, 0 < log10 LR ≤ 1)."""
+    def test_enfsi_tier_1_weak(self):
+        """log10(LR) = 0.5 -> Tier 1 (Weak support, 0 < log10 LR <= 1)."""
         res = engine.map_enfsi_verbal_scale(0.5)
         assert res.tier == 1
-        assert "limited" in res.tier_name_en.lower()
+        assert "weak" in res.tier_name_en.lower()
 
     def test_enfsi_tier_0_neutral(self):
-        """log10(LR) = 0 → Tier 0 (Neutral)."""
+        """log10(LR) = 0 -> Tier 0 (Neutral)."""
         res = engine.map_enfsi_verbal_scale(0.0)
         assert res.tier == 0
         assert "neutral" in res.tier_name_en.lower() or "neutral" in res.tier_name_tr.lower()
         assert res.is_positive_support is False
 
     def test_enfsi_negative_support_for_defence(self):
-        """log10(LR) = -2.0 → Supports defence (negative tier)."""
+        """log10(LR) = -2.0 -> Supports defence (Tier -2)."""
         res = engine.map_enfsi_verbal_scale(-2.0)
-        assert res.tier < 0
+        assert res.tier == -2
         assert "defence" in res.tier_name_en.lower()
         assert res.is_positive_support is False
 
+    def test_enfsi_negative_tier_6_extremely_strong(self):
+        """log10(LR) = -12.0 -> Supports defence (Tier -6, log10 LR < -9)."""
+        res = engine.map_enfsi_verbal_scale(-12.0)
+        assert res.tier == -6
+        assert "extremely strong" in res.tier_name_en.lower()
+        assert res.is_positive_support is False
+
     def test_enfsi_tier_boundary_exactly_at_log10_2(self):
-        """log10(LR) = 2.0 → Tier 2 boundary (moderate, not strong)."""
+        """log10(LR) = 2.0 -> Tier 2 boundary (moderate, not strong)."""
         res = engine.map_enfsi_verbal_scale(2.0)
         assert res.tier in [2, 3]  # boundary point; implementation may assign either adjacent tier
 
@@ -358,7 +372,7 @@ class TestVector05TippettF:
             assert res.log10_lr == pytest.approx(max(-300.0, min(300.0, lr)), abs=1e-6)
 
 
-# ── VECTOR_05_TIPPETT_G — Prosecutor's Fallacy Shield ─────────────────────────
+# ── VECTOR_05_TIPPETT_G -  Prosecutor's Fallacy Shield ─────────────────────────
 
 class TestVector05TippettG:
     """Prosecutor's Fallacy Shield text and invariant verification."""
@@ -398,7 +412,7 @@ class TestVector05TippettG:
         assert len(set(shields)) == 1
 
 
-# ── VECTOR_05_TIPPETT_H — API Integration Tests ───────────────────────────────
+# ── VECTOR_05_TIPPETT_H -  API Integration Tests ───────────────────────────────
 
 class TestVector05TippettH:
     """API integration tests across all 5 Module 05 endpoints."""
@@ -450,19 +464,28 @@ class TestVector05TippettH:
         assert data["log10_lr_court"] <= data["log10_lr_median"]
         assert "Court-admissible" in data["interpretation"]
 
-    def test_api_enfsi_verbal_scale_tier5(self):
-        """POST /forensic/validation/enfsi-verbal-scale: log10(LR)=26 → Tier 5."""
+    def test_api_enfsi_verbal_scale_tier6(self):
+        """POST /forensic/validation/enfsi-verbal-scale: log10(LR)=26 -> Tier 6."""
         resp = client.post("/api/v1/forensic/validation/enfsi-verbal-scale", json={"log10_lr": 26.0})
         assert resp.status_code == 200
         data = resp.json()
-        assert data["tier"] == 5
+        assert data["tier"] == 6
         assert "extremely strong" in data["tier_name_en"].lower()
         assert data["is_positive_support"] is True
         assert len(data["prosecutors_fallacy_shield_en"]) > 100
         assert len(data["prosecutors_fallacy_shield_tr"]) > 100
 
+    def test_api_enfsi_verbal_scale_tier5(self):
+        """POST /forensic/validation/enfsi-verbal-scale: log10(LR)=7.5 -> Tier 5."""
+        resp = client.post("/api/v1/forensic/validation/enfsi-verbal-scale", json={"log10_lr": 7.5})
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["tier"] == 5
+        assert "very strong" in data["tier_name_en"].lower()
+        assert data["is_positive_support"] is True
+
     def test_api_enfsi_verbal_scale_neutral(self):
-        """POST /forensic/validation/enfsi-verbal-scale: log10(LR)=0 → Tier 0 (neutral)."""
+        """POST /forensic/validation/enfsi-verbal-scale: log10(LR)=0 -> Tier 0 (neutral)."""
         resp = client.post("/api/v1/forensic/validation/enfsi-verbal-scale", json={"log10_lr": 0.0})
         assert resp.status_code == 200
         data = resp.json()
@@ -470,7 +493,7 @@ class TestVector05TippettH:
         assert data["is_positive_support"] is False
 
     def test_api_enfsi_verbal_scale_defence(self):
-        """POST /forensic/validation/enfsi-verbal-scale: log10(LR)=-3 → negative tier."""
+        """POST /forensic/validation/enfsi-verbal-scale: log10(LR)=-3 -> negative tier."""
         resp = client.post("/api/v1/forensic/validation/enfsi-verbal-scale", json={"log10_lr": -3.0})
         assert resp.status_code == 200
         data = resp.json()

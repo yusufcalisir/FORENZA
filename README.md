@@ -298,7 +298,7 @@ str-analysis/
 │           │   ├── hirisplex_model.py     # HIrisPlex-S 41-SNP MLR Models & Intermediate Thresholds
 │           │   ├── governance_engine.py   # German § 81e StPO Ancestry Gate & ISFG Fallacy Shields
 │           │   └── golden_vectors.py      # 5 Certified Golden Standards (NA12878, NA19240, NA18507, HG002, Tri-Racial)
-│           └── tests/                     # Automated Test Suite (3,573+ Automated Tests Passing)
+│           └── tests/                     # Automated Test Suite (3,576+ Automated Tests Passing)
 │
 ├── frontend/                              # Next.js 16 Workstation Dashboard
 │   ├── public/                            # Static Assets, Icons, Favicons
@@ -372,7 +372,7 @@ str-analysis/
 │       ├── context/                       # React Context Providers
 │       ├── dictionaries/                  # Bilingual Translations (TR / EN)
 │       ├── lib/                           # Utility Functions & API Clients
-│       ├── test/                          # Automated Vitest Suite (563/563 Tests Passing across 42 Specs)
+│       ├── test/                          # Automated Vitest Suite (564/564 Tests Passing across 42 Specs)
 │       └── utils/                         # Client-Side Biocomputational Simulation Engines
 │           ├── strLocusRegistryEngine.ts  # 24-STR Locus Registry & CE Sizing TS Engine
 │           ├── forensicCliBatchParser.ts  # Forensic CLI Batch Lexer & Ingestion TS Engine
@@ -696,12 +696,21 @@ The FastAPI gateway exposes a clean `/api/v1` RESTful interface.
 | **Autosomal STR (Single-Source LR)** | `/api/v1/forensic/lr` | `POST` | Computes single-source Likelihood Ratio under Balding-Nichols $\theta$ coancestry model with 95% HPD bounds |
 | **Kinship (Pedigree Index)** | `/api/v1/forensic/kinship` | `POST` | Computes parent-child, sibling, and extended kinship LRs with SMM mutation dynamics |
 | **Validation Runner** | `/api/v1/forensic/validate` | `POST` | Executes Monte Carlo validation simulation returning sensitivity, specificity, Cllr, and Tippett sample data |
+| **Population Genetics (Populations)** | `/api/v1/forensic/population/populations` | `GET` | Returns supported reference demographic populations and NRC-II minimum frequency defaults |
+| **Population Genetics (Rare Allele Bound)** | `/api/v1/forensic/population/frequency` | `POST` | Applies NRC-II Recommendation 4.1 5/(2N) minimum frequency bound ($p_{\min} = 0.00241$) |
+| **Population Genetics (Pairwise Fst)** | `/api/v1/forensic/population/fst` | `POST` | Calculates Wright's $F_{ST}$ pairwise genetic distance between two populations |
+| **Population Genetics (Dirichlet Smoothing)** | `/api/v1/forensic/population/dirichlet` | `POST` | Bayesian Dirichlet smoothing with prior concentration parameter $\kappa = (1-\theta)/\theta$ |
+| **Population Genetics (HWE Exact Test)** | `/api/v1/forensic/population/hwe` | `POST` | Tests Hardy-Weinberg equilibrium using Guo & Thompson MCMC exact permutation test |
+| **Population Genetics (Theta-Corrected LR)** | `/api/v1/forensic/population/theta-lr` | `POST` | Evaluates Balding-Nichols single-locus $\theta$-corrected Likelihood Ratio |
+| **Population Genetics (4x4 Fst Matrix)** | `/api/v1/forensic/population/fst-matrix` | `POST` | Calculates 4x4 pairwise $F_{ST}$ and Nei's genetic distance matrix across demographic panels |
 | **Population Genetics (RMP)** | `/api/v1/forensic/population/profile-rmp` | `POST` | Computes 24-locus NIST 1036 Combined Random Match Probability (RMP) & Single-Source LR with Balding-Nichols $\theta$ coancestry |
 | **Kinship (STR-24 Duo/Pedigree)** | `/api/v1/forensic/population/kinship-duo` | `POST` | Evaluates 24-locus Parent-Child / Sibling kinship LRs with IBD decomposition & Stepwise Mutation Model (SMM) rescue |
 | **Population Genetics (NRC-II Profile LR)** | `/api/v1/forensic/population/nrc/profile-lr` | `POST` | Computes 24-locus genotype probabilities under NRC-II Recommendation 4.10b |
 | **Population Genetics (Demographic Report)** | `/api/v1/forensic/population/nrc/demographic-report` | `POST` | Generates 4-population stratified Likelihood Ratios with Dirichlet smoothing |
 | **Population Genetics (Weir-Cockerham ANOVA)** | `/api/v1/forensic/population/nrc/weir-cockerham` | `POST` | Calculates dynamic multi-locus Fst variance decomposition across populations |
+| **Population Genetics (DCM Compound Likelihood)** | `/api/v1/forensic/population/nrc/dcm` | `POST` | Evaluates Dirichlet-Compound Multinomial (Polya-Eggenberger) likelihood under NRC-II |
 | **Population Genetics (Simplex Validation)** | `/api/v1/forensic/population/nrc/simplex-validate` | `POST` | Validates diploid genotype probability simplex normalization invariant ($\sum P = 1.0$) |
+| **Population Genetics (Golden Standards)** | `/api/v1/forensic/population/nrc/golden-profiles` | `GET` | Retrieves certified multi-ethnic reference profiles and ground-truth standards |
 | **Mixture (MCMC Deconvolution)** | `/api/v1/forensic/mixture` | `POST` | Runs 2-to-3 person continuous MCMC mixture deconvolution (EuroForMix Gamma / STRmix Log-Normal) with Gelman-Rubin convergence and per-locus calls |
 | **Mixture (Health Check)** | `/api/v1/forensic/mixture/health` | `GET` | Validates MCMC sampler initialization and locus stutter database |
 | **Mixture (Likelihood Models)** | `/api/v1/forensic/mixture/models` | `GET` | Lists available continuous biophysical peak models and parameters |
@@ -782,6 +791,8 @@ The FastAPI gateway exposes a clean `/api/v1` RESTful interface.
 | **Validation Lab (HPD Lower Bound)** | `/api/v1/forensic/validation/hpd-lower-bound` | `POST` | Computes conservative 95% HPD lower bound (LR_court) from MCMC posterior samples |
 | **Validation Lab (ENFSI Scale)** | `/api/v1/forensic/validation/enfsi-verbal-scale` | `POST` | Maps continuous LRs to ENFSI 2017 7-tier verbal scale with Prosecutor's Fallacy Shield |
 | **Validation Lab (Simulation Cohorts)** | `/api/v1/forensic/validation/generate-cohort` | `POST` | Generates on-demand reference casework simulation cohorts (Pristine, LTDNA, SRM 2391d) |
+| **Validation Lab (Benchmarks)** | `/api/v1/forensic/validation/benchmarks` | `GET` | Retrieves certified golden benchmark test vectors for empirical model validation |
+| **Validation Lab (Misleading Evidence)** | `/api/v1/forensic/validation/misleading-evidence` | `POST` | Evaluates Royall's misleading evidence bound and neutral decision boundaries |
 | **ZK-SNARK Catalog** | `/api/v1/forensic/zk/catalog` | `GET` | Retrieves catalog of proving systems (Groth16, PLONK, Halo2, VOLE), curves, and scales |
 | **ZK-SNARK Synthesize** | `/api/v1/forensic/zk/synthesize-proof` | `POST` | Generates Groth16, PLONK, Halo2, or VOLE proofs from forensic profiles & witnesses |
 | **ZK-SNARK Verify** | `/api/v1/forensic/zk/verify-proof` | `POST` | Verifies zero-knowledge proof against public instance on BN254 & generates ISO 17025 certificate |
@@ -861,7 +872,7 @@ A biocomputational module in FORENZA is only certified as **`VERIFIED`** when it
 
 For complete mathematical derivations, test logs, and module-by-module audit records, refer to the dedicated validation resources:
 
-* 📊 **[Module Validation Status (`docs/VALIDATION_STATUS.md`)](file:///c:/Users/Yusuf/str-analysis/docs/VALIDATION_STATUS.md):** The live, single source of truth for platform readiness. Tracks verification criteria, reference datasets, cross-check tools, and passing edge cases across all 40 research modules powering the 38 SaaS subsystems (**40/40 VERIFIED, 3,573 automated passing tests**).
+* 📊 **[Module Validation Status (`docs/VALIDATION_STATUS.md`)](file:///c:/Users/Yusuf/str-analysis/docs/VALIDATION_STATUS.md):** The live, single source of truth for platform readiness. Tracks verification criteria, reference datasets, cross-check tools, and passing edge cases across all 40 research modules powering the 38 SaaS subsystems (**40/40 VERIFIED, 3,576 automated passing tests**).
 * 📑 **[Validation Checklist & Audit Template (`docs/VALIDATION_CHECKLIST.md`)](file:///c:/Users/Yusuf/str-analysis/docs/VALIDATION_CHECKLIST.md):** Comprehensive 750+ line audit record detailing every test execution command, dataset accession, analytical cross-check, and edge-case boundary verification across all 40 modules.
 * 📐 **[Mathematical Specification (`docs/math-spec.md`)](file:///c:/Users/Yusuf/str-analysis/docs/math-spec.md):** Complete mathematical and biocomputational specification covering all equations, probability distributions, Markov models, and uncertainty budgets.
 
@@ -902,7 +913,7 @@ pytest backend/node/services/forensic/physical/ -v        # Pillar 5: Physical E
 pytest backend/node/services/forensic/security/ -v        # Pillar 6: LIMS & ZKP
 pytest backend/node/services/forensic/geoint/ -v          # Pillar 7: Geo-Forensics
 
-# Execute frontend tactical workstation test suite (563 tests across 42 test suites)
+# Execute frontend tactical workstation test suite (564 tests across 42 test suites)
 npm --prefix frontend test -- --run
 ```
 

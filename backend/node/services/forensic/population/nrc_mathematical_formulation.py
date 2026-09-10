@@ -24,7 +24,7 @@ from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Set, Tuple
 
 # ---------------------------------------------------------------------------
-# Constants (Research-Locked — Pillar 1 §1.1 & NRC II 1996)
+# Constants (Research-Locked - Pillar 1 §1.1 & NRC II 1996)
 # ---------------------------------------------------------------------------
 NIST_1036_N: int = 1036
 NIST_1036_TWO_N: int = 2 * NIST_1036_N  # 2072 alleles
@@ -254,7 +254,7 @@ class BaldingNicholsMatchModel:
             p_cond = 2.0 * (theta + one_minus_theta * p_e1) * (theta + one_minus_theta * p_e2) / denom
             state = "HETEROZYGOUS_MATCH"
 
-        # Case 3: Partial Match — Evidence is Heterozygous, shares 1 allele with Suspect
+        # Case 3: Partial Match - Evidence is Heterozygous, shares 1 allele with Suspect
         elif not is_evid_homo:
             shared_alleles = set([s1, s2]).intersection(set([e1, e2]))
             if len(shared_alleles) == 1:
@@ -510,7 +510,11 @@ class NRC2LikelihoodRatioEngine:
 
         for locus, susp_gt in suspect_profile.items():
             evid_gt = evidence_profile.get(locus, susp_gt)
-            freqs = population_frequencies.get(locus, {})
+            # Case-insensitive locus lookup fallback (e.g. "vWA" -> "VWA", "Penta_D" -> "PENTA_D")
+            freqs = population_frequencies.get(locus)
+            if not freqs:
+                norm_key = locus.upper().replace("-", "_").replace(" ", "_")
+                freqs = population_frequencies.get(norm_key, {})
 
             match_res = BaldingNicholsMatchModel.compute_conditional_match_probability(
                 suspect_genotype=susp_gt,

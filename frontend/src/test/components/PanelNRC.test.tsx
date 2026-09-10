@@ -105,6 +105,77 @@ describe("Subsystem 03: PanelNRC (Dirichlet Fst & Balding-Nichols Population Gen
               }),
           });
         }
+        if (url.includes("/fst-matrix")) {
+          return Promise.resolve({
+            ok: true,
+            json: () =>
+              Promise.resolve({
+                populations: ["Caucasian", "AfricanAmerican", "Hispanic", "Asian"],
+                n_pairs: 6,
+                matrix: { "Caucasian|AfricanAmerican": 0.0182 },
+                nei_matrix: { "Caucasian|AfricanAmerican": 0.0412 },
+                theta_recommendation: 0.03,
+                verdict: "Moderate subpopulation structure detected",
+              }),
+          });
+        }
+        if (url.includes("/dirichlet")) {
+          return Promise.resolve({
+            ok: true,
+            json: () =>
+              Promise.resolve({
+                locus: "TH01",
+                allele_posteriors: [
+                  {
+                    allele: 9.3,
+                    observed_count: 50,
+                    raw_frequency: 0.25,
+                    prior_frequency: 0.28,
+                    dirichlet_alpha: 9.05,
+                    posterior_frequency: 0.254,
+                    was_p_min_applied: false,
+                    p_min_used: 0.00241,
+                  },
+                ],
+                concentration_parameter: 32.33,
+                sum_posterior: 1.0,
+                theta: 0.03,
+                n_individuals: 361,
+              }),
+          });
+        }
+        if (url.includes("/hwe")) {
+          return Promise.resolve({
+            ok: true,
+            json: () =>
+              Promise.resolve({
+                locus: "TH01",
+                n_alleles: 5,
+                n_genotypes: 15,
+                h_obs: 0.78,
+                h_exp: 0.81,
+                f_is: 0.037,
+                p_value: 0.54,
+                alpha_bonferroni: 0.00208,
+                hwe_rejected: false,
+                decision: "HWE_SATISFIED",
+                n_permutations: 10000,
+              }),
+          });
+        }
+        if (url.includes("/nrc/dcm")) {
+          return Promise.resolve({
+            ok: true,
+            json: () =>
+              Promise.resolve({
+                log_likelihood: -142.55,
+                probability: 1.2e-62,
+                kappa: 32.33,
+                total_alleles_sampled: 722,
+                num_distinct_alleles: 5,
+              }),
+          });
+        }
         return Promise.reject(new Error("Unknown route"));
       })
     );
@@ -125,13 +196,14 @@ describe("Subsystem 03: PanelNRC (Dirichlet Fst & Balding-Nichols Population Gen
     });
   });
 
-  it("2. allows switching seamlessly across all 5 canonical workstation tabs", async () => {
+  it("2. allows switching seamlessly across all 6 canonical workstation tabs", async () => {
     render(<PanelNRC />);
 
     // Default tab is 24-Locus Simplex Breakdown
     expect(screen.getByRole("button", { name: /24-Locus Simplex/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Stratification/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Weir-Cockerham ANOVA/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Dirichlet & HWE/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Golden Benchmarks/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /ISO 17025 Reporting/i })).toBeInTheDocument();
 
@@ -145,6 +217,12 @@ describe("Subsystem 03: PanelNRC (Dirichlet Fst & Balding-Nichols Population Gen
     fireEvent.click(screen.getByRole("button", { name: /Weir-Cockerham ANOVA/i }));
     expect(
       screen.getByText(/Weir & Cockerham \(1984\) Single-Locus ANOVA/i)
+    ).toBeInTheDocument();
+
+    // Switch to Dirichlet & HWE
+    fireEvent.click(screen.getByRole("button", { name: /Dirichlet & HWE/i }));
+    expect(
+      screen.getByText(/Guo-Thompson HWE Test/i)
     ).toBeInTheDocument();
 
     // Switch to Golden Benchmarks
@@ -302,4 +380,20 @@ describe("Subsystem 03: PanelNRC (Dirichlet Fst & Balding-Nichols Population Gen
     const copyBtn = screen.getByRole("button", { name: /Copy Certificate/i });
     expect(copyBtn).toBeInTheDocument();
   });
+
+  it("16. renders Dirichlet & HWE tab, allows changing locus and permutations without crashing", async () => {
+    render(<PanelNRC />);
+    const tabBtn = screen.getByRole("button", { name: /Dirichlet & HWE/i });
+    fireEvent.click(tabBtn);
+
+    expect(screen.getByText(/Guo-Thompson HWE Test/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/Dirichlet Bayesian Smoothing/i).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/Polya-Eggenberger DCM/i).length).toBeGreaterThanOrEqual(1);
+
+    // Permutation input
+    const permInput = screen.getByRole("spinbutton");
+    fireEvent.change(permInput, { target: { value: "5000" } });
+    expect(permInput).toHaveValue(5000);
+  });
 });
+

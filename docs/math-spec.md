@@ -4094,7 +4094,7 @@ $$\text{Shield}_{\text{Ballistics}} = \text{"Finding characteristic Pb-Ba-Sb par
 
 ---
 
-## Section 103: Subsystem 27: Trace Micro-Spectroscopy (ATR-FTIR & Raman HQI) & Multispectral Imaging (MSI Studio)
+## 103. Trace Micro-Spectroscopy (ATR-FTIR & Raman HQI) & Multispectral Imaging (MSI Studio) (Subsystem 27 / Module 24)
 
 Subsystem 27 provides physical trace chemical intelligence via Attenuated Total Reflectance Fourier-Transform Infrared (ATR-FTIR) and confocal micro-Raman spectroscopy, multispectral optical imaging (MSI), and 2D focal plane array (FPA) spatial chemical mapping.
 

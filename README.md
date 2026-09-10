@@ -327,7 +327,7 @@ str-analysis/
 │       │   │   ├── PanelNRC.tsx           # NRC II Population Genetics & Dirichlet Fst 5-Tab Forensic Studio
 │       │   │   ├── PanelMPSSTR.tsx        # MPS / NGS STR Sequence Analysis & Isoalleles 5-Tab Forensic Studio
 │       │   │   ├── PanelMLSTR.tsx         # ML STR Calling, Stutter Taxonomy & Fragsifier 5-Tab Forensic Studio
-│       │   │   ├── PanelYSTR.tsx          # Y-STR 27-Locus Multi-Panel Tactical Visualizer
+│       │   │   ├── PanelYSTR.tsx          # Y-STR 27-Locus Lineage Forensics 6-Tab Forensic Studio
 │       │   │   ├── PanelXSTR.tsx          # X-STR 12-Locus Argus X-12 5-Tab Forensic Studio
 │       │   │   ├── PanelMTDNA.tsx         # mtDNA EMPOP Alignment & Phylogenetics 5-Tab Forensic Studio
 │       │   │   ├── PanelDVI.tsx           # Interpol DVI Disaster Victim Identification 5-Tab Forensic Studio

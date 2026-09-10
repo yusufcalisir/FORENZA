@@ -333,6 +333,11 @@ class MCMCSampler:
                     total_ll -= 1e6
                     continue
                 total_ll += self._ll_engine.log_likelihood_locus_allele(h_obs, h_exp)
+
+            # Penalize unexpected peaks for posited contributor alleles absent from evidence
+            for allele, h_exp in expected.items():
+                if allele not in allele_obs and any(allele in pair for pair in locus_genotypes) and h_exp > 50.0:
+                    total_ll -= 1e5
         return total_ll
 
     # ------------------------------------------------------------------
@@ -353,7 +358,14 @@ class MCMCSampler:
             rng = random.Random(42)
 
         if weights is None:
-            weights = [1.0 / K] * K
+            if K == 2:
+                cand_weight_vectors = [[0.75, 0.25], [0.5, 0.5], [0.25, 0.75], [0.85, 0.15], [0.15, 0.85]]
+            elif K == 3:
+                cand_weight_vectors = [[0.6, 0.25, 0.15], [0.333, 0.333, 0.334], [0.5, 0.3, 0.2]]
+            else:
+                cand_weight_vectors = [[1.0 / K] * K]
+        else:
+            cand_weight_vectors = [weights]
 
         genotypes_by_locus: Dict[str, List[Tuple[float, float]]] = {}
 
@@ -415,17 +427,18 @@ class MCMCSampler:
             best_c = combos[0]
 
             for c in combos:
-                exp_h = bphys.expected_peak_heights(locus, c, weights, [0.0] * K)
-                ll = 0.0
-                for a, h_obs in allele_obs.items():
-                    h_exp = exp_h.get(a, 0.0)
-                    if h_exp > 0:
-                        ll += self._ll_engine.log_likelihood_locus_allele(h_obs, h_exp)
-                    else:
-                        ll -= 1e6
-                if ll > best_ll:
-                    best_ll = ll
-                    best_c = c
+                for w in cand_weight_vectors:
+                    exp_h = bphys.expected_peak_heights(locus, c, w, [0.0] * K)
+                    ll = 0.0
+                    for a, h_obs in allele_obs.items():
+                        h_exp = exp_h.get(a, 0.0)
+                        if h_exp > 0:
+                            ll += self._ll_engine.log_likelihood_locus_allele(h_obs, h_exp)
+                        else:
+                            ll -= 1e6
+                    if ll > best_ll:
+                        best_ll = ll
+                        best_c = c
 
             genotypes_by_locus[locus] = best_c
 
@@ -492,27 +505,8 @@ class MCMCSampler:
                 dk_new = rng.gauss(dk, d_step)
                 d_prop.append(max(0.0, dk_new))
 
-            # -- Genotype proposal (single-contributor perturbation at one locus) --
-            if rng.random() < 0.04 and isinstance(g_cur, dict) and observed:
-                pert_loc = rng.choice(list(observed.keys()))
-                pert_alleles = list(observed[pert_loc].keys())
-                if len(pert_alleles) >= 1:
-                    pert_k = rng.randrange(K)
-                    cand_pairs = [
-                        (pert_alleles[a], pert_alleles[b])
-                        for a in range(len(pert_alleles))
-                        for b in range(a, len(pert_alleles))
-                    ]
-                    new_pair = rng.choice(cand_pairs)
-                    g_prop = {loc: list(gen_list) for loc, gen_list in g_cur.items()}
-                    new_locus_g = list(g_prop.get(pert_loc, []))
-                    if pert_k < len(new_locus_g):
-                        new_locus_g[pert_k] = new_pair
-                        g_prop[pert_loc] = new_locus_g
-                else:
-                    g_prop = g_cur
-            else:
-                g_prop = g_cur
+            # -- Genotypes are fixed to optimal configuration; sample continuous parameters (w, d) --
+            g_prop = g_cur
 
             # -- Compute proposed log-likelihood --
             ll_prop = self._compute_log_likelihood(observed, g_prop, w_prop, d_prop)
@@ -644,7 +638,7 @@ class MCMCSampler:
             raise ValueError(f"K must be 2, 3, or 4 contributors (got {K})")
 
         init_degradation = [0.002] * K
-        init_genotypes   = self._propose_genotypes(observed, K, random.Random(42))
+        init_genotypes = self._propose_genotypes(observed, K, random.Random(42))
 
         # -- Run N_CHAINS parallel chains with overdispersed initializations --
         chain_results: List[MCMCChainResult] = []
@@ -682,6 +676,16 @@ class MCMCSampler:
                     if loc_idx < len(suspect_genotype):
                         suspect_dict[loc_name] = suspect_genotype[loc_idx]
 
+        # Precompute candidate genotype pairs per locus for H_p evaluation
+        locus_pairs: Dict[str, List[Tuple[float, float]]] = {}
+        for loc, allele_obs in observed.items():
+            alleles = sorted(allele_obs.keys())
+            locus_pairs[loc] = [
+                (alleles[i], alleles[j])
+                for i in range(len(alleles))
+                for j in range(i, len(alleles))
+            ]
+
         # -- Compute H_p integrated likelihood if suspect provided --
         ll_hp_vals: List[float] = []
         log10_pop_p = 0.0
@@ -704,30 +708,41 @@ class MCMCSampler:
                 # Evaluate all candidate contributor slots k in 0..K-1 to find the optimal assignment.
                 best_ll_hp = -1e30
                 for k_slot in range(K):
-                    candidate_genotypes: Dict[str, List[Tuple[float, float]]] = {}
-                    if isinstance(s.genotypes, dict):
-                        for loc_name, s_locus_genotypes in s.genotypes.items():
-                            if loc_name in suspect_dict and k_slot < len(s_locus_genotypes):
-                                new_g = list(s_locus_genotypes)
-                                new_g[k_slot] = suspect_dict[loc_name]
-                                candidate_genotypes[loc_name] = new_g
+                    total_ll_k = 0.0
+                    for loc, allele_obs in observed.items():
+                        g_s = suspect_dict.get(loc)
+                        pairs = locus_pairs.get(loc, [])
+                        if g_s and K == 2:
+                            best_locus_ll = -1e12
+                            for p_other in pairs:
+                                geno = [g_s, p_other] if k_slot == 0 else [p_other, g_s]
+                                ll = self._compute_log_likelihood(
+                                    {loc: allele_obs}, {loc: geno}, s.mixture_weights, s.degradation
+                                )
+                                if ll > best_locus_ll:
+                                    best_locus_ll = ll
+                            total_ll_k += best_locus_ll
+                        elif g_s and K > 2:
+                            s_g = s.genotypes.get(loc, []) if isinstance(s.genotypes, dict) else []
+                            if k_slot < len(s_g):
+                                geno = list(s_g)
+                                geno[k_slot] = g_s
+                                best_locus_ll = self._compute_log_likelihood(
+                                    {loc: allele_obs}, {loc: geno}, s.mixture_weights, s.degradation
+                                )
                             else:
-                                candidate_genotypes[loc_name] = s_locus_genotypes
-                    else:
-                        # Single locus list
-                        first_loc = next(iter(observed.keys()))
-                        if first_loc in suspect_dict and k_slot < len(s.genotypes):
-                            new_g = list(s.genotypes)
-                            new_g[k_slot] = suspect_dict[first_loc]
-                            candidate_genotypes[first_loc] = new_g
+                                best_locus_ll = -1e6
+                            total_ll_k += best_locus_ll
                         else:
-                            candidate_genotypes[first_loc] = s.genotypes
+                            # Locus not in suspect dict
+                            s_g = s.genotypes.get(loc) if isinstance(s.genotypes, dict) else None
+                            if s_g:
+                                total_ll_k += self._compute_log_likelihood(
+                                    {loc: allele_obs}, {loc: s_g}, s.mixture_weights, s.degradation
+                                )
 
-                    ll_k = self._compute_log_likelihood(
-                        observed, candidate_genotypes, s.mixture_weights, s.degradation
-                    )
-                    if ll_k > best_ll_hp:
-                        best_ll_hp = ll_k
+                    if total_ll_k > best_ll_hp:
+                        best_ll_hp = total_ll_k
 
                 ll_hp_vals.append(best_ll_hp)
 

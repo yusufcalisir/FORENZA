@@ -543,14 +543,6 @@ try:
 except Exception as _os_import_err:
     logger.warning(f"[boot] Evidence OS router not loaded: {_os_import_err}")
 
-# --- Tippett Calibration & ENFSI Evaluative Reporting Router (Module 05) ---
-try:
-    from app.api.tippett_routes import router as tippett_router
-    app.include_router(tippett_router, prefix="/api/v1")
-    logger.info("[boot] Tippett Calibration & ENFSI Reporting API router registered at /api/v1/forensic/validation")
-except Exception as _tippett_import_err:
-    logger.warning(f"[boot] Tippett router not loaded: {_tippett_import_err}")
-
 # --- Y-STR Haplotype Forensics Router (Module 06) ---
 try:
     from app.api.ystr_routes import router as ystr_router

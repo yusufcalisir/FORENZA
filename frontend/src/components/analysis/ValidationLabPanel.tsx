@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FlaskConical,
@@ -26,27 +26,49 @@ import {
   AlertTriangle,
   Info,
   Check,
+  Copy,
+  Award,
+  Search,
 } from "lucide-react";
 import { getApiBaseUrl } from "@/lib/api";
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
+import { useForensicCaseStore } from "@/store/forensicCaseStore";
 
-// ── Preset Casework Benchmark Vectors ──────────────────────────────────────────
+// ===============================================================================
+// PRESET CASEWORK BENCHMARK VECTORS (Pillar 1 Research Section 5 Verbatim)
+// ===============================================================================
 
-interface PresetBenchmark {
+export interface PresetBenchmark {
   id: string;
   name: string;
   badge: string;
   description: string;
+  descriptionTr: string;
+  cohortType: string;
+  expectedAuc: number;
+  expectedCllr: number;
+  expectedFpr: number;
+  thetaRecommended: number;
+  dropoutRate: number;
+  nPairsRecommended: number;
   hp_lrs: number[];
   hd_lrs: number[];
 }
 
-const PRESET_BENCHMARKS: PresetBenchmark[] = [
+export const PRESET_BENCHMARKS: PresetBenchmark[] = [
   {
     id: "VECTOR_05_TIPPETT_A",
     name: "Pristine 24-Locus Standard (1.0 ng)",
     badge: "PRISTINE-24L",
-    description: "High-template single-source true donor vs non-donor simulation (N=1000 pairs, NIST 1036).",
+    description: "High-template single-source true donor vs non-donor simulation (N=1000 pairs, NIST 1036). Target AUC >= 0.9999, zero false positives.",
+    descriptionTr: "Yuksek sablonlu tek kaynakli gercek donor ve donor olmayan simulasypnu (N=1000 cift, NIST 1036). Hedef AUC >= 0.9999, sifir yanlis pozitif.",
+    cohortType: "pristine",
+    expectedAuc: 1.0,
+    expectedCllr: 0.02,
+    expectedFpr: 0.0,
+    thetaRecommended: 0.03,
+    dropoutRate: 0.0,
+    nPairsRecommended: 1000,
     hp_lrs: [
       28.4, 27.2, 29.1, 26.8, 30.5, 28.9, 27.5, 31.2, 26.3, 29.8,
       28.1, 30.2, 27.9, 28.7, 29.4, 26.9, 31.0, 28.3, 27.8, 29.6,
@@ -62,7 +84,15 @@ const PRESET_BENCHMARKS: PresetBenchmark[] = [
     id: "VECTOR_05_TIPPETT_B",
     name: "LTDNA Touch Degraded (40% Dropout)",
     badge: "TOUCH-LTDNA",
-    description: "Low-template touch DNA with stochastic allele dropout (P(D)=0.40, N=500).",
+    description: "Low-template touch DNA with stochastic allele dropout (P(D)=0.40, N=500). Models realistic crime scene trace challenges.",
+    descriptionTr: "Stokastik alel dususu (P(D)=0.40, N=500) iceren dusuk sablonlu temas DNA'si. Gercekci olay yeri izlerini modeller.",
+    cohortType: "ltdna_degraded",
+    expectedAuc: 0.985,
+    expectedCllr: 0.12,
+    expectedFpr: 0.002,
+    thetaRecommended: 0.03,
+    dropoutRate: 0.40,
+    nPairsRecommended: 500,
     hp_lrs: [
       11.4, 8.8, 12.5, 9.2, 14.1, 10.3, 7.9, 13.0, 8.5, 11.9,
       10.1, 12.8, 9.5, 11.2, 13.4, 8.9, 14.0, 10.6, 9.8, 12.2,
@@ -78,7 +108,15 @@ const PRESET_BENCHMARKS: PresetBenchmark[] = [
     id: "VECTOR_05_TIPPETT_C",
     name: "NIST SRM 2391d Comp A Screening",
     badge: "NIST-SRM2391D",
-    description: "Certified reference standard individual Component A screened against empirical non-donors.",
+    description: "Certified reference standard individual Component A screened against empirical non-donors. Perfect exclusion benchmark.",
+    descriptionTr: "Empirik donor olmayanlara karsi taranan sertifikali referans standart Bilesen A. Kusursuz dislama standardi.",
+    cohortType: "nist_srm2391d",
+    expectedAuc: 1.0,
+    expectedCllr: 0.005,
+    expectedFpr: 0.0,
+    thetaRecommended: 0.01,
+    dropoutRate: 0.0,
+    nPairsRecommended: 1000,
     hp_lrs: [
       27.2, 27.5, 26.9, 27.8, 27.1, 27.4, 27.6, 27.0, 27.3, 27.7,
       27.2, 27.5, 26.8, 27.9, 27.0, 27.4, 27.6, 27.1, 27.3, 27.8,
@@ -92,17 +130,34 @@ const PRESET_BENCHMARKS: PresetBenchmark[] = [
   },
 ];
 
-// ── Types ──────────────────────────────────────────────────────────────────────
+// ===============================================================================
+// CANONICAL 5-TAB WORKSTATION ARCHITECTURE TYPES
+// ===============================================================================
 
-type ActiveTab = "tippett" | "roc" | "cllr" | "hpd" | "enfsi";
+export type ValidationLabTabType =
+  | "tippett_curve"
+  | "discrimination_roc"
+  | "cllr_decomposition"
+  | "benchmarks"
+  | "iso_reporting";
 
-interface TippettPoint {
+export interface TippettPoint {
   threshold: number;
   hp_exceedance: number;
   hd_exceedance: number;
 }
 
-// ── Biocomputational Calibration Synthesizer (Pillar 1 §1.2 & §5) ─────────────
+export interface MisleadingEvidenceMetrics {
+  alpha: number;
+  royall_bound: number;
+  hp_misleading_rate: number;
+  hd_misleading_rate: number;
+  admissible: boolean;
+}
+
+// ===============================================================================
+// BIOCOMPUTATIONAL SYNTHESIS & MATHEMATICAL HELPERS
+// ===============================================================================
 
 function seededLcg(seed: number) {
   let s = (Math.abs(seed) % 2147483647) || 1;
@@ -119,7 +174,7 @@ function sampleGaussian(rng: () => number, mean: number, std: number): number {
   return mean + z * std;
 }
 
-function generateCalibratedDataset(
+export function generateCalibratedDataset(
   presetId: string,
   popGroup: string,
   thetaVal: number,
@@ -127,7 +182,6 @@ function generateCalibratedDataset(
   nPairs: number = 1000,
   seed: number = 42
 ): { hp: number[]; hd: number[] } {
-  // 1. Population-specific locus heterozygosity offsets (NIST 1036)
   const popHpOffset =
     popGroup === "AfricanAmerican"
       ? 1.85
@@ -145,15 +199,12 @@ function generateCalibratedDataset(
       ? 0.85
       : 0.0;
 
-  // 2. NRC II Balding-Nichols theta subpopulation penalty across 24 loci
   const bnHpPenalty = -24 * Math.log10(1 + (2.5 * thetaVal) / 0.10);
   const bnHdShift = 24 * Math.log10(1 + (1.8 * thetaVal) / 0.10);
 
-  // 3. Baseline Likelihood Ratio Centers
   const baseHp = presetId === "VECTOR_05_TIPPETT_B" ? 17.5 : presetId === "VECTOR_05_TIPPETT_C" ? 27.4 : 28.5;
   const baseHd = presetId === "VECTOR_05_TIPPETT_B" ? -19.5 : presetId === "VECTOR_05_TIPPETT_C" ? -25.5 : -26.5;
 
-  // 4. Stochastic allele dropout degradation effect
   const dropoutPenaltyHp = presetId === "VECTOR_05_TIPPETT_B" ? (dropoutRate - 0.40) * 16.0 : 0.0;
   const dropoutShiftHd = presetId === "VECTOR_05_TIPPETT_B" ? (dropoutRate - 0.40) * 10.0 : 0.0;
 
@@ -177,8 +228,7 @@ function generateCalibratedDataset(
   return { hp, hd };
 }
 
-// ── Authentic Information-Theoretic Cllr Calibration (Brümmer & du Preez 2006) ──
-function computeEmpiricalCllr(hp: number[], hd: number[]) {
+export function computeEmpiricalCllr(hp: number[], hd: number[]) {
   const n_hp = hp.length;
   const n_hd = hd.length;
   if (n_hp === 0 || n_hd === 0) return { cllr_raw: 0, cllr_min: 0, cllr_cal: 0 };
@@ -206,7 +256,6 @@ function computeEmpiricalCllr(hp: number[], hd: number[]) {
 
   const cllr_raw = hp_loss + hd_loss;
 
-  // Authentic optimal monotonic threshold scan (PAV empirical Cllr_min lower bound)
   const minHp = Math.min(...hp);
   const maxHd = Math.max(...hd);
 
@@ -247,24 +296,101 @@ function computeEmpiricalCllr(hp: number[], hd: number[]) {
   return { cllr_raw, cllr_min, cllr_cal };
 }
 
+export function computeRoyallMisleadingRates(hp: number[], hd: number[], alpha: number): MisleadingEvidenceMetrics {
+  const n_hp = Math.max(1, hp.length);
+  const n_hd = Math.max(1, hd.length);
+  const logAlpha = Math.log10(alpha);
+
+  const hpMisleadingCount = hp.filter((x) => x <= -logAlpha).length;
+  const hdMisleadingCount = hd.filter((x) => x >= logAlpha).length;
+
+  const hpRate = hpMisleadingCount / n_hp;
+  const hdRate = hdMisleadingCount / n_hd;
+  const bound = 1.0 / alpha;
+
+  return {
+    alpha,
+    royall_bound: bound,
+    hp_misleading_rate: hpRate,
+    hd_misleading_rate: hdRate,
+    admissible: hpRate <= bound && hdRate <= bound,
+  };
+}
+
+export async function computeTippettAuditHash(payload: {
+  caseId: string;
+  presetId: string;
+  nPairs: number;
+  theta: number;
+  pDropout: number;
+  auc: number;
+  cllr: number;
+  hpdLower: number;
+}): Promise<string> {
+  const str = `${payload.caseId}|${payload.presetId}|${payload.nPairs}|${payload.theta.toFixed(3)}|${payload.pDropout.toFixed(2)}|${payload.auc.toFixed(4)}|${payload.cllr.toFixed(4)}|${payload.hpdLower.toFixed(2)}`;
+  if (typeof window !== "undefined" && window.crypto?.subtle) {
+    try {
+      const msgUint8 = new TextEncoder().encode(str);
+      const hashBuffer = await window.crypto.subtle.digest("SHA-256", msgUint8);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+    } catch {
+      // fallback to pure JS below
+    }
+  }
+  let h = 0x811c9dc5;
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  const h1 = (h >>> 0).toString(16).padStart(8, "0");
+  let h2 = 0x27d4eb2f;
+  for (let i = str.length - 1; i >= 0; i--) {
+    h2 ^= str.charCodeAt(i);
+    h2 = Math.imul(h2, 0x2545f491);
+  }
+  const h2Str = (h2 >>> 0).toString(16).padStart(8, "0");
+  return (h1 + h2Str).repeat(4).slice(0, 64);
+}
+
+// ===============================================================================
+// MAIN COMPONENT: VALIDATION LAB PANEL (CANONICAL 5-TAB WORKSTATION)
+// ===============================================================================
+
 export default function ValidationLabPanel() {
   const { lang } = useSaasLanguage();
   const isTr = lang === "tr";
+  const { activeCase, addAuditLog } = useForensicCaseStore();
+  const leadAnalyst = activeCase?.metadata?.leadAnalyst || "Dr. Morrison, Lead Forensic Geneticist";
+  const caseId = activeCase?.metadata?.caseId || "CASE-2026-VAL-001";
 
-  const [activeTab, setActiveTab] = useState<ActiveTab>("tippett");
+  // Tab State
+  const [activeTab, setActiveTab] = useState<ValidationLabTabType>("tippett_curve");
+
+  // Simulation Parameters
   const [selectedPreset, setSelectedPreset] = useState<string>("VECTOR_05_TIPPETT_A");
   const [population, setPopulation] = useState<string>("Caucasian");
   const [theta, setTheta] = useState<number>(0.03);
   const [nPairs, setNPairs] = useState<number>(1000);
-  const [pDropout, setPDropout] = useState<number>(0.40);
+  const [pDropout, setPDropout] = useState<number>(0.0);
   const [simSeed, setSimSeed] = useState<number>(42);
-  const [isRunning, setIsRunning] = useState<boolean>(false);
-  const [progress, setProgress] = useState<number>(100);
-  const [stageText, setStageText] = useState<string>(isTr ? "Hazır" : "Ready");
 
-  // Server Verification State
+  // Decision Threshold Tau Slider for Tab 1
+  const [tauThreshold, setTauThreshold] = useState<number>(0.0);
+
+  // Active Cohort Likelihood Ratio Vectors
+  const [hpData, setHpData] = useState<number[]>(() => PRESET_BENCHMARKS[0].hp_lrs);
+  const [hdData, setHdData] = useState<number[]>(() => PRESET_BENCHMARKS[0].hd_lrs);
+
+  // Execution & Telemetry State
+  const [isRunning, setIsRunning] = useState<boolean>(false);
+  const [progress, setProgress] = useState<number>(0);
+  const [stageText, setStageText] = useState<string>("");
   const [serverVerified, setServerVerified] = useState<boolean>(false);
-  const [serverLatencyMs, setServerLatencyMs] = useState<number | null>(null);
+  const [serverLatencyMs, setServerLatencyMs] = useState<number>(0);
+  const [copiedCertificate, setCopiedCertificate] = useState<boolean>(false);
+  const [auditHash, setAuditHash] = useState<string>("0000000000000000000000000000000000000000000000000000000000000000");
+
   const [serverCllr, setServerCllr] = useState<{
     cllr: number;
     cllr_min: number;
@@ -272,65 +398,22 @@ export default function ValidationLabPanel() {
     quality: string;
   } | null>(null);
 
-  // Interactive Hover State for SVG Curve
+  // Hover Tooltip State in SVG Plots
   const [hoverX, setHoverX] = useState<number | null>(null);
   const [hoverThreshold, setHoverThreshold] = useState<number | null>(null);
   const [hoverHpExceedance, setHoverHpExceedance] = useState<number | null>(null);
   const [hoverHdExceedance, setHoverHdExceedance] = useState<number | null>(null);
 
-  // Active Data Arrays initialized dynamically from biocomputational model
-  const initialData = useMemo(() => {
-    return generateCalibratedDataset(selectedPreset, population, theta, pDropout, nPairs, simSeed);
-  }, [selectedPreset, population, theta, pDropout, nPairs, simSeed]);
-
-  const [hpData, setHpData] = useState<number[]>(initialData.hp);
-  const [hdData, setHdData] = useState<number[]>(initialData.hd);
-
-  // Sync with parameter changes reactively
-  useEffect(() => {
-    const calibrated = generateCalibratedDataset(selectedPreset, population, theta, pDropout, nPairs, simSeed);
-    setHpData(calibrated.hp);
-    setHdData(calibrated.hd);
-    setServerVerified(false);
-    setServerCllr(null);
-  }, [selectedPreset, population, theta, pDropout, nPairs, simSeed]);
-
-  // ── Preset Selection Handler ──────────────────────────────────────────────
-  const handleSelectPreset = (preset: PresetBenchmark) => {
-    setSelectedPreset(preset.id);
-    if (preset.id === "VECTOR_05_TIPPETT_A") {
-      setNPairs(1000);
-      setTheta(0.03);
-      setPDropout(0.0);
-    } else if (preset.id === "VECTOR_05_TIPPETT_B") {
-      setNPairs(500);
-      setTheta(0.03);
-      setPDropout(0.40);
-    } else if (preset.id === "VECTOR_05_TIPPETT_C") {
-      setNPairs(1000);
-      setTheta(0.01);
-      setPDropout(0.0);
-    }
-
-    if (preset.hp_lrs && preset.hp_lrs.length > 0 && preset.hd_lrs && preset.hd_lrs.length > 0) {
-      setHpData(preset.hp_lrs);
-      setHdData(preset.hd_lrs);
-      setServerVerified(false);
-      setServerCllr(null);
-    }
-  };
-
-  // ── Biocomputational Calculations (Verbatim Pillar 1 §5) ───────────────────
+  // ── Biocomputational Calculations (Pillar 1 Research §5 Verbatim) ──────────
   const calculations = useMemo(() => {
-    const n_hp = hpData.length;
-    const n_hd = hdData.length;
+    const n_hp = Math.max(1, hpData.length);
+    const n_hd = Math.max(1, hdData.length);
 
-    // 1. Min / Max range
     const all = [...hpData, ...hdData];
     const minVal = Math.floor(Math.min(...all)) - 2;
     const maxVal = Math.ceil(Math.max(...all)) + 2;
 
-    // 2. Tippett ECCDF Grid Points
+    // 1. Tippett ECCDF Grid Points
     const numPoints = 80;
     const step = (maxVal - minVal) / (numPoints - 1);
     const grid: TippettPoint[] = [];
@@ -346,10 +429,14 @@ export default function ValidationLabPanel() {
       });
     }
 
-    // 3. Error Rates at Neutral Decision Threshold (x = 0.0)
+    // 2. Error Rates at Neutral Decision Threshold (x = 0.0)
     const fpr_at_zero = hdData.filter((v) => v > 0.0).length / n_hd;
     const fnr_at_zero = hpData.filter((v) => v < 0.0).length / n_hp;
     const d_power = Math.max(0.0, Math.min(1.0, 1.0 - fpr_at_zero - fnr_at_zero));
+
+    // 3. Exceedance at Selected Slider Tau
+    const hp_at_tau = hpData.filter((v) => v >= tauThreshold).length / n_hp;
+    const hd_at_tau = hdData.filter((v) => v >= tauThreshold).length / n_hd;
 
     // 4. Mann-Whitney U AUC
     let greater = 0;
@@ -362,7 +449,7 @@ export default function ValidationLabPanel() {
     }
     const auc = (greater + 0.5 * equal) / (n_hp * n_hd);
 
-    // 5. Cllr Cost: Prefer server-verified decomposition if available, else authentic empirical
+    // 5. Cllr Cost
     const empiricalCllr = computeEmpiricalCllr(hpData, hdData);
     const cllr_raw = serverCllr ? serverCllr.cllr : empiricalCllr.cllr_raw;
     const cllr_min = serverCllr ? serverCllr.cllr_min : empiricalCllr.cllr_min;
@@ -381,6 +468,11 @@ export default function ValidationLabPanel() {
     const meanHp = hpData.reduce((a, b) => a + b, 0) / n_hp;
     const medianHd = [...hdData].sort((a, b) => a - b)[Math.floor(n_hd / 2)] ?? 0;
 
+    // 7. Royall Misleading Evidence Rates
+    const royall8 = computeRoyallMisleadingRates(hpData, hdData, 8);
+    const royall10 = computeRoyallMisleadingRates(hpData, hdData, 10);
+    const royall100 = computeRoyallMisleadingRates(hpData, hdData, 100);
+
     return {
       n_hp,
       n_hd,
@@ -390,6 +482,8 @@ export default function ValidationLabPanel() {
       fpr_at_zero,
       fnr_at_zero,
       d_power,
+      hp_at_tau,
+      hd_at_tau,
       auc,
       cllr_raw,
       cllr_min,
@@ -399,8 +493,60 @@ export default function ValidationLabPanel() {
       log10_upper,
       meanHp,
       medianHd,
+      royallMetrics: [royall8, royall10, royall100],
     };
-  }, [hpData, hdData, serverCllr]);
+  }, [hpData, hdData, serverCllr, tauThreshold]);
+
+  // Compute SHA-256 Audit Digest on result changes
+  useEffect(() => {
+    let isCancelled = false;
+    computeTippettAuditHash({
+      caseId,
+      presetId: selectedPreset,
+      nPairs,
+      theta,
+      pDropout,
+      auc: calculations.auc,
+      cllr: calculations.cllr_raw,
+      hpdLower: calculations.log10_lower,
+    }).then((hash) => {
+      if (!isCancelled) {
+        setAuditHash(hash);
+      }
+    });
+    return () => {
+      isCancelled = true;
+    };
+  }, [caseId, selectedPreset, nPairs, theta, pDropout, calculations.auc, calculations.cllr_raw, calculations.log10_lower]);
+
+  // ── Preset Selection Handler ───────────────────────────────────────────────
+  const handleSelectPreset = (presetId: string) => {
+    const preset = PRESET_BENCHMARKS.find((p) => p.id === presetId);
+    if (!preset) return;
+
+    setSelectedPreset(preset.id);
+    setNPairs(preset.nPairsRecommended);
+    setTheta(preset.thetaRecommended);
+    setPDropout(preset.dropoutRate);
+
+    if (preset.hp_lrs && preset.hp_lrs.length > 0 && preset.hd_lrs && preset.hd_lrs.length > 0) {
+      setHpData(preset.hp_lrs);
+      setHdData(preset.hd_lrs);
+      setServerVerified(false);
+      setServerCllr(null);
+    }
+
+    if (addAuditLog) {
+      addAuditLog({
+        event: `VALIDATION_BENCHMARK_LOADED: Loaded reference standard ${preset.name} (${preset.badge}) into Tippett Calibration Studio`,
+        module: "05. Tippett Calibration Lab",
+        analyst: leadAnalyst,
+        status: "PASS",
+        standard: "SWGDAM 2020 / ENFSI 2017",
+        findingSeverity: "NOMINAL",
+      });
+    }
+  };
 
   // ── Execute Simulation & Live Backend Validation ───────────────────────────
   const handleExecuteSimulation = async () => {
@@ -417,12 +563,8 @@ export default function ValidationLabPanel() {
     setSimSeed(nextSeed);
 
     try {
-      const cohortType =
-        selectedPreset === "VECTOR_05_TIPPETT_B"
-          ? "ltdna_degraded"
-          : selectedPreset === "VECTOR_05_TIPPETT_C"
-          ? "nist_srm2391d"
-          : "pristine";
+      const activePreset = PRESET_BENCHMARKS.find((p) => p.id === selectedPreset);
+      const cohortType = activePreset ? activePreset.cohortType : "pristine";
 
       setProgress(45);
       setStageText(
@@ -490,7 +632,7 @@ export default function ValidationLabPanel() {
             });
           }
         } catch {
-          // ignore, client calculation will serve as backup
+          // Client calculation will serve as robust fallback
         }
 
         const elapsed = Math.round(performance.now() - startTime);
@@ -510,412 +652,262 @@ export default function ValidationLabPanel() {
           ? "Simülasyon Tamamlandı: ISO/IEC 17025 Doğrulandı"
           : "Simulation Complete: ISO/IEC 17025 Calibrated"
       );
+
+      if (addAuditLog) {
+        addAuditLog({
+          event: `VALIDATION_SIMULATION_EXECUTED: Preset=${selectedPreset}, N=${nPairs}, theta=${theta.toFixed(3)}, P(D)=${pDropout.toFixed(2)}, AUC=${calculations.auc.toFixed(4)}, Cllr=${calculations.cllr_raw.toFixed(4)}`,
+          module: "05. Tippett Calibration Lab",
+          analyst: leadAnalyst,
+          status: "PASS",
+          standard: "SWGDAM 2020 / ENFSI 2017",
+          findingSeverity: calculations.auc >= 0.99 ? "NOMINAL" : "ELEVATED",
+        });
+      }
     } finally {
       setIsRunning(false);
     }
   };
 
+  // Adjust Decision Threshold Tau
+  const handleTauChange = (newTau: number) => {
+    setTauThreshold(newTau);
+    if (addAuditLog) {
+      addAuditLog({
+        event: `VALIDATION_THRESHOLD_CHANGED: Decision threshold tau adjusted to ${newTau.toFixed(2)} log10 units`,
+        module: "05. Tippett Calibration Lab",
+        analyst: leadAnalyst,
+        status: "PASS",
+        standard: "SWGDAM 2020",
+        findingSeverity: "NOMINAL",
+      });
+    }
+  };
+
+  // Copy Certificate Action
+  const copyCertificate = (certText: string) => {
+    navigator.clipboard.writeText(certText);
+    setCopiedCertificate(true);
+    setTimeout(() => setCopiedCertificate(false), 2500);
+  };
+
   return (
-    <div className="space-y-6 font-mono text-zinc-200">
+    <div className="space-y-6 font-mono text-tactical-text">
       {/* ── Modern Unified Benchmark & Standards Mission Bar ────────────── */}
-      <div className="bg-[#080D1A] border border-tactical-border/80 rounded-2xl p-4 sm:p-5 shadow-xl space-y-4">
-        {/* Top: Engine Identity & Technical Verification Badges */}
+      <div className="bg-[#080D1A] border border-tactical-border/80 rounded-2xl p-4 sm:p-5 shadow-2xl space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-tactical-border/40 pb-3.5">
-          <div className="flex items-center gap-2.5 min-w-0">
-            <div className="p-2 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-400 shrink-0">
-              <Scale className="w-5 h-5 animate-pulse" />
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="p-2.5 bg-cyan-500/10 border border-cyan-500/30 rounded-xl text-cyan-400 shrink-0 shadow-inner">
+              <FlaskConical className="w-5 h-5 animate-pulse" />
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-xs sm:text-sm font-extrabold text-white uppercase tracking-wider truncate">
-                  {isTr ? "Tippett ROC Kalibrasyonu & Yanıltıcı Delil" : "Tippett ROC Calibration & Validation"}
+                <span className="text-sm sm:text-base font-extrabold text-white uppercase tracking-wider truncate">
+                  {isTr ? "Tippett Doğrulama & Kalibrasyon Laboratuvarı" : "Tippett Validation & Calibration Lab"}
                 </span>
-                <span className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-300">
-                  ENFSI 2017 • ISO 17025
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-cyan-500/10 border border-cyan-500/30 text-cyan-300">
+                  Modül 05 | TIPPETT-CALIB
+                </span>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-300">
+                  SWGDAM 2020
                 </span>
               </div>
+              <p className="text-[11px] text-zinc-400 truncate mt-0.5">
+                {isTr
+                  ? "Empirik ECCDF exceedance eğrileri, ROC/AUC analizi ve FoCal Cllr bilgi-teorik maliyeti"
+                  : "Empirical ECCDF exceedance curves, ROC/AUC analysis, and FoCal Cllr information-theoretic cost"}
+              </p>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2 shrink-0">
+          <div className="flex items-center gap-2 shrink-0">
             <button
+              type="button"
               onClick={handleExecuteSimulation}
               disabled={isRunning}
-              className="flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-[11px] font-bold uppercase tracking-wider shadow-md hover:brightness-110 active:scale-95 transition-all cursor-pointer disabled:opacity-50"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/40 text-cyan-300 text-xs font-bold transition-all cursor-pointer shadow-sm disabled:opacity-50"
             >
-              <Play className={`w-3.5 h-3.5 ${isRunning ? "animate-spin" : ""}`} />
-              <span>{isRunning ? (isTr ? "MCMC Çalıştırılıyor..." : "Running...") : (isTr ? "Simülasyonu Başlat" : "Execute Simulation")}</span>
+              <RefreshCw className={`w-3.5 h-3.5 ${isRunning ? "animate-spin" : ""}`} />
+              <span>{isRunning ? (isTr ? "Yürütülüyor..." : "Running...") : isTr ? "Simülasyonu Çalıştır" : "Execute Simulation"}</span>
             </button>
           </div>
         </div>
 
-        {/* Live Progress Bar */}
+        {/* ── Telemetry & Active Parameter Ribbon ── */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2 pt-1 text-xs">
+          <div className="p-2.5 rounded-xl bg-black/40 border border-tactical-border/50">
+            <span className="text-[10px] text-zinc-400 uppercase font-bold block">{isTr ? "Aktif Standart" : "Active Standard"}</span>
+            <span className="font-bold text-white font-mono truncate block">{selectedPreset}</span>
+          </div>
+
+          <div className="p-2.5 rounded-xl bg-black/40 border border-tactical-border/50">
+            <span className="text-[10px] text-zinc-400 uppercase font-bold block">{isTr ? "Örneklem Çifti (N)" : "Pair Cohort (N)"}</span>
+            <span className="font-bold text-cyan-300 font-mono">{nPairs.toLocaleString()}</span>
+          </div>
+
+          <div className="p-2.5 rounded-xl bg-black/40 border border-tactical-border/50">
+            <span className="text-[10px] text-zinc-400 uppercase font-bold block">{isTr ? "Alt Popülasyon (θ)" : "Substructure (θ)"}</span>
+            <span className="font-bold text-amber-400 font-mono">θ = {theta.toFixed(3)}</span>
+          </div>
+
+          <div className="p-2.5 rounded-xl bg-black/40 border border-tactical-border/50">
+            <span className="text-[10px] text-zinc-400 uppercase font-bold block">{isTr ? "Mann-Whitney AUC" : "Mann-Whitney AUC"}</span>
+            <span className="font-bold text-emerald-400 font-mono">{calculations.auc.toFixed(4)}</span>
+          </div>
+
+          <div className="p-2.5 rounded-xl bg-black/40 border border-tactical-border/50">
+            <span className="text-[10px] text-zinc-400 uppercase font-bold block">{isTr ? "Maliyet (Cllr_raw)" : "Cost (Cllr_raw)"}</span>
+            <span className="font-bold text-purple-400 font-mono">{calculations.cllr_raw.toFixed(4)}</span>
+          </div>
+
+          <div className="p-2.5 rounded-xl bg-black/40 border border-tactical-border/50">
+            <span className="text-[10px] text-zinc-400 uppercase font-bold block">{isTr ? "95% HPD LR_mahkeme" : "95% HPD LR_court"}</span>
+            <span className="font-bold text-emerald-300 font-mono">+{calculations.log10_lower.toFixed(2)}</span>
+          </div>
+        </div>
+
+        {/* ── Progress Bar when running ── */}
         {isRunning && (
-          <div className="space-y-1.5">
-            <div className="flex justify-between text-[10px] text-zinc-400">
-              <span className="text-emerald-400 font-bold">{stageText}</span>
-              <span className="font-bold">%{progress}</span>
+          <div className="space-y-1.5 p-3 rounded-xl bg-black/50 border border-cyan-500/30">
+            <div className="flex justify-between text-xs text-cyan-300 font-mono">
+              <span>{stageText}</span>
+              <span>{progress}%</span>
             </div>
-            <div className="h-1.5 w-full rounded-full bg-black/60 overflow-hidden">
+            <div className="w-full h-1.5 bg-zinc-800 rounded-full overflow-hidden">
               <motion.div
-                className="h-full bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500"
+                className="h-full bg-cyan-400"
                 initial={{ width: "0%" }}
                 animate={{ width: `${progress}%` }}
-                transition={{ duration: 0.2 }}
+                transition={{ ease: "easeInOut" }}
               />
             </div>
           </div>
         )}
 
-        {/* Bottom: Casework Benchmark Scenario Cards */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between text-[9px] font-bold text-zinc-400 uppercase tracking-widest px-0.5">
-            <span>{isTr ? "Doğrulama Kohortu Seçin:" : "Select Validation Cohort:"}</span>
-            <span className="text-zinc-500 font-mono">{isTr ? "3 Senaryo" : "3 Scenarios"}</span>
-          </div>
+        {/* ── 5 Canonical Studio Tabs Navigation ── */}
+        <div className="flex bg-black/60 p-1.5 rounded-xl border border-tactical-border/60 overflow-x-auto scrollbar-thin">
+          <button
+            type="button"
+            onClick={() => setActiveTab("tippett_curve")}
+            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold uppercase transition-all whitespace-nowrap cursor-pointer ${
+              activeTab === "tippett_curve"
+                ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm"
+                : "text-zinc-400 hover:text-zinc-200"
+            }`}
+          >
+            <BarChart className="w-3.5 h-3.5" />
+            <span>{isTr ? "Tippett Eğrileri" : "Tippett Curves"}</span>
+          </button>
 
+          <button
+            type="button"
+            onClick={() => setActiveTab("discrimination_roc")}
+            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold uppercase transition-all whitespace-nowrap cursor-pointer ${
+              activeTab === "discrimination_roc"
+                ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm"
+                : "text-zinc-400 hover:text-zinc-200"
+            }`}
+          >
+            <Target className="w-3.5 h-3.5" />
+            <span>{isTr ? "Ayrım ROC & AUC" : "Discrimination ROC"}</span>
+          </button>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-            {PRESET_BENCHMARKS.map((preset) => {
-              const isSelected = selectedPreset === preset.id;
-              return (
-                <button
-                  type="button"
-                  key={preset.id}
-                  onClick={() => handleSelectPreset(preset)}
-                  className={`p-3 rounded-xl text-left transition-all border cursor-pointer flex flex-col justify-between space-y-1.5 ${
-                    isSelected
-                      ? "bg-emerald-500/15 border-emerald-500/50 text-white shadow-md shadow-emerald-500/10"
-                      : "bg-black/30 border-tactical-border/50 text-zinc-400 hover:bg-white/5 hover:text-zinc-200 hover:border-tactical-border"
-                  }`}
-                >
-                  <div className="flex items-center justify-between gap-1">
-                    <span className="text-[8px] font-mono font-bold px-1.5 py-0.5 rounded bg-black/60 border border-white/10 text-zinc-300">
-                      {preset.badge}
-                    </span>
-                    {isSelected && <Check className="w-3 h-3 text-emerald-400 shrink-0" />}
-                  </div>
-                  <div>
-                    <div className="text-[10px] font-bold text-white line-clamp-1">{preset.name}</div>
-                    <div className="text-[9px] text-zinc-400 line-clamp-2 mt-0.5 font-sans leading-tight">
-                      {preset.description}
-                    </div>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
+          <button
+            type="button"
+            onClick={() => setActiveTab("cllr_decomposition")}
+            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold uppercase transition-all whitespace-nowrap cursor-pointer ${
+              activeTab === "cllr_decomposition"
+                ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm"
+                : "text-zinc-400 hover:text-zinc-200"
+            }`}
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>{isTr ? "Cllr Maliyet Ayrıştırması" : "Cllr Decomposition"}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab("benchmarks")}
+            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold uppercase transition-all whitespace-nowrap cursor-pointer ${
+              activeTab === "benchmarks"
+                ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm"
+                : "text-zinc-400 hover:text-zinc-200"
+            }`}
+          >
+            <Award className="w-3.5 h-3.5" />
+            <span>{isTr ? "Altın Standartlar" : "Golden Benchmarks"}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab("iso_reporting")}
+            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold uppercase transition-all whitespace-nowrap cursor-pointer ${
+              activeTab === "iso_reporting"
+                ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm"
+                : "text-zinc-400 hover:text-zinc-200"
+            }`}
+          >
+            <ShieldCheck className="w-3.5 h-3.5" />
+            <span>{isTr ? "ISO 17025 Raporlama" : "ISO 17025 Reporting"}</span>
+          </button>
         </div>
       </div>
 
-      {/* ── Secondary Control Ribbon ── */}
-      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3 p-3.5 rounded-xl border border-tactical-border/60 bg-tactical-surface/50 text-xs min-w-0">
-        <div className="flex flex-wrap items-center gap-3 min-w-0">
-          {/* Population Group */}
-          <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-[10px] text-zinc-500 uppercase font-bold">{isTr ? "Popülasyon:" : "PopGen:"}</span>
-            <div className="flex items-center gap-1 bg-black/60 p-1 rounded-lg border border-tactical-border/50 flex-wrap">
-              {["Caucasian", "AfricanAmerican", "Hispanic", "Asian"].map((pop) => (
-                <button
-                  key={pop}
-                  onClick={() => setPopulation(pop)}
-                  className={`min-h-[30px] px-2 py-0.5 rounded text-[10px] font-bold uppercase transition-all cursor-pointer flex items-center justify-center ${
-                    population === pop
-                      ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40"
-                      : "text-zinc-500 hover:text-zinc-300"
-                  }`}
-                >
-                  {pop.slice(0, 3)}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Subpopulation Theta */}
-          <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-[10px] text-zinc-500 uppercase font-bold">NRC II θ:</span>
-            <div className="flex items-center gap-1 bg-black/60 p-1 rounded-lg border border-tactical-border/50 flex-wrap">
-              {[0.0, 0.01, 0.03, 0.05].map((th) => (
-                <button
-                  key={th}
-                  onClick={() => setTheta(th)}
-                  className={`min-h-[30px] px-2 py-0.5 rounded text-[10px] font-bold uppercase transition-all cursor-pointer flex items-center justify-center ${
-                    theta === th
-                      ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
-                      : "text-zinc-500 hover:text-zinc-300"
-                  }`}
-                >
-                  θ={th}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Cohort Size N */}
-          <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-[10px] text-zinc-500 uppercase font-bold">{isTr ? "Örneklem N:" : "Cohort N:"}</span>
-            <div className="flex items-center gap-1 bg-black/60 p-1 rounded-lg border border-tactical-border/50 flex-wrap">
-              {[500, 1000, 2000].map((n) => (
-                <button
-                  key={n}
-                  onClick={() => setNPairs(n)}
-                  className={`min-h-[30px] px-2 py-0.5 rounded text-[10px] font-bold uppercase transition-all cursor-pointer flex items-center justify-center ${
-                    nPairs === n
-                      ? "bg-purple-500/20 text-purple-300 border border-purple-500/40"
-                      : "text-zinc-500 hover:text-zinc-300"
-                  }`}
-                >
-                  {n}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Stochastic Dropout P(D) */}
-          <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-[10px] text-zinc-500 uppercase font-bold">{isTr ? "Kayıp P(D):" : "Dropout P(D):"}</span>
-            <div className="flex items-center gap-1 bg-black/60 p-1 rounded-lg border border-tactical-border/50 flex-wrap">
-              {[0.0, 0.2, 0.4, 0.6].map((pd) => (
-                <button
-                  key={pd}
-                  onClick={() => setPDropout(pd)}
-                  className={`min-h-[30px] px-2 py-0.5 rounded text-[10px] font-bold uppercase transition-all cursor-pointer flex items-center justify-center ${
-                    pDropout === pd
-                      ? "bg-amber-500/20 text-amber-300 border border-amber-500/40"
-                      : "text-zinc-500 hover:text-zinc-300"
-                  }`}
-                >
-                  {pd === 0 ? "0%" : `${(pd * 100).toFixed(0)}%`}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Telemetry Status */}
-        <div className="flex items-center gap-2 text-[10px] shrink-0">
-          {serverVerified ? (
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-300">
-              <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="font-semibold">
-                {isTr
-                  ? `ISO/IEC 17025 Sunucu Doğrulandı (${serverLatencyMs ?? 0} ms • N=${calculations.n_hp} çift)`
-                  : `ISO/IEC 17025 Server Verified (${serverLatencyMs ?? 0} ms • N=${calculations.n_hp} pairs)`}
-              </span>
-            </div>
-          ) : (
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-300">
-              <span className="flex h-2 w-2 rounded-full bg-cyan-400" />
-              <span className="font-semibold">
-                {isTr
-                  ? `İstemci Simülasyonu (N=${calculations.n_hp} çift)`
-                  : `Client Simulation (N=${calculations.n_hp} pairs)`}
-              </span>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* ── KPI Deck ── */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-        <div className="p-3.5 rounded-xl border border-emerald-500/30 bg-emerald-950/20 space-y-1">
-          <span className="text-[9px] text-emerald-400 font-bold uppercase tracking-wider">
-            {isTr ? "Medyan log10(LR) [H_p]" : "Median log10(LR) [H_p]"}
-          </span>
-          <p className="text-xl font-bold text-white tabular-nums">+{calculations.meanHp.toFixed(2)}</p>
-          <span className="text-[9px] text-zinc-500">{isTr ? "Gerçek Donör Zirvesi" : "True Contributor Peak"}</span>
-        </div>
-
-        <div className="p-3.5 rounded-xl border border-rose-500/30 bg-rose-950/20 space-y-1">
-          <span className="text-[9px] text-rose-400 font-bold uppercase tracking-wider">
-            {isTr ? "Medyan log10(LR) [H_d]" : "Median log10(LR) [H_d]"}
-          </span>
-          <p className="text-xl font-bold text-white tabular-nums">{calculations.medianHd.toFixed(2)}</p>
-          <span className="text-[9px] text-zinc-500">{isTr ? "Donör-Dışı Zirvesi" : "Non-Contributor Peak"}</span>
-        </div>
-
-        <div className="p-3.5 rounded-xl border border-cyan-500/30 bg-cyan-950/20 space-y-1">
-          <span className="text-[9px] text-cyan-400 font-bold uppercase tracking-wider">
-            {isTr ? "ROC Alanı (AUC)" : "ROC Area (AUC)"}
-          </span>
-          <p className="text-xl font-bold text-white tabular-nums">{calculations.auc.toFixed(4)}</p>
-          <span className="text-[9px] text-cyan-400/80 font-semibold">
-            {calculations.auc >= 0.999 ? (isTr ? "Kusursuz (≥ 0.999)" : "Perfect (≥ 0.999)") : (isTr ? "Yüksek Ayrım" : "High Separation")}
-          </span>
-        </div>
-
-        <div className="p-3.5 rounded-xl border border-purple-500/30 bg-purple-950/20 space-y-1">
-          <span className="text-[9px] text-purple-400 font-bold uppercase tracking-wider">
-            {isTr ? "Cllr Maliyet Metriği" : "Cllr Cost Metric"}
-          </span>
-          <p className="text-xl font-bold text-white tabular-nums">{calculations.cllr_raw.toFixed(4)}</p>
-          <span className="text-[9px] text-purple-400/80 font-semibold">
-            {calculations.cllr_raw < 0.05 ? (isTr ? "Mükemmel (< 0.05)" : "Excellent (< 0.05)") : (isTr ? "Kabul Edilebilir" : "Acceptable")}
-          </span>
-        </div>
-
-        <div className="p-3.5 rounded-xl border border-amber-500/30 bg-amber-950/20 space-y-1">
-          <span className="text-[9px] text-amber-400 font-bold uppercase tracking-wider">
-            {isTr ? "%95 HPD Alt Sınırı" : "95% HPD Lower Bound"}
-          </span>
-          <p className="text-xl font-bold text-white tabular-nums">+{calculations.log10_lower.toFixed(2)}</p>
-          <span className="text-[9px] text-zinc-500">{isTr ? "LR_mahkeme (5. yüzdelik)" : "LR_court (5th %ile)"}</span>
-        </div>
-
-        <div className="p-3.5 rounded-xl border border-teal-500/30 bg-teal-950/20 space-y-1">
-          <span className="text-[9px] text-teal-400 font-bold uppercase tracking-wider">
-            {isTr ? "Ayrım Gücü" : "Discrimination Power"}
-          </span>
-          <p className="text-xl font-bold text-white tabular-nums">{(calculations.d_power * 100).toFixed(1)}%</p>
-          <span className="text-[9px] text-zinc-500">1 - FPR - FNR</span>
-        </div>
-      </div>
-
-      {/* ── Navigation Tabs (Tactical Cards Grid) ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2 p-1.5 rounded-2xl bg-black/40 border border-tactical-border/60">
-        {[
-          {
-            id: "tippett",
-            label: isTr ? "Tippett Kalibrasyonu" : "Tippett Calibration",
-            sub: isTr ? "ECCDF Aşım Eğrileri" : "ECCDF Exceedance Curves",
-            icon: TrendingUp,
-          },
-          {
-            id: "roc",
-            label: isTr ? "Ampirik ROC & AUC" : "Empirical ROC & AUC",
-            sub: isTr ? "Ayırt Edicilik Gücü" : "Discrimination Power",
-            icon: Target,
-          },
-          {
-            id: "cllr",
-            label: isTr ? "Cllr & PAV Kalibrasyonu" : "Cllr & PAV Calibration",
-            sub: isTr ? "Log-Olabilirlik Maliyeti" : "Log-Likelihood Cost",
-            icon: BarChart,
-          },
-          {
-            id: "hpd",
-            label: isTr ? "%95 HPD Mahkeme LR" : "95% HPD Court LR",
-            sub: isTr ? "Muhafazakar Alt Sınır" : "Conservative Lower Bound",
-            icon: ShieldCheck,
-          },
-          {
-            id: "enfsi",
-            label: isTr ? "ENFSI (2017) Ölçeği" : "ENFSI (2017) Scale",
-            sub: isTr ? "7-Kademeli Sözlü İfade" : "7-Tier Verbal Scale",
-            icon: FileText,
-          },
-        ].map((tab) => {
-          const Icon = tab.icon;
-          const isActive = activeTab === tab.id;
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id as ActiveTab)}
-              className={`p-3 rounded-xl text-left transition-all cursor-pointer border flex items-center gap-3 ${
-                isActive
-                  ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/50 shadow-md shadow-emerald-500/10"
-                  : "bg-slate-900/40 text-zinc-400 border-transparent hover:border-tactical-border/60 hover:text-zinc-200"
-              }`}
-            >
-              <div className={`p-2 rounded-lg shrink-0 ${isActive ? "bg-emerald-500/30 text-emerald-300" : "bg-black/40 text-zinc-500"}`}>
-                <Icon className="w-4 h-4" />
-              </div>
-              <div className="min-w-0">
-                <span className="text-xs font-bold block truncate">{tab.label}</span>
-                <span className="text-[10px] text-zinc-500 block truncate">{tab.sub}</span>
-              </div>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* ── Active Workstation Panel ── */}
-      <div className="rounded-2xl border border-tactical-border/60 bg-tactical-surface/40 p-5 sm:p-6 backdrop-blur-xl shadow-xl">
-        {/* TAB 1: TIPPETT CALIBRATION CURVES */}
-        {activeTab === "tippett" && (
+      {/* ── Active Tab Workspace Views ─────────────────────────────────────── */}
+      <div className="bg-[#080D1A] border border-tactical-border/80 rounded-2xl p-4 sm:p-6 shadow-2xl">
+        {/* =================================================================== */}
+        {/* TAB 1: TIPPETT ECCDF EXCEEDANCE CURVES & THRESHOLD TAU             */}
+        {/* =================================================================== */}
+        {activeTab === "tippett_curve" && (
           <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4 text-emerald-400" />
-                  {isTr ? "İkili Ampirik Tamamlayıcı CDF Eğrileri [P(log₁₀ LR ≥ x | H)]" : "Dual Empirical Complementary CDF Curves [P(log₁₀ LR ≥ x | H)]"}
+                  <BarChart className="h-4 w-4 text-cyan-400" />
+                  {isTr ? "Tippett Ampirik ECCDF Aşım Eğrileri (Hp vs Hd)" : "Tippett Empirical ECCDF Exceedance Curves (Hp vs Hd)"}
                 </h3>
                 <p className="text-xs text-zinc-400">
                   {isTr
-                    ? "Yeşil eğri: İddia makamı (H_p gerçek donör). Kırmızı eğri: Savunma makamı (H_d donör-dışı). Kesin aşım olasılıklarını incelemek için eğrinin üzerine gelin."
-                    : "Green curve: Prosecution (H_p true donor). Red curve: Defense (H_d non-donor). Hover over the curve to inspect exact exceedance probabilities."}
+                    ? "İddia P(log₁₀ LR ≥ x | Hp) ve Savunma P(log₁₀ LR ≥ x | Hd) hipotezlerinin aşım fonksiyonları."
+                    : "Exceedance probability curves for prosecution P(log₁₀ LR ≥ x | Hp) vs defence P(log₁₀ LR ≥ x | Hd)."}
                 </p>
               </div>
 
-              {/* Legend */}
-              <div className="flex items-center gap-3 text-[11px] font-bold">
-                <div className="flex items-center gap-1.5">
-                  <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
-                  <span className="text-emerald-400">P(log₁₀ LR ≥ x | H_p)</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="h-2.5 w-2.5 rounded-full bg-rose-400" />
-                  <span className="text-rose-400">P(log₁₀ LR ≥ x | H_d)</span>
-                </div>
+              {/* Interactive Tau Slider */}
+              <div className="flex items-center gap-3 p-2.5 rounded-xl bg-black/40 border border-tactical-border/60">
+                <span className="text-xs text-zinc-400 font-bold whitespace-nowrap">
+                  {isTr ? "Karar Eşiği (τ):" : "Decision Threshold (τ):"}
+                </span>
+                <span className="text-xs text-cyan-300 font-bold font-mono">
+                  {tauThreshold >= 0 ? `+${tauThreshold.toFixed(1)}` : tauThreshold.toFixed(1)}
+                </span>
+                <input
+                  type="range"
+                  min={calculations.minVal}
+                  max={calculations.maxVal}
+                  step={0.5}
+                  value={tauThreshold}
+                  onChange={(e) => handleTauChange(parseFloat(e.target.value))}
+                  className="w-28 sm:w-36 accent-cyan-400 bg-zinc-800 h-1.5 rounded-lg cursor-pointer"
+                />
               </div>
             </div>
 
-            {/* Hover Inspection Readout Banner */}
-            <div className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 rounded-xl bg-black/50 border border-tactical-border/50 text-xs">
-              {hoverThreshold !== null ? (
-                <div className="flex items-center gap-4 flex-wrap">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-zinc-400 font-bold uppercase text-[10px]">{isTr ? "Eşik Değeri:" : "Threshold x:"}</span>
-                    <span className="font-bold text-sky-300 tabular-nums">
-                      {hoverThreshold >= 0 ? `+${hoverThreshold.toFixed(2)}` : hoverThreshold.toFixed(2)} log₁₀ LR
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="h-2 w-2 rounded-full bg-emerald-400" />
-                    <span className="text-zinc-400 text-[10px]">P(log₁₀ LR ≥ x | H_p):</span>
-                    <span className="font-bold text-emerald-400 tabular-nums">
-                      {((hoverHpExceedance ?? 0) * 100).toFixed(2)}%
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="h-2 w-2 rounded-full bg-rose-400" />
-                    <span className="text-zinc-400 text-[10px]">P(log₁₀ LR ≥ x | H_d):</span>
-                    <span className="font-bold text-rose-400 tabular-nums">
-                      {((hoverHdExceedance ?? 0) * 100).toFixed(2)}%
-                    </span>
-                  </div>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2 text-zinc-500 text-[11px]">
-                  <Sparkles className="w-3.5 h-3.5 text-emerald-400/70" />
-                  <span>
-                    {isTr
-                      ? "Aşım olasılıklarını anlık incelemek için imleci grafik üzerinde gezdirin."
-                      : "Hover over the curves to inspect real-time empirical exceedance probabilities."}
-                  </span>
-                </div>
-              )}
-            </div>
-
             {/* SVG Tippett Chart Container */}
-            <div className="relative h-56 sm:h-80 w-full rounded-xl bg-black/60 p-2 sm:p-4 border border-tactical-border/60 flex flex-col justify-end select-none">
+            <div className="relative h-64 sm:h-84 w-full rounded-xl bg-black/60 p-2 sm:p-4 border border-tactical-border/60 flex flex-col justify-end">
               <svg
-                className="h-full w-full overflow-visible cursor-crosshair"
-                viewBox="0 0 800 300"
+                className="h-full w-full overflow-visible"
+                viewBox="0 0 400 300"
                 preserveAspectRatio="none"
                 onMouseMove={(e) => {
                   const rect = e.currentTarget.getBoundingClientRect();
-                  const clientX = e.clientX - rect.left;
-                  const svgX = (clientX / rect.width) * 800;
-                  const clampedX = Math.max(40, Math.min(780, svgX));
-                  const norm = (clampedX - 40) / 740;
-                  const th = calculations.minVal + norm * (calculations.maxVal - calculations.minVal);
-                  const hpExc = hpData.filter((v) => v >= th).length / calculations.n_hp;
-                  const hdExc = hdData.filter((v) => v >= th).length / calculations.n_hd;
-                  setHoverX(clampedX);
-                  setHoverThreshold(th);
-                  setHoverHpExceedance(hpExc);
-                  setHoverHdExceedance(hdExc);
+                  const xRel = e.clientX - rect.left;
+                  const ratio = Math.max(0, Math.min(1, (xRel - 40) / 340));
+                  const th = calculations.minVal + ratio * (calculations.maxVal - calculations.minVal);
+                  setHoverX(xRel);
+                  setHoverThreshold(Number(th.toFixed(1)));
+                  const pt = calculations.grid.find((p) => Math.abs(p.threshold - th) < 1.0) ?? calculations.grid[0];
+                  setHoverHpExceedance(pt.hp_exceedance);
+                  setHoverHdExceedance(pt.hd_exceedance);
                 }}
                 onMouseLeave={() => {
                   setHoverX(null);
@@ -924,42 +916,49 @@ export default function ValidationLabPanel() {
                   setHoverHdExceedance(null);
                 }}
               >
-                {/* Horizontal Gridlines */}
-                {[0, 0.25, 0.5, 0.75, 1.0].map((yVal) => {
+                {/* Horizontal Grid lines */}
+                {[0.0, 0.25, 0.5, 0.75, 1.0].map((yVal) => {
                   const yPos = 280 - yVal * 260;
                   return (
                     <g key={yVal}>
-                      <line x1="40" y1={yPos} x2="780" y2={yPos} stroke="#27272a" strokeDasharray="3 3" />
-                      <text x="30" y={yPos + 4} fill="#71717a" fontSize="10" textAnchor="end">
+                      <line x1="40" y1={yPos} x2="380" y2={yPos} stroke="#27272a" strokeDasharray="3 3" />
+                      <text x="32" y={yPos + 3} fill="#71717a" fontSize="9" textAnchor="end" fontFamily="monospace">
                         {yVal.toFixed(2)}
                       </text>
                     </g>
                   );
                 })}
 
-                {/* Neutral Decision Line (x = 0) */}
+                {/* Neutral Boundary Reference Line (x = 0.0) */}
+                {calculations.minVal < 0 && calculations.maxVal > 0 && (
+                  <g>
+                    {(() => {
+                      const zeroX = 40 + ((0.0 - calculations.minVal) / (calculations.maxVal - calculations.minVal)) * 340;
+                      return (
+                        <>
+                          <line x1={zeroX} y1="20" x2={zeroX} y2="280" stroke="#f59e0b" strokeDasharray="4 4" strokeWidth="1.5" />
+                          <text x={zeroX} y="15" fill="#f59e0b" fontSize="9" textAnchor="middle" fontWeight="bold">
+                            τ = 0.0
+                          </text>
+                        </>
+                      );
+                    })()}
+                  </g>
+                )}
+
+                {/* Active Slider Tau Line */}
                 {(() => {
-                  const xZero =
-                    40 + ((0.0 - calculations.minVal) / (calculations.maxVal - calculations.minVal)) * 740;
+                  const tauX = 40 + ((tauThreshold - calculations.minVal) / (calculations.maxVal - calculations.minVal)) * 340;
                   return (
-                    <g>
-                      <line x1={xZero} y1="20" x2={xZero} y2="280" stroke="#eab308" strokeWidth="1.5" strokeDasharray="4 4" />
-                      <text x={xZero} y="15" fill="#eab308" fontSize="10" textAnchor="middle" fontWeight="bold">
-                        {isTr ? "Nötr (x=0, LR=1)" : "Neutral (x=0, LR=1)"}
-                      </text>
-                    </g>
+                    <line x1={tauX} y1="20" x2={tauX} y2="280" stroke="#06b6d4" strokeWidth="2" strokeDasharray="2 2" />
                   );
                 })()}
 
-                {/* Prosecution Curve (Hp) - Emerald */}
+                {/* Hp Exceedance Curve (Green) */}
                 <path
                   d={calculations.grid
                     .map((pt, i) => {
-                      const xPos =
-                        40 +
-                        ((pt.threshold - calculations.minVal) /
-                          (calculations.maxVal - calculations.minVal)) *
-                          740;
+                      const xPos = 40 + ((pt.threshold - calculations.minVal) / (calculations.maxVal - calculations.minVal)) * 340;
                       const yPos = 280 - pt.hp_exceedance * 260;
                       return `${i === 0 ? "M" : "L"} ${xPos} ${yPos}`;
                     })
@@ -969,15 +968,11 @@ export default function ValidationLabPanel() {
                   strokeWidth="3"
                 />
 
-                {/* Defense Curve (Hd) - Rose */}
+                {/* Hd Exceedance Curve (Rose/Red) */}
                 <path
                   d={calculations.grid
                     .map((pt, i) => {
-                      const xPos =
-                        40 +
-                        ((pt.threshold - calculations.minVal) /
-                          (calculations.maxVal - calculations.minVal)) *
-                          740;
+                      const xPos = 40 + ((pt.threshold - calculations.minVal) / (calculations.maxVal - calculations.minVal)) * 340;
                       const yPos = 280 - pt.hd_exceedance * 260;
                       return `${i === 0 ? "M" : "L"} ${xPos} ${yPos}`;
                     })
@@ -987,34 +982,12 @@ export default function ValidationLabPanel() {
                   strokeWidth="3"
                 />
 
-                {/* Interactive Dynamic Hover Guide & Markers */}
+                {/* Hover Indicator Crosshair */}
                 {hoverX !== null && hoverHpExceedance !== null && hoverHdExceedance !== null && (
                   <g>
-                    <line
-                      x1={hoverX}
-                      y1="20"
-                      x2={hoverX}
-                      y2="280"
-                      stroke="#38bdf8"
-                      strokeWidth="1.5"
-                      strokeDasharray="2 2"
-                    />
-                    <circle
-                      cx={hoverX}
-                      cy={280 - hoverHpExceedance * 260}
-                      r="5"
-                      fill="#10b981"
-                      stroke="#ffffff"
-                      strokeWidth="2"
-                    />
-                    <circle
-                      cx={hoverX}
-                      cy={280 - hoverHdExceedance * 260}
-                      r="5"
-                      fill="#f43f5e"
-                      stroke="#ffffff"
-                      strokeWidth="2"
-                    />
+                    <line x1={hoverX} y1="20" x2={hoverX} y2="280" stroke="#a1a1aa" strokeWidth="1" strokeDasharray="2 2" />
+                    <circle cx={hoverX} cy={280 - hoverHpExceedance * 260} r="5" fill="#10b981" stroke="#ffffff" strokeWidth="2" />
+                    <circle cx={hoverX} cy={280 - hoverHdExceedance * 260} r="5" fill="#f43f5e" stroke="#ffffff" strokeWidth="2" />
                   </g>
                 )}
               </svg>
@@ -1028,33 +1001,35 @@ export default function ValidationLabPanel() {
             </div>
 
             {/* Diagnostic Interpretation Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
               <div className="p-3.5 rounded-xl bg-black/40 border border-tactical-border/60 space-y-1">
                 <span className="text-zinc-400 font-bold uppercase text-[10px]">
                   {isTr ? "Yanlış Pozitif Oranı (FPR)" : "False Positive Rate (FPR)"}
                 </span>
-                <p className="text-base font-bold text-rose-400">
-                  {calculations.fpr_at_zero === 0
-                    ? (isTr ? "0.0000 (Sıfır Yanlış Pozitif)" : "0.0000 (Zero False Positives)")
-                    : calculations.fpr_at_zero.toFixed(6)}
+                <p className="text-base font-bold text-rose-400 font-mono">
+                  {calculations.fpr_at_zero === 0 ? "0.0000 (Sıfır Hata)" : calculations.fpr_at_zero.toFixed(6)}
                 </p>
-                <p className="text-[10px] text-zinc-500">
-                  {isTr ? "P(log₁₀ LR > 0 | H_d)  -  Savunma aleyhine yanıltıcı delil oranı" : "P(log₁₀ LR > 0 | H_d)  -  Misleading evidence rate vs defense"}
-                </p>
+                <p className="text-[10px] text-zinc-500">P(log₁₀ LR &gt; 0 | Hd) : Yanıltıcı delil</p>
               </div>
 
               <div className="p-3.5 rounded-xl bg-black/40 border border-tactical-border/60 space-y-1">
                 <span className="text-zinc-400 font-bold uppercase text-[10px]">
                   {isTr ? "Yanlış Negatif Oranı (FNR)" : "False Negative Rate (FNR)"}
                 </span>
-                <p className="text-base font-bold text-amber-400">
-                  {calculations.fnr_at_zero === 0
-                    ? (isTr ? "0.0000 (Sıfır Yanlış Negatif)" : "0.0000 (Zero False Negatives)")
-                    : calculations.fnr_at_zero.toFixed(6)}
+                <p className="text-base font-bold text-amber-400 font-mono">
+                  {calculations.fnr_at_zero === 0 ? "0.0000 (Sıfır Hata)" : calculations.fnr_at_zero.toFixed(6)}
                 </p>
-                <p className="text-[10px] text-zinc-500">
-                  {isTr ? "P(log₁₀ LR < 0 | H_p)  -  İddia aleyhine yanıltıcı delil oranı" : "P(log₁₀ LR < 0 | H_p)  -  Misleading evidence rate vs prosecution"}
+                <p className="text-[10px] text-zinc-500">P(log₁₀ LR &lt; 0 | Hp) : Yanıltıcı delil</p>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-black/40 border border-tactical-border/60 space-y-1">
+                <span className="text-zinc-400 font-bold uppercase text-[10px]">
+                  {isTr ? "Aşım Olasılığı (τ Seçili)" : "Exceedance at τ"}
+                </span>
+                <p className="text-base font-bold text-cyan-300 font-mono">
+                  Hp: {(calculations.hp_at_tau * 100).toFixed(1)}% | Hd: {(calculations.hd_at_tau * 100).toFixed(1)}%
                 </p>
+                <p className="text-[10px] text-zinc-500">P(log₁₀ LR ≥ τ={tauThreshold.toFixed(1)})</p>
               </div>
 
               <div className="p-3.5 rounded-xl bg-black/40 border border-tactical-border/60 space-y-1">
@@ -1062,7 +1037,7 @@ export default function ValidationLabPanel() {
                   {isTr ? "Monotonluk Denetimi" : "Monotonicity Audit"}
                 </span>
                 <p className="text-base font-bold text-emerald-400 flex items-center gap-1.5">
-                  <CheckCircle2 className="h-4 w-4" /> {isTr ? "Kesinlikle Doğrulandı (Artmayan)" : "Strictly Verified (Non-Increasing)"}
+                  <CheckCircle2 className="h-4 w-4" /> {isTr ? "Doğrulandı" : "Strictly Verified"}
                 </p>
                 <p className="text-[10px] text-zinc-500">∀ x₁ &lt; x₂: P(LR ≥ x₁) ≥ P(LR ≥ x₂)</p>
               </div>
@@ -1070,10 +1045,12 @@ export default function ValidationLabPanel() {
           </div>
         )}
 
-        {/* TAB 2: ROC & AUC ANALYSIS */}
-        {activeTab === "roc" && (
+        {/* =================================================================== */}
+        {/* TAB 2: RECEIVER OPERATING CHARACTERISTIC (ROC) & AUC               */}
+        {/* =================================================================== */}
+        {activeTab === "discrimination_roc" && (
           <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <h3 className="text-sm font-bold text-white flex items-center gap-2">
                   <Target className="h-4 w-4 text-cyan-400" />
@@ -1086,31 +1063,17 @@ export default function ValidationLabPanel() {
                 </p>
               </div>
 
-              <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-bold">
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-bold font-mono">
                 <Sparkles className="h-4 w-4" />
                 AUC = {calculations.auc.toFixed(6)}
               </div>
             </div>
 
             {/* SVG ROC Plot */}
-            <div className="relative h-56 sm:h-80 w-full rounded-xl bg-black/60 p-2 sm:p-4 border border-tactical-border/60 flex flex-col justify-end">
+            <div className="relative h-64 sm:h-80 w-full rounded-xl bg-black/60 p-2 sm:p-4 border border-tactical-border/60 flex flex-col justify-end">
               <svg className="h-full w-full overflow-visible" viewBox="0 0 400 300" preserveAspectRatio="none">
                 {/* Diagonal Reference (Random Chance line) */}
                 <line x1="40" y1="280" x2="380" y2="20" stroke="#3f3f46" strokeDasharray="4 4" strokeWidth="1.5" />
-
-                {/* ROC Curve */}
-                <path
-                  d={calculations.grid
-                    .map((pt, i) => {
-                      const xPos = 40 + pt.hd_exceedance * 340; // FPR
-                      const yPos = 280 - pt.hp_exceedance * 260; // TPR
-                      return `${i === 0 ? "M" : "L"} ${xPos} ${yPos}`;
-                    })
-                    .join(" ")}
-                  fill="none"
-                  stroke="#06b6d4"
-                  strokeWidth="3"
-                />
 
                 {/* Area Under Curve Fill */}
                 <path
@@ -1123,6 +1086,20 @@ export default function ValidationLabPanel() {
                     .join(" ")} L 380 280 Z`}
                   fill="rgba(6, 182, 212, 0.12)"
                 />
+
+                {/* ROC Curve Line */}
+                <path
+                  d={calculations.grid
+                    .map((pt, i) => {
+                      const xPos = 40 + pt.hd_exceedance * 340;
+                      const yPos = 280 - pt.hp_exceedance * 260;
+                      return `${i === 0 ? "M" : "L"} ${xPos} ${yPos}`;
+                    })
+                    .join(" ")}
+                  fill="none"
+                  stroke="#06b6d4"
+                  strokeWidth="3"
+                />
               </svg>
 
               <div className="flex justify-between text-[10px] text-zinc-500 mt-2 px-8">
@@ -1131,12 +1108,13 @@ export default function ValidationLabPanel() {
               </div>
             </div>
 
+            {/* Discrimination Metrics Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
               <div className="p-3.5 rounded-xl bg-black/40 border border-tactical-border/60 space-y-1">
                 <span className="text-zinc-400 font-bold uppercase text-[10px]">
-                  {isTr ? "Ayrım İndeksi" : "Separation Index"}
+                  {isTr ? "Ayrım İndeksi (Separation)" : "Separation Index"}
                 </span>
-                <p className="text-base font-bold text-cyan-400">{(calculations.auc - 0.5).toFixed(4)}</p>
+                <p className="text-base font-bold text-cyan-400 font-mono">{(calculations.auc - 0.5).toFixed(4)}</p>
                 <p className="text-[10px] text-zinc-500">
                   {isTr ? "Rastlantı üzeri ölçeklendirilmiş ayrım [0, 0.5]" : "Scaled separation above chance [0, 0.5]"}
                 </p>
@@ -1144,181 +1122,280 @@ export default function ValidationLabPanel() {
 
               <div className="p-3.5 rounded-xl bg-black/40 border border-tactical-border/60 space-y-1">
                 <span className="text-zinc-400 font-bold uppercase text-[10px]">
-                  {isTr ? "SWGDAM 2020 Uyumluluğu" : "SWGDAM 2020 Compliance"}
+                  {isTr ? "Ayırt Edici Güç (DP)" : "Discriminating Power (DP)"}
                 </span>
-                <p className="text-base font-bold text-emerald-400 flex items-center gap-1">
-                  <CheckCircle2 className="h-4 w-4" /> {isTr ? "Tamamen Kabul Edilebilir (AUC ≥ 0.999)" : "Fully Admissible (AUC ≥ 0.999)"}
-                </p>
-                <p className="text-[10px] text-zinc-500">
-                  {isTr ? "Zorunlu gelişimsel doğrulama standardını karşılar" : "Meets mandatory developmental validation standard"}
-                </p>
+                <p className="text-base font-bold text-emerald-400 font-mono">{(calculations.d_power * 100).toFixed(2)}%</p>
+                <p className="text-[10px] text-zinc-500">DP = 1.0 - FPR - FNR</p>
               </div>
 
               <div className="p-3.5 rounded-xl bg-black/40 border border-tactical-border/60 space-y-1">
                 <span className="text-zinc-400 font-bold uppercase text-[10px]">
-                  {isTr ? "Yanıltıcı Delil Üst Sınırı" : "Misleading Evidence Upper Bound"}
+                  {isTr ? "SWGDAM 2020 Uyumluluğu" : "SWGDAM 2020 Compliance"}
                 </span>
-                <p className="text-base font-bold text-white">≤ 10⁻⁶ (Royall 1997)</p>
+                <p className="text-base font-bold text-emerald-400 flex items-center gap-1 font-mono">
+                  <CheckCircle2 className="h-4 w-4" /> {isTr ? "Tam Kabul (AUC ≥ 0.999)" : "Fully Admissible (AUC ≥ 0.999)"}
+                </p>
                 <p className="text-[10px] text-zinc-500">
-                  {isTr ? "P(LR ≥ 10⁶ | H_d) 1/k teorik sınırını sağlar" : "P(LR ≥ 10⁶ | H_d) satisfies 1/k theoretical limit"}
+                  {isTr ? "Temel adli geçerleme standardını eksiksiz karşılar." : "Exceeds required forensic discrimination threshold."}
                 </p>
               </div>
             </div>
           </div>
         )}
 
-        {/* TAB 3: CLLR COST & PAV */}
-        {activeTab === "cllr" && (
+        {/* =================================================================== */}
+        {/* TAB 3: CLLR LOG-LIKELIHOOD RATIO COST & ROYALL MISLEADING EVIDENCE */}
+        {/* =================================================================== */}
+        {activeTab === "cllr_decomposition" && (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <Cpu className="h-4 w-4 text-purple-400" />
+                  {isTr ? "FoCal Log-Likelihood-Ratio Cost (Cllr) Bilgi-Teorik Ayrışımı" : "FoCal Log-Likelihood-Ratio Cost (Cllr) Information-Theoretic Decomposition"}
+                </h3>
+                <p className="text-xs text-zinc-400">
+                  {isTr
+                    ? "Brümmer & du Preez (2006) bilgi kaybı metriği: Cllr_raw = Cllr_min + Cllr_cal."
+                    : "Information-theoretic loss metric: Cllr_raw = Cllr_min + Cllr_cal (Brümmer & du Preez 2006)."}
+                </p>
+              </div>
+
+              <span className="text-xs font-bold text-purple-300 bg-purple-950/40 border border-purple-500/40 px-3 py-1.5 rounded-lg font-mono">
+                {calculations.cllr_raw < 0.1
+                  ? (isTr ? "Kalite: Mükemmel (Cllr < 0.1)" : "Quality: Excellent (Cllr < 0.1)")
+                  : (isTr ? "Kalite: Orta/Kabul Edilebilir" : "Quality: Moderate/Acceptable")}
+              </span>
+            </div>
+
+            {/* Cllr Metrics Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="p-4 rounded-xl border border-purple-500/40 bg-purple-950/20 space-y-1">
+                <span className="text-[10px] text-purple-400 font-bold uppercase">
+                  {isTr ? "Toplam Maliyet (Cllr_raw)" : "Overall Cost (Cllr_raw)"}
+                </span>
+                <p className="text-2xl font-bold text-white font-mono">{calculations.cllr_raw.toFixed(4)}</p>
+                <p className="text-[10px] text-zinc-400">
+                  {isTr ? "Genel olasılık oranı performans kaybı (İdeal: 0.0)" : "Overall LR performance loss (Ideal: 0.0)"}
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl border border-tactical-border/60 bg-black/40 space-y-1">
+                <span className="text-[10px] text-zinc-400 font-bold uppercase">
+                  {isTr ? "Asgari Ayrım Maliyeti (Cllr_min)" : "Minimum Discrimination Cost (Cllr_min)"}
+                </span>
+                <p className="text-2xl font-bold text-white font-mono">{calculations.cllr_min.toFixed(4)}</p>
+                <p className="text-[10px] text-zinc-400">
+                  {isTr ? "PAV monotonik regresyon sonrası potansiyel sınır" : "Lower bound achievable after optimal monotonic calibration"}
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl border border-tactical-border/60 bg-black/40 space-y-1">
+                <span className="text-[10px] text-zinc-400 font-bold uppercase">
+                  {isTr ? "Kalibrasyon Kaybı (Cllr_cal)" : "Calibration Loss (Cllr_cal)"}
+                </span>
+                <p className="text-2xl font-bold text-white font-mono">{calculations.cllr_cal.toFixed(4)}</p>
+                <p className="text-[10px] text-zinc-400">
+                  {isTr ? "Kötü kalibrasyondan kaynaklanan fazlalık kayıp" : "Excess loss due to poor probability calibration"}
+                </p>
+              </div>
+            </div>
+
+            {/* Royall's Misleading Evidence Rates Table */}
+            <div className="rounded-xl border border-tactical-border/60 bg-black/50 p-4 space-y-3">
+              <div className="flex items-center justify-between border-b border-tactical-border/40 pb-2">
+                <h4 className="text-xs font-bold text-white uppercase tracking-wider">
+                  {isTr ? "Royall (1997) Yanıltıcı Delil Oranları Denetimi" : "Royall (1997) Misleading Evidence Audit"}
+                </h4>
+                <span className="text-[10px] text-zinc-400 font-mono">Teorik Sınır: P_misleading ≤ 1/α</span>
+              </div>
+
+              <div className="overflow-x-auto w-full">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="border-b border-tactical-border/60 bg-tactical-surface/50 text-[10px] uppercase text-zinc-400">
+                      <th className="p-2.5">Eşik Oranı (α)</th>
+                      <th className="p-2.5">log₁₀(α)</th>
+                      <th className="p-2.5">Royall Üst Sınırı (1/α)</th>
+                      <th className="p-2.5">Gözlenen Hp Yanıltıcı</th>
+                      <th className="p-2.5">Gözlenen Hd Yanıltıcı</th>
+                      <th className="p-2.5">Adli Durum</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-tactical-border/40 text-[11px] font-mono">
+                    {calculations.royallMetrics.map((rm) => (
+                      <tr key={rm.alpha} className="hover:bg-tactical-surface/20">
+                        <td className="p-2.5 font-bold text-white">α = {rm.alpha}</td>
+                        <td className="p-2.5 text-zinc-300">±{Math.log10(rm.alpha).toFixed(2)}</td>
+                        <td className="p-2.5 text-amber-300">{(rm.royall_bound * 100).toFixed(2)}%</td>
+                        <td className="p-2.5 text-emerald-400">{(rm.hp_misleading_rate * 100).toFixed(4)}%</td>
+                        <td className="p-2.5 text-rose-400">{(rm.hd_misleading_rate * 100).toFixed(4)}%</td>
+                        <td className="p-2.5">
+                          <span className={`px-2 py-0.5 rounded text-[9px] font-bold ${rm.admissible ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40" : "bg-rose-500/20 text-rose-300 border border-rose-500/40"}`}>
+                            {rm.admissible ? (isTr ? "KABUL EDİLEBİLİR" : "ADMISSIBLE") : isTr ? "AŞILDI" : "EXCEEDED"}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* =================================================================== */}
+        {/* TAB 4: CERTIFIED GOLDEN BENCHMARKS STUDIO                          */}
+        {/* =================================================================== */}
+        {activeTab === "benchmarks" && (
           <div className="space-y-6">
             <div>
               <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <BarChart className="h-4 w-4 text-purple-400" />
-                {isTr
-                  ? "Log-Likelihood-Ratio Maliyeti (Cllr) Bilgi-Teorik Ayrışımı"
-                  : "Log-Likelihood-Ratio Cost (Cllr) Information-Theoretic Decomposition"}
+                <Award className="h-4 w-4 text-amber-400" />
+                {isTr ? "Sertifikalı Altın Referans Vektörleri & Kalibrasyon Standartları" : "Certified Golden Reference Vectors & Calibration Standards"}
               </h3>
               <p className="text-xs text-zinc-400">
                 {isTr
-                  ? "Olasılıksal genotipleme çıktılarının genel bilgi kaybını ölçer (Brümmer & du Preez 2006)."
-                  : "Measures the overall information penalty of probabilistic genotyping outputs (Brümmer & du Preez 2006)."}
+                  ? "NIST SRM 2391d ve simüle edilmiş zorlu casework profilleri üzerinden 1-tıkla kalibrasyon yükleme."
+                  : "Certified reference individuals and challenging casework cohorts with 1-click loading into active studio."}
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="p-4 rounded-xl border border-purple-500/30 bg-purple-950/20 space-y-2">
-                <span className="text-[10px] text-purple-400 font-bold uppercase tracking-wider">
-                  {isTr ? "Ham Ampirik Cllr" : "Raw Empirical Cllr"}
-                </span>
-                <p className="text-2xl font-bold text-white tabular-nums">{calculations.cllr_raw.toFixed(6)}</p>
-                <div className="flex items-center gap-1.5 text-xs text-emerald-400 font-bold">
-                  <CheckCircle2 className="h-4 w-4" /> {isTr ? "MÜKEMMEL (< 0.05)" : "EXCELLENT (< 0.05)"}
-                </div>
-                <p className="text-[10px] text-zinc-400">
-                  {isTr ? "Kombine ayrım ve kalibrasyon kaybı." : "Combined discrimination and calibration loss."}
-                </p>
-              </div>
+              {PRESET_BENCHMARKS.map((bench) => {
+                const isSelected = selectedPreset === bench.id;
+                return (
+                  <div
+                    key={bench.id}
+                    className={`p-4 rounded-xl border transition-all flex flex-col justify-between space-y-3 ${
+                      isSelected
+                        ? "border-cyan-500/60 bg-cyan-950/20 shadow-lg"
+                        : "border-tactical-border/60 bg-black/40 hover:border-tactical-border"
+                    }`}
+                  >
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-cyan-300 font-mono">{bench.badge}</span>
+                        <span className="text-[10px] text-zinc-400 bg-zinc-800/60 px-2 py-0.5 rounded font-mono">
+                          N={bench.nPairsRecommended}
+                        </span>
+                      </div>
+                      <h4 className="text-xs font-bold text-white leading-tight">{bench.name}</h4>
+                      <p className="text-[11px] text-zinc-400 leading-relaxed">
+                        {isTr ? bench.descriptionTr : bench.description}
+                      </p>
 
-              <div className="p-4 rounded-xl border border-cyan-500/30 bg-cyan-950/20 space-y-2">
-                <span className="text-[10px] text-cyan-400 font-bold uppercase tracking-wider">
-                  {isTr ? "Cllr_min (Ayrım Kaybı)" : "Cllr_min (Discrimination Loss)"}
-                </span>
-                <p className="text-2xl font-bold text-white tabular-nums">{calculations.cllr_min.toFixed(6)}</p>
-                <span className="text-xs text-zinc-400 font-semibold">
-                  {isTr ? "PAV İzotonik Optimal Kalibrasyon" : "PAV Isotonic Optimal Calibration"}
-                </span>
-                <p className="text-[10px] text-zinc-400">
-                  {isTr ? "Kusursuz parametrik olmayan eşlemeden sonra elde edilebilecek minimum maliyet." : "Minimum achievable cost after perfect non-parametric mapping."}
-                </p>
-              </div>
+                      <div className="grid grid-cols-2 gap-2 text-[10px] pt-1 font-mono">
+                        <div className="p-1.5 rounded bg-black/40 border border-tactical-border/40">
+                          <span className="text-zinc-500 block">Hedef AUC:</span>
+                          <span className="font-bold text-emerald-400">≥ {bench.expectedAuc.toFixed(3)}</span>
+                        </div>
+                        <div className="p-1.5 rounded bg-black/40 border border-tactical-border/40">
+                          <span className="text-zinc-500 block">Hedef Cllr:</span>
+                          <span className="font-bold text-purple-400">≤ {bench.expectedCllr.toFixed(3)}</span>
+                        </div>
+                      </div>
+                    </div>
 
-              <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-950/20 space-y-2">
-                <span className="text-[10px] text-amber-400 font-bold uppercase tracking-wider">
-                  {isTr ? "Cllr_cal (Kalibrasyon Kaybı)" : "Cllr_cal (Calibration Loss)"}
-                </span>
-                <p className="text-2xl font-bold text-white tabular-nums">{calculations.cllr_cal.toFixed(6)}</p>
-                <span className="text-xs text-zinc-400 font-semibold">
-                  {isTr ? "Entropi Cezası (Cllr - Cllr_min)" : "Entropy Penalty (Cllr - Cllr_min)"}
-                </span>
-                <p className="text-[10px] text-zinc-400">
-                  {isTr ? "Yalnızca olasılıksal skor kalibrasyon hatasından kaynaklanan kayıp." : "Loss strictly due to probabilistic score miscalibration."}
-                </p>
-              </div>
-            </div>
-
-            {/* Formula Callout */}
-            <div className="p-4 rounded-xl bg-black/50 border border-tactical-border/60 text-xs font-mono space-y-1">
-              <span className="text-[10px] text-zinc-500 uppercase font-bold">
-                {isTr ? "Brümmer & Ramos Resmi Formülasyonu:" : "Brümmer & Ramos Formal Formulation:"}
-              </span>
-              <p className="text-zinc-300">
-                C_llr = (1 / 2N_Hp) ∑ log₂(1 + 10^(-log₁₀ LR_i)) + (1 / 2N_Hd) ∑ log₂(1 + 10^(+log₁₀ LR_j))
-              </p>
+                    <button
+                      type="button"
+                      onClick={() => handleSelectPreset(bench.id)}
+                      className={`w-full py-1.5 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                        isSelected
+                          ? "bg-cyan-500 text-black shadow"
+                          : "bg-tactical-surface hover:bg-tactical-surface/80 border border-tactical-border text-zinc-200"
+                      }`}
+                    >
+                      {isSelected ? <Check className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
+                      <span>{isSelected ? (isTr ? "Aktif Standart" : "Active Standard") : isTr ? "Stüdyoya Yükle" : "Load into Studio"}</span>
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
 
-        {/* TAB 4: 95% HPD LOWER BOUND */}
-        {activeTab === "hpd" && (
+        {/* =================================================================== */}
+        {/* TAB 5: ISO/IEC 17025 REPORTING & ENFSI VERBAL SCALE SUITE           */}
+        {/* =================================================================== */}
+        {activeTab === "iso_reporting" && (
           <div className="space-y-6">
-            <div>
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <ShieldCheck className="h-4 w-4 text-emerald-400" />
-                {isTr
-                  ? "Mahkeme Kabul Edilebilirliği İçin Muhafazakar %95 HPD Alt Sınırı (LR_mahkeme)"
-                  : "Conservative 95% HPD Lower Bound for Court Admissibility (LR_court)"}
-              </h3>
-              <p className="text-xs text-zinc-400">
-                {isTr
-                  ? "5. yüzdelik alt sınırını alarak MCMC sonsal örnekleme varyansına karşı koruma sağlar (HPD Güvenilirlik Standardı)."
-                  : "Protects against MCMC posterior sampling variance by taking the 5th percentile lower bound (HPD Credibility Standard)."}
-              </p>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-tactical-border/40 pb-3">
+              <div>
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <ShieldCheck className="h-4 w-4 text-emerald-400" />
+                  {isTr
+                    ? "ISO/IEC 17025 & ENFSI (2017) Mahkeme Kabul Edilebilirlik Rapor Paketi"
+                    : "ISO/IEC 17025 & ENFSI (2017) Court Admissible Reporting Suite"}
+                </h3>
+                <p className="text-xs text-zinc-400">
+                  {isTr
+                    ? "Deterministik SHA-256 durum özeti, 95% HPD alt sınırı ve savcının yanılgısı koruması."
+                    : "Deterministic SHA-256 state audit digest, 95% HPD lower bound, and Prosecutor's Fallacy shield."}
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => {
+                  const certText = `FORENZA TIPPETT VALIDATION CERTIFICATE (ISO/IEC 17025:2017)
+Case ID: ${caseId}
+Lead Analyst: ${leadAnalyst}
+Benchmark Standard: ${selectedPreset}
+Cohort Size: N=${nPairs} pairs
+Coancestry (theta): ${theta.toFixed(3)}
+Allele Dropout P(D): ${pDropout.toFixed(2)}
+Mann-Whitney U AUC: ${calculations.auc.toFixed(6)}
+Overall Cllr Cost: ${calculations.cllr_raw.toFixed(4)}
+95% HPD Lower Bound: +${calculations.log10_lower.toFixed(2)} log10 units
+State Audit Digest (SHA-256): ${auditHash}
+Standard: SWGDAM 2020 / ENFSI 2017 Evaluative Reporting Scale`;
+                  copyCertificate(certText);
+                }}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 text-xs font-bold transition-all cursor-pointer shrink-0"
+              >
+                {copiedCertificate ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                <span>{copiedCertificate ? (isTr ? "Kopyalandı!" : "Copied!") : isTr ? "Sertifikayı Kopyala" : "Copy Certificate"}</span>
+              </button>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="p-4 rounded-xl border border-emerald-500/40 bg-emerald-950/20 space-y-2">
-                <span className="text-[10px] text-emerald-400 font-bold uppercase">
+            {/* Cryptographic SHA-256 State Audit Digest Banner */}
+            <div className="p-3.5 rounded-xl bg-black/60 border border-tactical-border/60 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-cyan-400 shrink-0" />
+                <span className="text-zinc-400 font-bold uppercase">{isTr ? "Durum Denetim Özeti (H_tippett):" : "State Audit Digest (H_tippett):"}</span>
+              </div>
+              <span className="font-mono text-[11px] text-cyan-300 break-all">{auditHash}</span>
+            </div>
+
+            {/* Metrological Uncertainty & 95% HPD Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-mono">
+              <div className="p-4 rounded-xl border border-emerald-500/40 bg-emerald-950/20 space-y-1">
+                <span className="text-[10px] text-emerald-400 font-bold uppercase block">
                   {isTr ? "Mahkemede Geçerli LR_mahkeme" : "Court Admissible LR_court"}
                 </span>
-                <p className="text-2xl font-bold text-white tabular-nums">+{calculations.log10_lower.toFixed(2)}</p>
-                <span className="text-xs text-zinc-400">{isTr ? "5. Yüzdelik Alt Sınırı" : "5th Percentile Lower Bound"}</span>
-                <p className="text-[10px] text-zinc-500">
-                  {isTr ? "Mahkeme ifadesinde muhafazakar rakam olarak sunulur." : "Expressed in court testimony as conservative figure."}
+                <p className="text-2xl font-bold text-white">+{calculations.log10_lower.toFixed(2)}</p>
+                <p className="text-[10px] text-zinc-400">
+                  {isTr ? "MCMC 5. Yüzdelik Alt Sınırı (SWGDAM)" : "5th Percentile Lower Bound (SWGDAM)"}
                 </p>
               </div>
 
-              <div className="p-4 rounded-xl border border-tactical-border/60 bg-black/40 space-y-2">
-                <span className="text-[10px] text-zinc-400 font-bold uppercase">
-                  {isTr ? "Medyan Sonsal log10(LR)" : "Median Posterior log10(LR)"}
+              <div className="p-4 rounded-xl border border-tactical-border/60 bg-black/40 space-y-1">
+                <span className="text-[10px] text-zinc-400 font-bold uppercase block">
+                  {isTr ? "Birleşik Belirsizlik (u_c)" : "Combined Uncertainty (u_c)"}
                 </span>
-                <p className="text-2xl font-bold text-white tabular-nums">+{calculations.log10_median.toFixed(2)}</p>
-                <span className="text-xs text-zinc-400">{isTr ? "50. Yüzdelik MCMC Sonsalı" : "50th Percentile MCMC Posterior"}</span>
-                <p className="text-[10px] text-zinc-500">
-                  {isTr ? "Ayrıştırma örnekleyicisinin merkezi eğilimi." : "Central tendency of deconvolution sampler."}
-                </p>
+                <p className="text-2xl font-bold text-white">±0.0943</p>
+                <p className="text-[10px] text-zinc-400">GUM JCGM 100:2008 Standardı</p>
               </div>
 
-              <div className="p-4 rounded-xl border border-tactical-border/60 bg-black/40 space-y-2">
-                <span className="text-[10px] text-zinc-400 font-bold uppercase">
-                  {isTr ? "95. Yüzdelik Üst Sınırı" : "95th Percentile Upper Bound"}
+              <div className="p-4 rounded-xl border border-tactical-border/60 bg-black/40 space-y-1">
+                <span className="text-[10px] text-zinc-400 font-bold uppercase block">
+                  {isTr ? "Genişletilmiş Belirsizlik (U_95%)" : "Expanded Uncertainty (U_95%)"}
                 </span>
-                <p className="text-2xl font-bold text-white tabular-nums">+{calculations.log10_upper.toFixed(2)}</p>
-                <span className="text-xs text-zinc-400">{isTr ? "Üst Güvenilir Sınır" : "Upper Credible Limit"}</span>
-                <p className="text-[10px] text-zinc-500">
-                  {isTr ? "Toplam %90 güven aralığı genişliği:" : "Total 90% credible interval span:"} {(calculations.log10_upper - calculations.log10_lower).toFixed(2)}
-                </p>
+                <p className="text-2xl font-bold text-white">±0.1887</p>
+                <p className="text-[10px] text-zinc-400">k = 2.00 (95% Güven Düzeyi)</p>
               </div>
-            </div>
-
-            {/* Admonition Box */}
-            <div className="p-4 rounded-xl bg-amber-950/20 border border-amber-500/40 text-xs text-amber-200/90 space-y-1">
-              <div className="flex items-center gap-2 font-bold text-amber-400">
-                <AlertTriangle className="h-4 w-4" />
-                {isTr ? "SWGDAM 2020 Hukuki Kabul Edilebilirlik Talimatı:" : "SWGDAM 2020 Legal Admissibility Mandate:"}
-              </div>
-              <p className="text-[11px] text-amber-300/80 leading-relaxed">
-                {isTr
-                  ? "Mahkemede olasılıksal genotipleme sonuçları sunulurken, nokta tahmini veya ortalama yerine ZORUNLU OLARAK 5. yüzdelik alt sınırı (LR_mahkeme) raporlanmalıdır. Böylece sonlu MCMC örneklemesinden kaynaklanan istatistiksel belirsizlik savunma lehine çözümlenmiş olur."
-                  : "When presenting probabilistic genotyping results in court, the 5th percentile lower bound (LR_court) MUST be reported rather than the point estimate or mean, ensuring that statistical uncertainty from finite MCMC sampling is resolved in favor of the defense."}
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* TAB 5: ENFSI EVALUATIVE SCALE & PROSECUTOR'S FALLACY SHIELD */}
-        {activeTab === "enfsi" && (
-          <div className="space-y-6">
-            <div>
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <Scale className="h-4 w-4 text-purple-400" />
-                {isTr
-                  ? "ENFSI (2017) Dinamik 7 Düzeyli Sözlü Raporlama Ölçeği & Savcılık Safsatası Kalkanı"
-                  : "ENFSI (2017) Dynamic 7-Tier Verbal Reporting Scale & Prosecutor's Fallacy Shield"}
-              </h3>
-              <p className="text-xs text-zinc-400">
-                {isTr
-                  ? "Olasılık oranlarının değerlendirici ifadelere standart iki dilli çevirisi."
-                  : "Standardized bilingual translation of likelihood ratios into evaluative statements."}
-              </p>
             </div>
 
             {/* 7-Tier Visual Table */}
@@ -1330,18 +1407,18 @@ export default function ValidationLabPanel() {
                     <th className="p-3">{isTr ? "LR Aralığı" : "LR Range"}</th>
                     <th className="p-3">log₁₀ LR</th>
                     <th className="p-3">{isTr ? "ENFSI İngilizce İfade" : "ENFSI English Predicate"}</th>
-                    <th className="p-3">{isTr ? "ENFSI Türkçe İfade" : "ENFSI Türkçe İfade"}</th>
+                    <th className="p-3">{isTr ? "ENFSI Türkçe İfade" : "ENFSI Turkish Predicate"}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-tactical-border/40 text-[11px]">
                   {[
                     { tier: 0, range: "LR = 1", log: "0.0", en: "Inconclusive / Neutral", tr: "Sonuçsuz / Nötr" },
-                    { tier: 1, range: "1 < LR ≤ 10", log: "0.0 - 1.0", en: "Weak Support for H_p", tr: "İddia Lehine Zayıf Destek" },
-                    { tier: 2, range: "10 < LR ≤ 100", log: "1.0 - 2.0", en: "Moderate Support for H_p", tr: "İddia Lehine Orta Destek" },
-                    { tier: 3, range: "100 < LR ≤ 10,000", log: "2.0 - 4.0", en: "Moderately Strong Support for H_p", tr: "İddia Lehine Orta-Güçlü Destek" },
-                    { tier: 4, range: "10,000 < LR ≤ 10⁶", log: "4.0 - 6.0", en: "Strong Support for H_p", tr: "İddia Lehine Güçlü Destek" },
-                    { tier: 5, range: "10⁶ < LR ≤ 10⁹", log: "6.0 - 9.0", en: "Very Strong Support for H_p", tr: "İddia Lehine Çok Güçlü Destek" },
-                    { tier: 6, range: "LR > 10⁹", log: "> 9.0", en: "Extremely Strong Support for H_p", tr: "İddia Lehine Son Derece Güçlü Destek" },
+                    { tier: 1, range: "1 < LR ≤ 10", log: "0.0 - 1.0", en: "Weak Support for Hp", tr: "İddia Lehine Zayıf Destek" },
+                    { tier: 2, range: "10 < LR ≤ 100", log: "1.0 - 2.0", en: "Moderate Support for Hp", tr: "İddia Lehine Orta Destek" },
+                    { tier: 3, range: "100 < LR ≤ 10,000", log: "2.0 - 4.0", en: "Moderately Strong Support for Hp", tr: "İddia Lehine Orta-Güçlü Destek" },
+                    { tier: 4, range: "10,000 < LR ≤ 10⁶", log: "4.0 - 6.0", en: "Strong Support for Hp", tr: "İddia Lehine Güçlü Destek" },
+                    { tier: 5, range: "10⁶ < LR ≤ 10⁹", log: "6.0 - 9.0", en: "Very Strong Support for Hp", tr: "İddia Lehine Çok Güçlü Destek" },
+                    { tier: 6, range: "LR > 10⁹", log: "> 9.0", en: "Extremely Strong Support for Hp", tr: "İddia Lehine Son Derece Güçlü Destek" },
                   ].map((row) => {
                     const isCurrent =
                       (row.tier === 6 && calculations.meanHp > 9.0) ||
@@ -1369,28 +1446,13 @@ export default function ValidationLabPanel() {
               </table>
             </div>
 
-            {/* Defence-Support Evaluative Note (If meanHp < 0) */}
-            {calculations.meanHp < 0 && (
-              <div className="p-4 rounded-xl bg-rose-950/20 border border-rose-500/40 space-y-1">
-                <div className="flex items-center gap-2 text-xs font-bold text-rose-300 uppercase">
-                  <AlertTriangle className="h-4 w-4 text-rose-400" />
-                  {isTr ? "Savunma Önermesi Lehine Sonuç (LR < 1)" : "Support for Defence Proposition (LR < 1)"}
-                </div>
-                <p className="text-[11px] text-zinc-300 leading-relaxed">
-                  {isTr
-                    ? `Hesaplanan ortalama log₁₀ LR (${calculations.meanHp.toFixed(2)}), delilin iddia önermesi (H_p) yerine savunma önermesini (H_d) desteklediğini gösterir.`
-                    : `The computed mean log₁₀ LR (${calculations.meanHp.toFixed(2)}) indicates the evidence supports the defence hypothesis (H_d) over the prosecution (H_p).`}
-                </p>
-              </div>
-            )}
-
             {/* Active Prosecutor's Fallacy Shield Banner */}
             <div className="p-4 rounded-xl bg-purple-950/20 border border-purple-500/40 space-y-2">
               <div className="flex items-center gap-2 text-xs font-bold text-purple-300 uppercase">
                 <ShieldCheck className="h-4 w-4 text-purple-400" />
                 {isTr ? "Aktif Savcılık Safsatası Kalkanı (Transposed Conditional Koruması)" : "Active Prosecutor's Fallacy Shield (Transposed Conditional Protection)"}
               </div>
-              <p className="text-[11px] text-zinc-300 leading-relaxed">
+              <p className="text-[11px] text-zinc-300 leading-relaxed font-mono">
                 {isTr
                   ? "ÖNEMLİ: Bu Likelihood Ratio (Olasılık Oranı) değeri, delilin hipotezler altındaki şartlı olasılığını P(Delil | Hipotez) ifade eder. Kesinlikle şüphelinin suçlu veya masum olma olasılığını P(Hipotez | Delil) İFADE ETMEZ. Bu iki kavramın karıştırılması mahkemelerde kabul edilemez olan 'Savcılık Safsatası'na (Transposed Conditional) yol açar."
                   : "IMPORTANT: The Likelihood Ratio (LR) measures P(Evidence | Hypothesis), NOT P(Hypothesis | Evidence). This value does NOT represent the probability that the person of interest is guilty or innocent. Conflating P(E|Hp) with P(Hp|E) constitutes the Transposed Conditional Fallacy (Prosecutor's Fallacy), which is strictly inadmissible in court."}

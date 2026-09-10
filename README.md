@@ -376,7 +376,7 @@ str-analysis/
 │       ├── context/                       # React Context Providers
 │       ├── dictionaries/                  # Bilingual Translations (TR / EN)
 │       ├── lib/                           # Utility Functions & API Clients
-│       ├── test/                          # Automated Vitest Suite (451/451 Tests Passing across 39 Specs)
+│       ├── test/                          # Automated Vitest Suite (466/466 Tests Passing across 40 Specs)
 │       └── utils/                         # Client-Side Biocomputational Simulation Engines
 │           ├── strLocusRegistryEngine.ts  # 24-STR Locus Registry & CE Sizing TS Engine
 │           ├── forensicCliBatchParser.ts  # Forensic CLI Batch Lexer & Ingestion TS Engine
@@ -889,7 +889,7 @@ pytest backend/node/services/forensic/physical/ -v        # Pillar 5: Physical E
 pytest backend/node/services/forensic/security/ -v        # Pillar 6: LIMS & ZKP
 pytest backend/node/services/forensic/geoint/ -v          # Pillar 7: Geo-Forensics
 
-# Execute frontend tactical workstation test suite (451 tests across 39 test suites)
+# Execute frontend tactical workstation test suite (466 tests across 40 test suites)
 npm --prefix frontend test -- --run
 ```
 

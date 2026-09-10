@@ -4245,3 +4245,97 @@ $$\text{Shield}_{\text{Toxicology}} = \text{"Post-mortem cardiac blood concentra
 Under ISO/IEC 17025:2017 Section 7.8, all concentration inputs, kinetic parameters, observed ratios, and extrapolation verdicts are bound into a 64-hex SHA-256 state audit digest:
 $$H_{\text{pmr}} = \text{SHA256}\left( \text{caseId} \parallel \text{compound} \parallel C_{\text{heart}} \parallel C_{\text{femoral}} \parallel C/P \parallel C_{\text{antemortem}} \right)$$
 
+---
+
+## 105. Dirichlet Fst Population Genetics, Balding-Nichols Substructure & Weir-Cockerham ANOVA Engine (Subsystem 03 / Module 03)
+
+### 105.1 Balding-Nichols (1994, 1995) & NRC II (1996) Allele Match Probabilities
+Under population substructure governed by coancestry coefficient $\theta = F_{st}$, allele frequencies deviate from Hardy-Weinberg Equilibrium (HWE). In accordance with NRC II (1996) Recommendations 4.1 and 4.2 and Balding-Nichols (1994, 1995), the match probability $P(G | G, \theta)$ conditional on observing an identical genotype in the suspect is formulated as:
+
+**Homozygous Locus Match Probability (NRC Recommendation 4.1):**
+$$P(A_i A_i \mid A_i A_i, \theta) = \frac{\left[2\theta + (1-\theta)p_i\right] \left[3\theta + (1-\theta)p_i\right]}{(1+\theta)(1+2\theta)}$$
+
+**Heterozygous Locus Match Probability (NRC Recommendation 4.2):**
+$$P(A_i A_j \mid A_i A_j, \theta) = \frac{2 \left[\theta + (1-\theta)p_i\right] \left[\theta + (1-\theta)p_j\right]}{(1+\theta)(1+2\theta)} \quad (i \neq j)$$
+
+where:
+- $p_i, p_j$ are the database allele frequencies from the relevant demographic group (NIST 1036 dataset).
+- $\theta = F_{st}$ is the coancestry parameter ($\theta = 0.010$ for outbred Caucasian/African populations, $\theta = 0.030$ for isolated/inbred populations, up to $\theta = 0.150$ for high endogamy).
+
+**Locus Likelihood Ratio:**
+$$LR_l = \frac{1}{P(G_l \mid G_l, \theta)}$$
+
+**Multi-Locus Combined Likelihood Ratio (Product Rule):**
+$$LR_{\text{total}} = \prod_{l=1}^{L} LR_l \implies \log_{10} LR_{\text{total}} = \sum_{l=1}^{L} \log_{10} LR_l$$
+
+**Mathematical Invariant (Log-Likelihood Additivity):**
+$$\left| \log_{10} LR_{\text{total}} - \sum_{l=1}^{L} \log_{10} LR_l \right| < 10^{-6}$$
+
+---
+
+### 105.2 Demographic Stratification & Simplex Normalization Invariant
+Across $K = 4$ major ancestral demographies (AFR, EUR, HIS, EAS), individual demographic match likelihoods are evaluated:
+$$\mathcal{L}_k = \prod_{l=1}^{L} P(G_l \mid G_l, \theta_k)$$
+
+Demographic attribution posterior probabilities are normalized on the unit simplex:
+$$P_k = \frac{\mathcal{L}_k}{\sum_{m=1}^{K} \mathcal{L}_m}$$
+
+**Simplex Normalization Invariant:**
+$$\left| \sum_{k=1}^{K} P_k - 1.0 \right| \le 10^{-6}$$
+
+---
+
+### 105.3 Weir & Cockerham (1984) Single-Locus ANOVA $F_{st}$ Decomposition
+To compute an unbiased estimate of population substructure $\hat{\theta} = F_{st}$ across $s$ subpopulations with sample sizes $n_i$ ($i = 1, \dots, s$):
+
+**Between-Population Mean Squares ($MSP$):**
+$$MSP = \frac{1}{s-1} \sum_{i=1}^{s} n_i (\tilde{p}_i - \bar{p})^2$$
+
+**Within-Population Mean Squares ($MSG$):**
+$$MSG = \frac{1}{\sum_{i=1}^{s} (n_i - 1)} \sum_{i=1}^{s} n_i \tilde{p}_i (1 - \tilde{p}_i)$$
+
+**Effective Sample Size Coefficient ($n_c$):**
+$$n_c = \frac{1}{s-1} \left( \sum_{i=1}^{s} n_i - \frac{\sum_{i=1}^{s} n_i^2}{\sum_{i=1}^{s} n_i} \right)$$
+
+**Variance Components:**
+$$s_a^2 = \frac{MSP - MSG}{n_c}, \quad s_w^2 = MSG$$
+
+**Unbiased Weir-Cockerham Estimator ($\hat{\theta}_{\text{weir}}$):**
+$$\hat{\theta}_{\text{weir}} = \max\left(0.0, \; \frac{s_a^2}{s_a^2 + s_w^2}\right) = \max\left(0.0, \; \frac{MSP - MSG}{MSP + (n_c - 1)MSG}\right)$$
+
+---
+
+### 105.4 ISO/IEC 17025:2017 GUM Measurement Uncertainty Budget
+Under the Guide to the Expression of Uncertainty in Measurement (GUM):
+
+**Combined Standard Uncertainty:**
+$$u_c(\log_{10} LR) = \sqrt{u_{\text{sampling}}^2 + u_{\text{substructure}}^2 + u_{\text{stutter}}^2}$$
+
+Typical forensic budget parameters:
+- $u_{\text{sampling}} = 0.080\text{ log}_{10}\text{ units}$ (NIST 1036 finite sampling variance).
+- $u_{\text{substructure}} = 0.120\text{ log}_{10}\text{ units}$ ($\theta$ misspecification error).
+- $u_{\text{stutter}} = 0.050\text{ log}_{10}\text{ units}$ (PCR amplification artifact variance).
+$$u_c = \sqrt{0.080^2 + 0.120^2 + 0.050^2} = \sqrt{0.0233} \approx 0.1526\text{ log}_{10}\text{ units}$$
+
+**Expanded Uncertainty ($k = 2.00$, 95% Coverage):**
+$$U_{95\%} = k \cdot u_c = 2.00 \cdot 0.1526 \approx 0.3053\text{ log}_{10}\text{ units}$$
+
+**Legally Conservative 95% Lower Bound:**
+$$\log_{10} LR_{95\%\text{ LB}} = \max\left(0.0, \; \log_{10} LR_{\text{total}} - U_{95\%}\right)$$
+$$LR_{95\%\text{ LB}} = 10^{\log_{10} LR_{95\%\text{ LB}}}$$
+
+---
+
+### 105.5 ENFSI (2017) Verbal Scale & Transposed Conditional Defense Shield
+Numerical likelihood ratios are mapped to standardized ENFSI (2017) 7-tier verbal conclusions:
+- $1 \le LR < 10$: Inconclusive / Neutral.
+- $10 \le LR < 10^2$: Weak support.
+- $10^2 \le LR < 10^3$: Moderate support.
+- $10^3 \le LR < 10^4$: Moderately strong support.
+- $10^4 \le LR < 10^5$: Strong support.
+- $10^5 \le LR < 10^6$: Very strong support.
+- $LR \ge 10^6$: Extremely strong support.
+
+**Prosecutor's Fallacy Defense Shield:**
+$$\text{Shield}_{\text{NRC}} = \text{"The Likelihood Ratio evaluates the probability of the genetic evidence under competing propositions } P(E|H_p) / P(E|H_d)\text{, NOT the probability of guilt } P(H_p|E)\text{. Stating that an LR of } 10^{15} \text{ indicates a } 10^{15}:1 \text{ probability that the defendant committed the crime constitutes the Transposed Conditional Fallacy."}$$
+

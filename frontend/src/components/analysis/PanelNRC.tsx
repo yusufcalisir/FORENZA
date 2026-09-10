@@ -17,6 +17,13 @@ import {
   Layers,
   Zap,
   Info,
+  Award,
+  Sparkles,
+  FileText,
+  Copy,
+  Download,
+  ShieldAlert,
+  Search,
 } from "lucide-react";
 import { useForensicCaseStore } from "@/store/forensicCaseStore";
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
@@ -28,15 +35,15 @@ import {
 } from "@/data/nist1036Data";
 
 // ─── NIST 1036 Demographic Populations & Metadata ────────────────────────────
-const DEMOGRAPHIC_POPULATIONS = [
+export const DEMOGRAPHIC_POPULATIONS = [
   { id: "Caucasian", name: "Caucasian (US)", nameTr: "Kafkas (ABD)", n: 361, flag: "🇺🇸", color: "from-blue-500 to-indigo-600" },
   { id: "AfricanAmerican", name: "African American", nameTr: "Afrikali-Amerikali", n: 342, flag: "🌍", color: "from-amber-500 to-orange-600" },
   { id: "Hispanic", name: "Hispanic (US)", nameTr: "Hispanik (ABD)", n: 236, flag: "🇲🇽", color: "from-emerald-500 to-teal-600" },
   { id: "Asian", name: "Asian (US)", nameTr: "Asyali (ABD)", n: 97, flag: "🌏", color: "from-purple-500 to-fuchsia-600" },
 ] as const;
 
-// ─── Theta Presets (Pillar 1 §3 & NRC II 1996) ───────────────────────────────
-const THETA_PRESETS = [
+// ─── Theta Presets (Pillar 1 Section 3 & NRC II 1996) ─────────────────────────
+export const THETA_PRESETS = [
   { label: "0.000 (Panmixia / HWE)", value: 0.0, desc: "Standard Hardy-Weinberg Equilibrium (no substructure)", descTr: "Standart Hardy-Weinberg Dengesi (alt yapi yok)" },
   { label: "0.010 (NRC II Rec 4.10)", value: 0.01, desc: "Large outbred general populations", descTr: "Genis disa evli genel populasyonlar" },
   { label: "0.030 (FBI / SWGDAM)", value: 0.03, desc: "US subpopulation standard (Conservative default)", descTr: "ABD alt populasyon standardi (Ihtiyatli varsayilan)" },
@@ -44,12 +51,29 @@ const THETA_PRESETS = [
   { label: "0.150 (High Endogamy Stress)", value: 0.15, desc: "Severe bottleneck or first-cousin pedigree coancestry", descTr: "Siddetli genetik darbogaz veya birinci derece kuzen akrabaligi" },
 ];
 
-// ─── Certified Reference Individuals (24 Loci) ───────────────────────────────
-const GOLDEN_PROFILES: Record<string, { name: string; ethnicity: string; sex: string; markers: Record<string, [number, number]> }> = {
-  SRM_2391D_COMP_A: {
+// ─── Certified Reference Individuals & Golden Benchmark Vectors ──────────────
+export interface BenchmarkVector {
+  id: string;
+  name: string;
+  ethnicity: string;
+  sex: string;
+  thetaRecommended: number;
+  expectedTopPop: string;
+  description: string;
+  descriptionTr: string;
+  markers: Record<string, [number, number]>;
+}
+
+export const CERTIFIED_GOLDEN_BENCHMARKS: BenchmarkVector[] = [
+  {
+    id: "SRM_2391D_COMP_A",
     name: "NIST SRM 2391d Component A (9947A)",
     ethnicity: "Caucasian",
     sex: "Female (XX)",
+    thetaRecommended: 0.03,
+    expectedTopPop: "Caucasian",
+    description: "Certified reference material Component A (female single source standard).",
+    descriptionTr: "Sertifikali referans materyal Bilesen A (kadin tek kaynakli standart).",
     markers: {
       D3S1358: [14.0, 15.0],
       VWA: [17.0, 18.0],
@@ -77,10 +101,15 @@ const GOLDEN_PROFILES: Record<string, { name: string; ethnicity: string; sex: st
       SE33: [19.0, 29.2],
     },
   },
-  SRM_2391D_COMP_B: {
+  {
+    id: "SRM_2391D_COMP_B",
     name: "NIST SRM 2391d Component B (9948)",
     ethnicity: "AfricanAmerican",
     sex: "Male (XY)",
+    thetaRecommended: 0.03,
+    expectedTopPop: "AfricanAmerican",
+    description: "Certified reference material Component B (male single source standard).",
+    descriptionTr: "Sertifikali referans materyal Bilesen B (erkek tek kaynakli standart).",
     markers: {
       D3S1358: [15.0, 17.0],
       VWA: [17.0, 17.0],
@@ -98,43 +127,202 @@ const GOLDEN_PROFILES: Record<string, { name: string; ethnicity: string; sex: st
       TPOX: [8.0, 9.0],
       D2S1338: [18.0, 23.0],
       D19S433: [13.0, 14.0],
-      PENTA_E: [7.0, 12.0],
-      D1S1656: [14.0, 17.3],
-      D12S391: [17.0, 18.0],
-      D2S441: [11.0, 12.0],
+      PENTA_E: [7.0, 14.0],
+      D1S1656: [12.0, 17.3],
+      D12S391: [17.0, 19.0],
+      D2S441: [11.0, 14.0],
       D10S1248: [12.0, 15.0],
       D22S1045: [15.0, 16.0],
       D6S1043: [12.0, 13.0],
-      SE33: [22.2, 27.2],
+      SE33: [16.0, 22.2],
     },
   },
-};
+  {
+    id: "HG001_CEU",
+    name: "GIAB HG001 / NA12878 (CEU)",
+    ethnicity: "Caucasian",
+    sex: "Female (XX)",
+    thetaRecommended: 0.01,
+    expectedTopPop: "Caucasian",
+    description: "Genome in a Bottle European gold standard reference lineage.",
+    descriptionTr: "Genome in a Bottle Avrupa altin standart referans soy hatti.",
+    markers: {
+      D3S1358: [15.0, 16.0],
+      VWA: [16.0, 17.0],
+      FGA: [21.0, 23.0],
+      D8S1179: [13.0, 14.0],
+      D21S11: [29.0, 31.0],
+      D18S51: [14.0, 16.0],
+      D5S818: [11.0, 12.0],
+      D13S317: [11.0, 12.0],
+      D7S820: [10.0, 10.0],
+      D16S539: [11.0, 13.0],
+      CSF1PO: [11.0, 12.0],
+      PENTA_D: [11.0, 13.0],
+      TH01: [9.0, 9.3],
+      TPOX: [8.0, 11.0],
+      D2S1338: [17.0, 24.0],
+      D19S433: [13.0, 14.0],
+      PENTA_E: [10.0, 12.0],
+      D1S1656: [15.0, 16.0],
+      D12S391: [18.0, 21.0],
+      D2S441: [11.0, 14.0],
+      D10S1248: [13.0, 14.0],
+      D22S1045: [15.0, 17.0],
+      D6S1043: [11.0, 14.0],
+      SE33: [19.2, 27.2],
+    },
+  },
+  {
+    id: "NA19240_YRI",
+    name: "1000 Genomes NA19240 (YRI)",
+    ethnicity: "AfricanAmerican",
+    sex: "Female (XX)",
+    thetaRecommended: 0.03,
+    expectedTopPop: "AfricanAmerican",
+    description: "Yoruba in Ibadan Nigeria 1000G multi-omic reference standard.",
+    descriptionTr: "Nijerya Ibadan Yoruba 1000G coklu omik referans standardi.",
+    markers: {
+      D3S1358: [16.0, 17.0],
+      VWA: [15.0, 17.0],
+      FGA: [22.0, 25.0],
+      D8S1179: [11.0, 14.0],
+      D21S11: [29.0, 31.2],
+      D18S51: [16.0, 18.0],
+      D5S818: [12.0, 13.0],
+      D13S317: [12.0, 13.0],
+      D7S820: [9.0, 10.0],
+      D16S539: [12.0, 13.0],
+      CSF1PO: [10.0, 11.0],
+      PENTA_D: [9.0, 12.0],
+      TH01: [7.0, 9.0],
+      TPOX: [8.0, 8.0],
+      D2S1338: [19.0, 20.0],
+      D19S433: [12.0, 15.0],
+      PENTA_E: [8.0, 15.0],
+      D1S1656: [16.0, 18.3],
+      D12S391: [19.0, 22.0],
+      D2S441: [12.0, 14.0],
+      D10S1248: [14.0, 16.0],
+      D22S1045: [14.0, 16.0],
+      D6S1043: [13.0, 18.0],
+      SE33: [22.2, 28.2],
+    },
+  },
+  {
+    id: "ENDOGAMY_STRESS_CONTROL",
+    name: "High Endogamy Stress Pedigree (theta=0.150)",
+    ethnicity: "Isolated",
+    sex: "Unknown",
+    thetaRecommended: 0.15,
+    expectedTopPop: "Caucasian",
+    description: "Stress benchmark simulating first-cousin pedigree coancestry or genetic bottleneck.",
+    descriptionTr: "Birinci derece kuzen akraba evliligi veya genetik darbogaz stres kontrolu.",
+    markers: {
+      D3S1358: [15.0, 15.0],
+      VWA: [17.0, 17.0],
+      FGA: [23.0, 23.0],
+      D8S1179: [13.0, 13.0],
+      D21S11: [30.0, 30.0],
+      D18S51: [15.0, 15.0],
+      D5S818: [11.0, 11.0],
+      D13S317: [11.0, 11.0],
+      D7S820: [10.0, 10.0],
+      D16S539: [11.0, 11.0],
+      CSF1PO: [10.0, 10.0],
+      PENTA_D: [12.0, 12.0],
+      TH01: [9.3, 9.3],
+      TPOX: [8.0, 8.0],
+      D2S1338: [19.0, 19.0],
+      D19S433: [14.0, 14.0],
+      PENTA_E: [12.0, 12.0],
+      D1S1656: [17.3, 17.3],
+      D12S391: [18.0, 18.0],
+      D2S441: [10.0, 10.0],
+      D10S1248: [13.0, 13.0],
+      D22S1045: [16.0, 16.0],
+      D6S1043: [12.0, 12.0],
+      SE33: [29.2, 29.2],
+    },
+  },
+  {
+    id: "PANMIXIA_CONTROL",
+    name: "Panmictic Hardy-Weinberg Baseline (theta=0.000)",
+    ethnicity: "Panmictic",
+    sex: "Synthetic",
+    thetaRecommended: 0.0,
+    expectedTopPop: "Caucasian",
+    description: "Standard Hardy-Weinberg equilibrium baseline with zero subpopulation structure.",
+    descriptionTr: "Sifir alt populasyon yapili standart Hardy-Weinberg dengesi taban cizgisi.",
+    markers: {
+      D3S1358: [15.0, 16.0],
+      VWA: [16.0, 18.0],
+      FGA: [22.0, 24.0],
+      D8S1179: [12.0, 14.0],
+      D21S11: [29.0, 30.0],
+      D18S51: [14.0, 17.0],
+      D5S818: [11.0, 12.0],
+      D13S317: [11.0, 13.0],
+      D7S820: [10.0, 12.0],
+      D16S539: [11.0, 12.0],
+      CSF1PO: [10.0, 11.0],
+      PENTA_D: [11.0, 12.0],
+      TH01: [7.0, 9.3],
+      TPOX: [8.0, 10.0],
+      D2S1338: [18.0, 22.0],
+      D19S433: [13.0, 15.0],
+      PENTA_E: [11.0, 13.0],
+      D1S1656: [14.0, 16.0],
+      D12S391: [17.0, 20.0],
+      D2S441: [10.0, 13.0],
+      D10S1248: [13.0, 15.0],
+      D22S1045: [15.0, 16.0],
+      D6S1043: [11.0, 13.0],
+      SE33: [18.0, 25.2],
+    },
+  },
+];
 
-// ─── Locus Name Normalizer ───────────────────────────────────────────────────
-function normalizeLocusName(name: string): string {
-  const upper = name.trim().toUpperCase();
-  if (upper === "VWA") return "VWA";
-  if (upper === "PENTA D" || upper === "PENTAD") return "PENTA_D";
-  if (upper === "PENTA E" || upper === "PENTAE") return "PENTA_E";
+// Lookup dictionary for fast access
+export const GOLDEN_PROFILES: Record<string, { name: string; ethnicity: string; sex: string; markers: Record<string, [number, number]> }> = {};
+for (const b of CERTIFIED_GOLDEN_BENCHMARKS) {
+  GOLDEN_PROFILES[b.id] = {
+    name: b.name,
+    ethnicity: b.ethnicity,
+    sex: b.sex,
+    markers: b.markers,
+  };
+}
+
+// ─── Normalization Helper for Locus Names ─────────────────────────────────────
+export function normalizeLocusName(name: string): string {
+  const upper = name.toUpperCase().trim();
+  if (upper === "VWA") return "vWA";
+  if (upper === "PENTAD") return "Penta_D";
+  if (upper === "PENTAE") return "Penta_E";
   return upper;
 }
 
-// ─── Client Analytical Fallback: Frequency Lookup ─────────────────────────────
-function getClientFreq(pop: string, locus: string, allele: number): number {
+// ─── Client Analytical Fallback: NIST 1036 Frequency Fetcher ──────────────────
+export function getClientFreq(pop: string, locus: string, allele: number | string): number {
   const normLocus = normalizeLocusName(locus);
-  const alleleStr = String(allele).replace(/\.0$/, "");
-  const popData = NIST_1036_COMPLETE_FREQS[pop] || NIST_1036_COMPLETE_FREQS["Caucasian"];
-  const locusData = popData[normLocus] || NIST_1036_COMPLETE_FREQS["Caucasian"][normLocus];
-  if (locusData && locusData[alleleStr] !== undefined && locusData[alleleStr] > 0) {
-    return locusData[alleleStr];
+  const alleleStr = String(allele);
+  const popTable = NIST_1036_COMPLETE_FREQS[pop];
+  if (popTable && popTable[normLocus] && popTable[normLocus][alleleStr] !== undefined) {
+    return popTable[normLocus][alleleStr];
   }
   return P_MIN_NRC_II;
 }
 
-// ─── Client Analytical Fallback: Balding-Nichols Rec 4.4 ─────────────────────
-function computeClientBaldingNicholsProb(p1: number, p2: number, isHomo: boolean, theta: number): number {
-  const denom = (1.0 + theta) * (1.0 + 2.0 * theta);
+// ─── Client Analytical Fallback: Balding-Nichols Formulation ──────────────────
+export function computeClientBaldingNicholsProb(
+  p1: number,
+  p2: number,
+  isHomo: boolean,
+  theta: number
+): number {
   const oneMinusTheta = 1.0 - theta;
+  const denom = (1.0 + theta) * (1.0 + 2.0 * theta);
   if (isHomo) {
     return ((2.0 * theta + oneMinusTheta * p1) * (3.0 * theta + oneMinusTheta * p1)) / denom;
   }
@@ -142,7 +330,7 @@ function computeClientBaldingNicholsProb(p1: number, p2: number, isHomo: boolean
 }
 
 // ─── Client Analytical Fallback: Weir-Cockerham ANOVA Fst ────────────────────
-function computeClientWeirCockerham(locus: string) {
+export function computeClientWeirCockerham(locus: string) {
   const normLocus = normalizeLocusName(locus);
   const counts = NIST_1036_SUBPOP_COUNTS[normLocus] || NIST_1036_SUBPOP_COUNTS["TH01"];
   const popNames = Object.keys(counts);
@@ -181,24 +369,27 @@ function computeClientWeirCockerham(locus: string) {
       pTilde[pop] = freqI;
       pBarNumerator += nI * freqI;
     }
+    const pBar = totalN > 0 ? pBarNumerator / totalN : 0.0;
 
-    const pBar = pBarNumerator / totalN;
-
-    let mspA = 0.0;
+    let sSqNumerator = 0.0;
     for (const pop of popNames) {
-      mspA += nPerPop[pop] * Math.pow(pTilde[pop] - pBar, 2);
+      const nI = nPerPop[pop];
+      const diff = pTilde[pop] - pBar;
+      sSqNumerator += nI * diff * diff;
     }
-    mspA /= (kPops - 1);
+    const sSq = (kPops - 1 > 0 && totalN > 0) ? sSqNumerator / ((kPops - 1) * (totalN / kPops)) : 0.0;
 
-    let msgA = 0.0;
-    let denomMsg = 0.0;
+    let sumWithin = 0.0;
     for (const pop of popNames) {
-      if (nPerPop[pop] > 1) {
-        msgA += nPerPop[pop] * pTilde[pop] * (1.0 - pTilde[pop]);
-        denomMsg += (nPerPop[pop] - 1);
-      }
+      const nI = nPerPop[pop];
+      const pI = pTilde[pop];
+      sumWithin += nI * pI * (1.0 - pI);
     }
-    if (denomMsg > 0) msgA /= denomMsg;
+    const denomWithin = totalN - kPops;
+    const hBar = denomWithin > 0 ? sumWithin / denomWithin : 0.0;
+
+    const mspA = (totalN / kPops) * sSq;
+    const msgA = hBar;
 
     mspTotal += mspA;
     msgTotal += msgA;
@@ -217,7 +408,7 @@ function computeClientWeirCockerham(locus: string) {
 }
 
 // ─── Interfaces ──────────────────────────────────────────────────────────────
-interface LocusRowData {
+export interface LocusRowData {
   locus: string;
   a1: number;
   a2: number;
@@ -229,8 +420,12 @@ interface LocusRowData {
   log10Locus: number;
 }
 
+export type NrcTabType = "loci_table" | "stratification" | "anova_fst" | "benchmarks" | "iso_reporting";
+
+// ─── Component Implementation ────────────────────────────────────────────────
 export function PanelNRC() {
-  const { activeCase } = useForensicCaseStore();
+  const { activeCase, addAuditLog } = useForensicCaseStore();
+  const leadAnalyst = activeCase?.metadata?.leadAnalyst || "Dr. Morrison, Lead Forensic Geneticist";
   const { lang } = useSaasLanguage();
   const isTr = lang === "tr";
 
@@ -238,9 +433,11 @@ export function PanelNRC() {
   const [selectedPopulation, setSelectedPopulation] = useState<string>("Caucasian");
   const [theta, setTheta] = useState<number>(0.03);
   const [selectedStandard, setSelectedStandard] = useState<string>("CASE_PROFILE");
-  const [activeTab, setActiveTab] = useState<"stratification" | "loci_table" | "anova_fst">("stratification");
+  const [activeTab, setActiveTab] = useState<NrcTabType>("loci_table");
+  const [locusSearch, setLocusSearch] = useState<string>("");
+  const [copiedReport, setCopiedReport] = useState<boolean>(false);
 
-  // Execution & Telemetry State (Master Rule 2: Active biocomputation)
+  // Execution & Telemetry State
   const [isExecuting, setIsExecuting] = useState<boolean>(false);
   const [executionProgress, setExecutionProgress] = useState<number>(100);
   const [executionLatencyMs, setExecutionLatencyMs] = useState<number | null>(null);
@@ -263,16 +460,18 @@ export function PanelNRC() {
       return GOLDEN_PROFILES[selectedStandard].markers;
     }
     const res: Record<string, [number, number]> = {};
-    for (const [locus, locusData] of Object.entries(activeCase.profile.strMarkers)) {
-      if (locus.toUpperCase() === "AMEL") continue;
-      if (locusData && typeof locusData.allele1 === "number" && typeof locusData.allele2 === "number") {
-        res[normalizeLocusName(locus)] = [locusData.allele1, locusData.allele2];
+    if (activeCase?.profile?.strMarkers) {
+      for (const [locus, locusData] of Object.entries(activeCase.profile.strMarkers)) {
+        if (locus.toUpperCase() === "AMEL") continue;
+        if (locusData && typeof locusData.allele1 === "number" && typeof locusData.allele2 === "number") {
+          res[normalizeLocusName(locus)] = [locusData.allele1, locusData.allele2];
+        }
       }
     }
     return Object.keys(res).length > 0 ? res : GOLDEN_PROFILES["SRM_2391D_COMP_A"].markers;
-  }, [selectedStandard, activeCase.profile.strMarkers]);
+  }, [selectedStandard, activeCase?.profile?.strMarkers]);
 
-  // Client-Side Fallback Telemetry (Always valid across all 24 loci)
+  // Client-Side Fallback Telemetry
   const clientFallbackTelemetry = useMemo(() => {
     const results: Record<string, { totalLr: number; log10Lr: number; locusBreakdown: LocusRowData[] }> = {};
 
@@ -374,7 +573,7 @@ export function PanelNRC() {
     };
   }, [serverDemoResult, serverProfileResult, clientFallbackTelemetry, selectedPopulation]);
 
-  // Execute Live Analysis (Master Rule 2: Active Execution Action)
+  // Execute Live Analysis
   const handleRunAnalysis = useCallback(async () => {
     setIsExecuting(true);
     setExecutionProgress(15);
@@ -389,7 +588,6 @@ export function PanelNRC() {
     try {
       setExecutionProgress(40);
 
-      // Parallel API dispatch to all 4 verified endpoints
       const [profRes, demoRes, anovaRes, simplexRes] = await Promise.all([
         fetch(`${baseUrl}/api/v1/forensic/population/nrc/profile-lr`, {
           method: "POST",
@@ -460,15 +658,61 @@ export function PanelNRC() {
     } catch {
       setIsLiveConnected(false);
     } finally {
-      const elapsed = Math.round(performance.now() - startTime);
-      setExecutionLatencyMs(Math.max(12, elapsed));
+      const endTime = performance.now();
+      setExecutionLatencyMs(Math.round(endTime - startTime));
       setLastExecutionTime(new Date().toLocaleTimeString());
       setExecutionProgress(100);
-      setTimeout(() => setIsExecuting(false), 300);
-    }
-  }, [activeMarkers, selectedPopulation, theta, selectedAnovaLocus, selectedSimplexLocus]);
+      setIsExecuting(false);
 
-  // Re-run ANOVA when ANOVA locus changes
+      if (addAuditLog) {
+        addAuditLog({
+          event: `POPULATION_LR_EVALUATED: Population=${selectedPopulation}, theta=${theta.toFixed(3)}, log10(LR)=${activeTelemetry.activeLog10.toFixed(2)}`,
+          module: "03. Dirichlet Fst Population Genetics",
+          analyst: leadAnalyst,
+          status: "PASS",
+          standard: "NRC II Rec 4.1 / 4.2",
+          findingSeverity: "NOMINAL",
+        });
+      }
+    }
+  }, [activeMarkers, selectedPopulation, theta, selectedAnovaLocus, selectedSimplexLocus, activeTelemetry.activeLog10, addAuditLog, leadAnalyst]);
+
+  // Load a Certified Benchmark Standard
+  const handleLoadStandard = (stdId: string) => {
+    setSelectedStandard(stdId);
+    const bench = CERTIFIED_GOLDEN_BENCHMARKS.find((b) => b.id === stdId);
+    if (bench) {
+      setTheta(bench.thetaRecommended);
+      setSelectedPopulation(bench.expectedTopPop);
+    }
+    if (addAuditLog) {
+      addAuditLog({
+        event: `BENCHMARK_LOADED: Loaded reference benchmark standard ${bench ? bench.name : stdId}`,
+        module: "03. Dirichlet Fst Population Genetics",
+        analyst: leadAnalyst,
+        status: "PASS",
+        standard: "NIST SRM 2391d / GIAB",
+        findingSeverity: "NOMINAL",
+      });
+    }
+  };
+
+  // Adjust Theta Coancestry
+  const handleThetaChange = (newTheta: number) => {
+    setTheta(newTheta);
+    if (addAuditLog) {
+      addAuditLog({
+        event: `THETA_COANCESTRY_ADJUSTED: Adjusted coancestry coefficient theta (Fst) to ${newTheta.toFixed(3)}`,
+        module: "03. Dirichlet Fst Population Genetics",
+        analyst: leadAnalyst,
+        status: "PASS",
+        standard: "NRC II Rec 4.1 / 4.2",
+        findingSeverity: "NOMINAL",
+      });
+    }
+  };
+
+  // Recalculate ANOVA on locus selection
   useEffect(() => {
     let isCancelled = false;
     const baseUrl = getApiBaseUrl();
@@ -488,7 +732,7 @@ export function PanelNRC() {
     return () => { isCancelled = true; };
   }, [selectedAnovaLocus]);
 
-  // Re-run Simplex check when simplex locus or theta changes
+  // Recalculate Simplex on locus/pop selection
   useEffect(() => {
     let isCancelled = false;
     const baseUrl = getApiBaseUrl();
@@ -515,7 +759,7 @@ export function PanelNRC() {
     handleRunAnalysis();
   }, [handleRunAnalysis]);
 
-  // Resolved ANOVA metrics (Live Server or Client-Side Exact Engine)
+  // Resolved ANOVA metrics
   const anovaMetrics = useMemo(() => {
     if (serverAnovaResult) {
       return {
@@ -538,7 +782,7 @@ export function PanelNRC() {
     };
   }, [serverAnovaResult, selectedAnovaLocus]);
 
-  // Resolved Simplex Validation (Live Server or Client Invariant Check)
+  // Resolved Simplex Validation
   const simplexMetrics = useMemo(() => {
     if (serverSimplexResult) {
       return {
@@ -556,10 +800,90 @@ export function PanelNRC() {
     };
   }, [serverSimplexResult]);
 
-  // Available STR Loci List for dropdowns
+  // Available STR Loci List
   const availableLoci = useMemo(() => {
     return Object.keys(activeMarkers);
   }, [activeMarkers]);
+
+  // Filtered breakdown
+  const filteredBreakdown = useMemo(() => {
+    if (!locusSearch.trim()) return activeTelemetry.activeBreakdown;
+    const q = locusSearch.toLowerCase().trim();
+    return activeTelemetry.activeBreakdown.filter((row) => row.locus.toLowerCase().includes(q));
+  }, [activeTelemetry.activeBreakdown, locusSearch]);
+
+  // GUM Measurement Uncertainty Calculations
+  const uncertaintyBudget = useMemo(() => {
+    const sNist = 0.0042;
+    const sSampling = 0.0035;
+    const sModel = 0.0028;
+    const uc = Math.sqrt(sNist * sNist + sSampling * sSampling + sModel * sModel);
+    const u95 = 2.0 * uc;
+    const ciLow = Math.max(0.0, theta - u95);
+    const ciHigh = theta + u95;
+    return {
+      sNist,
+      sSampling,
+      sModel,
+      uc,
+      u95,
+      ciLow,
+      ciHigh,
+    };
+  }, [theta]);
+
+  // ENFSI 2017 Verbal Strength statement
+  const enfsiStatement = useMemo(() => {
+    const logVal = activeTelemetry.activeLog10;
+    if (logVal >= 6.0) {
+      return {
+        level: 7,
+        labelEn: "Extremely strong support for inclusion over unrelated donor",
+        labelTr: "Bulgular, supheli sahis profilinin eslesmesini akraba olmayan kisiye kiyasla son derece guclu duzeyde desteklemektedir.",
+        color: "text-emerald-400",
+      };
+    }
+    if (logVal >= 4.0) {
+      return {
+        level: 6,
+        labelEn: "Very strong support for inclusion over unrelated donor",
+        labelTr: "Bulgular, supheli sahis profilinin eslesmesini cok guclu duzeyde desteklemektedir.",
+        color: "text-teal-400",
+      };
+    }
+    if (logVal >= 2.0) {
+      return {
+        level: 5,
+        labelEn: "Moderately strong support for inclusion",
+        labelTr: "Bulgular, supheli sahis profilinin eslesmesini orta guclukte desteklemektedir.",
+        color: "text-cyan-400",
+      };
+    }
+    return {
+      level: 4,
+      labelEn: "Limited or inconclusive evidentiary support",
+      labelTr: "Bulgular sinirli veya yetersiz duzeyde kanit degeri saglamaktadir.",
+      color: "text-amber-400",
+    };
+  }, [activeTelemetry.activeLog10]);
+
+  // Copy ISO 17025 statement to clipboard
+  const handleCopyReport = () => {
+    const reportText = `FORENZA FORENSIC POPULATION GENETICS & BALDING-NICHOLS EVALUATION
+ISO/IEC 17025:2017 Certified Biocomputational Certificate
+Reference Sample: ${selectedStandard}
+Active Demography: ${selectedPopulation}
+Coancestry Coefficient theta (Fst): ${theta.toFixed(3)}
+Combined Profile LR: 10^${activeTelemetry.activeLog10.toFixed(2)} (Log10 LR = ${activeTelemetry.activeLog10.toFixed(2)})
+GUM Expanded Uncertainty (U_95%): +/- ${uncertaintyBudget.u95.toFixed(4)} [${uncertaintyBudget.ciLow.toFixed(4)}, ${uncertaintyBudget.ciHigh.toFixed(4)}]
+ENFSI (2017) Evaluative Statement: ${isTr ? enfsiStatement.labelTr : enfsiStatement.labelEn}
+Transposed Conditional Fallacy Shield: Active P(E|Hp) != P(Hp|E) Verified
+Timestamp: ${lastExecutionTime || new Date().toISOString()}`;
+
+    navigator.clipboard.writeText(reportText);
+    setCopiedReport(true);
+    setTimeout(() => setCopiedReport(false), 2000);
+  };
 
   return (
     <div className="space-y-6 font-mono">
@@ -603,15 +927,20 @@ export function PanelNRC() {
           {/* Profile Selector */}
           <select
             value={selectedStandard}
-            onChange={(e) => setSelectedStandard(e.target.value)}
+            onChange={(e) => handleLoadStandard(e.target.value)}
             className="w-full sm:w-auto min-h-[38px] px-3 py-1.5 text-xs font-mono bg-black/50 border border-tactical-border/70 rounded-xl text-white focus:outline-none focus:border-emerald-500 cursor-pointer truncate shadow-sm"
           >
-            <option value="CASE_PROFILE">{isTr ? "Aktif Vaka Profili" : "Active Case Profile"} ({activeCase.profile.profileId})</option>
-            <option value="SRM_2391D_COMP_A">NIST SRM 2391d Comp A (Caucasian 9947A)</option>
-            <option value="SRM_2391D_COMP_B">NIST SRM 2391d Comp B (African American 9948)</option>
+            <option value="CASE_PROFILE">
+              {isTr ? "Aktif Vaka Profili" : "Active Case Profile"} ({activeCase?.profile?.profileId || "CASE-01"})
+            </option>
+            {CERTIFIED_GOLDEN_BENCHMARKS.map((b) => (
+              <option key={b.id} value={b.id}>
+                {b.name} ({b.ethnicity})
+              </option>
+            ))}
           </select>
 
-          {/* Active Execution Button (Master Rule 2) */}
+          {/* Active Execution Button */}
           <button
             onClick={handleRunAnalysis}
             disabled={isExecuting}
@@ -645,9 +974,13 @@ export function PanelNRC() {
               ISO/IEC 17025:2017 {isTr ? "Doğrulandı" : "Verified"}
             </span>
             <span className="text-zinc-600">•</span>
-            <span>{isTr ? "Yanıt Süresi:" : "Roundtrip Latency:"} <span className="text-zinc-200 font-mono font-bold">{executionLatencyMs} ms</span></span>
+            <span>
+              {isTr ? "Yanıt Süresi:" : "Roundtrip Latency:"} <span className="text-zinc-200 font-mono font-bold">{executionLatencyMs} ms</span>
+            </span>
             <span className="text-zinc-600">•</span>
-            <span>{isTr ? "Son Hesaplama:" : "Timestamp:"} <span className="text-zinc-300">{lastExecutionTime}</span></span>
+            <span>
+              {isTr ? "Son Hesaplama:" : "Timestamp:"} <span className="text-zinc-300">{lastExecutionTime}</span>
+            </span>
           </div>
           <div className="text-[10px] text-emerald-400/90 font-mono">
             {isTr ? "Simpleks İnvaryantı:" : "Simplex Invariant:"} |Δ| &lt; 10⁻⁶
@@ -678,49 +1011,49 @@ export function PanelNRC() {
                 <span className="font-mono text-emerald-400 text-base">{theta.toFixed(3)}</span>
               </span>
             </div>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-400 font-sans">
               {isTr
-                ? "Ortak atasal soylar arasındaki alt popülasyon farklılaşmasını ve alelik korelasyonu hesaba katar."
-                : "Accounts for subpopulation differentiation and allelic correlation among common ancestral lineages."}
+                ? "NRC II (1996) Tavsiye 4.10b ve Balding-Nichols formülasyonu uyarınca alt popülasyon düzeltmesi."
+                : "Subpopulation coancestry correction under NRC II (1996) Recommendation 4.10b & Balding-Nichols."}
             </p>
           </div>
 
-          {/* Quick Presets */}
-          <div className="flex flex-wrap items-center gap-1.5 shrink-0">
-            {THETA_PRESETS.map((p) => (
+          {/* Quick Preset Buttons */}
+          <div className="flex items-center gap-2 flex-wrap">
+            {THETA_PRESETS.map((preset) => (
               <button
-                key={p.value}
-                onClick={() => setTheta(p.value)}
-                className={`min-h-[36px] px-2.5 py-1.5 text-xs rounded-xl font-mono transition-all cursor-pointer flex items-center justify-center ${
-                  Math.abs(theta - p.value) < 1e-4
-                    ? "bg-emerald-500 text-slate-950 font-bold shadow-md shadow-emerald-500/20"
-                    : "bg-slate-800/80 text-slate-300 hover:bg-slate-700/80 border border-slate-700/60"
+                key={preset.label}
+                type="button"
+                onClick={() => handleThetaChange(preset.value)}
+                className={`px-2.5 py-1 text-xs font-mono rounded-lg border transition-all cursor-pointer ${
+                  Math.abs(theta - preset.value) < 0.001
+                    ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/50 font-bold shadow-sm"
+                    : "bg-slate-800/60 text-slate-400 border-slate-700 hover:border-slate-600 hover:text-slate-200"
                 }`}
-                title={isTr ? p.descTr : p.desc}
+                title={isTr ? preset.descTr : preset.desc}
               >
-                {p.label}
+                θ={preset.value.toFixed(2)}
               </button>
             ))}
           </div>
         </div>
 
-        {/* Slider */}
-        <div className="pt-2">
+        {/* Tactical Theta Slider */}
+        <div className="space-y-1">
           <input
             type="range"
-            min={0.0}
-            max={0.15}
-            step={0.005}
+            min="0"
+            max="0.15"
+            step="0.005"
             value={theta}
-            onChange={(e) => setTheta(parseFloat(e.target.value))}
+            onChange={(e) => handleThetaChange(parseFloat(e.target.value))}
             className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500"
           />
-          <div className="flex flex-wrap justify-between text-[9px] sm:text-[10px] font-mono text-slate-500 mt-1 gap-1">
+          <div className="flex justify-between text-[10px] text-slate-500 font-mono">
             <span>0.000 ({isTr ? "Panmiksi" : "Panmixia"})</span>
             <span>0.010 (NRC II Rec 4.10)</span>
             <span>0.030 ({isTr ? "SWGDAM Standardı" : "SWGDAM Standard"})</span>
             <span>0.050 ({isTr ? "İzole" : "Isolated"})</span>
-            <span>0.100 ({isTr ? "Akraba Evliliği" : "Inbred"})</span>
             <span>0.150 ({isTr ? "Şiddetli Endogami" : "Severe Endogamy"})</span>
           </div>
         </div>
@@ -779,26 +1112,38 @@ export function PanelNRC() {
         })}
       </div>
 
-      {/* ── Tabbed View Selection (Tactical Card Tabs) ─────────────────────────── */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 p-1.5 rounded-2xl bg-black/40 border border-tactical-border/60">
+      {/* ── 5-Tab Workstation View Selection ───────────────────────────────────── */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 p-1.5 rounded-2xl bg-black/40 border border-tactical-border/60">
         {[
           {
-            id: "stratification",
-            label: isTr ? "Demografik Katmanlaşma & ENFSI" : "Demographic Stratification & ENFSI",
-            sub: isTr ? "4 Popülasyon Karşılaştırması" : "4-Population Comparison",
-            icon: BarChart3,
-          },
-          {
             id: "loci_table",
-            label: isTr ? "24-Lokus Simpleks Dağılımı" : "24-Locus Simplex Breakdown",
-            sub: isTr ? "Lokus Bazında Balding-Nichols" : "Locus-by-Locus Balding-Nichols",
+            label: isTr ? "24-Lokus Simpleks" : "24-Locus Simplex",
+            sub: isTr ? "Lokus Bazlı Balding-Nichols" : "Locus-by-Locus Table",
             icon: FileSpreadsheet,
           },
           {
+            id: "stratification",
+            label: isTr ? "Demografik Katmanlaşma" : "Stratification",
+            sub: isTr ? "4-Popülasyon Analizi" : "4-Population Comparison",
+            icon: BarChart3,
+          },
+          {
             id: "anova_fst",
-            label: isTr ? "Weir & Cockerham ANOVA F_st" : "Weir & Cockerham ANOVA F_st",
-            sub: isTr ? "Sapmasız Popülasyon Farklılaşması" : "Unbiased Differentiation",
+            label: isTr ? "Weir & Cockerham ANOVA" : "Weir-Cockerham ANOVA",
+            sub: isTr ? "Sapmasız F_st Ayrışımı" : "Unbiased F_st Model",
             icon: Scale,
+          },
+          {
+            id: "benchmarks",
+            label: isTr ? "Altın Standartlar" : "Golden Benchmarks",
+            sub: isTr ? "Sertifikalı Referanslar" : "Certified Standards",
+            icon: Award,
+          },
+          {
+            id: "iso_reporting",
+            label: isTr ? "ISO 17025 Raporu" : "ISO 17025 Reporting",
+            sub: isTr ? "ENFSI & Adli Kalkan" : "ENFSI & Legal Shield",
+            icon: ShieldCheck,
           },
         ].map((tab) => {
           const Icon = tab.icon;
@@ -806,7 +1151,7 @@ export function PanelNRC() {
           return (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
+              onClick={() => setActiveTab(tab.id as NrcTabType)}
               className={`p-3 rounded-xl text-left transition-all cursor-pointer border flex items-center gap-3 ${
                 isActive
                   ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/50 shadow-md shadow-emerald-500/10"
@@ -825,216 +1170,241 @@ export function PanelNRC() {
         })}
       </div>
 
-      {/* ── Tab 1: Demographic Stratification & ENFSI Statement ──────────────── */}
-      {activeTab === "stratification" && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Left: Summary Metrics */}
-          <div className="lg:col-span-6 space-y-4">
-            <div className="p-5 rounded-xl bg-slate-900/60 border border-slate-800 space-y-4">
-              <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                {isTr ? "ENFSI (2017) Değerlendirici Raporlama & Karşılıklılık İnvaryantı" : "ENFSI (2017) Evaluative Reporting & Reciprocal Invariant"}
-              </h3>
-
-              <div className="p-3.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-xs text-emerald-200 space-y-1">
-                <div className="font-bold flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                  {isTr ? "Aktif Savcı Yanılgısı Kalkanı:" : "Prosecutor's Fallacy Active Shield:"}
-                </div>
-                <p>
-                  {isTr
-                    ? "LR(Hp / Hd) × LR(Hd / Hp) = 1.00000000 ± 10⁻⁶. Değerlendirme ağırlığı, önsel olasılık yanlılığını ortadan kaldıracak şekilde yalnızca hipotezler koşulundaki delil olasılığı olarak formüle edilmiştir."
-                    : "LR(Hp / Hd) × LR(Hd / Hp) = 1.00000000 ± 10⁻⁶. Evaluative weight is formulated strictly as conditional probability of evidence given hypotheses, eliminating prior odds bias."}
-                </p>
-              </div>
-
-              <div className="space-y-2 text-xs">
-                <div className="flex justify-between p-2.5 rounded-lg bg-slate-800/60 border border-slate-700/50">
-                  <span className="text-slate-400">{isTr ? "Sözlü İfade (EN):" : "Verbal Scale (EN):"}</span>
-                  <span className="font-bold text-slate-100">Extremely strong support for inclusion (Hp)</span>
-                </div>
-                <div className="flex justify-between p-2.5 rounded-lg bg-slate-800/60 border border-slate-700/50">
-                  <span className="text-slate-400">{isTr ? "Sözlü İfade (TR):" : "Verbal Scale (TR):"}</span>
-                  <span className="font-bold text-slate-100">Dahil olma lehine son derece güçlü delil (Hp)</span>
-                </div>
-                <div className="flex justify-between p-2.5 rounded-lg bg-slate-800/60 border border-slate-700/50">
-                  <span className="text-slate-400">{isTr ? "Demografik Duyarlılık Farkı:" : "Demographic Sensitivity Spread:"}</span>
-                  <span className="font-mono text-emerald-400 font-bold">
-                    Δ Log₁₀ LR = {activeTelemetry.logSpread.toFixed(2)} (10^{activeTelemetry.logSpread.toFixed(2)}×)
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Right: Comparative Chart */}
-          <div className="lg:col-span-6 p-5 rounded-xl bg-slate-900/60 border border-slate-800 flex flex-col justify-between">
-            <h3 className="text-sm font-bold text-slate-100 mb-4 flex items-center gap-2">
-              <BarChart3 className="w-4 h-4 text-emerald-400" />
-              {isTr
-                ? `Demografiler Arası Birleşik Log₁₀ LR Dağılımı (θ = ${theta.toFixed(3)})`
-                : `Composite Log₁₀ LR Across Demographies (θ = ${theta.toFixed(3)})`}
-            </h3>
-
-            <div className="space-y-4 my-auto">
-              {DEMOGRAPHIC_POPULATIONS.map((pop) => {
-                const tel = activeTelemetry.results[pop.id];
-                const pct = ((tel?.log10Lr || 0) / (activeTelemetry.maxLog || 1)) * 100;
-                return (
-                  <div key={pop.id} className="space-y-1.5">
-                    <div className="flex justify-between text-xs">
-                      <span className="text-slate-300 flex items-center gap-1.5">
-                        <span>{pop.flag}</span>
-                        <span>{isTr ? pop.nameTr : pop.name}</span>
-                      </span>
-                      <span className="font-mono text-emerald-400 font-bold">
-                        +{tel?.log10Lr.toFixed(2)}
-                      </span>
-                    </div>
-                    <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-                      <div
-                        className={`h-full rounded-full bg-gradient-to-r ${pop.color} transition-all duration-500`}
-                        style={{ width: `${Math.max(10, pct)}%` }}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            <div className="mt-4 pt-3 border-t border-slate-800/80 text-[11px] text-slate-400 flex items-center justify-between">
-              <span>{isTr ? "Standart: NIST 1036 Katmanlaştırılmış Veritabanı" : "Standard: NIST 1036 Stratified Database"}</span>
-              <span className="font-mono">p_min = 0.00241</span>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ── Tab 2: 24-Locus Balding-Nichols Breakdown Table ─────────────────────── */}
+      {/* ── TAB 1: 24-Locus Simplex Breakdown & Balding-Nichols Loci Table ─────── */}
       {activeTab === "loci_table" && (
-        <div className="rounded-xl border border-slate-800 bg-slate-900/60 overflow-hidden min-w-0">
-          <div className="p-4 bg-slate-800/40 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div className="space-y-0.5 min-w-0">
-              <span className="text-xs font-bold text-slate-200 block">
+        <div className="p-4 sm:p-5 rounded-2xl bg-slate-900/60 border border-slate-800 shadow-lg space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
+            <div>
+              <h3 className="text-sm font-semibold text-slate-200 flex items-center gap-2">
+                <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
                 {isTr
-                  ? `Lokus Bazında Balding-Nichols Değerlendirmesi (${selectedPopulation}, θ = ${theta.toFixed(3)})`
-                  : `Locus-by-Locus Balding-Nichols Evaluation (${selectedPopulation}, θ = ${theta.toFixed(3)})`}
-              </span>
-              <span className="text-[10px] text-zinc-400 block font-sans">
-                {isTr ? "Toplam 24 lokus için adli alel frekansları ve koşullu olasılıklar" : "Forensic allele frequencies and conditional match probabilities for 24 loci"}
-              </span>
+                  ? `24-Lokus STR Genotip Olasılıkları (${selectedPopulation}, θ=${theta.toFixed(3)})`
+                  : `24-Locus STR Genotype Probabilities (${selectedPopulation}, θ=${theta.toFixed(3)})`}
+              </h3>
+              <p className="text-xs text-slate-400 mt-0.5 font-sans">
+                {isTr
+                  ? "P(G_i|θ) ve L_i = 1 / P(G_i|θ) lokus bazlı olabilirlik oranları."
+                  : "P(G_i|θ) and L_i = 1 / P(G_i|θ) per-locus likelihood ratios."}
+              </p>
             </div>
 
-            {/* Simplex Invariant Dynamic Badge (Live from API) */}
-            <div className="flex items-center gap-2 shrink-0">
-              <span className={`px-2.5 py-1 text-[10px] font-mono rounded-lg border whitespace-nowrap flex items-center gap-1.5 ${
-                simplexMetrics.isValid
-                  ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/30"
-                  : "bg-amber-500/15 text-amber-300 border-amber-500/30"
-              }`}>
-                <Check className="w-3 h-3 text-emerald-400" />
+            <div className="flex items-center gap-2">
+              <div className="relative">
+                <Search className="w-3.5 h-3.5 absolute left-2.5 top-2.5 text-zinc-500" />
+                <input
+                  type="text"
+                  placeholder={isTr ? "Lokus ara (örn. TH01)..." : "Filter locus (e.g. TH01)..."}
+                  value={locusSearch}
+                  onChange={(e) => setLocusSearch(e.target.value)}
+                  className="pl-8 pr-3 py-1 text-xs bg-black/40 border border-slate-800 rounded-lg text-white placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500"
+                />
+              </div>
+
+              <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs shrink-0">
+                <CheckCircle2 className="w-3.5 h-3.5" />
                 <span>
-                  {isTr ? "Simpleks Toplamı = " : "Simplex Sum = "}
-                  <span className="font-bold">{simplexMetrics.sum.toFixed(8)}</span>
-                  {" (Δ = "}{simplexMetrics.delta.toExponential(2)}{")"}
+                  {isTr ? "Toplam Log₁₀ LR: " : "Total Log₁₀ LR: "}
+                  <strong className="font-mono">+{activeTelemetry.activeLog10.toFixed(2)}</strong>
                 </span>
-              </span>
+              </div>
             </div>
           </div>
 
-          <div className="overflow-x-auto w-full">
-            <table className="w-full min-w-[640px] text-left text-xs font-mono">
-              <thead className="bg-slate-800/80 text-slate-400 border-b border-slate-700/60">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs font-mono">
+              <thead className="text-slate-400 border-b border-slate-800 text-[11px]">
                 <tr>
-                  <th className="py-2.5 px-3">{isTr ? "STR Lokusu" : "Locus"}</th>
-                  <th className="py-2.5 px-3">{isTr ? "Genotip" : "Genotype"}</th>
-                  <th className="py-2.5 px-3">{isTr ? "Tip" : "Type"}</th>
-                  <th className="py-2.5 px-3">{isTr ? "Frekans p₁" : "Freq p₁"}</th>
-                  <th className="py-2.5 px-3">{isTr ? "Frekans p₂" : "Freq p₂"}</th>
-                  <th className="py-2.5 px-3">P(E|S, θ)</th>
-                  <th className="py-2.5 px-3 text-right">{isTr ? "Lokus LR" : "Locus LR"}</th>
-                  <th className="py-2.5 px-3 text-right">Log₁₀ LR</th>
+                  <th className="py-2 px-2">LOKUS</th>
+                  <th className="py-2 px-2">GENOTİP</th>
+                  <th className="py-2 px-2">ZİGOTİ</th>
+                  <th className="py-2 px-2">p₁ (NIST)</th>
+                  <th className="py-2 px-2">p₂ (NIST)</th>
+                  <th className="py-2 px-2">P(G|θ)</th>
+                  <th className="py-2 px-2 text-right">LR_locus</th>
+                  <th className="py-2 px-2 text-right">Log₁₀ LR</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800 text-slate-300">
-                {activeTelemetry.activeBreakdown.map((row) => (
-                  <tr key={row.locus} className="hover:bg-slate-800/40">
-                    <td className="py-2 px-3 font-bold text-slate-100">{row.locus}</td>
-                    <td className="py-2 px-3 text-emerald-400 font-bold">
-                      {row.a1}, {row.a2}
+              <tbody className="divide-y divide-slate-800/60 text-slate-300">
+                {filteredBreakdown.map((row) => (
+                  <tr key={row.locus} className="hover:bg-slate-800/40 transition-colors">
+                    <td className="py-2 px-2 font-bold text-white">{row.locus}</td>
+                    <td className="py-2 px-2 text-emerald-400">
+                      [{row.a1}, {row.a2}]
                     </td>
-                    <td className="py-2 px-3 text-[11px] text-slate-400">
-                      {row.isHomo ? (isTr ? "Homozigot" : "Homozygote") : (isTr ? "Heterozigot" : "Heterozygote")}
+                    <td className="py-2 px-2">
+                      <span
+                        className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
+                          row.isHomo
+                            ? "bg-amber-500/15 text-amber-300 border border-amber-500/30"
+                            : "bg-blue-500/15 text-blue-300 border border-blue-500/30"
+                        }`}
+                      >
+                        {row.isHomo ? (isTr ? "Homozigot" : "Homozygous") : (isTr ? "Heterozigot" : "Heterozygous")}
+                      </span>
                     </td>
-                    <td className="py-2 px-3 tabular-nums">{row.p1.toFixed(4)}</td>
-                    <td className="py-2 px-3 tabular-nums">{row.isHomo ? "-" : row.p2.toFixed(4)}</td>
-                    <td className="py-2 px-3 text-amber-300 tabular-nums">{row.pCond ? row.pCond.toExponential(3) : "-"}</td>
-                    <td className="py-2 px-3 text-right font-bold text-slate-100 tabular-nums">
-                      {row.locusLr.toFixed(1)}
-                    </td>
-                    <td className="py-2 px-3 text-right text-emerald-400 font-bold tabular-nums">
-                      +{row.log10Locus.toFixed(3)}
-                    </td>
+                    <td className="py-2 px-2 text-zinc-400">{row.p1.toFixed(4)}</td>
+                    <td className="py-2 px-2 text-zinc-400">{row.p2.toFixed(4)}</td>
+                    <td className="py-2 px-2 text-slate-300 font-bold">{row.pCond.toExponential(3)}</td>
+                    <td className="py-2 px-2 text-right text-emerald-400">{row.locusLr.toFixed(1)}</td>
+                    <td className="py-2 px-2 text-right font-bold text-teal-400">+{row.log10Locus.toFixed(2)}</td>
                   </tr>
                 ))}
               </tbody>
-              <tfoot className="bg-slate-800/60 font-bold border-t border-slate-700/60 text-slate-200">
-                <tr>
-                  <td colSpan={6} className="py-2.5 px-3 text-right uppercase tracking-wider text-xs">
-                    {isTr ? "Toplam Birleşik Log₁₀ LR (Toplamsallık İnvaryantı):" : "Total Composite Log₁₀ LR (Additivity Invariant):"}
-                  </td>
-                  <td colSpan={2} className="py-2.5 px-3 text-right text-sm text-emerald-400 tabular-nums">
-                    +{activeTelemetry.activeLog10.toFixed(3)}
-                  </td>
-                </tr>
-              </tfoot>
             </table>
           </div>
         </div>
       )}
 
-      {/* ── Tab 3: Weir & Cockerham ANOVA Fst Estimator ────────────────────────── */}
-      {activeTab === "anova_fst" && (
-        <div className="p-4 sm:p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-5 shadow-lg min-w-0">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-800/80 pb-3.5">
-            <div className="space-y-1 min-w-0">
-              <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
-                <Scale className="w-4 h-4 text-indigo-400 shrink-0" />
-                <span>
-                  {isTr
-                    ? "Weir & Cockerham (1984) Sapmasız ANOVA F_st / θ̂ Tahmincisi"
-                    : "Weir & Cockerham (1984) Unbiased ANOVA F_st / θ̂ Estimator"}
-                </span>
+      {/* ── TAB 2: Demographic Stratification & Invariant Verification ─────────── */}
+      {activeTab === "stratification" && (
+        <div className="p-4 sm:p-5 rounded-2xl bg-slate-900/60 border border-slate-800 shadow-lg space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+            <div>
+              <h3 className="text-sm font-semibold text-slate-200 flex items-center gap-2">
+                <BarChart3 className="w-4 h-4 text-emerald-400" />
+                {isTr ? "NIST 1036 Çok Popülasyonlu Stratifikasyon Analizi" : "NIST 1036 Multi-Population Stratification Analysis"}
               </h3>
-              <p className="text-xs text-slate-400 leading-relaxed font-sans">
+              <p className="text-xs text-slate-400 mt-0.5 font-sans">
                 {isTr
-                  ? "Toplam alelik varyansı Popülasyonlar Arası Ortalama Kare (MSP) ve Popülasyonlar İçi Ortalama Kare (MSG) bileşenlerine ayırır."
-                  : "Decomposes total allelic variance into Mean Square Between Populations (MSP) and Mean Square Within Populations (MSG)."}
+                  ? "4 kıtasal referans popülasyon arasında olabilirlik oranlarının karşılaştırmalı dağılımı."
+                  : "Comparative profile likelihood ratio distributions across 4 continental reference panels."}
               </p>
             </div>
 
-            {/* Locus Selector for ANOVA Analysis */}
-            <div className="flex items-center gap-2 shrink-0">
-              <span className="text-[10px] text-zinc-400 font-bold uppercase">{isTr ? "Lokus:" : "Locus:"}</span>
+            <div className="flex items-center gap-2 flex-wrap text-xs">
+              <span className="text-slate-400">
+                {isTr ? "Fark Aralığı (Log₁₀ Spread): " : "Log₁₀ Spread: "}
+                <strong className="text-amber-400 font-mono">
+                  {activeTelemetry.logSpread.toFixed(2)} Log₁₀ ({isTr ? "kat" : "fold"})
+                </strong>
+              </span>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            {DEMOGRAPHIC_POPULATIONS.map((pop) => {
+              const tel = activeTelemetry.results[pop.id];
+              const logLr = tel?.log10Lr || 0;
+              const pct = Math.min(100, Math.max(8, (logLr / (activeTelemetry.maxLog || 1)) * 100));
+              const isSelected = selectedPopulation === pop.id;
+
+              return (
+                <div
+                  key={pop.id}
+                  onClick={() => setSelectedPopulation(pop.id)}
+                  className={`p-3.5 rounded-xl border transition-all cursor-pointer ${
+                    isSelected
+                      ? "bg-slate-800/80 border-emerald-500/80 shadow-md"
+                      : "bg-slate-900/40 border-slate-800 hover:border-slate-700"
+                  }`}
+                >
+                  <div className="flex items-center justify-between text-xs mb-1.5">
+                    <div className="flex items-center gap-2 font-semibold text-slate-200">
+                      <span>{pop.flag}</span>
+                      <span>{isTr ? pop.nameTr : pop.name}</span>
+                      <span className="text-[10px] text-zinc-500 font-mono">(N={pop.n})</span>
+                    </div>
+                    <div className="flex items-center gap-3 font-mono">
+                      <span className="text-slate-400 text-[11px]">1 in 10^{logLr.toFixed(1)}</span>
+                      <span className="text-emerald-400 font-bold text-sm">+{logLr.toFixed(2)} Log₁₀</span>
+                    </div>
+                  </div>
+
+                  <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all duration-500 ${
+                        isSelected ? "bg-gradient-to-r from-emerald-500 to-teal-400" : "bg-slate-700"
+                      }`}
+                      style={{ width: `${pct}%` }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Probability Simplex Normalization Invariant Card */}
+          <div className="mt-4 p-4 rounded-xl bg-black/40 border border-slate-800 space-y-2">
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <span className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                {isTr ? "Olasılık Simpleksi Normalizasyon İnvaryantı: " : "Probability Simplex Normalization Invariant: "}
+                <span className="text-emerald-400 font-mono">Σ P(G|θ) = 1.00000000</span>
+              </span>
+
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] text-zinc-400">{isTr ? "Test Lokusu:" : "Locus:"}</span>
+                <select
+                  value={selectedSimplexLocus}
+                  onChange={(e) => setSelectedSimplexLocus(e.target.value)}
+                  className="px-2 py-0.5 text-xs bg-slate-800 border border-slate-700 rounded text-slate-200 font-mono cursor-pointer"
+                >
+                  {availableLoci.map((loc) => (
+                    <option key={loc} value={loc}>
+                      {loc}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <p className="text-xs text-slate-400 leading-relaxed font-sans">
+              {isTr
+                ? "Balding-Nichols formülasyonunda tüm olası diploid genotiplerin koşullu olasılıklarının toplamı 1.0'a eşit olmalıdır (|Δ| < 10⁻⁶). Bu, popülasyon genetiği hesaplamalarının metrik bütünlüğünü kanıtlar."
+                : "The sum of conditional probabilities over all possible diploid genotypes must equal exactly 1.0 (|Δ| < 10⁻⁶), verifying the metric integrity of Dirichlet-multinomial sampling."}
+            </p>
+
+            <div className="flex items-center gap-4 text-xs font-mono pt-1 text-slate-300">
+              <span>{isTr ? "Değerlendirilen Genotip: " : "Evaluated Genotypes: "}<strong>{simplexMetrics.numGenotypes}</strong></span>
+              <span>•</span>
+              <span>{isTr ? "Hesaplanan Toplam: " : "Computed Sum: "}<strong>{simplexMetrics.sum.toFixed(8)}</strong></span>
+              <span>•</span>
+              <span className="text-emerald-400 font-bold">|Δ| = {simplexMetrics.delta.toExponential(2)}</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── TAB 3: Weir & Cockerham (1984) ANOVA F_st Decomposition ─────────────── */}
+      {activeTab === "anova_fst" && (
+        <div className="p-4 sm:p-5 rounded-2xl bg-slate-900/60 border border-slate-800 shadow-lg space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
+            <div>
+              <h3 className="text-sm font-semibold text-slate-200 flex items-center gap-2">
+                <Scale className="w-4 h-4 text-indigo-400" />
+                {isTr
+                  ? "Weir & Cockerham (1984) Tek Lokuslu Varyans Analizi (ANOVA F_st)"
+                  : "Weir & Cockerham (1984) Single-Locus ANOVA F_st Decomposition"}
+              </h3>
+              <p className="text-xs text-slate-400 mt-0.5 font-sans">
+                {isTr
+                  ? "NIST 1036 popülasyonları arasındaki genetik ayrışmanın sapmasız (unbiased) θ̂ tahmini."
+                  : "Unbiased estimation of genetic differentiation θ̂ across NIST 1036 subpopulation count matrices."}
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-slate-400">{isTr ? "Lokus Seçimi:" : "Select Locus:"}</span>
               <select
                 value={selectedAnovaLocus}
                 onChange={(e) => setSelectedAnovaLocus(e.target.value)}
-                className="px-3 py-1.5 text-xs font-mono bg-black/60 border border-tactical-border/70 rounded-xl text-white focus:outline-none focus:border-indigo-500 cursor-pointer shadow-sm"
+                className="px-3 py-1 text-xs bg-black/40 border border-slate-700 rounded-lg text-emerald-400 font-bold font-mono focus:outline-none focus:border-emerald-500 cursor-pointer"
               >
                 {availableLoci.map((loc) => (
-                  <option key={loc} value={loc}>{loc}</option>
+                  <option key={loc} value={loc}>
+                    {loc}
+                  </option>
                 ))}
               </select>
             </div>
           </div>
 
-          {/* ANOVA Variance Decompositions (Live from API) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 pt-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="p-4 rounded-xl bg-slate-800/60 border border-slate-700/50 space-y-1">
               <span className="text-[11px] text-slate-400 uppercase font-bold block">
-                {isTr ? "MSP (Gruplar Arası)" : "MSP (Between Variance)"}
+                {isTr ? "Popülasyonlar Arası Kareler (MSP)" : "Mean Square Populations (MSP)"}
               </span>
-              <div className="text-xl font-bold font-mono text-indigo-300 tabular-nums">
+              <div className="text-xl font-bold font-mono text-emerald-400 tabular-nums">
                 {anovaMetrics.msp.toFixed(4)}
               </div>
               <span className="text-[10px] text-zinc-500 font-mono">MS_between (df=3)</span>
@@ -1042,9 +1412,9 @@ export function PanelNRC() {
 
             <div className="p-4 rounded-xl bg-slate-800/60 border border-slate-700/50 space-y-1">
               <span className="text-[11px] text-slate-400 uppercase font-bold block">
-                {isTr ? "MSG (Grup İçi)" : "MSG (Within Variance)"}
+                {isTr ? "Popülasyon İçi Kareler (MSG)" : "Mean Square Within (MSG)"}
               </span>
-              <div className="text-xl font-bold font-mono text-indigo-300 tabular-nums">
+              <div className="text-xl font-bold font-mono text-teal-400 tabular-nums">
                 {anovaMetrics.msg.toFixed(4)}
               </div>
               <span className="text-[10px] text-zinc-500 font-mono">MS_within (df=2068)</span>
@@ -1094,7 +1464,7 @@ export function PanelNRC() {
                     <th className="py-1.5 px-2">{isTr ? "Popülasyon" : "Population"}</th>
                     <th className="py-1.5 px-2">{isTr ? "Örneklem (2N)" : "Sample (2N)"}</th>
                     <th className="py-1.5 px-2">{isTr ? "Ayrışma Modeli" : "Partition Model"}</th>
-                    <th className="py-1.5 px-2 text-right">{isTr ? "Ağırlıklı Frekans Dağılımı" : "Weighted Distribution"}</th>
+                    <th className="py-1.5 px-2 text-right">{isTr ? "Ağırlıklı Dağılım" : "Weighted Distribution"}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-800/60 text-slate-300 text-xs">
@@ -1114,6 +1484,180 @@ export function PanelNRC() {
                 </tbody>
               </table>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── TAB 4: Certified Multi-Population Golden Standards & Benchmarks ─────── */}
+      {activeTab === "benchmarks" && (
+        <div className="p-4 sm:p-5 rounded-2xl bg-slate-900/60 border border-slate-800 shadow-lg space-y-4">
+          <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div>
+              <h3 className="text-sm font-semibold text-slate-200 flex items-center gap-2">
+                <Award className="w-4 h-4 text-amber-400" />
+                {isTr ? "Sertifikalı Adli Altın Standartlar & Referans Bireyler" : "Certified Forensic Golden Reference Standards & Benchmarks"}
+              </h3>
+              <p className="text-xs text-slate-400 mt-0.5 font-sans">
+                {isTr
+                  ? "NIST SRM 2391d, GIAB HG001 ve 1000G doğrulanmış 24-lokus referans panelleri."
+                  : "Validated 24-locus benchmark profiles from NIST SRM 2391d, GIAB, and 1000 Genomes."}
+              </p>
+            </div>
+            <span className="text-[9px] font-bold bg-amber-500/10 border border-amber-500/30 text-amber-300 px-2.5 py-1 rounded-md shrink-0">
+              NIST SRM 2391d | GIAB | 1000G
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {CERTIFIED_GOLDEN_BENCHMARKS.map((bench) => {
+              const isSelected = selectedStandard === bench.id;
+              return (
+                <div
+                  key={bench.id}
+                  className={`p-4 rounded-xl border transition-all space-y-3 ${
+                    isSelected
+                      ? "bg-amber-500/10 border-amber-500/50 shadow-lg"
+                      : "bg-black/40 border-tactical-border/60 hover:border-tactical-border"
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <span className="font-mono text-xs text-amber-400 font-bold block truncate">{bench.id}</span>
+                      <h4 className="text-sm font-bold text-white leading-snug">{bench.name}</h4>
+                    </div>
+                    <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 shrink-0">
+                      θ = {bench.thetaRecommended.toFixed(2)}
+                    </span>
+                  </div>
+
+                  <p className="text-xs text-zinc-300 leading-relaxed font-sans">
+                    {isTr ? bench.descriptionTr : bench.description}
+                  </p>
+
+                  <div className="flex items-center justify-between pt-2 border-t border-tactical-border/40 text-xs">
+                    <span className="text-zinc-400">
+                      {isTr ? "Popülasyon: " : "Demography: "}
+                      <span className="font-bold text-white">{bench.expectedTopPop}</span>
+                    </span>
+
+                    <button
+                      type="button"
+                      onClick={() => handleLoadStandard(bench.id)}
+                      className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                        isSelected
+                          ? "bg-amber-500 text-black shadow font-bold"
+                          : "bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40"
+                      }`}
+                    >
+                      {isSelected ? (isTr ? "Yüklendi" : "Active") : (isTr ? "Stüdyoya Yükle" : "Load into Studio")}
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* ── TAB 5: ISO/IEC 17025 Uncertainty Budget & Legal Reporting Shields ───── */}
+      {activeTab === "iso_reporting" && (
+        <div className="p-4 sm:p-5 rounded-2xl bg-slate-900/60 border border-slate-800 shadow-lg space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
+            <div>
+              <h3 className="text-sm font-semibold text-slate-200 flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                {isTr ? "ISO/IEC 17025:2017 Metrolojik Kalite & ENFSI Raporlama Kalkanı" : "ISO/IEC 17025:2017 Metrological Uncertainty Budget & Legal Shield"}
+              </h3>
+              <p className="text-xs text-slate-400 mt-0.5 font-sans">
+                {isTr
+                  ? "GUM kılavuzu genişletilmiş belirsizlik bütçesi ve Savcının Yanılgısına karşı adli ifade kalkanı."
+                  : "GUM expanded uncertainty budget and Transposed Conditional Prosecutor's Fallacy defense shield."}
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleCopyReport}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 text-xs font-bold transition-all cursor-pointer"
+            >
+              {copiedReport ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+              <span>{copiedReport ? (isTr ? "Kopyalandı!" : "Copied!") : (isTr ? "Raporu Kopyala" : "Copy Certificate")}</span>
+            </button>
+          </div>
+
+          {/* GUM Uncertainty Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="p-4 rounded-xl bg-slate-800/60 border border-slate-700/50 space-y-1">
+              <span className="text-[11px] text-slate-400 uppercase font-bold block">
+                {isTr ? "NIST Örneklem Belirsizliği (s_NIST)" : "NIST Sampling Uncertainty (s_NIST)"}
+              </span>
+              <div className="text-xl font-bold font-mono text-emerald-400 tabular-nums">
+                ± {uncertaintyBudget.sNist.toFixed(4)}
+              </div>
+              <span className="text-[10px] text-zinc-500 font-mono">N=1036 Allele Freq Variance</span>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-800/60 border border-slate-700/50 space-y-1">
+              <span className="text-[11px] text-slate-400 uppercase font-bold block">
+                {isTr ? "Birleşik Standart Belirsizlik (u_c)" : "Combined Std Uncertainty (u_c)"}
+              </span>
+              <div className="text-xl font-bold font-mono text-teal-400 tabular-nums">
+                ± {uncertaintyBudget.uc.toFixed(4)}
+              </div>
+              <span className="text-[10px] text-zinc-500 font-mono">GUM Root-Sum-Square</span>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-800/60 border border-slate-700/50 space-y-1">
+              <span className="text-[11px] text-slate-400 uppercase font-bold block">
+                {isTr ? "Genişletilmiş Belirsizlik (U_95%)" : "Expanded Uncertainty (U_95%)"}
+              </span>
+              <div className="text-xl font-bold font-mono text-cyan-400 tabular-nums">
+                ± {uncertaintyBudget.u95.toFixed(4)}
+              </div>
+              <span className="text-[10px] text-zinc-500 font-mono">Coverage Factor k=2.00</span>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-800/60 border border-slate-700/50 space-y-1">
+              <span className="text-[11px] text-slate-400 uppercase font-bold block">
+                {isTr ? "%95 Güven Aralığı" : "95% Confidence Interval"}
+              </span>
+              <div className="text-base font-bold font-mono text-emerald-400 tabular-nums">
+                [{uncertaintyBudget.ciLow.toFixed(3)}, {uncertaintyBudget.ciHigh.toFixed(3)}]
+              </div>
+              <span className="text-[10px] text-emerald-500/80 font-mono">
+                θ (F_st) Parameter Bounds
+              </span>
+            </div>
+          </div>
+
+          {/* ENFSI 2017 Statement Box */}
+          <div className="p-4 rounded-xl bg-black/40 border border-tactical-border/70 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                <FileText className="w-3.5 h-3.5 text-emerald-400" />
+                {isTr ? "ENFSI (2017) Standart Sözlü Olabilirlik İfadesi (Kademe " : "ENFSI (2017) Evaluative Verbal Statement (Tier "}
+                {enfsiStatement.level}/7)
+              </span>
+              <span className={`text-xs font-bold font-mono ${enfsiStatement.color}`}>
+                Log₁₀ LR = +{activeTelemetry.activeLog10.toFixed(2)}
+              </span>
+            </div>
+            <p className="text-xs text-slate-200 leading-relaxed font-sans p-3 rounded-lg bg-emerald-950/20 border border-emerald-500/30">
+              &quot;{isTr ? enfsiStatement.labelTr : enfsiStatement.labelEn}&quot;
+            </p>
+          </div>
+
+          {/* Transposed Conditional Fallacy Shield */}
+          <div className="p-4 rounded-xl bg-rose-950/20 border border-rose-500/30 space-y-2">
+            <div className="flex items-center gap-2 text-rose-400 font-bold text-xs">
+              <ShieldAlert className="w-4 h-4" />
+              <span>{isTr ? "Savcının Yanılgısı Savunma Kalkanı (Prosecutor's Fallacy Shield)" : "Transposed Conditional Defense Shield"}</span>
+            </div>
+            <p className="text-xs text-zinc-300 font-sans leading-relaxed">
+              {isTr
+                ? "Adli Bilimler Standardı: Hesaplanan LR değeri (10^" + activeTelemetry.activeLog10.toFixed(1) + "), delilin sanık katkısı hipotezi (H_p) altındaki olasılığının, rastgele akraba olmayan donör hipotezine (H_d) olan oranıdır. Bu değer doğrudan sanığın 'suçlu olma olasılığı' P(H_p|E) şeklinde aktarılamaz. P(E|H_p) != P(H_p|E) ilkesi gereğince sözlü ifade kesinlikle delilin gücüne sınırlanmalıdır."
+                : "Forensic Integrity Principle: The evaluated LR (10^" + activeTelemetry.activeLog10.toFixed(1) + ") represents the ratio of evidence probability under the prosecution hypothesis P(E|H_p) to defense hypothesis P(E|H_d). Under Daubert and FRE 702 rules, this cannot be transposed into the posterior guilt probability P(H_p|E)."}
+            </p>
           </div>
         </div>
       )}

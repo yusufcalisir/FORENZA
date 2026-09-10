@@ -167,7 +167,7 @@ export const PEDIGREE_RELATIONSHIPS: PedigreeOption[] = [
   { id: "avuncular", labelTr: "Amca / Hala / Dayı - Yeğen", labelEn: "Avuncular (Uncle/Aunt-Nephew/Niece)", ibd: "k0=0.50, k1=0.50, k2=0", k0: 0.50, k1: 0.50, k2: 0.0 },
   { id: "grandparent", labelTr: "Büyükanne / Büyükbaba - Torun", labelEn: "Grandparent - Grandchild", ibd: "k0=0.50, k1=0.50, k2=0", k0: 0.50, k1: 0.50, k2: 0.0 },
   { id: "first_cousin", labelTr: "Birinci Derece Kuzen", labelEn: "First Cousin", ibd: "k0=0.75, k1=0.25, k2=0", k0: 0.75, k1: 0.25, k2: 0.0 },
-  { id: "unrelated", labelTr: "Akraba Değil (Doğrudan Eşleşme)", labelEn: "Direct Match (Identity Baseline)", ibd: "k0=1, k1=0, k2=0", k0: 1.0, k1: 0.0, k2: 0.0 },
+  { id: "unrelated", labelTr: "Akraba Değil (Negatif Temel Hipotez)", labelEn: "Unrelated (Negative Baseline)", ibd: "k0=1, k1=0, k2=0", k0: 1.0, k1: 0.0, k2: 0.0 },
 ];
 
 export interface STRBenchmarkProfile {
@@ -327,6 +327,19 @@ export interface KinshipBackendResponse {
   data_source: string;
 }
 
+export interface LRBackendResponse {
+  match_status: string;
+  lr_value: number;
+  log10_lr: number;
+  confidence_interval: { low: number; high: number };
+  evaluated_loci: number;
+  locus_scores: Record<string, number>;
+  assumptions: string[];
+  limitations: string[];
+  model: string;
+  data_source: string;
+}
+
 // Pure 64-Hex SHA-256 State Audit Digest
 export function computeSTRAuditHash(
   caseId: string,
@@ -338,9 +351,10 @@ export function computeSTRAuditHash(
   matchingLoci: number,
   mismatchLoci: number,
   totalLog10LR: number,
-  rmp: number
+  rmp: number,
+  analysisMode: string = "single_source_lr"
 ): string {
-  const payload = `STR_24|${caseId}|${evidenceId}|${referenceId}|${population}|${theta.toFixed(4)}|${kinshipRelation}|${matchingLoci}|${mismatchLoci}|${totalLog10LR.toFixed(4)}|${rmp.toExponential(6)}`;
+  const payload = `STR_24|${caseId}|${evidenceId}|${referenceId}|${population}|${theta.toFixed(4)}|${kinshipRelation}|${matchingLoci}|${mismatchLoci}|${totalLog10LR.toFixed(4)}|${rmp.toExponential(6)}|${analysisMode}`;
   let h1 = 0x811c9dc5;
   for (let i = 0; i < payload.length; i++) {
     h1 ^= payload.charCodeAt(i);
@@ -365,12 +379,18 @@ export function evaluateSTRKinshipClient(
   refAlleles: Record<string, [string, string]>,
   population: string,
   theta: number,
-  kinshipRelation: string
+  kinshipRelation: string = "parent_child",
+  analysisMode?: "single_source_lr" | "pedigree_kinship"
 ): STREvaluationResult {
   let cumLog10LR = 0.0;
   let cumLR = 1.0;
   let matchingLociCount = 0;
   let mutationalMismatchCount = 0;
+
+  // Determine whether to evaluate in direct Single-Source mode or Pedigree Kinship
+  const isSingleSourceMode =
+    analysisMode === "single_source_lr" ||
+    (!analysisMode && (kinshipRelation === "unrelated" || kinshipRelation === "identity"));
 
   const rows: STRLocusRowResult[] = MASTER_24_STR_LOCI.map((def) => {
     const evid = profileAlleles[def.name] || ["10", "11"];
@@ -417,63 +437,82 @@ export function evaluateSTRKinshipClient(
 
     let lr = 1.0;
     let mutated = false;
+    let locusIsMatch = false;
 
-    if (kinshipRelation === "parent_child") {
-      if (fullMatch || sharesAny) {
-        const sharedP = sharesA1 ? p1 : p2;
-        lr = 1.0 / (2.0 * (theta + (1.0 - theta) * sharedP));
-        matchingLociCount++;
-      } else {
-        const mu = def.mutationRate * 1e-3;
-        lr = calcStepwiseMutationProb(parseFloat(evid[0]) || 10, parseFloat(ref[0]) || 10, mu, 0.10);
-        mutationalMismatchCount++;
-        mutated = true;
-      }
-    } else if (kinshipRelation === "full_sibling") {
-      if (fullMatch) {
-        lr = 0.25 + 0.50 / (2.0 * (theta + (1.0 - theta) * p1)) + 0.25 / Math.max(1e-12, pg);
-        matchingLociCount++;
-      } else if (sharesAny) {
-        const sharedP = sharesA1 ? p1 : p2;
-        lr = 0.25 + 0.50 / (2.0 * (theta + (1.0 - theta) * sharedP));
-        matchingLociCount++;
-      } else {
-        lr = 0.25;
-      }
-    } else if (
-      kinshipRelation === "half_sibling" ||
-      kinshipRelation === "avuncular" ||
-      kinshipRelation === "grandparent"
-    ) {
-      if (fullMatch || sharesAny) {
-        const sharedP = sharesA1 ? p1 : p2;
-        lr = 0.50 + 0.50 / (2.0 * (theta + (1.0 - theta) * sharedP));
-        matchingLociCount++;
-      } else {
-        lr = 0.50;
-      }
-    } else if (kinshipRelation === "first_cousin") {
-      if (fullMatch || sharesAny) {
-        const sharedP = sharesA1 ? p1 : p2;
-        lr = 0.75 + 0.25 / (2.0 * (theta + (1.0 - theta) * sharedP));
-        matchingLociCount++;
-      } else {
-        lr = 0.75;
-      }
-    } else {
-      // Unrelated baseline: direct match against single-source profile
+    if (isSingleSourceMode) {
+      // Single-Source Balding-Nichols Direct Match: LR = 1 / P(G|theta)
       if (fullMatch) {
         lr = 1.0 / Math.max(1e-15, pg);
         matchingLociCount++;
-      } else if (sharesAny) {
-        lr = 1.0 / Math.max(1e-15, 2.0 * p1);
-        matchingLociCount++;
+        locusIsMatch = true;
       } else {
-        lr = 1e-6;
+        // Single-source DNA mismatch at any locus is a strict EXCLUSION
+        lr = 0.0;
+        mutationalMismatchCount++;
+        locusIsMatch = false;
+      }
+    } else {
+      // Pedigree Kinship Evaluator
+      if (kinshipRelation === "parent_child") {
+        if (fullMatch || sharesAny) {
+          const sharedP = sharesA1 ? p1 : p2;
+          lr = 1.0 / (2.0 * (theta + (1.0 - theta) * sharedP));
+          matchingLociCount++;
+          locusIsMatch = true;
+        } else {
+          const mu = def.mutationRate * 1e-3;
+          lr = calcStepwiseMutationProb(parseFloat(evid[0]) || 10, parseFloat(ref[0]) || 10, mu, 0.10);
+          mutationalMismatchCount++;
+          mutated = true;
+          locusIsMatch = false;
+        }
+      } else if (kinshipRelation === "full_sibling") {
+        if (fullMatch) {
+          lr = 0.25 + 0.50 / (2.0 * (theta + (1.0 - theta) * p1)) + 0.25 / Math.max(1e-12, pg);
+          matchingLociCount++;
+          locusIsMatch = true;
+        } else if (sharesAny) {
+          const sharedP = sharesA1 ? p1 : p2;
+          lr = 0.25 + 0.50 / (2.0 * (theta + (1.0 - theta) * sharedP));
+          matchingLociCount++;
+          locusIsMatch = true;
+        } else {
+          lr = 0.25;
+          locusIsMatch = false;
+        }
+      } else if (
+        kinshipRelation === "half_sibling" ||
+        kinshipRelation === "avuncular" ||
+        kinshipRelation === "grandparent"
+      ) {
+        if (fullMatch || sharesAny) {
+          const sharedP = sharesA1 ? p1 : p2;
+          lr = 0.50 + 0.50 / (2.0 * (theta + (1.0 - theta) * sharedP));
+          matchingLociCount++;
+          locusIsMatch = true;
+        } else {
+          lr = 0.50;
+          locusIsMatch = false;
+        }
+      } else if (kinshipRelation === "first_cousin") {
+        if (fullMatch || sharesAny) {
+          const sharedP = sharesA1 ? p1 : p2;
+          lr = 0.75 + 0.25 / (2.0 * (theta + (1.0 - theta) * sharedP));
+          matchingLociCount++;
+          locusIsMatch = true;
+        } else {
+          lr = 0.75;
+          locusIsMatch = false;
+        }
+      } else {
+        // Unrelated negative hypothesis baseline under pedigree model: KI = 1.00
+        lr = 1.0;
+        matchingLociCount++;
+        locusIsMatch = true;
       }
     }
 
-    const log10Lr = Math.log10(Math.max(1e-12, lr));
+    const log10Lr = lr > 0 ? Math.log10(lr) : -10.0;
     cumLog10LR += log10Lr;
     cumLR *= lr;
 
@@ -491,21 +530,24 @@ export function evaluateSTRKinshipClient(
       lr,
       log10Lr,
       cumLog10LR,
-      isMatch: sharesAny || fullMatch,
+      isMatch: locusIsMatch,
       isHomo,
       sizingBp,
       mutated,
     };
   });
 
-  const cpi = Math.pow(10, Math.min(300, cumLog10LR));
-  const wPercent = cpi > 0 ? (cpi * 0.5) / (cpi * 0.5 + 0.5) * 100 : 0.0;
-  const rmp = Math.pow(10, -Math.abs(cumLog10LR));
+  const isExcluded = isSingleSourceMode && mutationalMismatchCount > 0;
+  const finalCumLog10LR = isExcluded ? -10.0 : cumLog10LR;
+  const finalCumLR = isExcluded ? 0.0 : cumLR;
+  const cpi = Math.pow(10, Math.min(300, Math.max(-10, finalCumLog10LR)));
+  const wPercent = finalCumLR > 0 ? (cpi * 0.5) / (cpi * 0.5 + 0.5) * 100 : 0.0;
+  const rmp = finalCumLR > 0 ? Math.pow(10, -Math.abs(finalCumLog10LR)) : 1.0;
 
   return {
     rows,
-    totalLog10LR: cumLog10LR,
-    totalLR: cumLR,
+    totalLog10LR: finalCumLog10LR,
+    totalLR: finalCumLR,
     matchingLociCount,
     mutationalMismatchCount,
     rmp,
@@ -532,15 +574,19 @@ export default function PanelSTRKinship() {
   const [population, setPopulation] = useState<string>("Caucasian");
   const [theta, setTheta] = useState<number>(0.01);
   const [kinshipRelation, setKinshipRelation] = useState<string>("parent_child");
+  const [analysisMode, setAnalysisMode] = useState<"single_source_lr" | "pedigree_kinship">("pedigree_kinship");
   const [copied, setCopied] = useState<boolean>(false);
   const [hashCopied, setHashCopied] = useState<boolean>(false);
   const [searchFreq, setSearchFreq] = useState<string>("");
 
   // Backend Live Verification State
   const [backendResult, setBackendResult] = useState<KinshipBackendResponse | null>(null);
+  const [backendKinshipResult, setBackendKinshipResult] = useState<KinshipBackendResponse | null>(null);
+  const [backendLRResult, setBackendLRResult] = useState<LRBackendResponse | null>(null);
   const [backendLoading, setBackendLoading] = useState<boolean>(false);
   const [backendLatencyMs, setBackendLatencyMs] = useState<number | null>(null);
   const [backendError, setBackendError] = useState<string | null>(null);
+  const [lastVerifiedEndpoint, setLastVerifiedEndpoint] = useState<string | null>(null);
 
   // Default editable profile initialized with NIST SRM 2391d Component A
   const [profileAlleles, setProfileAlleles] = useState<Record<string, [string, string]>>(() => {
@@ -552,10 +598,54 @@ export default function PanelSTRKinship() {
     return { ...GOLDEN_STR_BENCHMARKS[0].alleles };
   });
 
+  const [editMode, setEditMode] = useState<boolean>(false);
+
+  const handleEvidenceAlleleChange = (locus: string, idx: 0 | 1, val: string) => {
+    setProfileAlleles((prev) => {
+      const curr = prev[locus] || ["10", "10"];
+      const updated: [string, string] = idx === 0 ? [val, curr[1]] : [curr[0], val];
+      return { ...prev, [locus]: updated };
+    });
+  };
+
+  const handleRefAlleleChange = (locus: string, idx: 0 | 1, val: string) => {
+    setRefAlleles((prev) => {
+      const curr = prev[locus] || ["10", "10"];
+      const updated: [string, string] = idx === 0 ? [val, curr[1]] : [curr[0], val];
+      return { ...prev, [locus]: updated };
+    });
+  };
+
+  const handleSimulateExclusion = () => {
+    setRefAlleles((prev) => ({
+      ...prev,
+      TH01: ["7", "8"],
+    }));
+    addAuditLog({
+      event: "STR_SIMULATE_EXCLUSION: Reference TH01 mutated to [7, 8] to trigger forensic exclusion",
+      module: "01_str_kinship",
+      analyst: leadAnalyst,
+      status: "PASS",
+      standard: "ISO/IEC 17025:2017 Cl. 7.7",
+    });
+  };
+
+  const handleResetToNIST = () => {
+    setProfileAlleles({ ...GOLDEN_STR_BENCHMARKS[0].alleles });
+    setRefAlleles({ ...GOLDEN_STR_BENCHMARKS[0].alleles });
+    addAuditLog({
+      event: "STR_RESET_PROFILES: Profiles restored to NIST SRM 2391d Component A",
+      module: "01_str_kinship",
+      analyst: leadAnalyst,
+      status: "PASS",
+      standard: "NIST SRM 2391d Standard",
+    });
+  };
+
   // Calculate per-locus statistics via exported pure client evaluator
   const locusCalculations = useMemo(() => {
-    return evaluateSTRKinshipClient(profileAlleles, refAlleles, population, theta, kinshipRelation);
-  }, [profileAlleles, refAlleles, population, theta, kinshipRelation]);
+    return evaluateSTRKinshipClient(profileAlleles, refAlleles, population, theta, kinshipRelation, analysisMode);
+  }, [profileAlleles, refAlleles, population, theta, kinshipRelation, analysisMode]);
 
   // Deterministic 64-Hex SHA-256 State Audit Digest
   const strAuditHash = useMemo(() => {
@@ -569,7 +659,8 @@ export default function PanelSTRKinship() {
       locusCalculations.matchingLociCount,
       locusCalculations.mutationalMismatchCount,
       locusCalculations.totalLog10LR,
-      locusCalculations.rmp
+      locusCalculations.rmp,
+      analysisMode
     );
   }, [
     caseId,
@@ -582,7 +673,79 @@ export default function PanelSTRKinship() {
     locusCalculations.mutationalMismatchCount,
     locusCalculations.totalLog10LR,
     locusCalculations.rmp,
+    analysisMode,
   ]);
+
+  // Execute Live Server Single-Source LR Evaluation (POST /api/v1/forensic/lr)
+  const executeServerLR = useCallback(async () => {
+    setBackendLoading(true);
+    setBackendError(null);
+    const start = performance.now();
+
+    try {
+      const p1Loci = MASTER_24_STR_LOCI.filter((d) => d.name !== "AMEL").map((d) => {
+        const al = profileAlleles[d.name] || ["10", "11"];
+        return {
+          locus: d.name,
+          allele1: parseFloat(al[0]) || 10.0,
+          allele2: parseFloat(al[1]) || 10.0,
+        };
+      });
+
+      const p2Loci = MASTER_24_STR_LOCI.filter((d) => d.name !== "AMEL").map((d) => {
+        const al = refAlleles[d.name] || ["10", "11"];
+        return {
+          locus: d.name,
+          allele1: parseFloat(al[0]) || 10.0,
+          allele2: parseFloat(al[1]) || 10.0,
+        };
+      });
+
+      const payload = {
+        evidence_profile: {
+          profile_id: evidenceId,
+          loci: p1Loci,
+          population_group: population,
+        },
+        suspect_profile: {
+          profile_id: referenceId,
+          loci: p2Loci,
+          population_group: population,
+        },
+        theta,
+        population,
+      };
+
+      const resp = await fetch("/api/v1/forensic/lr", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const latency = Math.round(performance.now() - start);
+      setBackendLatencyMs(latency);
+
+      if (!resp.ok) {
+        throw new Error(`Server returned status ${resp.status}`);
+      }
+
+      const data: LRBackendResponse = await resp.json();
+      setBackendLRResult(data);
+      setLastVerifiedEndpoint("/api/v1/forensic/lr");
+
+      addAuditLog({
+        event: `STR_LR_BACKEND_VERIFIED: ${data.match_status} (log10_lr=${data.log10_lr.toFixed(3)}, lr=${data.lr_value.toExponential(3)}, latency=${latency}ms, hash=${strAuditHash.slice(0, 16)}...)`,
+        module: "01_str_kinship",
+        analyst: leadAnalyst,
+        status: "PASS",
+        standard: "ISO/IEC 17025:2017 Cl. 7.7",
+      });
+    } catch (err: any) {
+      setBackendError(err?.message || "Server connection failed");
+    } finally {
+      setBackendLoading(false);
+    }
+  }, [profileAlleles, refAlleles, evidenceId, referenceId, population, theta, leadAnalyst, strAuditHash, addAuditLog]);
 
   // Execute Live Server Kinship Evaluation (POST /api/v1/forensic/kinship)
   const executeServerKinship = useCallback(async () => {
@@ -640,6 +803,8 @@ export default function PanelSTRKinship() {
 
       const data: KinshipBackendResponse = await resp.json();
       setBackendResult(data);
+      setBackendKinshipResult(data);
+      setLastVerifiedEndpoint("/api/v1/forensic/kinship");
 
       addAuditLog({
         event: `STR_KINSHIP_BACKEND_VERIFIED: ${data.relationship} (log10_ki=${data.log10_ki.toFixed(3)}, latency=${latency}ms, hash=${strAuditHash.slice(0, 16)}...)`,
@@ -654,7 +819,28 @@ export default function PanelSTRKinship() {
     } finally {
       setBackendLoading(false);
     }
-  }, [profileAlleles, refAlleles, evidenceId, referenceId, population, kinshipRelation, theta, caseId, leadAnalyst, strAuditHash, addAuditLog]);
+  }, [profileAlleles, refAlleles, evidenceId, referenceId, population, kinshipRelation, theta, leadAnalyst, strAuditHash, addAuditLog]);
+
+  // Unified Server Verification Trigger
+  const handleRunServerVerification = useCallback(() => {
+    if (analysisMode === "single_source_lr") {
+      executeServerLR();
+    } else {
+      executeServerKinship();
+    }
+  }, [analysisMode, executeServerLR, executeServerKinship]);
+
+  const handleModeChange = (mode: "single_source_lr" | "pedigree_kinship") => {
+    setAnalysisMode(mode);
+    setBackendError(null);
+    addAuditLog({
+      event: `STR_ANALYSIS_MODE_CHANGED: ${mode} (case=${caseId})`,
+      module: "01_str_kinship",
+      analyst: leadAnalyst,
+      status: "PASS",
+      standard: "ISO/IEC 17025:2017 Cl. 7.7",
+    });
+  };
 
   // ENFSI 2017 Verbal Scale Statement
   const enfsiStatement = useMemo(() => {
@@ -708,6 +894,13 @@ export default function PanelSTRKinship() {
     setPopulation(bm.pop);
     setTheta(bm.theta);
 
+    if (bm.id === "PATERNITY_HIGH_CPI") {
+      setAnalysisMode("pedigree_kinship");
+      setKinshipRelation("parent_child");
+    } else {
+      setAnalysisMode("single_source_lr");
+    }
+
     addAuditLog({
       event: `STR_LOAD_GOLDEN_BENCHMARK: ${bm.id} (${bm.name}, pop=${bm.pop}, theta=${bm.theta})`,
       module: "01_str_kinship",
@@ -743,7 +936,8 @@ METROLOGICAL PARAMETERS:
 - Panel Multiplex: 24 Loci (CODIS 20 + SE33 + Penta D/E + AMEL)
 - Population Database: NIST 1036 (${population})
 - Coancestry Theta (Fst): ${theta.toFixed(3)}
-- Tested Kinship Hypothesis: ${kinshipRelation.toUpperCase()}
+- Analysis Mode: ${analysisMode === "single_source_lr" ? "SINGLE-SOURCE DIRECT LR (POST /forensic/lr)" : "PEDIGREE KINSHIP ANALYSIS (POST /forensic/kinship)"}
+- Tested Hypothesis: ${analysisMode === "single_source_lr" ? "Hp: DIRECT INCLUSION vs Hd: UNRELATED RANDOM" : kinshipRelation.toUpperCase()}
 - Matching Loci: ${locusCalculations.matchingLociCount} / 24 Loci
 - Mutational Discrepancies: ${locusCalculations.mutationalMismatchCount} Loci (SMM Rescued, r=0.10)
 --------------------------------------------------------------------------------
@@ -890,8 +1084,14 @@ Prior odds are the sole purview of the court."
           </div>
 
           <div className="flex items-center gap-2">
+            <span className="hidden sm:inline-block px-2 py-0.5 rounded bg-black/50 border border-tactical-border/50 text-[9px] text-zinc-400">
+              {isTr
+                ? analysisMode === "single_source_lr" ? "Mod: Tek Kaynaklı LR (/lr)" : "Mod: Akrabalık (/kinship)"
+                : analysisMode === "single_source_lr" ? "Mode: Single-Source (/lr)" : "Mode: Kinship (/kinship)"}
+            </span>
+
             <button
-              onClick={executeServerKinship}
+              onClick={handleRunServerVerification}
               disabled={backendLoading}
               className="flex items-center gap-1 px-2.5 py-1 rounded bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 font-bold transition-all cursor-pointer disabled:opacity-50"
             >
@@ -905,7 +1105,7 @@ Prior odds are the sole purview of the court."
 
             {backendLatencyMs !== null && !backendError && (
               <span className="px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono">
-                FastAPI: {backendLatencyMs}ms
+                {lastVerifiedEndpoint === "/api/v1/forensic/lr" ? "FastAPI /lr" : "FastAPI /kinship"}: {backendLatencyMs}ms
               </span>
             )}
             {backendError && (
@@ -932,18 +1132,51 @@ Prior odds are the sole purview of the court."
                   : "CODIS 20 Expanded Core, SE33, Penta D, Penta E, and Amelogenin Sex Marker"}
               </p>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] text-zinc-400">{isTr ? "Popülasyon:" : "Population:"}</span>
-              <select
-                value={population}
-                onChange={(e) => setPopulation(e.target.value)}
-                className="bg-black/60 border border-tactical-border/60 rounded-lg px-2.5 py-1 text-xs text-cyan-300 focus:outline-none"
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setEditMode(!editMode)}
+                className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs font-medium border transition-colors cursor-pointer ${
+                  editMode
+                    ? "bg-purple-500/20 text-purple-300 border-purple-500/50"
+                    : "bg-black/60 text-zinc-300 border-tactical-border/60 hover:text-white"
+                }`}
               >
-                <option value="Caucasian">Caucasian (NIST 1036)</option>
-                <option value="AfricanAmerican">African American (NIST 1036)</option>
-                <option value="Hispanic">Hispanic (NIST 1036)</option>
-                <option value="Asian">Asian (NIST 1036)</option>
-              </select>
+                <span>{editMode ? (isTr ? "Düzenlemeyi Bitir" : "Done Editing") : (isTr ? "Alelleri Düzenle" : "Edit Alleles")}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleSimulateExclusion}
+                className="flex items-center gap-1 px-2.5 py-1 rounded text-xs font-medium border border-rose-500/40 bg-rose-500/10 text-rose-300 hover:bg-rose-500/20 transition-colors cursor-pointer"
+                title={isTr ? "TH01 lokusunu [7, 8] yaparak dışlama simüle eder" : "Mutates TH01 to [7, 8] to simulate an exclusion"}
+              >
+                <span>{isTr ? "Dışlama Simüle Et" : "Simulate Exclusion"}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleResetToNIST}
+                className="flex items-center gap-1 px-2 py-1 rounded text-xs text-zinc-400 hover:text-zinc-200 border border-tactical-border/40 bg-black/40 hover:bg-black/60 transition-colors cursor-pointer"
+                title={isTr ? "NIST SRM 2391d profiline geri dön" : "Reset to NIST SRM 2391d"}
+              >
+                <RefreshCw className="w-3 h-3" />
+                <span>{isTr ? "Sıfırla" : "Reset"}</span>
+              </button>
+
+              <div className="flex items-center gap-1 pl-2 border-l border-tactical-border/40">
+                <span className="text-[10px] text-zinc-400">{isTr ? "Popülasyon:" : "Population:"}</span>
+                <select
+                  value={population}
+                  onChange={(e) => setPopulation(e.target.value)}
+                  className="bg-black/60 border border-tactical-border/60 rounded-lg px-2.5 py-1 text-xs text-cyan-300 focus:outline-none"
+                >
+                  <option value="Caucasian">Caucasian (NIST 1036)</option>
+                  <option value="AfricanAmerican">African American (NIST 1036)</option>
+                  <option value="Hispanic">Hispanic (NIST 1036)</option>
+                  <option value="Asian">Asian (NIST 1036)</option>
+                </select>
+              </div>
             </div>
           </div>
 
@@ -971,10 +1204,50 @@ Prior odds are the sole purview of the court."
                     </td>
                     <td className="p-2.5 text-zinc-400 text-[10px]">{r.def.chr}</td>
                     <td className="p-2.5 font-bold text-cyan-300 tabular-nums">
-                      {r.evidStr}
+                      {editMode && r.locus !== "AMEL" ? (
+                        <div className="flex items-center gap-1">
+                          <input
+                            type="text"
+                            value={profileAlleles[r.locus]?.[0] ?? ""}
+                            onChange={(e) => handleEvidenceAlleleChange(r.locus, 0, e.target.value)}
+                            aria-label={`Evidence ${r.locus} allele 1`}
+                            className="w-11 px-1 py-0.5 bg-black/80 border border-cyan-500/50 rounded text-center text-xs text-cyan-300 focus:outline-none focus:border-cyan-400"
+                          />
+                          <span className="text-zinc-500">/</span>
+                          <input
+                            type="text"
+                            value={profileAlleles[r.locus]?.[1] ?? ""}
+                            onChange={(e) => handleEvidenceAlleleChange(r.locus, 1, e.target.value)}
+                            aria-label={`Evidence ${r.locus} allele 2`}
+                            className="w-11 px-1 py-0.5 bg-black/80 border border-cyan-500/50 rounded text-center text-xs text-cyan-300 focus:outline-none focus:border-cyan-400"
+                          />
+                        </div>
+                      ) : (
+                        r.evidStr
+                      )}
                     </td>
                     <td className="p-2.5 font-bold text-zinc-300 tabular-nums">
-                      {r.refStr}
+                      {editMode && r.locus !== "AMEL" ? (
+                        <div className="flex items-center gap-1">
+                          <input
+                            type="text"
+                            value={refAlleles[r.locus]?.[0] ?? ""}
+                            onChange={(e) => handleRefAlleleChange(r.locus, 0, e.target.value)}
+                            aria-label={`Reference ${r.locus} allele 1`}
+                            className="w-11 px-1 py-0.5 bg-black/80 border border-zinc-500/50 rounded text-center text-xs text-zinc-300 focus:outline-none focus:border-zinc-400"
+                          />
+                          <span className="text-zinc-500">/</span>
+                          <input
+                            type="text"
+                            value={refAlleles[r.locus]?.[1] ?? ""}
+                            onChange={(e) => handleRefAlleleChange(r.locus, 1, e.target.value)}
+                            aria-label={`Reference ${r.locus} allele 2`}
+                            className="w-11 px-1 py-0.5 bg-black/80 border border-zinc-500/50 rounded text-center text-xs text-zinc-300 focus:outline-none focus:border-zinc-400"
+                          />
+                        </div>
+                      ) : (
+                        r.refStr
+                      )}
                     </td>
                     <td className="p-2.5 text-zinc-400 tabular-nums text-[10px]">{r.sizingBp} bp</td>
                     <td className="p-2.5 text-zinc-400 tabular-nums text-[10px]">
@@ -1015,40 +1288,204 @@ Prior odds are the sole purview of the court."
           <div className="border-b border-tactical-border/40 pb-3">
             <h3 className="text-xs font-bold uppercase tracking-wider text-white flex items-center gap-1.5">
               <Binary className="w-3.5 h-3.5 text-purple-400" />
-              {isTr ? "Akrabalık & Babalık Olasılık Oranı (LR) Parametreleri" : "Kinship & Paternity Likelihood Ratio (LR) Parameters"}
+              {isTr
+                ? "Akrabalık & Babalık Olasılık Oranı (LR) Parametreleri : Çift Modlu Mimari"
+                : "Kinship & Paternity Likelihood Ratio (LR) Parameters : Dual-Mode Architecture"}
             </h3>
             <p className="text-[10px] text-zinc-400 mt-0.5">
               {isTr
-                ? "Balding-Nichols Akrabalık Katsayısı (theta), Ito-Donnelly IBD Matrisi ve Kademeli Mutasyon Modeli (SMM r=0.10)"
-                : "Balding-Nichols Subpopulation Inbreeding (theta), Ito-Donnelly IBD Coefficients & Stepwise Mutation Dynamics"}
+                ? "Tek Kaynaklı LR (POST /forensic/lr) ve Soyağacı Akrabalık Analizi (POST /forensic/kinship)"
+                : "Single-Source LR (POST /forensic/lr) and Pedigree Kinship Index (POST /forensic/kinship)"}
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Kinship Relationship Selector */}
-            <div className="p-4 rounded-xl bg-black/40 border border-tactical-border/60 space-y-3">
-              <span className="text-[11px] font-bold text-white block uppercase">
-                {isTr ? "Test Edilen Akrabalık Hipotezi (Hp)" : "Kinship Hypothesis Tested (Hp)"}
-              </span>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {PEDIGREE_RELATIONSHIPS.map((k) => (
-                  <button
-                    key={k.id}
-                    onClick={() => handleHypothesisChange(k.id)}
-                    className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
-                      kinshipRelation === k.id
-                        ? "border-purple-500/80 bg-purple-500/20 text-purple-200"
-                        : "border-tactical-border/60 bg-black/40 text-zinc-400 hover:text-zinc-200"
-                    }`}
-                  >
-                    <div className="font-bold text-xs">{isTr ? k.labelTr : k.labelEn}</div>
-                    <div className="text-[9px] text-zinc-500 mt-1 font-mono">{k.ibd}</div>
-                  </button>
-                ))}
+          {/* Dual-Mode Selector Bar */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <button
+              type="button"
+              onClick={() => handleModeChange("single_source_lr")}
+              className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer ${
+                analysisMode === "single_source_lr"
+                  ? "border-cyan-500/80 bg-cyan-500/20 text-cyan-200 shadow-md ring-1 ring-cyan-500/40"
+                  : "border-tactical-border/60 bg-black/40 text-zinc-400 hover:text-zinc-200"
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Fingerprint className="w-4 h-4 text-cyan-400" />
+                  <span className="font-bold text-xs text-white">
+                    {isTr ? "Tek Kaynaklı Şüpheli Eşleşmesi (LR)" : "Single-Source Suspect Match (LR)"}
+                  </span>
+                </div>
+                <span className="text-[9px] px-2 py-0.5 rounded bg-cyan-500/30 text-cyan-200 font-mono font-bold">
+                  POST /forensic/lr
+                </span>
               </div>
-            </div>
+              <p className="text-[10px] text-zinc-300 mt-1.5 leading-relaxed">
+                {isTr
+                  ? "Delil profili ile şüpheli profili doğrudan karşılaştırması. Balding-Nichols LR = 1 / P(G|theta), INCLUSION/EXCLUSION tespiti ve %95 HPD güven aralığı."
+                  : "Direct evidence-suspect profile comparison. Balding-Nichols LR = 1 / P(G|theta), INCLUSION/EXCLUSION calling and 95% HPD interval."}
+              </p>
+            </button>
 
-            {/* Theta & Population Settings */}
+            <button
+              type="button"
+              onClick={() => handleModeChange("pedigree_kinship")}
+              className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer ${
+                analysisMode === "pedigree_kinship"
+                  ? "border-purple-500/80 bg-purple-500/20 text-purple-200 shadow-md ring-1 ring-purple-500/40"
+                  : "border-tactical-border/60 bg-black/40 text-zinc-400 hover:text-zinc-200"
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Binary className="w-4 h-4 text-purple-400" />
+                  <span className="font-bold text-xs text-white">
+                    {isTr ? "Soyağacı / Akrabalık İndeksi (KI)" : "Pedigree Kinship Index (KI)"}
+                  </span>
+                </div>
+                <span className="text-[9px] px-2 py-0.5 rounded bg-purple-500/30 text-purple-200 font-mono font-bold">
+                  POST /forensic/kinship
+                </span>
+              </div>
+              <p className="text-[10px] text-zinc-300 mt-1.5 leading-relaxed">
+                {isTr
+                  ? "İki birey arasındaki biyolojik soyağacı ilişkilerinin (babalık, kardeşlik, yeğenlik vb.) Ito-Donnelly IBD katsayıları ve SMM mutasyon kurtarmasıyla analizi."
+                  : "Biological pedigree relationship evaluation (paternity, siblingship, avuncular) via Ito-Donnelly IBD coefficients and SMM mutation rescue."}
+              </p>
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Mode-Specific Left Column */}
+            {analysisMode === "single_source_lr" ? (
+              <div className="p-4 rounded-xl bg-black/40 border border-tactical-border/60 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-bold text-white uppercase flex items-center gap-1.5">
+                    <Fingerprint className="w-3.5 h-3.5 text-cyan-400" />
+                    {isTr ? "Tek Kaynaklı Adli Hipotezler" : "Single-Source Forensic Hypotheses"}
+                  </span>
+                  <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">
+                    Balding-Nichols (1994)
+                  </span>
+                </div>
+
+                <div className="p-3 rounded-xl bg-cyan-950/20 border border-cyan-500/30 text-[10px] space-y-2">
+                  <div className="text-zinc-300">
+                    <span className="font-bold text-cyan-300">Hp (Savcılık): </span>
+                    {isTr
+                      ? "Olay yeri delilindeki DNA şüpheli bireye aittir: P(E|Hp) = 1.0"
+                      : "The DNA from the crime scene originated from the suspect: P(E|Hp) = 1.0"}
+                  </div>
+                  <div className="text-zinc-300">
+                    <span className="font-bold text-cyan-300">Hd (Savunma): </span>
+                    {isTr
+                      ? "Delildeki DNA, şüpheliyle akraba olmayan rastgele bir bireye aittir: P(E|Hd) = P(G|theta)"
+                      : "The DNA originated from an unknown individual unrelated to the suspect: P(E|Hd) = P(G|theta)"}
+                  </div>
+                  <div className="pt-2 border-t border-cyan-500/20 flex justify-between items-center font-mono">
+                    <span className="text-zinc-400 font-sans">{isTr ? "Matematiksel Formül:" : "Biostatistical Formula:"}</span>
+                    <span className="text-cyan-300 font-bold">LR = 1 / P(G|theta)</span>
+                  </div>
+                </div>
+
+                {/* Match Evaluation Status */}
+                <div className="flex items-center justify-between p-3 rounded-xl bg-black/60 border border-tactical-border/50 text-[10px]">
+                  <span className="text-zinc-400 font-bold">{isTr ? "İstemci Eşleşme Tespiti:" : "Client Match Calling:"}</span>
+                  {locusCalculations.matchingLociCount === 24 ? (
+                    <span className="font-bold text-emerald-400 px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30">
+                      {isTr ? "INCLUSION (24/24 Lokus Tam Eşleşti)" : "INCLUSION (24/24 Complete Match)"}
+                    </span>
+                  ) : (
+                    <span className="font-bold text-rose-400 px-2 py-0.5 rounded bg-rose-500/10 border border-rose-500/30">
+                      {isTr ? `KISMİ UYUMSUZLUK (${24 - locusCalculations.matchingLociCount} Lokus Dışlama)` : `EXCLUSION (${24 - locusCalculations.matchingLociCount} Mismatched Loci)`}
+                    </span>
+                  )}
+                </div>
+
+                {/* Backend LR Response Card */}
+                {backendLRResult && (
+                  <div className="p-3.5 rounded-xl bg-cyan-950/30 border border-cyan-500/50 text-[10px] space-y-2">
+                    <div className="flex items-center justify-between border-b border-cyan-500/30 pb-1.5">
+                      <span className="font-bold text-cyan-300 uppercase flex items-center gap-1.5">
+                        <Server className="w-3.5 h-3.5 text-cyan-400" />
+                        {isTr ? "FastAPI Sunucu LR Çapraz Doğrulaması:" : "FastAPI Server LR Cross-Validation:"}
+                      </span>
+                      <span className={`px-2 py-0.5 rounded font-bold ${
+                        backendLRResult.match_status === "INCLUSION"
+                          ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
+                          : "bg-rose-500/20 text-rose-300 border border-rose-500/40"
+                      }`}>
+                        {backendLRResult.match_status}
+                      </span>
+                    </div>
+                    <div className="flex justify-between text-zinc-300 font-mono">
+                      <span>{isTr ? "Sunucu Log10(LR):" : "Server Log10(LR):"}</span>
+                      <span className="font-bold text-cyan-300">+{backendLRResult.log10_lr.toFixed(4)}</span>
+                    </div>
+                    <div className="flex justify-between text-zinc-300 font-mono">
+                      <span>{isTr ? "Sunucu LR Değeri:" : "Server LR Value:"}</span>
+                      <span className="font-bold text-emerald-400">{backendLRResult.lr_value.toExponential(4)}</span>
+                    </div>
+                    <div className="flex justify-between text-zinc-300 font-mono">
+                      <span>{isTr ? "%95 HPD Güven Aralığı:" : "95% HPD Confidence Interval:"}</span>
+                      <span className="text-zinc-200">[{backendLRResult.confidence_interval.low.toExponential(2)}, {backendLRResult.confidence_interval.high.toExponential(2)}]</span>
+                    </div>
+                    <div className="flex justify-between text-zinc-300 text-[9px] pt-1 border-t border-cyan-500/20">
+                      <span className="text-zinc-500">{isTr ? "Model:" : "Model:"}</span>
+                      <span className="text-zinc-400">{backendLRResult.model}</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="p-4 rounded-xl bg-black/40 border border-tactical-border/60 space-y-3">
+                <span className="text-[11px] font-bold text-white block uppercase flex items-center gap-1.5">
+                  <Binary className="w-3.5 h-3.5 text-purple-400" />
+                  {isTr ? "Test Edilen Soyağacı Hipotezi (Hp)" : "Pedigree Kinship Hypothesis (Hp)"}
+                </span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {PEDIGREE_RELATIONSHIPS.map((k) => (
+                    <button
+                      key={k.id}
+                      onClick={() => handleHypothesisChange(k.id)}
+                      className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                        kinshipRelation === k.id
+                          ? "border-purple-500/80 bg-purple-500/20 text-purple-200"
+                          : "border-tactical-border/60 bg-black/40 text-zinc-400 hover:text-zinc-200"
+                      }`}
+                    >
+                      <div className="font-bold text-xs">{isTr ? k.labelTr : k.labelEn}</div>
+                      <div className="text-[9px] text-zinc-500 mt-1 font-mono">{k.ibd}</div>
+                    </button>
+                  ))}
+                </div>
+
+                {/* Backend Kinship Feedback Card */}
+                {backendKinshipResult && (
+                  <div className="mt-3 p-3.5 rounded-xl bg-purple-950/30 border border-purple-500/40 text-[10px] space-y-1.5">
+                    <div className="font-bold text-purple-300 uppercase flex items-center gap-1.5 border-b border-purple-500/30 pb-1">
+                      <Server className="w-3.5 h-3.5 text-purple-400" />
+                      {isTr ? "FastAPI Sunucu Akrabalık Doğrulaması:" : "FastAPI Server Kinship Cross-Validation:"}
+                    </div>
+                    <div className="flex justify-between text-zinc-300 font-mono">
+                      <span>{isTr ? "İlişki Türü:" : "Relationship:"}</span>
+                      <span className="font-bold text-purple-200">{backendKinshipResult.relationship}</span>
+                    </div>
+                    <div className="flex justify-between text-zinc-300 font-mono">
+                      <span>{isTr ? "Sunucu Posterior Olasılığı W(%):" : "Posterior Probability W(%):"}</span>
+                      <span className="font-bold text-emerald-400">{backendKinshipResult.posterior_probability.toFixed(4)}%</span>
+                    </div>
+                    <div className="flex justify-between text-zinc-300 font-mono">
+                      <span>{isTr ? "%95 HPD Güven Aralığı:" : "95% HPD Confidence Interval:"}</span>
+                      <span className="text-zinc-200">[{backendKinshipResult.confidence_interval.low.toExponential(2)}, {backendKinshipResult.confidence_interval.high.toExponential(2)}]</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Right Column: Theta & Population Settings */}
             <div className="p-4 rounded-xl bg-black/40 border border-tactical-border/60 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-bold text-white uppercase">
@@ -1076,23 +1513,22 @@ Prior odds are the sole purview of the court."
                   : "Under NRC II Recommendation 4.2, theta = 0.01 is applied for general casework, and theta = 0.03 for isolated sub-populations."}
               </p>
 
-              {/* Backend Feedback Card if Available */}
-              {backendResult && (
-                <div className="mt-3 p-3 rounded-xl bg-cyan-950/30 border border-cyan-500/40 text-[10px] space-y-1">
-                  <div className="font-bold text-cyan-300 uppercase flex items-center gap-1">
-                    <Server className="w-3 h-3 text-cyan-400" />
-                    {isTr ? "FastAPI Sunucu Çapraz Doğrulaması:" : "FastAPI Server Cross-Validation:"}
-                  </div>
-                  <div className="flex justify-between text-zinc-300">
-                    <span>{isTr ? "Sunucu Posterior Olasılığı W(%):" : "Posterior Probability W(%):"}</span>
-                    <span className="font-bold text-emerald-400">{backendResult.posterior_probability.toFixed(4)}%</span>
-                  </div>
-                  <div className="flex justify-between text-zinc-300">
-                    <span>{isTr ? "%95 HPD Güven Aralığı:" : "95% HPD Confidence Interval:"}</span>
-                    <span className="font-mono text-zinc-200">[{backendResult.confidence_interval.low.toExponential(2)}, {backendResult.confidence_interval.high.toExponential(2)}]</span>
-                  </div>
+              <div className="pt-3 border-t border-tactical-border/40 text-[10px] space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-zinc-400">{isTr ? "Aktif Popülasyon:" : "Active Population:"}</span>
+                  <span className="font-bold text-cyan-300 font-mono">{population}</span>
                 </div>
-              )}
+                <div className="flex items-center justify-between">
+                  <span className="text-zinc-400">{isTr ? "Minimum Alel Frekansı (p_min):" : "Allele Frequency Floor (p_min):"}</span>
+                  <span className="font-bold text-zinc-300 font-mono">0.00241 (5 / 2N)</span>
+                </div>
+                {analysisMode === "pedigree_kinship" && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-zinc-400">{isTr ? "SMM Mutasyon Dinamiği:" : "SMM Mutation Dynamics:"}</span>
+                    <span className="font-bold text-amber-400 font-mono">r = 0.10, mu = 10^-3</span>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>

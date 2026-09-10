@@ -1,5 +1,5 @@
 """
-FORENZA Module 01 — Likelihood Ratio (LR) Engine.
+FORENZA Module 01 : Likelihood Ratio (LR) Engine.
 
 Computes single-source Bayesian Likelihood Ratios under Balding-Nichols
 population substructure assumptions with complete 95% HPD uncertainty bounds
@@ -31,7 +31,7 @@ from .models import AnalysisResult, STRGenotype, STRProfile
 
 
 # ---------------------------------------------------------------------------
-# ENFSI (2017) Verbal Scale — Research-Locked (Pillar 1 & Pillar 6)
+# ENFSI (2017) Verbal Scale : Research-Locked (Pillar 1 & Pillar 6)
 # ---------------------------------------------------------------------------
 
 _ENFSI_VERBAL_TIERS: List[Tuple[float, float, str, str]] = [
@@ -62,7 +62,7 @@ def enfsi_verbal_scale(lr: float, language: str = "en") -> Tuple[int, str]:
         language: "en" (English) or "tr" (Turkish).
 
     Returns:
-        (tier_index, verbal_phrase) — tier 0 = Neutral, tier 6 = Extremely Strong.
+        (tier_index, verbal_phrase) : tier 0 = Neutral, tier 6 = Extremely Strong.
     """
     if lr <= 0:
         raise ValueError("LR must be > 0")
@@ -170,15 +170,15 @@ class LREngine:
                         "exclusion_locus": locus_name,
                         "log10_lr": float("-inf"),
                         "rmp": 1.0,
-                        "verbal_scale_en": "EXCLUSION — DNA profile does not match",
-                        "verbal_scale_tr": "DIŞLAMA — DNA profili eşleşmiyor",
+                        "verbal_scale_en": "EXCLUSION : DNA profile does not match",
+                        "verbal_scale_tr": "DIŞLAMA : DNA profili eşleşmiyor",
                         "evaluated_loci_count": len(locus_scores),
                         "theta": theta,
                         "population": pop,
                     },
                 )
 
-            # P(E | H_d) = P(G_suspect | θ)  — Balding-Nichols NRC II Rec 4.10b
+            # P(E | H_d) = P(G_suspect | θ) : Balding-Nichols NRC II Rec 4.10b
             p_h2 = self.freq_db.calculate_genotype_probability(
                 locus_name=locus_name,
                 allele1=s_genotype.allele1,
@@ -199,7 +199,7 @@ class LREngine:
         total_lr = 10.0 ** total_log_lr
         rmp = 1.0 / total_lr if total_lr > 0 else 1.0
 
-        # 95% Bayesian HPD CI — log-space uncertainty propagation
+        # 95% Bayesian HPD CI : log-space uncertainty propagation
         n_loci = len(common_loci)
         log_std_err = 0.15 * math.sqrt(n_loci)
         ci_low = 10.0 ** (total_log_lr - 1.96 * log_std_err)

@@ -173,44 +173,40 @@ str-analysis/
 │   │
 │   └── node/                              # Biocomputational Algorithmic Services
 │       └── services/forensic/             # 38 Specialized Biocomputational Modules (7 Pillars)
-│           ├── kinship/                   # 1. Autosomal STR & Kinship LR Engine
-│           ├── probabilistic/             # 2. MCMC Probabilistic Mixture Deconvoluter (Core Engine)
-│           ├── deconvolution/             # 2b. MCMC Mixture Deconvoluter Service Adapter
-│           ├── phenotype/                 # 3. HIrisPlex-S Phenotype Prediction Engine
-│           ├── popgen/                    # 4. Statistical Population Genetics & Fst
-│           ├── enfsi/                     # 5. ENFSI/SWGDAM Legal Report Generator
-│           ├── batch/                     # 6. High-Throughput Concurrent Batch Engine
-│           ├── lab/                       # 7. Empirical Synthetic Profile Simulator
-│           ├── p2p/                       # 8. Federated Multi-Node P2P Network
-│           ├── zkp/                       # 9. Zero-Knowledge Proof Privacy Matcher
-│           ├── system/                    # 10. System Telemetry & Integrity Probes
-│           ├── lineage/                   # 11. Y-STR, X-STR & mtDNA Lineage Engine
-│           ├── dvi/                       # 12. Interpol Disaster Victim Identification (DVI) Engine
+│           ├── kinship/                   # Pillar 1, Mod 01: Autosomal STR & Kinship LR Engine
+│           ├── probabilistic/             # Pillar 1, Mod 02: MCMC Probabilistic Mixture Deconvoluter
+│           ├── population/                # Pillar 1, Mod 03: Statistical Population Genetics & Fst
+│           ├── touch_dna/                 # Pillar 1, Mod 04: Touch DNA Low-Template Stochastic Modeling
+│           ├── tippett/                   # Pillar 1, Mod 05: Tippett Plot ROC Calibration & Validation
+│           ├── terminal/                  # Pillar 1, Mod 06/07: Ingestion, MPS STR & Fragsifier Registry
+│           ├── ystr/                      # Pillar 2, Mod 08: Y-STR 27-Locus Lineage Forensics (Y-FILER Plus)
+│           ├── xstr/                      # Pillar 2, Mod 09: X-STR 12-Locus Linkage & Kinship (Argus X-12)
+│           ├── mtdna/                     # Pillar 2, Mod 10: Mitochondrial DNA EMPOP rCRS/RSRS Alignment
+│           ├── dvi/                       # Pillar 2, Mod 11: Interpol Disaster Victim Identification (DVI)
 │           │   ├── dvi_mathematical_formulation.py # Direct AM, Trio, Deficiency, Siblings, Multi-Omic Joint LR & Hungarian Solver
 │           │   ├── dvi_reference_datasets.py      # Interpol Reference Standards, Golden VECTOR_P2_03, Casework Cohorts
 │           │   └── dvi_cross_validation.py        # Familias 3 DVI, Interpol Guide §4 & ENFSI Evaluative Reporting Shield
-│           ├── hid/                       # 13. Human Identification (HID) Engine
-│           ├── anthropology/              # 14. Skeletal Morphometrics & Stature Engine
-│           ├── entomology/                # 15. ADH Post-Mortem Interval (PMI) Engine
-│           ├── touch_dna/                 # 16. Touch DNA Low-Copy Number Engine
-│           ├── bpa/                       # 17. Bloodstain Pattern Analysis (BPA) Engine
-│           ├── epigenetics/               # 18. Horvath 5-CpG Methylation Age Clock
-│           ├── microbiology/              # 19. High-Res Diatom & Microbiome Engine
-│           ├── microscopy/                # 20. Automated Hair & Fiber Classifier
-│           ├── toxicology/                # 21. Mass Spectrometry Drug Screening Engine
-│           ├── ballistics/                # 22. Striation Matching & Gunshot Residue
-│           ├── digital/                   # 23. Digital Forensics Artifact Inspector
-│           ├── lims/                      # 24. LIMS Sample Tracking & Chain of Custody
-│           ├── qa_qc/                     # 25. Contamination & Negative Control QA/QC
-│           ├── governance/                # 26. Double-Blind Analyst Governance Engine
-│           ├── court/                     # 27. ISO 17025 Court Testimony Generator
-│           ├── evidence/                  # 27b. Physical & Biological Evidence Management, Custody Chain & SE(3) Scene Registration
-│           ├── geoint/                    # 28. Geo-Forensic Intelligence & Spatial Biogeochemistry
+│           ├── adna/                      # Pillar 2, Mod 12: Ancient DNA & Degraded Remains Kinetics
+│           ├── hid/                       # Pillar 2, Mod 12b: Human Identification (HID) Engine
+│           ├── phenotyping/               # Pillar 3, Mod 14-18: HIrisPlex-S, BGA, Cranio, Hair, MC1R
+│           ├── epigenetics/               # Pillar 4, Mod 19, 21, 22: Horvath Clocks, AHRR Lifestyle & Telomere
+│           ├── fluid/                     # Pillar 4, Mod 20: tDMR Tissue-Specific Epigenetic Deconvolution
+│           ├── bpa/                       # Pillar 5, Mod 24: Bloodstain Pattern Analysis (BPA) Engine
+│           ├── physical/                  # Pillar 5, Mod 25, 27, 28: SEM-EDX GSR, FTIR & PMR Toxicology
+│           ├── entomology/                # Pillar 5, Mod 26: Forensic Entomology Thermal Summation (PMI)
+│           ├── lims/                      # Pillar 6, Mod 29: LIMS Sample Tracking & Merkle Chain of Custody
+│           ├── zk/                        # Pillar 6, Mod 30: Circom BN254 ZK-SNARK Proving Systems
+│           ├── qc/                        # Pillar 6, Mod 31: ISO 17025 Measurement Uncertainty Engine
+│           ├── court/                     # Pillar 6, Mod 32: ENFSI Court Testimony & Reporting Shield
+│           ├── os/                        # Pillar 6, Mod 33: Forensic Evidence OS Master Orchestrator
+│           ├── evidence/                  # Pillar 6, Mod 33b: Physical & Biological Evidence Management, Custody Chain & 3D Scene Registration
+│           ├── geoint/                    # Pillar 7, Mod 34, 35, 37, 38: Isoscape, Soil, Rossmo, KDE Fusion
 │           │   ├── isoscape_provenance_engine.py # Continuous Multi-Isotope Provenance (H/O/Sr)
 │           │   ├── soil_mineralogy_engine.py     # Forensic Soil Pedology, QXRD & CoDa CLR
 │           │   ├── palynology_edna_engine.py     # Forensic Palynology & 16S/ITS eDNA Metagenomics
 │           │   ├── geographic_profiling_engine.py# Rossmo Targeted Hunting & Canter Circle
 │           │   └── geo_fusion_engine.py          # Multi-Criteria Bayesian Raster GIS Fusion
+│           ├── metagenomics/              # Pillar 7, Mod 36: Metagenomic Classifiers & eDNA Soil Provenance
 │           ├── terminal/                  # 29. Multi-Format Forensic Ingestion & Quality Engine
 │           │   ├── dna_terminal_parser.py # GeneMapper CSV, CODIS CMF XML, NGS VCF, LIMS JSON
 │           │   ├── cli_batch_parser.py    # Forensic CLI Batch Ingestion & EBNF Grammar Engine
@@ -376,7 +372,7 @@ str-analysis/
 │       ├── context/                       # React Context Providers
 │       ├── dictionaries/                  # Bilingual Translations (TR / EN)
 │       ├── lib/                           # Utility Functions & API Clients
-│       ├── test/                          # Automated Vitest Suite (550/550 Tests Passing across 42 Specs)
+│       ├── test/                          # Automated Vitest Suite (556/556 Tests Passing across 42 Specs)
 │       └── utils/                         # Client-Side Biocomputational Simulation Engines
 │           ├── strLocusRegistryEngine.ts  # 24-STR Locus Registry & CE Sizing TS Engine
 │           ├── forensicCliBatchParser.ts  # Forensic CLI Batch Lexer & Ingestion TS Engine
@@ -697,7 +693,9 @@ The FastAPI gateway exposes a clean `/api/v1` RESTful interface.
 
 | Domain | Route | Method | Description |
 | :--- | :--- | :--- | :--- |
-| **Kinship** | `/api/v1/forensic/kinship` | `POST` | Computes parent-child, sibling, and extended kinship LRs |
+| **Autosomal STR (Single-Source LR)** | `/api/v1/forensic/lr` | `POST` | Computes single-source Likelihood Ratio under Balding-Nichols $\theta$ coancestry model with 95% HPD bounds |
+| **Kinship (Pedigree Index)** | `/api/v1/forensic/kinship` | `POST` | Computes parent-child, sibling, and extended kinship LRs with SMM mutation dynamics |
+| **Validation Runner** | `/api/v1/forensic/validate` | `POST` | Executes Monte Carlo validation simulation returning sensitivity, specificity, Cllr, and Tippett sample data |
 | **Population Genetics (RMP)** | `/api/v1/forensic/population/profile-rmp` | `POST` | Computes 24-locus NIST 1036 Combined Random Match Probability (RMP) & Single-Source LR with Balding-Nichols $\theta$ coancestry |
 | **Kinship (STR-24 Duo/Pedigree)** | `/api/v1/forensic/population/kinship-duo` | `POST` | Evaluates 24-locus Parent-Child / Sibling kinship LRs with IBD decomposition & Stepwise Mutation Model (SMM) rescue |
 | **Population Genetics (NRC-II Profile LR)** | `/api/v1/forensic/population/nrc/profile-lr` | `POST` | Computes 24-locus genotype probabilities under NRC-II Recommendation 4.10b |
@@ -904,7 +902,7 @@ pytest backend/node/services/forensic/physical/ -v        # Pillar 5: Physical E
 pytest backend/node/services/forensic/security/ -v        # Pillar 6: LIMS & ZKP
 pytest backend/node/services/forensic/geoint/ -v          # Pillar 7: Geo-Forensics
 
-# Execute frontend tactical workstation test suite (550 tests across 42 test suites)
+# Execute frontend tactical workstation test suite (556 tests across 42 test suites)
 npm --prefix frontend test -- --run
 ```
 

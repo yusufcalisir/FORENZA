@@ -367,5 +367,219 @@ describe("Subsystem 01: Autosomal STR & Kinship Engine", () => {
 
       expect(screen.getByText("TH01")).toBeInTheDocument();
     });
+
+    it("toggles between Single-Source LR and Pedigree Kinship analysis modes", () => {
+      render(<PanelSTRKinship />);
+
+      // Go to Tab 2
+      fireEvent.click(screen.getByText(/Akrabalık & LR|Kinship & LR/i));
+
+      // Click Single-Source LR mode button
+      const singleSourceBtn = screen.getByText(/Tek Kaynaklı Şüpheli Eşleşmesi|Single-Source Suspect Match/i);
+      fireEvent.click(singleSourceBtn);
+
+      expect(mockAddAuditLog).toHaveBeenCalledWith(
+        expect.objectContaining({
+          event: expect.stringContaining("STR_ANALYSIS_MODE_CHANGED: single_source_lr"),
+          module: "01_str_kinship",
+        })
+      );
+
+      // Verify Single-Source elements are visible
+      expect(screen.getByText(/Tek Kaynaklı Adli Hipotezler|Single-Source Forensic Hypotheses/i)).toBeInTheDocument();
+      expect(screen.getAllByText(/POST \/forensic\/lr/i).length).toBeGreaterThan(0);
+
+      // Switch back to Pedigree Kinship
+      const pedigreeBtns = screen.getAllByText(/Soyağacı \/ Akrabalık İndeksi|Pedigree Kinship Index/i);
+      fireEvent.click(pedigreeBtns[pedigreeBtns.length - 1]);
+
+      expect(mockAddAuditLog).toHaveBeenCalledWith(
+        expect.objectContaining({
+          event: expect.stringContaining("STR_ANALYSIS_MODE_CHANGED: pedigree_kinship"),
+          module: "01_str_kinship",
+        })
+      );
+    });
+
+    it("executes POST /api/v1/forensic/lr server verification in Single-Source mode", async () => {
+      const mockLRResponse = {
+        match_status: "INCLUSION",
+        lr_value: 2.82e26,
+        log10_lr: 26.4502,
+        confidence_interval: { low: 1.5e25, high: 4.2e26 },
+        evaluated_loci: 23,
+        locus_scores: { TH01: 5.2, SE33: 14.8 },
+        assumptions: ["Single source", "Balding-Nichols theta=0.01"],
+        limitations: ["Casework reference"],
+        model: "Balding-Nichols Single-Source LR",
+        data_source: "NIST 1036 Caucasian",
+      };
+
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: vi.fn().mockResolvedValue(mockLRResponse),
+      });
+
+      render(<PanelSTRKinship />);
+
+      // Go to Tab 2
+      fireEvent.click(screen.getByText(/Akrabalık & LR|Kinship & LR/i));
+
+      // Switch to Single-Source LR mode
+      fireEvent.click(screen.getByText(/Tek Kaynaklı Şüpheli Eşleşmesi|Single-Source Suspect Match/i));
+
+      // Click server verification
+      const verifyBtn = screen.getByText(/Sunucu Doğrulaması|Run Server Verification/i);
+      fireEvent.click(verifyBtn);
+
+      await waitFor(() => {
+        expect(global.fetch).toHaveBeenCalledWith(
+          "/api/v1/forensic/lr",
+          expect.objectContaining({
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+          })
+        );
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText(/FastAPI \/lr:/i)).toBeInTheDocument();
+        expect(screen.getByText("+26.4502")).toBeInTheDocument();
+      });
+
+      expect(mockAddAuditLog).toHaveBeenCalledWith(
+        expect.objectContaining({
+          event: expect.stringContaining("STR_LR_BACKEND_VERIFIED: INCLUSION"),
+          module: "01_str_kinship",
+        })
+      );
+    });
+
+    it("executes POST /api/v1/forensic/kinship server verification in Pedigree mode", async () => {
+      const mockKinshipResponse = {
+        relationship: "parent_child",
+        ki_value: 6.32e12,
+        log10_ki: 12.8007,
+        confidence_interval: { low: 1.2e12, high: 9.8e12 },
+        posterior_probability: 99.9999,
+        evaluated_loci: 23,
+        locus_scores: { TH01: 2.1, SE33: 4.5 },
+        assumptions: ["Autosomal transmission", "Ito-Donnelly IBD"],
+        limitations: ["No mutation detected"],
+        model: "Ito-Donnelly Kinship Index with SMM",
+        data_source: "NIST 1036 Caucasian",
+      };
+
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: vi.fn().mockResolvedValue(mockKinshipResponse),
+      });
+
+      render(<PanelSTRKinship />);
+
+      // Go to Tab 2 (defaults to pedigree_kinship)
+      fireEvent.click(screen.getByText(/Akrabalık & LR|Kinship & LR/i));
+
+      // Click server verification
+      const verifyBtn = screen.getByText(/Sunucu Doğrulaması|Run Server Verification/i);
+      fireEvent.click(verifyBtn);
+
+      await waitFor(() => {
+        expect(global.fetch).toHaveBeenCalledWith(
+          "/api/v1/forensic/kinship",
+          expect.objectContaining({
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+          })
+        );
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText(/FastAPI \/kinship:/i)).toBeInTheDocument();
+        expect(screen.getByText("99.9999%")).toBeInTheDocument();
+      });
+
+      expect(mockAddAuditLog).toHaveBeenCalledWith(
+        expect.objectContaining({
+          event: expect.stringContaining("STR_KINSHIP_BACKEND_VERIFIED: parent_child"),
+          module: "01_str_kinship",
+        })
+      );
+    });
+  });
+
+  describe("Single-Source Strict Exclusion & Interactive Allele Editing", () => {
+    it("evaluates strict exclusion (LR=0, log10LR=-10, W=0%, RMP=1.0) when single-source alleles mismatch", () => {
+      const evidence = { ...GOLDEN_STR_BENCHMARKS[0].alleles };
+      const nonMatchingSuspect = {
+        ...evidence,
+        TH01: ["7", "8"] as [string, string], // NIST SRM 2391d Comp A is ["9.3", "9.3"]
+      };
+
+      const result = evaluateSTRKinshipClient(
+        evidence,
+        nonMatchingSuspect,
+        "Caucasian",
+        0.01,
+        "parent_child",
+        "single_source_lr"
+      );
+
+      expect(result.mutationalMismatchCount).toBe(1);
+      expect(result.totalLR).toBe(0.0);
+      expect(result.totalLog10LR).toBe(-10.0);
+      expect(result.wPercent).toBe(0.0);
+      expect(result.rmp).toBe(1.0);
+
+      const th01Row = result.rows.find((r) => r.locus === "TH01");
+      expect(th01Row?.isMatch).toBe(false);
+      expect(th01Row?.lr).toBe(0.0);
+    });
+
+    it("toggles edit mode and allows modifying alleles via UI inputs", () => {
+      render(<PanelSTRKinship />);
+
+      const editBtn = screen.getByText(/Alelleri Düzenle|Edit Alleles/i);
+      fireEvent.click(editBtn);
+
+      // Now inputs should be visible
+      const th01Input = screen.getByLabelText(/Evidence TH01 allele 1/i);
+      expect(th01Input).toBeInTheDocument();
+
+      fireEvent.change(th01Input, { target: { value: "6" } });
+      expect((th01Input as HTMLInputElement).value).toBe("6");
+
+      // Finish editing
+      const doneBtn = screen.getByText(/Düzenlemeyi Bitir|Done Editing/i);
+      fireEvent.click(doneBtn);
+      expect(screen.queryByLabelText(/Evidence TH01 allele 1/i)).not.toBeInTheDocument();
+    });
+
+    it("simulates exclusion and resets to NIST baseline correctly", () => {
+      render(<PanelSTRKinship />);
+
+      const simulateBtn = screen.getByText(/Dışlama Simüle Et|Simulate Exclusion/i);
+      fireEvent.click(simulateBtn);
+
+      expect(mockAddAuditLog).toHaveBeenCalledWith(
+        expect.objectContaining({
+          event: expect.stringContaining("STR_SIMULATE_EXCLUSION: Reference TH01 mutated to [7, 8]"),
+          module: "01_str_kinship",
+        })
+      );
+
+      const resetBtn = screen.getByText(/Sıfırla|Reset/i);
+      fireEvent.click(resetBtn);
+
+      expect(mockAddAuditLog).toHaveBeenCalledWith(
+        expect.objectContaining({
+          event: expect.stringContaining("STR_RESET_PROFILES: Profiles restored to NIST SRM 2391d"),
+          module: "01_str_kinship",
+        })
+      );
+    });
   });
 });
+

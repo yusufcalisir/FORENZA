@@ -213,7 +213,9 @@ export default function LandingFeatures() {
                                         {currentPillar.name}
                                     </h3>
                                     <p className="text-[10px] text-zinc-400 mt-0.5 truncate">
-                                        {isTr ? `Kategori 0${selectedPillar + 1} • ${t.subsystems.activeCount}` : `Pillar 0${selectedPillar + 1} • ${t.subsystems.activeCount}`}
+                                        {isTr
+                                            ? `Kategori 0${selectedPillar + 1} • ${currentPillar.subsystems.length} Aktif Modül (Toplam 38)`
+                                            : `Pillar 0${selectedPillar + 1} • ${currentPillar.subsystems.length} Active Subsystems (38 Total)`}
                                     </p>
                                 </div>
                             </div>
@@ -221,12 +223,14 @@ export default function LandingFeatures() {
                             <div className="flex items-center gap-2 shrink-0">
                                 <span className="px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
                                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                                    {isTr ? "5 / 5 AKTİF & OPERASYONEL" : "5 / 5 OPERATIONAL"}
+                                    {isTr
+                                        ? `${currentPillar.subsystems.length} / ${currentPillar.subsystems.length} AKTİF & OPERASYONEL`
+                                        : `${currentPillar.subsystems.length} / ${currentPillar.subsystems.length} OPERATIONAL`}
                                 </span>
                             </div>
                         </div>
 
-                        {/* 5 Subsystem Cards Grid */}
+                        {/* Subsystem Cards Grid */}
                         <div className="grid grid-cols-3 gap-5">
                             {currentPillar.subsystems.map((sub, sIdx) => (
                                 <motion.div

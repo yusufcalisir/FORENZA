@@ -41,6 +41,8 @@ $$P(A_i A_j \mid A_i A_k, \theta) = \frac{\left[\theta + (1-\theta)p_i\right] \l
 #### 4. Zero Shared Alleles ($A_i A_j \mid A_k A_l, i,j,k,l \text{ distinct}$):
 $$P(A_i A_j \mid A_k A_l, \theta) = \frac{2 \left[(1-\theta)p_i\right] \left[(1-\theta)p_j\right]}{(1+\theta)(1+2\theta)}$$
 
+> **Casework Adjudication Note:** In single-source suspect casework ($H_p: \text{Evidence profile } E \text{ originated from suspect } S$ vs $H_d: E \text{ originated from an unknown random person}$), a genetic mismatch at any locus ($E_l \neq S_l$) results in $P(E_l \mid H_p) = 0$, yielding a strict exclusion $LR_l = 0$ and total $LR = 0$. Configurations (3) and (4) evaluate the conditional subpopulation probability $P(E \mid H_d, S, \theta)$ under the defense hypothesis.
+
 ### 2.3 NRC II Rule 4.1 Minimum Allele Frequency Bound ($p_{\min}$)
 To prevent zero-division singularities, minimum frequency floor is strictly enforced:
 

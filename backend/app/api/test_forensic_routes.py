@@ -1,7 +1,7 @@
 """
 Integration Tests for FORENZA Forensic API Endpoints (Phase 4).
 Uses FastAPI TestClient (httpx) to hit /forensic/lr, /forensic/kinship, /forensic/validate.
-Imports only the router directly — no full app boot required.
+Imports only the router directly : no full app boot required.
 """
 
 import pytest
@@ -11,7 +11,7 @@ from fastapi.testclient import TestClient
 from app.api.forensic_routes import router
 from app.api.genomics_routes import router as genomics_router
 
-# Minimal test app — avoids booting full main.py with blockchain / DSPy deps
+# Minimal test app : avoids booting full main.py with blockchain / DSPy deps
 _app = FastAPI()
 _app.include_router(router, prefix="/api/v1")
 _app.include_router(genomics_router, prefix="/api/v1")
@@ -45,7 +45,7 @@ DIFFERENT_PROFILE = {
 }
 
 
-# ── POST /forensic/lr — INCLUSION ────────────────────────────────────────────
+# ── POST /forensic/lr : INCLUSION ────────────────────────────────────────────
 
 def test_lr_inclusion():
     payload = {
@@ -64,7 +64,7 @@ def test_lr_inclusion():
     assert len(data["locus_scores"]) >= 5
 
 
-# ── POST /forensic/lr — EXCLUSION ────────────────────────────────────────────
+# ── POST /forensic/lr : EXCLUSION ────────────────────────────────────────────
 
 def test_lr_exclusion():
     payload = {
@@ -79,7 +79,7 @@ def test_lr_exclusion():
     assert data["lr_value"] == 0.0
 
 
-# ── POST /forensic/lr — schema validation ────────────────────────────────────
+# ── POST /forensic/lr : schema validation ────────────────────────────────────
 
 def test_lr_schema_validation_too_few_loci():
     """Fewer than 3 loci should be rejected by Pydantic."""

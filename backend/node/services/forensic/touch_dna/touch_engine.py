@@ -516,7 +516,7 @@ class TouchDnaEngine:
         sample_id: str,
         num_contributors: int,
         recovered_mass_pg: float,
-    ) -> TouchDnaAnalysisResult:
+    ) -> Dict[str, Any]:
         """
         Executes Touch DNA mixture contributor deconvolution with posterior sampling.
         Integrates template-dependent variance scaling and Roberts-Gelman MCMC scaling.

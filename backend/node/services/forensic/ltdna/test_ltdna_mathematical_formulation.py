@@ -124,6 +124,18 @@ class TestLogisticDropoutFormulation:
         res_sub_rfu = LTDNAMathematicalFormulation.compute_dropout_probability_rfu(100.0)
         assert res_sub_rfu.is_below_critical
 
+    def test_non_negative_clamping_for_rfu_and_mass(self):
+        """Negative RFU and mass inputs are clamped to 0.0 baseline."""
+        res_neg_rfu = LTDNAMathematicalFormulation.compute_dropout_probability_rfu(-50.0)
+        res_zero_rfu = LTDNAMathematicalFormulation.compute_dropout_probability_rfu(0.0)
+        assert res_neg_rfu.dropout_probability == res_zero_rfu.dropout_probability
+        assert res_neg_rfu.logit_value == res_zero_rfu.logit_value
+
+        res_neg_mass = LTDNAMathematicalFormulation.compute_dropout_probability_mass(-25.0)
+        res_zero_mass = LTDNAMathematicalFormulation.compute_dropout_probability_mass(0.0)
+        assert res_neg_mass.dropout_probability == res_zero_mass.dropout_probability
+        assert res_neg_mass.logit_value == res_zero_mass.logit_value
+
 
 # ===========================================================================
 # 2. Poisson Allele Drop-in Mathematical Tests

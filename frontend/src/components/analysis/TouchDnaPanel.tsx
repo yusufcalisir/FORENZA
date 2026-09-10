@@ -242,7 +242,7 @@ export function calcSingleLocusLR(
     for (const extraA of extras) {
       const hExtra = observedPeaks[extraA] || 50.0;
       const pdf = calcDropinHeightDensity(hExtra);
-      likHp *= Math.max(1e-6, lambdaC * pdf);
+      likHp *= Math.max(1e-12, lambdaC * pdf);
     }
   }
 

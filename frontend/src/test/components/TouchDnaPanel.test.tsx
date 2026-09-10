@@ -218,20 +218,31 @@ describe("Subsystem 04: Touch DNA & Low-Template (LTDNA) Stochastic Modeling Eng
   // 3. Component Rendering & Case Telemetry
   // =========================================================================
   describe("TouchDnaPanel Component Rendering & Case Telemetry", () => {
-    it("renders mission header with CURRAN-GILL LTDNA badge and dynamic case ID", () => {
-      render(<TouchDnaPanel />);
+    const renderTouchPanelAsync = async () => {
+      let res: any;
+      await act(async () => {
+        res = render(<TouchDnaPanel />);
+      });
+      await waitFor(() => {
+        expect(screen.getByText(/AT 50 RFU • ST 150 RFU/i)).toBeInTheDocument();
+      });
+      return res;
+    };
+
+    it("renders mission header with CURRAN-GILL LTDNA badge and dynamic case ID", async () => {
+      await renderTouchPanelAsync();
 
       expect(
         screen.getAllByText(/Touch DNA & Low-Template Stochastic Modeling|Temas DNA & Düşük Şablon Stokastik Modelleme/i).length
       ).toBeGreaterThan(0);
 
-      expect(screen.getByText(/CURRAN-GILL LTDNA/i)).toBeInTheDocument();
+      expect(screen.getAllByText(/CURRAN-GILL LTDNA/i).length).toBeGreaterThan(0);
       expect(screen.getByText(/AT 50 RFU • ST 150 RFU/i)).toBeInTheDocument();
       expect(screen.getByText("TEST-CASE-2026-LTDNA")).toBeInTheDocument();
     });
 
-    it("renders cryptographic H_ltdna state audit hash in header", () => {
-      render(<TouchDnaPanel />);
+    it("renders cryptographic H_ltdna state audit hash in header", async () => {
+      await renderTouchPanelAsync();
 
       const copyHashButtons = screen.getAllByTitle(/H_ltdna Durum Özetini Kopyala|Copy H_ltdna State Audit Hash/i);
       expect(copyHashButtons.length).toBeGreaterThan(0);
@@ -242,13 +253,20 @@ describe("Subsystem 04: Touch DNA & Low-Template (LTDNA) Stochastic Modeling Eng
   // 4. Tab Navigation Across All 5 LTDNA Modules
   // =========================================================================
   describe("Tab Navigation Across All 5 LTDNA Modules", () => {
-    it("navigates seamlessly across Substrate, Dropout, Drop-in, Heterozygote, and 24-Locus Profile tabs", () => {
-      const { container } = render(<TouchDnaPanel />);
+    it("navigates seamlessly across Substrate, Dropout, Drop-in, Heterozygote, and 24-Locus Profile tabs", async () => {
+      let container: HTMLElement;
+      await act(async () => {
+        const res = render(<TouchDnaPanel />);
+        container = res.container;
+      });
+      await waitFor(() => {
+        expect(screen.getByText(/AT 50 RFU • ST 150 RFU/i)).toBeInTheDocument();
+      });
 
       // Tab 2: Dropout Curves
-      const curvesTabBtn = container.querySelector("#tab-curves");
+      const curvesTabBtn = container!.querySelector("#tab-curves");
       expect(curvesTabBtn).toBeInTheDocument();
-      act(() => {
+      await act(async () => {
         fireEvent.click(curvesTabBtn!);
       });
       expect(
@@ -256,9 +274,9 @@ describe("Subsystem 04: Touch DNA & Low-Template (LTDNA) Stochastic Modeling Eng
       ).toBeGreaterThan(0);
 
       // Tab 3: Drop-in
-      const dropinTabBtn = container.querySelector("#tab-dropin");
+      const dropinTabBtn = container!.querySelector("#tab-dropin");
       expect(dropinTabBtn).toBeInTheDocument();
-      act(() => {
+      await act(async () => {
         fireEvent.click(dropinTabBtn!);
       });
       expect(
@@ -266,9 +284,9 @@ describe("Subsystem 04: Touch DNA & Low-Template (LTDNA) Stochastic Modeling Eng
       ).toBeGreaterThan(0);
 
       // Tab 4: Heterozygote
-      const hetTabBtn = container.querySelector("#tab-heterozygote");
+      const hetTabBtn = container!.querySelector("#tab-heterozygote");
       expect(hetTabBtn).toBeInTheDocument();
-      act(() => {
+      await act(async () => {
         fireEvent.click(hetTabBtn!);
       });
       expect(
@@ -276,9 +294,9 @@ describe("Subsystem 04: Touch DNA & Low-Template (LTDNA) Stochastic Modeling Eng
       ).toBeGreaterThan(0);
 
       // Tab 5: 24-Locus Profile
-      const profileTabBtn = container.querySelector("#tab-profile");
+      const profileTabBtn = container!.querySelector("#tab-profile");
       expect(profileTabBtn).toBeInTheDocument();
-      act(() => {
+      await act(async () => {
         fireEvent.click(profileTabBtn!);
       });
       expect(
@@ -289,9 +307,9 @@ describe("Subsystem 04: Touch DNA & Low-Template (LTDNA) Stochastic Modeling Eng
       ).toBeGreaterThan(0);
 
       // Tab 1: Return to Substrate
-      const substrateTabBtn = container.querySelector("#tab-substrate");
+      const substrateTabBtn = container!.querySelector("#tab-substrate");
       expect(substrateTabBtn).toBeInTheDocument();
-      act(() => {
+      await act(async () => {
         fireEvent.click(substrateTabBtn!);
       });
       expect(
@@ -304,13 +322,20 @@ describe("Subsystem 04: Touch DNA & Low-Template (LTDNA) Stochastic Modeling Eng
   // 5. Preset Selection, Substrate Physics & Audit Logging
   // =========================================================================
   describe("Preset Selection, Substrate Physics & Audit Logging", () => {
-    it("switches casework presets and dispatches structured audit log", () => {
-      const { container } = render(<TouchDnaPanel />);
+    it("switches casework presets and dispatches structured audit log", async () => {
+      let container: HTMLElement;
+      await act(async () => {
+        const res = render(<TouchDnaPanel />);
+        container = res.container;
+      });
+      await waitFor(() => {
+        expect(screen.getByText(/AT 50 RFU • ST 150 RFU/i)).toBeInTheDocument();
+      });
 
       // Switch to VECTOR_TERM_06
-      const vectorTerm06Btn = container.querySelector("#preset-vector-term-06");
+      const vectorTerm06Btn = container!.querySelector("#preset-vector-term-06");
       expect(vectorTerm06Btn).toBeInTheDocument();
-      act(() => {
+      await act(async () => {
         fireEvent.click(vectorTerm06Btn!);
       });
 
@@ -323,9 +348,9 @@ describe("Subsystem 04: Touch DNA & Low-Template (LTDNA) Stochastic Modeling Eng
       );
 
       // Switch to NIST SRM 2391d
-      const nistBtn = container.querySelector("#preset-nist-srm2391d");
+      const nistBtn = container!.querySelector("#preset-nist-srm2391d");
       expect(nistBtn).toBeInTheDocument();
-      act(() => {
+      await act(async () => {
         fireEvent.click(nistBtn!);
       });
 
@@ -338,12 +363,19 @@ describe("Subsystem 04: Touch DNA & Low-Template (LTDNA) Stochastic Modeling Eng
       );
     });
 
-    it("links active casework profile from forensic case store and dispatches audit entry", () => {
-      const { container } = render(<TouchDnaPanel />);
+    it("links active casework profile from forensic case store and dispatches audit entry", async () => {
+      let container: HTMLElement;
+      await act(async () => {
+        const res = render(<TouchDnaPanel />);
+        container = res.container;
+      });
+      await waitFor(() => {
+        expect(screen.getByText(/AT 50 RFU • ST 150 RFU/i)).toBeInTheDocument();
+      });
 
-      const loadCaseBtn = container.querySelector("#load-casework-profile-btn");
+      const loadCaseBtn = container!.querySelector("#load-casework-profile-btn");
       expect(loadCaseBtn).toBeInTheDocument();
-      act(() => {
+      await act(async () => {
         fireEvent.click(loadCaseBtn!);
       });
 
@@ -356,15 +388,22 @@ describe("Subsystem 04: Touch DNA & Low-Template (LTDNA) Stochastic Modeling Eng
       );
     });
 
-    it("selects forensic substrates and updates recovery telemetry", () => {
-      const { container } = render(<TouchDnaPanel />);
+    it("selects forensic substrates and updates recovery telemetry", async () => {
+      let container: HTMLElement;
+      await act(async () => {
+        const res = render(<TouchDnaPanel />);
+        container = res.container;
+      });
+      await waitFor(() => {
+        expect(screen.getByText(/AT 50 RFU • ST 150 RFU/i)).toBeInTheDocument();
+      });
 
       // Find substrate cards in Tab 1
-      const substrateCards = container.querySelectorAll(".cursor-pointer");
+      const substrateCards = container!.querySelectorAll(".cursor-pointer");
       expect(substrateCards.length).toBeGreaterThanOrEqual(4);
 
       // Click on smooth non-porous (Glass)
-      act(() => {
+      await act(async () => {
         fireEvent.click(substrateCards[0]);
       });
     });

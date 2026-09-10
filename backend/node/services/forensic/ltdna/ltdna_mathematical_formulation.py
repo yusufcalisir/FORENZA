@@ -184,7 +184,8 @@ class LTDNAMathematicalFormulation:
           P(D | RFU) = 1 / (1 + exp(-(β₀ + β₁ · RFU)))
           β₀ = +2.50, β₁ = -0.025 RFU⁻¹
         """
-        logit = beta_0 + beta_1 * rfu
+        clamped_rfu = max(0.0, rfu)
+        logit = beta_0 + beta_1 * clamped_rfu
         # Numerically stable logistic sigmoid computation: P(D) = 1 / (1 + exp(-logit))
         if logit > 40.0:
             p_dropout = 1.0 - math.exp(-logit)
@@ -211,7 +212,7 @@ class LTDNAMathematicalFormulation:
             dropout_probability=round(p_dropout, 8),
             analytical_derivative=round(derivative, 8),
             critical_threshold_1pct=round(crit_thresh, 4),
-            is_below_critical=(rfu < crit_thresh),
+            is_below_critical=(clamped_rfu < crit_thresh),
         )
 
     @staticmethod
@@ -227,7 +228,8 @@ class LTDNAMathematicalFormulation:
           P(D | pg) = 1 / (1 + exp(-(β₀ + β₁ · mass_pg)))
           β₀ = +3.20, β₁ = -0.080 pg⁻¹
         """
-        logit = beta_0 + beta_1 * mass_pg
+        clamped_mass = max(0.0, mass_pg)
+        logit = beta_0 + beta_1 * clamped_mass
         if logit > 40.0:
             p_dropout = 1.0 - math.exp(-logit)
         elif logit < -40.0:
@@ -248,7 +250,7 @@ class LTDNAMathematicalFormulation:
             dropout_probability=round(p_dropout, 8),
             analytical_derivative=round(derivative, 8),
             critical_threshold_1pct=round(crit_thresh, 4),
-            is_below_critical=(mass_pg < crit_thresh),
+            is_below_critical=(clamped_mass < crit_thresh),
         )
 
     @staticmethod
@@ -266,8 +268,10 @@ class LTDNAMathematicalFormulation:
           P(D | pg, bp) = 1 / (1 + exp(-(β₀ + β₁ · mass_pg + β_s · (bp - 100))))
           where larger fragments have increased dropout probability.
         """
-        size_penalty = beta_s * max(0.0, amplicon_bp - 100.0)
-        logit = beta_0 + beta_1 * mass_pg + size_penalty
+        clamped_mass = max(0.0, mass_pg)
+        clamped_bp = max(0.0, amplicon_bp)
+        size_penalty = beta_s * max(0.0, clamped_bp - 100.0)
+        logit = beta_0 + beta_1 * clamped_mass + size_penalty
         if logit > 40.0:
             p_dropout = 1.0 - math.exp(-logit)
         elif logit < -40.0:
@@ -288,7 +292,7 @@ class LTDNAMathematicalFormulation:
             dropout_probability=round(p_dropout, 8),
             analytical_derivative=round(derivative, 8),
             critical_threshold_1pct=round(crit_thresh, 4),
-            is_below_critical=(mass_pg < crit_thresh),
+            is_below_critical=(clamped_mass < crit_thresh),
         )
 
     # -----------------------------------------------------------------------

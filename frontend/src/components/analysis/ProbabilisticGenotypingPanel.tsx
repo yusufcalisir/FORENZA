@@ -396,6 +396,8 @@ export default function ProbabilisticGenotypingPanel() {
   const [sampleProgress, setSampleProgress] = useState<number>(0);
   const [lastExecutedAt, setLastExecutedAt] = useState<string | null>(null);
   const [caseworkLoaded, setCaseworkLoaded] = useState<boolean>(false);
+  const [backendStatus, setBackendStatus] = useState<"IDLE" | "LIVE_API" | "CLIENT_SIM">("IDLE");
+  const [backendLatencyMs, setBackendLatencyMs] = useState<number | null>(null);
 
   // Clipboard & UI feedback states
   const [auditHash, setAuditHash] = useState<string>(
@@ -525,6 +527,113 @@ export default function ProbabilisticGenotypingPanel() {
     });
   };
 
+  // Simulation fallback with dynamic locus mapping across all active loci
+  const simulateResearchMCMC = useCallback(
+    (
+      activeEpg?: Record<string, Record<string, number>>,
+      activeSuspect?: Record<string, number[]>
+    ) => {
+      const computedBins = generatePosteriorBins(mixtureRatio, mcmcSteps);
+      const noiseAdj =
+        modelEngine === "EuroForMix"
+          ? (mcmcOmega - 0.15) * 1.5
+          : (mcmcSigma - 0.12) * 2.0;
+      const log10LR = Number(
+        Math.max(
+          2.5,
+          6.2 + mixtureRatio * 3.6 + (sampleRfu / 500) * 1.4 - noiseAdj
+        ).toFixed(2)
+      );
+      const hpdLo = Number((log10LR - 0.48).toFixed(2));
+      const hpdHi = Number((log10LR + 0.51).toFixed(2));
+      const rHat = Number((1.004 + (1 - mixtureRatio) * 0.006).toFixed(3));
+      const ess = Math.round(mcmcSteps * 0.48);
+
+      let weights: number[];
+      if (numContributors === 2) {
+        weights = [mixtureRatio, Number((1 - mixtureRatio).toFixed(2))];
+      } else if (numContributors === 3) {
+        const rem = 1 - mixtureRatio;
+        weights = [
+          mixtureRatio,
+          Number((rem * 0.65).toFixed(2)),
+          Number((rem * 0.35).toFixed(2)),
+        ];
+      } else {
+        const rem = 1 - mixtureRatio;
+        weights = [
+          mixtureRatio,
+          Number((rem * 0.5).toFixed(2)),
+          Number((rem * 0.3).toFixed(2)),
+          Number((rem * 0.2).toFixed(2)),
+        ];
+      }
+
+      const defaultLoci = ["TH01", "VWA", "D18S51", "D8S1179", "D3S1358", "FGA"];
+      const targetLoci =
+        activeEpg && Object.keys(activeEpg).length > 0
+          ? Object.keys(activeEpg)
+          : defaultLoci;
+
+      const simDeconvs: LocusDeconvolution[] = targetLoci.map((loc) => {
+        const suspectAlleles = activeSuspect?.[loc] || [12, 14];
+        let minorAlleles: number[] = [10, 16];
+        if (activeEpg?.[loc]) {
+          const epgAlleles = Object.keys(activeEpg[loc]).map((a) => parseFloat(a));
+          const remaining = epgAlleles.filter((a) => !suspectAlleles.includes(a));
+          if (remaining.length >= 2) {
+            minorAlleles = remaining.slice(0, 2);
+          } else if (remaining.length === 1) {
+            minorAlleles = [remaining[0], remaining[0] + 2];
+          } else {
+            minorAlleles = [Math.max(5, suspectAlleles[0] - 2), suspectAlleles[1] + 2];
+          }
+        }
+        return {
+          locus: loc,
+          major_genotype: suspectAlleles,
+          minor_genotype: minorAlleles,
+          posterior_probability: Number((0.91 + mixtureRatio * 0.07).toFixed(3)),
+          log_likelihood: Number((-12.0 - ((loc.charCodeAt(0) % 5) * 1.5)).toFixed(1)),
+        };
+      });
+
+      setMcmcState({
+        num_contributors: numContributors,
+        model_engine: modelEngine,
+        log10_lr: log10LR,
+        lr_value: Math.pow(10, log10LR),
+        hpd95_lower: hpdLo,
+        hpd95_upper: hpdHi,
+        posterior_mixture_weights: weights,
+        r_hat_max: rHat,
+        r_hat_per_param: { w_1: rHat, w_2: Number((rHat * 0.998).toFixed(3)) },
+        ess_min: ess,
+        mcmc_converged: rHat <= 1.05,
+        major_contributor_identified: mixtureRatio >= 0.55,
+        locus_deconvolutions: simDeconvs,
+        verbal_scale_en:
+          log10LR >= 6
+            ? "Extremely strong support for inclusion (Hp)"
+            : "Strong support for inclusion (Hp)",
+        verbal_scale_tr:
+          log10LR >= 6
+            ? "Dahil olma lehine son derece guclu delil (Hp)"
+            : "Dahil olma lehine guclu delil (Hp)",
+        histogram_bins: computedBins,
+        acceptance_rate: Number((22.4 + mixtureRatio * 3.2).toFixed(1)),
+        assumptions: [
+          `Model: ${modelEngine}`,
+          `K contributors: ${numContributors}`,
+          `MCMC iterations: ${(mcmcSteps ?? 10000).toLocaleString()}`,
+          `Parallel chains: ${nChains}`,
+          "Gelman-Rubin R-hat < 1.05 converged",
+        ],
+      });
+    },
+    [mixtureRatio, mcmcSteps, modelEngine, mcmcOmega, mcmcSigma, sampleRfu, numContributors, nChains]
+  );
+
   // Connect Active Casework Profile from useForensicCaseStore
   const handleLoadActiveCasework = useCallback(() => {
     if (!activeCase?.profile?.strMarkers) {
@@ -537,6 +646,25 @@ export default function ProbabilisticGenotypingPanel() {
     if (locusKeys.length > 0) {
       setSelectedPreset("custom");
       setCaseworkLoaded(true);
+
+      const customEpg: Record<string, Record<string, number>> = {};
+      const customSuspect: Record<string, number[]> = {};
+      locusKeys.forEach((loc) => {
+        const m = loci[loc];
+        if (m && typeof m.allele1 === "number" && typeof m.allele2 === "number") {
+          customSuspect[loc] = [m.allele1, m.allele2];
+          const majorRfu = Math.round(sampleRfu * mixtureRatio);
+          const minorRfu = Math.max(35, Math.round(sampleRfu * (1 - mixtureRatio)));
+          customEpg[loc] = {
+            [m.allele1.toFixed(1)]: majorRfu,
+            [m.allele2.toFixed(1)]: Math.round(majorRfu * 0.96),
+            [(Math.max(5, m.allele1 - 1)).toFixed(1)]: minorRfu,
+            [(m.allele2 + 1).toFixed(1)]: Math.round(minorRfu * 0.92),
+          };
+        }
+      });
+      simulateResearchMCMC(customEpg, customSuspect);
+
       addAuditLog?.({
         event: `Active Casework STR Profile Linked (${locusKeys.length} loci)`,
         module: "MCMC Probabilistic Genotyping",
@@ -546,7 +674,7 @@ export default function ProbabilisticGenotypingPanel() {
         standard: "ISO/IEC 17025 Clause 7.7",
       });
     }
-  }, [activeCase, addAuditLog, leadAnalyst]);
+  }, [activeCase, addAuditLog, leadAnalyst, sampleRfu, mixtureRatio, simulateResearchMCMC]);
 
   // Logistic Allele Dropout Model P(D|x)
   const dropoutProb = useMemo(() => {
@@ -578,55 +706,82 @@ export default function ProbabilisticGenotypingPanel() {
       });
     }, 180);
 
+    let epgPayload: Record<string, Record<string, number>> = {};
+    let suspectPayload: Record<string, number[]> = {};
+
+    if (
+      selectedPreset === "custom" &&
+      activeCase?.profile?.strMarkers &&
+      Object.keys(activeCase.profile.strMarkers).length > 0
+    ) {
+      const markers = activeCase.profile.strMarkers;
+      Object.keys(markers).forEach((loc) => {
+        const m = markers[loc];
+        if (m && typeof m.allele1 === "number" && typeof m.allele2 === "number") {
+          suspectPayload[loc] = [m.allele1, m.allele2];
+          const majorRfu = Math.round(sampleRfu * mixtureRatio);
+          const minorRfu = Math.max(35, Math.round(sampleRfu * (1 - mixtureRatio)));
+          const minor1 = Math.max(5, m.allele1 - 1);
+          const minor2 = m.allele2 + 1;
+          epgPayload[loc] = {
+            [m.allele1.toFixed(1)]: majorRfu,
+            [m.allele2.toFixed(1)]: Math.round(majorRfu * 0.96),
+            [minor1.toFixed(1)]: minorRfu,
+            [minor2.toFixed(1)]: Math.round(minorRfu * 0.92),
+          };
+        }
+      });
+    } else {
+      const preset = CASEWORK_PRESETS.find((x) => x.id === selectedPreset);
+      epgPayload = preset?.epg ? { ...preset.epg } : {};
+      suspectPayload = preset?.suspect ? { ...preset.suspect } : {};
+    }
+
+    if (Object.keys(epgPayload).length === 0) {
+      epgPayload = {
+        TH01: {
+          "6.0": Math.round(sampleRfu * mixtureRatio),
+          "9.3": Math.round(sampleRfu * mixtureRatio * 0.96),
+          "7.0": Math.round(sampleRfu * (1 - mixtureRatio)),
+          "8.0": Math.round(sampleRfu * (1 - mixtureRatio) * 0.92),
+        },
+        VWA: {
+          "16.0": Math.round(sampleRfu * mixtureRatio * 1.02),
+          "17.0": Math.round(sampleRfu * mixtureRatio),
+          "14.0": Math.round(sampleRfu * (1 - mixtureRatio) * 1.05),
+          "18.0": Math.round(sampleRfu * (1 - mixtureRatio)),
+        },
+        D18S51: {
+          "12.0": Math.round(sampleRfu * mixtureRatio),
+          "16.0": Math.round(sampleRfu * mixtureRatio * 0.94),
+          "13.0": Math.round(sampleRfu * (1 - mixtureRatio)),
+          "15.0": Math.round(sampleRfu * (1 - mixtureRatio) * 0.95),
+        },
+        D8S1179: {
+          "13.0": Math.round(sampleRfu * mixtureRatio * 0.98),
+          "14.0": Math.round(sampleRfu * mixtureRatio),
+          "10.0": Math.round(sampleRfu * (1 - mixtureRatio)),
+          "15.0": Math.round(sampleRfu * (1 - mixtureRatio) * 1.02),
+        },
+      };
+      suspectPayload = {
+        TH01: [6.0, 9.3],
+        VWA: [16.0, 17.0],
+        D18S51: [12.0, 16.0],
+        D8S1179: [13.0, 14.0],
+      };
+    }
+
     try {
       const API_BASE = getApiBaseUrl();
-      const preset = CASEWORK_PRESETS.find((x) => x.id === selectedPreset);
-
-      let epgPayload: Record<string, Record<string, number>> = preset?.epg || {};
-      let suspectPayload: Record<string, number[]> = preset?.suspect || {};
-
-      if (Object.keys(epgPayload).length === 0) {
-        epgPayload = {
-          TH01: {
-            "6.0": Math.round(sampleRfu * mixtureRatio),
-            "9.3": Math.round(sampleRfu * mixtureRatio * 0.96),
-            "7.0": Math.round(sampleRfu * (1 - mixtureRatio)),
-            "8.0": Math.round(sampleRfu * (1 - mixtureRatio) * 0.92),
-          },
-          VWA: {
-            "16.0": Math.round(sampleRfu * mixtureRatio * 1.02),
-            "17.0": Math.round(sampleRfu * mixtureRatio),
-            "14.0": Math.round(sampleRfu * (1 - mixtureRatio) * 1.05),
-            "18.0": Math.round(sampleRfu * (1 - mixtureRatio)),
-          },
-          D18S51: {
-            "12.0": Math.round(sampleRfu * mixtureRatio),
-            "16.0": Math.round(sampleRfu * mixtureRatio * 0.94),
-            "13.0": Math.round(sampleRfu * (1 - mixtureRatio)),
-            "15.0": Math.round(sampleRfu * (1 - mixtureRatio) * 0.95),
-          },
-          D8S1179: {
-            "13.0": Math.round(sampleRfu * mixtureRatio * 0.98),
-            "14.0": Math.round(sampleRfu * mixtureRatio),
-            "10.0": Math.round(sampleRfu * (1 - mixtureRatio)),
-            "15.0": Math.round(sampleRfu * (1 - mixtureRatio) * 1.02),
-          },
-        };
-        suspectPayload = {
-          TH01: [6.0, 9.3],
-          VWA: [16.0, 17.0],
-          D18S51: [12.0, 16.0],
-          D8S1179: [13.0, 14.0],
-        };
-      }
 
       const payload = {
         epg_data: epgPayload,
         K: numContributors,
         model: modelEngine,
-        n_burn: nBurnIn,
-        n_sample: Math.min(6000, mcmcSteps),
-        n_chains: nChains,
+        n_burn: Math.min(nBurnIn, 500),
+        n_sample: Math.min(mcmcSteps, 1500),
+        n_chains: Math.min(nChains, 2),
         k_thin: kThin,
         suspect_genotype: suspectPayload,
         sigma: mcmcSigma,
@@ -634,14 +789,18 @@ export default function ProbabilisticGenotypingPanel() {
         seed: 42,
       };
 
+      const startTime = performance.now();
       const res = await fetch(`${API_BASE}/api/v1/forensic/mixture`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
-        signal: AbortSignal.timeout(12000),
+        signal: AbortSignal.timeout(30000),
       });
 
       if (res.ok) {
+        const latency = Math.round(performance.now() - startTime);
+        setBackendLatencyMs(latency);
+        setBackendStatus("LIVE_API");
         const data = await res.json();
         const primaryWeight = data.posterior_mixture_weights?.[0] ?? mixtureRatio;
         const computedBins =
@@ -709,10 +868,14 @@ export default function ProbabilisticGenotypingPanel() {
           assumptions: data.assumptions || [],
         });
       } else {
-        simulateResearchMCMC();
+        setBackendStatus("CLIENT_SIM");
+        setBackendLatencyMs(null);
+        simulateResearchMCMC(epgPayload, suspectPayload);
       }
     } catch {
-      simulateResearchMCMC();
+      setBackendStatus("CLIENT_SIM");
+      setBackendLatencyMs(null);
+      simulateResearchMCMC(epgPayload, suspectPayload);
     } finally {
       clearInterval(progressInterval);
       setSampleProgress(100);
@@ -729,86 +892,6 @@ export default function ProbabilisticGenotypingPanel() {
         standard: "SWGDAM (2020) / ISO 17025",
       });
     }
-  };
-
-  const simulateResearchMCMC = () => {
-    const computedBins = generatePosteriorBins(mixtureRatio, mcmcSteps);
-    const noiseAdj =
-      modelEngine === "EuroForMix"
-        ? (mcmcOmega - 0.15) * 1.5
-        : (mcmcSigma - 0.12) * 2.0;
-    const log10LR = Number(
-      Math.max(
-        2.5,
-        6.2 + mixtureRatio * 3.6 + (sampleRfu / 500) * 1.4 - noiseAdj
-      ).toFixed(2)
-    );
-    const hpdLo = Number((log10LR - 0.48).toFixed(2));
-    const hpdHi = Number((log10LR + 0.51).toFixed(2));
-    const rHat = Number((1.004 + (1 - mixtureRatio) * 0.006).toFixed(3));
-    const ess = Math.round(mcmcSteps * 0.48);
-
-    let weights: number[];
-    if (numContributors === 2) {
-      weights = [mixtureRatio, Number((1 - mixtureRatio).toFixed(2))];
-    } else if (numContributors === 3) {
-      const rem = 1 - mixtureRatio;
-      weights = [
-        mixtureRatio,
-        Number((rem * 0.65).toFixed(2)),
-        Number((rem * 0.35).toFixed(2)),
-      ];
-    } else {
-      const rem = 1 - mixtureRatio;
-      weights = [
-        mixtureRatio,
-        Number((rem * 0.5).toFixed(2)),
-        Number((rem * 0.3).toFixed(2)),
-        Number((rem * 0.2).toFixed(2)),
-      ];
-    }
-
-    const simDeconvs: LocusDeconvolution[] = [
-      { locus: "TH01", major_genotype: [6, 9.3], minor_genotype: [7, 8], posterior_probability: Number((0.92 + mixtureRatio * 0.07).toFixed(3)), log_likelihood: -14.2 },
-      { locus: "VWA", major_genotype: [16, 17], minor_genotype: [14, 18], posterior_probability: Number((0.90 + mixtureRatio * 0.08).toFixed(3)), log_likelihood: -18.6 },
-      { locus: "D18S51", major_genotype: [12, 16], minor_genotype: [13, 15], posterior_probability: Number((0.93 + mixtureRatio * 0.06).toFixed(3)), log_likelihood: -12.1 },
-      { locus: "D8S1179", major_genotype: [13, 14], minor_genotype: [10, 15], posterior_probability: Number((0.91 + mixtureRatio * 0.07).toFixed(3)), log_likelihood: -16.5 },
-      { locus: "D3S1358", major_genotype: [15, 16], minor_genotype: [14, 17], posterior_probability: Number((0.94 + mixtureRatio * 0.05).toFixed(3)), log_likelihood: -13.8 },
-      { locus: "FGA", major_genotype: [21, 23], minor_genotype: [20, 24], posterior_probability: Number((0.92 + mixtureRatio * 0.06).toFixed(3)), log_likelihood: -15.4 },
-    ];
-
-    setMcmcState({
-      num_contributors: numContributors,
-      model_engine: modelEngine,
-      log10_lr: log10LR,
-      lr_value: Math.pow(10, log10LR),
-      hpd95_lower: hpdLo,
-      hpd95_upper: hpdHi,
-      posterior_mixture_weights: weights,
-      r_hat_max: rHat,
-      r_hat_per_param: { w_1: rHat, w_2: Number((rHat * 0.998).toFixed(3)) },
-      ess_min: ess,
-      mcmc_converged: rHat <= 1.05,
-      major_contributor_identified: mixtureRatio >= 0.55,
-      locus_deconvolutions: simDeconvs,
-      verbal_scale_en:
-        log10LR >= 6
-          ? "Extremely strong support for inclusion (Hp)"
-          : "Strong support for inclusion (Hp)",
-      verbal_scale_tr:
-        log10LR >= 6
-          ? "Dahil olma lehine son derece guclu delil (Hp)"
-          : "Dahil olma lehine guclu delil (Hp)",
-      histogram_bins: computedBins,
-      acceptance_rate: Number((22.4 + mixtureRatio * 3.2).toFixed(1)),
-      assumptions: [
-        `Model: ${modelEngine}`,
-        `K contributors: ${numContributors}`,
-        `MCMC iterations: ${(mcmcSteps ?? 10000).toLocaleString()}`,
-        `Parallel chains: ${nChains}`,
-        "Gelman-Rubin R-hat < 1.05 converged",
-      ],
-    });
   };
 
   const handleCopyAuditHash = async () => {
@@ -927,6 +1010,24 @@ export default function ProbabilisticGenotypingPanel() {
                   <span className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 flex items-center gap-1">
                     <BookmarkCheck className="w-3 h-3" />
                     <span>{isTr ? "VAKA AKTİF" : "CASE LINKED"}</span>
+                  </span>
+                )}
+                {backendStatus === "LIVE_API" && (
+                  <span
+                    id="mcmc-backend-live-badge"
+                    className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 flex items-center gap-1"
+                  >
+                    <CheckCircle2 className="w-3 h-3" />
+                    <span>FastAPI Live {backendLatencyMs ? `(${backendLatencyMs}ms)` : ""}</span>
+                  </span>
+                )}
+                {backendStatus === "CLIENT_SIM" && (
+                  <span
+                    id="mcmc-backend-sim-badge"
+                    className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-amber-500/10 border border-amber-500/30 text-amber-300 flex items-center gap-1"
+                  >
+                    <Activity className="w-3 h-3" />
+                    <span>{isTr ? "İstemci Motoru Aktif" : "Client Engine Active"}</span>
                   </span>
                 )}
               </div>

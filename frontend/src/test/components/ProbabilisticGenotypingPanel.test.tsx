@@ -421,6 +421,73 @@ describe("Subsystem 02: MCMC Probabilistic Mixture Deconvolution Engine", () => 
       });
     });
 
+    it("dynamically updates locus deconvolution without locus loss when casework profile is linked", () => {
+      const { container } = render(<ProbabilisticGenotypingPanel />);
+
+      const loadCaseBtn = container.querySelector("#load-casework-profile-btn");
+      expect(loadCaseBtn).toBeInTheDocument();
+      fireEvent.click(loadCaseBtn!);
+
+      // Switch to Loci tab to view deconvoluted loci
+      const tabLociBtn = container.querySelector("#tab-loci");
+      expect(tabLociBtn).toBeInTheDocument();
+      fireEvent.click(tabLociBtn!);
+
+      // Casework has TH01, VWA, D18S51: all must be rendered
+      expect(screen.getAllByText(/TH01/i).length).toBeGreaterThan(0);
+      expect(screen.getAllByText(/VWA/i).length).toBeGreaterThan(0);
+      expect(screen.getAllByText(/D18S51/i).length).toBeGreaterThan(0);
+    });
+
+    it("displays FastAPI Live badge on successful API deconvolution response", async () => {
+      const originalFetch = global.fetch;
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          n_contributors: 2,
+          model_engine: "STRmix",
+          log10_lr_point: 8.92,
+          posterior_mixture_weights: [0.72, 0.28],
+          convergence: { r_hat_max: 1.006, converged: true },
+        }),
+      } as Response);
+
+      try {
+        const { container } = render(<ProbabilisticGenotypingPanel />);
+        const runBtn = container.querySelector("#run-mcmc-btn");
+        expect(runBtn).toBeInTheDocument();
+        fireEvent.click(runBtn!);
+
+        await waitFor(() => {
+          const liveBadge = container.querySelector("#mcmc-backend-live-badge");
+          expect(liveBadge).toBeInTheDocument();
+          expect(liveBadge?.textContent).toContain("FastAPI Live");
+        });
+      } finally {
+        global.fetch = originalFetch;
+      }
+    });
+
+    it("displays Client Engine Active badge on network error fallback", async () => {
+      const originalFetch = global.fetch;
+      global.fetch = vi.fn().mockRejectedValue(new Error("Network connection error"));
+
+      try {
+        const { container } = render(<ProbabilisticGenotypingPanel />);
+        const runBtn = container.querySelector("#run-mcmc-btn");
+        expect(runBtn).toBeInTheDocument();
+        fireEvent.click(runBtn!);
+
+        await waitFor(() => {
+          const simBadge = container.querySelector("#mcmc-backend-sim-badge");
+          expect(simBadge).toBeInTheDocument();
+          expect(simBadge?.textContent).toContain("Client Engine Active");
+        });
+      } finally {
+        global.fetch = originalFetch;
+      }
+    });
+
     it("renders Prosecutor's Fallacy Shield with transposed conditional defense", () => {
       const { container } = render(<ProbabilisticGenotypingPanel />);
 

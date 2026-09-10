@@ -1,5 +1,5 @@
 """
-FORENZA Tippett Calibration & ENFSI Evaluative Reporting API — Pydantic v2 Schemas (Module 05).
+FORENZA Tippett Calibration & ENFSI Evaluative Reporting API: Pydantic v2 Schemas (Module 05).
 
 Covers all endpoints:
   - Tippett Calibration Curves (Hp / Hd ECCDF)
@@ -162,6 +162,9 @@ class HPDLowerBoundResponse(BaseTippettSchema):
     log10_lr_median: float
     log10_lr_mean: float
     log10_lr_95ci_upper: float
+    std_log10_lr: Optional[float] = None
+    u_c: Optional[float] = None
+    expanded_uncertainty_u95: Optional[float] = None
     court_admissible_lr: Optional[float] = None
     interpretation: str
 

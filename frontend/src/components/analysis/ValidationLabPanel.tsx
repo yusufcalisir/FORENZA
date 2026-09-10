@@ -398,6 +398,32 @@ export default function ValidationLabPanel() {
     quality: string;
   } | null>(null);
 
+  const [serverTippett, setServerTippett] = useState<{
+    fpr_at_zero: number;
+    fnr_at_zero: number;
+    discrimination_power: number;
+    grid_points: TippettPoint[];
+  } | null>(null);
+
+  const [serverRoc, setServerRoc] = useState<{
+    auc: number;
+    separation_index: number;
+  } | null>(null);
+
+  const [serverHpd, setServerHpd] = useState<{
+    log10_lr_court: number;
+    u_c?: number;
+    expanded_uncertainty_u95?: number;
+  } | null>(null);
+
+  const [serverEnfsi, setServerEnfsi] = useState<{
+    tier: number;
+    tier_name_en: string;
+    tier_name_tr: string;
+    verbal_statement: string;
+    is_positive_support: boolean;
+  } | null>(null);
+
   // Hover Tooltip State in SVG Plots
   const [hoverX, setHoverX] = useState<number | null>(null);
   const [hoverThreshold, setHoverThreshold] = useState<number | null>(null);
@@ -416,23 +442,30 @@ export default function ValidationLabPanel() {
     // 1. Tippett ECCDF Grid Points
     const numPoints = 80;
     const step = (maxVal - minVal) / (numPoints - 1);
-    const grid: TippettPoint[] = [];
+    const clientGrid: TippettPoint[] = [];
 
     for (let i = 0; i < numPoints; i++) {
       const x = minVal + i * step;
       const hp_count = hpData.filter((v) => v >= x).length;
       const hd_count = hdData.filter((v) => v >= x).length;
-      grid.push({
+      clientGrid.push({
         threshold: Number(x.toFixed(2)),
         hp_exceedance: hp_count / n_hp,
         hd_exceedance: hd_count / n_hd,
       });
     }
 
+    const grid: TippettPoint[] =
+      serverTippett?.grid_points && serverTippett.grid_points.length > 0
+        ? serverTippett.grid_points
+        : clientGrid;
+
     // 2. Error Rates at Neutral Decision Threshold (x = 0.0)
-    const fpr_at_zero = hdData.filter((v) => v > 0.0).length / n_hd;
-    const fnr_at_zero = hpData.filter((v) => v < 0.0).length / n_hp;
-    const d_power = Math.max(0.0, Math.min(1.0, 1.0 - fpr_at_zero - fnr_at_zero));
+    const fpr_at_zero = serverTippett ? serverTippett.fpr_at_zero : hdData.filter((v) => v > 0.0).length / n_hd;
+    const fnr_at_zero = serverTippett ? serverTippett.fnr_at_zero : hpData.filter((v) => v < 0.0).length / n_hp;
+    const d_power = serverTippett
+      ? serverTippett.discrimination_power
+      : Math.max(0.0, Math.min(1.0, 1.0 - fpr_at_zero - fnr_at_zero));
 
     // 3. Exceedance at Selected Slider Tau
     const hp_at_tau = hpData.filter((v) => v >= tauThreshold).length / n_hp;
@@ -447,7 +480,8 @@ export default function ValidationLabPanel() {
         else if (hp === hd) equal += 1;
       }
     }
-    const auc = (greater + 0.5 * equal) / (n_hp * n_hd);
+    const clientAuc = (greater + 0.5 * equal) / (n_hp * n_hd);
+    const auc = serverRoc ? serverRoc.auc : clientAuc;
 
     // 5. Cllr Cost
     const empiricalCllr = computeEmpiricalCllr(hpData, hdData);
@@ -455,18 +489,27 @@ export default function ValidationLabPanel() {
     const cllr_min = serverCllr ? serverCllr.cllr_min : empiricalCllr.cllr_min;
     const cllr_cal = serverCllr ? serverCllr.cllr_cal : empiricalCllr.cllr_cal;
 
-    // 6. 95% HPD Lower Bound
+    // 6. 95% HPD Lower Bound & Dynamic GUM Measurement Uncertainty
     const sortedHp = [...hpData].sort((a, b) => a - b);
     const idx5 = Math.floor(0.05 * sortedHp.length);
     const idx50 = Math.floor(0.50 * sortedHp.length);
     const idx95 = Math.floor(0.95 * sortedHp.length);
 
-    const log10_lower = sortedHp[idx5] ?? sortedHp[0];
+    const log10_lower = serverHpd ? serverHpd.log10_lr_court : (sortedHp[idx5] ?? sortedHp[0]);
     const log10_median = sortedHp[idx50] ?? sortedHp[0];
     const log10_upper = sortedHp[idx95] ?? sortedHp[sortedHp.length - 1];
 
     const meanHp = hpData.reduce((a, b) => a + b, 0) / n_hp;
     const medianHd = [...hdData].sort((a, b) => a - b)[Math.floor(n_hd / 2)] ?? 0;
+
+    // Dynamic ISO/IEC 17025 GUM Combined & Expanded Uncertainty
+    const varianceHp =
+      hpData.reduce((acc, v) => acc + Math.pow(v - meanHp, 2), 0) / Math.max(1, hpData.length - 1);
+    const stdHp = Math.sqrt(varianceHp);
+    const dynamicUc =
+      serverHpd?.u_c ?? Number((stdHp / Math.sqrt(Math.max(1, hpData.length))).toFixed(4));
+    const dynamicU95 =
+      serverHpd?.expanded_uncertainty_u95 ?? Number((2.00 * dynamicUc).toFixed(4));
 
     // 7. Royall Misleading Evidence Rates
     const royall8 = computeRoyallMisleadingRates(hpData, hdData, 8);
@@ -493,9 +536,11 @@ export default function ValidationLabPanel() {
       log10_upper,
       meanHp,
       medianHd,
+      dynamicUc,
+      dynamicU95,
       royallMetrics: [royall8, royall10, royall100],
     };
-  }, [hpData, hdData, serverCllr, tauThreshold]);
+  }, [hpData, hdData, serverCllr, serverTippett, serverRoc, serverHpd, tauThreshold]);
 
   // Compute SHA-256 Audit Digest on result changes
   useEffect(() => {
@@ -612,7 +657,7 @@ export default function ValidationLabPanel() {
         setHpData(fetchedHp);
         setHdData(fetchedHd);
 
-        // Fetch official server Cllr decomposition
+        // 1. Fetch official server Cllr decomposition
         try {
           const cllrRes = await fetch(`${getApiBaseUrl()}/api/v1/forensic/validation/cllr-score`, {
             method: "POST",
@@ -632,7 +677,105 @@ export default function ValidationLabPanel() {
             });
           }
         } catch {
-          // Client calculation will serve as robust fallback
+          // Client calculation serves as fallback
+        }
+
+        // 2. Fetch official server Tippett ECCDF curves
+        try {
+          const tippettRes = await fetch(`${getApiBaseUrl()}/api/v1/forensic/validation/tippett-curve`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              hp_log10_lrs: fetchedHp,
+              hd_log10_lrs: fetchedHd,
+              num_points: 80,
+            }),
+          });
+          if (tippettRes.ok) {
+            const tData = await tippettRes.json();
+            setServerTippett({
+              fpr_at_zero: tData.fpr_at_zero,
+              fnr_at_zero: tData.fnr_at_zero,
+              discrimination_power: tData.discrimination_power,
+              grid_points: tData.grid_points,
+            });
+          }
+        } catch {
+          // Client calculation serves as fallback
+        }
+
+        // 3. Fetch official server ROC & AUC analysis
+        try {
+          const rocRes = await fetch(`${getApiBaseUrl()}/api/v1/forensic/validation/roc-analysis`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              hp_log10_lrs: fetchedHp,
+              hd_log10_lrs: fetchedHd,
+              num_thresholds: 80,
+            }),
+          });
+          if (rocRes.ok) {
+            const rData = await rocRes.json();
+            setServerRoc({
+              auc: rData.auc,
+              separation_index: rData.separation_index,
+            });
+          }
+        } catch {
+          // Client calculation serves as fallback
+        }
+
+        // 4. Fetch official server 95% HPD Lower Bound & GUM Uncertainty
+        let courtVal = 0;
+        try {
+          const hpdRes = await fetch(`${getApiBaseUrl()}/api/v1/forensic/validation/hpd-lower-bound`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              mcmc_log10_lrs: fetchedHp,
+              percentile: 5.0,
+            }),
+          });
+          if (hpdRes.ok) {
+            const hData = await hpdRes.json();
+            courtVal = hData.log10_lr_court;
+            setServerHpd({
+              log10_lr_court: hData.log10_lr_court,
+              u_c: hData.u_c,
+              expanded_uncertainty_u95: hData.expanded_uncertainty_u95,
+            });
+          }
+        } catch {
+          // Client calculation serves as fallback
+        }
+
+        // 5. Fetch official server ENFSI 2017 Verbal Scale Statement
+        try {
+          const evalLogVal =
+            courtVal !== 0
+              ? courtVal
+              : [...fetchedHp].sort((a, b) => a - b)[Math.floor(0.05 * fetchedHp.length)] ?? 0;
+          const enfsiRes = await fetch(`${getApiBaseUrl()}/api/v1/forensic/validation/enfsi-verbal-scale`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              log10_lr: evalLogVal,
+              language: isTr ? "tr" : "en",
+            }),
+          });
+          if (enfsiRes.ok) {
+            const eData = await enfsiRes.json();
+            setServerEnfsi({
+              tier: eData.tier,
+              tier_name_en: eData.tier_name_en,
+              tier_name_tr: eData.tier_name_tr,
+              verbal_statement: eData.verbal_statement,
+              is_positive_support: eData.is_positive_support,
+            });
+          }
+        } catch {
+          // Client calculation serves as fallback
         }
 
         const elapsed = Math.round(performance.now() - startTime);
@@ -643,6 +786,10 @@ export default function ValidationLabPanel() {
         setHpData(fallback.hp);
         setHdData(fallback.hd);
         setServerCllr(null);
+        setServerTippett(null);
+        setServerRoc(null);
+        setServerHpd(null);
+        setServerEnfsi(null);
         setServerVerified(false);
       }
 
@@ -1385,7 +1532,7 @@ Standard: SWGDAM 2020 / ENFSI 2017 Evaluative Reporting Scale`;
                 <span className="text-[10px] text-zinc-400 font-bold uppercase block">
                   {isTr ? "Birleşik Belirsizlik (u_c)" : "Combined Uncertainty (u_c)"}
                 </span>
-                <p className="text-2xl font-bold text-white">±0.0943</p>
+                <p className="text-2xl font-bold text-white">±{calculations.dynamicUc.toFixed(4)}</p>
                 <p className="text-[10px] text-zinc-400">GUM JCGM 100:2008 Standardı</p>
               </div>
 
@@ -1393,12 +1540,25 @@ Standard: SWGDAM 2020 / ENFSI 2017 Evaluative Reporting Scale`;
                 <span className="text-[10px] text-zinc-400 font-bold uppercase block">
                   {isTr ? "Genişletilmiş Belirsizlik (U_95%)" : "Expanded Uncertainty (U_95%)"}
                 </span>
-                <p className="text-2xl font-bold text-white">±0.1887</p>
+                <p className="text-2xl font-bold text-white">±{calculations.dynamicU95.toFixed(4)}</p>
                 <p className="text-[10px] text-zinc-400">k = 2.00 (95% Güven Düzeyi)</p>
               </div>
             </div>
 
-            {/* 7-Tier Visual Table */}
+            {/* Live Server Verified ENFSI Evaluative Statement Banner */}
+            {serverEnfsi && (
+              <div className="p-3.5 rounded-xl bg-emerald-950/20 border border-emerald-500/40 text-xs space-y-1">
+                <div className="flex items-center gap-2 text-emerald-400 font-bold uppercase text-[10px]">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <span>{isTr ? "ENFSI (2017) Resmi Değerlendirici Görüş İfadesi:" : "ENFSI (2017) Evaluative Reporting Statement:"}</span>
+                </div>
+                <p className="text-white font-medium italic">
+                  &ldquo;{serverEnfsi.verbal_statement}&rdquo;
+                </p>
+              </div>
+            )}
+
+            {/* 7-Tier Visual Table (Dual-Proposition: Hp Support & Hd Defence Support) */}
             <div className="overflow-x-auto w-full rounded-xl border border-tactical-border/60 bg-black/50">
               <table className="w-full min-w-[560px] text-left text-xs border-collapse">
                 <thead>
@@ -1412,27 +1572,57 @@ Standard: SWGDAM 2020 / ENFSI 2017 Evaluative Reporting Scale`;
                 </thead>
                 <tbody className="divide-y divide-tactical-border/40 text-[11px]">
                   {[
-                    { tier: 0, range: "LR = 1", log: "0.0", en: "Inconclusive / Neutral", tr: "Sonuçsuz / Nötr" },
-                    { tier: 1, range: "1 < LR ≤ 10", log: "0.0 - 1.0", en: "Weak Support for Hp", tr: "İddia Lehine Zayıf Destek" },
-                    { tier: 2, range: "10 < LR ≤ 100", log: "1.0 - 2.0", en: "Moderate Support for Hp", tr: "İddia Lehine Orta Destek" },
-                    { tier: 3, range: "100 < LR ≤ 10,000", log: "2.0 - 4.0", en: "Moderately Strong Support for Hp", tr: "İddia Lehine Orta-Güçlü Destek" },
-                    { tier: 4, range: "10,000 < LR ≤ 10⁶", log: "4.0 - 6.0", en: "Strong Support for Hp", tr: "İddia Lehine Güçlü Destek" },
-                    { tier: 5, range: "10⁶ < LR ≤ 10⁹", log: "6.0 - 9.0", en: "Very Strong Support for Hp", tr: "İddia Lehine Çok Güçlü Destek" },
                     { tier: 6, range: "LR > 10⁹", log: "> 9.0", en: "Extremely Strong Support for Hp", tr: "İddia Lehine Son Derece Güçlü Destek" },
+                    { tier: 5, range: "10⁶ < LR ≤ 10⁹", log: "6.0 - 9.0", en: "Very Strong Support for Hp", tr: "İddia Lehine Çok Güçlü Destek" },
+                    { tier: 4, range: "10,000 < LR ≤ 10⁶", log: "4.0 - 6.0", en: "Strong Support for Hp", tr: "İddia Lehine Güçlü Destek" },
+                    { tier: 3, range: "100 < LR ≤ 10,000", log: "2.0 - 4.0", en: "Moderately Strong Support for Hp", tr: "İddia Lehine Orta-Güçlü Destek" },
+                    { tier: 2, range: "10 < LR ≤ 100", log: "1.0 - 2.0", en: "Moderate Support for Hp", tr: "İddia Lehine Orta Destek" },
+                    { tier: 1, range: "1 < LR ≤ 10", log: "0.0 - 1.0", en: "Weak Support for Hp", tr: "İddia Lehine Zayıf Destek" },
+                    { tier: 0, range: "LR = 1", log: "0.0", en: "Inconclusive / Neutral", tr: "Sonuçsuz / Nötr" },
+                    { tier: -1, range: "0.1 ≤ LR < 1", log: "-1.0 - 0.0", en: "Weak Support for Hd", tr: "Savunma Lehine Zayıf Destek" },
+                    { tier: -2, range: "0.01 ≤ LR < 0.1", log: "-2.0 - -1.0", en: "Moderate Support for Hd", tr: "Savunma Lehine Orta Destek" },
+                    { tier: -3, range: "10⁻⁴ ≤ LR < 0.01", log: "-4.0 - -2.0", en: "Moderately Strong Support for Hd", tr: "Savunma Lehine Orta-Güçlü Destek" },
+                    { tier: -4, range: "10⁻⁶ ≤ LR < 10⁻⁴", log: "-6.0 - -4.0", en: "Strong Support for Hd", tr: "Savunma Lehine Güçlü Destek" },
+                    { tier: -5, range: "10⁻⁹ ≤ LR < 10⁻⁶", log: "-9.0 - -6.0", en: "Very Strong Support for Hd", tr: "Savunma Lehine Çok Güçlü Destek" },
+                    { tier: -6, range: "LR < 10⁻⁹", log: "< -9.0", en: "Extremely Strong Support for Hd", tr: "Savunma Lehine Son Derece Güçlü Destek" },
                   ].map((row) => {
+                    const courtVal = calculations.log10_lower;
                     const isCurrent =
-                      (row.tier === 6 && calculations.meanHp > 9.0) ||
-                      (row.tier === 5 && calculations.meanHp > 6.0 && calculations.meanHp <= 9.0) ||
-                      (row.tier === 4 && calculations.meanHp > 4.0 && calculations.meanHp <= 6.0) ||
-                      (row.tier === 3 && calculations.meanHp > 2.0 && calculations.meanHp <= 4.0) ||
-                      (row.tier === 2 && calculations.meanHp > 1.0 && calculations.meanHp <= 2.0) ||
-                      (row.tier === 1 && calculations.meanHp > 0.0 && calculations.meanHp <= 1.0) ||
-                      (row.tier === 0 && calculations.meanHp <= 0.0);
+                      (row.tier === 6 && courtVal > 9.0) ||
+                      (row.tier === 5 && courtVal > 6.0 && courtVal <= 9.0) ||
+                      (row.tier === 4 && courtVal > 4.0 && courtVal <= 6.0) ||
+                      (row.tier === 3 && courtVal > 2.0 && courtVal <= 4.0) ||
+                      (row.tier === 2 && courtVal > 1.0 && courtVal <= 2.0) ||
+                      (row.tier === 1 && courtVal > 0.0 && courtVal <= 1.0) ||
+                      (row.tier === 0 && Math.abs(courtVal) < 1e-4) ||
+                      (row.tier === -1 && courtVal >= -1.0 && courtVal < 0.0) ||
+                      (row.tier === -2 && courtVal >= -2.0 && courtVal < -1.0) ||
+                      (row.tier === -3 && courtVal >= -4.0 && courtVal < -2.0) ||
+                      (row.tier === -4 && courtVal >= -6.0 && courtVal < -4.0) ||
+                      (row.tier === -5 && courtVal >= -9.0 && courtVal < -6.0) ||
+                      (row.tier === -6 && courtVal < -9.0);
+
+                    const badgeClass = isCurrent
+                      ? row.tier > 0
+                        ? "bg-emerald-500 text-black font-extrabold"
+                        : row.tier < 0
+                        ? "bg-rose-500 text-black font-extrabold"
+                        : "bg-cyan-400 text-black font-extrabold"
+                      : "bg-black/60 text-zinc-400";
+
+                    const rowClass = isCurrent
+                      ? row.tier > 0
+                        ? "bg-emerald-950/40 font-bold text-white"
+                        : row.tier < 0
+                        ? "bg-rose-950/40 font-bold text-white"
+                        : "bg-cyan-950/40 font-bold text-white"
+                      : "text-zinc-300";
+
                     return (
-                      <tr key={row.tier} className={isCurrent ? "bg-emerald-950/40 font-bold text-white" : "text-zinc-300"}>
+                      <tr key={row.tier} className={rowClass}>
                         <td className="p-3">
-                          <span className={`px-2 py-0.5 rounded text-[10px] ${isCurrent ? "bg-emerald-500 text-black font-extrabold" : "bg-black/60 text-zinc-400"}`}>
-                            {isTr ? `Düzey ${row.tier}` : `Tier ${row.tier}`}
+                          <span className={`px-2 py-0.5 rounded text-[10px] ${badgeClass}`}>
+                            {row.tier > 0 ? `+${row.tier}` : `${row.tier}`}
                           </span>
                         </td>
                         <td className="p-3 font-mono">{row.range}</td>

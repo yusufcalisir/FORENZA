@@ -106,7 +106,7 @@ async def compute_tippett_curves(body: TippettCurveRequest) -> TippettCurveRespo
 @router.post(
     "/roc-analysis",
     response_model=ROCAnalysisResponse,
-    summary="Empirical ROC Analysis — FPR, FNR, AUC, MER",
+    summary="Empirical ROC Analysis: FPR, FNR, AUC, MER",
     description=(
         "Computes empirical ROC curve and AUC via trapezoidal integration. "
         "FPR = P(log10(LR) > 0 | Hd), FNR = P(log10(LR) < 0 | Hp). "
@@ -194,6 +194,16 @@ async def compute_hpd_lower_bound(body: HPDLowerBoundRequest) -> HPDLowerBoundRe
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"HPD lower bound computation failed: {str(exc)}"
         )
+    n_samples = res.n_mcmc_samples
+    if n_samples > 1:
+        variance = sum((x - res.log10_lr_mean) ** 2 for x in body.mcmc_log10_lrs) / (n_samples - 1)
+        std_val = math.sqrt(variance)
+        u_c = std_val / math.sqrt(n_samples)
+    else:
+        std_val = 0.0
+        u_c = 0.0
+    u95 = 2.00 * u_c
+
     return HPDLowerBoundResponse(
         n_mcmc_samples=res.n_mcmc_samples,
         percentile=res.percentile,
@@ -201,6 +211,9 @@ async def compute_hpd_lower_bound(body: HPDLowerBoundRequest) -> HPDLowerBoundRe
         log10_lr_median=res.log10_lr_median,
         log10_lr_mean=res.log10_lr_mean,
         log10_lr_95ci_upper=res.log10_lr_95ci_upper,
+        std_log10_lr=round(std_val, 4),
+        u_c=round(u_c, 4),
+        expanded_uncertainty_u95=round(u95, 4),
         court_admissible_lr=math.pow(10.0, res.log10_lr_court),
         interpretation=res.interpretation,
     )

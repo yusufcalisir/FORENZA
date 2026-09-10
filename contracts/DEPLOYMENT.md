@@ -1,4 +1,4 @@
-# FORENZA Cryptographic Smart Contracts — Deployment Guide
+# FORENZA Cryptographic Smart Contracts : Deployment Guide
 
 This guide details the compilation, unit testing, testnet deployment, and verification procedures for the **FORENZA: Forensic Evidence Operating System** on-chain layer.
 

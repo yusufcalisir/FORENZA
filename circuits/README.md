@@ -32,7 +32,7 @@ The `dna_match.circom` circuit enables a querying law enforcement or forensic ag
 | **Circuit Language** | Circom 2.1.6+ |
 | **Proving System** | Groth16 (`snarkjs`) / Plonk compatible |
 | **Elliptic Curve** | BN254 (alt_bn128, 254-bit prime field) |
-| **Hash Primitive** | Poseidon $T=6$ ($R_F = 8, R_P = 57$) — zk-SNARK optimized arithmetic hash |
+| **Hash Primitive** | Poseidon $T=6$ ($R_F = 8, R_P = 57$) : zk-SNARK optimized arithmetic hash |
 | **Input Signals** | `private_dna_array[20]` (private), `salt` (private), `public_hash` (public) |
 | **R1CS Constraints** | $\approx 1,280$ non-linear constraints |
 | **Proving Time** | $\approx 350\text{ ms}$ on standard x86_64 CPU |

@@ -369,21 +369,41 @@ class MCMCSampler:
                 for j in range(i, len(alleles))
             ]
 
-            # Generate candidate sets for K contributors
+            # Rank candidate pairs by total observed peak height of constituent alleles
+            pairs.sort(key=lambda p: allele_obs.get(p[0], 0.0) + allele_obs.get(p[1], 0.0), reverse=True)
+            target_cover = len(alleles)
+
+            # Generate candidate sets for K contributors ensuring observed allele coverage
             if K == 2:
                 combos = [[p1, p2] for p1 in pairs for p2 in pairs]
             elif K == 3:
-                # Limit combinatorial expansion for K=3
-                top_pairs = pairs[:min(10, len(pairs))]
-                combos = [[p1, p2, p3] for p1 in top_pairs for p2 in top_pairs for p3 in top_pairs]
+                if len(pairs) <= 15:
+                    covering = [
+                        [p1, p2, p3]
+                        for p1 in pairs
+                        for p2 in pairs
+                        for p3 in pairs
+                        if len(set(p1 + p2 + p3).intersection(alleles)) >= min(target_cover, 5)
+                    ]
+                    combos = covering if covering else [[p1, p2, p3] for p1 in pairs[:10] for p2 in pairs[:10] for p3 in pairs[:10]]
+                else:
+                    top_pairs = pairs[:min(12, len(pairs))]
+                    combos = [[p1, p2, p3] for p1 in top_pairs for p2 in top_pairs for p3 in top_pairs]
             else:
-                combos = [[p] * K for p in pairs[:min(5, len(pairs))]]
+                top_pairs = pairs[:min(8, len(pairs))]
+                combos = [
+                    [p1, p2, p3, p4]
+                    for p1 in top_pairs[:4]
+                    for p2 in top_pairs[:4]
+                    for p3 in top_pairs[:4]
+                    for p4 in top_pairs[:4]
+                ]
 
             if not combos:
                 genotypes_by_locus[locus] = [(alleles[0], alleles[0])] * K
                 continue
 
-            # Score candidates using BiophysicalPeakModel under provided weights
+            # Score candidates using BiophysicalPeakModel under provided weights (baseline d=0.0)
             locus_rfu = sum(allele_obs.values())
             bphys = BiophysicalPeakModel(
                 template_scale=max(50.0, 0.5 * locus_rfu),
@@ -395,7 +415,7 @@ class MCMCSampler:
             best_c = combos[0]
 
             for c in combos:
-                exp_h = bphys.expected_peak_heights(locus, c, weights, [0.002] * K)
+                exp_h = bphys.expected_peak_heights(locus, c, weights, [0.0] * K)
                 ll = 0.0
                 for a, h_obs in allele_obs.items():
                     h_exp = exp_h.get(a, 0.0)
@@ -443,7 +463,7 @@ class MCMCSampler:
         d_step = 0.0002        # proposal standard deviation for degradation
 
         # Adaptive batch tracking
-        tune_interval = 100
+        tune_interval = max(25, min(100, self.n_burn // 10))
         batch_accepted = 0
         batch_proposals = 0
 
@@ -457,7 +477,7 @@ class MCMCSampler:
                     dirichlet_conc = max(50.0, dirichlet_conc * 0.85)
                     d_step = min(0.005, d_step * 1.15)
                 elif batch_rate < 0.22:
-                    dirichlet_conc = min(100000.0, dirichlet_conc * 1.25)
+                    dirichlet_conc = min(100000.0, dirichlet_conc * 1.35)
                     d_step = max(0.000001, d_step * 0.80)
                 batch_accepted = 0
                 batch_proposals = 0
@@ -472,18 +492,25 @@ class MCMCSampler:
                 dk_new = rng.gauss(dk, d_step)
                 d_prop.append(max(0.0, dk_new))
 
-            # -- Genotype proposal (occasional perturbation of a single locus) --
-            if rng.random() < 0.02 and isinstance(g_cur, dict):
-                g_prop = {loc: list(gen_list) for loc, gen_list in g_cur.items()}
+            # -- Genotype proposal (single-contributor perturbation at one locus) --
+            if rng.random() < 0.04 and isinstance(g_cur, dict) and observed:
                 pert_loc = rng.choice(list(observed.keys()))
                 pert_alleles = list(observed[pert_loc].keys())
                 if len(pert_alleles) >= 1:
-                    new_g = []
-                    for _ in range(K):
-                        a1 = rng.choice(pert_alleles)
-                        a2 = rng.choice(pert_alleles)
-                        new_g.append((min(a1, a2), max(a1, a2)))
-                    g_prop[pert_loc] = new_g
+                    pert_k = rng.randrange(K)
+                    cand_pairs = [
+                        (pert_alleles[a], pert_alleles[b])
+                        for a in range(len(pert_alleles))
+                        for b in range(a, len(pert_alleles))
+                    ]
+                    new_pair = rng.choice(cand_pairs)
+                    g_prop = {loc: list(gen_list) for loc, gen_list in g_cur.items()}
+                    new_locus_g = list(g_prop.get(pert_loc, []))
+                    if pert_k < len(new_locus_g):
+                        new_locus_g[pert_k] = new_pair
+                        g_prop[pert_loc] = new_locus_g
+                else:
+                    g_prop = g_cur
             else:
                 g_prop = g_cur
 
@@ -623,16 +650,13 @@ class MCMCSampler:
         chain_results: List[MCMCChainResult] = []
         for c_id in range(self.n_chains):
             chain_init_weights = self._get_dispersed_init_weights(c_id, K)
-            chain_init_genotypes = self._propose_genotypes(
-                observed, K, random.Random(42 + c_id * 31), weights=chain_init_weights
-            )
             chain = self._run_chain(
                 chain_id=c_id,
                 observed=observed,
                 K=K,
                 init_weights=chain_init_weights,
                 init_degradation=list(init_degradation),
-                init_genotypes=dict(chain_init_genotypes),
+                init_genotypes=dict(init_genotypes),
             )
             chain_results.append(chain)
 
@@ -662,31 +686,50 @@ class MCMCSampler:
         ll_hp_vals: List[float] = []
         log10_pop_p = 0.0
 
+        # Filter suspect loci to those present in observed evidence
+        eval_loci = [loc for loc in suspect_dict if loc in observed]
+        if not eval_loci:
+            suspect_dict = {}
+
         if suspect_dict:
-            # Composite population match probability for suspect across loci
+            # Composite population match probability for suspect across evaluated loci
             pop_db = FrequencyDatabase(default_population="Caucasian")
-            for loc_name, (sa1, sa2) in suspect_dict.items():
+            for loc_name in eval_loci:
+                sa1, sa2 = suspect_dict[loc_name]
                 p_geno = pop_db.calculate_genotype_probability(loc_name, sa1, sa2, theta=0.01)
                 log10_pop_p += math.log10(max(1e-12, p_geno))
 
             for s in all_samples:
-                fixed_genotypes: Dict[str, List[Tuple[float, float]]] = {}
-                if isinstance(s.genotypes, dict):
-                    for loc_name, s_locus_genotypes in s.genotypes.items():
-                        if loc_name in suspect_dict:
-                            fixed_genotypes[loc_name] = [suspect_dict[loc_name]] + s_locus_genotypes[1:]
+                # Under H_p, suspect can be any of the K contributors.
+                # Evaluate all candidate contributor slots k in 0..K-1 to find the optimal assignment.
+                best_ll_hp = -1e30
+                for k_slot in range(K):
+                    candidate_genotypes: Dict[str, List[Tuple[float, float]]] = {}
+                    if isinstance(s.genotypes, dict):
+                        for loc_name, s_locus_genotypes in s.genotypes.items():
+                            if loc_name in suspect_dict and k_slot < len(s_locus_genotypes):
+                                new_g = list(s_locus_genotypes)
+                                new_g[k_slot] = suspect_dict[loc_name]
+                                candidate_genotypes[loc_name] = new_g
+                            else:
+                                candidate_genotypes[loc_name] = s_locus_genotypes
+                    else:
+                        # Single locus list
+                        first_loc = next(iter(observed.keys()))
+                        if first_loc in suspect_dict and k_slot < len(s.genotypes):
+                            new_g = list(s.genotypes)
+                            new_g[k_slot] = suspect_dict[first_loc]
+                            candidate_genotypes[first_loc] = new_g
                         else:
-                            fixed_genotypes[loc_name] = s_locus_genotypes
-                else:
-                    # Single locus list
-                    first_loc = next(iter(observed.keys()))
-                    if first_loc in suspect_dict:
-                        fixed_genotypes[first_loc] = [suspect_dict[first_loc]] + s.genotypes[1:]
+                            candidate_genotypes[first_loc] = s.genotypes
 
-                ll_hp = self._compute_log_likelihood(
-                    observed, fixed_genotypes, s.mixture_weights, s.degradation
-                )
-                ll_hp_vals.append(ll_hp)
+                    ll_k = self._compute_log_likelihood(
+                        observed, candidate_genotypes, s.mixture_weights, s.degradation
+                    )
+                    if ll_k > best_ll_hp:
+                        best_ll_hp = ll_k
+
+                ll_hp_vals.append(best_ll_hp)
 
         # -- LR computation in log-space (log-sum-exp) --
         def _log_mean_exp(vals: List[float]) -> float:
@@ -726,9 +769,15 @@ class MCMCSampler:
         lr_point = 10.0 ** clamped_exp
 
         # -- Posterior mean mixture weights & degradation (with label-switching canonical alignment) --
-        aligned_weights = [sorted(s.mixture_weights, reverse=True) for s in all_samples]
+        aligned_weights: List[List[float]] = []
+        aligned_degradation: List[List[float]] = []
+        for s in all_samples:
+            perm = sorted(range(K), key=lambda idx: s.mixture_weights[idx], reverse=True)
+            aligned_weights.append([s.mixture_weights[p] for p in perm])
+            aligned_degradation.append([s.degradation[p] for p in perm])
+
         post_w = [statistics.mean(w[k] for w in aligned_weights) for k in range(K)]
-        post_d = [statistics.mean(s.degradation[k] for s in all_samples) for k in range(K)]
+        post_d = [statistics.mean(d[k] for d in aligned_degradation) for k in range(K)]
 
         verbal_en, verbal_tr = _enfsi_verbal(lr_point)
 

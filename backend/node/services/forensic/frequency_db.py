@@ -287,6 +287,34 @@ CODIS_20_LOCI: Tuple[str, ...] = (
 # FrequencyDatabase Class
 # ---------------------------------------------------------------------------
 
+# ---------------------------------------------------------------------------
+# Canonical Locus Normalization (SWGDAM / ISFG)
+# ---------------------------------------------------------------------------
+
+_CANONICAL_LOCUS_ALIASES: Dict[str, str] = {
+    "PENTAD": "PENTA_D",
+    "PENTA_D": "PENTA_D",
+    "PENTAE": "PENTA_E",
+    "PENTA_E": "PENTA_E",
+    "AMEL": "AMEL",
+    "AMELOGENIN": "AMEL",
+    "SE33": "SE33",
+    "SE_33": "SE33",
+    "VWA": "VWA",
+}
+
+
+def normalize_locus_name(locus_name: str) -> str:
+    """Normalize input locus names (e.g. 'Penta D', 'PentaD', 'vwa') to canonical database keys."""
+    cleaned = locus_name.strip().upper().replace(" ", "_").replace("-", "_")
+    if cleaned in _CANONICAL_LOCUS_ALIASES:
+        return _CANONICAL_LOCUS_ALIASES[cleaned]
+    no_under = cleaned.replace("_", "")
+    if no_under in _CANONICAL_LOCUS_ALIASES:
+        return _CANONICAL_LOCUS_ALIASES[no_under]
+    return cleaned
+
+
 class FrequencyDatabase:
     """
     24-locus allele frequency database with NRC II Rule 4.1 minimum floor
@@ -305,7 +333,7 @@ class FrequencyDatabase:
     def supported_populations(self) -> list:
         return list(POPULATION_FREQUENCIES.keys())
 
-    # ── Allele Frequency Lookup ───────────────────────────────────────────
+    # -- Allele Frequency Lookup -------------------------------------------
 
     def get_frequency(
         self,
@@ -316,7 +344,8 @@ class FrequencyDatabase:
         """Returns bounded allele frequency enforcing NRC II Rule 4.1 floor."""
         pop = population or self.default_population
         pop_db = POPULATION_FREQUENCIES.get(pop, POPULATION_FREQUENCIES["Caucasian"])
-        locus_db = pop_db.get(locus_name.upper(), {})
+        canonical_locus = normalize_locus_name(locus_name)
+        locus_db = pop_db.get(canonical_locus, {})
         freq = locus_db.get(allele_value, self.min_frequency)
         return max(freq, self.min_frequency)
 

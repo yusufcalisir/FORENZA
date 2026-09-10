@@ -1,5 +1,5 @@
 """
-FORENZA 1.2.5 — Deconvolution MCMCSampler Shim
+FORENZA 1.2.5 : Deconvolution MCMCSampler Shim
 
 Canonical roadmap path: backend/node/services/forensic/deconvolution/mcmc_sampler.py
 Engine implementation:   backend/node/services/forensic/probabilistic/mcmc.py
@@ -8,7 +8,7 @@ This shim re-exports all public symbols from the validated probabilistic engine
 (10/10 edge-case tests passing, 2026-08-20) so the roadmap import path resolves
 without code duplication.
 
-Research Reference: pillar_1_probabilistic_genotyping_research.md §2.5–2.9
+Research Reference: pillar_1_probabilistic_genotyping_research.md §2.5-2.9
 """
 
 from node.services.forensic.probabilistic.mcmc import (

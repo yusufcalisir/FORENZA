@@ -1,6 +1,6 @@
 """
 FORENZA Forensic Evidence Operating System
-Pillar 1 — Module 1.4: Low-Template DNA (LTDNA) Stochastic Modeling Engine
+Pillar 1 : Module 1.4: Low-Template DNA (LTDNA) Stochastic Modeling Engine
 Sub-Item 1.4.1: Mathematical Formulation Unit Test Suite
 
 Tests:
@@ -282,7 +282,7 @@ class TestCurranGillMarkovStateTransitions:
 
     def test_vector_03_golden_benchmark_ltdna_dropout(self):
         """
-        VECTOR_03 — Golden Benchmark LTDNA Dropout Case.
+        VECTOR_03 : Golden Benchmark LTDNA Dropout Case.
         vWA locus: suspect (16, 17), observed 16@80RFU (17 dropped).
         P(D) stochastic penalty applied -> log10(LR) is reduced relative to full match.
         """

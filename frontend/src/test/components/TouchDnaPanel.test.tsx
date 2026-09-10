@@ -452,5 +452,74 @@ describe("Subsystem 04: Touch DNA & Low-Template (LTDNA) Stochastic Modeling Eng
         expect(container).toBeInTheDocument();
       });
     });
+
+    it("verifies STR_LOCUS_SPECS contains D16S539 and AMEL alias for casework parity", () => {
+      expect(STR_LOCUS_SPECS["D16S539"]).toBeDefined();
+      expect(STR_LOCUS_SPECS["D16S539"].bp).toBe(280);
+      expect(STR_LOCUS_SPECS["AMEL"]).toBeDefined();
+      expect(STR_LOCUS_SPECS["Amelogenin"]).toBeDefined();
+    });
+
+    it("transmits certified population_frequencies and amplicon_sizes in multi-locus-lr payload", async () => {
+      const fetchSpy = vi.spyOn(global, "fetch");
+      const { container } = render(<TouchDnaPanel />);
+
+      const execBtn = container.querySelector("#execute-touch-analysis-btn");
+      await act(async () => {
+        fireEvent.click(execBtn!);
+      });
+
+      await waitFor(() => {
+        const calls = fetchSpy.mock.calls;
+        const multiLocusCall = calls.find((c) => String(c[0]).includes("multi-locus-lr"));
+        expect(multiLocusCall).toBeDefined();
+        if (multiLocusCall && multiLocusCall[1] && multiLocusCall[1].body) {
+          const body = JSON.parse(multiLocusCall[1].body as string);
+          expect(body.population_frequencies).toBeDefined();
+          expect(body.population_frequencies["vWA"]).toBeDefined();
+          expect(body.amplicon_sizes).toBeDefined();
+          expect(body.amplicon_sizes["vWA"]).toBe(175);
+        }
+      });
+    });
+
+    it("renders Peter Gill LCN 6-Tier Reference Dilution series in Tab 1 and updates initial mass on click", async () => {
+      const { container } = render(<TouchDnaPanel />);
+
+      // Verify the 6-tier section header exists
+      await waitFor(() => {
+        expect(container.textContent).toContain("Peter Gill LCN");
+      });
+
+      // Find 60 pg tier button and click it
+      const tierBtns = Array.from(container.querySelectorAll("button")).filter(
+        (b) => b.textContent?.includes("60 pg")
+      );
+      expect(tierBtns.length).toBeGreaterThan(0);
+
+      await act(async () => {
+        fireEvent.click(tierBtns[0]);
+      });
+
+      // Template mass should now update towards 60 pg
+      expect(container.textContent).toContain("60.0 pg");
+    });
+
+    it("renders live server verification box or fallback in Tab 4", async () => {
+      const { container } = render(<TouchDnaPanel />);
+
+      const tab4Btn = container.querySelector("#tab-heterozygote");
+      expect(tab4Btn).toBeInTheDocument();
+
+      await act(async () => {
+        fireEvent.click(tab4Btn!);
+      });
+
+      await waitFor(() => {
+        expect(container.textContent).toContain("Curran-Gill");
+      });
+    });
   });
 });
+
+

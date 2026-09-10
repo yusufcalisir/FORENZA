@@ -1,6 +1,6 @@
 """
 FORENZA Forensic Evidence Operating System
-Pillar 1 — Module 1.4: Low-Template DNA (LTDNA) Stochastic Modeling Engine
+Pillar 1: Module 1.4: Low-Template DNA (LTDNA) Stochastic Modeling Engine
 Sub-Item 1.4.1: Mathematical Formulation
 
 Derives exclusively and verbatim from:
@@ -19,11 +19,11 @@ from typing import Dict, List, Optional, Tuple, Union
 # 1. Research-Calibrated Empirical Constants (Verbatim Pillar 1 §4 & §6)
 # ===========================================================================
 
-# §4.1 Logistic Allele Dropout Model — RFU-based calibration
+# §4.1 Logistic Allele Dropout Model: RFU-based calibration
 DROPOUT_BETA0_RFU: float = 2.50
 DROPOUT_BETA1_RFU: float = -0.025   # per RFU unit
 
-# §4.1 Logistic Allele Dropout Model — DNA Mass-based calibration
+# §4.1 Logistic Allele Dropout Model: DNA Mass-based calibration
 DROPOUT_BETA0_MASS: float = 3.20
 DROPOUT_BETA1_MASS: float = -0.080  # per picogram (pg)
 
@@ -36,10 +36,10 @@ DROPIN_LAMBDA_POISSON: float = 0.020  # per locus
 # §4.2 Truncated Exponential Drop-in Peak Height decay parameter
 DROPIN_LAMBDA_HEIGHT: float = 0.015   # per RFU unit above AT
 
-# Analytical Threshold (AT) — signal below is baseline noise/artefact
+# Analytical Threshold (AT): signal below is baseline noise/artefact
 ANALYTICAL_THRESHOLD_RFU: float = 50.0
 
-# Stochastic Threshold (ST) — peaks below trigger potential sister dropout flag
+# Stochastic Threshold (ST): peaks below trigger potential sister dropout flag
 STOCHASTIC_THRESHOLD_RFU: float = 150.0
 
 # Heterozygote peak balance (H_b) quality threshold
@@ -612,6 +612,7 @@ class LTDNAMathematicalFormulation:
         pop_freqs_db: Dict[str, Dict[float, float]],
         theta: float = 0.03,
         lambda_c: float = DROPIN_LAMBDA_POISSON,
+        amplicon_sizes: Optional[Dict[str, float]] = None,
     ) -> LTDNAMultiLocusResult:
         """
         Compute multi-locus profile Likelihood Ratio across 24 loci under LTDNA stochastic models.
@@ -621,7 +622,7 @@ class LTDNAMathematicalFormulation:
         """
         # Compute template-wide dropout probability
         p_d_res = LTDNAMathematicalFormulation.compute_dropout_probability_mass(template_pg)
-        p_dropout = p_d_res.dropout_probability
+        p_dropout_global = p_d_res.dropout_probability
 
         locus_results: List[LTDNALocusLRResult] = []
         sum_log10_lr = 0.0
@@ -630,6 +631,15 @@ class LTDNAMathematicalFormulation:
         for locus, susp_geno in suspect_profile.items():
             obs_peaks = observed_profile.get(locus, {})
             locus_freqs = pop_freqs_db.get(locus, {})
+
+            if amplicon_sizes and locus in amplicon_sizes:
+                locus_bp = amplicon_sizes[locus]
+                p_dropout = LTDNAMathematicalFormulation.compute_dropout_probability_fragment_size(
+                    mass_pg=template_pg,
+                    amplicon_bp=locus_bp,
+                ).dropout_probability
+            else:
+                p_dropout = p_dropout_global
 
             loc_res = LTDNAMathematicalFormulation.compute_ltdna_single_locus_lr(
                 locus=locus,
@@ -667,13 +677,19 @@ class LTDNAMathematicalFormulation:
             verbal_en = "Support for Defense Proposition (Exclusion)"
             verbal_tr = "Savunma Propozisyonu İçin Destek (Dışlama)"
 
+        mean_pd = (
+            sum(r.p_dropout_1 for r in locus_results) / len(locus_results)
+            if locus_results
+            else p_dropout_global
+        )
+
         return LTDNAMultiLocusResult(
             n_loci=len(locus_results),
             locus_results=locus_results,
             total_lr_point=total_lr,
             total_log10_lr=round(clamped_total_log10, 4),
             total_stochastic_flags_count=total_flags,
-            mean_p_dropout=round(p_dropout, 6),
+            mean_p_dropout=round(mean_pd, 6),
             verbal_en=verbal_en,
             verbal_tr=verbal_tr,
             additivity_verified=True,

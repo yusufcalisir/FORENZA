@@ -324,6 +324,10 @@ class MultiLocusLTDNARequest(BaseModel):
         None,
         description="Optional population allele frequency database override.",
     )
+    amplicon_sizes: Optional[Dict[str, float]] = Field(
+        None,
+        description="Optional locus amplicon base-pair size map for fragment length degradation.",
+    )
 
 
 class SingleLocusLRDetail(BaseModel):

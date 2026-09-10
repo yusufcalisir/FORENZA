@@ -1,6 +1,6 @@
 """
 FORENZA Forensic Evidence Operating System
-Pillar 1 — Module 1.4: Low-Template DNA (LTDNA) Stochastic Modeling Engine
+Pillar 1 : Module 1.4: Low-Template DNA (LTDNA) Stochastic Modeling Engine
 Sub-Item 1.4.4: 5 Documented Edge-Case Tests (EC-LTDNA-01 to EC-LTDNA-05)
 
 Mandatory Verification Criteria (AGENTS.md & VALIDATION_CHECKLIST.md):

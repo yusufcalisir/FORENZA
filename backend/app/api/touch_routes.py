@@ -72,12 +72,24 @@ _touch_engine = TouchDnaEngine()
 )
 async def compute_dropout_model(body: DropoutModelRequest) -> DropoutModelResponse:
     try:
-        if body.model_type.upper() == "MASS_PG":
+        mtype = body.model_type.upper()
+        if mtype == "MASS_PG":
             beta_0 = body.beta_0 if body.beta_0 is not None else DROPOUT_BETA0_MASS
             beta_1 = body.beta_1 if body.beta_1 is not None else DROPOUT_BETA1_MASS
             res = _touch_engine.compute_mass_dropout_probability(
                 mass_pg=body.input_value,
                 amplicon_bp=body.amplicon_bp,
+                beta_0=beta_0,
+                beta_1=beta_1,
+            )
+        elif mtype == "FRAGMENT_BP":
+            beta_0 = body.beta_0 if body.beta_0 is not None else DROPOUT_BETA0_MASS
+            beta_1 = body.beta_1 if body.beta_1 is not None else DROPOUT_BETA1_MASS
+            amplicon_bp = body.amplicon_bp if body.amplicon_bp is not None else body.input_value
+            mass_pg = body.input_value if body.amplicon_bp is not None else 30.0
+            res = _touch_engine.compute_mass_dropout_probability(
+                mass_pg=mass_pg,
+                amplicon_bp=amplicon_bp,
                 beta_0=beta_0,
                 beta_1=beta_1,
             )
@@ -282,6 +294,7 @@ async def compute_multi_locus_lr(body: MultiLocusLTDNARequest) -> MultiLocusLTDN
             template_pg=body.template_pg,
             population_db=pop_db_typed,
             theta=body.theta,
+            amplicon_sizes=body.amplicon_sizes,
         )
 
         details = [
@@ -375,31 +388,23 @@ async def analyze_ltdna(body: AnalyzeLtdnaRequest) -> AnalyzeLtdnaResponse:
 )
 async def contributor_deconv(body: ContributorDeconvRequest) -> ContributorDeconvResponse:
     try:
-        k = body.num_contributors
-        if k == 1:
-            props = {"Contributor_1": 1.0}
-        elif k == 2:
-            props = {"Major_Contributor": 0.75, "Minor_Contributor": 0.25}
-        elif k == 3:
-            props = {"Major_Contributor": 0.60, "Minor_1": 0.25, "Minor_2": 0.15}
-        else:
-            props = {
-                "Contributor_1": 0.40, "Contributor_2": 0.30,
-                "Contributor_3": 0.20, "Contributor_4": 0.10,
-            }
-        log_lr = round(4.5 + 0.05 * body.recovered_mass_pg, 2)
+        res = _touch_engine.deconvolve_touch_mixture(
+            sample_id=body.sample_id,
+            num_contributors=body.num_contributors,
+            recovered_mass_pg=body.recovered_mass_pg,
+        )
     except Exception as exc:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Touch DNA contributor deconvolution failed: {str(exc)}"
         )
     return ContributorDeconvResponse(
-        sample_id=body.sample_id,
-        num_contributors=body.num_contributors,
-        deconvolution_status="MCMC_CONVERGED",
-        mixture_proportions=props,
-        mcmc_acceptance_rate=0.421,
-        log10_lr=log_lr,
+        sample_id=res["sample_id"],
+        num_contributors=res["num_contributors"],
+        deconvolution_status=res["deconvolution_status"],
+        mixture_proportions=res["mixture_proportions"],
+        mcmc_acceptance_rate=res["mcmc_acceptance_rate"],
+        log10_lr=res["log10_lr"],
     )
 
 

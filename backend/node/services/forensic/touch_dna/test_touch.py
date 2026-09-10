@@ -1,5 +1,5 @@
 """
-Unit & Integration Tests for FORENZA Touch DNA & Low-Template (LTDNA) Package — Module 04.
+Unit & Integration Tests for FORENZA Touch DNA & Low-Template (LTDNA) Package : Module 04.
 
 Tests verbatim from Pillar 1 Research §4:
   §4.1 Logistic Allele Dropout P(D|x): RFU model (β₀=+2.50, β₁=-0.025)
@@ -11,15 +11,15 @@ Tests verbatim from Pillar 1 Research §4:
   Substrate Recovery Efficiency Matrix (4 materials).
 
 Golden Benchmark Vectors:
-  VECTOR_03   — vWA (16@80RFU, 17 dropped), suspect (16,17) → log10(LR) = 1.22 ± 0.20
-  VECTOR_04_LTDNA_A — RFU Logistic Dropout at 50 RFU and 150 RFU
-  VECTOR_04_LTDNA_B — Mass Logistic Dropout at 50 pg and 150 pg
-  VECTOR_04_LTDNA_C — Poisson Drop-in P(C=0), P(C=1) with λ_C=0.020
-  VECTOR_04_LTDNA_D — Exponential Drop-in Height PDF
-  VECTOR_04_LTDNA_E — Heterozygote Balance H_b flag (imbalance < 0.60)
-  VECTOR_04_LTDNA_F — Stochastic Threshold ST=150 RFU flag
-  VECTOR_04_LTDNA_G — Substrate Recovery Efficiency for 4 materials
-  VECTOR_04_LTDNA_H — API integration tests for all 5 new endpoints
+  VECTOR_03   : vWA (16@80RFU, 17 dropped), suspect (16,17) → log10(LR) = 1.22 ± 0.20
+  VECTOR_04_LTDNA_A : RFU Logistic Dropout at 50 RFU and 150 RFU
+  VECTOR_04_LTDNA_B : Mass Logistic Dropout at 50 pg and 150 pg
+  VECTOR_04_LTDNA_C : Poisson Drop-in P(C=0), P(C=1) with λ_C=0.020
+  VECTOR_04_LTDNA_D : Exponential Drop-in Height PDF
+  VECTOR_04_LTDNA_E : Heterozygote Balance H_b flag (imbalance < 0.60)
+  VECTOR_04_LTDNA_F : Stochastic Threshold ST=150 RFU flag
+  VECTOR_04_LTDNA_G : Substrate Recovery Efficiency for 4 materials
+  VECTOR_04_LTDNA_H : API integration tests for all 5 new endpoints
 """
 
 import math
@@ -43,11 +43,11 @@ client = TestClient(_app)
 touch_engine = TouchDnaEngine()
 
 
-# ── VECTOR_03 (Golden) — LTDNA Dropout Case ──────────────────────────────────
+# ── VECTOR_03 (Golden) : LTDNA Dropout Case ──────────────────────────────────
 
 def test_vector_03_ltdna_vwa_single_dropout_log10_lr():
     """
-    VECTOR_03 — Low-Template Drop Case.
+    VECTOR_03 : Low-Template Drop Case.
     vWA locus: observed 16@80RFU, allele 17 dropped.
     Suspect genotype: (16, 17). P(D) stochastic penalty active.
     Expected: log10(LR) = 1.22 ± 0.20
@@ -86,11 +86,11 @@ def test_vector_03_ltdna_vwa_single_dropout_log10_lr():
     assert "support" in res_lr.interpretation.lower()
 
 
-# ── VECTOR_04_LTDNA_A — RFU Logistic Dropout Model ───────────────────────────
+# ── VECTOR_04_LTDNA_A : RFU Logistic Dropout Model ───────────────────────────
 
 def test_vector_04_ltdna_a_rfu_dropout_at_50_rfu():
     """
-    VECTOR_04_LTDNA_A(i) — P(D|RFU=50) = 1/(1+exp(-(2.50 + (-0.025)*50)))
+    VECTOR_04_LTDNA_A(i) : P(D|RFU=50) = 1/(1+exp(-(2.50 + (-0.025)*50)))
     logit = 2.50 - 1.25 = 1.25 → P(D) = 1/(1+exp(-1.25)) = 0.7773...
     """
     logit_expected = 2.50 + (-0.025) * 50.0       # = 1.25
@@ -105,7 +105,7 @@ def test_vector_04_ltdna_a_rfu_dropout_at_50_rfu():
 
 def test_vector_04_ltdna_a_rfu_dropout_at_150_rfu():
     """
-    VECTOR_04_LTDNA_A(ii) — P(D|RFU=150) = 1/(1+exp(-(2.50 + (-0.025)*150)))
+    VECTOR_04_LTDNA_A(ii) : P(D|RFU=150) = 1/(1+exp(-(2.50 + (-0.025)*150)))
     logit = 2.50 - 3.75 = -1.25 → P(D) = 1/(1+exp(1.25)) = 0.2227...
     """
     logit_expected = 2.50 + (-0.025) * 150.0      # = -1.25
@@ -124,11 +124,11 @@ def test_vector_04_ltdna_a_rfu_dropout_symmetry():
     assert abs(p50 + p150 - 1.0) < 1e-4, f"p50={p50}, p150={p150}"
 
 
-# ── VECTOR_04_LTDNA_B — Mass Logistic Dropout Model ──────────────────────────
+# ── VECTOR_04_LTDNA_B : Mass Logistic Dropout Model ──────────────────────────
 
 def test_vector_04_ltdna_b_mass_dropout_at_50_pg():
     """
-    VECTOR_04_LTDNA_B(i) — P(D|50 pg) = 1/(1+exp(-(3.20 + (-0.080)*50)))
+    VECTOR_04_LTDNA_B(i) : P(D|50 pg) = 1/(1+exp(-(3.20 + (-0.080)*50)))
     logit = 3.20 - 4.00 = -0.80 → P(D) = 1/(1+exp(0.80)) = 0.3100...
     """
     logit_expected = 3.20 + (-0.080) * 50.0       # = -0.80
@@ -143,7 +143,7 @@ def test_vector_04_ltdna_b_mass_dropout_at_50_pg():
 
 def test_vector_04_ltdna_b_mass_dropout_at_150_pg():
     """
-    VECTOR_04_LTDNA_B(ii) — P(D|150 pg) = 1/(1+exp(-(3.20 + (-0.080)*150)))
+    VECTOR_04_LTDNA_B(ii) : P(D|150 pg) = 1/(1+exp(-(3.20 + (-0.080)*150)))
     logit = 3.20 - 12.00 = -8.80 → P(D) ≈ 0.000151 (near-zero dropout)
     """
     logit_expected = 3.20 + (-0.080) * 150.0      # = -8.80
@@ -156,11 +156,11 @@ def test_vector_04_ltdna_b_mass_dropout_at_150_pg():
     assert res.is_below_critical is False   # Well above critical threshold
 
 
-# ── VECTOR_04_LTDNA_C — Poisson Drop-in Distribution ─────────────────────────
+# ── VECTOR_04_LTDNA_C : Poisson Drop-in Distribution ─────────────────────────
 
 def test_vector_04_ltdna_c_poisson_dropin_k0():
     """
-    VECTOR_04_LTDNA_C(i) — P(C=0) = e^{-0.020} = 0.980199...
+    VECTOR_04_LTDNA_C(i) : P(C=0) = e^{-0.020} = 0.980199...
     (probability of no spurious drop-in allele at this locus)
     """
     res = touch_engine.compute_dropin_poisson_probability(k=0)
@@ -171,7 +171,7 @@ def test_vector_04_ltdna_c_poisson_dropin_k0():
 
 def test_vector_04_ltdna_c_poisson_dropin_k1():
     """
-    VECTOR_04_LTDNA_C(ii) — P(C=1) = (0.020^1 * e^{-0.020}) / 1! = 0.0196...
+    VECTOR_04_LTDNA_C(ii) : P(C=1) = (0.020^1 * e^{-0.020}) / 1! = 0.0196...
     (probability of exactly one drop-in allele)
     """
     res = touch_engine.compute_dropin_poisson_probability(k=1)
@@ -189,11 +189,11 @@ def test_vector_04_ltdna_c_poisson_sum_invariant():
     assert abs(total - 1.0) < 1e-6, f"Sum P(C=0..10) = {total}"
 
 
-# ── VECTOR_04_LTDNA_D — Exponential Drop-in Height PDF ───────────────────────
+# ── VECTOR_04_LTDNA_D : Exponential Drop-in Height PDF ───────────────────────
 
 def test_vector_04_ltdna_d_dropin_height_pdf_at_at():
     """
-    VECTOR_04_LTDNA_D(i) — f(AT) = λ_h * exp(-λ_h * (AT - AT)) = λ_h = 0.015
+    VECTOR_04_LTDNA_D(i) : f(AT) = λ_h * exp(-λ_h * (AT - AT)) = λ_h = 0.015
     """
     res = touch_engine.compute_dropin_height_density(h_c=ANALYTICAL_THRESHOLD_RFU)
     assert abs(res.height_density - DROPIN_LAMBDA_HEIGHT) < 1e-8, f"f(AT)={res.height_density}"
@@ -202,7 +202,7 @@ def test_vector_04_ltdna_d_dropin_height_pdf_at_at():
 
 def test_vector_04_ltdna_d_dropin_height_pdf_at_100_rfu():
     """
-    VECTOR_04_LTDNA_D(ii) — f(100) = 0.015 * exp(-0.015 * (100 - 50)) = 0.015 * exp(-0.75)
+    VECTOR_04_LTDNA_D(ii) : f(100) = 0.015 * exp(-0.015 * (100 - 50)) = 0.015 * exp(-0.75)
     """
     h_c = 100.0
     expected = DROPIN_LAMBDA_HEIGHT * math.exp(-DROPIN_LAMBDA_HEIGHT * (h_c - ANALYTICAL_THRESHOLD_RFU))
@@ -213,7 +213,7 @@ def test_vector_04_ltdna_d_dropin_height_pdf_at_100_rfu():
 
 def test_vector_04_ltdna_d_dropin_height_pdf_below_at():
     """
-    VECTOR_04_LTDNA_D(iii) — h_c < AT (40 RFU) → f(h_c) = 0.0, is_above_at = False
+    VECTOR_04_LTDNA_D(iii) : h_c < AT (40 RFU) → f(h_c) = 0.0, is_above_at = False
     """
     res = touch_engine.compute_dropin_height_density(h_c=40.0)
     assert res.height_density == 0.0
@@ -228,11 +228,11 @@ def test_vector_04_ltdna_d_dropin_height_pdf_monotone_decreasing():
         assert densities[i] > densities[i + 1], f"Non-monotone at h={h_vals[i]}"
 
 
-# ── VECTOR_04_LTDNA_E — Heterozygote Balance Flag (H_b < 0.60) ───────────────
+# ── VECTOR_04_LTDNA_E : Heterozygote Balance Flag (H_b < 0.60) ───────────────
 
 def test_vector_04_ltdna_e_hb_flag_imbalanced():
     """
-    VECTOR_04_LTDNA_E — H_b = 80/200 = 0.40 < 0.60 → imbalance_flag = True
+    VECTOR_04_LTDNA_E : H_b = 80/200 = 0.40 < 0.60 → imbalance_flag = True
     """
     res = touch_engine.evaluate_heterozygote_balance(h1=80.0, h2=200.0)
     assert abs(res.h_balance - 0.40) < 1e-6
@@ -262,11 +262,11 @@ def test_vector_04_ltdna_e_hb_formula_correctness():
     assert res.imbalance_flag is True
 
 
-# ── VECTOR_04_LTDNA_F — Stochastic Threshold ST=150 RFU ──────────────────────
+# ── VECTOR_04_LTDNA_F : Stochastic Threshold ST=150 RFU ──────────────────────
 
 def test_vector_04_ltdna_f_st_flag_triggered():
     """
-    VECTOR_04_LTDNA_F — h_min = 80 < ST = 150 RFU → stochastic_threshold_flag = True
+    VECTOR_04_LTDNA_F : h_min = 80 < ST = 150 RFU → stochastic_threshold_flag = True
     even if H_b ≥ 0.60 (e.g. h1=80, h2=100, H_b=0.80)
     """
     res = touch_engine.evaluate_heterozygote_balance(h1=80.0, h2=100.0)
@@ -289,7 +289,7 @@ def test_vector_04_ltdna_f_at_flag_triggered():
     assert res.stochastic_flag_active is True
 
 
-# ── VECTOR_04_LTDNA_G — Substrate Recovery Efficiency (4 Materials) ──────────
+# ── VECTOR_04_LTDNA_G : Substrate Recovery Efficiency (4 Materials) ──────────
 
 def test_vector_04_ltdna_g_smooth_non_porous_efficiency():
     """SMOOTH_NON_POROUS: efficiency=0.60 → 100 pg → 60 pg recovered → LTDNA."""
@@ -339,7 +339,7 @@ def test_vector_04_ltdna_g_dropout_uses_logistic_mass_model():
     assert abs(res.stochastic_model.dropout_probability_pd - expected_pd_approx) < 1e-4
 
 
-# ── VECTOR_04_LTDNA_H — API Integration Tests ────────────────────────────────
+# ── VECTOR_04_LTDNA_H : API Integration Tests ────────────────────────────────
 
 def test_vector_04_ltdna_h_api_dropout_model_rfu():
     """POST /forensic/touch/dropout-model: RFU model at 50 RFU → P(D) ≈ 0.7773."""
@@ -591,3 +591,80 @@ def test_api_validation_error_handling_422():
         "sample_id": "ERR-1", "substrate_type": "SMOOTH_NON_POROUS", "input_mass_pg": -10.0
     })
     assert resp.status_code == 422
+
+
+def test_api_dropout_model_fragment_bp_with_amplicon_size():
+    """POST /forensic/touch/dropout-model with model_type='FRAGMENT_BP' does not crash with AttributeError."""
+    payload = {
+        "model_type": "FRAGMENT_BP",
+        "input_value": 250.0,
+        "amplicon_bp": 250.0,
+    }
+    resp = client.post("/api/v1/forensic/touch/dropout-model", json=payload)
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["model_type"] == "FRAGMENT_BP"
+    assert data["dropout_probability"] > 0.0
+    assert data["dropout_probability"] < 1.0
+
+
+def test_api_multi_locus_lr_24_locus_full_nist_consistency():
+    """POST /forensic/touch/multi-locus-lr: 24-locus VECTOR_TERM_06 has consistent log10_lr without 32.9 order distortion."""
+    suspect_profile = {
+        "D3S1358": [15.0, 16.0], "vWA": [16.0, 18.0], "FGA": [21.0, 22.0],
+        "D8S1179": [13.0, 14.0], "D21S11": [28.0, 30.0], "D18S51": [12.0, 15.0],
+        "D5S818": [11.0, 12.0], "D13S317": [11.0, 13.0], "D7S820": [9.0, 10.0],
+        "TH01": [6.0, 9.3], "TPOX": [8.0, 11.0], "CSF1PO": [10.0, 11.0],
+        "D1S1656": [15.0, 17.3], "D2S1338": [17.0, 20.0], "D10S1248": [13.0, 14.0],
+        "D12S391": [18.0, 21.0], "D19S433": [13.0, 14.0], "D22S1045": [15.0, 16.0],
+        "D2S441": [11.0, 12.0], "D6S1043": [11.0, 12.0], "SE33": [27.2, 28.2],
+        "Penta_D": [9.0, 12.0], "Penta_E": [7.0, 12.0], "Amelogenin": [1.0, 2.0]
+    }
+    observed_profile = {
+        "D3S1358": {"15": 80.0}, "vWA": {"16": 110.0, "18": 50.0}, "FGA": {"21": 75.0},
+        "D8S1179": {"13": 95.0, "14": 80.0}, "D21S11": {"28": 65.0}, "D18S51": {"12": 60.0},
+        "D5S818": {"11": 85.0}, "D13S317": {"11": 75.0, "13": 60.0}, "D7S820": {"9": 65.0, "10": 55.0},
+        "TH01": {"6": 90.0, "9.3": 80.0}, "TPOX": {"8": 75.0, "11": 60.0}, "CSF1PO": {"10": 55.0},
+        "D1S1656": {"15": 100.0, "17.3": 85.0}, "D2S1338": {"17": 55.0}, "D10S1248": {"13": 110.0, "14": 95.0},
+        "D12S391": {"18": 70.0, "21": 55.0}, "D19S433": {"13": 105.0, "14": 90.0}, "D22S1045": {"15": 115.0, "16": 100.0},
+        "D2S441": {"11": 120.0, "12": 105.0}, "D6S1043": {"11": 85.0, "12": 70.0}, "SE33": {"27.2": 55.0},
+        "Penta_D": {"9": 55.0}, "Penta_E": {}, "Amelogenin": {"1": 95.0, "2": 80.0}
+    }
+    payload = {
+        "suspect_profile": suspect_profile,
+        "observed_profile": observed_profile,
+        "template_pg": 31.25,
+        "theta": 0.03,
+    }
+    resp = client.post("/api/v1/forensic/touch/multi-locus-lr", json=payload)
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["n_loci"] == 24
+    assert data["additivity_verified"] is True
+    # Under realistic 24 loci NIST frequencies, log10_lr is around 3.5 - 6.5, NOT 37.55!
+    assert 2.0 <= data["total_log10_lr"] <= 10.0, f"Expected realistic LR around 4.65, got {data['total_log10_lr']}"
+
+
+def test_api_multi_locus_lr_with_amplicon_sizes():
+    """POST /forensic/touch/multi-locus-lr supports optional amplicon_sizes degradation."""
+    payload = {
+        "suspect_profile": {
+            "vWA": [16.0, 17.0],
+            "SE33": [27.2, 28.2],
+        },
+        "observed_profile": {
+            "vWA": {"16": 80.0},
+            "SE33": {"27.2": 55.0},
+        },
+        "template_pg": 40.0,
+        "theta": 0.03,
+        "amplicon_sizes": {
+            "vWA": 175.0,
+            "SE33": 360.0,
+        }
+    }
+    resp = client.post("/api/v1/forensic/touch/multi-locus-lr", json=payload)
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["n_loci"] == 2
+    assert data["additivity_verified"] is True

@@ -376,7 +376,7 @@ str-analysis/
 │       ├── context/                       # React Context Providers
 │       ├── dictionaries/                  # Bilingual Translations (TR / EN)
 │       ├── lib/                           # Utility Functions & API Clients
-│       ├── test/                          # Automated Vitest Suite (525/525 Tests Passing across 42 Specs)
+│       ├── test/                          # Automated Vitest Suite (536/536 Tests Passing across 42 Specs)
 │       └── utils/                         # Client-Side Biocomputational Simulation Engines
 │           ├── strLocusRegistryEngine.ts  # 24-STR Locus Registry & CE Sizing TS Engine
 │           ├── forensicCliBatchParser.ts  # Forensic CLI Batch Lexer & Ingestion TS Engine
@@ -768,6 +768,16 @@ The FastAPI gateway exposes a clean `/api/v1` RESTful interface.
 | **Touch DNA (Drop-in & Height PDF)** | `/api/v1/forensic/touch/dropin-model` | `POST` | Computes Poisson drop-in PMF P(C=k) and truncated exponential height PDF f(h_C) |
 | **Touch DNA (Heterozygote Balance)** | `/api/v1/forensic/touch/heterozygote-balance` | `POST` | Evaluates peak balance ratio H_b and flags stochastic threshold violations |
 | **Touch DNA (Single-Locus LR)** | `/api/v1/forensic/touch/stochastic-lr` | `POST` | Computes Curran-Gill stochastic single-source LR across 4 Markov observation states |
+| **Touch DNA (Multi-Locus LTDNA)** | `/api/v1/forensic/touch/multi-locus-lr` | `POST` | Evaluates multi-locus 24-STR profile stochastic LR with dropout modeling under Curran & Gill (2016) |
+| **Touch DNA (Mixture Deconvolution)** | `/api/v1/forensic/touch/contributor-deconv` | `POST` | Executes MCMC Touch DNA mixture contributor deconvolution with posterior sampling |
+| **Touch DNA (Dilution Tiers)** | `/api/v1/forensic/touch/dilution-tiers` | `GET` | Retrieves 6 Peter Gill LCN serial dilution benchmark tiers (15 pg to 500 pg) |
+| **Touch DNA (Substrates Matrix)** | `/api/v1/forensic/touch/substrates` | `GET` | Retrieves 4 forensic substrate recovery materials and transfer efficiencies |
+| **Touch DNA (Benchmark Vectors)** | `/api/v1/forensic/touch/benchmark-vectors` | `GET` | Retrieves golden casework benchmark vectors (VECTOR_03, VECTOR_TERM_06) |
+| **QC & Assurance (Profile Validation)** | `/api/v1/forensic/qc/evaluate-profile` | `POST` | Evaluates run QC, peak height ratios, stutter thresholds, and off-ladder flags |
+| **QC & Assurance (Uncertainty Budget)** | `/api/v1/forensic/qc/uncertainty/calculate-budget` | `POST` | Computes ISO/IEC 17025 GUM expanded measurement uncertainty budget (U95% = 2.00 * uc) |
+| **QC & Assurance (Proficiency Z-Score)** | `/api/v1/forensic/qc/uncertainty/proficiency-z-score` | `POST` | Evaluates proficiency testing z-scores across satisfactory, questionable, and unsatisfactory tiers |
+| **ISO Reporting (Certificate Compiler)** | `/api/v1/forensic/reports/compile-iso-certificate` | `POST` | Compiles ISO/IEC 17025:2017 evaluative reporting certificates with HMAC-SHA256 signature |
+| **Technical Review (Dual Sign-Off)** | `/api/v1/forensic/review/submit-decision` | `POST` | Submits peer review / technical supervisor dual sign-off decision under ISO 17025 |
 | **Validation Lab (Tippett Curves)** | `/api/v1/forensic/validation/tippett-curve` | `POST` | Computes Hp and Hd Tippett empirical complementary CDF (ECCDF) calibration curves |
 | **Validation Lab (ROC & AUC)** | `/api/v1/forensic/validation/roc-analysis` | `POST` | Evaluates empirical ROC curves, FPR/FNR at LR=1, and Mann-Whitney AUC |
 | **Validation Lab (Cllr Cost)** | `/api/v1/forensic/validation/cllr-score` | `POST` | Computes Log-Likelihood-Ratio Cost (Cllr) and PAV isotonic calibration loss |
@@ -789,8 +799,10 @@ The FastAPI gateway exposes a clean `/api/v1` RESTful interface.
 | **Forensic Terminal (CLI Batch)** | `/api/v1/forensic/terminal/cli-batch` | `POST` | Executes multi-omic batch CLI ingestion commands (`str`, `ystr`, `mtdna`, `snp`, `cpg`) with ISO 17025 SHA-256 state hashing |
 | **Forensic Terminal (PopGen Probability)** | `/api/v1/forensic/terminal/popgen-probability` | `POST` | Computes NIST 1036 Combined Match LR & RMP under NRC II 4.1 |
 | **Forensic Terminal (EPG Synth)** | `/api/v1/forensic/terminal/epg/synthesize` | `POST` | Synthesizes 5/6-dye capillary electropherograms with degradation & stutter modeling |
-| **Lineage (Y-STR Lineage Match)** | `/api/v1/forensic/lineage/ystr/evaluate-match` | `POST` | Evaluates Y-FILER Plus haplotype frequency, Clopper-Pearson 95% bound & SMM kinship |
-| **Lineage (Y-STR Bayesian Haplogroup)** | `/api/v1/forensic/lineage/ystr/bayesian-haplogroup` | `POST` | Predicts Y-DNA haplogroup clade probabilities from Y-STR haplotype profile |
+| **Lineage (Y-STR Paternal Kinship)** | `/api/v1/forensic/lineage/ystr/evaluate-paternal-kinship` | `POST` | Evaluates Y-FILER Plus haplotype frequency, Clopper-Pearson 95% bound & SMM kinship |
+| **Lineage (Y-STR Haplogroup)** | `/api/v1/forensic/lineage/ystr/predict-haplogroup` | `POST` | Predicts Y-DNA haplogroup clade probabilities from Y-STR haplotype profile |
+| **Lineage (Y-STR DYS389 Decoupling)** | `/api/v1/forensic/lineage/ystr/decouple-dys389` | `POST` | Decouples DYS389I and DYS389II nested repeat lengths into independent alleles |
+| **Lineage (Y-STR Mixture Contributors)** | `/api/v1/forensic/lineage/ystr/mixture-contributors` | `POST` | Infers minimum male contributors from multi-copy markers (DYS385, DYF387S1) |
 | **Lineage (X-STR Kinship)** | `/api/v1/forensic/lineage/xstr/evaluate-kinship` | `POST` | Evaluates Argus X-12 4 linkage groups with Kosambi mapping & female kinship PHS |
 | **Lineage (X-STR Kosambi Map)** | `/api/v1/forensic/lineage/xstr/kosambi-map` | `POST` | Translates genetic distance (cM) to recombination fraction (r) via Kosambi mapping function |
 | **Lineage (X-STR Linkage Groups)** | `/api/v1/forensic/lineage/xstr/linkage-groups` | `GET` | Retrieves Argus X-12 4 linkage groups (LG1-LG4) with recombination frequencies |
@@ -799,6 +811,9 @@ The FastAPI gateway exposes a clean `/api/v1` RESTful interface.
 | **Lineage (mtDNA EMPOP)** | `/api/v1/forensic/lineage/mtdna/empop-upper-bound` | `POST` | Aligns HV1/HV2/HV3 to rCRS/RSRS with EMPOP 3'-right alignment & haplogroups |
 | **Lineage (mtDNA Haplogroup)** | `/api/v1/forensic/lineage/mtdna/predict-haplogroup` | `POST` | Predicts PhyloTree Build 17 macrohaplogroup from diagnostic control region mutations |
 | **Disaster Victim ID (DVI)** | `/api/v1/forensic/dvi/joint-lr` | `POST` | Computes multi-omic joint LR and Hungarian ante/post-mortem reconciliation |
+| **Human ID (Disaster Remains)** | `/api/v1/forensic/hid/identify` | `POST` | Multi-marker disaster and skeletal remains identification scoring |
+| **Human ID (Taphonomic Remains)** | `/api/v1/forensic/hid/evaluate-remains` | `POST` | Evaluates skeletal remains taphonomic condition and DNA yield potential |
+| **Human ID (Degradation Audit)** | `/api/v1/forensic/hid/degradation-audit` | `POST` | Evaluates molecular degradation index across short vs long amplicons |
 | **Ancient DNA (MapDamage Kinetics)** | `/api/v1/forensic/adna/mapdamage-profile` | `POST` | Computes Briggs 5' C->T and 3' G->A deamination curves & overhang kinetics |
 | **Ancient DNA (Fragmentation Decay)** | `/api/v1/forensic/adna/fragmentation` | `POST` | Calculates exponential fragment length decay P(L) and degradation risk tiers |
 | **Ancient DNA (SNP Likelihood)** | `/api/v1/forensic/adna/snp-likelihood` | `POST` | Evaluates damage-compensated degraded SNP genotype calling & misincorporation LR |
@@ -889,7 +904,7 @@ pytest backend/node/services/forensic/physical/ -v        # Pillar 5: Physical E
 pytest backend/node/services/forensic/security/ -v        # Pillar 6: LIMS & ZKP
 pytest backend/node/services/forensic/geoint/ -v          # Pillar 7: Geo-Forensics
 
-# Execute frontend tactical workstation test suite (525 tests across 42 test suites)
+# Execute frontend tactical workstation test suite (536 tests across 42 test suites)
 npm --prefix frontend test -- --run
 ```
 

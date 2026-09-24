@@ -17,7 +17,7 @@ export default function LandingHeader() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isGuideOpen, setIsGuideOpen] = useState(false);
     const [isApiModalOpen, setIsApiModalOpen] = useState(false);
-    const [modeInfo, setModeInfo] = useState({ label: "DEMO SİMÜLASYON MODU", isLive: false });
+    const [modeInfo, setModeInfo] = useState<{ label: string; isLive: boolean }>(() => getActiveModeLabel(isTr));
 
     useEffect(() => {
         const updateMode = () => setModeInfo(getActiveModeLabel(isTr));

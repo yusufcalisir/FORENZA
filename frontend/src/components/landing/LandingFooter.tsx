@@ -4,15 +4,23 @@ import Link from "next/link";
 import ForenzaLogoIcon from "@/components/common/ForenzaLogoIcon";
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 
-const TECH_BADGES = [
-    { label: "ISO/IEC 17025" },
-    { label: "3,577 Doğrulanmış Test" },
-    { label: "zk-SNARK Gizlilik" },
-    { label: "Merkle Delil Zinciri" },
-];
-
 export default function LandingFooter() {
-    const { t } = useSaasLanguage();
+    const { t, lang } = useSaasLanguage();
+    const isTr = lang === "tr";
+
+    const techBadges = isTr
+        ? [
+            { label: "ISO/IEC 17025" },
+            { label: "3,577 Doğrulanmış Test" },
+            { label: "zk-SNARK Gizlilik" },
+            { label: "Merkle Delil Zinciri" },
+        ]
+        : [
+            { label: "ISO/IEC 17025" },
+            { label: "3,577 Verified Tests" },
+            { label: "zk-SNARK Privacy" },
+            { label: "Merkle Evidence Chain" },
+        ];
 
     const footerColumns = [
         {
@@ -120,7 +128,7 @@ export default function LandingFooter() {
                     <p>&copy; 2026 FORENZA Evidence OS. {t.footer.rights}</p>
                     
                     <div className="flex flex-wrap items-center justify-center gap-1.5">
-                        {TECH_BADGES.map((b, bIdx) => (
+                        {techBadges.map((b, bIdx) => (
                             <span 
                                 key={bIdx} 
                                 className="px-2.5 py-0.5 rounded-md bg-white/[0.03] border border-white/8 text-[10px] font-mono font-medium text-zinc-400"

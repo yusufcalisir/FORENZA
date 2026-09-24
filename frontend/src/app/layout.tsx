@@ -106,6 +106,13 @@ export default async function RootLayout({
 
   return (
     <html lang={initialLang} className="dark" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var l=localStorage.getItem('forenza_saas_lang_user');if(l==='en'||l==='tr'){document.documentElement.lang=l;}}catch(e){}})();`,
+          }}
+        />
+      </head>
       <body
         className="font-sans antialiased"
         suppressHydrationWarning

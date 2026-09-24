@@ -40,6 +40,9 @@ export function SaasLanguageProvider({
 
   const applyLang = useCallback((newLang: SaasLanguage, persist = true) => {
     setLangState(newLang);
+    if (typeof document !== "undefined") {
+      document.documentElement.lang = newLang;
+    }
     if (persist) {
       try {
         localStorage.setItem(STORAGE_KEY, newLang);
@@ -61,6 +64,9 @@ export function SaasLanguageProvider({
       const stored = localStorage.getItem(STORAGE_KEY) as SaasLanguage | null;
       if (stored === "tr" || stored === "en") {
         setLangState(stored);
+        if (typeof document !== "undefined") {
+          document.documentElement.lang = stored;
+        }
         // Keep cookie in sync but don't touch localStorage again
         setCookie(COOKIE_NAME, stored);
         return;
@@ -69,6 +75,9 @@ export function SaasLanguageProvider({
       const cookieVal = getCookie(COOKIE_NAME) as SaasLanguage | null;
       if (cookieVal === "tr" || cookieVal === "en") {
         setLangState(cookieVal);
+        if (typeof document !== "undefined") {
+          document.documentElement.lang = cookieVal;
+        }
         // Restore localStorage so Phase 1 catches it next time
         localStorage.setItem(STORAGE_KEY, cookieVal);
         return;
@@ -76,16 +85,19 @@ export function SaasLanguageProvider({
     } catch (_) {}
 
     // Phase 2: No explicit user preference found.
-    // Use server-detected initialLang (from IP / Accept-Language header)  -  state only,
+    // Use server-detected initialLang (from IP / Accept-Language header) - state only,
     // do NOT persist to localStorage/cookie so other users / future sessions start fresh.
     if (initialLang === "tr" || initialLang === "en") {
       setLangState(initialLang);
+      if (typeof document !== "undefined") {
+        document.documentElement.lang = initialLang;
+      }
       // Intentionally NOT writing to localStorage or cookie here.
       return;
     }
 
     // Phase 3: Client-side browser fallback (no cookie, no server hint).
-    // Apply to state only  -  no persistence.
+    // Apply to state only - no persistence.
     try {
       const navLang = (navigator.language || "").toLowerCase();
       const navLangs = Array.from(navigator.languages || []).map((l) => l.toLowerCase());
@@ -97,8 +109,12 @@ export function SaasLanguageProvider({
         tz.includes("Istanbul") ||
         tz.includes("Turkey");
 
-      setLangState(isTurkish ? "tr" : "en");
-      // Still no persistence  -  only explicit user action persists.
+      const resolved = isTurkish ? "tr" : "en";
+      setLangState(resolved);
+      if (typeof document !== "undefined") {
+        document.documentElement.lang = resolved;
+      }
+      // Still no persistence - only explicit user action persists.
     } catch (e) {
       console.warn("Language detection fallback error", e);
     }
@@ -108,14 +124,22 @@ export function SaasLanguageProvider({
   useEffect(() => {
     const handleStorage = (e: StorageEvent) => {
       if (e.key === STORAGE_KEY && (e.newValue === "tr" || e.newValue === "en")) {
-        setLangState(e.newValue as SaasLanguage);
+        const nextLang = e.newValue as SaasLanguage;
+        setLangState(nextLang);
+        if (typeof document !== "undefined") {
+          document.documentElement.lang = nextLang;
+        }
       }
     };
 
     const handleCustomChange = (e: Event) => {
       const customEvent = e as CustomEvent<SaasLanguage>;
       if (customEvent.detail === "tr" || customEvent.detail === "en") {
-        setLangState(customEvent.detail);
+        const nextLang = customEvent.detail;
+        setLangState(nextLang);
+        if (typeof document !== "undefined") {
+          document.documentElement.lang = nextLang;
+        }
       }
     };
 
@@ -131,9 +155,10 @@ export function SaasLanguageProvider({
     applyLang(newLang, true);
   };
 
-  // Dynamically synchronize browser tab title with active language
+  // Dynamically synchronize browser tab title and documentElement.lang with active language
   useEffect(() => {
     if (typeof document !== "undefined") {
+      document.documentElement.lang = lang;
       document.title =
         lang === "tr"
           ? "FORENZA | Çoklu-Omik Adli Delil İşletim Sistemi"

@@ -106,3 +106,66 @@ class TestMPSSTRApiEndpoints:
         data = resp.json()
         assert len(data) == 4
         assert any(v["vector_id"] == "VECTOR_MPS_01" for v in data)
+
+    def test_flanking_rescue_endpoint(self):
+        payload = {
+            "sample_id": "VECTOR_MPS_04",
+            "observed_sequences": [
+                "[TCTA]11 [TCTG]4 [TCTA]1",
+                "[TCTA]11 [TCTG]4 [TCTA]2_rs771794429[G>A]"
+            ],
+            "apparent_ce_call": 14.0
+        }
+        resp = client.post("/api/v1/forensic/mps-str/flanking-rescue", json=payload)
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["locus_name"] == "vWA"
+        assert data["is_rescued"] is True
+        assert "rs771794429" in data["detected_flanking_snp"]
+        assert "AFRICAN_VWA_MUTATION_RESCUED" in data["qa_recommendation"]
+
+    def test_filter_stutter_endpoint(self):
+        payload = {
+            "reads": {
+                "CTTC [CTTT]17": 2800,
+                "CTTC [CTTT]16": 160,
+                "[CTTT]18": 1040
+            },
+            "analytical_threshold_ratio": 0.05,
+            "stutter_threshold_ratio": 0.10
+        }
+        resp = client.post("/api/v1/forensic/mps-str/filter-stutter", json=payload)
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["total_reads"] == 4000
+        assert data["analytical_threshold_reads"] == 200
+        assert data["allele_count"] == 2
+        assert "CTTC [CTTT]16" not in data["filtered_alleles"]
+        assert len(data["removed_artifacts"]) >= 1
+
+    def test_locus_registry_endpoint(self):
+        resp = client.get("/api/v1/forensic/mps-str/locus-registry")
+        assert resp.status_code == 200
+        data = resp.json()
+        assert len(data) == 25
+        locus_names = [d["locus_name"] for d in data]
+        assert "SE33" in locus_names
+        assert "D1S1656" in locus_names
+        assert "PENTA_E" in locus_names
+
+    def test_analyze_genotype_endpoint(self):
+        payload = {
+            "locus_name": "D3S1358",
+            "sequence_alleles": [
+                "[TCTA]1 [TCTG]3 [TCTA]11",
+                "[TCTA]1 [TCTG]3 [TCTA]12"
+            ],
+            "population": "GLOBAL_COMPOSITE"
+        }
+        resp = client.post("/api/v1/forensic/mps-str/analyze-genotype", json=payload)
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["locus_name"] == "D3S1358"
+        assert data["ce_genotype"] == "15, 16"
+        assert data["information_gain_ratio"] >= 1.0
+        assert data["is_fully_concordant"] is True

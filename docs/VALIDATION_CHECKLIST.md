@@ -92,7 +92,7 @@ This document provides the mandatory 3-item checklist and 5-edge-case audit log 
   - [x] `EC-MPS-03`: SE33 compound 4-bp flanking deletion auto-reconciliation without false allele calling.
   - [x] `EC-MPS-04`: Syntenic linkage equilibrium constraint between D6S1043 and SE33 on chromosome 6q ($\theta = 0.0440$).
   - [x] `EC-MPS-05`: Sub-threshold analytical cutoff ($\text{AT} = 5.0\%$) and isometric stutter subtraction.
-  - **Full test run:** `pytest backend/node/services/forensic/genomics/mps_str/ backend/app/api/test_mps_str_routes.py -v` → **37 passed in ~2.8s**
+  - **Full test run:** `pytest backend/node/services/forensic/genomics/mps_str/ backend/app/api/test_mps_str_routes.py -v` → **42 passed in ~3.1s**
 
 ---
 

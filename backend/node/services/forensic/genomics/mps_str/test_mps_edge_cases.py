@@ -13,6 +13,7 @@ from node.services.forensic.genomics.mps_str.frequency_matrices import (
 )
 from node.services.forensic.genomics.mps_str.se33_engine import SE33HyperPolymorphicEngine
 from node.services.forensic.genomics.mps_str.linkage_guard import SyntenicLinkageGuard
+from node.services.forensic.genomics.mps_str.signal_filter import MPSSignalFilter
 from node.services.forensic.genomics.mps_str.golden_vectors import GOLDEN_VECTORS_MPS
 
 
@@ -97,11 +98,14 @@ class TestMPSISOTestsAndEdgeCases:
             "[CTTT]18": 1040        # True minor allele (26%)
         }
         
-        filtered_alleles = [seq for seq, cnt in reads.items() if cnt >= analytical_threshold]
+        filtered_result = MPSSignalFilter.filter_stutter_and_at(reads, at_ratio=0.05, stutter_ratio=0.10)
+        filtered_alleles = list(filtered_result.filtered_alleles.keys())
         assert len(filtered_alleles) == 2
         assert "CTTC [CTTT]16" not in filtered_alleles
         assert "CTTC [CTTT]17" in filtered_alleles
         assert "[CTTT]18" in filtered_alleles
+        assert len(filtered_result.removed_artifacts) >= 1
+        assert filtered_result.removed_artifacts[0].rejection_reason == "SUB_ANALYTICAL_THRESHOLD"
 
 
 class TestAllCertifiedGoldenVectors:

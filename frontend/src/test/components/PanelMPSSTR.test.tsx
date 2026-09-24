@@ -11,6 +11,8 @@ import {
   reconcileSE33FlankingDeletion,
   parseSequenceToLengthCall,
   computeIsoalleleInformationGain,
+  AUTOSOMAL_25_LOCI_REGISTRY,
+  filterMpsStutterAndNoise,
 } from "@/components/analysis/PanelMPSSTR";
 
 describe("Subsystem 23: Massively Parallel Sequencing (MPS/NGS) STR Analysis", () => {
@@ -194,5 +196,59 @@ describe("Subsystem 23: Massively Parallel Sequencing (MPS/NGS) STR Analysis", (
     const hExp = computeExpectedHeterozygosity(freqList);
     expect(hExp).toBe(0.98);
     expect(hExp).toBeGreaterThan(0.97);
+  });
+
+  // ─── 25-Locus Registry & ISO 17025 Signal Filter Tests ───────────────────────
+
+  it("should define complete 25-autosomal STR locus registry with exact counts and diversity", () => {
+    const loci = Object.values(AUTOSOMAL_25_LOCI_REGISTRY);
+    expect(loci).toHaveLength(25);
+
+    // SE33 hyper-polymorphism: 170 sequences, 41 CE lengths, 4.15x boost, H_exp = 0.973
+    const se33 = AUTOSOMAL_25_LOCI_REGISTRY["SE33"];
+    expect(se33).toBeDefined();
+    expect(se33.ce_length_alleles).toBe(41);
+    expect(se33.mps_sequence_alleles).toBe(170);
+    expect(se33.fold_increase).toBe(4.15);
+    expect(se33.expected_heterozygosity).toBe(0.973);
+    expect(se33.is_high_diversity).toBe(true);
+
+    // D21S11 complex locus: 67 sequences, 21 CE lengths, 3.19x boost, H_exp = 0.930
+    const d21 = AUTOSOMAL_25_LOCI_REGISTRY["D21S11"];
+    expect(d21).toBeDefined();
+    expect(d21.ce_length_alleles).toBe(21);
+    expect(d21.mps_sequence_alleles).toBe(67);
+    expect(d21.expected_heterozygosity).toBe(0.930);
+
+    // High diversity loci count: exactly 7 loci with H_exp >= 0.895
+    const highDiversity = loci.filter((l) => l.expected_heterozygosity >= 0.895);
+    expect(highDiversity).toHaveLength(7);
+    const highNames = highDiversity.map((l) => l.locus_name);
+    expect(highNames).toContain("SE33");
+    expect(highNames).toContain("D21S11");
+    expect(highNames).toContain("D2S1338");
+    expect(highNames).toContain("D12S391");
+    expect(highNames).toContain("D3S1358");
+    expect(highNames).toContain("D1S1656");
+    expect(highNames).toContain("Penta E");
+  });
+
+  it("should filter noise below 5% AT and isolate reverse stutters via filterMpsStutterAndNoise", () => {
+    const reads = [
+      { sequence: "[TCTA]1 [TCTG]3 [TCTA]12", depth: 4500 }, // True major allele
+      { sequence: "[TCTA]1 [TCTG]3 [TCTA]11", depth: 320 },  // -1 repeat reverse stutter (7.1% of major)
+      { sequence: "[TCTA]1 [TCTG]3 [TCTA]10", depth: 45 },   // Background noise (0.9% of total < 5% AT)
+    ];
+
+    const result = filterMpsStutterAndNoise(reads, 0.05, 0.15);
+
+    expect(result.trueAlleles).toHaveLength(1);
+    expect(result.trueAlleles[0].sequence).toBe("[TCTA]1 [TCTG]3 [TCTA]12");
+
+    expect(result.filteredStutters).toHaveLength(1);
+    expect(result.filteredStutters[0].sequence).toBe("[TCTA]1 [TCTG]3 [TCTA]11");
+
+    expect(result.filteredNoise).toHaveLength(1);
+    expect(result.filteredNoise[0].sequence).toBe("[TCTA]1 [TCTG]3 [TCTA]10");
   });
 });

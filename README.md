@@ -147,6 +147,8 @@ str-analysis/
 │   │   ├── api/                           # Endpoint Routers per Domain
 │   │   │   ├── forensics_schemas.py       # Pydantic Schemas for DNA & Kinship
 │   │   │   ├── genomics_schemas.py        # Pydantic Schemas for STR/SNP Loci
+│   │   │   ├── mps_str_schemas.py         # Pydantic Schemas for MPS/NGS STR Sequence Lab
+│   │   │   ├── mps_str_routes.py          # REST Gateway for MPS/NGS STR Sequence Lab
 │   │   │   ├── mixture_schemas.py         # Pydantic Schemas for MCMC Mixture Deconvolution
 │   │   │   ├── mixture_routes.py          # REST Gateway for MCMC Mixture Deconvolution
 │   │   │   ├── phenotype_extended_schemas.py # Schemas for HIrisPlex-S & BGA
@@ -298,6 +300,23 @@ str-analysis/
 │           │   ├── hirisplex_model.py     # HIrisPlex-S 41-SNP MLR Models & Intermediate Thresholds
 │           │   ├── governance_engine.py   # German § 81e StPO Ancestry Gate & ISFG Fallacy Shields
 │           │   └── golden_vectors.py      # 5 Certified Golden Standards (NA12878, NA19240, NA18507, HG002, Tri-Racial)
+│           ├── genomics/mps_str/          # Pillar 1, Mod 06: MPS/NGS STR Sequence Analysis & Isoalleles Engine
+│           │   ├── mps_str_engine.py      # Massively Parallel Sequencing STR Analysis & Isoallele Deconvolution Engine
+│           │   ├── grammar.py             # ISFG Forward-Strand Minimal Sequence Grammar Parser
+│           │   ├── converter.py           # 3-Tier ISFG Reversible CE-to-Sequence Converter
+│           │   ├── se33_engine.py         # SE33 Hyper-Polymorphic Architecture & Flanking Indels Engine
+│           │   ├── mixture_deconvolution.py # Multi-Contributor Sequence-Level Mixture Deconvolution
+│           │   ├── biostatistics.py       # 25-Locus Forensic Biostatistics & Diversity Calculations
+│           │   ├── linkage_guard.py       # D6S1043 - SE33 Kosambi Synteny & Flanking Mutation Rescues
+│           │   ├── frequency_matrices.py  # Autosomal 25-Locus Sequence Frequency Matrices (AFR, EUR, EAS, SAS, AMR)
+│           │   ├── signal_filter.py       # ISO 17025 Analytical Threshold & Reverse Stutter Filter (EC-MPS-05)
+│           │   ├── golden_vectors.py      # 4 Certified Golden Vectors (VECTOR_MPS_01 to 04)
+│           │   ├── test_mps_str_engine.py # Core Engine & Analytical Tests
+│           │   ├── test_mps_grammar.py    # Grammar & Conversion Unit Tests
+│           │   ├── test_se33_engine.py    # SE33 Structure & Flanking InDel Tests
+│           │   ├── test_mps_biostatistics.py # Biostatistics & 25-Locus Diversity Tests
+│           │   ├── test_mps_mixtures_linkage.py # Mixture Deconvolution & Syntenic Linkage Tests
+│           │   └── test_mps_edge_cases.py # 6 Empirical Edge-Case Tests (EC-MPS-01 to 06)
 │           └── tests/                     # Automated Test Suite (3,577+ Automated Tests Passing)
 │
 ├── frontend/                              # Next.js 16 Workstation Dashboard
@@ -372,7 +391,7 @@ str-analysis/
 │       ├── context/                       # React Context Providers
 │       ├── dictionaries/                  # Bilingual Translations (TR / EN)
 │       ├── lib/                           # Utility Functions & API Clients
-│       ├── test/                          # Automated Vitest Suite (564/564 Tests Passing across 42 Specs)
+│       ├── test/                          # Automated Vitest Suite (566/566 Tests Passing across 42 Specs)
 │       └── utils/                         # Client-Side Biocomputational Simulation Engines
 │           ├── strLocusRegistryEngine.ts  # 24-STR Locus Registry & CE Sizing TS Engine
 │           ├── forensicCliBatchParser.ts  # Forensic CLI Batch Lexer & Ingestion TS Engine
@@ -808,6 +827,16 @@ The FastAPI gateway exposes a clean `/api/v1` RESTful interface.
 | **Forensic Terminal (CLI Batch)** | `/api/v1/forensic/terminal/cli-batch` | `POST` | Executes multi-omic batch CLI ingestion commands (`str`, `ystr`, `mtdna`, `snp`, `cpg`) with ISO 17025 SHA-256 state hashing |
 | **Forensic Terminal (PopGen Probability)** | `/api/v1/forensic/terminal/popgen-probability` | `POST` | Computes NIST 1036 Combined Match LR & RMP under NRC II 4.1 |
 | **Forensic Terminal (EPG Synth)** | `/api/v1/forensic/terminal/epg/synthesize` | `POST` | Synthesizes 5/6-dye capillary electropherograms with degradation & stutter modeling |
+| **MPS-STR (Sequence Parsing)** | `/api/v1/forensic/mps-str/parse-sequence` | `POST` | Parses ISFG forward-strand minimal sequence string into structured repeat blocks and flanking SNPs |
+| **MPS-STR (Sequence to CE)** | `/api/v1/forensic/mps-str/sequence-to-ce` | `POST` | Converts sequence allele representation to backwards-compatible CE length-based allele call |
+| **MPS-STR (Genotype Analysis)** | `/api/v1/forensic/mps-str/analyze-genotype` | `POST` | Evaluates sequence vs CE match probability, discrimination power and information gain ratio |
+| **MPS-STR (SE33 Hyper-Polymorphic)** | `/api/v1/forensic/mps-str/analyze-se33` | `POST` | Evaluates SE33 sequence architecture, flanking indels (rs369314007, rs1371483225) and isoalleles |
+| **MPS-STR (Mixture Deconvolution)** | `/api/v1/forensic/mps-str/deconvolve-mixture` | `POST` | Multi-locus sequence-level mixture deconvolution separating overlapping CE length alleles |
+| **MPS-STR (25-Locus Biostatistics)** | `/api/v1/forensic/mps-str/biostatistics` | `POST` | Computes 25-locus forensic biostatistics (H_exp, PM, PD, PE, T2T expansion) across 5 populations |
+| **MPS-STR (Flanking Rescue)** | `/api/v1/forensic/mps-str/flanking-rescue` | `POST` | Rescues primer binding site mutations (e.g. vWA rs771794429) causing CE allelic dropout |
+| **MPS-STR (Signal & Stutter Filter)** | `/api/v1/forensic/mps-str/filter-stutter` | `POST` | Applies ISO 17025 analytical threshold (AT=5.0%) and reverse stutter filter (15.0%) |
+| **MPS-STR (Locus Registry)** | `/api/v1/forensic/mps-str/locus-registry` | `GET` | Retrieves full 25-autosomal STR locus registry with chromosomal bands and repeat motifs |
+| **MPS-STR (Golden Vectors)** | `/api/v1/forensic/mps-str/golden-vectors` | `GET` | Retrieves 4 certified golden benchmark reference vectors (VECTOR_MPS_01 to 04) |
 | **Lineage (Y-STR Paternal Kinship)** | `/api/v1/forensic/lineage/ystr/evaluate-paternal-kinship` | `POST` | Evaluates Y-FILER Plus haplotype frequency, Clopper-Pearson 95% bound & SMM kinship |
 | **Lineage (Y-STR Haplogroup)** | `/api/v1/forensic/lineage/ystr/predict-haplogroup` | `POST` | Predicts Y-DNA haplogroup clade probabilities from Y-STR haplotype profile |
 | **Lineage (Y-STR DYS389 Decoupling)** | `/api/v1/forensic/lineage/ystr/decouple-dys389` | `POST` | Decouples DYS389I and DYS389II nested repeat lengths into independent alleles |
@@ -905,7 +934,7 @@ FORENZA maintains **3,577 automated unit, integration, and invariant tests (100%
 pytest backend/ -v
 
 # Target specific architectural pillars
-pytest backend/node/services/forensic/probabilistic/ -v   # Pillar 1: Probabilistic Genotyping
+pytest backend/node/services/forensic/probabilistic/ backend/node/services/forensic/genomics/mps_str/ -v   # Pillar 1: Probabilistic Genotyping & MPS-STR
 pytest backend/node/services/forensic/ystr/ backend/node/services/forensic/mtdna/ -v  # Pillar 2: Lineage
 pytest backend/node/services/forensic/phenotyping/ -v     # Pillar 3: Phenotyping & Ancestry
 pytest backend/node/services/forensic/epigenetics/ -v     # Pillar 4: Epigenetics & Aging
@@ -913,7 +942,7 @@ pytest backend/node/services/forensic/physical/ -v        # Pillar 5: Physical E
 pytest backend/node/services/forensic/security/ -v        # Pillar 6: LIMS & ZKP
 pytest backend/node/services/forensic/geoint/ -v          # Pillar 7: Geo-Forensics
 
-# Execute frontend tactical workstation test suite (564 tests across 42 test suites)
+# Execute frontend tactical workstation test suite (566 tests across 42 test suites)
 npm --prefix frontend test -- --run
 ```
 

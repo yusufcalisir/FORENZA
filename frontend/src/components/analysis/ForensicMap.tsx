@@ -290,13 +290,41 @@ function ConfidenceRing({
     );
 }
 
+export type MapTileProvider = "carto" | "esri";
+
+interface TileProviderConfig {
+    name: string;
+    baseUrl: string;
+    labelsUrl: string;
+    maxNativeZoom: number;
+    maxZoom: number;
+    attribution: string;
+}
+
 const CARTO_API_KEY = process.env.NEXT_PUBLIC_CARTO_API_KEY || "cb1_3wib_1_f2ba8e6c8658e7f96198c2d9";
-const CARTO_BASE_URL = CARTO_API_KEY
-    ? `https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png?key=${CARTO_API_KEY}`
-    : "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png";
-const CARTO_LABELS_URL = CARTO_API_KEY
-    ? `https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png?key=${CARTO_API_KEY}`
-    : "https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png";
+
+const TILE_PROVIDERS: Record<MapTileProvider, TileProviderConfig> = {
+    carto: {
+        name: "CARTO Dark Matter",
+        baseUrl: CARTO_API_KEY
+            ? `https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png?key=${CARTO_API_KEY}`
+            : "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png",
+        labelsUrl: CARTO_API_KEY
+            ? `https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png?key=${CARTO_API_KEY}`
+            : "https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png",
+        maxNativeZoom: 19,
+        maxZoom: 19,
+        attribution: "© CARTO © OpenStreetMap",
+    },
+    esri: {
+        name: "Esri Dark Canvas (Failover)",
+        baseUrl: "https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}",
+        labelsUrl: "https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}",
+        maxNativeZoom: 16,
+        maxZoom: 19,
+        attribution: "© Esri © DeLorme NAVTEQ",
+    },
+};
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // MAIN MAP COMPONENT
@@ -315,6 +343,23 @@ export default function ForensicMap({
     const { lang } = useSaasLanguage();
     const isTr = lang === "tr";
     const [phase, setPhase] = useState<ScanPhase>("idle");
+    const [provider, setProvider] = useState<MapTileProvider>(() => {
+        return CARTO_API_KEY ? "carto" : "esri";
+    });
+    const errorCountRef = useRef(0);
+
+    const handleTileError = useCallback(() => {
+        if (provider === "carto") {
+            errorCountRef.current += 1;
+            // Automatic failover: If CARTO encounters 3 consecutive tile errors, switch to Esri immediately
+            if (errorCountRef.current >= 3) {
+                console.warn("[ForensicMap] CARTO tile service unreachable or unauthorized. Initiating automatic failover to Esri Dark Canvas...");
+                setProvider("esri");
+            }
+        }
+    }, [provider]);
+
+    const activeConfig = TILE_PROVIDERS[provider];
 
     const center = useMemo<[number, number]>(() => {
         if (data && data.length > 0 && data[0].lat && data[0].lng) {
@@ -351,8 +396,13 @@ export default function ForensicMap({
 
             {/* 1. Dark Base Map (Terrain & Geometry without text labels) */}
             <TileLayer
-                url={CARTO_BASE_URL}
-                maxZoom={19}
+                key={`base-${provider}`}
+                url={activeConfig.baseUrl}
+                maxNativeZoom={activeConfig.maxNativeZoom}
+                maxZoom={activeConfig.maxZoom}
+                eventHandlers={{
+                    tileerror: handleTileError,
+                }}
             />
 
             {/* 2. Middle Layer: Luminescent Tactical Heatmap */}
@@ -361,18 +411,40 @@ export default function ForensicMap({
             {/* 3. Top Layer: High-Contrast Crisp Map Labels (Rendered ABOVE heatmap via zIndex: 650) */}
             <Pane name="labels" style={{ zIndex: 650, pointerEvents: "none" }}>
                 <TileLayer
-                    url={CARTO_LABELS_URL}
-                    maxZoom={19}
+                    key={`labels-${provider}`}
+                    url={activeConfig.labelsUrl}
+                    maxNativeZoom={activeConfig.maxNativeZoom}
+                    maxZoom={activeConfig.maxZoom}
                     opacity={0.92}
+                    eventHandlers={{
+                        tileerror: handleTileError,
+                    }}
                 />
             </Pane>
 
-            {/* 4. Subtle Legal Attribution */}
-            <div className="absolute bottom-1 right-2 z-[660] text-[8px] font-mono text-zinc-600/70 select-none pointer-events-none">
-                &copy; CARTO &copy; OpenStreetMap
+            {/* 4. Provider Manual Toggle & Status Badge */}
+            <div className="absolute bottom-2 left-2 z-[660] flex items-center gap-1.5 bg-[#080d14]/85 backdrop-blur-md px-2 py-1 rounded-md border border-white/10 text-[9px] font-mono shadow-sm">
+                <span className={`w-1.5 h-1.5 rounded-full ${provider === "carto" ? "bg-emerald-400" : "bg-cyan-400"} animate-pulse`} />
+                <span className="text-zinc-300 font-semibold">{activeConfig.name}</span>
+                <button
+                    type="button"
+                    onClick={() => {
+                        errorCountRef.current = 0;
+                        setProvider((prev) => (prev === "carto" ? "esri" : "carto"));
+                    }}
+                    className="ml-1 text-zinc-400 hover:text-white underline decoration-dotted cursor-pointer transition-colors"
+                    title={isTr ? "Harita sağlayıcısını manuel değiştir" : "Manually toggle map tile provider"}
+                >
+                    {isTr ? "Değiştir" : "Switch"}
+                </button>
             </div>
 
-            {/* 5. Scanning Controller */}
+            {/* 5. Subtle Legal Attribution */}
+            <div className="absolute bottom-1 right-2 z-[660] text-[8px] font-mono text-zinc-600/70 select-none pointer-events-none">
+                {activeConfig.attribution}
+            </div>
+
+            {/* 6. Scanning Controller */}
             {topRegion && (
                 <ScanController
                     target={topRegion}

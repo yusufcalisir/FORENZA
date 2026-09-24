@@ -290,6 +290,14 @@ function ConfidenceRing({
     );
 }
 
+const CARTO_API_KEY = process.env.NEXT_PUBLIC_CARTO_API_KEY || "cb1_3wib_1_f2ba8e6c8658e7f96198c2d9";
+const CARTO_BASE_URL = CARTO_API_KEY
+    ? `https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png?key=${CARTO_API_KEY}`
+    : "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png";
+const CARTO_LABELS_URL = CARTO_API_KEY
+    ? `https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png?key=${CARTO_API_KEY}`
+    : "https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png";
+
 // ═══════════════════════════════════════════════════════════════════════════════
 // MAIN MAP COMPONENT
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -343,7 +351,7 @@ export default function ForensicMap({
 
             {/* 1. Dark Base Map (Terrain & Geometry without text labels) */}
             <TileLayer
-                url="https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png"
+                url={CARTO_BASE_URL}
                 maxZoom={19}
             />
 
@@ -353,13 +361,18 @@ export default function ForensicMap({
             {/* 3. Top Layer: High-Contrast Crisp Map Labels (Rendered ABOVE heatmap via zIndex: 650) */}
             <Pane name="labels" style={{ zIndex: 650, pointerEvents: "none" }}>
                 <TileLayer
-                    url="https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png"
+                    url={CARTO_LABELS_URL}
                     maxZoom={19}
                     opacity={0.92}
                 />
             </Pane>
 
-            {/* 4. Scanning Controller */}
+            {/* 4. Subtle Legal Attribution */}
+            <div className="absolute bottom-1 right-2 z-[660] text-[8px] font-mono text-zinc-600/70 select-none pointer-events-none">
+                &copy; CARTO &copy; OpenStreetMap
+            </div>
+
+            {/* 5. Scanning Controller */}
             {topRegion && (
                 <ScanController
                     target={topRegion}

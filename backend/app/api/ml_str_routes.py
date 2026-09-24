@@ -1,8 +1,14 @@
-"""
+﻿"""
 FastAPI Router for Machine Learning STR Calling & Fragsifier Pre-Filtering.
 Base Route: /api/v1/forensic/ml-str
+
+Phase 69 Fixes:
+  D-MLSTR-02: Dynamic repeat unit length via LOCUS_REPEAT_UNIT_REGISTRY (k=3,4,5).
+  D-MLSTR-06: Analytical Gaussian area formula replaces arbitrary 8.5x multiplier.
+              Area = h * fwhm * sqrt(pi / (4 * ln2))  [FWHM default = 1.25 bp]
 """
 
+import math
 from typing import Dict, List, Any
 from fastapi import APIRouter, HTTPException, status
 
@@ -25,6 +31,62 @@ from .ml_str_schemas import (
 )
 
 router = APIRouter(prefix="/forensic/ml-str", tags=["Forensic ML STR Calling & Fragsifier"])
+
+# ---------------------------------------------------------------------------
+# D-MLSTR-02: Locus Repeat Unit Length Registry
+# Source: str_24_locus_microvariants_research.md & mps_ngs_str_sequence_analysis_research.md
+# k=3: trinucleotide (D22S1045); k=4: tetranucleotide (majority); k=5: pentanucleotide (Penta D/E)
+# ---------------------------------------------------------------------------
+LOCUS_REPEAT_UNIT_REGISTRY: Dict[str, int] = {
+    "TH01":      4,
+    "D3S1358":   4,
+    "D21S11":    4,
+    "SE33":      4,
+    "VWA":       4,
+    "D16S539":   4,
+    "D18S51":    4,
+    "FGA":       4,
+    "CSF1PO":    4,
+    "D1S1656":   4,
+    "D2S441":    4,
+    "D2S1338":   4,
+    "D5S818":    4,
+    "D7S820":    4,
+    "D8S1179":   4,
+    "D10S1248":  4,
+    "D12S391":   4,
+    "D19S433":   4,
+    "D22S1045":  3,   # trinucleotide – critical for correct back-stutter position
+    "TPOX":      4,
+    "PENTA_D":   5,   # pentanucleotide
+    "PENTA_E":   5,   # pentanucleotide
+    "D6S1043":   4,
+    "D13S317":   4,
+    "AMEL":      0,   # amelogenin – no repeat unit
+}
+
+_DEFAULT_REPEAT_UNIT_LEN: int = 4
+
+# Gaussian area coefficient: sqrt(pi / (4 * ln(2)))
+_GAUSSIAN_COEFF: float = math.sqrt(math.pi / (4.0 * math.log(2.0)))
+# Default FWHM for CE peaks when not provided (1.25 bp per research spec)
+_DEFAULT_CE_FWHM: float = 1.25
+
+
+def _locus_repeat_unit(locus_name: str) -> int:
+    """Lookup repeat unit length k from the canonical registry."""
+    key = locus_name.upper().replace(" ", "_").replace("-", "_")
+    return LOCUS_REPEAT_UNIT_REGISTRY.get(key, _DEFAULT_REPEAT_UNIT_LEN)
+
+
+def _gaussian_area(height: float, fwhm: float) -> float:
+    """Compute analytical Gaussian peak area.
+    
+    Area = h * FWHM * sqrt(pi / (4 * ln(2)))
+    
+    For FWHM = 1.25 bp: Area ≈ 1.330 * h  (not 8.5 * h)
+    """
+    return height * fwhm * _GAUSSIAN_COEFF
 
 
 @router.post("/extract-features", response_model=FeatureVector24D)
@@ -65,16 +127,24 @@ async def classify_peak_endpoint(req: ClassifyPeakRequest) -> PeakClassification
         else:
             if req.locus_name is None or req.peak_id is None or req.peak_height is None:
                 raise ValueError("Either feature_vector or (locus_name, peak_id, peak_height) must be provided.")
+            fwhm_val = req.fwhm if req.fwhm is not None else _DEFAULT_CE_FWHM
+            # D-MLSTR-02: dynamic k from registry
+            k = req.repeat_unit_len if req.repeat_unit_len is not None else _locus_repeat_unit(req.locus_name)
+            # D-MLSTR-06: Gaussian area instead of 8.5x
+            area_val = (
+                req.peak_area if req.peak_area is not None
+                else _gaussian_area(req.peak_height, fwhm_val)
+            )
             fv = MLSTRFeatureExtractor.extract_features(
                 locus_name=req.locus_name,
                 peak_id=req.peak_id,
                 peak_height=req.peak_height,
-                peak_area=req.peak_area,
-                fwhm=req.fwhm if req.fwhm is not None else 1.0,
+                peak_area=area_val,
+                fwhm=fwhm_val,
                 bp_position=req.bp_position if req.bp_position is not None else 150.0,
                 major_allele_bp=req.major_allele_bp if req.major_allele_bp is not None else 150.0,
                 major_allele_height=req.major_allele_height,
-                repeat_unit_len=req.repeat_unit_len if req.repeat_unit_len is not None else 4,
+                repeat_unit_len=k,
                 sequence_string=req.sequence_string or "",
                 co_eluting_secondary_rfu=req.co_eluting_secondary_rfu or 0.0,
                 analytical_threshold=req.analytical_threshold if req.analytical_threshold is not None else 50.0,
@@ -87,7 +157,6 @@ async def classify_peak_endpoint(req: ClassifyPeakRequest) -> PeakClassification
         )
 
 
-
 @router.post("/filter-locus", response_model=LocusMLPreFilterReport)
 async def filter_locus_endpoint(req: FilterLocusPeaksRequest) -> LocusMLPreFilterReport:
     """
@@ -98,17 +167,22 @@ async def filter_locus_endpoint(req: FilterLocusPeaksRequest) -> LocusMLPreFilte
             fvs = req.feature_vectors
         elif req.raw_peaks is not None and len(req.raw_peaks) > 0:
             major_peak = max(req.raw_peaks, key=lambda p: p.height)
+            # D-MLSTR-02: locus-specific k; D-MLSTR-06: Gaussian area
+            k = _locus_repeat_unit(req.locus_name)
             fvs = [
                 MLSTRFeatureExtractor.extract_features(
                     locus_name=req.locus_name,
                     peak_id=p.peak_id,
                     peak_height=p.height,
-                    peak_area=p.peak_area if p.peak_area is not None else p.height * 8.5,
-                    fwhm=p.fwhm,
+                    peak_area=(
+                        p.peak_area if p.peak_area is not None
+                        else _gaussian_area(p.height, p.fwhm if p.fwhm else _DEFAULT_CE_FWHM)
+                    ),
+                    fwhm=p.fwhm if p.fwhm else _DEFAULT_CE_FWHM,
                     bp_position=p.bp_position,
                     major_allele_bp=major_peak.bp_position,
                     major_allele_height=major_peak.height,
-                    repeat_unit_len=4,
+                    repeat_unit_len=k,
                     sequence_string=p.sequence_string,
                     co_eluting_secondary_rfu=p.co_eluting_secondary_rfu,
                 )
@@ -155,17 +229,22 @@ async def prefilter_mixture_endpoint(req: MultiLocusPreFilterRequest) -> MultiLo
                 if not pks:
                     continue
                 major_pk = max(pks, key=lambda p: p.height)
+                # D-MLSTR-02 + D-MLSTR-06 applied per locus
+                k = _locus_repeat_unit(loc)
                 lmap[loc] = [
                     MLSTRFeatureExtractor.extract_features(
                         locus_name=loc,
                         peak_id=p.peak_id,
                         peak_height=p.height,
-                        peak_area=p.peak_area if p.peak_area is not None else p.height * 8.5,
-                        fwhm=p.fwhm,
+                        peak_area=(
+                            p.peak_area if p.peak_area is not None
+                            else _gaussian_area(p.height, p.fwhm if p.fwhm else _DEFAULT_CE_FWHM)
+                        ),
+                        fwhm=p.fwhm if p.fwhm else _DEFAULT_CE_FWHM,
                         bp_position=p.bp_position,
                         major_allele_bp=major_pk.bp_position,
                         major_allele_height=major_pk.height,
-                        repeat_unit_len=4,
+                        repeat_unit_len=k,
                         sequence_string=p.sequence_string,
                         co_eluting_secondary_rfu=p.co_eluting_secondary_rfu,
                     )

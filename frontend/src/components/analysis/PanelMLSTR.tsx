@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -24,8 +24,9 @@ import {
 } from "lucide-react";
 import { useSaasLanguage } from "@/context/SaaSLanguageContext";
 import { getApiBaseUrl } from "@/lib/api";
+import { useForensicCaseStore } from "@/store/forensicCaseStore";
 
-// ─── Golden Benchmark Presets ──────────────────────────────────────────────────
+// â”€â”€â”€ Golden Benchmark Presets â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 interface RawPeak {
   id: string;
   h: number;
@@ -50,7 +51,7 @@ interface GoldenPreset {
   sequenceString: string;
 }
 
-// ─── Named Exports for Vitest (Subsystem 22: ML STR Calling & Artifact Filtering) ────────────────
+// â”€â”€â”€ Named Exports for Vitest (Subsystem 22: ML STR Calling & Artifact Filtering) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Following the same pattern as GeoForensicIntelligencePanel: exported golden vectors + pure math
 // functions enable the 5 mandatory EC-MLSTR ISO/IEC 17025 edge-case invariants to be unit-tested.
 
@@ -145,7 +146,7 @@ const MLSTR_GOLDEN_PRESETS: GoldenPreset[] = [
   MLSTR_GOLDEN_VECTOR_04,
 ];
 
-// ─── Exported Pure Math Functions (testable without DOM) ────────────────────────────────────────
+// â”€â”€â”€ Exported Pure Math Functions (testable without DOM) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 /**
  * EC-MLSTR-02: Stutter Ratio observed.
@@ -233,6 +234,9 @@ export const PanelMLSTR: React.FC = () => {
   const [sbResult, setSbResult] = useState<any>(null);
   const [sbIsLoading, setSbIsLoading] = useState<boolean>(false);
 
+  // D-MLSTR-07: Merkle Audit Trail Integration (ISO/IEC 17025 chain-of-custody)
+  const addAuditLog = useForensicCaseStore((s) => s.addAuditLog);
+
   // Reset selected peak index on preset change
   useEffect(() => {
     setSelectedPeakIndex(0);
@@ -265,7 +269,7 @@ export const PanelMLSTR: React.FC = () => {
             height: p.h,
             bp_position: p.bp,
             fwhm: 1.25,
-            peak_area: p.h * 8.5,
+            peak_area: null  /* server applies Gaussian formula: h*FWHM*sqrt(pi/(4*ln2)) */,
             sequence_string: preset.sequenceString
           }))
         }),
@@ -282,12 +286,12 @@ export const PanelMLSTR: React.FC = () => {
             locus_name: preset.locus,
             peak_id: p.id,
             peak_height: p.h,
-            peak_area: p.h * 8.5,
+            peak_area: null  /* server applies Gaussian formula: h*FWHM*sqrt(pi/(4*ln2)) */,
             fwhm: 1.25,
             bp_position: p.bp,
             major_allele_bp: majorP.bp,
             major_allele_height: majorP.h,
-            repeat_unit_len: 4,
+            repeat_unit_len: null,  /* backend LOCUS_REPEAT_UNIT_REGISTRY determines k */
             sequence_string: preset.sequenceString
           }),
           signal: AbortSignal.timeout(6000)
@@ -317,7 +321,7 @@ export const PanelMLSTR: React.FC = () => {
               height: p.h,
               bp_position: p.bp,
               fwhm: 1.25,
-              peak_area: p.h * 8.5
+              peak_area: null  /* server applies Gaussian formula: h*FWHM*sqrt(pi/(4*ln2)) */
             }))
           }
         }),
@@ -339,6 +343,17 @@ export const PanelMLSTR: React.FC = () => {
       if (isfgData) setLiveIsfgData(isfgData);
       if (mcmcData) setLiveMcmcSummary(mcmcData);
 
+      // D-MLSTR-07: Log analysis event to Merkle audit chain
+      addAuditLog({
+        event: `ML-STR Fragsifier: ${preset.name} benchmark analyzed at ${preset.locus}`,
+        module: "ML_STR_MODULE_07",
+        analyst: "FORENZA_SYSTEM",
+        status: "PASS",
+        findingSeverity: "NOMINAL",
+        standard: "ISO/IEC 17025:2017 | ISFG 2016 Minimal Nomenclature",
+        polygonTx: undefined,
+      });
+
       const classMap: Record<string, any> = {};
       classResults.forEach((cr, idx) => {
         if (cr && preset.rawPeaks[idx]) {
@@ -355,12 +370,12 @@ export const PanelMLSTR: React.FC = () => {
           locus_name: preset.locus,
           peak_id: preset.rawPeaks[0]?.id || "Peak_1",
           peak_height: preset.rawPeaks[0]?.h || 1000,
-          peak_area: (preset.rawPeaks[0]?.h || 1000) * 8.5,
+          peak_area: null  /* server applies Gaussian formula */,
           fwhm: 1.25,
           bp_position: preset.rawPeaks[0]?.bp || 150.0,
           major_allele_bp: majorP.bp,
           major_allele_height: majorP.h,
-          repeat_unit_len: 4,
+          repeat_unit_len: null,  /* backend LOCUS_REPEAT_UNIT_REGISTRY determines k */
           sequence_string: preset.sequenceString
         }),
         signal: AbortSignal.timeout(4000)
@@ -400,12 +415,12 @@ export const PanelMLSTR: React.FC = () => {
             locus_name: activePreset.locus,
             peak_id: currentPeak.id,
             peak_height: currentPeak.h,
-            peak_area: currentPeak.h * 8.5,
+            peak_area: null  /* server applies Gaussian formula */,
             fwhm: 1.25,
             bp_position: currentPeak.bp,
             major_allele_bp: majorP.bp,
             major_allele_height: majorP.h,
-            repeat_unit_len: 4,
+            repeat_unit_len: null,  /* backend LOCUS_REPEAT_UNIT_REGISTRY determines k */
             sequence_string: activePreset.sequenceString
           }),
           signal: AbortSignal.timeout(4000)
@@ -433,12 +448,12 @@ export const PanelMLSTR: React.FC = () => {
           locus_name: sbLocus,
           peak_id: "Sandbox_Peak",
           peak_height: sbHeight,
-          peak_area: sbHeight * 8.5,
+          peak_area: null  /* server applies Gaussian formula */,
           fwhm: sbFwhm,
           bp_position: sbBp,
           major_allele_bp: sbMajorBp,
           major_allele_height: sbMajorHeight,
-          repeat_unit_len: 4,
+          repeat_unit_len: null,  /* backend LOCUS_REPEAT_UNIT_REGISTRY determines k */
           co_eluting_secondary_rfu: sbSecondaryRfu
         }),
         signal: AbortSignal.timeout(4000)
@@ -446,6 +461,16 @@ export const PanelMLSTR: React.FC = () => {
       if (res.ok) {
         const data = await res.json();
         setSbResult(data);
+        // D-MLSTR-07: Log sandbox classification to audit trail
+        addAuditLog({
+          event: `ML-STR Sandbox: ${sbLocus} peak classified as ${data?.predicted_class ?? "UNKNOWN"} (conf=${((data?.confidence_score ?? 0) * 100).toFixed(1)}%)`,
+          module: "ML_STR_MODULE_07",
+          analyst: "FORENZA_SYSTEM",
+          status: "PASS",
+          findingSeverity: "NOMINAL",
+          standard: "ISO/IEC 17025:2017 | ENFSI 2017",
+          polygonTx: undefined,
+        });
       }
     } catch {
       // Keep previous
@@ -490,7 +515,7 @@ export const PanelMLSTR: React.FC = () => {
             <div className="flex flex-wrap items-center gap-2 mb-2">
               <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-500/20 text-purple-300 border border-purple-500/40 flex items-center gap-1.5">
                 <Cpu className="w-3.5 h-3.5" />
-                {isTr ? "ML STR ÇAĞIRMA & ARTEFAKT ELEME" : "ML STR CALLING & ARTIFACT FILTER"}
+                {isTr ? "ML STR Ã‡AÄIRMA & ARTEFAKT ELEME" : "ML STR CALLING & ARTIFACT FILTER"}
               </span>
               <span className="px-2.5 py-0.5 rounded-full text-xs font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
                 Fragsifier 500-Tree RF Ensemble
@@ -501,12 +526,12 @@ export const PanelMLSTR: React.FC = () => {
             </div>
             <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight flex items-center gap-2">
               {isTr
-                ? "Makine Öğrenmesi STR Çağırma & MCMC Ön Filtreleme Laboratuvarı"
+                ? "Makine Ã–ÄŸrenmesi STR Ã‡aÄŸÄ±rma & MCMC Ã–n Filtreleme LaboratuvarÄ±"
                 : "Machine Learning STR Calling & MCMC Pre-Filtering Lab"}
             </h2>
             <p className="text-xs sm:text-sm text-slate-300 max-w-3xl mt-1">
               {isTr
-                ? "Barash et al. (2023) ve Fragsifier Random Forest mimarisini temel alarak 24-boyutlu özellik uzayında elektroferogram piklerini 7 biyofiziksel sınıfa ayırır, cihaz artefaktlarını eler ve MCMC karışım dekonvolüsyonunu 2.1 kata kadar hızlandırır."
+                ? "Barash et al. (2023) ve Fragsifier Random Forest mimarisini temel alarak 24-boyutlu Ã¶zellik uzayÄ±nda elektroferogram piklerini 7 biyofiziksel sÄ±nÄ±fa ayÄ±rÄ±r, cihaz artefaktlarÄ±nÄ± eler ve MCMC karÄ±ÅŸÄ±m dekonvolÃ¼syonunu 2.1 kata kadar hÄ±zlandÄ±rÄ±r."
                 : "Leverages Barash et al. (2023) and Fragsifier Random Forest architecture to classify EPG peaks across a 24-D feature space into 7 biophysical classes, culling artifacts and accelerating downstream MCMC mixture deconvolution up to 2.1x."}
             </p>
           </div>
@@ -521,7 +546,7 @@ export const PanelMLSTR: React.FC = () => {
               className="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-emerald-600 hover:from-purple-500 hover:to-emerald-500 text-white font-mono text-xs font-bold transition-all shadow-lg shadow-purple-950/50 flex items-center justify-center gap-2 border border-purple-400/40 cursor-pointer disabled:opacity-50"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin" : ""}`} />
-              <span>{isTr ? "ML Analizini Çalıştır" : "Execute ML Analysis"}</span>
+              <span>{isTr ? "ML Analizini Ã‡alÄ±ÅŸtÄ±r" : "Execute ML Analysis"}</span>
               <span className="px-1.5 py-0.5 rounded bg-black/40 text-[10px] text-purple-200">
                 {roundtripMs}ms
               </span>
@@ -533,7 +558,7 @@ export const PanelMLSTR: React.FC = () => {
         {isAnalyzing && (
           <div className="mt-4 pt-3 border-t border-purple-500/20">
             <div className="flex justify-between text-[11px] font-mono text-purple-300 mb-1">
-              <span>{isTr ? "Biyofiziksel Özellik Çıkarımı & RF Sınıflandırma..." : "Extracting 24D Features & Classifying Artifacts..."}</span>
+              <span>{isTr ? "Biyofiziksel Ã–zellik Ã‡Ä±karÄ±mÄ± & RF SÄ±nÄ±flandÄ±rma..." : "Extracting 24D Features & Classifying Artifacts..."}</span>
               <span>{executionProgress}%</span>
             </div>
             <div className="h-1.5 w-full rounded-full bg-slate-950 overflow-hidden">
@@ -550,7 +575,7 @@ export const PanelMLSTR: React.FC = () => {
         <div className="mt-4 pt-4 border-t border-purple-500/20 flex flex-wrap items-center gap-2">
           <span className="text-xs text-slate-400 font-mono font-semibold mr-1 flex items-center gap-1">
             <Database className="w-3.5 h-3.5 text-purple-400" />
-            {isTr ? "Altın Standart Vektörler:" : "Golden Test Vectors:"}
+            {isTr ? "AltÄ±n Standart VektÃ¶rler:" : "Golden Test Vectors:"}
           </span>
           {MLSTR_GOLDEN_PRESETS.map((preset) => (
             <button
@@ -573,11 +598,11 @@ export const PanelMLSTR: React.FC = () => {
       {/* Navigation Tabs */}
       <div className="flex border-b border-tactical-border/60 gap-2 sm:gap-4 overflow-x-auto pb-1 scrollbar-none">
         {[
-          { id: "classifier", label: isTr ? "Fragsifier 7-Sınıflı Ayrıştırıcı" : "Fragsifier 7-Class Classifier", icon: Filter },
-          { id: "isfg3tier", label: isTr ? "ISFG 3-Seviyeli Hiyerarşi" : "ISFG 3-Tier Hierarchy", icon: Layers },
-          { id: "mcmcTelemetry", label: isTr ? "MCMC Hızlanma & Arama Uzayı" : "MCMC Optimization Telemetry", icon: Zap },
-          { id: "features", label: isTr ? "24-Boyutlu Özellik Uzayı" : "24-D Feature Vector Explorer", icon: Sliders },
-          { id: "sandbox", label: isTr ? "İnteraktif Sinyal Sandbox" : "Interactive Signal Sandbox", icon: Play },
+          { id: "classifier", label: isTr ? "Fragsifier 7-SÄ±nÄ±flÄ± AyrÄ±ÅŸtÄ±rÄ±cÄ±" : "Fragsifier 7-Class Classifier", icon: Filter },
+          { id: "isfg3tier", label: isTr ? "ISFG 3-Seviyeli HiyerarÅŸi" : "ISFG 3-Tier Hierarchy", icon: Layers },
+          { id: "mcmcTelemetry", label: isTr ? "MCMC HÄ±zlanma & Arama UzayÄ±" : "MCMC Optimization Telemetry", icon: Zap },
+          { id: "features", label: isTr ? "24-Boyutlu Ã–zellik UzayÄ±" : "24-D Feature Vector Explorer", icon: Sliders },
+          { id: "sandbox", label: isTr ? "Ä°nteraktif Sinyal Sandbox" : "Interactive Signal Sandbox", icon: Play },
         ].map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -600,7 +625,7 @@ export const PanelMLSTR: React.FC = () => {
 
       {/* Tab Content */}
       <AnimatePresence mode="wait">
-        {/* ── TAB 1: CLASSIFIER ── */}
+        {/* â”€â”€ TAB 1: CLASSIFIER â”€â”€ */}
         {activeTab === "classifier" && (
           <motion.div
             key="classifier"
@@ -622,7 +647,7 @@ export const PanelMLSTR: React.FC = () => {
               </div>
 
               <div className="bg-tactical-surface/50 border border-tactical-border/60 rounded-xl p-4">
-                <div className="text-xs text-slate-400 font-mono mb-1">{isTr ? "HAM PİK SAYISI" : "RAW PEAKS INGESTED"}</div>
+                <div className="text-xs text-slate-400 font-mono mb-1">{isTr ? "HAM PÄ°K SAYISI" : "RAW PEAKS INGESTED"}</div>
                 <div className="text-xl font-bold text-amber-300 font-mono">
                   {liveLocusReport?.total_raw_peaks ?? activePreset.rawPeaks.length} Peaks
                 </div>
@@ -638,7 +663,7 @@ export const PanelMLSTR: React.FC = () => {
               </div>
 
               <div className="bg-tactical-surface/50 border border-emerald-500/40 rounded-xl p-4 bg-emerald-950/20">
-                <div className="text-xs text-emerald-400 font-mono mb-1">{isTr ? "UYGULANAN ARTEFAKT EYLEMİ" : "ARTIFACT ACTION TAKEN"}</div>
+                <div className="text-xs text-emerald-400 font-mono mb-1">{isTr ? "UYGULANAN ARTEFAKT EYLEMÄ°" : "ARTIFACT ACTION TAKEN"}</div>
                 <div className="text-xs sm:text-sm font-bold text-emerald-300 font-mono mt-1 break-words">
                   {livePeakClassifications[currentPeak.id]?.recommended_action ?? (isTr ? activePreset.actionTr : activePreset.action)}
                 </div>
@@ -666,7 +691,7 @@ export const PanelMLSTR: React.FC = () => {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <h3 className="text-sm sm:text-base font-semibold text-white flex items-center gap-2">
                   <Activity className="w-4 h-4 text-purple-400" />
-                  {isTr ? "Lokus İçi Sinyal Ayrıştırma ve Karar Tablosu" : "Intra-Locus Signal Classification & Action Matrix"}
+                  {isTr ? "Lokus Ä°Ã§i Sinyal AyrÄ±ÅŸtÄ±rma ve Karar Tablosu" : "Intra-Locus Signal Classification & Action Matrix"}
                 </h3>
                 <span className="text-xs font-mono text-purple-300 bg-purple-950/60 border border-purple-500/40 px-2.5 py-1 rounded-md self-start sm:self-auto">
                   Fragsifier RF Confidence: {livePeakClassifications[currentPeak.id] ? `${(livePeakClassifications[currentPeak.id].confidence_score * 100).toFixed(1)}%` : "> 92.0%"}
@@ -677,12 +702,12 @@ export const PanelMLSTR: React.FC = () => {
                 <table className="w-full text-xs font-mono text-left">
                   <thead className="bg-slate-900/80 text-slate-400 border-b border-slate-800">
                     <tr>
-                      <th className="p-3">{isTr ? "PİK ID" : "PEAK ID"}</th>
-                      <th className="p-3">{isTr ? "YÜKSEKLİK (RFU)" : "HEIGHT (RFU)"}</th>
-                      <th className="p-3">{isTr ? "POZİSYON (BP)" : "POSITION (BP)"}</th>
-                      <th className="p-3">{isTr ? "CANLI ML TAHMİNİ" : "PREDICTED CLASS"}</th>
-                      <th className="p-3">{isTr ? "GÜVEN" : "CONFIDENCE"}</th>
-                      <th className="p-3">{isTr ? "EYLEM POLİTİKASI" : "ACTION POLICY"}</th>
+                      <th className="p-3">{isTr ? "PÄ°K ID" : "PEAK ID"}</th>
+                      <th className="p-3">{isTr ? "YÃœKSEKLÄ°K (RFU)" : "HEIGHT (RFU)"}</th>
+                      <th className="p-3">{isTr ? "POZÄ°SYON (BP)" : "POSITION (BP)"}</th>
+                      <th className="p-3">{isTr ? "CANLI ML TAHMÄ°NÄ°" : "PREDICTED CLASS"}</th>
+                      <th className="p-3">{isTr ? "GÃœVEN" : "CONFIDENCE"}</th>
+                      <th className="p-3">{isTr ? "EYLEM POLÄ°TÄ°KASI" : "ACTION POLICY"}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-800/60">
@@ -730,9 +755,9 @@ export const PanelMLSTR: React.FC = () => {
                   <div className="flex items-center justify-between text-xs font-mono">
                     <span className="text-slate-300 font-bold flex items-center gap-2">
                       <Sparkles className="w-3.5 h-3.5 text-purple-400" />
-                      {isTr ? `Seçili Pik İçin 7-Sınıf Sonsal Olasılık Dağılımı (${currentPeak.id}):` : `7-Class Posterior Distribution for ${currentPeak.id}:`}
+                      {isTr ? `SeÃ§ili Pik Ä°Ã§in 7-SÄ±nÄ±f Sonsal OlasÄ±lÄ±k DaÄŸÄ±lÄ±mÄ± (${currentPeak.id}):` : `7-Class Posterior Distribution for ${currentPeak.id}:`}
                     </span>
-                    <span className="text-purple-300">{currentPeak.bp} bp • {currentPeak.h} RFU</span>
+                    <span className="text-purple-300">{currentPeak.bp} bp â€¢ {currentPeak.h} RFU</span>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 text-[11px] font-mono">
@@ -758,7 +783,7 @@ export const PanelMLSTR: React.FC = () => {
           </motion.div>
         )}
 
-        {/* ── TAB 2: ISFG 3-TIER HIERARCHY ── */}
+        {/* â”€â”€ TAB 2: ISFG 3-TIER HIERARCHY â”€â”€ */}
         {activeTab === "isfg3tier" && (
           <motion.div
             key="isfg3tier"
@@ -772,10 +797,10 @@ export const PanelMLSTR: React.FC = () => {
                 <div>
                   <h3 className="text-sm sm:text-base font-semibold text-white flex items-center gap-2">
                     <Layers className="w-4 h-4 text-blue-400" />
-                    {isTr ? "ISFG (2016) 3-Aşamalı Hiyerarşik Terminoloji Düzeni" : "ISFG (2016) 3-Tier Hierarchical Nomenclature Architecture"}
+                    {isTr ? "ISFG (2016) 3-AÅŸamalÄ± HiyerarÅŸik Terminoloji DÃ¼zeni" : "ISFG (2016) 3-Tier Hierarchical Nomenclature Architecture"}
                   </h3>
                   <p className="text-xs text-slate-400 mt-0.5">
-                    {isTr ? `Lokus: ${activePreset.locus} • Canlı ISFG Seviye 1, 2 ve 3 Dönüşümü` : `Locus: ${activePreset.locus} • Live ISFG Level 1, 2, and 3 Representation`}
+                    {isTr ? `Lokus: ${activePreset.locus} â€¢ CanlÄ± ISFG Seviye 1, 2 ve 3 DÃ¶nÃ¼ÅŸÃ¼mÃ¼` : `Locus: ${activePreset.locus} â€¢ Live ISFG Level 1, 2, and 3 Representation`}
                   </p>
                 </div>
                 <span className="px-2.5 py-1 rounded bg-blue-500/10 border border-blue-500/30 text-blue-300 text-xs font-mono">
@@ -842,7 +867,7 @@ export const PanelMLSTR: React.FC = () => {
                 {/* Tokenized Repeat Blocks */}
                 {liveIsfgData?.motif_token_blocks && (
                   <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                    <span className="text-[10px] text-slate-400 font-mono mr-1">{isTr ? "Tekrar Blokları:" : "Repeat Blocks:"}</span>
+                    <span className="text-[10px] text-slate-400 font-mono mr-1">{isTr ? "Tekrar BloklarÄ±:" : "Repeat Blocks:"}</span>
                     {liveIsfgData.motif_token_blocks.map((block: string, bIdx: number) => (
                       <span key={bIdx} className="px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30 text-[10px] font-mono">
                         {block}
@@ -855,7 +880,7 @@ export const PanelMLSTR: React.FC = () => {
           </motion.div>
         )}
 
-        {/* ── TAB 3: MCMC TELEMETRY ── */}
+        {/* â”€â”€ TAB 3: MCMC TELEMETRY â”€â”€ */}
         {activeTab === "mcmcTelemetry" && (
           <motion.div
             key="mcmcTelemetry"
@@ -868,11 +893,11 @@ export const PanelMLSTR: React.FC = () => {
               <div>
                 <h3 className="text-sm sm:text-base font-semibold text-white flex items-center gap-2">
                   <Zap className="w-4 h-4 text-amber-400" />
-                  {isTr ? "MCMC-MH Arama Uzayı ve Yakınsama İyileştirmesi" : "MCMC-MH State Space Reduction & Convergence Optimization"}
+                  {isTr ? "MCMC-MH Arama UzayÄ± ve YakÄ±nsama Ä°yileÅŸtirmesi" : "MCMC-MH State Space Reduction & Convergence Optimization"}
                 </h3>
                 <p className="text-xs text-slate-300 mt-1">
                   {isTr
-                    ? "ML ön filtreleme katmanı, olasılıksal karışım dekonvolüsyonunun biyofiziksel olabilirlik modelini değiştirmeden Markov zincirinin arama yapacağı permütasyon uzayını temizler:"
+                    ? "ML Ã¶n filtreleme katmanÄ±, olasÄ±lÄ±ksal karÄ±ÅŸÄ±m dekonvolÃ¼syonunun biyofiziksel olabilirlik modelini deÄŸiÅŸtirmeden Markov zincirinin arama yapacaÄŸÄ± permÃ¼tasyon uzayÄ±nÄ± temizler:"
                     : "The upstream ML pre-filter narrows the combinatorial permutation space explored by MCMC without altering the continuous Gamma/Log-Normal biophysical likelihood density:"}
                 </p>
               </div>
@@ -908,7 +933,7 @@ export const PanelMLSTR: React.FC = () => {
               {liveMcmcSummary?.loci_reports && (
                 <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
                   <div className="text-xs font-mono text-slate-300 font-bold">
-                    {isTr ? "Lokus Bazlı MCMC Arama Uzayı Budama Raporu:" : "Locus-by-Locus MCMC State Space Pruning Telemetry:"}
+                    {isTr ? "Lokus BazlÄ± MCMC Arama UzayÄ± Budama Raporu:" : "Locus-by-Locus MCMC State Space Pruning Telemetry:"}
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono">
                     {Object.entries(liveMcmcSummary.loci_reports).map(([locName, rep]: [string, any]) => (
@@ -934,14 +959,14 @@ export const PanelMLSTR: React.FC = () => {
                   {isTr ? "SAVCI YANILGISI KALKANI (PROSECUTOR'S FALLACY SHIELD):" : "PROSECUTOR'S FALLACY SHIELD (ENFSI 2017):"}
                 </span>
                 {isTr
-                  ? (liveMcmcSummary?.prosecutors_fallacy_shield_tr ?? "ENFSI (2017) Standart Beyanı: Makine öğrenmesi ön filtreleme katmanı, MCMC olabilirlik hesaplaması öncesinde cihaz artefaktlarını ve kekeleme piklerini ayıklar. Şüphelinin suçluluğu veya biyolojik örnekte kesin varlığı hakkında beyanda bulunmaz.")
+                  ? (liveMcmcSummary?.prosecutors_fallacy_shield_tr ?? "ENFSI (2017) Standart BeyanÄ±: Makine Ã¶ÄŸrenmesi Ã¶n filtreleme katmanÄ±, MCMC olabilirlik hesaplamasÄ± Ã¶ncesinde cihaz artefaktlarÄ±nÄ± ve kekeleme piklerini ayÄ±klar. ÅÃ¼phelinin suÃ§luluÄŸu veya biyolojik Ã¶rnekte kesin varlÄ±ÄŸÄ± hakkÄ±nda beyanda bulunmaz.")
                   : (liveMcmcSummary?.prosecutors_fallacy_shield_en ?? "ENFSI (2017) Standard Statement: Machine learning pre-filtering eliminates instrumental artifacts and stutter peaks prior to MCMC likelihood calculation. It does NOT assert the guilt or presence of any suspect in the biological sample.")}
               </div>
             </div>
           </motion.div>
         )}
 
-        {/* ── TAB 4: 24-D FEATURE VECTOR ── */}
+        {/* â”€â”€ TAB 4: 24-D FEATURE VECTOR â”€â”€ */}
         {activeTab === "features" && (
           <motion.div
             key="features"
@@ -960,11 +985,11 @@ export const PanelMLSTR: React.FC = () => {
                     </span>
                     <div>
                       <h3 className="text-base sm:text-lg font-bold text-white tracking-wide">
-                        {isTr ? "24-Boyutlu Sürekli Özellik Uzayı Vektörü" : "24-Dimensional Continuous Feature Space Vector"}
+                        {isTr ? "24-Boyutlu SÃ¼rekli Ã–zellik UzayÄ± VektÃ¶rÃ¼" : "24-Dimensional Continuous Feature Space Vector"}
                       </h3>
                       <p className="text-xs text-slate-400">
                         {isTr
-                          ? "Fragsifier Random Forest sınıflandırıcısına beslenen canlı x1-x24 biyofiziksel özellikler"
+                          ? "Fragsifier Random Forest sÄ±nÄ±flandÄ±rÄ±cÄ±sÄ±na beslenen canlÄ± x1-x24 biyofiziksel Ã¶zellikler"
                           : "Multivariate biophysical feature metrics ingested by Fragsifier RF Ensemble from backend"}
                       </p>
                     </div>
@@ -973,7 +998,7 @@ export const PanelMLSTR: React.FC = () => {
 
                 {/* Candidate Peak Selector */}
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-xs text-slate-400 font-semibold">{isTr ? "Tepe Seç:" : "Select Peak:"}</span>
+                  <span className="text-xs text-slate-400 font-semibold">{isTr ? "Tepe SeÃ§:" : "Select Peak:"}</span>
                   <div className="flex items-center gap-1.5 bg-black/50 p-1 rounded-xl border border-tactical-border/60">
                     {rawPeaks.map((peak, idx) => {
                       const isSelected = selectedPeakIndex === idx;
@@ -1002,14 +1027,14 @@ export const PanelMLSTR: React.FC = () => {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
                   <span className="text-slate-300 font-bold flex items-center gap-2">
                     <Activity className="w-4 h-4 text-purple-400" />
-                    {isTr ? "24-Boyutlu Özellik Yoğunluk Spektrumu" : "24D Feature Vector Intensity Spectrum"}
-                    <span className="font-mono text-purple-300 font-bold">[{currentPeak.id} • {currentPeak.bp} bp]</span>
+                    {isTr ? "24-Boyutlu Ã–zellik YoÄŸunluk Spektrumu" : "24D Feature Vector Intensity Spectrum"}
+                    <span className="font-mono text-purple-300 font-bold">[{currentPeak.id} â€¢ {currentPeak.bp} bp]</span>
                   </span>
                   <div className="flex items-center gap-3 text-[10px] font-mono text-slate-400">
                     <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-purple-400" /> {isTr ? "x1-x6 Morfoloji" : "x1-x6 Morphology"}</span>
                     <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-amber-400" /> {isTr ? "x7-x12 Kekeleme" : "x7-x12 Stutter"}</span>
                     <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-blue-400" /> {isTr ? "x13-x18 Dizi" : "x13-x18 Sequence"}</span>
-                    <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-emerald-400" /> {isTr ? "x19-x24 Karışım" : "x19-x24 Mixture"}</span>
+                    <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-emerald-400" /> {isTr ? "x19-x24 KarÄ±ÅŸÄ±m" : "x19-x24 Mixture"}</span>
                   </div>
                 </div>
 
@@ -1060,7 +1085,7 @@ export const PanelMLSTR: React.FC = () => {
                     </div>
                     <div className="p-2.5 rounded-xl bg-black/40 border border-slate-800">
                       <div className="text-slate-400 text-[10px]">Area (x2):</div>
-                      <div className="font-bold text-purple-300">{liveFeatureVector?.morphology?.peak_area?.toFixed(1) ?? (currentPeak.h * 8.5).toFixed(1)}</div>
+                      <div className="font-bold text-purple-300">{liveFeatureVector?.morphology?.peak_area?.toFixed(1) ?? (currentPeak.h * 1.330).toFixed(1)  /* Gaussian: h*1.25*sqrt(pi/(4*ln2)) */}</div>
                     </div>
                     <div className="p-2.5 rounded-xl bg-black/40 border border-slate-800">
                       <div className="text-slate-400 text-[10px]">FWHM (x3):</div>
@@ -1078,7 +1103,7 @@ export const PanelMLSTR: React.FC = () => {
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-amber-200 tracking-wider flex items-center gap-1.5">
                       <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
-                      2. {isTr ? "Kekeleme & Artefakt Yakınlığı (x7 - x12)" : "Stutter & Artifact Proximity (x7 - x12)"}
+                      2. {isTr ? "Kekeleme & Artefakt YakÄ±nlÄ±ÄŸÄ± (x7 - x12)" : "Stutter & Artifact Proximity (x7 - x12)"}
                     </span>
                     <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300">
                       Delta: {liveFeatureVector?.stutter_kinetics?.delta_bp_to_major?.toFixed(1) ?? "0.0"} bp
@@ -1109,7 +1134,7 @@ export const PanelMLSTR: React.FC = () => {
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-blue-200 tracking-wider flex items-center gap-1.5">
                       <Layers className="w-3.5 h-3.5 text-blue-400" />
-                      3. {isTr ? "Dizi Karmaşıklığı & Entropi (x13 - x18)" : "Sequence Complexity & Entropy (x13 - x18)"}
+                      3. {isTr ? "Dizi KarmaÅŸÄ±klÄ±ÄŸÄ± & Entropi (x13 - x18)" : "Sequence Complexity & Entropy (x13 - x18)"}
                     </span>
                     <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/20 text-blue-300">
                       H: {liveFeatureVector?.sequence_complexity?.locus_shannon_entropy?.toFixed(3) ?? "1.716"} bit
@@ -1140,7 +1165,7 @@ export const PanelMLSTR: React.FC = () => {
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-emerald-200 tracking-wider flex items-center gap-1.5">
                       <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                      4. {isTr ? "Karışım Dinamikleri & Eşik (x19 - x24)" : "Mixture Dynamics & Thresholds (x19 - x24)"}
+                      4. {isTr ? "KarÄ±ÅŸÄ±m Dinamikleri & EÅŸik (x19 - x24)" : "Mixture Dynamics & Thresholds (x19 - x24)"}
                     </span>
                     <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300">
                       Hb: {liveFeatureVector?.mixture_dynamics?.heterozygote_balance_hb?.toFixed(2) ?? "1.00"}
@@ -1170,7 +1195,7 @@ export const PanelMLSTR: React.FC = () => {
           </motion.div>
         )}
 
-        {/* ── TAB 5: INTERACTIVE SIGNAL SANDBOX ── */}
+        {/* â”€â”€ TAB 5: INTERACTIVE SIGNAL SANDBOX â”€â”€ */}
         {activeTab === "sandbox" && (
           <motion.div
             key="sandbox"
@@ -1184,11 +1209,11 @@ export const PanelMLSTR: React.FC = () => {
                 <div>
                   <h3 className="text-sm sm:text-base font-semibold text-white flex items-center gap-2">
                     <Play className="w-4 h-4 text-emerald-400" />
-                    {isTr ? "İnteraktif Özel Pik / Sinyal Sınıflandırma Laboratuvarı" : "Interactive Custom Signal & Artifact Classifier Sandbox"}
+                    {isTr ? "Ä°nteraktif Ã–zel Pik / Sinyal SÄ±nÄ±flandÄ±rma LaboratuvarÄ±" : "Interactive Custom Signal & Artifact Classifier Sandbox"}
                   </h3>
                   <p className="text-xs text-slate-400 mt-0.5">
                     {isTr
-                      ? "Pik parametrelerini canlı ayarlayın, Random Forest modelinin anlık 7-sınıflı biyofiziksel kararını ve ISO 17025 eylemini görün."
+                      ? "Pik parametrelerini canlÄ± ayarlayÄ±n, Random Forest modelinin anlÄ±k 7-sÄ±nÄ±flÄ± biyofiziksel kararÄ±nÄ± ve ISO 17025 eylemini gÃ¶rÃ¼n."
                       : "Adjust peak morphology parameters in real-time to observe the Random Forest 7-class biophysical decision."}
                   </p>
                 </div>
@@ -1199,7 +1224,7 @@ export const PanelMLSTR: React.FC = () => {
                   className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-mono text-xs font-bold transition-all flex items-center gap-1.5 self-start sm:self-auto cursor-pointer"
                 >
                   <RefreshCw className={`w-3.5 h-3.5 ${sbIsLoading ? "animate-spin" : ""}`} />
-                  <span>{isTr ? "Sınıflandır" : "Classify"}</span>
+                  <span>{isTr ? "SÄ±nÄ±flandÄ±r" : "Classify"}</span>
                 </button>
               </div>
 
@@ -1207,7 +1232,7 @@ export const PanelMLSTR: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 font-mono text-xs">
                 <div className="p-3.5 rounded-xl bg-black/40 border border-slate-800 space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-slate-400">{isTr ? "Hedef Pik Yüksekliği:" : "Target Peak Height:"}</span>
+                    <span className="text-slate-400">{isTr ? "Hedef Pik YÃ¼ksekliÄŸi:" : "Target Peak Height:"}</span>
                     <span className="font-bold text-amber-300">{sbHeight} RFU</span>
                   </div>
                   <input
@@ -1239,7 +1264,7 @@ export const PanelMLSTR: React.FC = () => {
 
                 <div className="p-3.5 rounded-xl bg-black/40 border border-slate-800 space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-slate-400">{isTr ? "Referans Majör Pik Yüksekliği:" : "Major Allele Height:"}</span>
+                    <span className="text-slate-400">{isTr ? "Referans MajÃ¶r Pik YÃ¼ksekliÄŸi:" : "Major Allele Height:"}</span>
                     <span className="font-bold text-purple-300">{sbMajorHeight} RFU</span>
                   </div>
                   <input
@@ -1255,7 +1280,7 @@ export const PanelMLSTR: React.FC = () => {
 
                 <div className="p-3.5 rounded-xl bg-black/40 border border-slate-800 space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-slate-400">{isTr ? "Majör Alel Konumu (bp):" : "Major Allele Pos (bp):"}</span>
+                    <span className="text-slate-400">{isTr ? "MajÃ¶r Alel Konumu (bp):" : "Major Allele Pos (bp):"}</span>
                     <span className="font-bold text-white">{sbMajorBp.toFixed(1)} bp</span>
                   </div>
                   <input
@@ -1271,7 +1296,7 @@ export const PanelMLSTR: React.FC = () => {
 
                 <div className="p-3.5 rounded-xl bg-black/40 border border-slate-800 space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-slate-400">{isTr ? "FWHM Genişliği (bp):" : "Peak FWHM (bp):"}</span>
+                    <span className="text-slate-400">{isTr ? "FWHM GeniÅŸliÄŸi (bp):" : "Peak FWHM (bp):"}</span>
                     <span className="font-bold text-cyan-300">{sbFwhm.toFixed(2)} bp</span>
                   </div>
                   <input
@@ -1287,7 +1312,7 @@ export const PanelMLSTR: React.FC = () => {
 
                 <div className="p-3.5 rounded-xl bg-black/40 border border-slate-800 space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-slate-400">{isTr ? "Boya Sızıntısı (Pull-Up RFU):" : "Co-eluting Dye Bleed:"}</span>
+                    <span className="text-slate-400">{isTr ? "Boya SÄ±zÄ±ntÄ±sÄ± (Pull-Up RFU):" : "Co-eluting Dye Bleed:"}</span>
                     <span className="font-bold text-rose-300">{sbSecondaryRfu} RFU</span>
                   </div>
                   <input
@@ -1307,18 +1332,18 @@ export const PanelMLSTR: React.FC = () => {
                 <div className="p-5 rounded-xl bg-slate-950 border border-purple-500/40 space-y-4">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
                     <div className="flex items-center gap-3">
-                      <span className="text-xs text-slate-400 font-mono">{isTr ? "Fragsifier Kararı:" : "Fragsifier Prediction:"}</span>
+                      <span className="text-xs text-slate-400 font-mono">{isTr ? "Fragsifier KararÄ±:" : "Fragsifier Prediction:"}</span>
                       <span className={`px-3 py-1 rounded text-xs font-bold border ${getClassColor(sbResult.predicted_class).bg} ${getClassColor(sbResult.predicted_class).text} ${getClassColor(sbResult.predicted_class).border}`}>
                         {sbResult.predicted_class}
                       </span>
                     </div>
                     <div className="text-xs font-mono text-emerald-400 font-bold">
-                      {isTr ? "Güven Skoru:" : "Model Confidence:"} {(sbResult.confidence_score * 100).toFixed(1)}%
+                      {isTr ? "GÃ¼ven Skoru:" : "Model Confidence:"} {(sbResult.confidence_score * 100).toFixed(1)}%
                     </div>
                   </div>
 
                   <div className="text-xs font-mono text-slate-300">
-                    <span className="text-slate-400">{isTr ? "Önerilen Kalite Eylemi: " : "Recommended Action: "}</span>
+                    <span className="text-slate-400">{isTr ? "Ã–nerilen Kalite Eylemi: " : "Recommended Action: "}</span>
                     <span className="text-white font-bold">{sbResult.recommended_action}</span>
                   </div>
 

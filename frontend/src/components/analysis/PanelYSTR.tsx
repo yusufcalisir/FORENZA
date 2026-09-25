@@ -472,18 +472,33 @@ export function evaluateYStrKinshipClient(
     if (aVal === undefined || bVal === undefined) continue;
 
     if (locusDef.isMultiCopy) {
-      const aArr = Array.isArray(aVal) ? [...aVal].sort((x, y) => x - y) : [Number(aVal)];
-      const bArr = Array.isArray(bVal) ? [...bVal].sort((x, y) => x - y) : [Number(bVal)];
+      const aArr = Array.isArray(aVal) ? [...aVal].map(Number).sort((x, y) => x - y) : [Number(aVal)];
+      const bArr = Array.isArray(bVal) ? [...bVal].map(Number).sort((x, y) => x - y) : [Number(bVal)];
 
       const isIdentical = aArr.length === bArr.length && aArr.every((v, i) => v === bArr[i]);
       if (isIdentical) {
         matchingLoci++;
-        combinedMutationProduct *= Math.pow(1 - locusDef.mu, meioses);
+        // Both duplicated copies must remain unmutated: (1 - mu_l)^(2 * meioses)
+        combinedMutationProduct *= Math.pow(1 - locusDef.mu, 2 * meioses);
       } else {
         mutatedLoci++;
         if (locusDef.isRm) rmMutations++; else standardMutations++;
-        const delta = Math.abs((aArr[0] || 0) - (bArr[0] || 0));
-        combinedMutationProduct *= computeStepwiseMutationLR(meioses, delta, locusDef.mu, locusDef.r);
+
+        // Pairwise multi-copy SMM: evaluate both sorted copies (D-YSTR-01 fix)
+        if (aArr.length === 2 && bArr.length === 2) {
+          const delta1 = Math.abs(aArr[0] - bArr[0]);
+          const delta2 = Math.abs(aArr[1] - bArr[1]);
+          const p1 = delta1 === 0
+            ? Math.pow(1 - locusDef.mu, meioses)
+            : computeStepwiseMutationLR(meioses, delta1, locusDef.mu, locusDef.r);
+          const p2 = delta2 === 0
+            ? Math.pow(1 - locusDef.mu, meioses)
+            : computeStepwiseMutationLR(meioses, delta2, locusDef.mu, locusDef.r);
+          combinedMutationProduct *= (p1 * p2);
+        } else {
+          const delta = Math.abs((aArr[0] || 0) - (bArr[0] || 0));
+          combinedMutationProduct *= computeStepwiseMutationLR(meioses, delta, locusDef.mu, locusDef.r);
+        }
       }
     } else {
       const aNum = Number(aVal);
@@ -500,11 +515,8 @@ export function evaluateYStrKinshipClient(
     }
   }
 
-  // Lineage exclusion standard: 2 or more standard mutations or 3 or more total mutations
-  const isExcluded =
-    standardMutations >= 2 ||
-    mutatedLoci >= 3 ||
-    (profileA.DYS19 && profileB.DYS19 && profileA.DYS19 !== profileB.DYS19 && profileA.DYS390 !== profileB.DYS390);
+  // Lineage exclusion standard: >= 3 standard mutations or >= 5 total mutations (D-YSTR-02 fix)
+  const isExcluded = standardMutations >= 3 || mutatedLoci >= 5;
 
   let finalLR = 1.0;
   let log10LR = 0.0;

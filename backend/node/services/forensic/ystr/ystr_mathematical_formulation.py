@@ -1,6 +1,6 @@
 """
 FORENZA Forensic Evidence Operating System
-Pillar 2 — Module 2.1: Y-STR 27-Locus Lineage Engine (Y-FILER Plus)
+Pillar 2: Module 2.1: Y-STR 27-Locus Lineage Engine (Y-FILER Plus)
 Sub-Item 2.1.1: Mathematical Formulation
 
 Derives verbatim and exclusively from:
@@ -611,6 +611,90 @@ HAPLOGROUP_MODAL_PROFILES: Dict[str, Dict[str, Any]] = {
             "DYF387S1a/b": [37, 38]
         }
     },
+    "O": {
+        "primary_snp": "M175 / M122 (O2a)",
+        "description": "East Asian Lineage (Han Chinese, Korean, Japanese, Southeast Asian)",
+        "prior": 0.14,
+        "modal_str": {
+            "DYS393": 13, "DYS390": 24, "DYS19": 15, "DYS391": 10,
+            "DYS385a/b": [12, 18], "DYS439": 11, "DYS389I": 14, "DYS392": 13,
+            "DYS389II": 31, "DYS438": 10, "DYS437": 14, "DYS448": 19,
+            "DYS456": 15, "DYS458": 17, "DYS635": 23, "YGATAH4": 12,
+            "DYS460": 11, "DYS481": 23, "DYS533": 12, "DYS570": 17,
+            "DYS576": 17, "DYS627": 23, "DYS518": 37, "DYS449": 30,
+            "DYF387S1a/b": [36, 38]
+        }
+    },
+    "Q": {
+        "primary_snp": "M242 / M3",
+        "description": "Indigenous American / Siberian Lineage",
+        "prior": 0.02,
+        "modal_str": {
+            "DYS393": 13, "DYS390": 24, "DYS19": 13, "DYS391": 10,
+            "DYS385a/b": [13, 14], "DYS439": 12, "DYS389I": 13, "DYS392": 14,
+            "DYS389II": 30, "DYS438": 12, "DYS437": 14, "DYS448": 20,
+            "DYS456": 15, "DYS458": 16, "DYS635": 22, "YGATAH4": 11,
+            "DYS460": 10, "DYS481": 22, "DYS533": 12, "DYS570": 16,
+            "DYS576": 17, "DYS627": 21, "DYS518": 38, "DYS449": 30,
+            "DYF387S1a/b": [36, 38]
+        }
+    },
+    "C": {
+        "primary_snp": "M130 / M217",
+        "description": "Central / North Asian / Mongolian / Oceanic Lineage",
+        "prior": 0.03,
+        "modal_str": {
+            "DYS393": 13, "DYS390": 25, "DYS19": 16, "DYS391": 10,
+            "DYS385a/b": [13, 16], "DYS439": 11, "DYS389I": 13, "DYS392": 11,
+            "DYS389II": 29, "DYS438": 10, "DYS437": 14, "DYS448": 21,
+            "DYS456": 16, "DYS458": 17, "DYS635": 22, "YGATAH4": 11,
+            "DYS460": 11, "DYS481": 22, "DYS533": 12, "DYS570": 18,
+            "DYS576": 17, "DYS627": 20, "DYS518": 38, "DYS449": 31,
+            "DYF387S1a/b": [35, 37]
+        }
+    },
+    "T": {
+        "primary_snp": "M184 / M70",
+        "description": "Near Eastern / Mediterranean / East African Lineage",
+        "prior": 0.015,
+        "modal_str": {
+            "DYS393": 13, "DYS390": 24, "DYS19": 15, "DYS391": 10,
+            "DYS385a/b": [13, 17], "DYS439": 12, "DYS389I": 13, "DYS392": 11,
+            "DYS389II": 29, "DYS438": 10, "DYS437": 15, "DYS448": 21,
+            "DYS456": 15, "DYS458": 16, "DYS635": 21, "YGATAH4": 11,
+            "DYS460": 11, "DYS481": 22, "DYS533": 12, "DYS570": 17,
+            "DYS576": 17, "DYS627": 21, "DYS518": 38, "DYS449": 29,
+            "DYF387S1a/b": [36, 38]
+        }
+    },
+    "L": {
+        "primary_snp": "M20 / M11",
+        "description": "South Asian / Indus Valley Lineage",
+        "prior": 0.015,
+        "modal_str": {
+            "DYS393": 12, "DYS390": 23, "DYS19": 15, "DYS391": 10,
+            "DYS385a/b": [14, 17], "DYS439": 11, "DYS389I": 13, "DYS392": 11,
+            "DYS389II": 29, "DYS438": 10, "DYS437": 15, "DYS448": 21,
+            "DYS456": 15, "DYS458": 17, "DYS635": 21, "YGATAH4": 11,
+            "DYS460": 11, "DYS481": 23, "DYS533": 12, "DYS570": 18,
+            "DYS576": 18, "DYS627": 21, "DYS518": 38, "DYS449": 30,
+            "DYF387S1a/b": [36, 37]
+        }
+    },
+    "H": {
+        "primary_snp": "M69 / M52",
+        "description": "South Asian (Indian Subcontinent / Romani) Lineage",
+        "prior": 0.02,
+        "modal_str": {
+            "DYS393": 14, "DYS390": 22, "DYS19": 15, "DYS391": 10,
+            "DYS385a/b": [15, 17], "DYS439": 11, "DYS389I": 13, "DYS392": 11,
+            "DYS389II": 30, "DYS438": 10, "DYS437": 15, "DYS448": 21,
+            "DYS456": 15, "DYS458": 16, "DYS635": 21, "YGATAH4": 11,
+            "DYS460": 11, "DYS481": 22, "DYS533": 12, "DYS570": 17,
+            "DYS576": 17, "DYS627": 21, "DYS518": 38, "DYS449": 29,
+            "DYF387S1a/b": [36, 37]
+        }
+    },
 }
 
 
@@ -849,7 +933,7 @@ class YStrMathematicalFormulation:
         profile_a: Dict[str, Any],
         profile_b: Dict[str, Any],
         meioses_m: int = 1,
-        database_size_n: int = 38500,
+        database_size_n: int = 385000,
         theta: float = 0.03,
     ) -> PaternalKinshipResult:
         """

@@ -114,7 +114,7 @@ The President's Council of Advisors on Science and Technology (PCAST) evaluated 
 
 ### 7.1 Y-Chromosome STR Analysis & YHRD Guidelines
 * **Y-FILER Plus 27-Locus Panel:** Includes 20 standard plus 7 Rapidly Mutating (RM) loci (`DYS570`, `DYS576`, `DYS627`, `DYS518`, `DYS449`, `DYF387S1a/b`) with mutation rates $\mu > 10^{-2}$ per generation, allowing separation of close patrilineal relatives (Ballantyne et al., 2014).
-* **Clopper-Pearson 95% Binomial Upper Bound:** Exact estimation of haplotype frequency in reference database $N$ (YHRD $N=35,000$) when $k=0$ observations occur:
+* **Clopper-Pearson 95% Binomial Upper Bound:** Exact estimation of haplotype frequency in reference database $N$ (YHRD $N=385,000$) when $k=0$ observations occur:
   $$p_{\text{upper}} = 1 - (1 - \alpha)^{1/(N+1)}$$
 * **Brenner Subpopulation Coancestry Correction:**
   $$p_{\text{Brenner}} = \frac{k + \theta}{N + \theta} \quad (\theta = 0.02)$$

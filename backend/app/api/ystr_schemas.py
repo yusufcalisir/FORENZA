@@ -217,7 +217,7 @@ class YSTRMatchRequest(BaseModel):
     evidence_markers: Dict[str, Any]
     suspect_markers: Dict[str, Any]
     database_count_k: int = 0
-    database_size_n: int = 25000
+    database_size_n: int = 385000
     theta: float = 0.03
     alpha: float = 0.05
 

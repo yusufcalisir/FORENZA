@@ -533,9 +533,30 @@ class YSTREngine:
         n = database_size_n if database_size_n is not None else self.default_database_n
         th = theta if theta is not None else self.default_theta
 
-        # Normalize locus keys
-        ev_norm = {normalize_ystr_locus_name(k): v for k, v in evidence_markers.items()}
-        su_norm = {normalize_ystr_locus_name(k): v for k, v in suspect_markers.items()}
+        # Normalize and expand paired multi-copy loci (DYS385a/b, DYF387S1a/b)
+        def _expand_profile(profile: Dict[str, Any]) -> Dict[str, float]:
+            expanded: Dict[str, float] = {}
+            for k, v in profile.items():
+                clean_k = k.strip().upper().replace("-", "").replace("/", "_")
+                if clean_k in ("DYS385A_B", "DYS385", "DYS385_AB") and isinstance(v, (list, tuple)):
+                    vals = sorted([float(x) for x in v])
+                    expanded["DYS385a"] = vals[0]
+                    expanded["DYS385b"] = vals[1] if len(vals) > 1 else vals[0]
+                elif clean_k in ("DYF387S1A_B", "DYF387S1", "DYF387S1_AB") and isinstance(v, (list, tuple)):
+                    vals = sorted([float(x) for x in v])
+                    expanded["DYF387S1a"] = vals[0]
+                    expanded["DYF387S1b"] = vals[1] if len(vals) > 1 else vals[0]
+                else:
+                    canon = normalize_ystr_locus_name(k)
+                    val = v[0] if isinstance(v, (list, tuple)) else v
+                    try:
+                        expanded[canon] = float(val)
+                    except (ValueError, TypeError):
+                        continue
+            return expanded
+
+        ev_norm = _expand_profile(evidence_markers)
+        su_norm = _expand_profile(suspect_markers)
 
         common_loci = sorted(set(ev_norm.keys()) & set(su_norm.keys()))
         total_eval = len(common_loci)

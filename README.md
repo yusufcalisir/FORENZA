@@ -149,6 +149,10 @@ str-analysis/
 │   │   │   ├── genomics_schemas.py        # Pydantic Schemas for STR/SNP Loci
 │   │   │   ├── mps_str_schemas.py         # Pydantic Schemas for MPS/NGS STR Sequence Lab
 │   │   │   ├── mps_str_routes.py          # REST Gateway for MPS/NGS STR Sequence Lab
+│   │   │   ├── ml_str_schemas.py          # Pydantic Schemas for ML STR Artifact Classifier
+│   │   │   ├── ml_str_routes.py           # REST Gateway for ML STR Artifact Classifier
+│   │   │   ├── ystr_schemas.py            # Pydantic Schemas for Y-STR 27-Locus Lineage Forensics
+│   │   │   ├── ystr_routes.py             # REST Gateway for Y-STR 27-Locus Lineage Engine
 │   │   │   ├── mixture_schemas.py         # Pydantic Schemas for MCMC Mixture Deconvolution
 │   │   │   ├── mixture_routes.py          # REST Gateway for MCMC Mixture Deconvolution
 │   │   │   ├── phenotype_extended_schemas.py # Schemas for HIrisPlex-S & BGA

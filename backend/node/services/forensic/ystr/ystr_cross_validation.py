@@ -1,6 +1,6 @@
 """
 FORENZA Forensic Evidence Operating System
-Pillar 2 — Module 2.1: Y-STR 27-Locus Lineage Engine (Y-FILER Plus)
+Pillar 2: Module 2.1: Y-STR 27-Locus Lineage Engine (Y-FILER Plus)
 Sub-Item 2.1.3: Independent Tool Cross-Validation
 
 Derives verbatim and exclusively from:

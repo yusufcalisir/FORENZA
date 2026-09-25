@@ -2571,7 +2571,7 @@ Bidirectional parsing and serialization supporting standard capillary electropho
    - Analytical ($AT=50\text{ RFU}$), Stochastic ($ST=200\text{ RFU}$), and Saturation ($SAT=8000\text{ RFU}$) threshold lines.
 5. **Tab 5: 27-Locus Y-STR Haplotype & Lineage Analysis (`ystr`):**
    - Comprehensive 25 multiplex systems spanning 27 physical loci including all 7 RM loci (`DYS570`, `DYS576`, `DYS627`, `DYS518`, `DYS449`, `DYF387S1a/b`).
-   - Snedecor $F$ Clopper-Pearson 95% upper bound against YHRD ($N=35,000$), Brenner subpopulation correction ($\theta = 0.02$), and discrete Laplace haplogroup classifier.
+   - Snedecor $F$ Clopper-Pearson 95% upper bound against YHRD ($N=385,000$), Brenner subpopulation correction ($\theta = 0.02$), and discrete Laplace haplogroup classifier.
    - Stepwise Mutation Model (SMM) Kinship CPI and male mixture contributor deconvolution ($N_{\text{male}}$).
 6. **Tab 6: mtDNA Control Region & EMPOP Alignment (`mtdna`):**
    - Hypervariable D-Loop architecture visualizer across 5 regions (HV1, HV2, HV3, OHR, CR) aligned to rCRS (NC_012920.1) and RSRS.
@@ -2622,9 +2622,9 @@ The Y-STR engine operates across 25 multiplex systems covering 27 physical loci.
 $$[\text{DYS389.2}] = \text{DYS389II} - \text{DYS389I}$$
 
 ### 76.2 Exact Clopper-Pearson 95% Upper Bound
-For $k$ observed matches in a database of size $N$ (YHRD standard $N = 35,000$):
+For $k$ observed matches in a database of size $N$ (YHRD Release 68 standard $N = 385,000$):
 - For $k = 0$:
-  $$p_{\text{upper}} = 1 - \alpha^{1/(N+1)} \quad (\alpha = 0.05 \implies p_{\text{upper}} \approx 8.56 \times 10^{-5})$$
+  $$p_{\text{upper}} = 1 - \alpha^{1/(N+1)} \quad (\alpha = 0.05, N = 385,000 \implies p_{\text{upper}} \approx 7.78 \times 10^{-6})$$
 - For $k > 0$, using the quantile of Snedecor's $F$-distribution with degrees of freedom $d_1 = 2(k+1), d_2 = 2(N-k)$:
   $$p_{\text{upper}} = \frac{(k+1) F_{1-\alpha/2, 2(k+1), 2(N-k)}}{(N-k) + (k+1) F_{1-\alpha/2, 2(k+1), 2(N-k)}}$$
 
@@ -2635,9 +2635,15 @@ $$p_{\text{Brenner}} = \frac{k + \theta}{N + \theta}, \quad p_{\text{subpop}} = 
 ### 76.4 Stepwise Mutation Model (SMM) Kinship Index
 For an alleged paternal relationship spanning $m$ meioses between donor $A$ and donor $B$:
 $$P(\text{Transmission} \mid m) = \prod_{l=1}^{27} P(A_l \to B_l \mid m)$$
-where for repeat difference $\Delta = |A_l - B_l|$:
+where for repeat difference $\Delta = |A_l - B_l|$ on single-copy systems:
 $$P(A_l \to B_l \mid m) = \begin{cases} (1 - \mu_l)^m & \text{if } \Delta = 0 \\ m \cdot \frac{\mu_l}{2} (1 - r_l) r_l^{\Delta - 1} & \text{if } \Delta \ge 1 \end{cases}$$
-The combined paternal kinship index evaluates to:
+For multi-copy duplicated systems (`DYS385a/b`, `DYF387S1a/b`), alleles are evaluated pairwise across sorted copies ($A_{l,1} \to B_{l,1}$ and $A_{l,2} \to B_{l,2}$):
+$$P(A_{\text{multi}} \to B_{\text{multi}} \mid m) = P(A_{l,1} \to B_{l,1} \mid m) \cdot P(A_{l,2} \to B_{l,2} \mid m)$$
+When both duplicate copies are identical ($\Delta_1 = 0, \Delta_2 = 0$), the transmission factor evaluates to $(1 - \mu_l)^{2m}$.
+
+In accordance with SWGDAM / ISFG patrilineal exclusion guidelines, if the number of standard single-step mutations satisfies $N_{\text{mut,std}} \ge 3$ or the total number of discordant loci satisfies $N_{\text{mut,total}} \ge 5$, the kinship hypothesis is excluded deterministically:
+$$\text{CPI}_{Y} = 0.0 \quad (\log_{10} \text{CPI}_{Y} = -\infty)$$
+Otherwise, the combined paternal kinship index evaluates to:
 $$\text{CPI}_{Y} = \frac{P(\text{Transmission} \mid m)}{P_{\text{unrelated}}(B)}$$
 
 ### 76.5 Male Mixture Contributor Deconvolution ($N_{\text{male}}$)

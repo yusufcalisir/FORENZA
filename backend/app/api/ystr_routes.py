@@ -1,4 +1,4 @@
-"""
+﻿"""
 FORENZA Y-STR Haplotype Forensics API Router (Module 2.1).
 Standards Compliance: ISO/IEC 17025:2017, SWGDAM Lineage Guidelines (2020), ENFSI Evaluative Reporting (2017).
 Research Source: research/pillar_2_lineage_kinship_research.md & research/ystr_27_mtdna_empop_lineage_research.md
@@ -63,7 +63,7 @@ router = APIRouter(
 )
 
 
-# ── 1. Paternal Kinship Evaluation ───────────────────────────────────────────
+# â”€â”€ 1. Paternal Kinship Evaluation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 @router.post(
     "/evaluate-paternal-kinship",
@@ -84,7 +84,7 @@ async def evaluate_paternal_kinship(body: PaternalKinshipRequest) -> PaternalKin
         shield = YStrCrossValidationEngine.get_isfg_patrilineal_disclaimer()
     except ValueError as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Y-STR paternal kinship evaluation error: {str(exc)}",
         )
     except Exception as exc:
@@ -127,7 +127,7 @@ async def evaluate_paternal_kinship(body: PaternalKinshipRequest) -> PaternalKin
     )
 
 
-# ── 2. Population Frequency & Confidence Bounds ─────────────────────────────
+# â”€â”€ 2. Population Frequency & Confidence Bounds â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 @router.post(
     "/clopper-pearson-bound",
@@ -145,7 +145,7 @@ async def get_clopper_pearson_bound(body: ClopperPearsonRequest) -> ClopperPears
         )
     except ValueError as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Clopper-Pearson parameter validation error: {str(exc)}",
         )
 
@@ -184,7 +184,7 @@ async def get_brenner_frequency(body: BrennerFrequencyRequest) -> BrennerFrequen
         )
     except ValueError as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Brenner parameter validation error: {str(exc)}",
         )
 
@@ -202,7 +202,7 @@ async def get_brenner_frequency(body: BrennerFrequencyRequest) -> BrennerFrequen
     )
 
 
-# ── 3. Haplogroup Prediction ────────────────────────────────────────────────
+# â”€â”€ 3. Haplogroup Prediction â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 @router.post(
     "/predict-haplogroup",
@@ -216,7 +216,7 @@ async def predict_y_haplogroup(body: HaplogroupPredictionRequest) -> HaplogroupP
         res = YStrMathematicalFormulation.predict_haplogroup(profile=body.y_str_markers)
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Haplogroup prediction failed: {str(exc)}",
         )
 
@@ -241,7 +241,7 @@ async def predict_y_haplogroup_alias(body: HaplogroupPredictionRequest) -> Haplo
     return await predict_y_haplogroup(body)
 
 
-# ── 4. Decoupling & Mixture Contributors ────────────────────────────────────
+# â”€â”€ 4. Decoupling & Mixture Contributors â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 @router.post(
     "/decouple-dys389",
@@ -255,7 +255,7 @@ async def decouple_dys389_endpoint(body: DecoupleDys389Request) -> DecoupleDys38
         pure = YStrMathematicalFormulation.decouple_dys389(body.dys389i, body.dys389ii_total)
     except ValueError as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"DYS389 decoupling error: {str(exc)}",
         )
 
@@ -307,19 +307,19 @@ async def get_mixture_contributors(body: MixtureContributorsRequest) -> MixtureC
             )
         else:
             raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
                 detail="Either locus_allele_counts or locus_alleles must be provided.",
             )
     except HTTPException:
         raise
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Mixture contributor estimation error: {str(exc)}",
         )
 
 
-# ── 5. SMM & Legacy Match Endpoints ─────────────────────────────────────────
+# â”€â”€ 5. SMM & Legacy Match Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 @router.post(
     "/smm-transition",
@@ -340,7 +340,7 @@ async def compute_smm_transition(body: SMMTransitionRequest) -> SMMTransitionRes
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"SMM computation error: {str(exc)}",
         )
 
@@ -378,7 +378,7 @@ async def evaluate_match_endpoint(body: YSTRMatchRequest) -> YSTRMatchResponse:
         )
     except Exception as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail=f"Match evaluation failed: {str(exc)}",
         )
 
@@ -435,7 +435,7 @@ async def evaluate_match_endpoint(body: YSTRMatchRequest) -> YSTRMatchResponse:
     )
 
 
-# ── 6. Catalogs, Metapopulations & Casework Cohorts ──────────────────────────
+# â”€â”€ 6. Catalogs, Metapopulations & Casework Cohorts â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 @router.get(
     "/panel-metadata",
